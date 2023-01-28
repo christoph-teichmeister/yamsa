@@ -4,9 +4,20 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+ai-django-core = "==6.9.*"
 django = "==4.1.*"
+django-environ = "==0.9.*"
+django-extensions = "==3.2.*"
+whitenoise = "==6.3.*"
+psycopg2-binary = "==2.9.*"
 
 [dev-packages]
+black = "*"
+django-upgrade = "*"
+flake8 = "*"
+flake8-bugbear = "*"
+isort = "*"
+pyupgrade = "*"
 
 [requires]
 python_version = "3.10"
