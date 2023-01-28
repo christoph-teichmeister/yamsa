@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "" && echo "run migrations" && echo ""
+echo "" && echo "Run migrations" && echo ""
 python manage.py migrate
-echo "" && echo "done with migrations" && echo ""
+echo "" && echo "Done with migrations!" && echo ""
 
 exec "$@"

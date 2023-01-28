@@ -5,7 +5,7 @@ services:
   database:
     container_name: yamsa_database
     restart: always
-    image: postgres:15-alpine
+    image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -18,13 +18,13 @@ services:
 
   backend:
     container_name: yamsa_backend
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    restart: "no"
     volumes:
       - ./:/yamsa
     ports:
       - "8000:8000"
-    restart: "no"
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
     depends_on:
         - database
 

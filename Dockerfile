@@ -10,6 +10,10 @@ ARG GID=1000
 ### STAGE 1: Build python ###
 FROM python:${PYTHON_MINOR_VERSION} AS builder-python
 
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 # Set work directory
 ENV TMP_DIR=/tmp/
 WORKDIR $TMP_DIR
@@ -22,7 +26,7 @@ RUN apt-get update && \
 # Move pipfiles to project
 COPY Pipfile Pipfile.lock $TMP_DIR
 RUN pip install -U pip pipenv
-RUN ["pipenv", "install", "--system", "--deploy"]
+RUN pipenv install --system --deploy
 
 # Set Path variable to global arg var
 ARG ENV_PATH
