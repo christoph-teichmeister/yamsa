@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+
+  database:
+    container_name: yamsa_database
+    restart: always
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=my-password
+      - POSTGRES_DB=yamsa_db
+    ports:
+      - "5431:5432"
+
+
+  backend:
+    container_name: yamsa_backend
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./:/yamsa
+    ports:
+      - "8000:8000"
+    restart: "no"
+    depends_on:
+        - database
+
+
+volumes:
+  postgres_data:
