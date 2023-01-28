@@ -17,6 +17,10 @@ import environ
 env = environ.Env(
     SECRET_KEY=(str, ""),
     DEBUG=(bool, False),
+    # Database ENV
+    DB_NAME=(str, ""),
+    DB_PASSWORD=(str, ""),
+    DB_USER=(str, ""),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -36,7 +40,9 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+AUTH_USER_MODEL = "account.User"
+
+ALLOWED_HOSTS = ()
 
 # Application definition
 
@@ -54,7 +60,11 @@ THIRD_PARTY_APPS = (
     "django_extensions",
 )
 
-LOCAL_APPS = ()
+LOCAL_APPS = (
+    "apps.account",
+    "apps.room",
+    "apps.transaction",
+)
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -97,9 +107,9 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "PORT": "5432",
         "HOST": "database",
-        "NAME": os.environ.get("DB_NAME"),
-        "PASSWORD": os.environ.get("DB_PASSWORD"),
-        "USER": os.environ.get("DB_USER"),
+        "NAME": env("DB_NAME"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "USER": env("DB_USER"),
     }
 }
 
@@ -137,6 +147,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = (os.path.join(APPS_DIR, "static"),)
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+)
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
