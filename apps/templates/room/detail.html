@@ -1,0 +1,11 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+    <p>{{ room.name }}</p>
+    <p>{{ room.status }}</p>
+    <p>{{ room.description }}</p>
+
+{#    {% for user in room.users %}#}
+{#        <p>{{ user.name }}</p>#}
+{#    {% endfor %}#}
+{% endblock %}
