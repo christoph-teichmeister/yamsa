@@ -5,7 +5,9 @@
     <p>{{ room.status }}</p>
     <p>{{ room.description }}</p>
 
-{#    {% for user in room.users %}#}
-{#        <p>{{ user.name }}</p>#}
-{#    {% endfor %}#}
+    {#    {% for user in room.users %}#}
+    {#        <p>{{ user.name }}</p>#}
+    {#    {% endfor %}#}
+
+    {% include "room/partials/_add_payment_modal.html" %}
 {% endblock %}
