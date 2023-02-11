@@ -20,3 +20,14 @@ class RoomDetailView(generic.DetailView):
     template_name = "room/detail.html"
     context_object_name = "room"
     model = Room
+
+    def get_context_data(self, **kwargs) -> dict:
+        context_data = super().get_context_data(**kwargs)
+
+        room = context_data.get("room")
+        room_users = room.users.all().values("name", "id")
+
+        return {
+            **context_data,
+            "room_users": room_users,
+        }
