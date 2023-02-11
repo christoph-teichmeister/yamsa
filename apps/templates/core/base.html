@@ -19,9 +19,16 @@
     {# Idomorph for cool HTMX morph swapping #}
     <script src="https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js"></script>
 </head>
-<body hx-ext="morph">
+<body hx-ext="morph" id="body">
 
-{% include "base_content.html" %}
+<div class="container-fluid" style="padding-top: 2rem;">
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+
+{% include "_nav.html" %}
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
         integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"

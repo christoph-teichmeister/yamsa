@@ -1,2 +1,6 @@
-<p>{{ user.email }}</p>
-<p>{{ user.username }}</p>
+{% extends "core/base.html" %}
+
+{% block content %}
+    <p>{{ user.email }}</p>
+    <p>{{ user.username }}</p>
+{% endblock %}
