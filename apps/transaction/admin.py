@@ -6,5 +6,5 @@ from apps.transaction.models import Transaction
 
 
 @register(Transaction)
-class TransactionAdmin(admin.ModelAdmin, CommonInfoAdminMixin):
+class TransactionAdmin(CommonInfoAdminMixin, admin.ModelAdmin):
     pass

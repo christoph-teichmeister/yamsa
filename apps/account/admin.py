@@ -6,5 +6,5 @@ from apps.account.models import User
 
 
 @register(User)
-class UserAdmin(admin.ModelAdmin, CommonInfoAdminMixin):
+class UserAdmin(CommonInfoAdminMixin, admin.ModelAdmin):
     list_display = ("name", "email", "is_guest")

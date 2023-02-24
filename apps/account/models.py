@@ -7,7 +7,7 @@ class User(CommonInfo, AbstractUser):
     # Abstract model for any user
 
     name = models.CharField(max_length=50)
-    rooms = models.ManyToManyField("room.Room", through="room.UserTransactionsForRoom")
+    rooms = models.ManyToManyField("room.Room", through="room.UserConnectionToRoom")
 
     is_guest = models.BooleanField(default=True)
 
