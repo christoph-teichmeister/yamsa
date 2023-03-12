@@ -1,23 +1,29 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-    <p>{{ room.name }}</p>
+    <h1>{{ room.name }}</h1>
     <p>{{ room.description }}</p>
 
-    <p>Freunde:</p>
-    <ul>
+    <h5>Friends:</h5>
+    <ul class="list-group">
         {% for user in room_users %}
-            <li>{{ user.name }}</li>
+            <li class="list-group-item">{{ user.name }}</li>
         {% endfor %}
     </ul>
+    <br/>
 
-
-    <p>Transaktionen:</p>
-    <ul>
-        {% for transaction in room_transactions %}
-            <li>{{ transaction.description }}</li>
-        {% endfor %}
-    </ul>
+    {% if room_transactions %}
+        <h5>Payments made:</h5>
+        <ul class="list-group">
+            {% for transaction in room_transactions %}
+                <li class="list-group-item">
+                    {{ transaction.paid_by_name }} paid <strong>{{ transaction.value }}€</strong>
+                    for {{ transaction.paid_for_name }} ("{{ transaction.description }}")
+                </li>
+            {% endfor %}
+        </ul>
+        <br/>
+    {% endif %}
 
     {% include "room/partials/_add_payment_modal.html" %}
 {% endblock %}
