@@ -13,7 +13,3 @@ class TransactionForm(ModelForm):
             "room",
             "value",
         )
-
-    def clean(self):
-        print("TransactionForm CLEAN")
-        super().clean()
