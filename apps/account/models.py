@@ -4,8 +4,6 @@ from django.db import models
 
 
 class User(CommonInfo, AbstractUser):
-    # Abstract model for any user
-
     name = models.CharField(max_length=50)
     rooms = models.ManyToManyField("room.Room", through="room.UserConnectionToRoom")
 
@@ -18,9 +16,9 @@ class User(CommonInfo, AbstractUser):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
+    def clean(self):
         if self.is_guest and not self.is_superuser:
             self.username = f"{self.name}-{self.id}"
             self.email = f"{self.username}@local.local"
 
-        super().save(*args, **kwargs)
+        super().clean()
