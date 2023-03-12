@@ -2,12 +2,22 @@
 
 {% block content %}
     <p>{{ room.name }}</p>
-    <p>{{ room.status }}</p>
     <p>{{ room.description }}</p>
 
-    {#    {% for user in room.users %}#}
-    {#        <p>{{ user.name }}</p>#}
-    {#    {% endfor %}#}
+    <p>Freunde:</p>
+    <ul>
+        {% for user in room_users %}
+            <li>{{ user.name }}</li>
+        {% endfor %}
+    </ul>
+
+
+    <p>Transaktionen:</p>
+    <ul>
+        {% for transaction in room_transactions %}
+            <li>{{ transaction.description }}</li>
+        {% endfor %}
+    </ul>
 
     {% include "room/partials/_add_payment_modal.html" %}
 {% endblock %}

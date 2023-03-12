@@ -1,32 +1,73 @@
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
     Add payment
 </button>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Add payment for {{ room.name }}</h1>
+                <h1 class="modal-title fs-5" id="addTransactionModalLabel">Add payment for {{ room.name }}</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form>
+            <form action="/transaction/add/" method="post">
+                {% csrf_token %}
+
                 <div class="modal-body">
 
-                    <div class="mb-3">
-                        <label for="paymentAmount" class="form-label">Amount paid in €</label>
-                        <input type="number" class="form-control" id="paymentAmount">
+                    <div class="mb-3 form-group">
+                        <label for="value" class="form-label">Amount paid in €</label>
+                        <input id="value"
+                               name="value"
+                               type="number"
+                               class="form-control"
+                               required
+                        />
                     </div>
-                    <div class="mb-3">
-                        <label for="paymentRecipientSelect" class="form-label">Paid for</label>
-                        <select class="form-select mb-3" multiple id="paymentRecipientSelect">
-                            {% for user in room_users %}
-                                <option value="{{ user.id }}">{{ user.name }}</option>
+
+                    <div class="mb-3 form-group">
+                        <label for="paidForSelect">Paid for</label>
+                        <select id="paid_for"
+                                name="paid_for"
+                                multiple
+                                class="form-control"
+                                id="paidForSelect"
+                                required
+                        >
+                            {% for room_user in room_users %}
+                                <option value="{{ room_user.id }}">{{ room_user.name }}</option>
                             {% endfor %}
                         </select>
+                    </div>
+
+                    <div class="mb-3 form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" class="form-control" rows="3" required></textarea>
+                    </div>
+
+                    <div class="form-group" hidden>
+                        <label for="paid_by" class="form-label">Paid by</label>
+                        <input id="paid_by"
+                               name="paid_by"
+                               type="number"
+                               class="form-control"
+                               required
+                               value="{{ user.id }}"
+                        />
+                    </div>
+
+                    <div class="form-group" hidden>
+                        <label for="room" class="form-label">Raum</label>
+                        <input id="room"
+                               name="room"
+                               type="number"
+                               class="form-control"
+                               required
+                               value="{{ room.id }}"
+                        />
                     </div>
 
                 </div>
