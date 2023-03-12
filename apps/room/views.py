@@ -1,3 +1,4 @@
+from django.db.models import F
 from django.http import HttpResponse
 from django.views import generic
 
@@ -31,7 +32,20 @@ class RoomDetailView(generic.DetailView):
 
         room = context_data.get("room")
         room_users = room.users.all().values("name", "id")
-        room_transactions = room.transactions.all().values("description", "id")
+        room_transactions = (
+            room.transactions.all()
+            .annotate(
+                paid_by_name=F("paid_by__name"),
+                paid_for_name=F("paid_for__name"),
+            )
+            .values(
+                "id",
+                "description",
+                "value",
+                "paid_by_name",
+                "paid_for_name",
+            )
+        )
 
         return {
             **context_data,
