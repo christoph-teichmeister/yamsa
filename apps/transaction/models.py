@@ -23,6 +23,7 @@ class Transaction(CommonInfo):
     settled_at = models.DateField(blank=True, null=True)
 
     class Meta:
+        ordering = ("-id",)
         verbose_name = "Transaction"
         verbose_name_plural = "Transaction"
 
