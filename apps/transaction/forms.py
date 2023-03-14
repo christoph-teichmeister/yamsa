@@ -1,9 +1,9 @@
-from django.forms import ModelForm
+from django import forms
 
 from apps.transaction.models import Transaction
 
 
-class TransactionForm(ModelForm):
+class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
         fields = (
