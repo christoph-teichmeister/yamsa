@@ -12,3 +12,12 @@ class TransactionCreateView(generic.CreateView):
 
     def get_success_url(self):
         return reverse(viewname="room-detail", args=self.request.POST.get("room"))
+
+    def post(self, request, *args, **kwargs):
+        ret = super().post(request, *args, **kwargs)
+
+        transaction: Transaction = self.object
+        transaction.value = transaction.value / transaction.paid_for.count()
+        transaction.save()
+
+        return ret
