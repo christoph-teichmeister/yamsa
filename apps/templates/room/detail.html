@@ -18,13 +18,49 @@
 
     <p>{{ room.description }}</p>
 
-    <h5>Friends:</h5>
-    <ul class="list-group">
-        {% for user in room_users %}
-            <li class="list-group-item">{{ user.name }}</li>
-        {% endfor %}
-    </ul>
-    <br/>
+    {% if room_users %}
+        <h5>People:</h5>
+        <ul class="list-group">
+            {% for user in room_users %}
+                <li class="list-group-item">{{ user.name }}</li>
+            {% endfor %}
+        </ul>
+        <br/>
+    {% endif %}
+
+    {% if optimised_debts %}
+        <h5>Optimised Debts (Additions):</h5>
+        <ul class="list-group">
+            {% for optimised_debt in optimised_debts %}
+                {% if optimised_debt.outgoing %}
+                    <li class="list-group-item">{{ optimised_debt.user }} adds {{ optimised_debt.outgoing }}€ to the money pool</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <br/>
+
+        <h5>Optimised Debts (Receptions):</h5>
+        <ul class="list-group">
+            {% for optimised_debt in optimised_debts %}
+                {% if optimised_debt.incoming %}
+                    <li class="list-group-item">{{ optimised_debt.user }} gets {{ optimised_debt.incoming }}€ from the money pool</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <br/>
+    {% endif %}
+
+    {% if debts %}
+        <h5>Debts:</h5>
+        <ul class="list-group">
+            {% for debitor, debt_entry in debts.items %}
+                {% for creditor, value in debt_entry.items %}
+                    <li class="list-group-item">{{ debitor }} owes {{ value }}€ to {{ creditor }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+        <br/>
+    {% endif %}
 
     {% if room_transactions %}
         <h5>Payments made:</h5>
