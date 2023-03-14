@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views import generic
 
 from apps.room.models import Room
+from apps.transaction.services import DebtService
 
 
 class RoomListView(generic.ListView):
@@ -32,25 +33,29 @@ class RoomDetailView(generic.DetailView):
 
         room = context_data.get("room")
         room_users = room.users.all().values("name", "id")
-        room_transactions = (
-            room.transactions.all()
-            .annotate(
-                paid_by_name=F("paid_by__name"),
-                paid_for_name=F("paid_for__name"),
-            )
-            .values(
-                "id",
-                "description",
-                "value",
-                "paid_by_name",
-                "paid_for_name",
-            )
+
+        room_transactions_qs = room.transactions.all()
+        room_transactions = room_transactions_qs.annotate(
+            paid_by_name=F("paid_by__name"), paid_for_name=F("paid_for__name")
+        ).values(
+            "id",
+            "description",
+            "value",
+            "paid_by_name",
+            "paid_for_name",
+        )
+
+        debts = DebtService.get_debts_dict(room_transactions_qs=room_transactions_qs)
+        money_flow_tuple = DebtService.build_money_flow_tuple(
+            queryset=room_transactions_qs
         )
 
         return {
             **context_data,
             "room_users": room_users,
             "room_transactions": room_transactions,
+            "debts": debts,
+            "optimised_debts": money_flow_tuple,
         }
 
     def post(self, *args, **kwargs):
