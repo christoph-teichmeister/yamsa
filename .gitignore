@@ -1,4 +1,5 @@
 .idea
-.run
 
 apps/config/.env
+/.cache/
+/.local/
