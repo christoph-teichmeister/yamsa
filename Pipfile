@@ -8,9 +8,9 @@ ai-django-core = "==6.9.*"
 django = "==4.1.*"
 django-environ = "==0.9.*"
 django-extensions = "==3.2.*"
-whitenoise = "==6.3.*"
-psycopg2-binary = "==2.9.*"
 model-bakery = "==1.10.*"
+psycopg2-binary = "==2.9.*"
+whitenoise = "==6.3.*"
 
 [dev-packages]
 black = "*"
