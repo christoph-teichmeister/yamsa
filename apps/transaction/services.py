@@ -1,5 +1,7 @@
 from django.db.models import QuerySet
 
+from apps.moneyflow.models import MoneyFlow as MF
+from apps.moneyflow.querysets import MoneyFlowQuerySet
 from apps.transaction.dataclasses import Debt, DebtTuple, MoneyFlow, MoneyFlowTuple
 from apps.transaction.models import Transaction
 
@@ -55,7 +57,9 @@ class DebtService:
                             )
                         )
                     else:
-                        print(f"Debitor was about to be his own Creditor {debitor=}")
+                        print(
+                            f"Debitor was about to be their own Creditor {debitor.id=}\n"
+                        )
 
         money_flow_tuple: MoneyFlowTuple = MoneyFlowTuple()
 
@@ -85,12 +89,27 @@ class DebtService:
                     MoneyFlow(user=debt.creditor, incoming=debt.amount_owed)
                 )
 
-        print("\nFLOWS BEFORE OPTIMISING:\n")
-        money_flow_tuple.print_items()
+        # print("\nFLOWS BEFORE OPTIMISING:\n")
+        # money_flow_tuple.print_items()
 
         [flow.optimise_flows() for flow in money_flow_tuple]
 
-        print("\nFLOWS AFTER OPTIMISING:\n")
-        money_flow_tuple.print_items()
+        # print("\nFLOWS AFTER OPTIMISING:\n")
+        # money_flow_tuple.print_items()
 
         return money_flow_tuple
+
+    @staticmethod
+    def build_money_flow_queryset(queryset: QuerySet[Transaction]) -> MoneyFlowQuerySet:
+
+        room = None
+
+        # Create a debt_tuple consisting of ALL debts
+        for transaction in queryset.reverse():
+            room = transaction.room
+
+            MF.objects.create_or_update_flows_for_transaction(transaction=transaction)
+
+        room.money_flows.all().optimise_incoming_outgoing_values_for_queryset()
+
+        return room.money_flows.all() if room is not None else MF.objects.none()
