@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
 
 import environ
@@ -18,8 +19,10 @@ env = environ.Env(
     SECRET_KEY=(str, ""),
     DEBUG=(bool, False),
     # Database ENV
+    DB_HOST=(str, ""),
     DB_NAME=(str, ""),
     DB_PASSWORD=(str, ""),
+    DB_PORT=(str, ""),
     DB_USER=(str, ""),
 )
 
@@ -40,9 +43,17 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
+IS_TESTING = False
+if "test" in sys.argv or "test_coverage" in sys.argv:
+    IS_TESTING = True
+
+if IS_TESTING:
+    base = environ.Path(__file__) - 1
+    environ.Env.read_env(env_file=base("unittest.env"))
+
 AUTH_USER_MODEL = "account.User"
 
-ALLOWED_HOSTS = ()
+ALLOWED_HOSTS = ("*",)
 
 # Application definition
 
@@ -105,14 +116,19 @@ WSGI_APPLICATION = "apps.config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "PORT": "5432",
-        "HOST": "database",
+        "HOST": env("DB_HOST"),
         "NAME": env("DB_NAME"),
         "PASSWORD": env("DB_PASSWORD"),
+        "PORT": env("DB_PORT"),
         "USER": env("DB_USER"),
+        "TEST": {
+            "NAME": f'{env("DB_NAME")}_test',
+        },
     }
 }
 
+if IS_TESTING:
+    DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -146,7 +162,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = (os.path.join(APPS_DIR, "static"),)
 STATICFILES_FINDERS = (
@@ -159,3 +175,11 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+if IS_TESTING:
+    # DEBUG = False
+    # EMAIL_URL = "memorymail://"
+    # CACHE_BACKEND = "local"
+    # EMAIL_BACKEND = "memorymail://"
+    # PYTHONUNBUFFERED = 0
+    TEST_RUN = True
