@@ -1,6 +1,7 @@
 from django.urls import reverse
 from django.views import generic
 
+from apps.moneyflow.models import MoneyFlow
 from apps.transaction.forms import TransactionForm
 from apps.transaction.models import Transaction
 
@@ -17,7 +18,11 @@ class TransactionCreateView(generic.CreateView):
         ret = super().post(request, *args, **kwargs)
 
         transaction: Transaction = self.object
-        transaction.value = transaction.value / transaction.paid_for.count()
-        transaction.save()
+        if transaction is not None:
+            transaction.value = transaction.value / transaction.paid_for.count()
+            transaction.save()
+
+            # TODO CT: Maybe immediately optimise any existing flow upon transaction creation?
+            existing_flows = MoneyFlow.objects.filter(user_id=transaction.paid_by)
 
         return ret
