@@ -74,6 +74,7 @@ THIRD_PARTY_APPS = (
 LOCAL_APPS = (
     "apps.account",
     "apps.room",
+    "apps.moneyflow",
     "apps.transaction",
 )
 
