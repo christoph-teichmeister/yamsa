@@ -4,8 +4,8 @@ ARG PYTHON_MINOR_VERSION=3.10
 # Set global variable to export path from "builder-python" in production image
 ARG ENV_PATH
 
-ARG UID=1000
-ARG GID=1000
+#ARG UID=1000
+#ARG GID=1000
 
 ### STAGE 1: Build python ###
 FROM python:${PYTHON_MINOR_VERSION} AS builder-python
@@ -56,29 +56,31 @@ ENV PROJECT_HOME=/yamsa
 # Create application subdirectories
 WORKDIR $PROJECT_HOME
 
-ENV USER_NAME=yamsa_docker_user
-ENV USER_GROUP=$USER_NAME
+#ENV USER_NAME=yamsa_docker_user
+#ENV USER_GROUP=$USER_NAME
 
 # Create and set user and group
-RUN groupadd -r -g "${GID}" $USER_GROUP && useradd -g "${GID}" -u "${UID}" --home $PROJECT_HOME $USER_NAME
+#RUN groupadd -r -g "${GID}" $USER_GROUP && useradd -g "${GID}" -u "${UID}" --home $PROJECT_HOME $USER_NAME
 
 # Switch user
-USER $USER_NAME
+#USER $USER_NAME
 
 # Copy python executables
-COPY --chown=$USER_NAME:$USER_GROUP --from=builder-python /usr/local/lib/python${PYTHON_MINOR_VERSION}/site-packages/ /usr/local/lib/python${PYTHON_MINOR_VERSION}/site-packages/
+#COPY --chown=$USER_NAME:$USER_GROUP --from=builder-python /usr/local/lib/python${PYTHON_MINOR_VERSION}/site-packages/ /usr/local/lib/python${PYTHON_MINOR_VERSION}/site-packages/
+COPY --from=builder-python /usr/local/lib/python${PYTHON_MINOR_VERSION}/site-packages/ /usr/local/lib/python${PYTHON_MINOR_VERSION}/site-packages/
 # Copy python binaries
-COPY --chown=$USER_NAME:$USER_GROUP --from=builder-python /usr/local/bin/ /usr/local/bin/
+#COPY --chown=$USER_NAME:$USER_GROUP --from=builder-python /usr/local/bin/ /usr/local/bin/
+COPY --from=builder-python /usr/local/bin/ /usr/local/bin/
 
 # Copy application source code to project home
-COPY --chown=$USER_NAME:$USER_GROUP . $PROJECT_HOME
+#COPY --chown=$USER_NAME:$USER_GROUP . $PROJECT_HOME
+COPY  . $PROJECT_HOME
 
 # Create empty env-file to avoid warnings
 RUN touch $PROJECT_HOME/apps/config/.env
 
 # Run collectstatic for whitenoise
-# TODO CT: After installing whitenoise, reenable this
-#RUN python ./manage.py collectstatic --noinput
+RUN python ./manage.py collectstatic --noinput
 
 # EXPOSE port 8000 to allow communication to/from server
 EXPOSE 8000

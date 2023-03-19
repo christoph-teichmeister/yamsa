@@ -20,7 +20,7 @@ services:
     container_name: yamsa_backend
     restart: "no"
     volumes:
-      - ./:/yamsa
+      - .:/yamsa
     ports:
       - "8000:8000"
     build: .
