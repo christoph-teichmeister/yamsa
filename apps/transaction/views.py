@@ -17,12 +17,16 @@ class TransactionCreateView(generic.CreateView):
     def post(self, request, *args, **kwargs):
         ret = super().post(request, *args, **kwargs)
 
-        transaction: Transaction = self.object
-        if transaction is not None:
-            transaction.value = transaction.value / transaction.paid_for.count()
-            transaction.save()
-
-            # TODO CT: Maybe immediately optimise any existing flow upon transaction creation?
-            existing_flows = MoneyFlow.objects.filter(user_id=transaction.paid_by)
+        # transaction: Transaction = self.object
+        # if transaction is not None:
+        #     transaction.value = transaction.value / transaction.paid_for.count()
+        #     transaction.save()
+        #
+        #     MoneyFlow.objects.create_or_update_flows_for_transaction(
+        #         transaction=transaction
+        #     )
+        #
+        #     existing_flows = MoneyFlow.objects.filter(user_id=transaction.paid_by)
+        #     existing_flows.optimise_incoming_outgoing_values_for_queryset()
 
         return ret

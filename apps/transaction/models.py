@@ -1,5 +1,7 @@
 from ai_django_core.models import CommonInfo
 from django.db import models
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
 
 
 class Transaction(CommonInfo):
@@ -29,7 +31,28 @@ class Transaction(CommonInfo):
         verbose_name_plural = "Transaction"
 
     def __str__(self):
+        # return ""
         return f"{self.paid_by} paid {self.value}€ for {', '.join(self.paid_for.values_list('name', flat=True))}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+
+@receiver(m2m_changed, sender=Transaction.paid_for.through)
+def transaction_paid_for(sender, **kwargs):
+    action = kwargs.pop("action", None)
+    pk_set = kwargs.pop("pk_set", None)
+    instance: Transaction = kwargs.pop("instance", None)
+    if action == "pre_add":
+        instance.value = instance.value / len(pk_set)
+        instance.save()
+
+        from apps.moneyflow.models import MoneyFlow
+
+        MoneyFlow.objects.create_or_update_flows_for_transaction(transaction=instance)
+
+        existing_flows = MoneyFlow.objects.filter(user_id=instance.paid_by)
+        existing_flows.optimise_incoming_outgoing_values_for_queryset()
 
 
 class UserConnectionToTransaction(models.Model):
