@@ -22,7 +22,7 @@ class Command(BaseCommand):
         # Hashed password "Admin123$"
         default_password = "pbkdf2_sha256$390000$2YQxNcXJRO0Y0R4oYp8COI$M059FCLHU+olmskmSxvBfOPJjPkbJ7NJQcfowC9lA10="
 
-        superuser, created = User.objects.create(
+        superuser = User.objects.create(
             name="yamsa-admin",
             username="yamsa-admin",
             password=default_password,
@@ -33,13 +33,12 @@ class Command(BaseCommand):
         )
 
         print(
-            f'User ID: {superuser.id}, Name: "{superuser.name}" '
-            f'{"created" if created else "found"}'
+            f'User ID: {superuser.id}, Name: "{superuser.name}" created'
         )
 
         # --------------- NON GUEST USERS ---------------
 
-        non_guest_user_1, created = User.objects.create(
+        non_guest_user_1 = User.objects.create(
             name="non_guest_user_1",
             username="non_guest_user_1",
             password=default_password,
@@ -51,11 +50,10 @@ class Command(BaseCommand):
         )
 
         print(
-            f'User ID: {non_guest_user_1.id}, Name: "{non_guest_user_1.name}" '
-            f'{"created" if created else "found"}'
+            f'User ID: {non_guest_user_1.id}, Name: "{non_guest_user_1.name}" created'
         )
 
-        non_guest_user_2, created = User.objects.create(
+        non_guest_user_2 = User.objects.create(
             name="non_guest_user_2",
             username="non_guest_user_2",
             password=default_password,
@@ -67,13 +65,12 @@ class Command(BaseCommand):
         )
 
         print(
-            f'User ID: {non_guest_user_2.id}, Name: "{non_guest_user_2.name}" '
-            f'{"created" if created else "found"}'
+            f'User ID: {non_guest_user_2.id}, Name: "{non_guest_user_2.name}" created'
         )
 
         # --------------- GUEST USERS ---------------
 
-        guest_user_1, created = User.objects.create(
+        guest_user_1 = User.objects.create(
             name="guest_user_1",
             username="guest_user_1",
             is_superuser=False,
@@ -83,11 +80,10 @@ class Command(BaseCommand):
         )
 
         print(
-            f'User ID: {guest_user_1.id}, Name: "{guest_user_1.name}" '
-            f'{"created" if created else "found"}'
+            f'User ID: {guest_user_1.id}, Name: "{guest_user_1.name}" created'
         )
 
-        guest_user_2, created = User.objects.create(
+        guest_user_2 = User.objects.create(
             name="guest_user_2",
             username="guest_user_2",
             is_superuser=False,
@@ -97,21 +93,19 @@ class Command(BaseCommand):
         )
 
         print(
-            f'User ID: {guest_user_2.id}, Name: "{guest_user_2.name}" '
-            f'{"created" if created else "found"}'
+            f'User ID: {guest_user_2.id}, Name: "{guest_user_2.name}" created'
         )
 
     @staticmethod
     def _create_rooms():
-        room_1, created = Room.objects.create(
+        room_1 = Room.objects.create(
             name="Room_1", description="Description for Room_1"
         )
 
         room_1.users.add(*[u.id for u in User.objects.all()])
 
         print(
-            f'User ID: {room_1.id}, Name: "{room_1.name}" '
-            f'{"created" if created else "found"}'
+            f'User ID: {room_1.id}, Name: "{room_1.name}" created'
         )
 
     @staticmethod
