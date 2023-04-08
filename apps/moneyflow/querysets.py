@@ -6,6 +6,5 @@ class MoneyFlowQuerySet(models.QuerySet):
         return self.filter(room_id=room_id)
 
     def optimise_incoming_outgoing_values_for_queryset(self):
-        for money_flow in self:
-            money_flow.optimise_incoming_outgoing_values()
+        (money_flow.optimise_incoming_outgoing_values() for money_flow in self)
         return self
