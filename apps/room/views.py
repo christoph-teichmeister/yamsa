@@ -51,8 +51,6 @@ class RoomDetailView(generic.DetailView):
             "paid_for_name",
         )
 
-        debts = DebtService.get_debts_dict(room_transactions_qs=room_transactions_qs)
-
         queries_before_tuple = len(connection.queries)
         start = time.time()
         money_flow_tuple = DebtService.build_money_flow_tuple(
@@ -61,18 +59,20 @@ class RoomDetailView(generic.DetailView):
         queries_after_tuple = len(connection.queries)
         end = time.time()
         print(
-            f"money_flow_tuple took {end - start} and made {queries_after_tuple - queries_before_tuple} queries\n"
+            f"money_flow_tuple took {end - start} seconds and made {queries_after_tuple - queries_before_tuple} "
+            f"queries\n"
         )
 
         queries_before_qs = len(connection.queries)
         start = time.time()
-        money_flow_qs = DebtService.build_money_flow_queryset(
-            queryset=room_transactions_qs
-        )
+        # money_flow_qs = DebtService.build_money_flow_queryset(
+        #     queryset=room_transactions_qs
+        # )
+        money_flow_qs = room.money_flows.all()
         queries_after_qs = len(connection.queries)
         end = time.time()
         print(
-            f"money_flow_qs took {end - start}and made {queries_after_qs - queries_before_qs} queries\n"
+            f"money_flow_qs took {end - start} seconds and made {queries_after_qs - queries_before_qs} queries\n"
         )
 
         # money_flow_qs = MoneyFlow.objects.try_to_resolve_flows_and_reduce_them_to_zero(
@@ -83,7 +83,9 @@ class RoomDetailView(generic.DetailView):
             **context_data,
             "room_users": room_users,
             "room_transactions": room_transactions,
-            "debts": debts,
+            "debts": DebtService.get_debts_dict(
+                room_transactions_qs=room_transactions_qs
+            ),
             "money_flow_tuple": money_flow_tuple,
             "money_flow_qs": money_flow_qs,
             "shit_qs": money_flow_qs,
