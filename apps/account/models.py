@@ -20,5 +20,6 @@ class User(CommonInfo, AbstractUser):
         if self.is_guest and not self.is_superuser:
             self.username = f"{self.name}-{self.id}"
             self.email = f"{self.username}@local.local"
+            self.password = f"{self.name}-{self.id}"
 
         super().clean()
