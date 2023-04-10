@@ -22,16 +22,23 @@ class MoneyFlow(CommonInfo):
         verbose_name = "Money Flow"
         verbose_name_plural = "Money Flows"
         default_related_name = "money_flows"
+        unique_together = (
+            "user",
+            "room",
+        )
 
     def optimise_incoming_outgoing_values(self):
         if self.outgoing > self.incoming:
             self.outgoing = self.outgoing - self.incoming
             self.incoming = Decimal(0)
-        else:
+
+        elif self.outgoing < self.incoming:
             self.incoming = self.incoming - self.outgoing
             self.outgoing = Decimal(0)
 
-        self.save()
+        else:
+            self.incoming = Decimal(0)
+            self.outgoing = Decimal(0)
 
     def __str__(self):
         return f"{self.user} - Out: {self.outgoing}€ | In: {self.incoming}€"

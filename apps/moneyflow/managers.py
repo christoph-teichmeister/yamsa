@@ -44,12 +44,18 @@ class MoneyFlowManager(models.Manager):
         else:
             flows_to_be_updated += (flow,)
 
+        all_flows = sorted(
+            flows_to_be_created + flows_to_be_updated,
+            key=lambda touched_flow: touched_flow.user_id,
+        )
+
+        for flow in all_flows:
+            flow.optimise_incoming_outgoing_values()
+
         self.bulk_create(flows_to_be_created)
         self.bulk_update(flows_to_be_updated, fields=("outgoing", "incoming"))
 
-        # print(
-        #     f"\n{transaction}\n{[e for e in flows_to_be_created + flows_to_be_updated]}\n"
-        # )
+        # print(f"\n{transaction}\n{[e for e in all_flows]}\n")
 
     def create_or_update_flow(
         self, *, is_debitor_flow: bool, user: User, transaction: Transaction
@@ -58,20 +64,25 @@ class MoneyFlowManager(models.Manager):
         money_field = "outgoing" if is_debitor_flow else "incoming"
 
         existing_money_flow_qs = self.get_queryset().filter(user_id=user.id)
+        transaction_value = (
+            transaction.value * (transaction.paid_for.exclude(id=user.id).count())
+            if not is_debitor_flow
+            else transaction.value
+        )
 
         if not existing_money_flow_qs.exists():
             return True, self.model(
                 **{
                     "user": user,
                     "room_id": transaction.room_id,
-                    f"{money_field}": transaction.value,
+                    f"{money_field}": transaction_value,
                 }
             )
         else:
             existing_money_flow = existing_money_flow_qs.first()
 
             old_value = getattr(existing_money_flow, money_field)
-            setattr(existing_money_flow, money_field, old_value + transaction.value)
+            setattr(existing_money_flow, money_field, old_value + transaction_value)
             return False, existing_money_flow
 
     def try_to_resolve_flows_and_reduce_them_to_zero(self, *, room_id):
