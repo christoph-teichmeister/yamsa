@@ -6,12 +6,11 @@
 {% endblock %}
 
 {% block content %}
-    <div class="account-detail-container">
-        {% if request.user.is_anonymous or user.is_guest %}
+    {% if request.user.is_anonymous or user.is_guest %}
 
-            <p>You are a guest, thank you for using yamsa!</p>
+        <p>You are a guest, thank you for using yamsa!</p>
 
-            <p>Maybe consider registering? :)</p>
+        <p>Maybe consider registering? :)</p>
 
         {# TODO CT: Delete this button #}
         <button type="button"
@@ -25,10 +24,10 @@
             <small>Log me out though</small>
         </button>
 
-        {% else %}
+    {% else %}
 
-            <p>{{ user.email }}</p>
-            <p>{{ user.username }}</p>
+        <p>{{ user.email }}</p>
+        <p>{{ user.username }}</p>
 
         <button type="button"
                 class="btn btn-primary"
@@ -41,6 +40,5 @@
             Log me out
         </button>
 
-        {% endif %}
-    </div>
+    {% endif %}
 {% endblock %}
