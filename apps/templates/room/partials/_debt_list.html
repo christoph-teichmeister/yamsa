@@ -1,3 +1,9 @@
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'room/debt_list.css' %}">
+{% endblock %}
+
 {% if debts %}
     <br/>
 
@@ -6,7 +12,10 @@
     <ul class="list-group">
         {% for debitor, debt_entry in debts.items %}
             {% for creditor, value in debt_entry.items %}
-                <li class="list-group-item">{{ debitor }} owes {{ value }}€ to {{ creditor }}</li>
+                <li class="list-group-item">
+                    {% if debitor == request.user.name %}<span class="me-involved">You</span> owe {% else %}<strong>{{ debitor }}</strong> owes {% endif %}{{ value }}€
+                    to {% if creditor == request.user.name %}<span class="me-involved">you</span>{% else %}{{ creditor }}{% endif %}
+                </li>
             {% endfor %}
         {% endfor %}
     </ul>
