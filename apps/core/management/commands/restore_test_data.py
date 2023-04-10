@@ -1,5 +1,6 @@
 import subprocess
 
+from django.contrib.auth.hashers import make_password
 from django.core.management import BaseCommand
 from django.db import transaction
 
@@ -30,6 +31,7 @@ class Command(BaseCommand):
             is_superuser=True,
             is_staff=True,
             is_active=True,
+            is_guest=False,
         )
 
         print(
@@ -73,6 +75,7 @@ class Command(BaseCommand):
         guest_user_1 = User.objects.create(
             name="guest_user_1",
             username="guest_user_1",
+            password=make_password("guest_user_1-4"),
             is_superuser=False,
             is_staff=False,
             is_active=True,
@@ -86,6 +89,7 @@ class Command(BaseCommand):
         guest_user_2 = User.objects.create(
             name="guest_user_2",
             username="guest_user_2",
+            password=make_password("guest_user_1-5"),
             is_superuser=False,
             is_staff=False,
             is_active=True,
