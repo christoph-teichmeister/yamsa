@@ -15,47 +15,42 @@
                 <i class="bi bi-house"></i>
             </a>
         </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link"
-               id="pills-rooms-tab"
-               data-bs-toggle="pill"
-               role="tab"
-               aria-controls="pills-rooms"
-               aria-selected="false"
-               hx-trigger="click"
-               hx-get="{% url 'room-list' %}"
-               hx-target="#body"
-               hx-swap="morph:innerHTML"
-               hx-push-url="true"
-            >
-                <i class="bi bi-list-check"></i>
-            </a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link"
-               id="pills-contact-tab"
-               data-bs-toggle="pill"
-               role="tab"
-               aria-controls="pills-contact"
-               aria-selected="false"
-            >
-                Contact
-            </a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link"
-               id="profile-tab"
-               role="tab"
-               aria-controls="profile"
-               aria-selected="false"
-               hx-trigger="click"
-               hx-get="{% url 'account-user-profile' pk=1 %}"
-               hx-target="#body"
-               hx-swap="morph:innerHTML"
-               hx-push-url="true"
-            >
-                <i class="bi bi-person"></i>
-            </a>
-        </li>
+
+        {% if request.user.is_authenticated %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link"
+                   id="pills-rooms-tab"
+                   data-bs-toggle="pill"
+                   role="tab"
+                   aria-controls="pills-rooms"
+                   aria-selected="false"
+                   hx-trigger="click"
+                   hx-get="{% url 'room-list' %}"
+                   hx-target="#body"
+                   hx-swap="morph:innerHTML"
+                   hx-push-url="true"
+                >
+                    <i class="bi bi-list-check"></i>
+                </a>
+            </li>
+        {% endif %}
+
+        {% if request.user.is_authenticated %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link"
+                   id="profile-tab"
+                   role="tab"
+                   aria-controls="profile"
+                   aria-selected="false"
+                   hx-trigger="click"
+                   hx-get="{% url 'account-user-profile' pk=request.user.id %}"
+                   hx-target="#body"
+                   hx-swap="morph:innerHTML"
+                   hx-push-url="true"
+                >
+                    <i class="bi bi-person"></i>
+                </a>
+            </li>
+        {% endif %}
     </ul>
 </div>

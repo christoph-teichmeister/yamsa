@@ -1,0 +1,22 @@
+{% if room_transactions %}
+    <br/>
+
+    <h5>Payments made</h5>
+
+    <ul class="list-group list-group-flush">
+        {% for transaction in room_transactions %}
+            <li class="list-group-item pb-4 pt-4">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ transaction.value }}€</h5>
+                    <small>{{ transaction.created_at|date:'d.m.Y' }}</small>
+                </div>
+                <p class="mb-1">{{ transaction.paid_by_name }} paid
+                    <strong>{{ transaction.value }}€</strong>
+                    for {{ transaction.paid_for_name }}</p>
+                <small>{{ transaction.description }}</small>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <br/>
+{% endif %}

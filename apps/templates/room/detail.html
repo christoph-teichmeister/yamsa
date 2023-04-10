@@ -1,12 +1,16 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-    <div class="row align-items-center">
+    {% if request.user.is_authenticated %}
+        <small>Hey {{ request.user.username }}!</small>
+    {% endif %}
+
+    <div class="row align-items-center mt-3">
         <div class="col-9 col-md-5">
             <h1>{{ room.name }}</h1>
         </div>
         <div class="col-3 col-md-7">
-            <button class="btn btn-light btn-sm"
+            <button class="btn btn-light btn-sm float-end me-4"
                     onclick="copyShareURL()"
                     data-bs-toggle="tooltip"
                     data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
@@ -16,67 +20,71 @@
         </div>
     </div>
 
-    <p>{{ room.description }}</p>
+    <div class="mb-3">
+        <small>{{ room.description }}</small>
+    </div>
 
-    {% if room_users %}
-        <h5>People:</h5>
-        <ul class="list-group">
-            {% for user in room_users %}
-                <li class="list-group-item">{{ user.name }}</li>
-            {% endfor %}
+    {% if request.user.is_authenticated %}
+        <ul class="nav nav-tabs nav-fill" id="roomTab" role="tablist">
+
+            <li class="nav-item" role="presentation" style="cursor: pointer">
+                <a id="transaction-tab" class="nav-link active" data-bs-toggle="tab" data-bs-target="#transactions"
+                   role="tab"
+                   aria-controls="transactions" aria-selected="true">
+                    <i class="bi bi-wallet"></i>
+                </a>
+            </li>
+
+            <li class="nav-item" role="presentation" style="cursor: pointer">
+                <a id="debt-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#debts" role="tab"
+                   aria-controls="debts" aria-selected="false">
+                    <i class="bi bi-piggy-bank"></i>
+                </a>
+            </li>
+
+            <li class="nav-item" role="presentation" style="cursor: pointer">
+                <a id="moneyflow-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#moneyflows" role="tab"
+                   aria-controls="moneyflows" aria-selected="false">
+                    <i class="bi bi-arrow-left-right"></i>
+
+                </a>
+            </li>
+
+            <li class="nav-item" role="presentation" style="cursor: pointer">
+                <a id="people-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#people" role="tab"
+                   aria-controls="people" aria-selected="false">
+                    <i class="bi bi-people"></i>
+                </a>
+            </li>
+
         </ul>
-        <br/>
+
+        <div class="tab-content">
+
+            <div class="tab-pane active" id="transactions" role="tabpanel" aria-labelledby="transaction-tab"
+                 tabindex="0">
+                {% include "room/partials/_room_transactions_list.html" %}
+            </div>
+
+            <div class="tab-pane" id="debts" role="tabpanel" aria-labelledby="debt-tab" tabindex="0">
+                {% include "room/partials/_debt_list.html" %}
+            </div>
+
+            <div class="tab-pane" id="moneyflows" role="tabpanel" aria-labelledby="moneyflow-tab" tabindex="0">
+                {% include "room/partials/_money_flow_qs_accordion.html" %}
+            </div>
+
+            <div class="tab-pane" id="people" role="tabpanel" aria-labelledby="people-tab" tabindex="0">
+                {% include "room/partials/_users_of_room_list.html" %}
+            </div>
+
+        </div>
+
+        {% include "room/partials/_add_payment_modal.html" %}
+
+    {% else %}
+        {% include "room/partials/_detail_who_are_you.html" %}
     {% endif %}
-
-    {% if money_flow_tuple %}
-        <h4>money_flow_tuple</h4>
-        <h5>Optimised Debts (Additions):</h5>
-        <ul class="list-group">
-            {% for money_flow_dataclass in money_flow_tuple %}
-                {% if money_flow_dataclass.outgoing %}
-                    <li class="list-group-item">{{ money_flow_dataclass.user }} adds {{ money_flow_dataclass.outgoing }}€ to the money pool</li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-        <br/>
-
-        <h5>Optimised Debts (Receptions):</h5>
-        <ul class="list-group">
-            {% for money_flow_dataclass in money_flow_tuple %}
-                {% if money_flow_dataclass.incoming %}
-                    <li class="list-group-item">{{ money_flow_dataclass.user }} gets {{ money_flow_dataclass.incoming }}€ from the money pool</li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-        <br/>
-    {% endif %}
-
-    {% if debts %}
-        <h5>Debts:</h5>
-        <ul class="list-group">
-            {% for debitor, debt_entry in debts.items %}
-                {% for creditor, value in debt_entry.items %}
-                    <li class="list-group-item">{{ debitor }} owes {{ value }}€ to {{ creditor }}</li>
-                {% endfor %}
-            {% endfor %}
-        </ul>
-        <br/>
-    {% endif %}
-
-    {% if room_transactions %}
-        <h5>Payments made:</h5>
-        <ul class="list-group">
-            {% for transaction in room_transactions %}
-                <li class="list-group-item">
-                    {{ transaction.paid_by_name }} paid <strong>{{ transaction.value }}€</strong>
-                    for {{ transaction.paid_for_name }} ("{{ transaction.description }}")
-                </li>
-            {% endfor %}
-        </ul>
-        <br/>
-    {% endif %}
-
-    {% include "room/partials/_add_payment_modal.html" %}
 
     <script>
       const copyShareURL = () => {
@@ -88,6 +96,11 @@
           /* clipboard write failed */
           console.error("Something went wrong here")
         });
+      }
+
+      const handleTabClick = (elementID) => {
+        console.log(elementID)
+        const clickedTab = document.getElementById(elementID)
       }
     </script>
 {% endblock %}

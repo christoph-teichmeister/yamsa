@@ -1,0 +1,14 @@
+{% if debts %}
+    <br/>
+
+    <h5>Debts</h5>
+
+    <ul class="list-group">
+        {% for debitor, debt_entry in debts.items %}
+            {% for creditor, value in debt_entry.items %}
+                <li class="list-group-item">{{ debitor }} owes {{ value }}€ to {{ creditor }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+    <br/>
+{% endif %}

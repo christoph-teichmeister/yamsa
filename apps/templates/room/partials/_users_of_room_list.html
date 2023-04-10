@@ -1,0 +1,14 @@
+{% if room_users %}
+    <br/>
+
+    <h5>People</h5>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+
+        {% for user in room_users %}
+            {% include "room/partials/_user_card.html" with user=user %}
+        {% endfor %}
+    </div>
+
+    <br/>
+{% endif %}

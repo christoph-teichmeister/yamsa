@@ -1,0 +1,48 @@
+<hr>
+
+<form action="/account/guest_user/authenticate/" method="post">
+    {% csrf_token %}
+
+    <div class="mb-3 form-group">
+        <h5>
+            <label for="userSelect">Who are you?</label>
+        </h5>
+
+        <div class="mb-2">
+            <small style="cursor:pointer;"
+                    data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   data-bs-title="Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account try logging in.">
+                Not seeing your name?
+            </small>
+        </div>
+
+        <select id="user_id"
+                name="user_id"
+                class="form-control form-select mb-3"
+                id="userSelect"
+                required
+        >
+            {% for room_user in room_users %}
+                {% if room_user.is_guest %}
+                    <option value="{{ room_user.id }}">{{ room_user.name }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group" hidden>
+        <label for="room_id" class="form-label">Raum</label>
+        <input id="room_id"
+               name="room_id"
+               type="number"
+               class="form-control"
+               required
+               value="{{ room.id }}"
+        />
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary">That's me!</button>
+    </div>
+</form>
