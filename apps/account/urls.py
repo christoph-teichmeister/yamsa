@@ -12,8 +12,13 @@ urlpatterns = [
         name="account-authenticate-guest-user",
     ),
     path(
+        "login/",
+        views.LogInUserView.as_view(),
+        name="account-user-login",
+    ),
+    path(
         "logout/",
         views.LogOutUserView.as_view(),
-        name="account-logout",
+        name="account-user-logout",
     ),
 ]

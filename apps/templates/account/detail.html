@@ -13,33 +13,33 @@
 
             <p>Maybe consider registering? :)</p>
 
-            {# TODO CT: Delete this button #}
-            <button type="button"
-                    class="btn btn-primary"
-                    hx-trigger="click"
-                    hx-get="{% url 'account-logout' %}"
-                    hx-target="#body"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true"
-            >
-                <small>Log me out though</small>
-            </button>
+        {# TODO CT: Delete this button #}
+        <button type="button"
+                class="btn btn-primary"
+                hx-trigger="click"
+                hx-get="{% url 'account-user-logout' %}"
+                hx-target="#body"
+                hx-swap="morph:innerHTML"
+                hx-push-url="true"
+        >
+            <small>Log me out though</small>
+        </button>
 
         {% else %}
 
             <p>{{ user.email }}</p>
             <p>{{ user.username }}</p>
 
-            <button type="button"
-                    class="btn btn-primary"
-                    hx-trigger="click"
-                    hx-get="{% url 'account-logout' %}"
-                    hx-target="#body"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true"
-            >
-                Log me out
-            </button>
+        <button type="button"
+                class="btn btn-primary"
+                hx-trigger="click"
+                hx-get="{% url 'account-user-logout' %}"
+                hx-target="#body"
+                hx-swap="morph:innerHTML"
+                hx-push-url="true"
+        >
+            Log me out
+        </button>
 
         {% endif %}
     </div>
