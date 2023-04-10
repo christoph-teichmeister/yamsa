@@ -22,7 +22,7 @@ class RoomListView(generic.ListView):
         if user.is_superuser:
             return Room.objects.all()
 
-        return Room.objects.filter(created_by=user)
+        return Room.objects.filter(users=user)
 
 
 class RoomDetailView(generic.DetailView):
@@ -34,7 +34,7 @@ class RoomDetailView(generic.DetailView):
         context_data = super().get_context_data(**kwargs)
 
         room = context_data.get("room")
-        room_users = room.users.all().values("name", "id")
+        room_users = room.users.all().values("name", "id", "is_guest")
 
         room_transactions_qs = (
             room.transactions.all()
@@ -49,35 +49,19 @@ class RoomDetailView(generic.DetailView):
             "value",
             "paid_by_name",
             "paid_for_name",
-        )
-
-        queries_before_tuple = len(connection.queries)
-        start = time.time()
-        money_flow_tuple = DebtService.build_money_flow_tuple(
-            queryset=room_transactions_qs
-        )
-        queries_after_tuple = len(connection.queries)
-        end = time.time()
-        print(
-            f"money_flow_tuple took {end - start} seconds and made {queries_after_tuple - queries_before_tuple} "
-            f"queries\n"
+            "created_at",
         )
 
         queries_before_qs = len(connection.queries)
         start = time.time()
-        # money_flow_qs = DebtService.build_money_flow_queryset(
-        #     queryset=room_transactions_qs
-        # )
+
         money_flow_qs = room.money_flows.all()
+
         queries_after_qs = len(connection.queries)
         end = time.time()
         print(
             f"money_flow_qs took {end - start} seconds and made {queries_after_qs - queries_before_qs} queries\n"
         )
-
-        # money_flow_qs = MoneyFlow.objects.try_to_resolve_flows_and_reduce_them_to_zero(
-        #     room_id=room.id
-        # )
 
         return {
             **context_data,
@@ -86,7 +70,5 @@ class RoomDetailView(generic.DetailView):
             "debts": DebtService.get_debts_dict(
                 room_transactions_qs=room_transactions_qs
             ),
-            "money_flow_tuple": money_flow_tuple,
             "money_flow_qs": money_flow_qs,
-            "shit_qs": money_flow_qs,
         }
