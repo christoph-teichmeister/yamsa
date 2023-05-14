@@ -7,6 +7,7 @@ class Room(CommonInfo):
         OPEN = 1, "Open"
         CLOSED = 2, "Closed"
 
+    slug = models.UUIDField(unique=True)
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=500)
     status = models.SmallIntegerField(
