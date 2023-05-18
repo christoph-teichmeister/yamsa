@@ -10,7 +10,8 @@ class RoomAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     list_display = ("name", "status")
     list_filter = ("status",)
     search_fields = ("name",)
-    fieldsets = ((None, {"fields": ("name", "status", "description")}),)
+    readonly_fields = ("slug",)
+    fieldsets = ((None, {"fields": (("name", "slug"), "status", "description")}),)
 
     def get_inlines(self, request, obj):
         from apps.room.admin import UserConnectionToRoomInline

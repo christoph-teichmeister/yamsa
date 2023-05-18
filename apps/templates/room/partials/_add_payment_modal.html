@@ -1,5 +1,5 @@
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary float-end me-4 mb-5" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+<button type="button" class="btn btn-primary float-end mt-3 me-4" style="margin-bottom: 4rem" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
     Add payment
 </button>
 
@@ -24,6 +24,7 @@
                         <input id="value"
                                name="value"
                                type="number"
+                               step="any"
                                class="form-control"
                                required
                         />
@@ -57,6 +58,17 @@
                                class="form-control"
                                required
                                value="{{ user.id }}"
+                        />
+                    </div>
+
+                    <div class="form-group" hidden>
+                        <label for="room_slug" class="form-label">Raum</label>
+                        <input id="room_slug"
+                               name="room_slug"
+                               type="text"
+                               class="form-control"
+                               required
+                               value="{{ room.slug }}"
                         />
                     </div>
 

@@ -32,13 +32,13 @@
     </div>
 
     <div class="form-group" hidden>
-        <label for="room_id" class="form-label">Raum</label>
-        <input id="room_id"
-               name="room_id"
-               type="number"
+        <label for="room_slug" class="form-label">Raum</label>
+        <input id="room_slug"
+               name="room_slug"
+               type="text"
                class="form-control"
                required
-               value="{{ room.id }}"
+               value="{{ room.slug }}"
         />
     </div>
 
