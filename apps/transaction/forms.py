@@ -3,7 +3,7 @@ from django import forms
 from apps.transaction.models import Transaction
 
 
-class TransactionForm(forms.ModelForm):
+class TransactionCreateForm(forms.ModelForm):
     room_slug = forms.CharField()
 
     class Meta:
@@ -16,3 +16,9 @@ class TransactionForm(forms.ModelForm):
             "room_slug",
             "value",
         )
+
+
+class TransactionSettleForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = ("settled",)
