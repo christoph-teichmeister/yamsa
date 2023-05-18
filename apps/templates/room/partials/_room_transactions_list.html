@@ -13,7 +13,7 @@
                 <p class="mb-1">{{ transaction.paid_by_name }} paid
                     <strong>{{ transaction.value }}€</strong>
                     for {{ transaction.paid_for_name }}</p>
-                <small>{{ transaction.description }}</small>
+                <small style="font-style: italic">"{{ transaction.description }}"</small>
             </li>
         {% endfor %}
     </ul>

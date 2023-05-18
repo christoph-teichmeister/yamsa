@@ -1,3 +1,5 @@
+from _decimal import Decimal
+
 from ai_django_core.models import CommonInfo
 from django.db import models
 from django.db.models.signals import m2m_changed
@@ -44,7 +46,7 @@ def transaction_paid_for(sender, **kwargs):
     pk_set = kwargs.pop("pk_set", None)
     instance: Transaction = kwargs.pop("instance", None)
     if action == "post_add":
-        instance.value = instance.value / len(pk_set)
+        instance.value = round(Decimal(instance.value / len(pk_set)), 2)
         instance.save()
 
         from apps.moneyflow.models import MoneyFlow

@@ -20,6 +20,8 @@ class TransactionPaidByInline(admin.TabularInline):
 
 @register(Transaction)
 class TransactionAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
+    list_display = ("__str__", "room", "settled")
+    list_filter = ("room__name", "settled")
     fieldsets = (
         (None, {"fields": ("room", "description", "value")}),
         (
