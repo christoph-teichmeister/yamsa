@@ -26,19 +26,33 @@
 
     {% else %}
 
+        <div class="row float-end me-2">
+            <div class="col">
+                <a href="{{ PROJECT_BASE_URL }}/yese/login" target="_blank">
+                    <i class="bi bi-terminal"></i>
+                </a>
+            </div>
+        </div>
+
         <p>{{ user.email }}</p>
         <p>{{ user.username }}</p>
 
-        <button type="button"
-                class="btn btn-primary"
-                hx-trigger="click"
-                hx-get="{% url 'account-user-logout' %}"
-                hx-target="#body"
-                hx-swap="morph:innerHTML"
-                hx-push-url="true"
-        >
-            Log me out
-        </button>
+        <div class="fixed-bottom mb-5">
+            <div class="row float-end mb-4 me-2">
+                <div class="col">
+                    <button type="button"
+                            class="btn btn-primary"
+                            hx-trigger="click"
+                            hx-get="{% url 'account-user-logout' %}"
+                            hx-target="#body"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true"
+                    >
+                        Log me out
+                    </button>
+                </div>
+            </div>
+        </div>
 
     {% endif %}
 {% endblock %}
