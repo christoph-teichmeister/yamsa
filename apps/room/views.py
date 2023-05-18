@@ -68,7 +68,7 @@ class RoomDetailView(generic.DetailView):
             "room_users": room_users,
             "room_transactions": room_transactions,
             "debts": DebtService.get_debts_dict(
-                room_transactions_qs=room_transactions_qs
+                room_transactions_qs=room_transactions_qs.filter(settled=False)
             ),
             "money_flow_qs": money_flow_qs,
         }
