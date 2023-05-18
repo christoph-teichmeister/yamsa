@@ -29,6 +29,4 @@ class MoneyFlowAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
 
 @register(MoneyFlowLog)
 class MoneyFlowLogAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
-    fieldsets = (
-        (None, {"fields": ("money_flow", "log_message")}),
-    )
+    fieldsets = ((None, {"fields": ("money_flow", "log_message")}),)

@@ -35,9 +35,7 @@ class Command(BaseCommand):
             is_guest=False,
         )
 
-        print(
-            f'User ID: {superuser.id}, Name: "{superuser.name}" created'
-        )
+        print(f'User ID: {superuser.id}, Name: "{superuser.name}" created')
 
         # --------------- NON GUEST USERS ---------------
 
@@ -83,9 +81,7 @@ class Command(BaseCommand):
             is_guest=True,
         )
 
-        print(
-            f'User ID: {guest_user_1.id}, Name: "{guest_user_1.name}" created'
-        )
+        print(f'User ID: {guest_user_1.id}, Name: "{guest_user_1.name}" created')
 
         guest_user_2 = User.objects.create(
             name="guest_user_2",
@@ -97,9 +93,7 @@ class Command(BaseCommand):
             is_guest=True,
         )
 
-        print(
-            f'User ID: {guest_user_2.id}, Name: "{guest_user_2.name}" created'
-        )
+        print(f'User ID: {guest_user_2.id}, Name: "{guest_user_2.name}" created')
 
     @staticmethod
     def _create_rooms():
@@ -109,9 +103,7 @@ class Command(BaseCommand):
 
         room_1.users.add(*[u.id for u in User.objects.all()])
 
-        print(
-            f'User ID: {room_1.id}, Name: "{room_1.name}" created'
-        )
+        print(f'User ID: {room_1.id}, Name: "{room_1.name}" created')
 
     @staticmethod
     def restore_test_data():

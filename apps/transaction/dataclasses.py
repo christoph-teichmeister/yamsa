@@ -91,7 +91,6 @@ class BaseDataTuple:
     def update_data(
         self, item: _data_type, data_tuple_without_updated_item, **kwargs
     ) -> _data_type:
-
         for uncleaned_kwarg in kwargs:
             kwarg_list = uncleaned_kwarg.split("__")
             kwarg = kwarg_list[0]

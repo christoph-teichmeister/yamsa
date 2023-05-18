@@ -15,7 +15,11 @@ class UserProfileView(generic.DetailView):
     model = User
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs).update({"PROJECT_BASE_URL": settings.PROJECT_BASE_URL})
+        return (
+            super()
+            .get_context_data(**kwargs)
+            .update({"PROJECT_BASE_URL": settings.PROJECT_BASE_URL})
+        )
 
 
 class AuthenticateGuestUserView(generic.View):

@@ -42,7 +42,9 @@ class MoneyFlowManager(models.Manager):
 
             if created:
                 flows_to_be_created += (flow,)
-                flow_logs_to_be_handled_because_of_created_money_flows += ((flow, flow_log),)
+                flow_logs_to_be_handled_because_of_created_money_flows += (
+                    (flow, flow_log),
+                )
             else:
                 flows_to_be_updated += (flow,)
                 flow_logs_to_be_created_because_of_updated_money_flows += (flow_log,)
@@ -53,7 +55,9 @@ class MoneyFlowManager(models.Manager):
 
         if created:
             flows_to_be_created += (flow,)
-            flow_logs_to_be_handled_because_of_created_money_flows += ((flow, flow_log),)
+            flow_logs_to_be_handled_because_of_created_money_flows += (
+                (flow, flow_log),
+            )
         else:
             flows_to_be_updated += (flow,)
             flow_logs_to_be_created_because_of_updated_money_flows += (flow_log,)
@@ -71,10 +75,14 @@ class MoneyFlowManager(models.Manager):
 
         from apps.moneyflow.models import MoneyFlowLog
 
-        MoneyFlowLog.objects.bulk_create(flow_logs_to_be_created_because_of_updated_money_flows)
+        MoneyFlowLog.objects.bulk_create(
+            flow_logs_to_be_created_because_of_updated_money_flows
+        )
 
         flow_logs_to_be_created_because_of_created_money_flows = ()
-        for flow_and_flow_log_tuple in flow_logs_to_be_handled_because_of_created_money_flows:
+        for (
+            flow_and_flow_log_tuple
+        ) in flow_logs_to_be_handled_because_of_created_money_flows:
             money_flow = flow_and_flow_log_tuple[0]
             money_flow_log = flow_and_flow_log_tuple[1]
 
@@ -84,12 +92,14 @@ class MoneyFlowManager(models.Manager):
 
             flow_logs_to_be_created_because_of_created_money_flows += (money_flow_log,)
 
-        MoneyFlowLog.objects.bulk_create(flow_logs_to_be_created_because_of_created_money_flows)
+        MoneyFlowLog.objects.bulk_create(
+            flow_logs_to_be_created_because_of_created_money_flows
+        )
 
         # print(f"\n{transaction}\n{[e for e in all_flows]}\n")
 
     def create_or_update_flow(
-            self, *, is_debitor_flow: bool, user: User, transaction: Transaction
+        self, *, is_debitor_flow: bool, user: User, transaction: Transaction
     ) -> tuple[bool, "MoneyFlow", "MoneyFlowLog"]:
         """DOES NOT SAVE THE FLOW, just updates its values"""
         money_field = "outgoing" if is_debitor_flow else "incoming"
@@ -109,10 +119,12 @@ class MoneyFlowManager(models.Manager):
                     "user": user,
                     "room_id": transaction.room_id,
                     f"{money_field}": transaction_value,
-                })
+                }
+            )
             money_flow_log = MoneyFlowLog(
-                log_message=f'Money Flow for {user} created! (Transaction: {transaction})\n\n'
-                            f'Outgoing is: {money_flow.outgoing} € and Incoming is: {money_flow.incoming} €')
+                log_message=f"Money Flow for {user} created! (Transaction: {transaction})\n\n"
+                f"Outgoing is: {money_flow.outgoing} € and Incoming is: {money_flow.incoming} €"
+            )
 
             return True, money_flow, money_flow_log
         else:
@@ -123,20 +135,24 @@ class MoneyFlowManager(models.Manager):
             setattr(existing_money_flow, money_field, new_value)
 
             updated_money_field_str = (
-                f"Outgoing was: {old_value} € and now is: {new_value} €" if is_debitor_flow else f"Incoming was: "
-                f"{old_value} € and now is: {new_value} €"
+                f"Outgoing was: {old_value} € and now is: {new_value} €"
+                if is_debitor_flow
+                else f"Incoming was: " f"{old_value} € and now is: {new_value} €"
             )
             unchanged_money_field_str = (
-                f"Incoming was: {existing_money_flow.incoming} € and now is: {existing_money_flow.incoming} €" if
-                is_debitor_flow else f"Outgoing was: {existing_money_flow.outgoing} € and now is:"
-                                     f" {existing_money_flow.outgoing} €")
+                f"Incoming was: {existing_money_flow.incoming} € and now is: {existing_money_flow.incoming} €"
+                if is_debitor_flow
+                else f"Outgoing was: {existing_money_flow.outgoing} € and now is:"
+                f" {existing_money_flow.outgoing} €"
+            )
 
             money_flow_log = MoneyFlowLog(
                 money_flow=existing_money_flow,
-                log_message=f'Money Flow for {user} updated! (Transaction: {transaction})\n\n'
-                            f'Updated field is "{money_field}".\n\n'
-                            f'{updated_money_field_str}\n\n'
-                            f'{unchanged_money_field_str}')
+                log_message=f"Money Flow for {user} updated! (Transaction: {transaction})\n\n"
+                f'Updated field is "{money_field}".\n\n'
+                f"{updated_money_field_str}\n\n"
+                f"{unchanged_money_field_str}",
+            )
 
             return False, existing_money_flow, money_flow_log
 

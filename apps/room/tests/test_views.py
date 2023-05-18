@@ -9,7 +9,9 @@ from apps.transaction import views
 from apps.transaction.tests.helpers import TransactionHelpersMixin
 
 
-class RoomDetailViewTestCase(TransactionHelpersMixin, MoneyFlowHelpersMixin, BaseTestSetUp):
+class RoomDetailViewTestCase(
+    TransactionHelpersMixin, MoneyFlowHelpersMixin, BaseTestSetUp
+):
     view_class = views.TransactionCreateView
 
     @classmethod
@@ -51,7 +53,9 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, MoneyFlowHelpersMixin, Bas
             value=Decimal(5)
         )
 
-        response = self.client.get(reverse("room-detail", kwargs={"slug": self.room.slug}))
+        response = self.client.get(
+            reverse("room-detail", kwargs={"slug": self.room.slug})
+        )
 
         print(response)
 
@@ -163,7 +167,9 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, MoneyFlowHelpersMixin, Bas
         self.assertEqual(self.guest_user_2.money_flows.first().incoming, Decimal(0))
         self.assertEqual(self.guest_user_2.money_flows.first().outgoing, Decimal(11.5))
 
-        response = self.client.get(reverse("room-detail", kwargs={"slug": self.room.slug}))
+        response = self.client.get(
+            reverse("room-detail", kwargs={"slug": self.room.slug})
+        )
 
         # Final Assertions after everything has been done
 
@@ -209,7 +215,10 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, MoneyFlowHelpersMixin, Bas
         self.create_transaction(
             **base_data,
             paid_by=self.guest_user_1,
-            paid_for=(self.guest_user_2.id, self.guest_user_3.id,),
+            paid_for=(
+                self.guest_user_2.id,
+                self.guest_user_3.id,
+            ),
             value=Decimal(10)
         )
         self.assert_money_flow_values(user=self.guest_user_1, incoming=10, outgoing=0)
@@ -222,56 +231,93 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, MoneyFlowHelpersMixin, Bas
             paid_for=(self.guest_user_1.id, self.guest_user_2.id, self.guest_user_5.id),
             value=Decimal(10)
         )
-        self.assert_money_flow_values(user=self.guest_user_1, incoming=16.66, outgoing=0)
+        self.assert_money_flow_values(
+            user=self.guest_user_1, incoming=16.66, outgoing=0
+        )
         self.assert_money_flow_values(user=self.guest_user_2, incoming=0, outgoing=8.33)
         self.assert_money_flow_values(user=self.guest_user_5, incoming=0, outgoing=3.33)
 
         self.create_transaction(
             **base_data,
             paid_by=self.guest_user_4,
-            paid_for=(self.guest_user_1.id, self.guest_user_2.id,),
+            paid_for=(
+                self.guest_user_1.id,
+                self.guest_user_2.id,
+            ),
             value=Decimal(20)
         )
         self.assert_money_flow_values(user=self.guest_user_4, incoming=20, outgoing=0)
         self.assert_money_flow_values(user=self.guest_user_1, incoming=6.66, outgoing=0)
-        self.assert_money_flow_values(user=self.guest_user_2, incoming=0, outgoing=18.33)
+        self.assert_money_flow_values(
+            user=self.guest_user_2, incoming=0, outgoing=18.33
+        )
 
         self.create_transaction(
             **base_data,
             paid_by=self.guest_user_4,
-            paid_for=(self.guest_user_1.id, self.guest_user_2.id,),
+            paid_for=(
+                self.guest_user_1.id,
+                self.guest_user_2.id,
+            ),
             value=Decimal(20)
         )
         self.assert_money_flow_values(user=self.guest_user_4, incoming=40, outgoing=0)
         self.assert_money_flow_values(user=self.guest_user_1, incoming=0, outgoing=3.34)
-        self.assert_money_flow_values(user=self.guest_user_2, incoming=0, outgoing=28.33)
+        self.assert_money_flow_values(
+            user=self.guest_user_2, incoming=0, outgoing=28.33
+        )
 
         self.create_transaction(
             **base_data,
             paid_by=self.guest_user_4,
-            paid_for=(self.guest_user_1.id, self.guest_user_2.id,),
+            paid_for=(
+                self.guest_user_1.id,
+                self.guest_user_2.id,
+            ),
             value=Decimal(20)
         )
         self.assert_money_flow_values(user=self.guest_user_4, incoming=60, outgoing=0)
-        self.assert_money_flow_values(user=self.guest_user_1, incoming=0, outgoing=13.34)
-        self.assert_money_flow_values(user=self.guest_user_2, incoming=0, outgoing=38.33)
+        self.assert_money_flow_values(
+            user=self.guest_user_1, incoming=0, outgoing=13.34
+        )
+        self.assert_money_flow_values(
+            user=self.guest_user_2, incoming=0, outgoing=38.33
+        )
 
         self.create_transaction(
             **base_data,
             paid_by=self.guest_user_4,
-            paid_for=(self.guest_user_1.id, self.guest_user_3.id, self.guest_user_4.id,),
+            paid_for=(
+                self.guest_user_1.id,
+                self.guest_user_3.id,
+                self.guest_user_4.id,
+            ),
             value=Decimal(20)
         )
-        self.assert_money_flow_values(user=self.guest_user_4, incoming=73.34, outgoing=0)
-        self.assert_money_flow_values(user=self.guest_user_1, incoming=0, outgoing=20.01)
-        self.assert_money_flow_values(user=self.guest_user_3, incoming=0, outgoing=11.67)
+        self.assert_money_flow_values(
+            user=self.guest_user_4, incoming=73.34, outgoing=0
+        )
+        self.assert_money_flow_values(
+            user=self.guest_user_1, incoming=0, outgoing=20.01
+        )
+        self.assert_money_flow_values(
+            user=self.guest_user_3, incoming=0, outgoing=11.67
+        )
 
         # Final Assertions after everything has been done
 
-        self.assert_money_flow_values(user=self.guest_user_1, incoming=0, outgoing=20.01)
-        self.assert_money_flow_values(user=self.guest_user_2, incoming=0, outgoing=38.33)
-        self.assert_money_flow_values(user=self.guest_user_3, incoming=0, outgoing=11.67)
-        self.assert_money_flow_values(user=self.guest_user_4, incoming=73.34, outgoing=0)
+        self.assert_money_flow_values(
+            user=self.guest_user_1, incoming=0, outgoing=20.01
+        )
+        self.assert_money_flow_values(
+            user=self.guest_user_2, incoming=0, outgoing=38.33
+        )
+        self.assert_money_flow_values(
+            user=self.guest_user_3, incoming=0, outgoing=11.67
+        )
+        self.assert_money_flow_values(
+            user=self.guest_user_4, incoming=73.34, outgoing=0
+        )
         self.assert_money_flow_values(user=self.guest_user_5, incoming=0, outgoing=3.33)
 
     def test_money_flow_creation_on_transaction_creation(self):

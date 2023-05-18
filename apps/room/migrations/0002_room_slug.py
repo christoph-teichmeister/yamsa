@@ -4,16 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('room', '0001_initial'),
+        ("room", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='room',
-            name='slug',
-            field=models.UUIDField(default='9bf9ef75-8ffb-4aa5-9f1d-530ddbafe0b2', unique=True),
+            model_name="room",
+            name="slug",
+            field=models.UUIDField(
+                default="9bf9ef75-8ffb-4aa5-9f1d-530ddbafe0b2", unique=True
+            ),
             preserve_default=False,
         ),
     ]

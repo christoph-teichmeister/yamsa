@@ -11,7 +11,9 @@ class TransactionCreateView(generic.CreateView):
     template_name = "room/detail.html"
 
     def get_success_url(self):
-        return reverse(viewname="room-detail", kwargs={"slug": self.request.POST.get("room_slug")})
+        return reverse(
+            viewname="room-detail", kwargs={"slug": self.request.POST.get("room_slug")}
+        )
 
     def form_invalid(self, form):
         ret = super().form_invalid(form)
