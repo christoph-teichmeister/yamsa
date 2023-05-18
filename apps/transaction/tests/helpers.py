@@ -25,13 +25,14 @@ class TransactionHelpersMixin:
                 "paid_for": paid_for,
                 "paid_by": paid_by.id,
                 "room": room.id,
+                "room_slug": room.slug,
                 "value": value,
             },
         )
         self.assertEqual(response.status_code, HttpStatus.HTTP_302_FOUND)
 
         created_transaction_qs = paid_by.made_transactions.filter(
-            room_id=room.id, value=value / len(paid_for), paid_for__id__in=paid_for
+            room_id=room.id, value=round(value/len(paid_for), 2), paid_for__id__in=paid_for
         )
         self.assertTrue(
             created_transaction_qs.count() > 0, [e for e in created_transaction_qs]
