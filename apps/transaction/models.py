@@ -3,6 +3,7 @@ from ai_django_core.models import CommonInfo
 from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
+from django.utils import timezone
 
 
 class Transaction(CommonInfo):
@@ -39,6 +40,16 @@ class Transaction(CommonInfo):
         )
 
     def save(self, *args, **kwargs):
+        # Set settled_at if settled is True and settled_at was not already set (Meaning, the transaction was just
+        # settled)
+        if self.settled and not self.settled_at:
+            self.settled_at = timezone.now()
+
+        # Clear settled_at if it was set AND the transaction is not marked as settled (Meaning, for whatever reason,
+        # the transaction was just marked as not settled, although it was marked as such before)
+        if not self.settled and self.settled_at:
+            self.settled_at = None
+
         super().save(*args, **kwargs)
 
 
