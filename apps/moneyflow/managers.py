@@ -8,6 +8,12 @@ from apps.account.models import User
 from apps.moneyflow.querysets import MoneyFlowQuerySet
 from apps.transaction.models import Transaction
 
+# Hack to avoid circular imports just because I was trying to type properly
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from apps.moneyflow.models import MoneyFlow, MoneyFlowLog
+
 
 class MoneyFlowManager(models.Manager):
     def get_queryset(self) -> MoneyFlowQuerySet:
@@ -16,33 +22,41 @@ class MoneyFlowManager(models.Manager):
     def create_or_update_flows_for_transaction(self, transaction: Transaction):
         creditor: User = transaction.paid_by
 
-        creditor_incoming_money_value: Decimal = Decimal(0)
+        # creditor_incoming_money_value: Decimal = Decimal(0)
 
         flows_to_be_created: Tuple = ()
         flows_to_be_updated: Tuple = ()
+
+        flow_logs_to_be_handled_because_of_created_money_flows: Tuple = ()
+        flow_logs_to_be_created_because_of_updated_money_flows: Tuple = ()
 
         for debitor in transaction.paid_for.all():
             if debitor == creditor:
                 continue
 
-            creditor_incoming_money_value += transaction.value
+            # creditor_incoming_money_value += transaction.value
 
-            created, flow = self.create_or_update_flow(
+            created, flow, flow_log = self.create_or_update_flow(
                 is_debitor_flow=True, user=debitor, transaction=transaction
             )
 
             if created:
                 flows_to_be_created += (flow,)
+                flow_logs_to_be_handled_because_of_created_money_flows += ((flow, flow_log),)
             else:
                 flows_to_be_updated += (flow,)
+                flow_logs_to_be_created_because_of_updated_money_flows += (flow_log,)
 
-        created, flow = self.create_or_update_flow(
+        created, flow, flow_log = self.create_or_update_flow(
             is_debitor_flow=False, user=creditor, transaction=transaction
         )
+
         if created:
             flows_to_be_created += (flow,)
+            flow_logs_to_be_handled_because_of_created_money_flows += ((flow, flow_log),)
         else:
             flows_to_be_updated += (flow,)
+            flow_logs_to_be_created_because_of_updated_money_flows += (flow_log,)
 
         all_flows = sorted(
             flows_to_be_created + flows_to_be_updated,
@@ -55,11 +69,28 @@ class MoneyFlowManager(models.Manager):
         self.bulk_create(flows_to_be_created)
         self.bulk_update(flows_to_be_updated, fields=("outgoing", "incoming"))
 
+        from apps.moneyflow.models import MoneyFlowLog
+
+        MoneyFlowLog.objects.bulk_create(flow_logs_to_be_created_because_of_updated_money_flows)
+
+        flow_logs_to_be_created_because_of_created_money_flows = ()
+        for flow_and_flow_log_tuple in flow_logs_to_be_handled_because_of_created_money_flows:
+            money_flow = flow_and_flow_log_tuple[0]
+            money_flow_log = flow_and_flow_log_tuple[1]
+
+            money_flow_log.money_flow_id = self.model.objects.get(
+                user_id=money_flow.user_id, room_id=money_flow.room_id
+            ).id
+
+            flow_logs_to_be_created_because_of_created_money_flows += (money_flow_log,)
+
+        MoneyFlowLog.objects.bulk_create(flow_logs_to_be_created_because_of_created_money_flows)
+
         # print(f"\n{transaction}\n{[e for e in all_flows]}\n")
 
     def create_or_update_flow(
-        self, *, is_debitor_flow: bool, user: User, transaction: Transaction
-    ):
+            self, *, is_debitor_flow: bool, user: User, transaction: Transaction
+    ) -> tuple[bool, "MoneyFlow", "MoneyFlowLog"]:
         """DOES NOT SAVE THE FLOW, just updates its values"""
         money_field = "outgoing" if is_debitor_flow else "incoming"
 
@@ -70,20 +101,44 @@ class MoneyFlowManager(models.Manager):
             else transaction.value
         )
 
+        from apps.moneyflow.models import MoneyFlowLog
+
         if not existing_money_flow_qs.exists():
-            return True, self.model(
+            money_flow = self.model(
                 **{
                     "user": user,
                     "room_id": transaction.room_id,
                     f"{money_field}": transaction_value,
-                }
-            )
+                })
+            money_flow_log = MoneyFlowLog(
+                log_message=f'Money Flow for {user} created! (Transaction: {transaction})\n\n'
+                            f'Outgoing is: {money_flow.outgoing} € and Incoming is: {money_flow.incoming} €')
+
+            return True, money_flow, money_flow_log
         else:
             existing_money_flow = existing_money_flow_qs.first()
 
             old_value = getattr(existing_money_flow, money_field)
-            setattr(existing_money_flow, money_field, old_value + transaction_value)
-            return False, existing_money_flow
+            new_value = old_value + transaction_value
+            setattr(existing_money_flow, money_field, new_value)
+
+            updated_money_field_str = (
+                f"Outgoing was: {old_value} € and now is: {new_value} €" if is_debitor_flow else f"Incoming was: "
+                f"{old_value} € and now is: {new_value} €"
+            )
+            unchanged_money_field_str = (
+                f"Incoming was: {existing_money_flow.incoming} € and now is: {existing_money_flow.incoming} €" if
+                is_debitor_flow else f"Outgoing was: {existing_money_flow.outgoing} € and now is:"
+                                     f" {existing_money_flow.outgoing} €")
+
+            money_flow_log = MoneyFlowLog(
+                money_flow=existing_money_flow,
+                log_message=f'Money Flow for {user} updated! (Transaction: {transaction})\n\n'
+                            f'Updated field is "{money_field}".\n\n'
+                            f'{updated_money_field_str}\n\n'
+                            f'{unchanged_money_field_str}')
+
+            return False, existing_money_flow, money_flow_log
 
     def try_to_resolve_flows_and_reduce_them_to_zero(self, *, room_id):
         """
