@@ -1,4 +1,5 @@
 import subprocess
+import uuid
 
 from django.contrib.auth.hashers import make_password
 from django.core.management import BaseCommand
@@ -103,7 +104,7 @@ class Command(BaseCommand):
     @staticmethod
     def _create_rooms():
         room_1 = Room.objects.create(
-            name="Room_1", description="Description for Room_1"
+            name="Room_1", slug=uuid.uuid4(), description="Description for Room_1"
         )
 
         room_1.users.add(*[u.id for u in User.objects.all()])
