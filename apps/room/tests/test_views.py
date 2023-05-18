@@ -167,10 +167,6 @@ class RoomDetailViewTestCase(
         self.assertEqual(self.guest_user_2.money_flows.first().incoming, Decimal(0))
         self.assertEqual(self.guest_user_2.money_flows.first().outgoing, Decimal(11.5))
 
-        response = self.client.get(
-            reverse("room-detail", kwargs={"slug": self.room.slug})
-        )
-
         # Final Assertions after everything has been done
 
         self.assertEqual(

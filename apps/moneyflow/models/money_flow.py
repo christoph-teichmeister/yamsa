@@ -1,5 +1,4 @@
 from _decimal import Decimal
-
 from ai_django_core.models import CommonInfo
 from django.db import models
 

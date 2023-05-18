@@ -1,5 +1,4 @@
 from _decimal import Decimal
-
 from ai_django_core.models import CommonInfo
 from django.db import models
 from django.db.models.signals import m2m_changed
@@ -34,7 +33,10 @@ class Transaction(CommonInfo):
 
     def __str__(self):
         multiple_people = self.paid_for.all().count() > 1
-        return f"{self.paid_by} paid {self.value}€ for {'each: ' if multiple_people else ''}{', '.join(self.paid_for.values_list('name', flat=True))}"
+        return (
+            f"{self.paid_by} paid {self.value}€ for {'each: ' if multiple_people else ''}"
+            f"{', '.join(self.paid_for.values_list('name', flat=True))}"
+        )
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

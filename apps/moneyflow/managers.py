@@ -1,4 +1,5 @@
-from typing import Tuple
+# Hack to avoid circular imports just because I was trying to type properly
+from typing import TYPE_CHECKING, Tuple
 
 from _decimal import Decimal
 from django.db import models
@@ -7,9 +8,6 @@ from django.db.models import Sum
 from apps.account.models import User
 from apps.moneyflow.querysets import MoneyFlowQuerySet
 from apps.transaction.models import Transaction
-
-# Hack to avoid circular imports just because I was trying to type properly
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from apps.moneyflow.models import MoneyFlow, MoneyFlowLog
