@@ -11,10 +11,39 @@
 
     <ul class="list-group">
         {% for debitor, debt_entry in debts.items %}
-            {% for creditor, value in debt_entry.items %}
+            {% for creditor, value_and_transaction in debt_entry.items %}
                 <li class="list-group-item">
-                    {% if debitor == request.user.name %}<span class="me-involved">You</span> owe {% else %}<strong>{{ debitor }}</strong> owes {% endif %}{{ value }}€
-                    to {% if creditor == request.user.name %}<span class="me-involved">you</span>{% else %}{{ creditor }}{% endif %}
+                    {% if debitor == request.user.name %}
+                        <span class="me-involved">You</span> owe
+                    {% else %}
+                        <strong>{{ debitor }}</strong> owes
+                    {% endif %}
+                    {{ value_and_transaction.value }}€ to
+                    {% if creditor == request.user.name %}
+                        <span class="me-involved">you</span>
+                    {% else %}
+                        {{ creditor }}
+                    {% endif %}
+
+                    <div class="float-end">
+                        {% if value_and_transaction.transaction.settled %}
+                            <i class="bi bi-piggy-bank-fill" style="opacity: 25%"></i>
+                        {% else %}
+                            {% if debitor == request.user.name %}
+                                <i class="bi bi-piggy-bank"
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#settleTransactionModal"></i>
+                            {% else %}
+                                <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
+                                   data-bs-toggle="tooltip"
+                                   data-bs-placement="top"
+                                   data-bs-title="This transaction is not yours to settle!"></i>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    {# TODO CT: This is not the correct place, as the debts are dynamically calculated and do not correspond to the transaction entries in the db - so marking them as settled here makes no sense#}
+                    {% include "room/partials/_settle_payment_modal.html" with creditor=creditor transaction=value_and_transaction.transaction %}
                 </li>
             {% endfor %}
         {% endfor %}

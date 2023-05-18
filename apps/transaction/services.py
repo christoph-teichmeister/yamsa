@@ -18,11 +18,13 @@ class DebtService:
                     continue
 
                 try:
-                    debts[paid_for_name][paid_by_name] += value
+                    debts[paid_for_name][paid_by_name]["value"] += value
                 except KeyError:
                     try:
-                        debts[paid_for_name][paid_by_name] = value
+                        debts[paid_for_name][paid_by_name]["value"] = value
                     except KeyError:
-                        debts[paid_for_name] = {paid_by_name: value}
+                        debts[paid_for_name] = {
+                            paid_by_name: {"value": value, "transaction": transaction}
+                        }
 
         return debts

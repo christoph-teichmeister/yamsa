@@ -1,0 +1,62 @@
+<!-- Modal -->
+<div class="modal fade" id="settleTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addTransactionModalLabel">Settle your debt to {{ creditor }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form action="/transaction/{{ transaction.id }}/settle/" method="post">
+                {% csrf_token %}
+
+                <div class="modal-body">
+
+                    Settled?
+
+                    <div class="form-group" hidden>
+                        <label for="id" class="form-label">Transaction ID</label>
+                        <input id="id"
+                               name="id"
+                               type="number"
+                               class="form-control"
+                               required
+                               value="{{ transaction.id }}"
+                        />
+                    </div>
+
+                    <div class="form-group" hidden>
+                        <label for="settled" class="form-label">Settled?</label>
+                        <input id="settled"
+                               name="settled"
+                               type="checkbox"
+                               checked
+                               class="form-control"
+                               required
+                        />
+                    </div>
+
+                    <div class="form-group" hidden>
+                        <label for="room_slug" class="form-label">Room Slug</label>
+                        <input id="room_slug"
+                               name="room_slug"
+                               type="text"
+                               class="form-control"
+                               required
+                               value="{{ room.slug }}"
+                        />
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
