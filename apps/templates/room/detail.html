@@ -84,9 +84,6 @@
             </div>
 
         </div>
-
-        {% include "room/partials/_add_transaction_modal.html" %}
-
     {% else %}
         {% include "room/partials/_detail_who_are_you.html" %}
     {% endif %}
@@ -101,11 +98,6 @@
           /* clipboard write failed */
           console.error("Something went wrong here")
         });
-      }
-
-      const handleTabClick = (elementID) => {
-        console.log(elementID)
-        const clickedTab = document.getElementById(elementID)
       }
     </script>
 {% endblock %}
