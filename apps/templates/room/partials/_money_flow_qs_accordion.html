@@ -1,16 +1,26 @@
 {% if money_flow_qs %}
-    <br/>
-
-    <h5>Money Flow QS</h5>
+    <div class="tab-header">
+        <h5>Money Flow QS</h5>
+    </div>
 
     <ul class="list-group">
         {% for money_flow in money_flow_qs %}
             <li class="list-group-item">
-                {{ money_flow.user.name }} gets {{ money_flow.incoming }}€ and
-                pays {{ money_flow.outgoing }}€
+                {% if money_flow.user.name == request.user.name %}
+                    <span class="me-involved">
+                {% endif %}
+                {{ money_flow.user.name }}
+                {% if money_flow.user.name == request.user.name %}
+                    </span>
+                {% endif %}
+                gets {{ money_flow.incoming }}€ and pays {{ money_flow.outgoing }}€
             </li>
         {% endfor %}
     </ul>
 
     <br/>
+{% else %}
+    <div class="container text-center p-4">
+        - Nothing to display here yet -
+    </div>
 {% endif %}

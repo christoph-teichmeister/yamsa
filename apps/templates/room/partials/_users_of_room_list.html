@@ -1,10 +1,9 @@
 {% if room_users %}
-    <br/>
+    <div class="tab-header">
+        <h5>People</h5>
+    </div>
 
-    <h5>People</h5>
-
-    <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
-
+    <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for user in room_users %}
             {% include "room/partials/_user_card.html" with user=user %}
         {% endfor %}
