@@ -6,53 +6,55 @@
 {% endblock %}
 
 {% block content %}
-    {% if request.user.is_anonymous or user.is_guest %}
+    <div class="container text-center">
+        {% if request.user.is_anonymous or user.is_guest %}
 
-        <p>You are a guest, thank you for using yamsa!</p>
+            <p>You are a guest, thank you for using yamsa!</p>
 
-        <p>Maybe consider registering? :)</p>
+            <p>Maybe consider registering? :)</p>
 
-        {# TODO CT: Delete this button #}
-        <button type="button"
-                class="btn btn-primary"
-                hx-trigger="click"
-                hx-get="{% url 'account-user-logout' %}"
-                hx-target="#body"
-                hx-swap="morph:innerHTML"
-                hx-push-url="true"
-        >
-            <small>Log me out though</small>
-        </button>
+            {# TODO CT: Delete this button #}
+            <button type="button"
+                    class="btn btn-primary"
+                    hx-trigger="click"
+                    hx-get="{% url 'account-user-logout' %}"
+                    hx-target="#body"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true"
+            >
+                <small>Log me out though</small>
+            </button>
 
-    {% else %}
+        {% else %}
 
-        <div class="row float-end me-2">
-            <div class="col">
-                <a href="{{ PROJECT_BASE_URL }}/yese/login" target="_blank">
-                    <i class="bi bi-terminal"></i>
-                </a>
-            </div>
-        </div>
-
-        <p>{{ user.email }}</p>
-        <p>{{ user.username }}</p>
-
-        <div class="fixed-bottom mb-5">
-            <div class="row float-end mb-4 me-2">
+            <div class="row float-end me-2">
                 <div class="col">
-                    <button type="button"
-                            class="btn btn-primary"
-                            hx-trigger="click"
-                            hx-get="{% url 'account-user-logout' %}"
-                            hx-target="#body"
-                            hx-swap="morph:innerHTML"
-                            hx-push-url="true"
-                    >
-                        Log me out
-                    </button>
+                    <a href="{{ PROJECT_BASE_URL }}/yese/login" target="_blank">
+                        <i class="bi bi-terminal"></i>
+                    </a>
                 </div>
             </div>
-        </div>
 
-    {% endif %}
+            <p>{{ user.email }}</p>
+            <p>{{ user.username }}</p>
+
+            <div class="fixed-bottom mb-5">
+                <div class="row float-end mb-4 me-2">
+                    <div class="col">
+                        <button type="button"
+                                class="btn btn-primary"
+                                hx-trigger="click"
+                                hx-get="{% url 'account-user-logout' %}"
+                                hx-target="#body"
+                                hx-swap="morph:innerHTML"
+                                hx-push-url="true"
+                        >
+                            Log me out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
+    </div>
 {% endblock %}
