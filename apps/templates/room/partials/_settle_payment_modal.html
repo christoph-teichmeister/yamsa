@@ -1,30 +1,34 @@
 <!-- Modal -->
-<div class="modal fade" id="settleTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel"
+<div class="modal fade" id="settleDebtModal{{ debt_ids }}" tabindex="-1" aria-labelledby="addTransactionModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="addTransactionModalLabel">Settle your debt to {{ creditor }}</h1>
+                <h1 class="modal-title fs-5" id="addTransactionModalLabel">Settle your debt</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form action="/transaction/{{ transaction.id }}/settle/" method="post">
+            <form action="/debt/settle/" method="post">
                 {% csrf_token %}
 
                 <div class="modal-body">
 
-                    Settled?
+                    Have you paid off all your debts to {{ creditor }}?
 
                     <div class="form-group" hidden>
-                        <label for="id" class="form-label">Transaction ID</label>
-                        <input id="id"
-                               name="id"
-                               type="number"
-                               class="form-control"
-                               required
-                               value="{{ transaction.id }}"
-                        />
+                        <label for="DebtSelect">Debt IDs</label>
+                        <select id="debt_ids"
+                                name="debt_ids"
+                                multiple
+                                class="form-control"
+                                id="DebtSelect"
+                                required
+                        >
+                            {% for debt_id in debt_ids %}
+                                <option selected value="{{ debt_id }}">{{ debt_id }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <div class="form-group" hidden>

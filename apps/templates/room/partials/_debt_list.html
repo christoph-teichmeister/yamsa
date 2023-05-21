@@ -1,52 +1,70 @@
 {% load static %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'room/debt_list.css' %}">
+    <link rel="stylesheet" href="{% static 'room/partials/_debt_list.css' %}">
 {% endblock %}
 
 {% if debts %}
-    <br/>
-
-    <h5>Debts</h5>
+    <div class="tab-header">
+        <h5>Debts</h5>
+        <small>
+            If you have paid off your debt to someone, click on the white piggy-bank-icon (<i
+                class="bi bi-piggy-bank"></i>) next to the debt.
+        </small>
+    </div>
 
     <ul class="list-group">
         {% for debitor, debt_entry in debts.items %}
-            {% for creditor, value_and_transaction in debt_entry.items %}
+            {% for creditor, amount_owed_debt_ids_and_settled in debt_entry.items %}
                 <li class="list-group-item">
-                    {% if debitor == request.user.name %}
-                        <span class="me-involved">You</span> owe
-                    {% else %}
-                        <strong>{{ debitor }}</strong> owes
-                    {% endif %}
-                    {{ value_and_transaction.value }}€ to
-                    {% if creditor == request.user.name %}
-                        <span class="me-involved">you</span>
-                    {% else %}
-                        {{ creditor }}
-                    {% endif %}
-
-                    <div class="float-end">
-                        {% if value_and_transaction.transaction.settled %}
-                            <i class="bi bi-piggy-bank-fill" style="opacity: 25%"></i>
-                        {% else %}
-                            {% if debitor == request.user.name %}
-                                <i class="bi bi-piggy-bank"
-                                   data-bs-toggle="modal"
-                                   data-bs-target="#settleTransactionModal"></i>
-                            {% else %}
-                                <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-placement="top"
-                                   data-bs-title="This transaction is not yours to settle!"></i>
+                    <div class="row align-items-center">
+                        <div class="col-11">
+                            {% if amount_owed_debt_ids_and_settled.settled %}
+                                <span style="text-decoration: line-through;">
                             {% endif %}
-                        {% endif %}
-                    </div>
 
-                    {# TODO CT: This is not the correct place, as the debts are dynamically calculated and do not correspond to the transaction entries in the db - so marking them as settled here makes no sense#}
-                    {% include "room/partials/_settle_payment_modal.html" with creditor=creditor transaction=value_and_transaction.transaction %}
+                            {% if debitor == request.user.name %}
+                                <span class="me-involved">You</span> owe
+                            {% else %}
+                                <strong>{{ debitor }}</strong> owes
+                            {% endif %}
+                            {{ amount_owed_debt_ids_and_settled.amount_owed }}€ to
+                            {% if creditor == request.user.name %}
+                                <span class="me-involved">you</span>
+                            {% else %}
+                                {{ creditor }}
+                            {% endif %}
+
+                            {% if amount_owed_debt_ids_and_settled.settled %}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-1">
+                            <div class="float-end">
+                                {% if amount_owed_debt_ids_and_settled.settled %}
+                                    <i class="bi bi-piggy-bank-fill debt-settled"></i>
+                                {% else %}
+                                    {% if debitor == request.user.name %}
+                                        <i class="bi bi-piggy-bank"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#settleDebtModal{{ amount_owed_debt_ids_and_settled.debt_ids }}"></i>
+                                    {% else %}
+                                        <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-placement="top"
+                                           data-bs-title="This transaction is not yours to settle!"></i>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% include "room/partials/_settle_payment_modal.html" with creditor=creditor debt_ids=amount_owed_debt_ids_and_settled.debt_ids %}
+                    </div>
                 </li>
             {% endfor %}
         {% endfor %}
     </ul>
     <br/>
+
 {% endif %}
