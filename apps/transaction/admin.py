@@ -1,13 +1,9 @@
 from django.contrib import admin
 from django.contrib.admin import register
 
+from apps.debt.admin import DebtInline
 from apps.core.admin import YamsaCommonInfoAdminMixin
-from apps.transaction.models import Transaction, UserConnectionToTransaction
-
-
-class UserConnectionToTransactionInline(admin.StackedInline):
-    model = UserConnectionToTransaction
-    extra = 0
+from apps.transaction.models import Transaction
 
 
 class TransactionPaidByInline(admin.TabularInline):
@@ -33,16 +29,4 @@ class TransactionAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
             {"fields": ("settled", "settled_at")},
         ),
     )
-    inlines = (UserConnectionToTransactionInline,)
-
-
-@register(UserConnectionToTransaction)
-class UserConnectionToTransactionAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "transaction", "user")
-    search_fields = ("transaction__name", "user__name")
-    fieldsets = (
-        (
-            None,
-            {"fields": ("user", "transaction")},
-        ),
-    )
+    inlines = (DebtInline,)

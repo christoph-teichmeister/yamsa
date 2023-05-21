@@ -16,9 +16,3 @@ class TransactionCreateForm(forms.ModelForm):
             "room_slug",
             "value",
         )
-
-
-class TransactionSettleForm(forms.ModelForm):
-    class Meta:
-        model = Transaction
-        fields = ("settled",)

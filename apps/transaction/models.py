@@ -1,4 +1,5 @@
 from _decimal import Decimal
+
 from ai_django_core.models import CommonInfo
 from django.db import models
 from django.db.models.signals import m2m_changed
@@ -10,7 +11,7 @@ class Transaction(CommonInfo):
     description = models.TextField(max_length=500)
     paid_for = models.ManyToManyField(
         "account.User",
-        through="transaction.UserConnectionToTransaction",
+        through="debt.Debt",
     )
     paid_by = models.ForeignKey(
         "account.User", related_name="made_transactions", on_delete=models.CASCADE
@@ -58,26 +59,17 @@ def transaction_paid_for(sender, **kwargs):
     action = kwargs.pop("action", None)
     pk_set = kwargs.pop("pk_set", None)
     instance: Transaction = kwargs.pop("instance", None)
+
     if action == "post_add":
         instance.value = round(Decimal(instance.value / len(pk_set)), 2)
         instance.save()
 
+        # Mark any debts created because of this transaction, which belong to the debitor as settled, as a debitor
+        # can not owe themself money
+        instance.paid_by.owes_transactions.filter(
+            user=instance.paid_by, transaction_id=instance.id
+        ).update(settled=True, settled_at=timezone.now())
+
         from apps.moneyflow.models import MoneyFlow
 
         MoneyFlow.objects.create_or_update_flows_for_transaction(transaction=instance)
-
-
-class UserConnectionToTransaction(models.Model):
-    user = models.ForeignKey(
-        "account.User", on_delete=models.CASCADE, related_name="owes_transactions"
-    )
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "User-Connection to Transaction"
-        verbose_name_plural = "User-Connections to Transactions"
-
-    def __str__(self):
-        return (
-            f"{self.user} owes {self.transaction.value} to {self.transaction.paid_by}"
-        )
