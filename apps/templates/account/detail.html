@@ -11,32 +11,22 @@
 
             <p>You are a guest, thank you for using yamsa!</p>
 
-            <p>Maybe consider registering? :)</p>
-
-            {# TODO CT: Delete this button #}
-            <button type="button"
-                    class="btn btn-primary"
-                    hx-trigger="click"
-                    hx-get="{% url 'account-user-logout' %}"
-                    hx-target="#body"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true"
-            >
-                <small>Log me out though</small>
-            </button>
+            <p>Maybe consider <a href="{% url 'account-user-register' %}">registering</a>? :)</p>
 
         {% else %}
 
-            <div class="row float-end me-2">
-                <div class="col">
-                    <a href="{{ PROJECT_BASE_URL }}/yese/login" target="_blank">
-                        <i class="bi bi-terminal"></i>
-                    </a>
+            {% if request.user.is_superuser %}
+                <div class="row float-end me-2">
+                    <div class="col">
+                        <a href="{{ PROJECT_BASE_URL }}/yese/login" target="_blank">
+                            <i class="bi bi-terminal"></i>
+                        </a>
+                    </div>
                 </div>
-            </div>
+            {% endif %}
 
-            <p>{{ user.email }}</p>
             <p>{{ user.username }}</p>
+            <p>{{ user.email }}</p>
 
             <div class="fixed-bottom mb-5">
                 <div class="row float-end mb-4 me-2">

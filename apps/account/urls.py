@@ -12,6 +12,11 @@ urlpatterns = [
         name="account-authenticate-guest-user",
     ),
     path(
+        "register/",
+        views.RegisterUserView.as_view(),
+        name="account-user-register",
+    ),
+    path(
         "login/",
         views.LogInUserView.as_view(),
         name="account-user-login",
