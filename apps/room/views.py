@@ -1,11 +1,9 @@
-import time
-
-from django.db import connection
 from django.db.models import F
 from django.views import generic
 
+from apps.core.context_managers import measure_time_and_queries
+from apps.debt.models import Debt
 from apps.room.models import Room
-from apps.transaction.services import DebtService
 
 
 class RoomListView(generic.ListView):
@@ -30,45 +28,41 @@ class RoomDetailView(generic.DetailView):
     context_object_name = "room"
     model = Room
 
+    @measure_time_and_queries("RoomDetailView.get_context_data()")
     def get_context_data(self, **kwargs) -> dict:
         context_data = super().get_context_data(**kwargs)
 
         room = context_data.get("room")
         room_users = room.users.all().values("name", "id", "is_guest")
 
-        room_transactions_qs = (
+        room_transactions = (
             room.transactions.all()
             .select_related("paid_by", "room")
             .prefetch_related("paid_for")
-        )
-        room_transactions = room_transactions_qs.annotate(
-            paid_by_name=F("paid_by__name"), paid_for_name=F("paid_for__name")
-        ).values(
-            "id",
-            "description",
-            "value",
-            "paid_by_name",
-            "paid_for_name",
-            "created_at",
+            .annotate(
+                paid_by_name=F("paid_by__name"),
+                paid_for_name=F("paid_for__name"),
+            )
+            .values(
+                "id",
+                "description",
+                "value",
+                "paid_by_name",
+                "paid_for_name",
+                "created_at",
+            )
         )
 
-        queries_before_qs = len(connection.queries)
-        start = time.time()
-
-        money_flow_qs = room.money_flows.all()
-
-        queries_after_qs = len(connection.queries)
-        end = time.time()
-        print(
-            f"money_flow_qs took {end - start} seconds and made {queries_after_qs - queries_before_qs} queries\n"
-        )
+        debts = {}
+        for user in room.users.all().order_by("name"):
+            debts[user.name] = Debt.objects.get_debts_for_user_for_room_as_dict(
+                user.id, room.id
+            )
 
         return {
             **context_data,
             "room_users": room_users,
             "room_transactions": room_transactions,
-            "debts": DebtService.get_debts_dict(
-                room_transactions_qs=room_transactions_qs.filter(settled=False)
-            ),
-            "money_flow_qs": money_flow_qs,
+            "debts": debts,
+            "money_flow_qs": room.money_flows.all(),
         }
