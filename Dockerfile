@@ -26,7 +26,7 @@ RUN apt-get update && \
 # Move pipfiles to project
 COPY Pipfile Pipfile.lock $TMP_DIR
 RUN pip install -U pip pipenv
-RUN pipenv install --system --deploy
+RUN pipenv install --system --deploy --dev
 
 # Set Path variable to global arg var
 ARG ENV_PATH
