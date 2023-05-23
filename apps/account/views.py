@@ -14,11 +14,10 @@ class UserProfileView(generic.DetailView):
     model = User
 
     def get_context_data(self, **kwargs):
-        return (
-            super()
-            .get_context_data(**kwargs)
-            .update({"PROJECT_BASE_URL": settings.PROJECT_BASE_URL})
-        )
+        context_data = super().get_context_data(**kwargs)
+        context_data["PROJECT_BASE_URL"] = settings.PROJECT_BASE_URL
+        context_data["DJANGO_ADMIN_SUB_URL"] = settings.DJANGO_ADMIN_SUB_URL
+        return context_data
 
 
 class AuthenticateGuestUserView(generic.View):

@@ -19,6 +19,7 @@ env = environ.Env(
     SECRET_KEY=(str, ""),
     DEBUG=(bool, False),
     PROJECT_BASE_URL=(str, ""),
+    DJANGO_ADMIN_SUB_URL=(str, ""),
     # Database ENV
     DB_HOST=(str, ""),
     DB_NAME=(str, ""),
@@ -33,6 +34,7 @@ APPS_DIR = CONFIG_DIR.parent
 BASE_DIR = APPS_DIR.parent
 
 PROJECT_BASE_URL = env("PROJECT_BASE_URL")
+DJANGO_ADMIN_SUB_URL = env("DJANGO_ADMIN_SUB_URL")
 
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(CONFIG_DIR, ".env"))

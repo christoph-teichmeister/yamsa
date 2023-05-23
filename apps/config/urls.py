@@ -16,9 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from apps.config.settings import DJANGO_ADMIN_SUB_URL
+
 urlpatterns = [
     path("", include("apps.core.urls")),
-    path("yese/", admin.site.urls),
+    path(f"{DJANGO_ADMIN_SUB_URL}/", admin.site.urls),
     path("account/", include("apps.account.urls")),
     path("debt/", include("apps.debt.urls")),
     path("room/", include("apps.room.urls")),
