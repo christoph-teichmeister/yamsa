@@ -1,0 +1,26 @@
+:root {
+    --bs-body-bg: #2d2a2e;
+    --bs-body-color: white;
+}
+
+.error {
+    color: red;
+}
+
+.me-involved {
+    font-weight: bold;
+    color: var(--bs-primary-text)
+}
+
+.account-login-register-container {
+    height: 85vh;
+}
+
+.debt-list-debt-settled {
+    color: var(--bs-primary-text);
+    opacity: 50%
+}
+
+.room-detail-tab-header {
+    padding: 1rem;
+}
