@@ -1,3 +1,5 @@
+import uuid
+
 from ai_django_core.models import CommonInfo
 from django.db import models
 
@@ -22,6 +24,11 @@ class Room(CommonInfo):
 
     def __str__(self):
         return f"{self.name} ({self.get_status_display()})"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = uuid.uuid4()
+        super().save(*args, **kwargs)
 
 
 class UserConnectionToRoom(models.Model):
