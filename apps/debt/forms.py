@@ -5,8 +5,9 @@ from apps.debt.models import Debt
 
 
 class DebtSettleForm(forms.ModelForm):
+    # TODO CT: Completely rework this to a Charfield with the debt ids in a comma separated list
     debt_ids = forms.MultipleChoiceField(
-        choices=tuple(Debt.objects.values_list("id", "settled"))
+        choices=tuple((i,i) for i in range(0, 10000))
     )
 
     class Meta:
