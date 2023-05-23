@@ -1,13 +1,9 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block css %}
-    <link rel="stylesheet" href="{% static 'account/login.css' %}">
-{% endblock %}
-
 {% block content %}
 
-    <div class="d-flex align-items-center login-full-height">
+    <div class="d-flex align-items-center account-login-register-container">
         <form action="/account/register/" method="post" class="flex-grow-1">
             {% csrf_token %}
 

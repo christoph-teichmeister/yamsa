@@ -1,11 +1,7 @@
 {% load static %}
 
-{% block css %}
-    <link rel="stylesheet" href="{% static 'room/partials/_debt_list.css' %}">
-{% endblock %}
-
 {% if debts %}
-    <div class="tab-header">
+    <div class="room-detail-tab-header">
         <h5>Debts</h5>
         <small>
             If you have paid off your debt to someone, click on the white piggy-bank-icon (<i
@@ -43,7 +39,7 @@
                         <div class="col-1">
                             <div class="float-end">
                                 {% if amount_owed_debt_ids_and_settled.settled %}
-                                    <i class="bi bi-piggy-bank-fill debt-settled"></i>
+                                    <i class="bi bi-piggy-bank-fill debt-list-debt-settled"></i>
                                 {% else %}
                                     {% if debitor == request.user.name %}
                                         <i class="bi bi-piggy-bank"

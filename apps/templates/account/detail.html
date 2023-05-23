@@ -1,10 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block css %}
-    <link rel="stylesheet" href="{% static 'account/detail.css' %}">
-{% endblock %}
-
 {% block content %}
     <div class="container text-center">
         {% if request.user.is_anonymous or user.is_guest %}

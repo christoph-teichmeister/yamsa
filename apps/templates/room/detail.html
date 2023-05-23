@@ -1,10 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block css %}
-    <link rel="stylesheet" href="{% static 'room/detail.css' %}">
-{% endblock %}
-
 {% block content %}
     {% if request.user.is_authenticated %}
         <small>Hey {{ request.user.username }}!</small>
