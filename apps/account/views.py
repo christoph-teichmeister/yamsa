@@ -69,9 +69,7 @@ class RegisterUserView(generic.FormView):
 
             user.save()
 
-        user = authenticate(
-            username=user.username, password=user.password
-        )
+        user = authenticate(username=user.username, password=user.password)
 
         login(request=self.request, user=user)
 
