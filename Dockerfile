@@ -79,9 +79,6 @@ COPY  . $PROJECT_HOME
 # Create empty env-file to avoid warnings
 RUN touch $PROJECT_HOME/apps/config/.env
 
-# Run collectstatic for whitenoise
-RUN python ./manage.py collectstatic --noinput
-
 # EXPOSE port 8000 to allow communication to/from server
 EXPOSE 8000
 
