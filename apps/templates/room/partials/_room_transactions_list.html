@@ -1,8 +1,10 @@
-{% if room_transactions %}
-    <div class="room-detail-tab-header">
-        <h5>Payments made</h5>
-    </div>
+{% include "room/partials/_add_transaction_modal.html" %}
 
+<div class="room-detail-tab-header">
+    <h5>Payments made</h5>
+</div>
+
+{% if room_transactions %}
     <ul class="list-group list-group-flush">
         {% for transaction in room_transactions %}
             {% if transaction.paid_for_name != transaction.paid_by_name %}
@@ -38,5 +40,3 @@
         - No Payments have been made as of now -
     </div>
 {% endif %}
-
-{% include "room/partials/_add_transaction_modal.html" %}
