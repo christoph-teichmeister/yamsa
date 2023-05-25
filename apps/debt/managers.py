@@ -16,9 +16,24 @@ class DebtManager(Manager):
         """
         Exemplary return:
             {
-            'yamsa-admin': {'amount_owed': Decimal('36.59'), 'debt_ids': (25, 22, 3), 'settled': False},
-            'non_guest_user_1': {'amount_owed': Decimal('30.00'), 'debt_ids': (20,), 'settled': False},
-            'guest_user_2': {'amount_owed': Decimal('26.00'), 'debt_ids': (33, 9), 'settled': False}
+            'yamsa-admin': {
+                'amount_owed': Decimal('36.59'),
+                'debt_ids': (25, 22, 3),
+                'debt_ids_as_string': '25-22-3',
+                'settled': False
+                },
+            'non_guest_user_1': {
+                'amount_owed': Decimal('30.00'),
+                'debt_ids': (20,),
+                'debt_ids_as_string': '20',
+                'settled': False
+                },
+            'guest_user_2': {
+                'amount_owed': Decimal('26.00'),
+                'debt_ids': (33, 9),
+                'debt_ids_as_string': '33-9',
+                'settled': False
+                }
             }
         """
 
@@ -35,11 +50,13 @@ class DebtManager(Manager):
                 debt_dict[owed_to_id] = {
                     "amount_owed": transaction_value,
                     "debt_ids": (debt_id,),
+                    "debt_ids_as_string": f"{debt_id}",
                     "settled": True & settled,
                 }
             else:
                 debt_dict[owed_to_id]["amount_owed"] += transaction_value
                 debt_dict[owed_to_id]["debt_ids"] += (debt_id,)
+                debt_dict[owed_to_id]["debt_ids_as_string"] += f"-{debt_id}"
                 debt_dict[owed_to_id]["settled"] = (
                     debt_dict[owed_to_id]["settled"] & settled
                 )
