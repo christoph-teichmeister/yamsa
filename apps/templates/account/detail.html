@@ -9,6 +9,8 @@
 
             <p>Maybe consider <a href="{% url 'account-user-register' %}">registering</a>? :)</p>
 
+            <p>Already have an account? <a href="{% url 'account-user-login' %}">Login here!</a></p>
+
         {% else %}
 
             {% if request.user.is_superuser %}
