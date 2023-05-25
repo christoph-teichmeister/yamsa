@@ -10,6 +10,7 @@
     </div>
 
     <ul class="list-group">
+        {# Open debts #}
         {% for debitor, debt_dict in debts.items %}
             {% for creditor, amount_owed_debt_ids_and_settled in debt_dict.open_debts.items %}
                 <li class="list-group-item">
@@ -47,7 +48,10 @@
                     </div>
                 </li>
             {% endfor %}
+        {% endfor %}
 
+        {# Settled debts #}
+        {% for debitor, debt_dict in debts.items %}
             {% for creditor, amount_owed_debt_ids_and_settled in debt_dict.settled_debts.items %}
                 <li class="list-group-item">
                     <div class="row align-items-center">
@@ -76,6 +80,7 @@
                 </li>
             {% endfor %}
         {% endfor %}
+
     </ul>
     <br/>
 
