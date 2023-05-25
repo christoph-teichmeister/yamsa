@@ -84,7 +84,7 @@
         {% include "room/partials/_detail_who_are_you.html" %}
     {% endif %}
 
-    <script type="module">
+    <script>
       const copyShareURL = () => {
         const url = document.URL
         navigator.clipboard.writeText(url).then(() => {
@@ -95,7 +95,8 @@
           console.error("Something went wrong here")
         });
       }
-
+    </script>
+    <script type="module">
       // TODO CT: Joa keine Ahnung, fix this I guess
       /*
       const triggerTabList = document.querySelectorAll('#roomTab a')
