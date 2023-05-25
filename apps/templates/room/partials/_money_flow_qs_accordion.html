@@ -9,11 +9,13 @@
                 {% if money_flow.user.name == request.user.name %}
                     <span class="me-involved">
                 {% endif %}
-                {{ money_flow.user.name }}
+                {{ money_flow.user.name }}:
                 {% if money_flow.user.name == request.user.name %}
                     </span>
                 {% endif %}
-                gets {{ money_flow.incoming }}€ and pays {{ money_flow.outgoing }}€
+                <br>
+                Paid <strong>{{ money_flow.incoming }}€</strong> and owes <strong>{{ money_flow.outgoing }}€</strong>
+                for this event
             </li>
         {% endfor %}
     </ul>
