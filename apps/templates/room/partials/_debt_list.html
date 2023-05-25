@@ -44,7 +44,7 @@
                                     {% if debitor == request.user.name %}
                                         <i class="bi bi-piggy-bank"
                                            data-bs-toggle="modal"
-                                           data-bs-target="#settleDebtModal{{ amount_owed_debt_ids_and_settled.debt_ids }}"></i>
+                                           data-bs-target="#settleDebtModal{{ forloop.counter }}"></i>
                                     {% else %}
                                         <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
                                            data-bs-toggle="tooltip"
@@ -55,7 +55,7 @@
                             </div>
                         </div>
 
-                        {% include "room/partials/_settle_payment_modal.html" with creditor=creditor debt_ids=amount_owed_debt_ids_and_settled.debt_ids %}
+                        {% include "room/partials/_settle_payment_modal.html" with creditor=creditor debt_ids=amount_owed_debt_ids_and_settled.debt_ids forloop_counter=forloop.counter%}
                     </div>
                 </li>
             {% endfor %}
