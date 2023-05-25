@@ -10,7 +10,7 @@
 
         <div class="mb-2">
             <small style="cursor:pointer;"
-                    data-bs-toggle="tooltip"
+                   data-bs-toggle="tooltip"
                    data-bs-placement="top"
                    data-bs-title="Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account try logging in.">
                 Not seeing your name?
@@ -25,7 +25,9 @@
         >
             {% for room_user in room_users %}
                 {% if room_user.is_guest %}
-                    <option value="{{ room_user.id }}">{{ room_user.name }}</option>
+                    <option value="{{ room_user.id }}">
+                        {{ room_user.name }}
+                    </option>
                 {% endif %}
             {% endfor %}
         </select>
