@@ -10,15 +10,11 @@
     </div>
 
     <ul class="list-group">
-        {% for debitor, debt_entry in debts.items %}
-            {% for creditor, amount_owed_debt_ids_and_settled in debt_entry.items %}
+        {% for debitor, debt_dict in debts.items %}
+            {% for creditor, amount_owed_debt_ids_and_settled in debt_dict.open_debts.items %}
                 <li class="list-group-item">
                     <div class="row align-items-center">
                         <div class="col-11">
-                            {% if amount_owed_debt_ids_and_settled.settled %}
-                                <span style="text-decoration: line-through;">
-                            {% endif %}
-
                             {% if debitor == request.user.name %}
                                 <span class="me-involved">You</span> owe
                             {% else %}
@@ -30,32 +26,52 @@
                             {% else %}
                                 {{ creditor }}
                             {% endif %}
-
-                            {% if amount_owed_debt_ids_and_settled.settled %}
-                                </span>
-                            {% endif %}
                         </div>
 
                         <div class="col-1">
                             <div class="float-end">
-                                {% if amount_owed_debt_ids_and_settled.settled %}
-                                    <i class="bi bi-piggy-bank-fill debt-list-debt-settled"></i>
+                                {% if debitor == request.user.name %}
+                                    <i class="bi bi-piggy-bank"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#settleDebtModal{{ amount_owed_debt_ids_and_settled.debt_ids_as_string }}"></i>
                                 {% else %}
-                                    {% if debitor == request.user.name %}
-                                        <i class="bi bi-piggy-bank"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#settleDebtModal{{ amount_owed_debt_ids_and_settled.debt_ids_as_string }}"></i>
-                                    {% else %}
-                                        <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
-                                           data-bs-toggle="tooltip"
-                                           data-bs-placement="top"
-                                           data-bs-title="This transaction is not yours to settle!"></i>
-                                    {% endif %}
+                                    <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-placement="top"
+                                       data-bs-title="This transaction is not yours to settle!"></i>
                                 {% endif %}
                             </div>
                         </div>
 
                         {% include "room/partials/_settle_payment_modal.html" with creditor=creditor debt_ids=amount_owed_debt_ids_and_settled.debt_ids debt_ids_as_string=amount_owed_debt_ids_and_settled.debt_ids_as_string %}
+                    </div>
+                </li>
+            {% endfor %}
+
+            {% for creditor, amount_owed_debt_ids_and_settled in debt_dict.settled_debts.items %}
+                <li class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-11">
+                            <span style="text-decoration: line-through;">
+                            {% if debitor == request.user.name %}
+                                <span class="me-involved">You</span> owe
+                            {% else %}
+                                <strong>{{ debitor }}</strong> owes
+                            {% endif %}
+                                {{ amount_owed_debt_ids_and_settled.amount_owed }}€ to
+                                {% if creditor == request.user.name %}
+                                    <span class="me-involved">you</span>
+                                {% else %}
+                                    {{ creditor }}
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <div class="col-1">
+                            <div class="float-end">
+                                <i class="bi bi-piggy-bank-fill debt-list-debt-settled"></i>
+                            </div>
+                        </div>
                     </div>
                 </li>
             {% endfor %}
