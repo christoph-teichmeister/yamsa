@@ -12,9 +12,7 @@ class RoomCreateView(generic.CreateView):
     template_name = "room/create.html"
 
     def get_success_url(self):
-        return reverse(
-            viewname="room-detail", kwargs={"slug": self.object.slug}
-        )
+        return reverse(viewname="room-detail", kwargs={"slug": self.object.slug})
 
     def form_valid(self, form):
         created_room: Room = form.instance
