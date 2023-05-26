@@ -1,3 +1,5 @@
+from time import time
+
 from ai_django_core.models import CommonInfo
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -20,8 +22,9 @@ class User(CommonInfo, AbstractUser):
 
     def clean(self):
         if self.is_guest and not self.is_superuser:
-            self.username = f"{self.name}-{self.id}"
+            timestamp = time()
+            self.username = f"{self.name}-{timestamp}"
             self.email = f"{self.username}@local.local"
-            self.password = f"{self.name}-{self.id}"
+            self.password = f"{self.name}-{timestamp}"
 
         super().clean()

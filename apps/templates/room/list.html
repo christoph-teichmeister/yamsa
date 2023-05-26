@@ -21,8 +21,27 @@
                         </div>
                     </div>
                 </div>
-
             {% endfor %}
+
+            <div class="col-12 col-lg-6" style="cursor: pointer">
+                <div class="p-1">
+                    <div class="card"
+                         style="background-color: rgb(24,22,24)"
+                         hx-trigger="click"
+                         hx-get="{% url 'room-create' %}"
+                         hx-target="#body"
+                         hx-swap="morph:innerHTML"
+                         hx-push-url="true">
+                        <div class="card-body">
+                            <p class="card-text">
+                                <i class="bi bi-plus-circle"></i>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 
