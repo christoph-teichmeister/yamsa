@@ -1,6 +1,8 @@
 {% extends "core/base.html" %}
 {% load static %}
 
+{% block title %}yamsa | {{ room.name }}{% endblock %}
+
 {% block content %}
     {% if request.user.is_authenticated %}
         <small>Hey {{ request.user.username }}!</small>

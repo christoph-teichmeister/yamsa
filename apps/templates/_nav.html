@@ -37,12 +37,12 @@
 
         <li class="nav-item" role="presentation">
             <a class="nav-link"
-               id="profile-tab"
+               id="detail-tab"
                role="tab"
-               aria-controls="profile"
+               aria-controls="detail"
                aria-selected="false"
                hx-trigger="click"
-               hx-get="{% if request.user.is_authenticated %}{% url 'account-user-profile' pk=request.user.id %}{% else %}{% url 'account-user-login' %}{% endif %}"
+               hx-get="{% if request.user.is_authenticated %}{% url 'account-user-detail' pk=request.user.id %}{% else %}{% url 'account-user-login' %}{% endif %}"
                hx-target="#body"
                hx-swap="morph:innerHTML"
                hx-push-url="true"

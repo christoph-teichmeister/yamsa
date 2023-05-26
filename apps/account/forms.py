@@ -13,3 +13,9 @@ class RegisterForm(ModelForm):
     class Meta:
         model = User
         fields = ("username", "email", "password")
+
+
+class EditUserForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ("email", "paypal_me_link")

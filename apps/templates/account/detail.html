@@ -2,16 +2,17 @@
 {% load static %}
 
 {% block content %}
-    <div class="container text-center">
+    <div class="container">
         {% if request.user.is_anonymous or user.is_guest %}
+            <div class="text-center">
+                <p>You are a guest, thank you for using yamsa {{ user.name }}!</p>
 
-            <p>You are a guest, thank you for using yamsa {{ user.name }}!</p>
+                <p>Maybe consider <a href="{% url 'account-user-register' %}">registering</a>? :)</p>
 
-            <p>Maybe consider <a href="{% url 'account-user-register' %}">registering</a>? :)</p>
+                <p>Already have an account? <a href="{% url 'account-user-login' %}">Login here!</a></p>
 
-            <p>Already have an account? <a href="{% url 'account-user-login' %}">Login here!</a></p>
-
-            <p>Not you? <a href="{% url 'account-user-logout' %}">Click here!</a></p>
+                <p>Not you? <a href="{% url 'account-user-logout' %}">Click here!</a></p>
+            </div>
 
         {% else %}
 
@@ -25,8 +26,42 @@
                 </div>
             {% endif %}
 
-            <p>{{ user.username }}</p>
-            <p>{{ user.email }}</p>
+            <div class="text-left px-3">
+                <p>{{ user.username }}</p>
+                <p>{{ user.email }}</p>
+            </div>
+
+            <br><br>
+
+            <div class="room-detail-tab-header">
+                <h5>Your data:</h5>
+            </div>
+
+            <div class="text-left px-3">
+                <form action="/account/update/{{ user.id }}/" method="post" class="flex-grow-1">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">{{ form.fields.email.label }}</label>
+                        <input type="email" class="form-control" id="email" name="email" autocomplete="email"
+                               required value="{{ user.email }}">
+                        {% for error_message in form.errors.email.data %}
+                            <small class="error" id="emailError">{{ error_message.message }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="paypal_me_link" class="form-label">{{ form.fields.paypal_me_link.label }}</label>
+                        <input type="text" class="form-control" id="paypal_me_link" name="paypal_me_link"
+                               value="{% if user.paypal_me_link %}{{ user.paypal_me_link }}{% endif %}" placeholder="-">
+                        {% for error_message in form.errors.paypal_me_link.data %}
+                            <small class="error" id="paypal_me_linkError">{{ error_message.message }}</small>
+                        {% endfor %}
+                    </div>
+                    <div class="float-end">
+                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                    </div>
+                </form>
+            </div>
 
             <div class="fixed-bottom mb-5">
                 <div class="row float-end mb-4 me-2">

@@ -3,8 +3,9 @@ from django.urls import path
 from apps.account import views
 
 urlpatterns = [
+    path("detail/<int:pk>", views.UserDetailView.as_view(), name="account-user-detail"),
     path(
-        "profile/<int:pk>", views.UserProfileView.as_view(), name="account-user-profile"
+        "update/<int:pk>/", views.UserUpdateView.as_view(), name="account-user-update"
     ),
     path(
         "guest_user/authenticate/",

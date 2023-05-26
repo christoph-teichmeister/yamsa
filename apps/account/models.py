@@ -9,6 +9,8 @@ class User(CommonInfo, AbstractUser):
 
     is_guest = models.BooleanField(default=True)
 
+    paypal_me_link = models.URLField(max_length=200, null=True, blank=True)
+
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"

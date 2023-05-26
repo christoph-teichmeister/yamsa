@@ -1,11 +1,14 @@
+{% load static %}
+
 <!-- Modal -->
-<div class="modal fade" id="settleDebtModal{{ debt_ids_as_string }}" tabindex="-1" aria-labelledby="addTransactionModalLabel"
+<div class="modal fade" id="settleDebtModal{{ debt_ids_as_string }}" tabindex="-1"
+     aria-labelledby="addTransactionModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="addTransactionModalLabel">Settle your debt</h1>
+                <h1 class="modal-title fs-5" id="addTransactionModalLabel">Your debt to {{ creditor }}</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -14,7 +17,20 @@
 
                 <div class="modal-body">
 
-                    Have you paid off all your debts to {{ creditor }}?
+                    {% if creditor_paypal_me_link %}
+                        <div class="mb-5">
+                            {{ creditor }} has provided a link to their PayPal! Click the button to pay them!
+                            <div class="float-end pt-3">
+                                <a href="{{ creditor_paypal_me_link }}/{{ amount_owed }}" target="_blank">
+                                    <img width="80" alt="PayPal Checkout"
+                                         src={% static "checkout-logo-69x26-alt-2x.png" %}>
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        Sadly, {{ creditor }} has not provided a link to their PayPal. <br><br>
+                        Make sure, you've settled your debt!
+                    {% endif %}
 
                     <div class="form-group" hidden>
                         <label for="DebtSelect">Debt IDs</label>
