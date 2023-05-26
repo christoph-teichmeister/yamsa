@@ -9,26 +9,24 @@
 
     {% for news_object in news %}
         <ul class="list-group list-group-flush mb-3">
-            {% for news_object in news %}
-                <li class="list-group-item pb-4 pt-4">
-                    <div class="row">
-                        <div class="col-1">
-                            >
-                        </div>
-                        <div class="col-11">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">
-                                    {{ news_object.title }}
-                                </h5>
-                                <small style="font-style: italic">{{ news_object.created_at|date:'G:i // d.m.Y' }}</small>
-                            </div>
-                            <p class="my-2">
-                                {{ news_object.message }}
-                            </p>
-                        </div>
+            <li class="list-group-item pb-4 pt-4">
+                <div class="row">
+                    <div class="col-1">
+                        >
                     </div>
-                </li>
-            {% endfor %}
+                    <div class="col-11">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">
+                                {{ news_object.title }}
+                            </h5>
+                            <small style="font-style: italic">{{ news_object.created_at|date:'G:i // d.m.Y' }}</small>
+                        </div>
+                        <p class="my-2">
+                            {{ news_object.message }}
+                        </p>
+                    </div>
+                </div>
+            </li>
         </ul>
     {% endfor %}
 {% endblock %}
