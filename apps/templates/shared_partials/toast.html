@@ -1,0 +1,26 @@
+{# To trigger the below toast, copy the following button to your page and replace toast_id accordingly #}
+{# <button class="btn btn-primary" id="{{ toast_id }}Btn">Trigger Toast</button> #}
+
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="{{ toast_id }}" class="toast text-bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ toast_body }}
+        </div>
+    </div>
+</div>
+
+<script type="module">
+  const toastTrigger = document.getElementById("{{ toast_id }}Btn")
+  const toastLiveExample = document.getElementById("{{ toast_id }}")
+
+  if (toastTrigger) {
+    const toastBootstrap = window.bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+    toastTrigger.addEventListener('click', () => {
+      toastBootstrap.show()
+    })
+  }
+</script>
