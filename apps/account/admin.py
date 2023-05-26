@@ -17,7 +17,7 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
         (
             "Personal Information",
             {
-                "fields": ("name",),
+                "fields": ("name", "paypal_me_link"),
             },
         ),
         (
