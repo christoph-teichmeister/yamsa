@@ -1,9 +1,12 @@
+{% include "room/partials/_add_guest_modal.html" %}
+
 {% if room_users %}
+
     <div class="room-detail-tab-header">
         <h5>People</h5>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-1 mb-3">
         {% for user in room_users %}
             {% include "room/partials/_user_card.html" with user=user %}
         {% endfor %}

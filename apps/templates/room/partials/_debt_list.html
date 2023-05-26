@@ -1,15 +1,19 @@
 {% load static %}
 
-{% if debts %}
-    <div class="room-detail-tab-header">
-        <h5>Debts</h5>
+<div class="room-detail-tab-header">
+    <h5>Debts</h5>
+    {% if debts %}
         <small>
             If you have paid off your debt to someone, click on the white piggy-bank-icon (<i
                 class="bi bi-piggy-bank"></i>) next to the debt.
         </small>
-    </div>
+    {% else %}
+        - No debts yet -
+    {% endif %}
+</div>
 
-    <ul class="list-group">
+{% if debts %}
+    <ul class="list-group mb-5">
         {# Open debts #}
         {% for debitor, debt_dict in debts.items %}
             {% for creditor, amount_owed_debt_ids_and_settled in debt_dict.open_debts.items %}
@@ -44,7 +48,7 @@
                             </div>
                         </div>
 
-                        {% include "room/partials/_settle_payment_modal.html" with creditor=creditor debt_ids=amount_owed_debt_ids_and_settled.debt_ids debt_ids_as_string=amount_owed_debt_ids_and_settled.debt_ids_as_string amount_owed=amount_owed_debt_ids_and_settled.amount_owed creditor_paypal_me_link=amount_owed_debt_ids_and_settled.paypal_me_link%}
+                        {% include "room/partials/_settle_payment_modal.html" with creditor=creditor debt_ids=amount_owed_debt_ids_and_settled.debt_ids debt_ids_as_string=amount_owed_debt_ids_and_settled.debt_ids_as_string amount_owed=amount_owed_debt_ids_and_settled.amount_owed creditor_paypal_me_link=amount_owed_debt_ids_and_settled.paypal_me_link %}
                     </div>
                 </li>
             {% endfor %}
@@ -80,8 +84,7 @@
                 </li>
             {% endfor %}
         {% endfor %}
-
     </ul>
-    <br/>
 
+    <br/>
 {% endif %}

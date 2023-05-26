@@ -5,7 +5,7 @@
 </div>
 
 {% if room_transactions %}
-    <ul class="list-group list-group-flush">
+    <ul class="list-group list-group-flush mb-3">
         {% for transaction in room_transactions %}
             {% if transaction.paid_for_name != transaction.paid_by_name %}
                 <li class="list-group-item pb-4 pt-4">

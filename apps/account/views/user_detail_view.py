@@ -16,5 +16,3 @@ class UserDetailView(generic.DetailView):
         context_data["DJANGO_ADMIN_SUB_URL"] = settings.DJANGO_ADMIN_SUB_URL
         context_data["form"] = EditUserForm()
         return context_data
-
-
