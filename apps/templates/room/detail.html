@@ -5,11 +5,13 @@
 
 {% block content %}
     {% if request.user.is_authenticated %}
-        <small>Hey {{ request.user.name }}!</small>
+        <small>Hey
+            <span class="text-primary-emphasis">{{ request.user.name }}</span>
+            !</small>
     {% endif %}
 
     <div class="row align-items-center mt-3">
-        <div class="col-9 col-md-5">
+        <div class="col-9 col-md-5 text-break">
             <h1>{{ room.name }}</h1>
         </div>
         <div class="col-3 col-md-7">
