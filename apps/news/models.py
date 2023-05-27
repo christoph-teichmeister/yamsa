@@ -10,7 +10,10 @@ class News(CommonInfo):
     class Meta:
         verbose_name = "News"
         verbose_name_plural = "News"
-        ordering = ("-id",)
+        ordering = (
+            "highlighted",
+            "-id",
+        )
 
     def __str__(self):
         return f"{self.title}: {self.message[:20]}..."
@@ -29,3 +32,17 @@ class News(CommonInfo):
             existing_highlighted_news_qs.update(highlighted=False)
 
         super().save(*args, **kwargs)
+
+
+class NewsComment(CommonInfo):
+    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    comment = models.TextField(max_length=10000)
+
+    class Meta:
+        verbose_name = "Comment"
+        verbose_name_plural = "Comment"
+        default_related_name = "comments"
+        ordering = ("-id",)
+
+    def __str__(self):
+        return f'"{self.comment[:20]}" on {self.news.title}'

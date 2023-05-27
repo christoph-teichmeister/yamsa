@@ -7,5 +7,9 @@ urlpatterns = [
     path("create/", views.RoomCreateView.as_view(), name="room-create"),
     path("detail/<str:slug>", views.RoomDetailView.as_view(), name="room-detail"),
     path("detail/<str:slug>", views.RoomDetailView.as_view(), name="room-detail"),
-    path("htmx/checked-clipboard", views.CheckedClipboardHTMXView.as_view(), name="htmx-checked-clipboard"),
+    path(
+        "htmx/checked-clipboard",
+        views.CheckedClipboardHTMXView.as_view(),
+        name="htmx-checked-clipboard",
+    ),
 ]

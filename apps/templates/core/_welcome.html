@@ -7,48 +7,17 @@
 
     {% if highlighted_news %}
         <ul class="list-group list-group-flush">
-            <li class="list-group-item pt-4">
-                <div class="row">
-                    <div class="col-1">
-                        <i class="bi bi-star-fill"></i>
-                    </div>
-                    <div class="col-11">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1 highlighted-news-title">
-                                {{ highlighted_news.title }}
-                            </h5>
-                            <small style="font-style: italic">{{ highlighted_news.created_at|date:'G:i // d.m.Y' }}</small>
-                        </div>
-                        <p class="my-2">
-                            {{ highlighted_news.message }}
-                        </p>
-                    </div>
-                </div>
-            </li>
+            {% include "shared_partials/news_card.html" with news=highlighted_news %}
         </ul>
-        <hr>
+        <hr style="margin-bottom: 0">
     {% endif %}
 
-    {% for news_object in news %}
+    {% if news %}
         <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-                <div class="row">
-                    <div class="col-1">
-                        <i class="bi bi-caret-right"></i>
-                    </div>
-                    <div class="col-11">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">
-                                {{ news_object.title }}
-                            </h5>
-                            <small style="font-style: italic">{{ news_object.created_at|date:'G:i // d.m.Y' }}</small>
-                        </div>
-                        <p class="my-2">
-                            {{ news_object.message }}
-                        </p>
-                    </div>
-                </div>
-            </li>
+            {% for news_object in news %}
+                {% include "shared_partials/news_card.html" with news=news_object %}
+            {% endfor %}
         </ul>
-    {% endfor %}
+    {% endif %}
+
 {% endblock %}

@@ -17,6 +17,9 @@ class WelcomePartialView(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data["news"] = News.objects.exclude(highlighted=True)
-        context_data["highlighted_news"] = News.objects.filter(highlighted=True).first()
+
+        news_qs = News.objects.all().prefetch_related("comments")
+
+        context_data["news"] = news_qs.exclude(highlighted=True)
+        context_data["highlighted_news"] = news_qs.filter(highlighted=True).first()
         return context_data

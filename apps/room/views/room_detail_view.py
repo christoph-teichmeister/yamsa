@@ -26,6 +26,7 @@ class RoomDetailView(generic.DetailView):
         room = context_data.get("room")
         room_users = (
             room.userconnectiontoroom_set.all()
+            .select_related("user")
             .values("user_has_seen_this_room")
             .annotate(
                 name=F("user__name"),
