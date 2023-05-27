@@ -18,13 +18,9 @@
                     data-bs-toggle="tooltip"
                     data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
                     hx-get="{% url 'htmx-checked-clipboard' %}"
-                    {# hx-target="#body"#}
                     hx-swap="morph:innerHTML"
-                    {# hx-push-url="true"#}
             >
-                    {% include "shared_partials/clipboard_icon_unchecked.html" %}
-                {# <i class="bi bi-clipboard2-check-fill"></i>#}
-{#                <i class="bi bi-clipboard"></i>#}
+                {% include "shared_partials/clipboard_icon_unchecked.html" %}
             </button>
         </div>
     </div>
