@@ -7,6 +7,10 @@
     color: red;
 }
 
+.highlighted-news-title {
+    color: var(--bs-primary-text)
+}
+
 .me-involved {
     font-weight: bold;
     color: var(--bs-primary-text)
