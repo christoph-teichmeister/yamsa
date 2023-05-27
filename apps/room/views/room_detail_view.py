@@ -16,7 +16,16 @@ class RoomDetailView(generic.DetailView):
         context_data = super().get_context_data(**kwargs)
 
         room = context_data.get("room")
-        room_users = room.users.all().values("name", "id", "is_guest")
+        room_users = (
+            room.userconnectiontoroom_set.all()
+            .values("user_has_seen_this_room")
+            .annotate(
+                name=F("user__name"),
+                id=F("user__id"),
+                is_guest=F("user__is_guest"),
+            )
+            .order_by("user_has_seen_this_room", "name")
+        )
 
         room_transactions = (
             room.transactions.all()
@@ -38,9 +47,13 @@ class RoomDetailView(generic.DetailView):
 
         debts = {}
         for user in room.users.all().order_by("name"):
-            debts[user.name] = Debt.objects.get_debts_for_user_for_room_as_dict(
+            debts_for_user = Debt.objects.get_debts_for_user_for_room_as_dict(
                 user.id, room.id
             )
+            if debts_for_user == {}:
+                continue
+
+            debts[user.name] = debts_for_user
 
         return {
             **context_data,

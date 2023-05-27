@@ -57,6 +57,9 @@ class DebtManager(Manager):
 
         debts_for_user_for_room = self.get_debts_for_user_for_room(user_id, room_id)
 
+        if not debts_for_user_for_room.exists():
+            return {}
+
         debt_dict = {"open_debts": {}, "settled_debts": {}}
         for debt in debts_for_user_for_room:
             debt_id = debt.get("id")

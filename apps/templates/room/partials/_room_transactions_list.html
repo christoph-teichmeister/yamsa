@@ -1,7 +1,15 @@
 {% include "room/partials/_add_transaction_modal.html" %}
 
-<div class="room-detail-tab-header">
-    <h5>Payments made</h5>
+<div class="row align-items-center mt-3">
+    <div class="col-7">
+        <h5>Payments made</h5>
+    </div>
+    <div class="col-5 d-flex justify-content-end">
+        <button type="button" class="btn btn-primary btn-sm me-2 mb-2" data-bs-toggle="modal"
+                data-bs-target="#addTransactionModal">
+            Add payment
+        </button>
+    </div>
 </div>
 
 {% if room_transactions %}

@@ -5,7 +5,7 @@
 
 {% block content %}
     {% if request.user.is_authenticated %}
-        <small>Hey {{ request.user.username }}!</small>
+        <small>Hey {{ request.user.name }}!</small>
     {% endif %}
 
     <div class="row align-items-center mt-3">

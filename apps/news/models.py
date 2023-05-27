@@ -16,15 +16,16 @@ class News(CommonInfo):
         return f"{self.title}: {self.message[:20]}..."
 
     def save(self, *args, **kwargs):
-
         if self.highlighted:
             # If the current news has been marked as highlighted, find any other highlighted news and disable its
             # highlight
-            existing_highlighted_news_qs = self._meta.model.objects.filter(highlighted=True)
+            existing_highlighted_news_qs = self._meta.model.objects.filter(
+                highlighted=True
+            )
             if self.id:
-                existing_highlighted_news_qs = existing_highlighted_news_qs.exclude(id=self.id)
+                existing_highlighted_news_qs = existing_highlighted_news_qs.exclude(
+                    id=self.id
+                )
             existing_highlighted_news_qs.update(highlighted=False)
 
         super().save(*args, **kwargs)
-
-

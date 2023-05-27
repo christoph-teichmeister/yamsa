@@ -5,13 +5,18 @@
     <div class="container">
         {% if request.user.is_anonymous or user.is_guest %}
             <div class="text-center">
-                <p>You are a guest, thank you for using yamsa {{ user.name }}!</p>
+                <p>- You are a guest -</p>
 
-                <p>Maybe consider <a href="{% url 'account-user-register' %}">registering</a>? :)</p>
+                <p>Thank you for using yamsa, {{ user.name }}!</p>
 
-                <p>Already have an account? <a href="{% url 'account-user-login' %}">Login here!</a></p>
+                <small>Not you? <a href="{% url 'account-user-logout' %}">Click here!</a></small>
 
-                <p>Not you? <a href="{% url 'account-user-login' %}">Click here!</a></p>
+                <div class="fixed-bottom mb-5">
+                    <p>Maybe consider <a href="{% url 'account-user-register' %}">registering</a>? :)</p>
+
+                    <p>Already have an account? <a href="{% url 'account-user-login' %}">Login here!</a></p>
+                </div>
+
             </div>
 
         {% else %}

@@ -7,7 +7,5 @@ from apps.news.models import News
 
 @register(News)
 class NewsAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
-    fieldsets = (
-        (None, {"fields": ("highlighted", "title", "message")}),
-    )
+    fieldsets = ((None, {"fields": ("highlighted", "title", "message")}),)
     list_display = ("__str__", "title", "message", "highlighted")
