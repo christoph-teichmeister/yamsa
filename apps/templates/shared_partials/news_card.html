@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-1">
             {% if news.highlighted %}
-                <i class="bi bi-star-fill"></i>
+                ✨
             {% else %}
                 {% if opened %}
                     <i class="bi bi-caret-down"
@@ -12,7 +12,7 @@
                        hx-swap="morph:outerHTML"
                     ></i>
                 {% else %}
-                    <i class="bi bi-caret-right {% if news.comments.count %}text-primary{% endif %}"
+                    <i class="bi bi-caret-right {% if news.comments.count %}text-primary-emphasis{% endif %}"
                        hx-trigger="click"
                        hx-get="{% url 'htmx-opened-news' pk=news.id %}"
                        hx-target="#news-{{ news.id }}"
@@ -24,7 +24,7 @@
         </div>
         <div class="col-11">
             <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">
+                <h5 class="mb-1 {% if news.highlighted %}text-primary-emphasis{% endif %}">
                     {{ news.title }}
                 </h5>
                 <small style="font-style: italic">{{ news.created_at|date:'G:i // d.m.Y' }}</small>
