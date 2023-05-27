@@ -23,6 +23,7 @@ urlpatterns = [
     path(f"{DJANGO_ADMIN_SUB_URL}/", admin.site.urls),
     path("account/", include("apps.account.urls")),
     path("debt/", include("apps.debt.urls")),
+    path("news/", include("apps.news.urls")),
     path("room/", include("apps.room.urls")),
     path("transaction/", include("apps.transaction.urls")),
 ]

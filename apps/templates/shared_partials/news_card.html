@@ -1,10 +1,25 @@
-<li class="list-group-item {% if news.highlighted %}pt-4{% else %}pb-2 pt-4{% endif %}">
+<li id="news-{{ news.id }}" class="list-group-item {% if news.highlighted %}pt-4{% else %}pb-2 pt-4{% endif %}">
     <div class="row">
         <div class="col-1">
             {% if news.highlighted %}
                 <i class="bi bi-star-fill"></i>
             {% else %}
-                <i class="bi bi-caret-right"></i>
+                {% if opened %}
+                    <i class="bi bi-caret-down"
+                       hx-trigger="click"
+                       hx-get="{% url 'htmx-closed-news' pk=news.id %}"
+                       hx-target="#news-{{ news.id }}"
+                       hx-swap="morph:outerHTML"
+                    ></i>
+                {% else %}
+                    <i class="bi bi-caret-right {% if news.comments.count %}text-primary{% endif %}"
+                       hx-trigger="click"
+                       hx-get="{% url 'htmx-opened-news' pk=news.id %}"
+                       hx-target="#news-{{ news.id }}"
+                       hx-swap="morph:outerHTML"
+                    >
+                    </i>
+                {% endif %}
             {% endif %}
         </div>
         <div class="col-11">
@@ -14,9 +29,74 @@
                 </h5>
                 <small style="font-style: italic">{{ news.created_at|date:'G:i // d.m.Y' }}</small>
             </div>
+
             <p class="my-2">
                 {{ news.message }}
             </p>
+
+            {% if opened %}
+                <ul class="list-group">
+                    {% for comment_object in news.comments.all %}
+                        <li class="list-group-item pb-2">
+                            <small>
+                                {{ comment_object.comment }}
+                                <div class="fw-lighter">
+                                    <div class="row justify-content-between">
+                                        <div class="col">
+                                            {{ comment_object.created_by.name }}
+                                        </div>
+                                        <div class="col d-flex justify-content-end">
+                                            {{ comment_object.created_at|date:'G:i - d.m.Y' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </small>
+                        </li>
+                    {% endfor %}
+                    <li class="list-group-item">
+                        <form>
+                            {% csrf_token %}
+
+                            <div class="modal-body">
+
+                                <div class="form-group">
+                                    <label class="visually-hidden" for="comment"><small>Add a comment</small></label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text"
+                                               class="form-control"
+                                               id="comment"
+                                               name="comment"
+                                               placeholder="Add a comment"
+                                               required>
+                                        <button class="btn btn-outline-secondary"
+                                                id="button-addon2"
+                                                type="submit"
+                                                hx-post="{% url 'htmx-newscomment-create' %}"
+                                                hx-target="#news-{{ news.id }}"
+                                                hx-swap="morph:outerHTML"
+                                        >
+                                            <i class="bi bi-arrow-up-short"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" hidden>
+                                    <label for="news" class="form-label">News ID</label>
+                                    <input id="news"
+                                           name="news"
+                                           type="number"
+                                           class="form-control"
+                                           required
+                                           value="{{ news.id }}"
+                                    />
+                                </div>
+
+                            </div>
+                        </form>
+                    </li>
+                </ul>
+                <br><br>
+            {% endif %}
         </div>
     </div>
 </li>

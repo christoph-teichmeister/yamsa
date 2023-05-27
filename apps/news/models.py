@@ -42,7 +42,7 @@ class NewsComment(CommonInfo):
         verbose_name = "Comment"
         verbose_name_plural = "Comment"
         default_related_name = "comments"
-        ordering = ("-id",)
+        ordering = ("id",)
 
     def __str__(self):
         return f'"{self.comment[:20]}" on {self.news.title}'

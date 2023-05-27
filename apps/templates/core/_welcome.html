@@ -9,15 +9,16 @@
         <ul class="list-group list-group-flush">
             {% include "shared_partials/news_card.html" with news=highlighted_news %}
         </ul>
-        <hr style="margin-bottom: 0">
     {% endif %}
 
     {% if news %}
+        <hr style="margin-bottom: 0">
         <ul class="list-group list-group-flush">
             {% for news_object in news %}
                 {% include "shared_partials/news_card.html" with news=news_object %}
             {% endfor %}
         </ul>
+        <br>
     {% endif %}
 
 {% endblock %}
