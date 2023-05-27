@@ -21,7 +21,7 @@
             {% for creditor, amount_owed_debt_ids_and_settled in debt_dict.open_debts.items %}
                 <li class="list-group-item">
                     <div class="row align-items-center">
-                        <div class="col-11">
+                        <div class="col-9">
                             {% if debitor == request.user.name %}
                                 <span class="me-involved">You</span> owe
                             {% else %}
@@ -35,9 +35,15 @@
                             {% endif %}
                         </div>
 
-                        <div class="col-1">
+                        <div class="col-3">
                             <div class="float-end">
                                 {% if debitor == request.user.name %}
+                                    {% if amount_owed_debt_ids_and_settled.paypal_me_link %}
+                                        <a class="text-reset"
+                                           href="{{ amount_owed_debt_ids_and_settled.paypal_me_link }}/{{ amount_owed_debt_ids_and_settled.amount_owed }}"
+                                           target="_blank"><i class="bi bi-paypal"></i></a>
+                                        &nbsp&nbsp&nbsp
+                                    {% endif %}
                                     <i class="bi bi-piggy-bank"
                                        data-bs-toggle="modal"
                                        data-bs-target="#settleDebtModal{{ amount_owed_debt_ids_and_settled.debt_ids_as_string }}"></i>

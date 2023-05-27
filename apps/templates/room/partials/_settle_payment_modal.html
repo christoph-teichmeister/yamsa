@@ -17,20 +17,7 @@
 
                 <div class="modal-body">
 
-                    {% if creditor_paypal_me_link %}
-                        <div class="mb-5">
-                            {{ creditor }} has provided a link to their PayPal! Click the button to pay them!
-                            <div class="float-end pt-3">
-                                <a href="{{ creditor_paypal_me_link }}/{{ amount_owed }}" target="_blank">
-                                    <img width="80" alt="PayPal Checkout"
-                                         src={% static "checkout-logo-69x26-alt-2x.png" %}>
-                                </a>
-                            </div>
-                        </div>
-                    {% else %}
-                        Sadly, {{ creditor }} has not provided a link to their PayPal. <br><br>
-                        Make sure, you've settled your debt!
-                    {% endif %}
+                    Are you sure that you have settled your debt to {{ creditor }}?
 
                     <div class="form-group" hidden>
                         <label for="DebtSelect">Debt IDs</label>
@@ -72,8 +59,14 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Settle debt</button>
+                    {% if creditor_paypal_me_link %}
+                        <a href="{{ creditor_paypal_me_link }}/{{ amount_owed }}" target="_blank">
+                            <button type="button" class="btn btn-secondary">No, take me to their paypal</button>
+                        </a>
+                    {% else %}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary">Yes</button>
                 </div>
             </form>
 
