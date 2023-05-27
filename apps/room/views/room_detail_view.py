@@ -13,6 +13,14 @@ class RoomDetailView(generic.DetailView):
 
     @measure_time_and_queries("RoomDetailView.get_context_data()")
     def get_context_data(self, **kwargs) -> dict:
+        if not self.request.user.is_anonymous:
+            connection = self.object.userconnectiontoroom_set.filter(
+                user_id=self.request.user.id, user_has_seen_this_room=False
+            ).first()
+            if connection is not None:
+                connection.user_has_seen_this_room = True
+                connection.save()
+
         context_data = super().get_context_data(**kwargs)
 
         room = context_data.get("room")

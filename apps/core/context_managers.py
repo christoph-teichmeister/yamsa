@@ -22,7 +22,8 @@ class measure_time_and_queries(ContextDecorator):
         end = time.time()
 
         print(
-            f"{self.function_name} took {end - self.start} seconds and made {queries_after_qs - self.queries_before_qs} queries\n"
+            f"{self.function_name} took {end - self.start} seconds "
+            f"and made {queries_after_qs - self.queries_before_qs} queries\n"
         )
 
         return False
