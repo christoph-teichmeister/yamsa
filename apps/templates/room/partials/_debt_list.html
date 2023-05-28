@@ -27,7 +27,7 @@
                             {% else %}
                                 <strong>{{ debitor }}</strong> owes
                             {% endif %}
-                            {{ amount_owed_debt_ids_and_settled.amount_owed }}€ to
+                            {{ amount_owed_debt_ids_and_settled.amount_owed }}{{ currency_sign }} to
                             {% if creditor == request.user.name %}
                                 <span class="me-involved">you</span>
                             {% else %}
@@ -74,7 +74,7 @@
                             {% else %}
                                 <strong>{{ debitor }}</strong> owes
                             {% endif %}
-                                {{ amount_owed_debt_ids_and_settled.amount_owed }}€ to
+                                {{ amount_owed_debt_ids_and_settled.amount_owed }}{{ currency_sign }} to
                                 {% if creditor == request.user.name %}
                                     <span class="me-involved">you</span>
                                 {% else %}

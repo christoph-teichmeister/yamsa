@@ -17,4 +17,5 @@ class TransactionCreateView(generic.CreateView):
 
     def form_invalid(self, form):
         ret = super().form_invalid(form)
+        print(form.errors)
         return ret

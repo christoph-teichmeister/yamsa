@@ -17,7 +17,7 @@ class TransactionHelpersMixin:
         room: Room,
         value: Decimal,
     ):
-        description = f"{paid_by.name} {Decimal(value)}€ for {', '.join([str(e for e in paid_for)])}"
+        description = f"{paid_by.name} {Decimal(value)}{room.currency_sign} for {', '.join([str(e for e in paid_for)])}"
         response = self.client.post(
             reverse("transaction-add"),
             data={

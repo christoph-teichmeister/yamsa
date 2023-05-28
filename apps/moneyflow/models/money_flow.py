@@ -9,11 +9,13 @@ class MoneyFlow(CommonInfo):
     user = models.ForeignKey("account.User", on_delete=models.CASCADE)
     room = models.ForeignKey("room.Room", on_delete=models.CASCADE)
 
+    # Max digits for outgoing and incoming must be significantly higher than max_digits for transactions as
+    # multiple "high value" transactions would otherwise lead to an error here
     outgoing = models.DecimalField(
-        "Outgoing Money", max_digits=10, decimal_places=2, default=Decimal(0)
+        "Outgoing Money", max_digits=100, decimal_places=2, default=Decimal(0)
     )
     incoming = models.DecimalField(
-        "Incoming Money", max_digits=10, decimal_places=2, default=Decimal(0)
+        "Incoming Money", max_digits=100, decimal_places=2, default=Decimal(0)
     )
 
     objects = MoneyFlowManager()
@@ -41,4 +43,7 @@ class MoneyFlow(CommonInfo):
             self.outgoing = Decimal(0)
 
     def __str__(self):
-        return f"{self.user} - Out: {self.outgoing}€ | In: {self.incoming}€"
+        return (
+            f"{self.user} - Out: {self.outgoing}{self.room.currency_sign} | In: {self.incoming}"
+            f"{self.room.currency_sign}"
+        )

@@ -9,11 +9,19 @@ class Room(CommonInfo):
         OPEN = 1, "Open"
         CLOSED = 2, "Closed"
 
+    class PreferredCurrencyChoices(models.IntegerChoices):
+        EURO = 1, "Euro (€)"
+        POUND_STERLING = 2, "Pound Sterling (£)"
+
     slug = models.UUIDField(unique=True)
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=500)
     status = models.SmallIntegerField(
         choices=StatusChoices.choices, default=StatusChoices.OPEN
+    )
+
+    preferred_currency = models.SmallIntegerField(
+        choices=PreferredCurrencyChoices.choices, default=PreferredCurrencyChoices.EURO
     )
 
     users = models.ManyToManyField("account.User", through="room.UserConnectionToRoom")
@@ -29,6 +37,16 @@ class Room(CommonInfo):
         if not self.slug:
             self.slug = uuid.uuid4()
         super().save(*args, **kwargs)
+
+    @property
+    def currency_sign(self):
+        return currencyChoiceToCurrencySymbolMap[self.preferred_currency]
+
+
+currencyChoiceToCurrencySymbolMap = {
+    Room.PreferredCurrencyChoices.EURO.value: "€",
+    Room.PreferredCurrencyChoices.POUND_STERLING.value: "£",
+}
 
 
 class UserConnectionToRoom(models.Model):

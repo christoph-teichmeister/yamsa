@@ -19,7 +19,7 @@ class TransactionAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     list_display = ("__str__", "room", "settled")
     list_filter = ("room__name", "settled")
     fieldsets = (
-        (None, {"fields": ("room", "description", "value")}),
+        (None, {"fields": ("room", "description", ("value", "currency"))}),
         (
             "People involved",
             {"fields": ("paid_by",)},

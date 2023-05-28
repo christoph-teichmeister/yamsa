@@ -6,6 +6,8 @@ from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.utils import timezone
 
+from apps.room.models import Room, currencyChoiceToCurrencySymbolMap
+
 
 class Transaction(CommonInfo):
     description = models.TextField(max_length=500)
@@ -24,6 +26,11 @@ class Transaction(CommonInfo):
     )
 
     value = models.DecimalField(decimal_places=2, max_digits=10)
+    currency = models.SmallIntegerField(
+        choices=Room.PreferredCurrencyChoices.choices,
+        # TODO CT: Make this a setting entry
+        default=Room.PreferredCurrencyChoices.EURO,
+    )
 
     settled = models.BooleanField(default=False)
     settled_at = models.DateField(blank=True, null=True)
@@ -36,7 +43,7 @@ class Transaction(CommonInfo):
     def __str__(self):
         multiple_people = self.paid_for.all().count() > 1
         return (
-            f"{self.paid_by} paid {self.value}€ for {'each: ' if multiple_people else ''}"
+            f"{self.paid_by} paid {self.value}{self.currency_sign} for {'each: ' if multiple_people else ''}"
             f"{', '.join(self.paid_for.values_list('name', flat=True))}"
         )
 
@@ -52,6 +59,10 @@ class Transaction(CommonInfo):
             self.settled_at = None
 
         super().save(*args, **kwargs)
+
+    @property
+    def currency_sign(self):
+        return currencyChoiceToCurrencySymbolMap[self.currency]
 
 
 @receiver(m2m_changed, sender=Transaction.paid_for.through)

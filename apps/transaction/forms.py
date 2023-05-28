@@ -10,6 +10,7 @@ class TransactionCreateForm(forms.ModelForm):
         model = Transaction
         fields = (
             "description",
+            "currency",
             "paid_by",
             "paid_for",
             "room",

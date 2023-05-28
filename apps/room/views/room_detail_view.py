@@ -70,4 +70,5 @@ class RoomDetailView(generic.DetailView):
             "room_transactions": room_transactions,
             "debts": debts,
             "money_flow_qs": room.money_flows.all(),
+            "currency_sign": room.currency_sign,
         }

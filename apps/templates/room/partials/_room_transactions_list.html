@@ -18,7 +18,7 @@
             {% if transaction.paid_for_name != transaction.paid_by_name %}
                 <li class="list-group-item pb-4 pt-4">
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">{{ transaction.value }}€</h5>
+                        <h5 class="mb-1">{{ transaction.value }}{{ currency_sign }}</h5>
                         <small>{{ transaction.created_at|date:'d.m.Y' }}</small>
                     </div>
                     <p class="mb-1">
@@ -28,7 +28,7 @@
                             {{ transaction.paid_by_name }}
                         {% endif %}
                         paid
-                        <strong>{{ transaction.value }}€</strong>
+                        <strong>{{ transaction.value }}{{ currency_sign }}</strong>
                         for
                         {% if transaction.paid_for_name == request.user.name %}
                             <span class="me-involved">you</span>
