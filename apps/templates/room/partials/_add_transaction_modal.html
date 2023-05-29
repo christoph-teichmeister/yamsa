@@ -16,14 +16,18 @@
 
                     <div class="mb-3 form-group">
                         <label for="value" class="form-label">Amount paid in {{ currency_sign }}</label>
-                        <input id="value"
-                               name="value"
-                               type="number"
-                               step="any"
-                               class="form-control"
-                               max="99999999"
-                               required
-                        />
+                        <div class="input-group">
+                            <input id="value"
+                                   name="value"
+                                   type="number"
+                                   class="form-control"
+                                   min="0"
+                                   step="0.01"
+                                   max="99999999"
+                                   required
+                            />
+                            <span class="input-group-text">$</span>
+                        </div>
                     </div>
 
                     <div class="mb-3 form-group">
