@@ -180,8 +180,7 @@ USE_TZ = True
 # Here, they will be accessible at your-domain.onrender.com/static/...
 STATIC_URL = "/static/"
 
-# Tell Django to copy statics to the `staticfiles` directory
-# in your application directory on Render.
+# Tell Django to copy statics to the `staticfiles` directory in your application directory on Render.
 STATICFILES_FOLDER = f"{'staticfiles' if DEBUG else 'static'}"
 STATIC_ROOT = os.path.join(BASE_DIR, STATICFILES_FOLDER)
 
