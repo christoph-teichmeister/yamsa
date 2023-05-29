@@ -14,8 +14,3 @@ class TransactionCreateView(generic.CreateView):
         return reverse(
             viewname="room-detail", kwargs={"slug": self.request.POST.get("room_slug")}
         )
-
-    def form_invalid(self, form):
-        ret = super().form_invalid(form)
-        print(form.errors)
-        return ret

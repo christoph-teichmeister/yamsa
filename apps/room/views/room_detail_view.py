@@ -47,6 +47,7 @@ class RoomDetailView(generic.DetailView):
             .values(
                 "id",
                 "description",
+                "currency",
                 "value",
                 "paid_by_name",
                 "paid_for_name",
@@ -71,4 +72,5 @@ class RoomDetailView(generic.DetailView):
             "debts": debts,
             "money_flow_qs": room.money_flows.all(),
             "currency_sign": room.currency_sign,
+            "currency_sign_list": room.PreferredCurrencyChoices.choices,
         }

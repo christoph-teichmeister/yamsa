@@ -10,8 +10,8 @@ class Room(CommonInfo):
         CLOSED = 2, "Closed"
 
     class PreferredCurrencyChoices(models.IntegerChoices):
-        EURO = 1, "Euro (€)"
-        POUND_STERLING = 2, "Pound Sterling (£)"
+        EURO = 1, "€ - Euro"
+        POUND_STERLING = 2, "£ - Pound Sterling"
 
     slug = models.UUIDField(unique=True)
     name = models.CharField(max_length=100)
