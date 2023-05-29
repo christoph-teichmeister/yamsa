@@ -22,6 +22,7 @@ class RegisterUserView(generic.FormView):
                 email=form.data["email"],
                 is_guest=False,
             )
+            self.request.user = user
         else:
             user = self.request.user
             user.username = form.data["username"]

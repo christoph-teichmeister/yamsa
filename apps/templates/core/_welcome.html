@@ -5,20 +5,22 @@
         <h5>Welcome to yamsa</h5>
     </div>
 
-    {% if highlighted_news %}
-        <ul class="list-group list-group-flush">
-            {% include "shared_partials/news_card.html" with news=highlighted_news %}
-        </ul>
-    {% endif %}
+    {% if request.user.is_authenticated %}
+        {% if highlighted_news %}
+            <ul class="list-group list-group-flush">
+                {% include "shared_partials/news_card.html" with news=highlighted_news %}
+            </ul>
+        {% endif %}
 
-    {% if news %}
-        <hr style="margin-bottom: 0">
-        <ul class="list-group list-group-flush">
-            {% for news_object in news %}
-                {% include "shared_partials/news_card.html" with news=news_object %}
-            {% endfor %}
-        </ul>
-        <br>
+        {% if news %}
+            <hr style="margin-bottom: 0">
+            <ul class="list-group list-group-flush">
+                {% for news_object in news %}
+                    {% include "shared_partials/news_card.html" with news=news_object %}
+                {% endfor %}
+            </ul>
+            <br>
+        {% endif %}
     {% endif %}
 
 {% endblock %}
