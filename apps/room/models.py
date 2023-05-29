@@ -20,8 +20,8 @@ class Room(CommonInfo):
         choices=StatusChoices.choices, default=StatusChoices.OPEN
     )
 
-    preferred_currency = models.SmallIntegerField(
-        choices=PreferredCurrencyChoices.choices, default=PreferredCurrencyChoices.EURO
+    preferred_currency = models.ForeignKey(
+        "currency.Currency", related_name="rooms", on_delete=models.DO_NOTHING
     )
 
     users = models.ManyToManyField("account.User", through="room.UserConnectionToRoom")
