@@ -9,10 +9,29 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form action="/transaction/add/" method="post">
+            <form hx-post="{% url 'transaction-add' %}"
+                  hx-target="#body"
+                  hx-swap="morph:innerHTML">
                 {% csrf_token %}
 
                 <div class="modal-body">
+
+                    <div class="mb-3 form-group">
+                        <label for="paidBySelect">Who paid?</label>
+                        <select id="paid_by"
+                                name="paid_by"
+                                class="form-control form-select"
+                                id="paidBySelect"
+                                required
+                        >
+                            <option value="{{ request.user.id }}">{{ request.user.name }}</option>
+                            {% for room_user in room_users %}
+                                {% if room_user.id != request.user.id %}
+                                    <option value="{{ room_user.id }}">{{ room_user.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
 
                     <div class="mb-3 form-group">
                         <label for="value" class="form-label">Amount paid in {{ currency_sign }}</label>
@@ -26,7 +45,14 @@
                                    max="99999999"
                                    required
                             />
-                            <span class="input-group-text">$</span>
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">{{ currency_sign }}
+                            </button>
+                            <ul class="dropdown-menu">
+                                {% for currency_sign in currency_signs %}
+                                    <li>A currency sign</li>
+                                {% endfor %}
+                            </ul>
                         </div>
                     </div>
 
@@ -35,7 +61,7 @@
                         <select id="paid_for"
                                 name="paid_for"
                                 multiple
-                                class="form-control"
+                                class="form-control form-select"
                                 id="paidForSelect"
                                 required
                         >
@@ -48,17 +74,6 @@
                     <div class="mb-3 form-group">
                         <label for="description">Description</label>
                         <textarea id="description" name="description" class="form-control" rows="3" required></textarea>
-                    </div>
-
-                    <div class="form-group" hidden>
-                        <label for="paid_by" class="form-label">Paid by</label>
-                        <input id="paid_by"
-                               name="paid_by"
-                               type="number"
-                               class="form-control"
-                               required
-                               value="{{ user.id }}"
-                        />
                     </div>
 
                     <div class="form-group" hidden>
@@ -98,7 +113,12 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit"
+                            class="btn btn-primary"
+                    >
+                        Add payment
+                    </button>
+
                 </div>
             </form>
 
