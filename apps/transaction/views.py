@@ -2,6 +2,7 @@ from django.db.models import F
 from django.urls import reverse
 from django.views import generic
 
+from apps.core.context_managers import measure_time_and_queries
 from apps.transaction.forms import TransactionCreateForm
 from apps.transaction.models import Transaction
 
@@ -22,10 +23,10 @@ class TransactionListHTMXView(generic.ListView):
     context_object_name = "room_transactions"
     template_name = "transaction/_list.html"
 
+    @measure_time_and_queries("TransactionListHTMXView.get_queryset()")
     def get_queryset(self):
-        room_slug = self.kwargs.get("slug")
         return (
-            self.model.objects.filter(room__slug=room_slug)
+            self.model.objects.filter(room__slug=self.kwargs.get("slug"))
             .select_related("paid_by", "room")
             .prefetch_related("paid_for")
             .annotate(
