@@ -77,7 +77,10 @@
                             {% else %}
                                 <strong>{{ debitor }}</strong> owes
                             {% endif %}
-                                {{ amount_owed_debt_ids_and_settled.amount_owed }}{{ currency_sign }} to
+                                {% for currency_sign, amount_owed in amount_owed_debt_ids_and_settled.amount_owed.items %}
+                                    {{ amount_owed }}{{ currency_sign }}{% if not forloop.last %}, and{% endif %}
+                                {% endfor %}
+                                to
                                 {% if creditor == request.user.name %}
                                     <span class="me-involved">you</span>
                                 {% else %}
