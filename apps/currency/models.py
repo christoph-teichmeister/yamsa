@@ -1,8 +1,7 @@
-from ai_django_core.models import CommonInfo
 from django.db import models
 
 
-class Currency(CommonInfo):
+class Currency(models.Model):
     name = models.CharField(max_length=200)
     sign = models.CharField(max_length=10)
 
