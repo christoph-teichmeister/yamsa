@@ -13,7 +13,8 @@
                              hx-get="{% url 'room-detail' slug=room.slug %}"
                              hx-target="#body"
                              hx-swap="morph:innerHTML"
-                             hx-push-url="true">
+                             hx-push-url="true"
+                        >
                             <div class="card-body">
                                 <h5 class="card-title">{{ room.name }}</h5>
                                 <p class="card-text">{{ room.description }}</p>
