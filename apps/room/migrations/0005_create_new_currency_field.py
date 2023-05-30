@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("currency", "0002_currency_created_at_currency_created_by_and_more"),
+        ("currency", "0001_initial"),
         ("room", "0004_alter_room_preferred_currency"),
     ]
 

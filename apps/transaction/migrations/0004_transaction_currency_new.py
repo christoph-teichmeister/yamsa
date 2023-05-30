@@ -26,7 +26,7 @@ def convert_transaction_preferred_currencies(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("currency", "0002_currency_created_at_currency_created_by_and_more"),
+        ("currency", "0001_initial"),
         ("transaction", "0003_alter_transaction_currency"),
     ]
 
