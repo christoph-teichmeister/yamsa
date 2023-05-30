@@ -122,7 +122,7 @@ class MoneyFlowManager(models.Manager):
             money_flow_log = MoneyFlowLog(
                 log_message=f"Money Flow for {user} created! (Transaction: {transaction})\n\n"
                 f"Outgoing is: {money_flow.outgoing} {money_flow.room.preferred_currency.sign} and Incoming is:"
-                            f" {money_flow.incoming} {money_flow.room.preferred_currency.sign}"
+                f" {money_flow.incoming} {money_flow.room.preferred_currency.sign}"
             )
 
             return True, money_flow, money_flow_log
@@ -134,16 +134,26 @@ class MoneyFlowManager(models.Manager):
             setattr(existing_money_flow, money_field, new_value)
 
             updated_money_field_str = (
-                f"Outgoing was: {old_value} {existing_money_flow.roompreferred_currency.sign} and now is: {new_value} {existing_money_flow.roompreferred_currency.sign}"
+                (
+                    f"Outgoing was: {old_value} {existing_money_flow.roompreferred_currency.sign} "
+                    f"and now is: {new_value} {existing_money_flow.roompreferred_currency.sign}"
+                )
                 if is_debitor_flow
-                else f"Incoming was: "
-                f"{old_value} {existing_money_flow.roompreferred_currency.sign} and now is: {new_value} {existing_money_flow.roompreferred_currency.sign}"
+                else (
+                    f"Incoming was: {old_value} {existing_money_flow.roompreferred_currency.sign} "
+                    f"and now is: {new_value} {existing_money_flow.roompreferred_currency.sign}"
+                )
             )
             unchanged_money_field_str = (
-                f"Incoming was: {existing_money_flow.incoming} {existing_money_flow.roompreferred_currency.sign} and now is: {existing_money_flow.incoming} {existing_money_flow.roompreferred_currency.sign}"
+                (
+                    f"Incoming was: {existing_money_flow.incoming} {existing_money_flow.roompreferred_currency.sign} "
+                    f"and now is: {existing_money_flow.incoming} {existing_money_flow.roompreferred_currency.sign}"
+                )
                 if is_debitor_flow
-                else f"Outgoing was: {existing_money_flow.outgoing} {existing_money_flow.roompreferred_currency.sign} and now is:"
-                f" {existing_money_flow.outgoing} {existing_money_flow.roompreferred_currency.sign}"
+                else (
+                    f"Outgoing was: {existing_money_flow.outgoing} {existing_money_flow.roompreferred_currency.sign} "
+                    f"and now is: {existing_money_flow.outgoing} {existing_money_flow.roompreferred_currency.sign}"
+                )
             )
 
             money_flow_log = MoneyFlowLog(

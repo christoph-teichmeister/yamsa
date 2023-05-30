@@ -6,8 +6,6 @@ from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.utils import timezone
 
-from apps.room.models import Room
-
 
 class Transaction(CommonInfo):
     description = models.TextField(max_length=500)
