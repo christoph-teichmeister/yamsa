@@ -37,26 +37,6 @@ class RoomDetailView(generic.DetailView):
             .order_by("user_has_seen_this_room", "name")
         )
 
-        room_transactions = (
-            room.transactions.all()
-            .select_related("paid_by", "room")
-            .prefetch_related("paid_for")
-            .annotate(
-                paid_by_name=F("paid_by__name"),
-                paid_for_name=F("paid_for__name"),
-                currency_sign=F("currency__sign"),
-            )
-            .values(
-                "id",
-                "description",
-                "value",
-                "currency_sign",
-                "paid_by_name",
-                "paid_for_name",
-                "created_at",
-            )
-        )
-
         debts = {}
         for user in room.users.all().order_by("name"):
             debts_for_user = Debt.objects.get_debts_for_user_for_room_as_dict(
@@ -70,7 +50,6 @@ class RoomDetailView(generic.DetailView):
         return {
             **context_data,
             "room_users": room_users,
-            "room_transactions": room_transactions,
             "debts": debts,
             "money_flow_qs": room.money_flows.all(),
             "currency_sign": room.preferred_currency.sign,

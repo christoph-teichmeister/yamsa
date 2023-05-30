@@ -20,7 +20,7 @@ class TransactionCreateView(generic.CreateView):
 class TransactionListHTMXView(generic.ListView):
     model = Transaction
     context_object_name = "room_transactions"
-    template_name = "room/partials/_room_transactions_list.html"
+    template_name = "transaction/_list.html"
 
     def get_queryset(self):
         room_slug = self.kwargs.get("slug")
