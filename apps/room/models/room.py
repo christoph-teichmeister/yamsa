@@ -9,10 +9,6 @@ class Room(CommonInfo):
         OPEN = 1, "Open"
         CLOSED = 2, "Closed"
 
-    class PreferredCurrencyChoices(models.IntegerChoices):
-        EURO = 1, "€ - Euro"
-        POUND_STERLING = 2, "£ - Pound Sterling"
-
     slug = models.UUIDField(unique=True)
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=500)
@@ -37,16 +33,3 @@ class Room(CommonInfo):
         if not self.slug:
             self.slug = uuid.uuid4()
         super().save(*args, **kwargs)
-
-
-class UserConnectionToRoom(models.Model):
-    user = models.ForeignKey("account.User", on_delete=models.CASCADE)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    user_has_seen_this_room = models.BooleanField(default=False)
-
-    class Meta:
-        verbose_name = "User-Connection to Room"
-        verbose_name_plural = "User-Connections to Rooms"
-
-    def __str__(self):
-        return f"{self.user} belongs to {self.room}"
