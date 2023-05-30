@@ -7,11 +7,15 @@ class DebtManager(Manager):
     ) -> QuerySet["Debt"]:
         return (
             self.filter(user_id=user_id, transaction__room_id=room_id)
+            .select_related(
+                "transaction", "transaction__paid_by", "transaction__currency"
+            )
             .exclude(transaction__paid_by_id=user_id)
             .order_by("transaction__paid_by")
             .values(
                 "id",
                 "transaction__paid_by__name",
+                "transaction__currency__sign",
                 "transaction__value",
                 "transaction__paid_by__paypal_me_link",
                 "settled",
@@ -66,6 +70,7 @@ class DebtManager(Manager):
             owed_to_id = debt.get("transaction__paid_by__name")
             paypal_me_link = debt.get("transaction__paid_by__paypal_me_link")
             transaction_value = debt.get("transaction__value")
+            currency_sign = debt.get("transaction__currency__sign")
             settled = debt.get("settled")
 
             key = "settled_debts" if settled else "open_debts"
@@ -73,14 +78,22 @@ class DebtManager(Manager):
 
             if sub_dict.get(owed_to_id) is None:
                 sub_dict[owed_to_id] = {
-                    "amount_owed": transaction_value,
+                    "amount_owed": {f"{currency_sign}": transaction_value},
                     "debt_ids": (debt_id,),
                     "debt_ids_as_string": f"{debt_id}",
                     "settled": True & settled,
                     "paypal_me_link": paypal_me_link,
                 }
             else:
-                sub_dict[owed_to_id]["amount_owed"] += transaction_value
+                if sub_dict[owed_to_id]["amount_owed"].get(currency_sign) is not None:
+                    sub_dict[owed_to_id]["amount_owed"][
+                        currency_sign
+                    ] += transaction_value
+                else:
+                    sub_dict[owed_to_id]["amount_owed"][
+                        currency_sign
+                    ] = transaction_value
+
                 sub_dict[owed_to_id]["debt_ids"] += (debt_id,)
                 sub_dict[owed_to_id]["debt_ids_as_string"] += f"-{debt_id}"
                 sub_dict[owed_to_id]["settled"] = (

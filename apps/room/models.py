@@ -38,16 +38,6 @@ class Room(CommonInfo):
             self.slug = uuid.uuid4()
         super().save(*args, **kwargs)
 
-    @property
-    def currency_sign(self):
-        return currencyChoiceToCurrencySymbolMap[self.preferred_currency]
-
-
-currencyChoiceToCurrencySymbolMap = {
-    Room.PreferredCurrencyChoices.EURO.value: "€",
-    Room.PreferredCurrencyChoices.POUND_STERLING.value: "£",
-}
-
 
 class UserConnectionToRoom(models.Model):
     user = models.ForeignKey("account.User", on_delete=models.CASCADE)

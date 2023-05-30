@@ -51,10 +51,10 @@
                                         id="paidBySelect"
                                         required
                                 >
-                                    <option value="{{ room.preferred_currency }}">{{ currency_sign }}</option>
-                                    {% for currency_sign_value, currency_display_name in currency_sign_list %}
-                                        {% if currency_sign_value != room.preferred_currency %}
-                                            <option value="{{ currency_sign_value }}">{{ currency_display_name }}</option>
+                                    <option value="{{ room.preferred_currency }}">{{ room.preferred_currency.sign }}</option>
+                                    {% for currency in currency_signs %}
+                                        {% if currency != room.preferred_currency %}
+                                            <option value="{{ currency.id }}">{{ currency.sign }}</option>
                                         {% endif %}
                                     {% endfor %}
                                 </select>

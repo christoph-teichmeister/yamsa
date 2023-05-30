@@ -44,6 +44,6 @@ class MoneyFlow(CommonInfo):
 
     def __str__(self):
         return (
-            f"{self.user} - Out: {self.outgoing}{self.room.currency_sign} | In: {self.incoming}"
-            f"{self.room.currency_sign}"
+            f"{self.user} - Out: {self.outgoing}{self.room.preferred_currency.sign} | In: {self.incoming}"
+            f"{self.room.preferred_currency.sign}"
         )

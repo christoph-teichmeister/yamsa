@@ -2,6 +2,7 @@ from django.db.models import F
 from django.views import generic
 
 from apps.core.context_managers import measure_time_and_queries
+from apps.currency.models import Currency
 from apps.debt.models import Debt
 from apps.room.models import Room
 
@@ -23,7 +24,7 @@ class RoomDetailView(generic.DetailView):
 
         context_data = super().get_context_data(**kwargs)
 
-        room = context_data.get("room")
+        room: Room = context_data.get("room")
         room_users = (
             room.userconnectiontoroom_set.all()
             .select_related("user")
@@ -43,12 +44,13 @@ class RoomDetailView(generic.DetailView):
             .annotate(
                 paid_by_name=F("paid_by__name"),
                 paid_for_name=F("paid_for__name"),
+                currency_sign=F("currency__sign"),
             )
             .values(
                 "id",
                 "description",
-                "currency",
                 "value",
+                "currency_sign",
                 "paid_by_name",
                 "paid_for_name",
                 "created_at",
@@ -71,6 +73,6 @@ class RoomDetailView(generic.DetailView):
             "room_transactions": room_transactions,
             "debts": debts,
             "money_flow_qs": room.money_flows.all(),
-            "currency_sign": room.currency_sign,
-            "currency_sign_list": room.PreferredCurrencyChoices.choices,
+            "currency_sign": room.preferred_currency.sign,
+            "currency_signs": Currency.objects.all(),
         }
