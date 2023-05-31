@@ -8,5 +8,6 @@ class RoomCreateForm(forms.ModelForm):
         model = Room
         fields = (
             "name",
+            "preferred_currency",
             "description",
         )

@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+    <h1>Create Room</h1>
 
     <div class="d-flex align-items-center account-login-register-container">
         <form action="/room/create/" method="post" class="flex-grow-1">
@@ -13,6 +14,19 @@
                 {% for error_message in form.errors.name.data %}
                     <small class="error" id="nameError">{{ error_message.message }}</small>
                 {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                <label for="preferredCurrencySelect">Preferred Currency</label>
+                <select name="preferred_currency"
+                        class="form-control form-select"
+                        id="preferredCurrencySelect"
+                        required
+                >
+                    {% for currency in currencies %}
+                        <option value="{{ currency.id }}">{{ currency.sign }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
