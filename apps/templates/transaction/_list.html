@@ -3,7 +3,7 @@
      hx-get="{% url 'htmx-transaction-add-modal' slug=room.slug %}"
      hx-target="#add-transaction-modal-container"
      hx-swap="morph:innerHTML"
-     >
+>
 </div>
 
 <div class="row align-items-center mt-3">
@@ -47,10 +47,12 @@
             {% endif %}
         {% endfor %}
     </ul>
-
-    <br/>
 {% else %}
     <div class="container text-center p-4">
         - No Payments have been made as of now -
     </div>
 {% endif %}
+
+<br/>
+<br/>
+<br/>
