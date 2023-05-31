@@ -46,7 +46,7 @@
                    role="tab"
                    aria-controls="transactions"
                    aria-selected="true"
-                   hx-trigger="click,load"
+                   hx-trigger="load,reloadTransactionList from:body"
                    hx-get="{% url 'htmx-transaction-list' slug=room.slug %}"
                    hx-target="#transactions"
                    hx-swap="morph:innerHTML"

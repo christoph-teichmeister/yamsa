@@ -55,3 +55,8 @@ class RoomDetailView(generic.DetailView):
             "currency_sign": room.preferred_currency.sign,
             "currency_signs": Currency.objects.all(),
         }
+
+    def get(self, request, *args, **kwargs):
+        ret = super().get(request, *args, **kwargs)
+        ret.headers["HX-Trigger-After-Swap"] = "reloadTransactionList"
+        return ret
