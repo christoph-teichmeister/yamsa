@@ -6,6 +6,7 @@ from django.core.management import BaseCommand
 from django.db import transaction
 
 from apps.account.models import User
+from apps.currency.models import Currency
 from apps.room.models import Room
 
 
@@ -96,14 +97,22 @@ class Command(BaseCommand):
         print(f'User ID: {guest_user_2.id}, Name: "{guest_user_2.name}" created')
 
     @staticmethod
+    def _create_currencies():
+        Currency.objects.create(name="Euro", sign="€")
+        Currency.objects.create(name="Pound Sterling", sign="£")
+
+    @staticmethod
     def _create_rooms():
-        room_1 = Room.objects.create(
-            name="Room_1", slug=uuid.uuid4(), description="Description for Room_1"
+        room = Room.objects.create(
+            name="_Room",
+            slug=uuid.uuid4(),
+            description="Description for _Room",
+            preferred_currency=Currency.objects.get(sign="€"),
         )
 
-        room_1.users.add(*[u.id for u in User.objects.all()])
+        room.users.add(*[u.id for u in User.objects.all()])
 
-        print(f'User ID: {room_1.id}, Name: "{room_1.name}" created')
+        print(f'Room ID: {room.id}, Name: "{room.name}" created')
 
     @staticmethod
     def restore_test_data():
@@ -118,5 +127,7 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             self._create_users()
+
+            self._create_currencies()
 
             self._create_rooms()
