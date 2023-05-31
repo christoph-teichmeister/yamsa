@@ -28,6 +28,7 @@ class TransactionHelpersMixin:
                 "paid_for": paid_for,
                 "paid_by": paid_by.id,
                 "room": room.id,
+                "currency": room.preferred_currency_id,
                 "room_slug": room.slug,
                 "value": value,
             },

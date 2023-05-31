@@ -1,9 +1,12 @@
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from model_bakery import baker
 
 from apps.account.tests.baker_recipes import default_password
 
 
+@override_settings(
+    STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage"
+)
 class BaseTestSetUp(TestCase):
     @classmethod
     def setUpTestData(cls):

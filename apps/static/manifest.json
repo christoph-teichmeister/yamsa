@@ -10,6 +10,11 @@
   "background_color": "#2d2a2e",
   "theme_color": "#2d2a2e",
   "icons": [
+        {
+      "src": "images/favicon.ico",
+      "sizes": "16x16",
+      "type": "image/ico"
+    },
     {
       "src": "images/favicon-16x16.png",
       "sizes": "16x16",
