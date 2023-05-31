@@ -135,24 +135,24 @@ class MoneyFlowManager(models.Manager):
 
             updated_money_field_str = (
                 (
-                    f"Outgoing was: {old_value} {existing_money_flow.roompreferred_currency.sign} "
-                    f"and now is: {new_value} {existing_money_flow.roompreferred_currency.sign}"
+                    f"Outgoing was: {old_value} {existing_money_flow.room.preferred_currency.sign} "
+                    f"and now is: {new_value} {existing_money_flow.room.preferred_currency.sign}"
                 )
                 if is_debitor_flow
                 else (
-                    f"Incoming was: {old_value} {existing_money_flow.roompreferred_currency.sign} "
-                    f"and now is: {new_value} {existing_money_flow.roompreferred_currency.sign}"
+                    f"Incoming was: {old_value} {existing_money_flow.room.preferred_currency.sign} "
+                    f"and now is: {new_value} {existing_money_flow.room.preferred_currency.sign}"
                 )
             )
             unchanged_money_field_str = (
                 (
-                    f"Incoming was: {existing_money_flow.incoming} {existing_money_flow.roompreferred_currency.sign} "
-                    f"and now is: {existing_money_flow.incoming} {existing_money_flow.roompreferred_currency.sign}"
+                    f"Incoming was: {existing_money_flow.incoming} {existing_money_flow.room.preferred_currency.sign} "
+                    f"and now is: {existing_money_flow.incoming} {existing_money_flow.room.preferred_currency.sign}"
                 )
                 if is_debitor_flow
                 else (
-                    f"Outgoing was: {existing_money_flow.outgoing} {existing_money_flow.roompreferred_currency.sign} "
-                    f"and now is: {existing_money_flow.outgoing} {existing_money_flow.roompreferred_currency.sign}"
+                    f"Outgoing was: {existing_money_flow.outgoing} {existing_money_flow.room.preferred_currency.sign} "
+                    f"and now is: {existing_money_flow.outgoing} {existing_money_flow.room.preferred_currency.sign}"
                 )
             )
 

@@ -1,4 +1,10 @@
-{% include "transaction/partials/transaction-add-modal.html" %}
+<div id="add-transaction-modal-container"
+     hx-trigger="load"
+     hx-get="{% url 'htmx-transaction-add-modal' slug=room.slug %}"
+     hx-target="#add-transaction-modal-container"
+     hx-swap="morph:innerHTML"
+     >
+</div>
 
 <div class="row align-items-center mt-3">
     <div class="col-7">

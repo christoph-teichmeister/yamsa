@@ -5,7 +5,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="addTransactionModalLabel">Add payment for {{ room.name }}</h1>
+                <h1 class="modal-title fs-5" id="addTransactionModalLabel">Des isses: Add payment for {{ room.name }}</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -51,7 +51,7 @@
                                         id="paidBySelect"
                                         required
                                 >
-                                    <option value="{{ room.preferred_currency }}">{{ room.preferred_currency.sign }}</option>
+                                    <option value="{{ room.preferred_currency.id }}">{{ room.preferred_currency.sign }}</option>
                                     {% for currency in currency_signs %}
                                         {% if currency != room.preferred_currency %}
                                             <option value="{{ currency.id }}">{{ currency.sign }}</option>
