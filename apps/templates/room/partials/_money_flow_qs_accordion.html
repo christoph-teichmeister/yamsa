@@ -14,7 +14,7 @@
                     </span>
                 {% endif %}
                 <br>
-                Paid <strong>{{ money_flow.incoming }}{{ currency_sign }}</strong> and owes <strong>{{ money_flow.outgoing }}{{ currency_sign }}</strong>
+                Paid <strong>{{ money_flow.incoming }}{{ preferred_currency_sign }}</strong> and owes <strong>{{ money_flow.outgoing }}{{ preferred_currency_sign }}</strong>
                 for this event
             </li>
         {% endfor %}
