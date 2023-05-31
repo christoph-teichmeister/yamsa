@@ -1,0 +1,39 @@
+from django.db.models import F
+from django.views import generic
+
+from apps.core.context_managers import measure_time_and_queries
+from apps.room.models import Room
+from apps.transaction.models import Transaction
+
+
+class TransactionListHTMXView(generic.ListView):
+    model = Transaction
+    context_object_name = "room_transactions"
+    template_name = "transaction/_list.html"
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context["room"] = Room.objects.get(slug=self.kwargs.get("slug"))
+        return context
+
+    @measure_time_and_queries("TransactionListHTMXView.get_queryset()")
+    def get_queryset(self):
+        return (
+            self.model.objects.filter(room__slug=self.kwargs.get("slug"))
+            .select_related("paid_by", "room")
+            .prefetch_related("paid_for")
+            .annotate(
+                paid_by_name=F("paid_by__name"),
+                paid_for_name=F("paid_for__name"),
+                currency_sign=F("currency__sign"),
+            )
+            .values(
+                "id",
+                "description",
+                "value",
+                "currency_sign",
+                "paid_by_name",
+                "paid_for_name",
+                "created_at",
+            )
+        )
