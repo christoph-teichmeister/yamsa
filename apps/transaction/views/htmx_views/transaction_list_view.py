@@ -1,5 +1,7 @@
 from django.db.models import F
+from django.utils.functional import cached_property
 from django.views import generic
+from django_context_decorator import context
 
 from apps.core.context_managers import measure_time_and_queries
 from apps.room.models import Room
@@ -11,10 +13,10 @@ class TransactionListHTMXView(generic.ListView):
     context_object_name = "room_transactions"
     template_name = "transaction/_list.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(object_list=object_list, **kwargs)
-        context["room"] = Room.objects.get(slug=self.kwargs.get("slug"))
-        return context
+    @context
+    @cached_property
+    def room(self):
+        return Room.objects.get(slug=self.kwargs.get("slug"))
 
     @measure_time_and_queries("TransactionListHTMXView.get_queryset()")
     def get_queryset(self):

@@ -41,14 +41,14 @@
             <li class="nav-item" role="presentation" style="cursor: pointer">
                 <a id="transaction-tab"
                    class="nav-link active"
-                   data-bs-toggle="tab"
-                   data-bs-target="#transactions"
                    role="tab"
-                   aria-controls="transactions"
+                   data-bs-toggle="tab"
+                   data-bs-target="#transaction-tab-content"
+                   aria-controls="transaction-tab-content"
                    aria-selected="true"
                    hx-trigger="load,reloadTransactionList from:body"
                    hx-get="{% url 'htmx-transaction-list' slug=room.slug %}"
-                   hx-target="#transactions"
+                   hx-target="#transaction-tab-content"
                    hx-swap="morph:innerHTML"
                 >
                     <i class="bi bi-wallet"></i>
@@ -56,23 +56,44 @@
             </li>
 
             <li class="nav-item" role="presentation" style="cursor: pointer">
-                <a id="debt-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#debts" role="tab"
-                   aria-controls="debts" aria-selected="false">
+                <a id="debt-tab"
+                   class="nav-link"
+                   role="tab"
+                   data-bs-toggle="tab"
+                   data-bs-target="#debt-tab-content"
+                   aria-controls="debt-tab-content"
+                   aria-selected="false"
+                >
                     <i class="bi bi-piggy-bank"></i>
                 </a>
             </li>
 
             <li class="nav-item" role="presentation" style="cursor: pointer">
-                <a id="moneyflow-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#moneyflows" role="tab"
-                   aria-controls="moneyflows" aria-selected="false">
+                <a id="moneyflow-tab"
+                   class="nav-link"
+                   role="tab"
+                   data-bs-toggle="tab"
+                   data-bs-target="#moneyflows"
+                   aria-controls="moneyflows"
+                   aria-selected="false">
                     <i class="bi bi-arrow-left-right"></i>
 
                 </a>
             </li>
 
             <li class="nav-item" role="presentation" style="cursor: pointer">
-                <a id="people-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#people" role="tab"
-                   aria-controls="people" aria-selected="false">
+                <a id="people-tab"
+                   class="nav-link"
+                   role="tab"
+                   data-bs-toggle="tab"
+                   data-bs-target="#people-tab-content"
+                   aria-controls="people-tab-content"
+                   aria-selected="false"
+                   hx-trigger="click"
+                   hx-get="{% url 'htmx-account-list' slug=room.slug %}"
+                   hx-target="#people-tab-content"
+                   hx-swap="morph:innerHTML"
+                >
                     <i class="bi bi-people"></i>
                 </a>
             </li>
@@ -83,23 +104,36 @@
         <div class="tab-content" id="tab-content">
 
             <div class="tab-pane fade show active"
-                 id="transactions"
+                 id="transaction-tab-content"
                  role="tabpanel"
                  aria-labelledby="transaction-tab"
                  tabindex="0"
+            ></div>
+
+            <div class="tab-pane fade"
+                 id="debt-tab-content"
+                 role="tabpanel"
+                 aria-labelledby="debt-tab"
+                 tabindex="1"
             >
+                 {% include "room/partials/_debt_list.html" %}
             </div>
 
-            <div class="tab-pane fade" id="debts" role="tabpanel" aria-labelledby="debt-tab" tabindex="1">
-                {% include "room/partials/_debt_list.html" %}
-            </div>
-
-            <div class="tab-pane fade" id="moneyflows" role="tabpanel" aria-labelledby="moneyflow-tab" tabindex="2">
+            <div class="tab-pane fade"
+                 id="moneyflows"
+                 role="tabpanel"
+                 aria-labelledby="moneyflow-tab"
+                 tabindex="2"
+            >
                 {% include "room/partials/_money_flow_qs_accordion.html" %}
             </div>
 
-            <div class="tab-pane fade" id="people" role="tabpanel" aria-labelledby="people-tab" tabindex="3">
-                {% include "room/partials/_users_of_room_list.html" %}
+            <div class="tab-pane fade"
+                 id="people-tab-content"
+                 role="tabpanel"
+                 aria-labelledby="people-tab"
+                 tabindex="3"
+            >
             </div>
 
         </div>

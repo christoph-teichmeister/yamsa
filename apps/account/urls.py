@@ -32,4 +32,11 @@ urlpatterns = [
         views.LogOutUserView.as_view(),
         name="account-user-logout",
     ),
+    path(
+        "htmx/<str:slug>/list",
+        # Cached for 10 minutes
+        # cache_page(60 * 10)(views.UserListForRoomHTMXView.as_view()),
+        views.UserListForRoomHTMXView.as_view(),
+        name="htmx-account-list",
+    ),
 ]
