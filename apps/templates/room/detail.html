@@ -50,6 +50,7 @@
                    hx-get="{% url 'htmx-transaction-list' slug=room.slug %}"
                    hx-target="#transaction-tab-content"
                    hx-swap="morph:innerHTML"
+                   hx-indicator="#debt-loading-spinner"
                 >
                     <i class="bi bi-wallet"></i>
                 </a>
@@ -93,6 +94,7 @@
                    hx-get="{% url 'htmx-account-list' slug=room.slug %}"
                    hx-target="#people-tab-content"
                    hx-swap="morph:innerHTML"
+                   hx-indicator="#people-loading-spinner"
                 >
                     <i class="bi bi-people"></i>
                 </a>
@@ -108,7 +110,9 @@
                  role="tabpanel"
                  aria-labelledby="transaction-tab"
                  tabindex="0"
-            ></div>
+            >
+                {% include "shared_partials/loading_spinner.html" with spinner_id="debt-loading-spinner" %}
+            </div>
 
             <div class="tab-pane fade"
                  id="debt-tab-content"
@@ -116,7 +120,7 @@
                  aria-labelledby="debt-tab"
                  tabindex="1"
             >
-                 {% include "room/partials/_debt_list.html" %}
+                {% include "room/partials/_debt_list.html" %}
             </div>
 
             <div class="tab-pane fade"
@@ -134,6 +138,7 @@
                  aria-labelledby="people-tab"
                  tabindex="3"
             >
+                {% include "shared_partials/loading_spinner.html" with spinner_id="people-loading-spinner" %}
             </div>
 
         </div>
