@@ -25,8 +25,7 @@ class GuestCreateView(generic.CreateView):
 
         ret = super().form_valid(form)
 
-        created_guest.rooms.add(
-            Room.objects.get(slug=self.request.POST.get("room_slug"))
-        )
+        room_slug = self.request.POST.get("room_slug")
+        created_guest.rooms.add(Room.objects.get(slug=room_slug))
 
         return ret

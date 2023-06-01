@@ -35,7 +35,11 @@ urlpatterns = [
     path(
         "htmx/<str:slug>/list",
         # Cached for 10 minutes
-        # cache_page(60 * 10)(views.UserListForRoomHTMXView.as_view()),
+        # vary_on_headers("Cookie")(
+        #     cache_page(timeout=60 * 10, key_prefix="htmx-account-list")(
+        #         views.UserListForRoomHTMXView.as_view()
+        #     )
+        # ),
         views.UserListForRoomHTMXView.as_view(),
         name="htmx-account-list",
     ),
