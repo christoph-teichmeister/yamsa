@@ -1,26 +1,37 @@
-{# To trigger the below toast, copy the following button to your page and replace toast_id accordingly #}
-{# <button class="btn btn-primary" id="{{ toast_id }}Btn">Trigger Toast</button> #}
+{#<button type="button"#}
+{#        class="btn btn-primary"#}
+{#        hx-trigger="click"#}
+{#        hx-get="{% url 'htmx-toast' %}?toast_type=error&toast_message=Henlo"#}
+{#        hx-target="#htmx-toast-container"#}
+{#        hx-swap="morph:innerHTML"#}
+{#>#}
+{#    Click me#}
+{#</button>#}
 
-<div class="toast-container position-fixed top-0 end-0 p-3">
-    <div id="{{ toast_id }}" class="toast text-bg-success" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <strong class="me-auto">Success</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-            {{ toast_body }}
+{# Use the above button or only its hx-attributes to trigger toasts #}
+
+<div class="toast-container border-0 position-fixed top-0 end-0 p-3 w-75">
+    <div id="{{ toast_id }}"
+         class="toast top-0 end-0"
+         role="alert"
+         aria-live="assertive"
+         aria-atomic="true"
+    >
+        <div class="d-flex align-items-center {{ toast_type }}">
+            <div class="toast-body w-100 d-flex justify-content-between">
+                {{ toast_message }}
+                <button type="button"
+                        class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast"
+                        aria-label="Close"
+                ></button>
+            </div>
         </div>
     </div>
 </div>
 
 <script type="module">
-  const toastTrigger = document.getElementById("{{ toast_id }}Btn")
-  const toastLiveExample = document.getElementById("{{ toast_id }}")
-
-  if (toastTrigger) {
-    const toastBootstrap = window.bootstrap.Toast.getOrCreateInstance(toastLiveExample)
-    toastTrigger.addEventListener('click', () => {
-      toastBootstrap.show()
-    })
-  }
+  const toastLiveExample = document.getElementById('{{ toast_id }}')
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+  toastBootstrap.show()
 </script>
