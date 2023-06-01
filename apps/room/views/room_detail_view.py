@@ -61,6 +61,11 @@ class RoomDetailView(generic.DetailView):
         ret = super().get(request, *args, **kwargs)
         ret.headers["HX-Trigger-After-Swap"] = "reloadTransactionList"
 
+        ret.headers["HX-Trigger"] = "triggerToast"
+
+        # TODO CT: I'd like to have this parsed into the toast
+        ret.headers["YAMSA-Toast-Message"] = "My Message"
+
         if not self.request.user.is_anonymous:
             connection = self.object.userconnectiontoroom_set.filter(
                 user_id=self.request.user.id, user_has_seen_this_room=False

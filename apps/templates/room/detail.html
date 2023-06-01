@@ -29,6 +29,17 @@
         </div>
     </div>
 
+{#    <button type="button"#}
+{#            class="btn btn-primary"#}
+{#            hx-trigger="click"#}
+{#            hx-get="{% url 'htmx-toast' %}?toast_type=error&toast_message=Henlo"#}
+{#            hx-target="#htmx-toast-container"#}
+{#            hx-swap="morph:innerHTML"#}
+{#    >#}
+{#        Click me#}
+{#    </button>#}
+    {# {% include "shared_partials/toast.html" with toast_button_text="Click here" toast_message="My custom message" toast_btn_id="a_toast_btn_id" toast_id="a_toast_id" %}#}
+
     {# Room description #}
     <div class="mb-3">
         <small>{{ room.description }}</small>
