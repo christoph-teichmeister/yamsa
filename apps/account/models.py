@@ -1,6 +1,6 @@
 from time import time
 
-from ai_django_core.models import CommonInfo
+from ambient_toolbox.models import CommonInfo
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 

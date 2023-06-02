@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "bf89d1f939685627b0f671aa8770f02f1e90e1b343e67de75c4e14ad26b0cc9a"
+            "sha256": "f2c99d3c97a6d0d1c6085dbcc6ebac93f7e335dc58a3905eaeb2ea15c191552b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,13 +16,13 @@
         ]
     },
     "default": {
-        "ai-django-core": {
+        "ambient-toolbox": {
             "hashes": [
-                "sha256:323c9c4b7f6b3fdcd7da8bd71b441b7a152fcdcffbe744ccd5c036905d916e80",
-                "sha256:8fde5c4b5ef7937aa71bef2b0125c685a4a58068de95237aeef155b8a32748e6"
+                "sha256:6d9f6bb250315a12a992169c1d768d522dcfa39c05bb98f2f6c0ab037e646c29",
+                "sha256:9d9676c7312816cb0b5ed1625e360c6f09b5e90f084f505ce86cd1f1b45d69b2"
             ],
             "index": "pypi",
-            "version": "==6.9.2"
+            "version": "==8.0.2"
         },
         "asgiref": {
             "hashes": [
@@ -79,14 +79,6 @@
             ],
             "index": "pypi",
             "version": "==20.1.0"
-        },
-        "html2text": {
-            "hashes": [
-                "sha256:c7c629882da0cf377d66f073329ccf34a12ed2adf0169b9285ae4e63ef54c82b",
-                "sha256:e296318e16b059ddb97f7a8a1d6a5c1d7af4544049a01e261731d2d5cc277bbb"
-            ],
-            "markers": "python_version >= '3.5'",
-            "version": "==2020.1.16"
         },
         "model-bakery": {
             "hashes": [
@@ -198,11 +190,11 @@
         },
         "typing-extensions": {
             "hashes": [
-                "sha256:06006244c70ac8ee83fa8282cb188f697b8db25bc8b4df07be1873c43897060c",
-                "sha256:3a8b36f13dd5fdc5d1b16fe317f5668545de77fa0b8e02006381fd49d731ab98"
+                "sha256:88a4153d8505aabbb4e13aacb7c486c2b4a33ca3b3f807914a9b4c844c471c26",
+                "sha256:d91d5919357fe7f681a9f2b5b4cb2a5f1ef0a1e9f59c4d8ff0d3491e05c0ffd5"
             ],
             "markers": "python_version < '3.11'",
-            "version": "==4.6.2"
+            "version": "==4.6.3"
         },
         "webencodings": {
             "hashes": [

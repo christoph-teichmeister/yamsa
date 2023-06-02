@@ -1,3 +1,6 @@
+import json
+
+from ambient_toolbox.view_layer import htmx_mixins
 from django.db.models import F
 from django.utils.functional import cached_property
 from django.views import generic
@@ -8,10 +11,11 @@ from apps.debt.models import Debt
 from apps.room.models import Room
 
 
-class RoomDetailView(generic.DetailView):
+class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
     template_name = "room/detail.html"
     context_object_name = "room"
     model = Room
+    hx_trigger = {"reloadTransactionList": True}
 
     @context
     @cached_property
@@ -59,12 +63,6 @@ class RoomDetailView(generic.DetailView):
 
     def get(self, request, *args, **kwargs):
         ret = super().get(request, *args, **kwargs)
-        ret.headers["HX-Trigger-After-Swap"] = "reloadTransactionList"
-
-        ret.headers["HX-Trigger"] = "triggerToast"
-
-        # TODO CT: I'd like to have this parsed into the toast
-        ret.headers["YAMSA-Toast-Message"] = "My Message"
 
         if not self.request.user.is_anonymous:
             connection = self.object.userconnectiontoroom_set.filter(

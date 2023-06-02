@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-ai-django-core = "==6.9.*"
+ambient-toolbox = "==8.0.*"
 django = "==4.1.*"
 django-context-decorator = "==1.6.*"
 django-environ = "==0.9.*"

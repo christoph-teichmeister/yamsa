@@ -1,4 +1,4 @@
-from ai_django_core.admin.model_admins.mixins import CommonInfoAdminMixin
+from ambient_toolbox.admin.model_admins.mixins import CommonInfoAdminMixin
 
 
 class YamsaCommonInfoAdminMixin(CommonInfoAdminMixin):

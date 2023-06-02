@@ -1,25 +1,13 @@
-{#<button type="button"#}
-{#        class="btn btn-primary"#}
-{#        hx-trigger="click"#}
-{#        hx-get="{% url 'htmx-toast' %}?toast_type=error&toast_message=Henlo"#}
-{#        hx-target="#htmx-toast-container"#}
-{#        hx-swap="morph:innerHTML"#}
-{#>#}
-{#    Click me#}
-{#</button>#}
-
-{# Use the above button or only its hx-attributes to trigger toasts #}
-
 <div class="toast-container border-0 position-fixed top-0 end-0 p-3 w-75">
-    <div id="{{ toast_id }}"
-         class="toast top-0 end-0"
+    <div class="toast top-0 end-0"
+         id="toast-id"
          role="alert"
          aria-live="assertive"
          aria-atomic="true"
     >
-        <div class="d-flex align-items-center {{ toast_type }}">
+        <div id="toast-type-div" class="d-flex align-items-center {{ toast_type }}">
             <div class="toast-body w-100 d-flex justify-content-between">
-                {{ toast_message }}
+                <span id="toast-message-span"></span>
                 <button type="button"
                         class="btn-close btn-close-white me-2 m-auto"
                         data-bs-dismiss="toast"
@@ -31,7 +19,21 @@
 </div>
 
 <script type="module">
-  const toastLiveExample = document.getElementById('{{ toast_id }}')
-  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
-  toastBootstrap.show()
+  const toastElement = document.getElementById('toast-id')
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastElement)
+
+  document.body.addEventListener("triggerToast", (evt) => {
+    // Return early, if toast is already shown
+    if (toastBootstrap.isShown()) return
+
+    // Add message to toast
+    document.getElementById('toast-message-span').innerText = evt.detail.message
+
+    // Add class to toast
+    const splitTypes = evt.detail.type.split(" ")
+    splitTypes.map(typeString => document.getElementById('toast-type-div').classList.add(typeString))
+
+    // Get and show toast element
+    toastBootstrap.show()
+  })
 </script>

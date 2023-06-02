@@ -76,7 +76,7 @@ DJANGO_APPS = (
 )
 
 THIRD_PARTY_APPS = (
-    "ai_django_core",
+    "ambient_toolbox",
     "django_extensions",
 )
 
@@ -100,7 +100,7 @@ MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "ai_django_core.middleware.current_user.CurrentUserMiddleware",
+    "ambient_toolbox.middleware.current_user.CurrentUserMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 )

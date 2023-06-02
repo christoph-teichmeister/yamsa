@@ -28,6 +28,16 @@ class DebtManager(Manager):
         return self.get_debts_for_user_for_room(user_id, room_id).filter(settled=False)
 
     def get_debts_for_user_for_room_as_dict(self, user_id: int, room_id: int) -> dict:
+        debts_for_user_for_room = self.get_debts_for_user_for_room(user_id, room_id)
+
+        if not debts_for_user_for_room.exists():
+            return {}
+
+        return {}
+
+    def get_debts_for_user_for_room_as_dict_old(
+        self, user_id: int, room_id: int
+    ) -> dict:
         """
         Exemplary return:
             {

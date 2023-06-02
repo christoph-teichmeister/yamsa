@@ -13,7 +13,7 @@ body {
 
 .me-involved {
     font-weight: bold;
-    color: var(--bs-primary-text)
+    color: var(--bs-primary-text-emphasis)
 }
 
 .account-login-register-container {
@@ -21,7 +21,7 @@ body {
 }
 
 .debt-list-debt-settled {
-    color: var(--bs-primary-text);
+    color: var(--bs-primary-text-emphasis);
     opacity: 50%
 }
 

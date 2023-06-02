@@ -38,27 +38,7 @@
 </head>
 <body hx-ext="morph" id="body">
 
-{% block toast %}
-    <div id="htmx-toast-container"
-         hx-trigger="triggerToast from:body"
-         hx-get="{% url 'htmx-toast' %}"
-         hx-target="#htmx-toast-container"
-         hx-swap="morph:innerHTML"
-    >
-    </div>
-    <script>
-      document.body.addEventListener('htmx:configRequest', function (evt) {
-        if (evt.target.id === "htmx-toast-container") {
-          evt.detail.parameters["toast_message"] = "A test toast"
-        }
-      });
-
-      // TODO CT: Manage to somehow listen for response headers
-      document.body.addEventListener('htmx:afterRequest', function (evt) {
-        console.log("AFTER", evt)
-      });
-    </script>
-{% endblock %}
+{% include "shared_partials/toast.html" %}
 
 <div class="container-fluid" style="padding-top: 2rem; padding-bottom: 7rem; height: 100vh">
     <div id="content">
@@ -78,7 +58,7 @@
         integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS"
         crossorigin="anonymous"></script>
 
-<script>
+<script type="text/javascript">
   // Enable all Tooltips
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
   const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
