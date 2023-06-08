@@ -53,17 +53,14 @@ class RoomDetailViewTestCase(
             value=Decimal(5)
         )
 
-        response = self.client.get(
-            reverse("room-detail", kwargs={"slug": self.room.slug})
-        )
-
-        print(response)
-
         self.assertEqual(self.guest_user_1.money_flows.first().incoming, Decimal(5))
         self.assertEqual(self.guest_user_1.money_flows.first().outgoing, Decimal(0))
 
         self.assertEqual(self.guest_user_2.money_flows.first().incoming, Decimal(0))
         self.assertEqual(self.guest_user_2.money_flows.first().outgoing, Decimal(5))
+
+        res = self.client.get(reverse("room-detail", kwargs={"slug": self.room.slug}))
+        print(res)
 
     def test_simple_test_case_2(self):
         """
@@ -200,7 +197,7 @@ class RoomDetailViewTestCase(
         User 4 pays 20 € for User 1, 3, 4
 
         =>  User 4 receives 73,37 €
-            User 1 pays 20 €
+            User 1 pays 20 € to User 4
             All the others pay anyway
         """
 

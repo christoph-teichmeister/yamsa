@@ -168,6 +168,7 @@ class MoneyFlowManager(models.Manager):
 
     def try_to_resolve_flows_and_reduce_them_to_zero(self, *, room_id):
         """
+        TODO CT: Comment (the old comment is not true anymore)
         This function is the first step towards trying to determine, which user pays who.
 
         As of now this does not work though, it does a "dumb" look-ahead and reduces flow values if it finds
@@ -184,29 +185,62 @@ class MoneyFlowManager(models.Manager):
             "Something went majorly wrong if these values are not the same",
         )
 
-        for index, flow in enumerate(qs):
-            if index == qs.count() - 1:
-                break
+        sorted_for_biggest_receiver_list = list(
+            qs.order_by("-incoming").values("user__name", "outgoing", "incoming")
+        )
+        sorted_for_biggest_owes_list = list(
+            qs.order_by("-outgoing").values("user__name", "outgoing", "incoming")
+        )
 
-            first_flow: MoneyFlow = flow
-            second_flow: MoneyFlow = qs[index + 1]
+        all_is_done = False
 
-            if first_flow.outgoing > second_flow.incoming:
-                first_flow.outgoing -= second_flow.incoming
-                second_flow.incoming = Decimal(0)
+        while not all_is_done:
+            biggest_ower_index = 0
+            biggest_receive_entry = sorted_for_biggest_receiver_list[0]
+            biggest_ower_entry = sorted_for_biggest_owes_list[biggest_ower_index]
 
-            elif first_flow.outgoing < second_flow.incoming:
-                second_flow.incoming -= first_flow.outgoing
-                first_flow.outgoing = Decimal(0)
+            if biggest_ower_entry["user__name"] == biggest_receive_entry["user__name"]:
+                biggest_ower_index += 1
+                try:
+                    biggest_ower_entry = sorted_for_biggest_owes_list[
+                        biggest_ower_index
+                    ]
+                    biggest_ower_index = 0
+                except IndexError:
+                    break
 
-            elif first_flow.incoming > second_flow.outgoing:
-                first_flow.incoming -= second_flow.outgoing
-                second_flow.outgoing = Decimal(0)
+            if biggest_receive_entry["incoming"] - biggest_ower_entry["outgoing"] > 0:
+                if biggest_ower_entry["outgoing"] > 0:
+                    print(
+                        f'--- User {biggest_ower_entry["user__name"]} pays {biggest_ower_entry["outgoing"]} to'
+                        f' {biggest_receive_entry["user__name"]}'
+                    )
 
-            elif first_flow.incoming < second_flow.outgoing:
-                second_flow.outgoing -= first_flow.incoming
-                first_flow.incoming = Decimal(0)
+                biggest_receive_entry = {
+                    **biggest_receive_entry,
+                    "incoming": biggest_receive_entry["incoming"]
+                    - biggest_ower_entry["outgoing"],
+                }
+                sorted_for_biggest_receiver_list.pop(0)
+                sorted_for_biggest_owes_list.pop(0)
+                sorted_for_biggest_receiver_list.append(biggest_receive_entry)
 
-        qs.bulk_update(qs, ("incoming", "outgoing"))
+            else:
+                if biggest_receive_entry["incoming"] > 0:
+                    print(
+                        f'--- User {biggest_ower_entry["user__name"]} pays {biggest_receive_entry["incoming"]} to'
+                        f' {biggest_receive_entry["user__name"]}'
+                    )
+
+                biggest_ower_entry = {
+                    **biggest_ower_entry,
+                    "outgoing": biggest_ower_entry["outgoing"]
+                    - biggest_receive_entry["incoming"],
+                }
+                sorted_for_biggest_receiver_list.pop(0)
+                sorted_for_biggest_owes_list.pop(0)
+                sorted_for_biggest_owes_list.append(biggest_ower_entry)
+
+            all_is_done = len(sorted_for_biggest_receiver_list) == 0
 
         return qs

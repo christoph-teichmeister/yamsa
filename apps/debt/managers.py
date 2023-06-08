@@ -2,9 +2,7 @@ from django.db.models import Manager, QuerySet
 
 
 class DebtManager(Manager):
-    def get_debts_for_user_for_room(
-        self, user_id: int, room_id: int
-    ) -> QuerySet["Debt"]:
+    def get_debts_for_user_for_room(self, user_id: int, room_id: int) -> QuerySet[dict]:
         return (
             self.filter(user_id=user_id, transaction__room_id=room_id)
             .select_related(
@@ -24,66 +22,10 @@ class DebtManager(Manager):
 
     def get_unsettled_debts_for_user_for_room(
         self, user_id: int, room_id: int
-    ) -> QuerySet["Debt"]:
+    ) -> QuerySet[dict]:
         return self.get_debts_for_user_for_room(user_id, room_id).filter(settled=False)
 
-    def get_debts_for_user_for_room_as_dict(self, room_id: int) -> dict:
-        # TODO CT: Work on this
-        alL_debts_of_room_tuple = tuple(
-            self.filter(transaction__room_id=room_id)
-            .order_by("transaction__value")
-            .values_list("transaction__value", "transaction__paid_by")
-        )
-
-        cleaned_debt_entry_dict = {}
-        for debt_entry in alL_debts_of_room_tuple:
-            value = debt_entry[0]
-            paid_by_id = debt_entry[1]
-
-            if cleaned_debt_entry_dict.get(paid_by_id, None) is not None:
-                cleaned_debt_entry_dict[paid_by_id] += value
-            else:
-                cleaned_debt_entry_dict[paid_by_id] = value
-
-        sorted_debt_entry_list = list(
-            sorted(
-                cleaned_debt_entry_dict.items(),
-                key=lambda entry: entry[1],
-            )
-        )
-
-        if len(sorted_debt_entry_list) == 0:
-            return {}
-
-        cheapest_user_id = sorted_debt_entry_list[0][0]
-        most_expensive_user_id = sorted_debt_entry_list[-1][0]
-
-        all_is_done = False
-        while not all_is_done:
-            cheapest = sorted_debt_entry_list[0]
-            most_expensive = sorted_debt_entry_list[-1]
-
-            if most_expensive[1] - cheapest[1] > 0:
-                most_expensive = (most_expensive[0], most_expensive[1] - cheapest[1])
-                sorted_debt_entry_list.pop(0)
-                sorted_debt_entry_list.pop(-1)
-                sorted_debt_entry_list.append(most_expensive)
-
-            sorted_debt_entry_list = list(
-                sorted(sorted_debt_entry_list, key=lambda entry: entry[1])
-            )
-
-            all_is_done = len(sorted_debt_entry_list) == 1
-
-        print(
-            f"{cheapest_user_id} pays {sorted_debt_entry_list[0][1]} to {most_expensive_user_id}"
-        )
-
-        return {}
-
-    def get_debts_for_user_for_room_as_dict_old(
-        self, user_id: int, room_id: int
-    ) -> dict:
+    def get_debts_for_user_for_room_as_dict(self, user_id: int, room_id: int) -> dict:
         """
         Exemplary return:
             {
