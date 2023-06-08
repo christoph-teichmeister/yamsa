@@ -1,3 +1,4 @@
+from ambient_toolbox.view_layer import htmx_mixins
 from django.db.models import F
 from django.utils.functional import cached_property
 from django.views import generic
@@ -8,10 +9,11 @@ from apps.room.models import Room
 from apps.transaction.models import Transaction
 
 
-class TransactionListHTMXView(generic.ListView):
+class TransactionListHTMXView(htmx_mixins.HtmxResponseMixin, generic.ListView):
     model = Transaction
     context_object_name = "room_transactions"
     template_name = "transaction/_list.html"
+    hx_trigger = {"reloadTransactionAddModal": True}
 
     @context
     @cached_property
