@@ -16,10 +16,6 @@ body {
     color: var(--bs-primary-text-emphasis)
 }
 
-.account-login-register-container {
-    height: 80vh;
-}
-
 .debt-list-debt-settled {
     color: var(--bs-primary-text-emphasis);
     opacity: 50%
