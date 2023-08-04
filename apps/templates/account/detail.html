@@ -2,89 +2,86 @@
 {% load static %}
 
 {% block content %}
-    <div class="container">
-        {% if request.user.is_anonymous or user.is_guest %}
-            <div class="text-center">
-                <p>- You are a guest -</p>
+    {% if request.user.is_anonymous or user.is_guest %}
+        <div class="text-center">
+            <p>- You are a guest -</p>
 
-                <p>Thank you for using yamsa, {{ user.name }}!</p>
+            <p>Thank you for using yamsa, {{ user.name }}!</p>
 
-                <small>Not you? <a href="{% url 'account-user-logout' %}">Click here!</a></small>
+            <small>Not you? <a href="{% url 'account-user-logout' %}">Click here!</a></small>
 
-                <div class="fixed-bottom mb-5">
-                    <p>Maybe consider <a href="{% url 'account-user-register' %}">registering</a>? :)</p>
+            <div class="fixed-bottom" style="margin-bottom: 5em">
+                <p>Maybe consider <a href="{% url 'account-user-register' %}">registering</a>? :)</p>
 
-                    <p>Already have an account? <a href="{% url 'account-user-login' %}">Login here!</a></p>
-                </div>
-
+                <p>Already have an account? <a href="{% url 'account-user-login' %}">Login here!</a></p>
             </div>
 
-        {% else %}
+        </div>
+    {% else %}
 
-            {% if request.user.is_superuser %}
-                <div class="row float-end me-2">
-                    <div class="col">
-                        <a href="{{ PROJECT_BASE_URL }}/{{ DJANGO_ADMIN_SUB_URL }}/login" target="_blank">
-                            <i class="bi bi-terminal"></i>
-                        </a>
-                    </div>
-                </div>
-            {% endif %}
-
-            <div class="text-left px-3">
-                <p>{{ user.username }}</p>
-                <p>{{ user.email }}</p>
-            </div>
-
-            <br><br>
-
-            <div class="room-detail-tab-header">
-                <h5>Your data:</h5>
-            </div>
-
-            <div class="text-left px-3">
-                <form action="/account/update/{{ user.id }}/" method="post" class="flex-grow-1">
-                    {% csrf_token %}
-
-                    <div class="mb-3">
-                        <label for="email" class="form-label">{{ form.fields.email.label }}</label>
-                        <input type="email" class="form-control" id="email" name="email" autocomplete="email"
-                               required value="{{ user.email }}">
-                        {% for error_message in form.errors.email.data %}
-                            <small class="error" id="emailError">{{ error_message.message }}</small>
-                        {% endfor %}
-                    </div>
-                    <div class="mb-3">
-                        <label for="paypal_me_link" class="form-label">{{ form.fields.paypal_me_link.label }}</label>
-                        <input type="text" class="form-control" id="paypal_me_link" name="paypal_me_link"
-                               value="{% if user.paypal_me_link %}{{ user.paypal_me_link }}{% endif %}" placeholder="-">
-                        {% for error_message in form.errors.paypal_me_link.data %}
-                            <small class="error" id="paypal_me_linkError">{{ error_message.message }}</small>
-                        {% endfor %}
-                    </div>
-                    <div class="float-end">
-                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="fixed-bottom mb-5">
-                <div class="row float-end mb-5 me-2">
-                    <div class="col">
-                        <button type="button"
-                                class="btn btn-primary"
-                                hx-trigger="click"
-                                hx-get="{% url 'account-user-logout' %}"
-                                hx-target="#body"
-                                hx-swap="morph:innerHTML"
-                                hx-push-url="true"
-                        >
-                            Log me out
-                        </button>
-                    </div>
+        {% if request.user.is_superuser %}
+            <div class="row float-end me-2">
+                <div class="col">
+                    <a href="{{ PROJECT_BASE_URL }}/{{ DJANGO_ADMIN_SUB_URL }}/login" target="_blank">
+                        <i class="bi bi-terminal"></i>
+                    </a>
                 </div>
             </div>
-
         {% endif %}
-    </div>
+
+        <div class="text-left px-3">
+            <p>{{ user.username }}</p>
+            <p>{{ user.email }}</p>
+        </div>
+
+        <br><br>
+
+        <div class="room-detail-tab-header">
+            <h5>Your data:</h5>
+        </div>
+
+        <div class="text-left px-3">
+            <form action="/account/update/{{ user.id }}/" method="post" class="flex-grow-1">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">{{ form.fields.email.label }}</label>
+                    <input type="email" class="form-control" id="email" name="email" autocomplete="email"
+                           required value="{{ user.email }}">
+                    {% for error_message in form.errors.email.data %}
+                        <small class="error" id="emailError">{{ error_message.message }}</small>
+                    {% endfor %}
+                </div>
+                <div class="mb-3">
+                    <label for="paypal_me_link" class="form-label">{{ form.fields.paypal_me_link.label }}</label>
+                    <input type="text" class="form-control" id="paypal_me_link" name="paypal_me_link"
+                           value="{% if user.paypal_me_link %}{{ user.paypal_me_link }}{% endif %}" placeholder="-">
+                    {% for error_message in form.errors.paypal_me_link.data %}
+                        <small class="error" id="paypal_me_linkError">{{ error_message.message }}</small>
+                    {% endfor %}
+                </div>
+                <div class="float-end">
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="fixed-bottom mb-5">
+            <div class="row float-end mb-5 me-2">
+                <div class="col">
+                    <button type="button"
+                            class="btn btn-primary"
+                            hx-trigger="click"
+                            hx-get="{% url 'account-user-logout' %}"
+                            hx-target="#body"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true"
+                    >
+                        Log me out
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
 {% endblock %}

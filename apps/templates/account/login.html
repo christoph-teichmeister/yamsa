@@ -4,7 +4,7 @@
 {% block content %}
     <h1>Login</h1>
 
-    <div class="d-flex align-items-center account-login-register-container">
+    <div class="d-flex align-items-center h-100">
         <form action="/account/login/" method="post" class="flex-grow-1">
             {% csrf_token %}
 
@@ -33,6 +33,9 @@
             </div>
         </form>
     </div>
-    <small>Don't have an account yet? <a href="{% url 'account-user-register' %}">Register here!</a></small>
+
+    <small class="fixed-bottom ps-3" style="margin-bottom: 5em;">
+        Don't have an account yet? <a href="{% url 'account-user-register' %}">Register here!</a>
+    </small>
 
 {% endblock %}

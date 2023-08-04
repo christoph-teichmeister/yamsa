@@ -36,15 +36,13 @@
 
     <link rel="stylesheet" href="{% static 'base.css' %}">
 </head>
-<body hx-ext="morph" id="body">
+<body hx-ext="morph" id="body" style="height: 90vh">
 
 {% include "shared_partials/toast.html" %}
 
-<div class="container-fluid" style="padding-top: 2rem; padding-bottom: 7rem; height: 100vh">
-    <div id="content">
+<div class="container-fluid h-100" style="padding: 2rem 1rem;">
         {% block content %}
         {% endblock %}
-    </div>
 </div>
 
 {% include "_nav.html" %}
