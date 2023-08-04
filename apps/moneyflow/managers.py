@@ -178,6 +178,9 @@ class MoneyFlowManager(models.Manager):
 
         qs = self.get_queryset().filter_for_room_id(room_id=room_id)
 
+        if not qs.exists():
+            return qs
+
         outgoing_incoming_dict = qs.aggregate(Sum("outgoing"), Sum("incoming"))
         assert (
             outgoing_incoming_dict["outgoing__sum"]
