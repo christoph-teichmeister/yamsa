@@ -102,7 +102,7 @@ class MoneyFlowManager(models.Manager):
         """DOES NOT SAVE THE FLOW, just updates its values"""
         money_field = "outgoing" if is_debitor_flow else "incoming"
 
-        existing_money_flow_qs = self.get_queryset().filter(user_id=user.id)
+        existing_money_flow_qs = self.get_queryset().filter(user_id=user.id, room_id=transaction.room_id)
         transaction_value = (
             transaction.value * (transaction.paid_for.exclude(id=user.id).count())
             if not is_debitor_flow
