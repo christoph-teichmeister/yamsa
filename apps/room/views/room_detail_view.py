@@ -46,14 +46,10 @@ class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
     @context
     @cached_property
     def debts(self):
-        # TODO CT: Work on this
-        MoneyFlow.objects.try_to_resolve_flows_and_reduce_them_to_zero(
-            room_id=self.object.id
-        )
-
         debts = {}
+
         for user in self.object.users.all().order_by("name"):
-            debts_for_user = Debt.objects.get_debts_for_user_for_room_as_dict(
+            debts_for_user = Debt.objects.get_debts_for_user_for_room_as_dict_old(
                 user.id, self.object.id
             )
             if debts_for_user == {}:
@@ -61,6 +57,18 @@ class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
 
             debts[user.name] = debts_for_user
         return debts
+
+    @context
+    @cached_property
+    def debt_list(self):
+        # TODO CT: Work on this
+        MoneyFlow.objects.try_to_resolve_flows_and_reduce_them_to_zero(
+            room_id=self.object.id
+        )
+
+        return Debt.objects.get_debts_for_user_for_room_as_dict(
+            self.object.id
+        )
 
     @context
     @cached_property
