@@ -14,54 +14,81 @@
     {% endif %}
 </div>
 
+{% if debt_list %}
+    <ul class="list-group mb-5">
+        {% for log_message in debt_list %}
+            <li class="list-group-item">
+                <div class="row align-items-center">
+                    <div class="col-9">
+                        {{ log_message }}
+                    </div>
+
+                    <div class="col-3">
+                        <div class="float-end">
+                            <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
+                               data-bs-toggle="tooltip"
+                               data-bs-placement="top"
+                               data-bs-title="This transaction is not yours to settle!"></i>
+                        </div>
+                    </div>
+
+                    {% include "room/partials/_settle_payment_modal.html" with creditor=creditor debt_ids=amount_owed_debt_ids_and_settled.debt_ids debt_ids_as_string=amount_owed_debt_ids_and_settled.debt_ids_as_string amount_owed=amount_owed_debt_ids_and_settled.amount_owed creditor_paypal_me_link=amount_owed_debt_ids_and_settled.paypal_me_link %}
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <br/>
+{% endif %}
+
 {% if debts %}
     <ul class="list-group mb-5">
         {# Open debts #}
         {% for debitor, debt_dict in debts.items %}
             {% for creditor, amount_owed_debt_ids_and_settled in debt_dict.open_debts.items %}
-                <li class="list-group-item">
-                    <div class="row align-items-center">
-                        <div class="col-9">
-                            {% if debitor == request.user.name %}
-                                <span class="me-involved">You</span> owe
-                            {% else %}
-                                <strong>{{ debitor }}</strong> owes
-                            {% endif %}
-                            {% for currency_sign, amount_owed in amount_owed_debt_ids_and_settled.amount_owed.items %}
-                                {{ amount_owed }}{{ currency_sign }}{% if not forloop.last %}, and{% endif %}
-                            {% endfor %}
-                            to
-                            {% if creditor == request.user.name %}
-                                <span class="me-involved">you</span>
-                            {% else %}
-                                {{ creditor }}
-                            {% endif %}
-                        </div>
-
-                        <div class="col-3">
-                            <div class="float-end">
+                {% for currency_sign, amount_owed in amount_owed_debt_ids_and_settled.amount_owed.items %}
+                    <li class="list-group-item">
+                        <div class="row align-items-center">
+                            <div class="col-9">
                                 {% if debitor == request.user.name %}
-                                    {% if amount_owed_debt_ids_and_settled.paypal_me_link %}
-                                        <a class="text-reset"
-                                           href="{{ amount_owed_debt_ids_and_settled.paypal_me_link }}/{{ amount_owed_debt_ids_and_settled.amount_owed }}"
-                                           target="_blank"><i class="bi bi-paypal"></i></a>
-                                        &nbsp&nbsp&nbsp
-                                    {% endif %}
-                                    <i class="bi bi-piggy-bank"
-                                       data-bs-toggle="modal"
-                                       data-bs-target="#settleDebtModal{{ amount_owed_debt_ids_and_settled.debt_ids_as_string }}"></i>
+                                    <span class="me-involved">You</span> owe
                                 {% else %}
-                                    <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-placement="top"
-                                       data-bs-title="This transaction is not yours to settle!"></i>
+                                    <strong>{{ debitor }}</strong> owes
+                                {% endif %}
+                                {{ amount_owed }}{{ currency_sign }}{% if not forloop.last %}, and{% endif %}
+                                to
+                                {% if creditor == request.user.name %}
+                                    <span class="me-involved">you</span>
+                                {% else %}
+                                    {{ creditor }}
                                 {% endif %}
                             </div>
-                        </div>
 
-                        {% include "room/partials/_settle_payment_modal.html" with creditor=creditor debt_ids=amount_owed_debt_ids_and_settled.debt_ids debt_ids_as_string=amount_owed_debt_ids_and_settled.debt_ids_as_string amount_owed=amount_owed_debt_ids_and_settled.amount_owed creditor_paypal_me_link=amount_owed_debt_ids_and_settled.paypal_me_link %}
-                    </div>
-                </li>
+                            <div class="col-3">
+                                <div class="float-end">
+                                    {% if debitor == request.user.name %}
+                                        {% if amount_owed_debt_ids_and_settled.paypal_me_link %}
+                                            <a class="text-reset"
+                                               href="{{ amount_owed_debt_ids_and_settled.paypal_me_link }}/{{ amount_owed }}"
+                                               target="_blank"><i class="bi bi-paypal"></i></a>
+                                            &nbsp&nbsp&nbsp
+                                        {% endif %}
+                                        <i class="bi bi-piggy-bank"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#settleDebtModal{{ amount_owed_debt_ids_and_settled.debt_ids_as_string }}"></i>
+                                    {% else %}
+                                        <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-placement="top"
+                                           data-bs-title="This transaction is not yours to settle!"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {% include "room/partials/_settle_payment_modal.html" with creditor=creditor debt_ids=amount_owed_debt_ids_and_settled.debt_ids debt_ids_as_string=amount_owed_debt_ids_and_settled.debt_ids_as_string amount_owed=amount_owed_debt_ids_and_settled.amount_owed creditor_paypal_me_link=amount_owed_debt_ids_and_settled.paypal_me_link %}
+                        </div>
+                    </li>
+                {% endfor %}
             {% endfor %}
         {% endfor %}
 
@@ -100,5 +127,7 @@
         {% endfor %}
     </ul>
 
+    <br/>
+    <br/>
     <br/>
 {% endif %}
