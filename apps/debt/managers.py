@@ -79,6 +79,15 @@ class DebtManager(Manager):
                 sorted_cleaned_creditor_debts_list.pop(0)
                 sorted_cleaned_creditor_debts_list.pop(-1)
                 sorted_cleaned_creditor_debts_list.append(most_expensive_tuple)
+            else:
+                a_log_list.append(
+                    f"{cheapest_tuple[0]} pays {abs(diff_expensive_to_min)}{cheapest_tuple[1][1]} to {most_expensive_tuple[0]}"
+                )
+                cheapest_tuple = (cheapest_tuple[0], (cheapest_tuple[1][0] - diff_expensive_to_min, cheapest_tuple[1][
+                    1]))
+                sorted_cleaned_creditor_debts_list.pop(0)
+                sorted_cleaned_creditor_debts_list.pop(-1)
+                sorted_cleaned_creditor_debts_list.append(cheapest_tuple)
 
             sorted_cleaned_creditor_debts_list = list(
                 sorted(sorted_cleaned_creditor_debts_list, key=lambda entry: entry[1])
