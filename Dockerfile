@@ -1,5 +1,5 @@
-# Set Python and node versions
-ARG PYTHON_MINOR_VERSION=3.10
+# Set Python
+ARG PYTHON_MINOR_VERSION=3.11
 
 # Set global variable to export path from "builder-python" in production image
 ARG ENV_PATH
@@ -20,7 +20,8 @@ WORKDIR $TMP_DIR
 
 # Install OS dependencies required for the build
 RUN apt-get update && \
-    apt-get install && \
+    apt-get install -y && \
+    apt-get upgrade -y && \
     apt-get clean
 
 # Move pipfiles to project
@@ -33,7 +34,7 @@ ARG ENV_PATH
 RUN ENV_PATH=$PATH
 
 ### STAGE 2: Setup ###
-FROM python:${PYTHON_MINOR_VERSION}-bullseye AS production
+FROM python:${PYTHON_MINOR_VERSION}-slim AS production
 
 # Declare global variable to make it accessible
 ARG PYTHON_MINOR_VERSION
