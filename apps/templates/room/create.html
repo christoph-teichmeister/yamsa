@@ -17,14 +17,17 @@
             </div>
 
             <div class="mb-3">
-                <label for="preferredCurrencySelect">Preferred Currency</label>
+                <label for="preferred_currency">Preferred Currency</label>
                 <select name="preferred_currency"
                         class="form-control form-select"
-                        id="preferredCurrencySelect"
+                        id="preferred_currency"
                         required
                 >
                     {% for currency in currencies %}
-                        <option value="{{ currency.id }}">{{ currency.sign }}</option>
+                        <option {% if forloop.first %}selected{% endif %}
+                                value="{{ currency.id }}">
+                            {{ currency.sign }}
+                        </option>
                     {% endfor %}
                 </select>
             </div>

@@ -115,6 +115,7 @@ class Command(BaseCommand):
         print(f'Room ID: {room.id}, Name: "{room.name}" created')
 
     @staticmethod
+    @transaction.atomic
     def restore_test_data():
         """
         Creates / "Finds" test data.
@@ -125,9 +126,8 @@ class Command(BaseCommand):
         # Fake self for this method
         self = Command
 
-        with transaction.atomic():
-            self._create_users()
+        self._create_users()
 
-            self._create_currencies()
+        self._create_currencies()
 
-            self._create_rooms()
+        self._create_rooms()
