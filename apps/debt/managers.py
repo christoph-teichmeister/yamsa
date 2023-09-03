@@ -25,18 +25,7 @@ class DebtManager(Manager):
     ) -> QuerySet[dict]:
         return self.get_debts_for_user_for_room(user_id, room_id).filter(settled=False)
 
-    def get_debts_for_user_for_room_as_dict(self, room_id: int) -> list:
-        # TODO CT: Work on this
-        all_debts_of_room_tuple = tuple(
-            self.filter(transaction__room_id=room_id)
-            .order_by("transaction__value")
-            .values_list("transaction__value", "transaction__currency__sign", "transaction__paid_by__name",
-                         "user__name")
-        )
-
-        if len(all_debts_of_room_tuple) == 0:
-            return []
-
+    def _get_cleaned_debt_dict(self, all_debts_of_room_tuple: tuple):
         cleaned_debts_dict = {}
         for debt_entry in all_debts_of_room_tuple:
             value = debt_entry[0]
@@ -44,58 +33,106 @@ class DebtManager(Manager):
             paid_by_name = debt_entry[2]
             paid_for_name = debt_entry[3]
 
-            if cleaned_debts_dict.get(paid_by_name, None) is not None:
-                cleaned_debts_dict[paid_by_name] = (cleaned_debts_dict[paid_by_name][0] + value,
-                                                       cleaned_debts_dict[paid_by_name][1])
-            else:
-                cleaned_debts_dict[paid_by_name] = (value, currency_sign)
+            # If the currency is already in cleaned_debts_dict...
+            if cleaned_debts_dict.get(currency_sign) is not None:
+                currency_entry = cleaned_debts_dict[currency_sign]
 
-            if cleaned_debts_dict.get(paid_for_name, None) is not None:
-                cleaned_debts_dict[paid_for_name] = (cleaned_debts_dict[paid_for_name][0] - value,
-                                                        cleaned_debts_dict[paid_for_name][1])
-            else:
-                cleaned_debts_dict[paid_for_name] = (0 - value, currency_sign)
+                # If that currency already has an entry for the paid_by user...
+                if currency_entry.get(paid_by_name) is not None:
+                    # Update that entry with the new value
+                    existing_value = currency_entry[paid_by_name]
+                    cleaned_debts_dict[currency_sign][paid_by_name] = existing_value + value
+                else:
+                    # If the currency_sign has no entry for the user, but already exists in the dict, then it must be
+                    # for another user, so we just update the entry
+                    cleaned_debts_dict[currency_sign] = {**currency_entry, paid_by_name: value}
 
-        sorted_cleaned_creditor_debts_list = list(
-            sorted(
-                cleaned_debts_dict.items(),
-                key=lambda entry: entry[1],
+            else:
+                # If the currency is not in the dict yet, create a new entry
+                cleaned_debts_dict[currency_sign] = {paid_by_name: value}
+
+            # If currency_sign is not already in the cleaned_debts_dict...
+            if cleaned_debts_dict.get(currency_sign) is not None:
+                currency_entry = cleaned_debts_dict[currency_sign]
+
+                # If that currency already has an entry for the paid_for user...
+                if currency_entry.get(paid_for_name) is not None:
+                    # Update that entry with the new value
+                    existing_value = currency_entry[paid_for_name]
+                    cleaned_debts_dict[currency_sign][paid_for_name] = existing_value - value
+                else:
+                    # If the currency_sign has no entry for the user, but already exists in the dict, then it must be
+                    # for another user, so we just update the entry
+                    cleaned_debts_dict[currency_sign] = {**currency_entry, paid_for_name: 0 - value}
+
+            else:
+                # If the currency_sign is not in the dict yet, create a new entry
+                cleaned_debts_dict[currency_sign] = {paid_for_name: 0 - value}
+        return cleaned_debts_dict
+
+
+    def _get_sorted_cleaned_creditor_debts_dict(self, cleaned_debts_dict):
+        sorted_cleaned_creditor_debts_dict = {}
+        for currency_tuple in cleaned_debts_dict.items():
+            sorted_cleaned_creditor_debts_dict[currency_tuple[0]]= list(
+                sorted(
+                    currency_tuple[1].items(),
+                    key=lambda entry: entry[1],
+                )
             )
+        return sorted_cleaned_creditor_debts_dict
+
+
+
+    def get_debts_for_user_for_room_as_dict(self, room_id: int) -> list:
+        # TODO CT: Work on this
+        all_debts_of_room_tuple = tuple(
+            self.filter(transaction__room_id=room_id)
+            .order_by("transaction__value", "transaction__currency__sign")
+            .values_list("transaction__value", "transaction__currency__sign", "transaction__paid_by__name",
+                         "user__name")
         )
 
+        if len(all_debts_of_room_tuple) == 0:
+            return []
+
+        cleaned_debts_dict = self._get_cleaned_debt_dict(all_debts_of_room_tuple)
+        sorted_cleaned_creditor_debts_dict = self._get_sorted_cleaned_creditor_debts_dict(cleaned_debts_dict)
+
         a_log_list = []
+        for currency_sign in sorted_cleaned_creditor_debts_dict:
+            all_is_done = False
+            while not all_is_done:
+                sorted_cleaned_creditor_debts_list = sorted_cleaned_creditor_debts_dict[currency_sign]
+                cheapest_user_tuple = sorted_cleaned_creditor_debts_list[0]
+                most_expensive_user_tuple = sorted_cleaned_creditor_debts_list[-1]
 
-        all_is_done = False
-        while not all_is_done:
-            cheapest_tuple = sorted_cleaned_creditor_debts_list[0]
-            most_expensive_tuple = sorted_cleaned_creditor_debts_list[-1]
+                diff_expensive_to_min = abs(most_expensive_user_tuple[1]) - abs(cheapest_user_tuple[1])
+                if diff_expensive_to_min >= 0:
+                    a_log_list.append(
+                        f"{cheapest_user_tuple[0]} pays {abs(cheapest_user_tuple[1])}{currency_sign} to {most_expensive_user_tuple[0]}"
+                    )
+                    most_expensive_user_tuple = (most_expensive_user_tuple[0], diff_expensive_to_min)
 
-            diff_expensive_to_min = abs(most_expensive_tuple[1][0]) - abs(cheapest_tuple[1][0])
-            if diff_expensive_to_min >= 0:
-                a_log_list.append(
-                    f"{cheapest_tuple[0]} pays {abs(cheapest_tuple[1][0])}{cheapest_tuple[1][1]} to {most_expensive_tuple[0]}"
+                    sorted_cleaned_creditor_debts_list.pop(0)
+                    sorted_cleaned_creditor_debts_list.pop(-1)
+                    sorted_cleaned_creditor_debts_list.append(most_expensive_user_tuple)
+                else:
+                    a_log_list.append(
+                        f"{cheapest_user_tuple[0]} pays {abs(diff_expensive_to_min)}{currency_sign} to {most_expensive_user_tuple[0]}"
+                    )
+                    cheapest_user_tuple = (cheapest_user_tuple[0], cheapest_user_tuple[1] - diff_expensive_to_min)
+
+                    sorted_cleaned_creditor_debts_list.pop(0)
+                    sorted_cleaned_creditor_debts_list.pop(-1)
+                    sorted_cleaned_creditor_debts_list.append(cheapest_user_tuple)
+
+                sorted_cleaned_creditor_debts_list = list(
+                    sorted(sorted_cleaned_creditor_debts_list, key=lambda entry: entry[1])
                 )
-                most_expensive_tuple = (most_expensive_tuple[0], (diff_expensive_to_min, most_expensive_tuple[1][1]))
-                sorted_cleaned_creditor_debts_list.pop(0)
-                sorted_cleaned_creditor_debts_list.pop(-1)
-                sorted_cleaned_creditor_debts_list.append(most_expensive_tuple)
-            else:
-                a_log_list.append(
-                    f"{cheapest_tuple[0]} pays {abs(diff_expensive_to_min)}{cheapest_tuple[1][1]} to {most_expensive_tuple[0]}"
-                )
-                cheapest_tuple = (cheapest_tuple[0], (cheapest_tuple[1][0] - diff_expensive_to_min, cheapest_tuple[1][
-                    1]))
-                sorted_cleaned_creditor_debts_list.pop(0)
-                sorted_cleaned_creditor_debts_list.pop(-1)
-                sorted_cleaned_creditor_debts_list.append(cheapest_tuple)
 
-            sorted_cleaned_creditor_debts_list = list(
-                sorted(sorted_cleaned_creditor_debts_list, key=lambda entry: entry[1])
-            )
+                all_is_done = len(sorted_cleaned_creditor_debts_list) == 1
 
-            all_is_done = len(sorted_cleaned_creditor_debts_list) == 1
-
-        # print(a_log_list)
         return a_log_list
 
     def get_debts_for_user_for_room_as_dict_old(
