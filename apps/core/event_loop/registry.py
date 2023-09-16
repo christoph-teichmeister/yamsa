@@ -1,6 +1,5 @@
 import importlib
 import os
-from functools import wraps
 
 from django.conf import settings
 
@@ -92,3 +91,6 @@ class MessageRegistry:
             print(f"* {event}: [{handler_list}]")
 
         print(f"\n### {len(self.command_dict) + len(self.event_dict)} message functions detected. ###\n")
+
+
+message_registry = MessageRegistry()

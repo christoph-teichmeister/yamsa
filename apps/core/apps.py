@@ -9,6 +9,6 @@ class CoreConfig(AppConfig):
         super().ready()
 
         # Run auto-registry
-        from apps.core.domain import message_registry
+        from apps.core.event_loop.registry import message_registry
 
         message_registry.autodiscover()

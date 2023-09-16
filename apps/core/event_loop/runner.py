@@ -1,7 +1,7 @@
 from django.db import transaction
 
-from apps.core.domain import message_registry
 from apps.core.event_loop.messages import Command, Event, Message
+from apps.core.event_loop.registry import message_registry
 
 
 def handle_message(message_list: Message | list[Message]):
