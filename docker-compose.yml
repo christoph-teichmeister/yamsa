@@ -17,16 +17,13 @@ services:
 
 
   backend:
-#    container_name: yamsa_backend
+    container_name: yamsa_backend
     restart: "no"
     volumes:
       - .:/yamsa
     ports:
       - "8000:8000"
     build: .
-#    build:
-#      context: .
-#      target: production
     depends_on:
       - database
 
