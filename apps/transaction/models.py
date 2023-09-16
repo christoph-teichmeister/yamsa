@@ -9,9 +9,7 @@ class Transaction(CommonInfo):
         "account.User",
         through="debt.Debt",
     )
-    paid_by = models.ForeignKey(
-        "account.User", related_name="made_transactions", on_delete=models.CASCADE
-    )
+    paid_by = models.ForeignKey("account.User", related_name="made_transactions", on_delete=models.CASCADE)
 
     room = models.ForeignKey(
         "room.Room",
@@ -21,9 +19,7 @@ class Transaction(CommonInfo):
 
     value = models.DecimalField(decimal_places=2, max_digits=10)
 
-    currency = models.ForeignKey(
-        "currency.Currency", related_name="transactions", on_delete=models.DO_NOTHING
-    )
+    currency = models.ForeignKey("currency.Currency", related_name="transactions", on_delete=models.DO_NOTHING)
 
     settled = models.BooleanField(default=False)
     settled_at = models.DateField(blank=True, null=True)
