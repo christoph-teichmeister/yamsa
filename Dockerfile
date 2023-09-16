@@ -8,7 +8,7 @@ ARG ENV_PATH
 #ARG GID=1000
 
 ### STAGE 1: Build python ###
-FROM python:${PYTHON_MINOR_VERSION} AS builder-python
+FROM python:${PYTHON_MINOR_VERSION}-bullseye AS builder-python
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
