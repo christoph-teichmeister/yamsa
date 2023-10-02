@@ -6,9 +6,7 @@ from apps.debt.querysets import NewDebtQuerySet
 
 
 class Debt(models.Model):
-    user = models.ForeignKey(
-        "account.User", on_delete=models.CASCADE, related_name="owes_transactions"
-    )
+    user = models.ForeignKey("account.User", on_delete=models.CASCADE, related_name="owes_transactions")
     transaction = models.ForeignKey("transaction.Transaction", on_delete=models.CASCADE)
 
     settled = models.BooleanField(default=False)
@@ -21,9 +19,7 @@ class Debt(models.Model):
         verbose_name_plural = "Debts"
 
     def __str__(self):
-        return (
-            f"{self.user} owes {self.transaction.value} to {self.transaction.paid_by}"
-        )
+        return f"{self.user} owes {self.transaction.value} to {self.transaction.paid_by}"
 
     def save(self, *args, **kwargs):
         if self.user_id == self.transaction.paid_by_id:
