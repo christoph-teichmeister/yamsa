@@ -8,7 +8,6 @@ from django_context_decorator import context
 
 from apps.currency.models import Currency
 from apps.debt.models import Debt, NewDebt
-from apps.moneyflow.models import MoneyFlow
 from apps.room.models import Room
 
 
@@ -59,9 +58,6 @@ class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
     @context
     @cached_property
     def debt_list(self):
-        # TODO CT: Work on this
-        MoneyFlow.objects.try_to_resolve_flows_and_reduce_them_to_zero(room_id=self.object.id)
-
         return Debt.objects.get_debts_for_user_for_room_as_dict(self.object.id)
 
     @context
