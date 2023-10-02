@@ -96,7 +96,7 @@ class DebtManager(Manager):
         cleaned_debts_dict = self._get_cleaned_debt_dict(all_debts_of_room_tuple)
         sorted_cleaned_creditor_debts_dict = self._get_sorted_cleaned_creditor_debts_dict(cleaned_debts_dict)
 
-        test = {}
+        clean_dictionary = {}
 
         a_log_list = []
         for currency_sign in sorted_cleaned_creditor_debts_dict:
@@ -112,7 +112,7 @@ class DebtManager(Manager):
                         f"{cheapest_user_tuple[0]} pays {abs(cheapest_user_tuple[1])}{currency_sign} to {most_expensive_user_tuple[0]}"
                     )
                     add_or_update_dict(
-                        dictionary=test,
+                        dictionary=clean_dictionary,
                         update_value={
                             cheapest_user_tuple[0]: {
                                 most_expensive_user_tuple[0]: {
@@ -132,7 +132,7 @@ class DebtManager(Manager):
                         f"{cheapest_user_tuple[0]} pays {abs(diff_expensive_to_min)}{currency_sign} to {most_expensive_user_tuple[0]}"
                     )
                     add_or_update_dict(
-                        dictionary=test,
+                        dictionary=clean_dictionary,
                         update_value={
                             cheapest_user_tuple[0]: {
                                 most_expensive_user_tuple[0]: {
@@ -154,7 +154,7 @@ class DebtManager(Manager):
 
                 all_is_done = len(sorted_cleaned_creditor_debts_list) == 1
 
-        return test
+        return clean_dictionary
 
     def get_debts_for_user_for_room_as_dict_old(self, user_id: int, room_id: int) -> dict:
         """
