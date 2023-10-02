@@ -1,13 +1,14 @@
 from django.db.models import Manager, QuerySet
 
+from apps.core.utils import add_or_update_dict
+from apps.debt.querysets import NewDebtQuerySet
+
 
 class DebtManager(Manager):
     def get_debts_for_user_for_room(self, user_id: int, room_id: int) -> QuerySet[dict]:
         return (
             self.filter(user_id=user_id, transaction__room_id=room_id)
-            .select_related(
-                "transaction", "transaction__paid_by", "transaction__currency"
-            )
+            .select_related("transaction", "transaction__paid_by", "transaction__currency")
             .exclude(transaction__paid_by_id=user_id)
             .order_by("transaction__paid_by")
             .values(
@@ -20,9 +21,7 @@ class DebtManager(Manager):
             )
         )
 
-    def get_unsettled_debts_for_user_for_room(
-        self, user_id: int, room_id: int
-    ) -> QuerySet[dict]:
+    def get_unsettled_debts_for_user_for_room(self, user_id: int, room_id: int) -> QuerySet[dict]:
         return self.get_debts_for_user_for_room(user_id, room_id).filter(settled=False)
 
     def _get_cleaned_debt_dict(self, all_debts_of_room_tuple: tuple):
@@ -70,11 +69,10 @@ class DebtManager(Manager):
                 cleaned_debts_dict[currency_sign] = {paid_for_name: 0 - value}
         return cleaned_debts_dict
 
-
     def _get_sorted_cleaned_creditor_debts_dict(self, cleaned_debts_dict):
         sorted_cleaned_creditor_debts_dict = {}
         for currency_tuple in cleaned_debts_dict.items():
-            sorted_cleaned_creditor_debts_dict[currency_tuple[0]]= list(
+            sorted_cleaned_creditor_debts_dict[currency_tuple[0]] = list(
                 sorted(
                     currency_tuple[1].items(),
                     key=lambda entry: entry[1],
@@ -82,22 +80,23 @@ class DebtManager(Manager):
             )
         return sorted_cleaned_creditor_debts_dict
 
-
-
-    def get_debts_for_user_for_room_as_dict(self, room_id: int) -> list:
+    def get_debts_for_user_for_room_as_dict(self, room_id: int) -> dict:
         # TODO CT: Work on this
         all_debts_of_room_tuple = tuple(
             self.filter(transaction__room_id=room_id)
             .order_by("transaction__value", "transaction__currency__sign")
-            .values_list("transaction__value", "transaction__currency__sign", "transaction__paid_by__name",
-                         "user__name")
+            .values_list(
+                "transaction__value", "transaction__currency__sign", "transaction__paid_by__name", "user__name"
+            )
         )
 
         if len(all_debts_of_room_tuple) == 0:
-            return []
+            return {}
 
         cleaned_debts_dict = self._get_cleaned_debt_dict(all_debts_of_room_tuple)
         sorted_cleaned_creditor_debts_dict = self._get_sorted_cleaned_creditor_debts_dict(cleaned_debts_dict)
+
+        test = {}
 
         a_log_list = []
         for currency_sign in sorted_cleaned_creditor_debts_dict:
@@ -112,6 +111,17 @@ class DebtManager(Manager):
                     a_log_list.append(
                         f"{cheapest_user_tuple[0]} pays {abs(cheapest_user_tuple[1])}{currency_sign} to {most_expensive_user_tuple[0]}"
                     )
+                    add_or_update_dict(
+                        dictionary=test,
+                        update_value={
+                            cheapest_user_tuple[0]: {
+                                most_expensive_user_tuple[0]: {
+                                    currency_sign: abs(cheapest_user_tuple[1]),
+                                }
+                            }
+                        },
+                    )
+
                     most_expensive_user_tuple = (most_expensive_user_tuple[0], diff_expensive_to_min)
 
                     sorted_cleaned_creditor_debts_list.pop(0)
@@ -121,6 +131,17 @@ class DebtManager(Manager):
                     a_log_list.append(
                         f"{cheapest_user_tuple[0]} pays {abs(diff_expensive_to_min)}{currency_sign} to {most_expensive_user_tuple[0]}"
                     )
+                    add_or_update_dict(
+                        dictionary=test,
+                        update_value={
+                            cheapest_user_tuple[0]: {
+                                most_expensive_user_tuple[0]: {
+                                    currency_sign: abs(diff_expensive_to_min),
+                                }
+                            }
+                        },
+                    )
+
                     cheapest_user_tuple = (cheapest_user_tuple[0], cheapest_user_tuple[1] - diff_expensive_to_min)
 
                     sorted_cleaned_creditor_debts_list.pop(0)
@@ -133,11 +154,9 @@ class DebtManager(Manager):
 
                 all_is_done = len(sorted_cleaned_creditor_debts_list) == 1
 
-        return a_log_list
+        return test
 
-    def get_debts_for_user_for_room_as_dict_old(
-        self, user_id: int, room_id: int
-    ) -> dict:
+    def get_debts_for_user_for_room_as_dict_old(self, user_id: int, room_id: int) -> dict:
         """
         Exemplary return:
             {
@@ -196,19 +215,13 @@ class DebtManager(Manager):
                 }
             else:
                 if sub_dict[owed_to_id]["amount_owed"].get(currency_sign) is not None:
-                    sub_dict[owed_to_id]["amount_owed"][
-                        currency_sign
-                    ] += transaction_value
+                    sub_dict[owed_to_id]["amount_owed"][currency_sign] += transaction_value
                 else:
-                    sub_dict[owed_to_id]["amount_owed"][
-                        currency_sign
-                    ] = transaction_value
+                    sub_dict[owed_to_id]["amount_owed"][currency_sign] = transaction_value
 
                 sub_dict[owed_to_id]["debt_ids"] += (debt_id,)
                 sub_dict[owed_to_id]["debt_ids_as_string"] += f"-{debt_id}"
-                sub_dict[owed_to_id]["settled"] = (
-                    sub_dict[owed_to_id]["settled"] & settled
-                )
+                sub_dict[owed_to_id]["settled"] = sub_dict[owed_to_id]["settled"] & settled
 
         return debt_dict
 
