@@ -211,3 +211,8 @@ class DebtManager(Manager):
                 )
 
         return debt_dict
+
+
+class NewDebtManager(Manager):
+    def get_queryset(self) -> NewDebtQuerySet:
+        return NewDebtQuerySet(self.model, using=self._db)

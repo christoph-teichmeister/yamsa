@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
-from apps.debt.managers import DebtManager
+from apps.debt.managers import DebtManager, NewDebtManager
+from apps.debt.querysets import NewDebtQuerySet
 
 
 class Debt(models.Model):
@@ -39,3 +40,25 @@ class Debt(models.Model):
             self.settled_at = None
 
         super().save(*args, **kwargs)
+
+
+class NewDebt(models.Model):
+    debitor = models.ForeignKey("account.User", on_delete=models.CASCADE, related_name="debts")
+    creditor = models.ForeignKey("account.User", on_delete=models.CASCADE, related_name="debts_to_be_settled")
+    room = models.ForeignKey("room.Room", on_delete=models.CASCADE, related_name="debts")
+
+    value = models.DecimalField(decimal_places=2, max_digits=10)
+
+    currency = models.ForeignKey("currency.Currency", related_name="debts", on_delete=models.DO_NOTHING)
+
+    settled = models.BooleanField(default=False)
+    settled_at = models.DateField(blank=True, null=True)
+
+    objects = NewDebtManager.from_queryset(NewDebtQuerySet)()
+
+    class Meta:
+        verbose_name = "New Debt"
+        verbose_name_plural = "New Debts"
+
+    def __str__(self):
+        return f"{self.debitor} owes {self.value}{self.currency.sign} to {self.creditor}"
