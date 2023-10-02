@@ -65,11 +65,6 @@ class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
     def new_debts(self):
         return NewDebt.objects.filter_for_room_id(room_id=self.object.id)
 
-    @context
-    @cached_property
-    def money_flow_qs(self):
-        return self.object.money_flows.all()
-
     def get(self, request, *args, **kwargs):
         ret = super().get(request, *args, **kwargs)
 
