@@ -65,13 +65,15 @@ def reduce_some_sheit(context: TransactionCreated.Context):
 
                 if not debt_qs.exists():
                     if value != Decimal(0):
-                        created_debt_ids_tuple += (NewDebt.objects.create(
-                            debitor=debitor,
-                            creditor=creditor,
-                            room=context.transaction.room,
-                            value=value,
-                            currency=Currency.objects.get(sign=currency_sign),
-                        ).id,)
+                        created_debt_ids_tuple += (
+                            NewDebt.objects.create(
+                                debitor=debitor,
+                                creditor=creditor,
+                                room=context.transaction.room,
+                                value=value,
+                                currency=Currency.objects.get(sign=currency_sign),
+                            ).id,
+                        )
                         continue
 
                 if debt_qs.count() == 1:
