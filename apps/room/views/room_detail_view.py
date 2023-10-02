@@ -7,7 +7,7 @@ from django.views import generic
 from django_context_decorator import context
 
 from apps.currency.models import Currency
-from apps.debt.models import Debt
+from apps.debt.models import Debt, NewDebt
 from apps.moneyflow.models import MoneyFlow
 from apps.room.models import Room
 
@@ -49,9 +49,7 @@ class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
         debts = {}
 
         for user in self.object.users.all().order_by("name"):
-            debts_for_user = Debt.objects.get_debts_for_user_for_room_as_dict_old(
-                user.id, self.object.id
-            )
+            debts_for_user = Debt.objects.get_debts_for_user_for_room_as_dict_old(user.id, self.object.id)
             if debts_for_user == {}:
                 continue
 
@@ -62,13 +60,14 @@ class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
     @cached_property
     def debt_list(self):
         # TODO CT: Work on this
-        MoneyFlow.objects.try_to_resolve_flows_and_reduce_them_to_zero(
-            room_id=self.object.id
-        )
+        MoneyFlow.objects.try_to_resolve_flows_and_reduce_them_to_zero(room_id=self.object.id)
 
-        return Debt.objects.get_debts_for_user_for_room_as_dict(
-            self.object.id
-        )
+        return Debt.objects.get_debts_for_user_for_room_as_dict(self.object.id)
+
+    @context
+    @cached_property
+    def new_debts(self):
+        return NewDebt.objects.filter_for_room_id(room_id=self.object.id)
 
     @context
     @cached_property
