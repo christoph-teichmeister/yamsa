@@ -28,10 +28,22 @@
 
                 <div class="col-3">
                     <div class="float-end">
-                        <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
-                           data-bs-toggle="tooltip"
-                           data-bs-placement="top"
-                           data-bs-title="This transaction is not yours to settle!"></i>
+                        {% if debt.debitor.username == request.user.name %}
+                            {% if debt.creditor.paypal_me_link %}
+                                <a class="text-reset"
+                                   href="{{ debt.creditor.paypal_me_link }}/{{ debt.value }}"
+                                   target="_blank"><i class="bi bi-paypal"></i></a>
+                                &nbsp&nbsp&nbsp
+                            {% endif %}
+                            <i class="bi bi-piggy-bank"
+                               data-bs-toggle="modal"
+                               data-bs-target="#settleDebtModal{{ amount_owed_debt_ids_and_settled.debt_ids_as_string }}"></i>
+                        {% else %}
+                            <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
+                               data-bs-toggle="tooltip"
+                               data-bs-placement="top"
+                               data-bs-title="This transaction is not yours to settle!"></i>
+                        {% endif %}
                     </div>
                 </div>
 
