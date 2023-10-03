@@ -6,11 +6,11 @@ from apps.currency.models import Currency
 
 @register(Currency)
 class CurrencyAdmin(admin.ModelAdmin):
-    list_display = ("sign", "name")
-    search_fields = ("name",)
+    list_display = ("sign", "code", "name")
+    search_fields = ("name", "code")
     fieldsets = (
         (
             None,
-            {"fields": (("sign", "name"),)},
+            {"fields": (("sign", "code", "name"),)},
         ),
     )
