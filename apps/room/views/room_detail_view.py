@@ -63,7 +63,7 @@ class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
     @context
     @cached_property
     def new_debts(self):
-        return NewDebt.objects.filter_for_room_id(room_id=self.object.id).order_by("debitor__username")
+        return NewDebt.objects.filter_for_room_id(room_id=self.object.id).order_by("settled", "debitor__username")
 
     def get(self, request, *args, **kwargs):
         ret = super().get(request, *args, **kwargs)
