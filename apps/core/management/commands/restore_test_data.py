@@ -51,9 +51,7 @@ class Command(BaseCommand):
             is_guest=False,
         )
 
-        print(
-            f'User ID: {non_guest_user_1.id}, Name: "{non_guest_user_1.name}" created'
-        )
+        print(f'User ID: {non_guest_user_1.id}, Name: "{non_guest_user_1.name}" created')
 
         non_guest_user_2 = User.objects.create(
             name="non_guest_user_2",
@@ -66,9 +64,7 @@ class Command(BaseCommand):
             is_guest=False,
         )
 
-        print(
-            f'User ID: {non_guest_user_2.id}, Name: "{non_guest_user_2.name}" created'
-        )
+        print(f'User ID: {non_guest_user_2.id}, Name: "{non_guest_user_2.name}" created')
 
         # --------------- GUEST USERS ---------------
 
@@ -98,8 +94,8 @@ class Command(BaseCommand):
 
     @staticmethod
     def _create_currencies():
-        Currency.objects.create(name="Euro", sign="€")
-        Currency.objects.create(name="Pound Sterling", sign="£")
+        Currency.objects.create(name="Euro", sign="€", code="EUR")
+        Currency.objects.create(name="Pound Sterling", sign="£", code="GBP")
 
     @staticmethod
     def _create_rooms():
