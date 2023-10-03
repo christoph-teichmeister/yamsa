@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+from django.db.models import Q
+
 from apps.account.models import User
 from apps.core.event_loop.registry import message_registry
 from apps.currency.models import Currency
@@ -85,5 +87,5 @@ def reduce_some_sheit(context: TransactionCreated.Context):
                     else:
                         debt.delete()
 
-    # Delete any untouched debt objects
-    NewDebt.objects.exclude(id__in=(created_debt_ids_tuple + touched_debt_ids_tuple)).delete()
+    # Delete any untouched, unsettled debt objects
+    NewDebt.objects.exclude(Q(id__in=(created_debt_ids_tuple + touched_debt_ids_tuple)) | Q(settled=True)).delete()
