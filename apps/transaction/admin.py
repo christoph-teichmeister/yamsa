@@ -10,23 +10,19 @@ class TransactionPaidByInline(admin.TabularInline):
     model = Transaction
     extra = 0
     fk_name = "paid_by"
-    fields = ("description", "room", "value", "settled", "settled_at")
+    fields = ("description", "room", "value")
     readonly_fields = fields
 
 
 @register(Transaction)
 class TransactionAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
-    list_display = ("__str__", "room", "settled", "paid_by")
-    list_filter = ("room__name", "settled")
+    list_display = ("__str__", "room", "paid_by")
+    list_filter = ("room__name",)
     fieldsets = (
         (None, {"fields": ("room", "description", ("value", "currency"))}),
         (
             "People involved",
             {"fields": ("paid_by",)},
         ),
-        (
-            "Status",
-            {"fields": ("settled", "settled_at")},
-        ),
     )
-    inlines = (DebtInline,)
+    # inlines = (DebtInline,)

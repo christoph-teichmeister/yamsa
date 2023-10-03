@@ -36,9 +36,9 @@ class TransactionCreateForm(forms.ModelForm):
 
         # Mark any debts created because of this transaction, which belong to the debitor as settled, as a debitor
         # can not owe themself money
-        instance.paid_by.owes_transactions.filter(user=instance.paid_by, transaction_id=instance.id).update(
-            settled=True, settled_at=timezone.now()
-        )
+        # instance.paid_by.owes_transactions.filter(user=instance.paid_by, transaction_id=instance.id).update(
+        #     settled=True, settled_at=timezone.now()
+        # )
 
         handle_message(TransactionCreated(context_data={"transaction": instance}))
 
