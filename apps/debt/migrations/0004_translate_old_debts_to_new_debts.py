@@ -66,7 +66,7 @@ def translate_old_debts_to_new_debts(apps, schema_editor):
                     room=debt.transaction.room,
                     currency=debt.transaction.currency,
                     value=debt.transaction.value,
-                    settled=True,
+                    settled=False,
                     settled_at=debt.settled_at,
                 )
 
