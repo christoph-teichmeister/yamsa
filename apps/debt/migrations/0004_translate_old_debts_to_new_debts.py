@@ -256,5 +256,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # migrations.RunPython(translate_old_debts_to_new_debts, reverse_delete_all_new_debts),
+        migrations.RunPython(translate_old_debts_to_new_debts, reverse_delete_all_new_debts),
     ]
