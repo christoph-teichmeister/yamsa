@@ -20,6 +20,7 @@ class NewsCommentInline(admin.TabularInline):
 
 @register(News)
 class NewsAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
-    fieldsets = ((None, {"fields": ("highlighted", "title", "message")}),)
-    list_display = ("__str__", "title", "message", "highlighted")
+    fieldsets = ((None, {"fields": ("highlighted", "title", "message", "room")}),)
+    list_display = ("__str__", "title", "message", "highlighted", "room")
+    list_filter = ("room",)
     inlines = (NewsCommentInline,)
