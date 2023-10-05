@@ -18,16 +18,24 @@ class BaseView(generic.TemplateView):
 class WelcomePartialView(generic.TemplateView):
     template_name = "core/_welcome.html"
 
-    def get_context_data(self, **kwargs):
-        context_data = super().get_context_data(**kwargs)
+    def _get_news_base_qs(self):
+        if self.request.user.is_authenticated:
+            return News.objects.filter(
+                room_id__in=self.request.user.rooms.values_list("id", flat=True)
+            ).prefetch_related("comments")
 
-        news_qs = News.objects.filter(
-            room_id__in=self.request.user.rooms.values_list("id", flat=True)
-        ).prefetch_related("comments")
+        return News.objects.none()
 
-        context_data["news"] = news_qs.exclude(highlighted=True)
-        context_data["highlighted_news"] = news_qs.filter(highlighted=True).first()
-        return context_data
+    @context
+    @property
+    def news(self):
+        return self._get_news_base_qs().exclude(highlighted=True)
+
+    @context
+    @property
+    def highlighted_news(self):
+        ret = self._get_news_base_qs().filter(highlighted=True).first()
+        return ret
 
 
 class ToastHTMXView(generic.TemplateView):
