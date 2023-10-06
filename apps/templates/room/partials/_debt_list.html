@@ -16,7 +16,7 @@
 </div>
 
 <ul class="list-group mb-5">
-    {% for debt in new_debts %}
+    {% for debt in debts %}
         <li class="list-group-item">
             <div class="row align-items-center">
                 <div class="col-9">
@@ -39,38 +39,3 @@
 </ul>
 
 <br/>
-
-{#{% if debt_list %}#}
-{#    <h5>Reworked Debts</h5>#}
-{#    <ul class="list-group mb-5">#}
-{#        {% for debitor, debitor_dict in debt_list.items %}#}
-{#            {% for creditor, creditor_dict in debitor_dict.items %}#}
-{#                <li class="list-group-item">#}
-{#                    <div class="row align-items-center">#}
-{#                        <div class="col-9">#}
-{#                            {% autoescape off %}{% parse_user_text debitor True %}{% endautoescape %}#}
-{#                            {% if request.user.username == debt.debitor.username %}owe{% else %}owes{% endif %}#}
-{#                            {% for currency, amount_owed in creditor_dict.items %}#}
-{#                                {{ amount_owed }}{{ currency }}{% if not forloop.last %}, and{% endif %}#}
-{#                            {% endfor %}#}
-{#                            to {% autoescape off %}{% parse_user_text creditor %}{% endautoescape %}#}
-{#                        </div>#}
-{##}
-{#                        <div class="col-3">#}
-{#                            <div class="float-end">#}
-{#                                <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"#}
-{#                                   data-bs-toggle="tooltip"#}
-{#                                   data-bs-placement="top"#}
-{#                                   data-bs-title="This transaction is not yours to settle!"></i>#}
-{#                            </div>#}
-{#                        </div>#}
-{##}
-{#                        {% include "room/partials/_settle_payment_modal.html" with creditor=creditor debt_ids=amount_owed_debt_ids_and_settled.debt_ids debt_ids_as_string=amount_owed_debt_ids_and_settled.debt_ids_as_string amount_owed=amount_owed_debt_ids_and_settled.amount_owed creditor_paypal_me_link=amount_owed_debt_ids_and_settled.paypal_me_link %}#}
-{#                    </div>#}
-{#                </li>#}
-{#            {% endfor %}#}
-{#        {% endfor %}#}
-{#    </ul>#}
-{##}
-{#    <br/>#}
-{#{% endif %}#}
