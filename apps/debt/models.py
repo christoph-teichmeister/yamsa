@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-from apps.debt.managers import DebtManager, NewDebtManager
+from apps.debt.managers import NewDebtManager
 from apps.debt.querysets import NewDebtQuerySet
 
 
@@ -11,8 +11,6 @@ class Debt(models.Model):
 
     settled = models.BooleanField(default=False)
     settled_at = models.DateField(blank=True, null=True)
-
-    objects = DebtManager()
 
     class Meta:
         verbose_name = "Debt"
