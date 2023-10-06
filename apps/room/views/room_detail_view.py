@@ -43,25 +43,9 @@ class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
     @context
     @cached_property
     def debts(self):
-        debts = {}
-
-        for user in self.object.users.all().order_by("name"):
-            debts_for_user = Debt.objects.get_debts_for_user_for_room_as_dict_old(user.id, self.object.id)
-            if debts_for_user == {}:
-                continue
-
-            debts[user.name] = debts_for_user
-        return debts
-
-    @context
-    @cached_property
-    def debt_list(self):
-        return Debt.objects.get_debts_for_user_for_room_as_dict(self.object.id)
-
-    @context
-    @cached_property
-    def new_debts(self):
-        return NewDebt.objects.filter_for_room_id(room_id=self.object.id).order_by("settled", "debitor__username")
+        return NewDebt.objects.filter_for_room_id(room_id=self.object.id).order_by(
+            "settled", "currency__sign", "debitor__username"
+        )
 
     def get(self, request, *args, **kwargs):
         ret = super().get(request, *args, **kwargs)
