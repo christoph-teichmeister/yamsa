@@ -1,5 +1,3 @@
-import json
-
 from ambient_toolbox.view_layer import htmx_mixins
 from django.db.models import F
 from django.utils.functional import cached_property

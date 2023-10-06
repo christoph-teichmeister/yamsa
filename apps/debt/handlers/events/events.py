@@ -96,59 +96,66 @@ def reduce_some_sheit(context: TransactionCreated.Context):
     all_debts_of_room_tuple = tuple(
         Debt.objects.filter(transaction__room_id=context.transaction.room_id)
         .order_by("transaction__value", "transaction__currency__sign")
-        .values_list("user__name", "transaction__paid_by__name", "transaction__value")
+        .values_list("transaction__currency__sign", "user__name", "transaction__paid_by__name", "transaction__value")
     )
 
-    ret = simplify_debts(all_debts_of_room_tuple)
-    print(ret)
+    currency_debts = {}
+    for currency_sign, debtor, creditor, amount in all_debts_of_room_tuple:
+        debt_tuple = (debtor, creditor, amount)
+        if currency_debts.get(currency_sign) is None:
+            currency_debts[currency_sign] = [debt_tuple]
+        else:
+            currency_debts[currency_sign].append(debt_tuple)
 
+    currency_transactions = {}
+    for currency_sign, debt_list in currency_debts.items():
+        # Create a dictionary to track how much each person owes or is owed
+        balances = {}
 
-def simplify_debts(debts):
-    # Create a dictionary to track how much each person owes or is owed
-    balances = {}
+        # Populate the balances dictionary based on the provided debts
+        for debtor, creditor, amount in debt_list:
+            balances[debtor] = balances.get(debtor, 0) - amount
+            balances[creditor] = balances.get(creditor, 0) + amount
 
-    # Populate the balances dictionary based on the provided debts
-    for debtor, creditor, amount in debts:
-        balances[debtor] = balances.get(debtor, 0) - amount
-        balances[creditor] = balances.get(creditor, 0) + amount
+        # Initialize two lists for debtors and creditors
+        debtors = []
+        creditors = []
 
-    # Initialize two lists for debtors and creditors
-    debtors = []
-    creditors = []
+        # Separate debtors and creditors, ignoring those with a balance of 0
+        for person, balance in balances.items():
+            if balance < 0:
+                debtors.append((person, balance))
+            elif balance > 0:
+                creditors.append((person, balance))
 
-    # Separate debtors and creditors, ignoring those with a balance of 0
-    for person, balance in balances.items():
-        if balance < 0:
-            debtors.append((person, balance))
-        elif balance > 0:
-            creditors.append((person, balance))
+        # Sort debtors and creditors based on the owed amounts
+        debtors.sort(key=lambda x: x[1])
+        creditors.sort(key=lambda x: x[1], reverse=True)
 
-    # Sort debtors and creditors based on the owed amounts
-    debtors.sort(key=lambda x: x[1])
-    creditors.sort(key=lambda x: x[1], reverse=True)
+        # Initialize a list to track the transactions
+        transactions = []
 
-    # Initialize a list to track the transactions
-    transactions = []
+        # Perform debt consolidation
+        while debtors and creditors:
+            debtor, debt = debtors[0]
+            creditor, credit = creditors[0]
 
-    # Perform debt consolidation
-    while debtors and creditors:
-        debtor, debt = debtors[0]
-        creditor, credit = creditors[0]
+            # Calculate the amount to transfer
+            transfer_amount = min(-debt, credit)
 
-        # Calculate the amount to transfer
-        transfer_amount = min(-debt, credit)
+            # Update balances and create a transaction
+            balances[debtor] += transfer_amount
+            balances[creditor] -= transfer_amount
 
-        # Update balances and create a transaction
-        balances[debtor] += transfer_amount
-        balances[creditor] -= transfer_amount
+            # Add the transaction to the list
+            transactions.append((debtor, creditor, transfer_amount))
 
-        # Add the transaction to the list
-        transactions.append((debtor, creditor, transfer_amount))
+            # Remove debtors and creditors with zero balance
+            if balances[debtor] == 0:
+                debtors.pop(0)
+            if balances[creditor] == 0:
+                creditors.pop(0)
 
-        # Remove debtors and creditors with zero balance
-        if balances[debtor] == 0:
-            debtors.pop(0)
-        if balances[creditor] == 0:
-            creditors.pop(0)
+        currency_transactions[currency_sign] = transactions
 
-    return transactions
+    print()
