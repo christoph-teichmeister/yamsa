@@ -1,3 +1,5 @@
+{% load room_tags %}
+
 <div id="add-transaction-modal-container"
      hx-trigger="load,reloadTransactionAddModal from:body"
      hx-get="{% url 'htmx-transaction-add-modal' slug=room.slug %}"
@@ -8,19 +10,19 @@
 
 <div class="row align-items-center mt-3">
     <div class="col-7">
-        <h5>Payments made</h5>
+        <h5>Transactions made</h5>
     </div>
     <div class="col-5 d-flex justify-content-end">
         <button type="button" class="btn btn-primary btn-sm me-2 mb-2" data-bs-toggle="modal"
                 data-bs-target="#addTransactionModal">
-            Add payment
+            Add transaction
         </button>
     </div>
 </div>
 
-{% if room_transactions %}
+{% if transactions %}
     <ul class="list-group list-group-flush mb-3">
-        {% for transaction in room_transactions %}
+        {% for transaction in transactions %}
             {% if transaction.paid_for_name != transaction.paid_by_name %}
                 <li class="list-group-item pb-4 pt-4">
                     <div class="d-flex w-100 justify-content-between">
@@ -28,19 +30,11 @@
                         <small>{{ transaction.created_at|date:'d.m.Y' }}</small>
                     </div>
                     <p class="mb-1">
-                        {% if transaction.paid_by_name == request.user.name %}
-                            <span class="me-involved">You</span>
-                        {% else %}
-                            {{ transaction.paid_by_name }}
-                        {% endif %}
+                        {% autoescape off %}{% parse_user_text transaction.paid_by_name True %}{% endautoescape %}
                         paid
                         <strong>{{ transaction.value }}{{ transaction.currency_sign }}</strong>
                         for
-                        {% if transaction.paid_for_name == request.user.name %}
-                            <span class="me-involved">you</span>
-                        {% else %}
-                            {{ transaction.paid_for_name }}
-                        {% endif %}
+                        {% autoescape off %}{% parse_user_text transaction.paid_for_name False %}{% endautoescape %}
                     </p>
                     <small style="font-style: italic">"{{ transaction.description }}"</small>
                 </li>
@@ -49,7 +43,7 @@
     </ul>
 {% else %}
     <div class="container text-center p-4">
-        - No Payments have been made as of now -
+        - No transactions yet -
     </div>
 {% endif %}
 

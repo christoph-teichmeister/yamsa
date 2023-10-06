@@ -3,15 +3,11 @@ from django.urls import reverse
 from model_bakery import baker
 
 from apps.core.tests.setup import BaseTestSetUp
-from apps.moneyflow.models import MoneyFlow
-from apps.moneyflow.tests.helpers import MoneyFlowHelpersMixin
 from apps.transaction import views
 from apps.transaction.tests.helpers import TransactionHelpersMixin
 
 
-class RoomDetailViewTestCase(
-    TransactionHelpersMixin, MoneyFlowHelpersMixin, BaseTestSetUp
-):
+class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
     view_class = views.TransactionCreateView
 
     @classmethod
@@ -166,26 +162,26 @@ class RoomDetailViewTestCase(
 
         # Final Assertions after everything has been done
 
-        self.assertEqual(
-            MoneyFlow.objects.get(user_id=self.guest_user_1).incoming, Decimal(11)
-        )
-        self.assertEqual(
-            MoneyFlow.objects.get(user_id=self.guest_user_1).outgoing, Decimal(0)
-        )
+        # self.assertEqual(
+        #     MoneyFlow.objects.get(user_id=self.guest_user_1).incoming, Decimal(11)
+        # )
+        # self.assertEqual(
+        #     MoneyFlow.objects.get(user_id=self.guest_user_1).outgoing, Decimal(0)
+        # )
 
-        self.assertEqual(
-            MoneyFlow.objects.get(user_id=self.guest_user_2).incoming, Decimal(0)
-        )
-        self.assertEqual(
-            MoneyFlow.objects.get(user_id=self.guest_user_2).outgoing, Decimal(11.5)
-        )
+        # self.assertEqual(
+        #     MoneyFlow.objects.get(user_id=self.guest_user_2).incoming, Decimal(0)
+        # )
+        # self.assertEqual(
+        #     MoneyFlow.objects.get(user_id=self.guest_user_2).outgoing, Decimal(11.5)
+        # )
 
-        self.assertEqual(
-            MoneyFlow.objects.get(user_id=self.guest_user_3).incoming, Decimal(0.5)
-        )
-        self.assertEqual(
-            MoneyFlow.objects.get(user_id=self.guest_user_3).outgoing, Decimal(0)
-        )
+        # self.assertEqual(
+        #     MoneyFlow.objects.get(user_id=self.guest_user_3).incoming, Decimal(0.5)
+        # )
+        # self.assertEqual(
+        #     MoneyFlow.objects.get(user_id=self.guest_user_3).outgoing, Decimal(0)
+        # )
 
     def test_simple_test_case_3(self):
         """

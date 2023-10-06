@@ -5,10 +5,8 @@ from django.utils import timezone
 
 class Transaction(CommonInfo):
     description = models.TextField(max_length=500)
-    paid_for = models.ManyToManyField(
-        "account.User",
-        through="debt.Debt",
-    )
+    paid_for = models.ManyToManyField("account.User", through="debt.Debt", related_name="debitors")
+    new_paid_for = models.ManyToManyField("account.User")
     paid_by = models.ForeignKey("account.User", related_name="made_transactions", on_delete=models.CASCADE)
 
     room = models.ForeignKey(
@@ -20,9 +18,6 @@ class Transaction(CommonInfo):
     value = models.DecimalField(decimal_places=2, max_digits=10)
 
     currency = models.ForeignKey("currency.Currency", related_name="transactions", on_delete=models.DO_NOTHING)
-
-    settled = models.BooleanField(default=False)
-    settled_at = models.DateField(blank=True, null=True)
 
     class Meta:
         ordering = ("-id",)
@@ -39,12 +34,12 @@ class Transaction(CommonInfo):
     def save(self, *args, **kwargs):
         # Set settled_at if settled is True and settled_at was not already set (Meaning, the transaction was just
         # settled)
-        if self.settled and not self.settled_at:
-            self.settled_at = timezone.now()
+        # if self.settled and not self.settled_at:
+        #     self.settled_at = timezone.now()
 
         # Clear settled_at if it was set AND the transaction is not marked as settled (Meaning, for whatever reason,
         # the transaction was just marked as not settled, although it was marked as such before)
-        if not self.settled and self.settled_at:
-            self.settled_at = None
+        # if not self.settled and self.settled_at:
+        #     self.settled_at = None
 
         super().save(*args, **kwargs)

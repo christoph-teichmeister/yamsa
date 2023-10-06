@@ -1,22 +1,25 @@
 from django.urls import reverse
+from django.utils import timezone
 from django.views import generic
 
-from apps.debt.forms import DebtSettleForm
-from apps.debt.models import Debt
+from apps.debt.models import NewDebt
 
 
-class DebtSettleView(generic.FormView):
-    model = Debt
-    form_class = DebtSettleForm
+class DebtSettleView(generic.UpdateView):
+    model = NewDebt
+    fields = (
+        "id",
+        "settled",
+        "settled_at",
+    )
     template_name = "room/detail.html"
 
     def get_success_url(self):
-        return reverse(
-            viewname="room-detail", kwargs={"slug": self.request.POST.get("room_slug")}
-        )
+        return reverse(viewname="room-detail", kwargs={"slug": self.request.POST.get("room_slug")})
 
     def form_valid(self, form):
-        form.mark_debt_as_settled()
+        if self.object.settled:
+            self.object.settled_at = timezone.now()
         return super().form_valid(form)
 
     def form_invalid(self, form):

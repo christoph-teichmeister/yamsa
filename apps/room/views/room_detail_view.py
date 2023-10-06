@@ -1,5 +1,3 @@
-import json
-
 from ambient_toolbox.view_layer import htmx_mixins
 from django.db.models import F
 from django.utils.functional import cached_property
@@ -7,8 +5,7 @@ from django.views import generic
 from django_context_decorator import context
 
 from apps.currency.models import Currency
-from apps.debt.models import Debt
-from apps.moneyflow.models import MoneyFlow
+from apps.debt.models import Debt, NewDebt
 from apps.room.models import Room
 
 
@@ -46,26 +43,9 @@ class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
     @context
     @cached_property
     def debts(self):
-        # TODO CT: Work on this
-        MoneyFlow.objects.try_to_resolve_flows_and_reduce_them_to_zero(
-            room_id=self.object.id
+        return NewDebt.objects.filter_for_room_id(room_id=self.object.id).order_by(
+            "settled", "currency__sign", "debitor__username"
         )
-
-        debts = {}
-        for user in self.object.users.all().order_by("name"):
-            debts_for_user = Debt.objects.get_debts_for_user_for_room_as_dict(
-                user.id, self.object.id
-            )
-            if debts_for_user == {}:
-                continue
-
-            debts[user.name] = debts_for_user
-        return debts
-
-    @context
-    @cached_property
-    def money_flow_qs(self):
-        return self.object.money_flows.all()
 
     def get(self, request, *args, **kwargs):
         ret = super().get(request, *args, **kwargs)

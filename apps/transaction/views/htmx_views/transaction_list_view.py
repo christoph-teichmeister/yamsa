@@ -11,7 +11,7 @@ from apps.transaction.models import Transaction
 
 class TransactionListHTMXView(htmx_mixins.HtmxResponseMixin, generic.ListView):
     model = Transaction
-    context_object_name = "room_transactions"
+    context_object_name = "transactions"
     template_name = "transaction/_list.html"
     hx_trigger = {"reloadTransactionAddModal": True}
 
