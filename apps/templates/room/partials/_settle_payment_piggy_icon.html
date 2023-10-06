@@ -6,9 +6,7 @@
         {% if debt.creditor.paypal_me_link %}
             <a class="text-reset"
                href="{{ debt.creditor.paypal_me_link }}/{{ debt.value }}{{ debt.currency.code }}"
-               target="_blank">
-                <i class="bi bi-paypal"></i>
-            </a>
+               target="_blank"><i class="bi bi-paypal"></i></a>
             &nbsp&nbsp&nbsp
         {% endif %}
         <i class="bi bi-piggy-bank"
