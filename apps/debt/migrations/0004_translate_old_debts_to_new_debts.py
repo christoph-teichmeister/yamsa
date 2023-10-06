@@ -13,7 +13,6 @@ def translate_old_debts_to_new_debts(apps, schema_editor):
     NewDebt = apps.get_model("debt", "NewDebt")
 
     Room = apps.get_model("room", "Room")
-    User = apps.get_model("account", "User")
     Currency = apps.get_model("currency", "Currency")
 
     db_alias = schema_editor.connection.alias
@@ -73,173 +72,108 @@ def translate_old_debts_to_new_debts(apps, schema_editor):
     # Optimise open debts
     for room in Room.objects.using(db_alias).all():
         all_debts_of_room_tuple = tuple(
-            OldDebt.objects.using(db_alias)
-            .filter(transaction__room_id=room.id)
+            OldDebt.objects.filter(transaction__room_id=room.id)
             .order_by("transaction__value", "transaction__currency__sign")
-            .values_list(
-                "transaction__value", "transaction__currency__sign", "transaction__paid_by__name", "user__name"
-            )
+            .values_list("transaction__currency__sign", "user", "transaction__paid_by", "transaction__value")
         )
 
-        if len(all_debts_of_room_tuple) == 0:
-            return {}
-
-        cleaned_debts_dict = {}
-        for debt_entry in all_debts_of_room_tuple:
-            value = debt_entry[0]
-            currency_sign = debt_entry[1]
-            paid_by_name = debt_entry[2]
-            paid_for_name = debt_entry[3]
-
-            # If the currency is already in cleaned_debts_dict...
-            if cleaned_debts_dict.get(currency_sign) is not None:
-                currency_entry = cleaned_debts_dict[currency_sign]
-
-                # If that currency already has an entry for the paid_by user...
-                if currency_entry.get(paid_by_name) is not None:
-                    # Update that entry with the new value
-                    existing_value = currency_entry[paid_by_name]
-                    cleaned_debts_dict[currency_sign][paid_by_name] = existing_value + value
-                else:
-                    # If the currency_sign has no entry for the user, but already exists in the dict, then it must be
-                    # for another user, so we just update the entry
-                    cleaned_debts_dict[currency_sign] = {**currency_entry, paid_by_name: value}
-
+        currency_debts = {}
+        for currency_sign, debtor, creditor, amount in all_debts_of_room_tuple:
+            debt_tuple = (debtor, creditor, amount)
+            if currency_debts.get(currency_sign) is None:
+                currency_debts[currency_sign] = [debt_tuple]
             else:
-                # If the currency is not in the dict yet, create a new entry
-                cleaned_debts_dict[currency_sign] = {paid_by_name: value}
+                currency_debts[currency_sign].append(debt_tuple)
 
-            # If currency_sign is not already in the cleaned_debts_dict...
-            if cleaned_debts_dict.get(currency_sign) is not None:
-                currency_entry = cleaned_debts_dict[currency_sign]
+        currency_transactions = {}
+        for currency_sign, debt_list in currency_debts.items():
+            # Create a dictionary to track how much each person owes or is owed
+            balances = {}
 
-                # If that currency already has an entry for the paid_for user...
-                if currency_entry.get(paid_for_name) is not None:
-                    # Update that entry with the new value
-                    existing_value = currency_entry[paid_for_name]
-                    cleaned_debts_dict[currency_sign][paid_for_name] = existing_value - value
-                else:
-                    # If the currency_sign has no entry for the user, but already exists in the dict, then it must be
-                    # for another user, so we just update the entry
-                    cleaned_debts_dict[currency_sign] = {**currency_entry, paid_for_name: 0 - value}
+            # Populate the balances dictionary based on the provided debts
+            for debtor, creditor, amount in debt_list:
+                balances[debtor] = balances.get(debtor, 0) - amount
+                balances[creditor] = balances.get(creditor, 0) + amount
 
-            else:
-                # If the currency_sign is not in the dict yet, create a new entry
-                cleaned_debts_dict[currency_sign] = {paid_for_name: 0 - value}
+            # Initialize two lists for debtors and creditors
+            debtors = []
+            creditors = []
 
-        sorted_cleaned_creditor_debts_dict = {}
-        for currency_tuple in cleaned_debts_dict.items():
-            sorted_cleaned_creditor_debts_dict[currency_tuple[0]] = list(
-                sorted(
-                    currency_tuple[1].items(),
-                    key=lambda entry: entry[1],
-                )
-            )
+            # Separate debtors and creditors, ignoring those with a balance of 0
+            for person, balance in balances.items():
+                if balance < 0:
+                    debtors.append((person, balance))
+                elif balance > 0:
+                    creditors.append((person, balance))
 
-        clean_dictionary = {}
+            # Sort debtors and creditors based on the owed amounts
+            debtors.sort(key=lambda x: x[1])
+            creditors.sort(key=lambda x: x[1], reverse=True)
 
-        a_log_list = []
-        for currency_sign in sorted_cleaned_creditor_debts_dict:
-            all_is_done = False
-            while not all_is_done:
-                sorted_cleaned_creditor_debts_list = sorted_cleaned_creditor_debts_dict[currency_sign]
-                cheapest_user_tuple = sorted_cleaned_creditor_debts_list[0]
-                most_expensive_user_tuple = sorted_cleaned_creditor_debts_list[-1]
+            # Initialize a list to track the transactions
+            transactions = []
 
-                diff_expensive_to_min = abs(most_expensive_user_tuple[1]) - abs(cheapest_user_tuple[1])
-                if diff_expensive_to_min >= 0:
-                    a_log_list.append(
-                        f"{cheapest_user_tuple[0]} pays {abs(cheapest_user_tuple[1])}{currency_sign} to {most_expensive_user_tuple[0]}"
-                    )
-                    add_or_update_dict(
-                        dictionary=clean_dictionary,
-                        update_value={
-                            cheapest_user_tuple[0]: {
-                                most_expensive_user_tuple[0]: {
-                                    currency_sign: abs(cheapest_user_tuple[1]),
-                                }
-                            }
-                        },
-                    )
+            # Perform debt consolidation
+            while debtors and creditors:
+                debtor, debt = debtors[0]
+                creditor, credit = creditors[0]
 
-                    most_expensive_user_tuple = (most_expensive_user_tuple[0], diff_expensive_to_min)
+                # Calculate the amount to transfer
+                transfer_amount = min(-debt, credit)
 
-                    sorted_cleaned_creditor_debts_list.pop(0)
-                    sorted_cleaned_creditor_debts_list.pop(-1)
-                    sorted_cleaned_creditor_debts_list.append(most_expensive_user_tuple)
-                else:
-                    a_log_list.append(
-                        f"{cheapest_user_tuple[0]} pays {abs(diff_expensive_to_min)}{currency_sign} to {most_expensive_user_tuple[0]}"
-                    )
-                    add_or_update_dict(
-                        dictionary=clean_dictionary,
-                        update_value={
-                            cheapest_user_tuple[0]: {
-                                most_expensive_user_tuple[0]: {
-                                    currency_sign: abs(diff_expensive_to_min),
-                                }
-                            }
-                        },
-                    )
+                # Update balances and create a transaction
+                balances[debtor] += transfer_amount
+                balances[creditor] -= transfer_amount
 
-                    cheapest_user_tuple = (cheapest_user_tuple[0], cheapest_user_tuple[1] - diff_expensive_to_min)
+                # Add the transaction to the list
+                transactions.append((debtor, creditor, transfer_amount))
 
-                    sorted_cleaned_creditor_debts_list.pop(0)
-                    sorted_cleaned_creditor_debts_list.pop(-1)
-                    sorted_cleaned_creditor_debts_list.append(cheapest_user_tuple)
+                # Remove debtors and creditors with zero balance
+                if balances[debtor] == 0:
+                    debtors.pop(0)
+                if balances[creditor] == 0:
+                    creditors.pop(0)
 
-                sorted_cleaned_creditor_debts_list = list(
-                    sorted(sorted_cleaned_creditor_debts_list, key=lambda entry: entry[1])
-                )
-
-                all_is_done = len(sorted_cleaned_creditor_debts_list) == 1
+            currency_transactions[currency_sign] = transactions
 
         created_debt_ids_tuple = ()
         touched_debt_ids_tuple = ()
+        for currency_sign, transaction_list in currency_transactions.items():
+            for debtor, creditor, transfer_amount in transaction_list:
+                debt_qs = NewDebt.objects.filter(
+                    room=room,
+                    debitor=debtor,
+                    creditor=creditor,
+                    currency__sign=currency_sign,
+                    settled=False,
+                )
 
-        for debitor_name in clean_dictionary:
-            for creditor_name in clean_dictionary[debitor_name]:
-                for currency_sign in clean_dictionary[debitor_name][creditor_name]:
-                    value = clean_dictionary[debitor_name][creditor_name][currency_sign]
-
-                    debitor = User.objects.get(username=debitor_name)
-                    creditor = User.objects.get(username=creditor_name)
-
-                    if debitor == creditor:
+                if not debt_qs.exists():
+                    if transfer_amount != Decimal(0):
+                        created_debt_ids_tuple += (
+                            NewDebt.objects.create(
+                                debitor_id=debtor,
+                                creditor_id=creditor,
+                                room=room,
+                                value=transfer_amount,
+                                currency=Currency.objects.get(sign=currency_sign),
+                            ).id,
+                        )
                         continue
 
-                    debt_qs = NewDebt.objects.filter(
-                        room=room,
-                        debitor=debitor,
-                        creditor=creditor,
-                        currency__sign=currency_sign,
-                        settled=False,
-                    )
+                if debt_qs.count() == 1:
+                    debt = debt_qs.first()
+                    if transfer_amount != Decimal(0):
+                        debt.value = transfer_amount
+                        debt.save()
+                        touched_debt_ids_tuple += (debt.id,)
+                    else:
+                        debt.delete()
 
-                    if not debt_qs.exists():
-                        if value != Decimal(0):
-                            created_debt_ids_tuple += (
-                                NewDebt.objects.create(
-                                    debitor=debitor,
-                                    creditor=creditor,
-                                    room=room,
-                                    value=value,
-                                    currency=Currency.objects.get(sign=currency_sign),
-                                ).id,
-                            )
-                            continue
-
-                    if debt_qs.count() == 1:
-                        debt = debt_qs.first()
-                        if value != Decimal(0):
-                            debt.value = value
-                            debt.save()
-                            touched_debt_ids_tuple += (debt.id,)
-                        else:
-                            debt.delete()
-
-        # Delete any untouched, unsettled debt objects
-        NewDebt.objects.exclude(Q(id__in=(created_debt_ids_tuple + touched_debt_ids_tuple)) | Q(settled=True)).delete()
+            # Delete any untouched, unsettled debt objects
+            NewDebt.objects.exclude(
+                Q(id__in=(created_debt_ids_tuple + touched_debt_ids_tuple)) | Q(settled=True)
+            ).delete()
 
 
 def reverse_delete_all_new_debts(apps, schema_editor):
