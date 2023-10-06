@@ -11,7 +11,7 @@ from apps.transaction.messages.events.transaction import TransactionCreated
 @message_registry.register_event(event=TransactionCreated)
 def calculate_optimised_debts(context: TransactionCreated.Context):
     all_debts_of_room_tuple = tuple(
-        Debt.objects.filter(transaction__room_id=context.transaction.room_id)
+        Debt.objects.filter(transaction__room_id=context.transaction.room_id, settled=False)
         .order_by("transaction__value", "transaction__currency__sign")
         .values_list("transaction__currency__sign", "user", "transaction__paid_by", "transaction__value")
     )

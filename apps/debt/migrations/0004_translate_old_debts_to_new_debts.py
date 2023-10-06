@@ -72,7 +72,7 @@ def translate_old_debts_to_new_debts(apps, schema_editor):
     # Optimise open debts
     for room in Room.objects.using(db_alias).all():
         all_debts_of_room_tuple = tuple(
-            OldDebt.objects.filter(transaction__room_id=room.id)
+            OldDebt.objects.filter(transaction__room_id=room.id, settled=False)
             .order_by("transaction__value", "transaction__currency__sign")
             .values_list("transaction__currency__sign", "user", "transaction__paid_by", "transaction__value")
         )
