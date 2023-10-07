@@ -85,7 +85,6 @@ LOCAL_APPS = (
     "apps.currency",
     "apps.core",
     "apps.debt",
-    "apps.moneyflow",  # TODO CT: Will be deleted
     "apps.news",
     "apps.room",
     "apps.transaction",
