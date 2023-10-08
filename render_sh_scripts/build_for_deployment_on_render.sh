@@ -13,5 +13,5 @@ pipenv install --system --deploy
 echo "" && echo "python manage.py collectstatic --noinput"
 python manage.py collectstatic --no-input
 
-#echo "" && echo "python manage.py migrate"
-#python manage.py migrate
+echo "" && echo "python manage.py migrate"
+python manage.py migrate
