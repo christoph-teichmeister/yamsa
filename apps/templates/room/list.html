@@ -16,6 +16,11 @@
                              hx-push-url="true"
                         >
                             <div class="card-body">
+                                {% if request.user.is_superuser and request.user not in room.users.all %}
+                                    <small style="font-style: italic">
+                                        {{ room.created_by }}
+                                    </small>
+                                {% endif %}
                                 <h5 class="card-title">{{ room.name }}</h5>
                                 <p class="card-text">{{ room.description }}</p>
                             </div>
