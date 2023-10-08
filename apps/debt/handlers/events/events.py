@@ -80,7 +80,7 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
     for currency_sign, transaction_list in currency_transactions.items():
         for debtor, creditor, transfer_amount in transaction_list:
             debt_qs = NewDebt.objects.filter(
-                room=context.transaction.room,
+                room_id=context.transaction.room_id,
                 debitor=debtor,
                 creditor=creditor,
                 currency__sign=currency_sign,
@@ -93,7 +93,7 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
                         NewDebt.objects.create(
                             debitor_id=debtor,
                             creditor_id=creditor,
-                            room=context.transaction.room,
+                            room_id=context.transaction.room_id,
                             value=transfer_amount,
                             currency=Currency.objects.get(sign=currency_sign),
                         ).id,
@@ -111,5 +111,5 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
 
     # Delete any untouched, unsettled debt objects
     NewDebt.objects.exclude(Q(id__in=(created_debt_ids_tuple + touched_debt_ids_tuple)) | Q(settled=True)).filter(
-        room=context.transaction.room
+        room_id=context.transaction.room_id
     ).delete()
