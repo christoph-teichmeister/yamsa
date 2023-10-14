@@ -20,9 +20,10 @@ from django.urls import include, path, re_path
 from apps.config.settings import DJANGO_ADMIN_SUB_URL
 from apps.core.views import MaintenanceView
 
-app_urlpatterns = (
+urlpatterns = (
     [
         path("", include("apps.core.urls")),
+        path(f"{DJANGO_ADMIN_SUB_URL}/", admin.site.urls),
         path("account/", include("apps.account.urls")),
         path("debt/", include("apps.debt.urls")),
         path("news/", include("apps.news.urls")),
@@ -31,11 +32,10 @@ app_urlpatterns = (
     ]
     if not settings.MAINTENANCE
     else [
-        re_path(r"^.*/$", MaintenanceView.as_view(), name="core-maintenance"),
+        path(f"{DJANGO_ADMIN_SUB_URL}/", admin.site.urls),
+        # Empty URLs
         path("", MaintenanceView.as_view(), name="core-maintenance"),
+        # Any other URLs / wildcard
+        re_path(r"^.*/$", MaintenanceView.as_view(), name="core-maintenance"),
     ]
 )
-
-urlpatterns = app_urlpatterns + [
-    path(f"{DJANGO_ADMIN_SUB_URL}/", admin.site.urls),
-]
