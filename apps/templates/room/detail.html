@@ -22,7 +22,7 @@
                     data-bs-toggle="tooltip"
                     data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
                     hx-get="{% url 'htmx-checked-clipboard' %}"
-                    hx-swap="morph:innerHTML"
+                    hx-swap="innerHTML"
             >
                 {% include "shared_partials/clipboard_icon_unchecked.html" %}
             </button>
@@ -46,10 +46,10 @@
                    data-bs-target="#transaction-tab-content"
                    aria-controls="transaction-tab-content"
                    aria-selected="true"
-                   hx-trigger="load,reloadTransactionList from:body"
+                   hx-trigger="click,load,reloadTransactionList from:body"
                    hx-get="{% url 'htmx-transaction-list' slug=room.slug %}"
                    hx-target="#transaction-tab-content"
-                   hx-swap="morph:innerHTML"
+                   hx-swap="innerHTML"
                    hx-indicator="#debt-loading-spinner"
                 >
                     <i class="bi bi-wallet"></i>
@@ -77,10 +77,10 @@
                    data-bs-target="#people-tab-content"
                    aria-controls="people-tab-content"
                    aria-selected="false"
-                   hx-trigger="click"
+                   hx-trigger="click, reloadPeopleList from:body"
                    hx-get="{% url 'htmx-account-list' slug=room.slug %}"
                    hx-target="#people-tab-content"
-                   hx-swap="morph:innerHTML"
+                   hx-swap="innerHTML"
                    hx-indicator="#people-loading-spinner"
                 >
                     <i class="bi bi-people"></i>
@@ -124,8 +124,8 @@
         {% include "room/partials/_detail_who_are_you.html" %}
     {% endif %}
 
-    <script>
-      const copyShareURL = () => {
+    <script type="text/javascript">
+      var copyShareURL = () => {
         const url = document.URL
         navigator.clipboard.writeText(url).then(() => {
           // clipboard successfully set
@@ -136,6 +136,7 @@
         });
       }
     </script>
+
     <script type="module">
       // TODO CT: Joa keine Ahnung, fix this I guess
       /*

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import migrations
 
 from apps.core.event_loop.runner import handle_message
-from apps.transaction.messages.events.transaction import TransactionCreated
+from apps.transaction.messages.events.transaction import ParentTransactionCreated
 
 
 def triggers_debt_calculation_for_all_rooms(apps, schema_editor):
@@ -15,7 +15,7 @@ def triggers_debt_calculation_for_all_rooms(apps, schema_editor):
     for room in Room.objects.using(db_alias).all():
         transaction = room.transactions.first()
 
-        handle_message(TransactionCreated(context_data={"transaction": transaction}))
+        handle_message(ParentTransactionCreated(context_data={"transaction": transaction}))
 
 
 class Migration(migrations.Migration):

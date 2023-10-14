@@ -9,11 +9,10 @@ from apps.debt.models import Debt
 from apps.room.models import Room
 
 
-class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
+class RoomDetailView(generic.DetailView):
     template_name = "room/detail.html"
     context_object_name = "room"
     model = Room
-    hx_trigger = {"reloadTransactionList": True}
 
     @context
     @cached_property

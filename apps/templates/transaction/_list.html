@@ -1,16 +1,19 @@
 {% load room_tags %}
 
 <div id="add-transaction-modal-container"
-     hx-trigger="load,reloadTransactionAddModal from:body"
+     hx-trigger="load"
      hx-get="{% url 'htmx-transaction-add-modal' slug=room.slug %}"
      hx-target="#add-transaction-modal-container"
-     hx-swap="morph:innerHTML"
+     hx-swap="innerHTML"
 >
 </div>
 
 <div class="row align-items-center mt-3">
     <div class="col-7">
         <h5>Transactions made</h5>
+        <small>
+            Click on a transaction to see it in full detail.
+        </small>
     </div>
     <div class="col-5 d-flex justify-content-end">
         <button type="button" class="btn btn-primary btn-sm me-2 mb-2" data-bs-toggle="modal"
@@ -20,31 +23,28 @@
     </div>
 </div>
 
-{% if transactions %}
+{% if parent_transactions %}
     <ul class="list-group list-group-flush mb-3">
-        {% for transaction in transactions %}
-            {% if transaction.paid_for_name != transaction.paid_by_name %}
-                <li class="list-group-item pb-4 pt-4">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">{{ transaction.value }}{{ transaction.currency_sign }}</h5>
-                        <small>{{ transaction.created_at|date:'d.m.Y' }}</small>
-                    </div>
-                    <p class="mb-1">
-                        {% autoescape off %}{% parse_user_text transaction.paid_by_name True %}{% endautoescape %}
+        {% for parent_transaction in parent_transactions %}
+            <li class="list-group-item pb-4 pt-4"
+                hx-trigger="click"
+                hx-get="{% url 'htmx-transaction-detail' pk=parent_transaction.id %}"
+                hx-target="#transaction-tab-content"
+                hx-swap="innerHTML"
+            >
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">
+                        {% autoescape off %}
+                            {% parse_user_text parent_transaction.paid_by.name True %}{% endautoescape %}
                         paid
-                        <strong>{{ transaction.value }}{{ transaction.currency_sign }}</strong>
-                        for
-                        {% autoescape off %}{% parse_user_text transaction.paid_for_name False %}{% endautoescape %}
-                    </p>
-                    <small style="font-style: italic">"{{ transaction.description }}"</small>
-                </li>
-            {% endif %}
+                        <strong>{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</strong>
+                    </h5>
+                    <small>{{ parent_transaction.created_at|date:'d.m.Y' }}</small>
+                </div>
+                <small style="font-style: italic">"{{ parent_transaction.description }}"</small>
+            </li>
         {% endfor %}
     </ul>
-{% else %}
-    <div class="container text-center p-4">
-        - No transactions yet -
-    </div>
 {% endif %}
 
 <br/>

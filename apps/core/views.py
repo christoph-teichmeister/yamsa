@@ -64,6 +64,7 @@ class ToastHTMXView(generic.TemplateView):
     @context
     @property
     def toast_type(self):
+        # TODO CT: Extract these to some constant
         toast_type = self.request.GET.get("toast_type", "info")
 
         toast_type_dict = {

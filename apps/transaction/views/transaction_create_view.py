@@ -1,16 +1,15 @@
-from django.urls import reverse
 from django.views import generic
 
 from apps.transaction.forms import TransactionCreateForm
-from apps.transaction.models import Transaction
+from apps.transaction.models import ParentTransaction
+from apps.core import htmx
 
 
-class TransactionCreateView(generic.CreateView):
-    model = Transaction
+class TransactionCreateView(htmx.FormHtmxResponseMixin, generic.CreateView):
+    model = ParentTransaction
     form_class = TransactionCreateForm
-    template_name = "room/detail.html"
+    template_name = "transaction/partials/transaction_add_modal.html"
 
-    def get_success_url(self):
-        return reverse(
-            viewname="room-detail", kwargs={"slug": self.request.POST.get("room_slug")}
-        )
+    hx_trigger = "reloadTransactionList"
+    toast_success_message = "Transaction created successfully!"
+    toast_error_message = "There was an error creating the Transaction"

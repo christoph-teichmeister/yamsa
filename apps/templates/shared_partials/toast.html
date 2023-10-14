@@ -1,11 +1,11 @@
-<div class="toast-container border-0 position-fixed top-0 end-0 p-3 w-75">
-    <div class="toast top-0 end-0"
+<div class="toast-container position-fixed top-0 end-0 p-3 w-75">
+    <div class="toast top-0 end-0 border-0"
          id="toast-id"
          role="alert"
          aria-live="assertive"
          aria-atomic="true"
     >
-        <div id="toast-type-div" class="d-flex align-items-center {{ toast_type }}">
+        <div id="toast-type-div" class="d-flex align-items-center rounded-3 {{ toast_type }}">
             <div class="toast-body w-100 d-flex justify-content-between">
                 <span id="toast-message-span"></span>
                 <button type="button"
@@ -19,8 +19,8 @@
 </div>
 
 <script type="module">
-  const toastElement = document.getElementById('toast-id')
-  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastElement)
+  var toastElement = document.getElementById('toast-id')
+  var toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastElement)
 
   document.body.addEventListener("triggerToast", (evt) => {
     // Return early, if toast is already shown
@@ -30,7 +30,7 @@
     document.getElementById('toast-message-span').innerText = evt.detail.message
 
     // Add class to toast
-    const splitTypes = evt.detail.type.split(" ")
+    var splitTypes = evt.detail.type.split(" ")
     splitTypes.map(typeString => document.getElementById('toast-type-div').classList.add(typeString))
 
     // Get and show toast element
