@@ -35,6 +35,7 @@
             </p>
 
             {% if opened %}
+                <br>
                 <ul class="list-group">
                     {% for comment_object in news.comments.all %}
                         <li class="list-group-item pb-2">
@@ -95,7 +96,7 @@
                         </form>
                     </li>
                 </ul>
-                <br><br>
+                <br>
             {% endif %}
         </div>
     </div>
