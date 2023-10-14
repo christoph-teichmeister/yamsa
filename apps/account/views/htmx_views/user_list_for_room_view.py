@@ -21,10 +21,6 @@ class UserListForRoomHTMXView(generic.ListView):
         return (
             self.model.objects.filter(rooms__slug=self.kwargs.get("slug"))
             .values("name", "id", "is_guest")
-            .annotate(
-                user_has_seen_this_room=F(
-                    "userconnectiontoroom__user_has_seen_this_room"
-                )
-            )
+            .annotate(user_has_seen_this_room=F("userconnectiontoroom__user_has_seen_this_room"))
             .order_by("user_has_seen_this_room", "name")
         )

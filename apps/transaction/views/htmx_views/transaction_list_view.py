@@ -7,11 +7,10 @@ from apps.room.models import Room
 from apps.transaction.models import ParentTransaction
 
 
-class TransactionListHTMXView(htmx_mixins.HtmxResponseMixin, generic.ListView):
+class TransactionListHTMXView(generic.ListView):
     model = ParentTransaction
     context_object_name = "parent_transactions"
     template_name = "transaction/_list.html"
-    hx_trigger = {"reloadTransactionAddModal": True}
 
     # Custom attributes
     _room = None
