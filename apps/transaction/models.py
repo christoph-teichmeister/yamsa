@@ -1,7 +1,6 @@
 from ambient_toolbox.models import CommonInfo
 from django.db import models
 from django.db.models.aggregates import Sum
-from django.utils import timezone
 
 
 class Transaction(CommonInfo):
@@ -48,7 +47,7 @@ class ParentTransaction(CommonInfo):
 
     @property
     def value(self):
-        return self.child_transactions.aggregate(Sum("value"))["value__sum"]
+        return self.childtransaction_set.aggregate(Sum("value"))["value__sum"]
 
 
 class ChildTransaction(CommonInfo):

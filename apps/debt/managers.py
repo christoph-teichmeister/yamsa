@@ -1,6 +1,5 @@
-from django.db.models import Manager, QuerySet
+from django.db.models import Manager
 
-from apps.core.utils import add_or_update_dict
 from apps.debt.querysets import NewDebtQuerySet
 
 
