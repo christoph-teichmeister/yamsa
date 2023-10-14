@@ -11,7 +11,7 @@
 
             <form hx-post="{% url 'transaction-add' %}"
                   hx-target="#body"
-                  hx-swap="morph:innerHTML">
+                  hx-swap="innerHTML">
                 {% csrf_token %}
 
                 <div class="modal-body">

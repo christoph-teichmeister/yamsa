@@ -4,7 +4,7 @@
      hx-trigger="load,reloadTransactionAddModal from:body"
      hx-get="{% url 'htmx-transaction-add-modal' slug=room.slug %}"
      hx-target="#add-transaction-modal-container"
-     hx-swap="morph:innerHTML"
+     hx-swap="innerHTML"
 >
 </div>
 
@@ -30,7 +30,7 @@
                 hx-trigger="click"
                 hx-get="{% url 'htmx-transaction-detail' pk=parent_transaction.id %}"
                 hx-target="#transaction-tab-content"
-                hx-swap="morph:innerHTML"
+                hx-swap="innerHTML"
             >
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">

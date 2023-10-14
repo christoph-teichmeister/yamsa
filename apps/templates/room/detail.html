@@ -22,7 +22,7 @@
                     data-bs-toggle="tooltip"
                     data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
                     hx-get="{% url 'htmx-checked-clipboard' %}"
-                    hx-swap="morph:innerHTML"
+                    hx-swap="innerHTML"
             >
                 {% include "shared_partials/clipboard_icon_unchecked.html" %}
             </button>
@@ -49,7 +49,7 @@
                    hx-trigger="load,reloadTransactionList from:body"
                    hx-get="{% url 'htmx-transaction-list' slug=room.slug %}"
                    hx-target="#transaction-tab-content"
-                   hx-swap="morph:innerHTML"
+                   hx-swap="innerHTML"
                    hx-indicator="#debt-loading-spinner"
                 >
                     <i class="bi bi-wallet"></i>
@@ -80,7 +80,7 @@
                    hx-trigger="click"
                    hx-get="{% url 'htmx-account-list' slug=room.slug %}"
                    hx-target="#people-tab-content"
-                   hx-swap="morph:innerHTML"
+                   hx-swap="innerHTML"
                    hx-indicator="#people-loading-spinner"
                 >
                     <i class="bi bi-people"></i>
