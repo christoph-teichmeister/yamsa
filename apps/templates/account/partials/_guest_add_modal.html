@@ -1,6 +1,5 @@
 <!-- Add Guest Modal -->
-<div class="modal fade" id="addGuestModal" tabindex="-1" aria-labelledby="addGuestModalLabel"
-     aria-hidden="true">
+<div class="modal fade" id="addGuestModal" tabindex="-1" aria-labelledby="addGuestModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
@@ -9,11 +8,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form>
+            <form hx-post="{% url 'account-create-guest-user' %}" hx-swap="none">
                 {% csrf_token %}
 
                 <div class="modal-body">
-
                     <div class="mb-3 form-group">
                         <label for="name">Their name</label>
                         <input id="name" name="name" type="text" class="form-control" required/>
@@ -29,20 +27,11 @@
                                value="{{ room.slug }}"
                         />
                     </div>
-
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit"
-                            class="btn btn-primary"
-                            data-bs-dismiss="modal"
-                            hx-post="{% url 'account-create-guest-user' %}"
-                            hx-target="#body"
-                            hx-swap="morph:innerHTML"
-                    >
-                        Submit
-                    </button>
+                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
                 </div>
             </form>
 

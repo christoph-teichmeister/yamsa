@@ -77,7 +77,7 @@
                    data-bs-target="#people-tab-content"
                    aria-controls="people-tab-content"
                    aria-selected="false"
-                   hx-trigger="click"
+                   hx-trigger="click, reloadPeopleList from:body"
                    hx-get="{% url 'htmx-account-list' slug=room.slug %}"
                    hx-target="#people-tab-content"
                    hx-swap="innerHTML"
