@@ -45,9 +45,12 @@ class ParentTransaction(CommonInfo):
         verbose_name = "Parent Transaction"
         verbose_name_plural = "Parent Transactions"
 
+    def __str__(self):
+        return f"{self.id}: {self.paid_by.name} paid {self.value}{self.currency.sign}"
+
     @property
     def value(self):
-        return self.childtransaction_set.aggregate(Sum("value"))["value__sum"]
+        return self.child_transactions.aggregate(Sum("value"))["value__sum"]
 
 
 class ChildTransaction(CommonInfo):
