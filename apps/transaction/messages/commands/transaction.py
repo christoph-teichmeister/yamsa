@@ -6,7 +6,7 @@ from apps.core.event_loop.messages import Command
 from apps.room.models import Room
 
 
-class CreateTransaction(Command):
+class CreateParentTransaction(Command):
     @dataclass
     class Context:
         room: Room

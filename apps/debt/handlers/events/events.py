@@ -5,14 +5,14 @@ from django.db.models import Q
 from apps.core.event_loop.registry import message_registry
 from apps.currency.models import Currency
 from apps.debt.models import Debt
-from apps.transaction.messages.events.transaction import TransactionCreated
+from apps.transaction.messages.events.transaction import ParentTransactionCreated
 
 
-@message_registry.register_event(event=TransactionCreated)
-def calculate_optimised_debts(context: TransactionCreated.Context):
+@message_registry.register_event(event=ParentTransactionCreated)
+def calculate_optimised_debts(context: ParentTransactionCreated.Context):
     # Retrieve all unsettled debts in the room and store them in a tuple
     all_debts_of_room_tuple = tuple(
-        Debt.objects.filter(room_id=context.transaction.room_id, settled=False)
+        Debt.objects.filter(room_id=context.parent_transaction.room_id, settled=False)
         .order_by("value", "currency__sign")
         .values_list("currency__sign", "debitor", "creditor", "value")
     )
@@ -29,9 +29,10 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
             currency_debts[currency_sign].append(debt_tuple)
 
     # Insert data of created transaction into currency_debts
-    for debtor in context.transaction.paid_for.all():
-        debt_tuple = (debtor.id, context.transaction.paid_by.id, context.transaction.value)
-        currency_sign = context.transaction.currency.sign
+    for child_transaction in context.parent_transaction.child_transactions.all():
+        debtor = child_transaction.paid_for
+        debt_tuple = (debtor.id, context.parent_transaction.paid_by.id, context.parent_transaction.value)
+        currency_sign = context.parent_transaction.currency.sign
 
         if currency_debts.get(currency_sign) is None:
             currency_debts[currency_sign] = [debt_tuple]
@@ -100,7 +101,7 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
         for debtor, creditor, transfer_amount in transaction_list:
             # Query existing debt objects for the current transaction
             debt_qs = Debt.objects.filter(
-                room_id=context.transaction.room_id,
+                room_id=context.parent_transaction.room_id,
                 debitor=debtor,
                 creditor=creditor,
                 currency__sign=currency_sign,
@@ -114,7 +115,7 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
                         Debt.objects.create(
                             debitor_id=debtor,
                             creditor_id=creditor,
-                            room_id=context.transaction.room_id,
+                            room_id=context.parent_transaction.room_id,
                             value=transfer_amount,
                             currency=Currency.objects.get(sign=currency_sign),
                         ).id,
@@ -133,5 +134,5 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
 
     # Delete any unsettled debt objects that were not touched
     Debt.objects.exclude(Q(id__in=(created_debt_ids_tuple + touched_debt_ids_tuple)) | Q(settled=True)).filter(
-        room_id=context.transaction.room_id
+        room_id=context.parent_transaction.room_id
     ).delete()

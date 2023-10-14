@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
 from apps.core.event_loop.messages import Event
-from apps.transaction.models import Transaction
+from apps.transaction.models import ParentTransaction
 
 
-class TransactionCreated(Event):
+class ParentTransactionCreated(Event):
     @dataclass
     class Context:
-        transaction: Transaction
+        parent_transaction: ParentTransaction
