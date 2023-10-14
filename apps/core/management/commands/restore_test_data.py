@@ -78,15 +78,18 @@ class Command(BaseCommand):
 
     @staticmethod
     def _create_rooms():
+        all_users_id_list = User.objects.values_list("id", flat=True)
+
         for i in range(1, 4):
             room = Room.objects.create(
                 name=f"Room {i}",
                 slug=uuid.uuid4(),
                 description=f"Description for Room {i}",
                 preferred_currency=Currency.objects.get(sign="€"),
+                created_by_id=all_users_id_list[i],
             )
 
-            room.users.add(*[u.id for u in User.objects.all() if u.id % i == 0])
+            room.users.add(*[user_id for user_id in all_users_id_list if user_id % i == 0])
 
             print(f'Room ID: {room.id}, Name: "{room.name}" created')
 
