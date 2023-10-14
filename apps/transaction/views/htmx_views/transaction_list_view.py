@@ -1,41 +1,30 @@
 from ambient_toolbox.view_layer import htmx_mixins
-from django.db.models import F
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
 from apps.room.models import Room
-from apps.transaction.models import Transaction
+from apps.transaction.models import ParentTransaction
 
 
 class TransactionListHTMXView(htmx_mixins.HtmxResponseMixin, generic.ListView):
-    model = Transaction
-    context_object_name = "transactions"
+    model = ParentTransaction
+    context_object_name = "parent_transactions"
     template_name = "transaction/_list.html"
     hx_trigger = {"reloadTransactionAddModal": True}
+
+    # Custom attributes
+    _room = None
+
+    def dispatch(self, request, *args, **kwargs):
+        # Set room here, so that only one query is made and room is accessible throughout the other methods
+        self._room = Room.objects.get(slug=self.kwargs.get("slug"))
+        return super().dispatch(request, *args, **kwargs)
 
     @context
     @cached_property
     def room(self):
-        return Room.objects.get(slug=self.kwargs.get("slug"))
+        return self._room
 
     def get_queryset(self):
-        return (
-            self.model.objects.filter(room__slug=self.kwargs.get("slug"))
-            .select_related("paid_by", "room")
-            .prefetch_related("paid_for")
-            .annotate(
-                paid_by_name=F("paid_by__name"),
-                paid_for_name=F("paid_for__name"),
-                currency_sign=F("currency__sign"),
-            )
-            .values(
-                "id",
-                "description",
-                "value",
-                "currency_sign",
-                "paid_by_name",
-                "paid_for_name",
-                "created_at",
-            )
-        )
+        return self.model.objects.filter(room=self._room)
