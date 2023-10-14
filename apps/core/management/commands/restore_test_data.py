@@ -1,8 +1,7 @@
-import subprocess
 import uuid
 
 from django.contrib.auth.hashers import make_password
-from django.core.management import BaseCommand
+from django.core.management import BaseCommand, call_command
 from django.db import transaction
 
 from apps.account.models import User
@@ -16,7 +15,9 @@ class Command(BaseCommand):
     help = "Creates e2e data"
 
     def handle(self, *args, **options):
-        subprocess.call(["python", "manage.py", "flush", "--noinput"])
+        call_command("flush", "--noinput")
+
+        call_command("migrate")
 
         self.restore_test_data()
 
