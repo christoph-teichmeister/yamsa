@@ -46,7 +46,7 @@
                    data-bs-target="#transaction-tab-content"
                    aria-controls="transaction-tab-content"
                    aria-selected="true"
-                   hx-trigger="load,reloadTransactionList from:body"
+                   hx-trigger="click,load,reloadTransactionList from:body"
                    hx-get="{% url 'htmx-transaction-list' slug=room.slug %}"
                    hx-target="#transaction-tab-content"
                    hx-swap="innerHTML"
