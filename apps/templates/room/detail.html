@@ -124,8 +124,8 @@
         {% include "room/partials/_detail_who_are_you.html" %}
     {% endif %}
 
-    <script>
-      const copyShareURL = () => {
+    <script type="text/javascript">
+      var copyShareURL = () => {
         const url = document.URL
         navigator.clipboard.writeText(url).then(() => {
           // clipboard successfully set
