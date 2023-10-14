@@ -13,7 +13,6 @@ class FormHtmxResponseMixin:
     the signal and the value is a parameter passed to the frontend. If you don't need the value, set it to None.
     """
 
-    hx_redirect_url: str = None
     hx_trigger: Union[str, Dict[str, str]] = None
 
     toast_success_message: str = None
@@ -28,12 +27,7 @@ class FormHtmxResponseMixin:
         response = HttpResponse(201)
 
         # Get attributes
-        hx_redirect_url = self.get_hx_redirect_url()
         hx_trigger = self.get_hx_trigger()
-
-        # Set redirect header if set
-        if hx_redirect_url:
-            response["HX-Redirect"] = hx_redirect_url
 
         if isinstance(hx_trigger, str):
             hx_trigger = {f"{hx_trigger}": True}
@@ -46,6 +40,18 @@ class FormHtmxResponseMixin:
 
         # Return augmented response
         return response
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+
+        # Set trigger header if set
+        hx_trigger = {"triggerToast": {"message": self.get_toast_error_message(), "type": "text-bg-danger bg-gradient"}}
+
+        response["HX-Trigger"] = json.dumps(hx_trigger)
+
+        return response
+
+    # -------------- GETTER METHODS --------------
 
     def get_hx_redirect_url(self):
         """
