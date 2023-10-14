@@ -4,7 +4,7 @@ from django.contrib.admin import register
 from apps.account.models import User
 from apps.core.admin import YamsaCommonInfoAdminMixin
 from apps.room.admin import UserConnectionToRoomInline
-from apps.transaction.admin import TransactionPaidByInline
+from apps.transaction.admin import ParentTransactionPaidByInline
 
 
 @register(User)
@@ -28,7 +28,7 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     extra_fields_for_fieldset = ("last_login",)
     inlines = (
         UserConnectionToRoomInline,
-        TransactionPaidByInline,
+        ParentTransactionPaidByInline,
     )
 
     def get_readonly_fields(self, request, obj=None):
