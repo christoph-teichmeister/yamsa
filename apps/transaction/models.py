@@ -5,8 +5,7 @@ from django.utils import timezone
 
 class Transaction(CommonInfo):
     description = models.TextField(max_length=500)
-    paid_for = models.ManyToManyField("account.User", through="debt.Debt", related_name="debitors")
-    new_paid_for = models.ManyToManyField("account.User")
+    paid_for = models.ManyToManyField("account.User")
     paid_by = models.ForeignKey("account.User", related_name="made_transactions", on_delete=models.CASCADE)
 
     room = models.ForeignKey(
