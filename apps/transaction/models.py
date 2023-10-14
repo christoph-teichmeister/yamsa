@@ -29,16 +29,3 @@ class Transaction(CommonInfo):
             f"{self.paid_by} paid {self.value}{self.currency.sign} for {'each: ' if multiple_people else ''}"
             f"{', '.join(self.paid_for.values_list('name', flat=True))}"
         )
-
-    def save(self, *args, **kwargs):
-        # Set settled_at if settled is True and settled_at was not already set (Meaning, the transaction was just
-        # settled)
-        # if self.settled and not self.settled_at:
-        #     self.settled_at = timezone.now()
-
-        # Clear settled_at if it was set AND the transaction is not marked as settled (Meaning, for whatever reason,
-        # the transaction was just marked as not settled, although it was marked as such before)
-        # if not self.settled and self.settled_at:
-        #     self.settled_at = None
-
-        super().save(*args, **kwargs)
