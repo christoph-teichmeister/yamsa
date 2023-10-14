@@ -32,6 +32,7 @@ app_urlpatterns = (
     if not settings.MAINTENANCE
     else [
         re_path(r"^.*/$", MaintenanceView.as_view(), name="core-maintenance"),
+        path("", MaintenanceView.as_view(), name="core-maintenance"),
     ]
 )
 
