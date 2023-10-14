@@ -20,5 +20,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_new_relation, migrations.RunPython.noop),
+        # migrations.RunPython(populate_new_relation, migrations.RunPython.noop),
     ]
