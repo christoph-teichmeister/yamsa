@@ -1,7 +1,6 @@
 from _decimal import Decimal
 
 from django import forms
-from django.utils import timezone
 
 from apps.core.event_loop.runner import handle_message
 from apps.transaction.messages.events.transaction import TransactionCreated
