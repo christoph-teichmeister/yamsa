@@ -5,7 +5,7 @@ from django.views import generic
 from django_context_decorator import context
 
 from apps.currency.models import Currency
-from apps.debt.models import Debt, NewDebt
+from apps.debt.models import Debt
 from apps.room.models import Room
 
 
@@ -43,7 +43,7 @@ class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
     @context
     @cached_property
     def debts(self):
-        return NewDebt.objects.filter_for_room_id(room_id=self.object.id).order_by(
+        return Debt.objects.filter_for_room_id(room_id=self.object.id).order_by(
             "settled", "currency__sign", "debitor__username"
         )
 

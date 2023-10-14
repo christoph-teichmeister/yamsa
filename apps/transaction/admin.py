@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import register
 
-from apps.debt.admin import DebtInline
 from apps.core.admin import YamsaCommonInfoAdminMixin
 from apps.transaction.models import Transaction
 

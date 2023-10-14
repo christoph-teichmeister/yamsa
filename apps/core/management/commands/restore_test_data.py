@@ -38,59 +38,38 @@ class Command(BaseCommand):
 
         print(f'User ID: {superuser.id}, Name: "{superuser.name}" created')
 
-        # --------------- NON GUEST USERS ---------------
+        # --------------- REGISTERED USERS ---------------
 
-        non_guest_user_1 = User.objects.create(
-            name="non_guest_user_1",
-            username="non_guest_user_1",
-            password=default_password,
-            email="non_guest_user_1@yamsa.local",
-            is_superuser=False,
-            is_staff=False,
-            is_active=True,
-            is_guest=False,
-        )
+        # Creates five registered users
+        for i in range(1, 6):
+            registered_user = User.objects.create(
+                name=f"registered_user_{i}",
+                username=f"registered_user_{i}",
+                password=default_password,
+                email=f"registered_user_{i}@yamsa.local",
+                is_superuser=False,
+                is_staff=False,
+                is_active=True,
+                is_guest=False,
+            )
 
-        print(f'User ID: {non_guest_user_1.id}, Name: "{non_guest_user_1.name}" created')
-
-        non_guest_user_2 = User.objects.create(
-            name="non_guest_user_2",
-            username="non_guest_user_2",
-            password=default_password,
-            email="non_guest_user_2@yamsa.local",
-            is_superuser=False,
-            is_staff=False,
-            is_active=True,
-            is_guest=False,
-        )
-
-        print(f'User ID: {non_guest_user_2.id}, Name: "{non_guest_user_2.name}" created')
+            print(f'User ID: {registered_user.id}, Name: "{registered_user.name}" created')
 
         # --------------- GUEST USERS ---------------
 
-        guest_user_1 = User.objects.create(
-            name="guest_user_1",
-            username="guest_user_1",
-            password=make_password("guest_user_1-4"),
-            is_superuser=False,
-            is_staff=False,
-            is_active=True,
-            is_guest=True,
-        )
+        # Creates five guest users
+        for i in range(1, 6):
+            guest_user = User.objects.create(
+                name=f"guest_{i}",
+                username=f"guest_{i}",
+                password=make_password(f"guest_{i}"),
+                is_superuser=False,
+                is_staff=False,
+                is_active=True,
+                is_guest=True,
+            )
 
-        print(f'User ID: {guest_user_1.id}, Name: "{guest_user_1.name}" created')
-
-        guest_user_2 = User.objects.create(
-            name="guest_user_2",
-            username="guest_user_2",
-            password=make_password("guest_user_1-5"),
-            is_superuser=False,
-            is_staff=False,
-            is_active=True,
-            is_guest=True,
-        )
-
-        print(f'User ID: {guest_user_2.id}, Name: "{guest_user_2.name}" created')
+            print(f'User ID: {guest_user.id}, Name: "{guest_user.name}" created')
 
     @staticmethod
     def _create_currencies():
@@ -99,16 +78,20 @@ class Command(BaseCommand):
 
     @staticmethod
     def _create_rooms():
-        room = Room.objects.create(
-            name="_Room",
-            slug=uuid.uuid4(),
-            description="Description for _Room",
-            preferred_currency=Currency.objects.get(sign="€"),
-        )
+        all_users_id_list = User.objects.values_list("id", flat=True)
 
-        room.users.add(*[u.id for u in User.objects.all()])
+        for i in range(1, 4):
+            room = Room.objects.create(
+                name=f"Room {i}",
+                slug=uuid.uuid4(),
+                description=f"Description for Room {i}",
+                preferred_currency=Currency.objects.get(sign="€"),
+                created_by_id=all_users_id_list[i],
+            )
 
-        print(f'Room ID: {room.id}, Name: "{room.name}" created')
+            room.users.add(*[user_id for user_id in all_users_id_list if user_id % i == 0])
+
+            print(f'Room ID: {room.id}, Name: "{room.name}" created')
 
     @staticmethod
     @transaction.atomic
