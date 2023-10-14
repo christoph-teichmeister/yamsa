@@ -13,7 +13,7 @@ class RoomDetailView(htmx_mixins.HtmxResponseMixin, generic.DetailView):
     template_name = "room/detail.html"
     context_object_name = "room"
     model = Room
-    hx_trigger = {"reloadTransactionList": True}
+    # hx_trigger = {"reloadTransactionList": True}  # TODO CT: What do
 
     @context
     @cached_property
