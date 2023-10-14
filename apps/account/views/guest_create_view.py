@@ -4,8 +4,8 @@ from django.views import generic
 
 from apps.account.forms import GuestCreateForm
 from apps.account.models import User
+from apps.core import htmx
 from apps.room.models import Room, UserConnectionToRoom
-from core import htmx
 
 
 class GuestCreateView(htmx.FormHtmxResponseMixin, generic.CreateView):
