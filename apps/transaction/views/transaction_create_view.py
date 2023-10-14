@@ -1,4 +1,6 @@
-from django.urls import reverse
+import json
+
+from django.http import HttpResponse
 from django.views import generic
 
 from apps.transaction.forms import TransactionCreateForm
@@ -10,5 +12,15 @@ class TransactionCreateView(generic.CreateView):
     form_class = TransactionCreateForm
     template_name = "room/detail.html"
 
-    def get_success_url(self):
-        return reverse(viewname="room-detail", kwargs={"slug": self.request.POST.get("room_slug")})
+    def get_hx_trigger(self):
+        return {
+            "reloadTransactionList": True,
+            "triggerToast": {"message": "Transaction created successfully", "type": "text-bg-success bg-gradient"},
+        }
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        response = HttpResponse(201)
+        response["HX-Trigger"] = json.dumps(self.get_hx_trigger())
+        return response
