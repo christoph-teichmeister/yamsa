@@ -18,6 +18,7 @@ import environ
 env = environ.Env(
     SECRET_KEY=(str, ""),
     DEBUG=(bool, False),
+    MAINTENANCE=(bool, False),
     PROJECT_BASE_URL=(str, ""),
     DJANGO_ADMIN_SUB_URL=(str, ""),
     # Database ENV
@@ -47,6 +48,8 @@ SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
+
+MAINTENANCE = env("MAINTENANCE")
 
 IS_TESTING = False
 if "test" in sys.argv or "test_coverage" in sys.argv:
