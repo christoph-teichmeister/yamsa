@@ -62,8 +62,8 @@ class ChildTransaction(CommonInfo):
     class Meta:
         ordering = ("-id",)
         default_related_name = "child_transactions"
-        verbose_name = "Transaction"
-        verbose_name_plural = "Transactions"
+        verbose_name = "Child Transaction"
+        verbose_name_plural = "Child Transactions"
 
     def __str__(self):
         return (
