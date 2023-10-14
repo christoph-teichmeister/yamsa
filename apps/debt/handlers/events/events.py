@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from apps.core.event_loop.registry import message_registry
 from apps.currency.models import Currency
-from apps.debt.models import NewDebt
+from apps.debt.models import Debt
 from apps.transaction.messages.events.transaction import TransactionCreated
 
 
@@ -12,7 +12,7 @@ from apps.transaction.messages.events.transaction import TransactionCreated
 def calculate_optimised_debts(context: TransactionCreated.Context):
     # Retrieve all unsettled debts in the room and store them in a tuple
     all_debts_of_room_tuple = tuple(
-        NewDebt.objects.filter(room_id=context.transaction.room_id, settled=False)
+        Debt.objects.filter(room_id=context.transaction.room_id, settled=False)
         .order_by("value", "currency__sign")
         .values_list("currency__sign", "debitor", "creditor", "value")
     )
@@ -99,7 +99,7 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
     for currency_sign, transaction_list in currency_transactions.items():
         for debtor, creditor, transfer_amount in transaction_list:
             # Query existing debt objects for the current transaction
-            debt_qs = NewDebt.objects.filter(
+            debt_qs = Debt.objects.filter(
                 room_id=context.transaction.room_id,
                 debitor=debtor,
                 creditor=creditor,
@@ -111,7 +111,7 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
                 # Create a new debt object if it doesn't exist
                 if transfer_amount != Decimal(0):
                     created_debt_ids_tuple += (
-                        NewDebt.objects.create(
+                        Debt.objects.create(
                             debitor_id=debtor,
                             creditor_id=creditor,
                             room_id=context.transaction.room_id,
@@ -132,6 +132,6 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
                     debt.delete()
 
     # Delete any unsettled debt objects that were not touched
-    NewDebt.objects.exclude(Q(id__in=(created_debt_ids_tuple + touched_debt_ids_tuple)) | Q(settled=True)).filter(
+    Debt.objects.exclude(Q(id__in=(created_debt_ids_tuple + touched_debt_ids_tuple)) | Q(settled=True)).filter(
         room_id=context.transaction.room_id
     ).delete()

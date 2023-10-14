@@ -2,11 +2,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
 
-from apps.debt.models import NewDebt
+from apps.debt.models import Debt
 
 
 class DebtSettleView(generic.UpdateView):
-    model = NewDebt
+    model = Debt
     fields = (
         "id",
         "settled",
