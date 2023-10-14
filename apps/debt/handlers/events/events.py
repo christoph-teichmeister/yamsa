@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from apps.core.event_loop.registry import message_registry
 from apps.currency.models import Currency
-from apps.debt.models import NewDebt, Debt
+from apps.debt.models import NewDebt
 from apps.transaction.messages.events.transaction import TransactionCreated
 
 
@@ -12,9 +12,9 @@ from apps.transaction.messages.events.transaction import TransactionCreated
 def calculate_optimised_debts(context: TransactionCreated.Context):
     # Retrieve all unsettled debts in the room and store them in a tuple
     all_debts_of_room_tuple = tuple(
-        Debt.objects.filter(transaction__room_id=context.transaction.room_id, settled=False)
-        .order_by("transaction__value", "transaction__currency__sign")
-        .values_list("transaction__currency__sign", "user", "transaction__paid_by", "transaction__value")
+        NewDebt.objects.filter(room_id=context.transaction.room_id, settled=False)
+        .order_by("value", "currency__sign")
+        .values_list("currency__sign", "debitor", "creditor", "value")
     )
 
     # Initialize a dictionary to organize debts by currency sign
@@ -28,6 +28,17 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
         else:
             currency_debts[currency_sign].append(debt_tuple)
 
+    # Insert data of created transaction into currency_debts
+    for debtor in context.transaction.paid_for.all():
+        debt_tuple = (debtor.id, context.transaction.paid_by.id, context.transaction.value)
+        currency_sign = context.transaction.currency.sign
+
+        if currency_debts.get(currency_sign) is None:
+            currency_debts[currency_sign] = [debt_tuple]
+        else:
+            currency_debts[currency_sign].append(debt_tuple)
+
+    # Initialize a dictionary to track transactions for each currency
     currency_transactions = {}
 
     # Iterate through debts grouped by currency and perform debt consolidation
