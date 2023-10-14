@@ -1,7 +1,7 @@
 {% load room_tags %}
 
 <div id="add-transaction-modal-container"
-     hx-trigger="load,reloadTransactionAddModal from:body"
+     hx-trigger="load"
      hx-get="{% url 'htmx-transaction-add-modal' slug=room.slug %}"
      hx-target="#add-transaction-modal-container"
      hx-swap="innerHTML"
