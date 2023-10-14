@@ -26,7 +26,12 @@
 {% if parent_transactions %}
     <ul class="list-group list-group-flush mb-3">
         {% for parent_transaction in parent_transactions %}
-            <li class="list-group-item pb-4 pt-4">
+            <li class="list-group-item pb-4 pt-4"
+                hx-trigger="click"
+                hx-get="{% url 'htmx-transaction-detail' pk=parent_transaction.id %}"
+                hx-target="#transaction-tab-content"
+                hx-swap="morph:innerHTML"
+            >
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">
                         {% autoescape off %}
