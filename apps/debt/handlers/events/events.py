@@ -10,13 +10,17 @@ from apps.transaction.messages.events.transaction import TransactionCreated
 
 @message_registry.register_event(event=TransactionCreated)
 def calculate_optimised_debts(context: TransactionCreated.Context):
+    # Retrieve all unsettled debts in the room and store them in a tuple
     all_debts_of_room_tuple = tuple(
         Debt.objects.filter(transaction__room_id=context.transaction.room_id, settled=False)
         .order_by("transaction__value", "transaction__currency__sign")
         .values_list("transaction__currency__sign", "user", "transaction__paid_by", "transaction__value")
     )
 
+    # Initialize a dictionary to organize debts by currency sign
     currency_debts = {}
+
+    # Group debts by currency sign
     for currency_sign, debtor, creditor, amount in all_debts_of_room_tuple:
         debt_tuple = (debtor, creditor, amount)
         if currency_debts.get(currency_sign) is None:
@@ -25,8 +29,10 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
             currency_debts[currency_sign].append(debt_tuple)
 
     currency_transactions = {}
+
+    # Iterate through debts grouped by currency and perform debt consolidation
     for currency_sign, debt_list in currency_debts.items():
-        # Create a dictionary to track how much each person owes or is owed
+        # Initialize a dictionary to track how much each person owes or is owed
         balances = {}
 
         # Populate the balances dictionary based on the provided debts
@@ -34,22 +40,20 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
             balances[debtor] = balances.get(debtor, 0) - amount
             balances[creditor] = balances.get(creditor, 0) + amount
 
-        # Initialize two lists for debtors and creditors
+        # Initialize lists for debtors and creditors, ignoring those with a balance of 0
         debtors = []
         creditors = []
 
-        # Separate debtors and creditors, ignoring those with a balance of 0
+        # Separate debtors and creditors and sort them based on the owed amounts
         for person, balance in balances.items():
             if balance < 0:
                 debtors.append((person, balance))
             elif balance > 0:
                 creditors.append((person, balance))
 
-        # Sort debtors and creditors based on the owed amounts
+        # Sort debtors and creditors and track transactions
         debtors.sort(key=lambda x: x[1])
         creditors.sort(key=lambda x: x[1], reverse=True)
-
-        # Initialize a list to track the transactions
         transactions = []
 
         # Perform debt consolidation
@@ -73,12 +77,17 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
             if balances[creditor] == 0:
                 creditors.pop(0)
 
+        # Store the resulting transactions in the dictionary
         currency_transactions[currency_sign] = transactions
 
+    # Initialize tuples to keep track of created and touched debt IDs
     created_debt_ids_tuple = ()
     touched_debt_ids_tuple = ()
+
+    # Iterate through currency transactions and update or create debt objects
     for currency_sign, transaction_list in currency_transactions.items():
         for debtor, creditor, transfer_amount in transaction_list:
+            # Query existing debt objects for the current transaction
             debt_qs = NewDebt.objects.filter(
                 room_id=context.transaction.room_id,
                 debitor=debtor,
@@ -88,6 +97,7 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
             )
 
             if not debt_qs.exists():
+                # Create a new debt object if it doesn't exist
                 if transfer_amount != Decimal(0):
                     created_debt_ids_tuple += (
                         NewDebt.objects.create(
@@ -98,9 +108,10 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
                             currency=Currency.objects.get(sign=currency_sign),
                         ).id,
                     )
-                    continue
+                continue
 
             if debt_qs.count() == 1:
+                # Update or delete an existing debt object based on the transaction
                 debt = debt_qs.first()
                 if transfer_amount != Decimal(0):
                     debt.value = transfer_amount
@@ -109,7 +120,7 @@ def calculate_optimised_debts(context: TransactionCreated.Context):
                 else:
                     debt.delete()
 
-    # Delete any untouched, unsettled debt objects
+    # Delete any unsettled debt objects that were not touched
     NewDebt.objects.exclude(Q(id__in=(created_debt_ids_tuple + touched_debt_ids_tuple)) | Q(settled=True)).filter(
         room_id=context.transaction.room_id
     ).delete()
