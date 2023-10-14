@@ -7,6 +7,7 @@ from django_context_decorator import context
 from apps.currency.models import Currency
 from apps.room.forms import RoomCreateForm
 from apps.room.models import Room
+from apps.room.models import UserConnectionToRoom
 
 
 class RoomCreateView(generic.CreateView):
@@ -30,6 +31,6 @@ class RoomCreateView(generic.CreateView):
 
         ret = super().form_valid(form)
 
-        created_room.users.add(self.request.user)
+        UserConnectionToRoom.objects.create(user=self.request.user, room=created_room)
 
         return ret

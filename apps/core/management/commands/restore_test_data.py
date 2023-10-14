@@ -6,7 +6,7 @@ from django.db import transaction
 
 from apps.account.models import User
 from apps.currency.models import Currency
-from apps.room.models import Room
+from apps.room.models import Room, UserConnectionToRoom
 
 
 class Command(BaseCommand):
@@ -90,7 +90,9 @@ class Command(BaseCommand):
                 created_by_id=all_users_id_list[i],
             )
 
-            room.users.add(*[user_id for user_id in all_users_id_list if user_id % i == 0])
+            for user_id in all_users_id_list:
+                if user_id % i == 0:
+                    UserConnectionToRoom.objects.create(user_id=user_id, room=room)
 
             print(f'Room ID: {room.id}, Name: "{room.name}" created')
 

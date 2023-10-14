@@ -1,5 +1,6 @@
 import time
 
+from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import generic
@@ -21,7 +22,7 @@ class WelcomePartialView(generic.TemplateView):
     def _get_news_base_qs(self):
         if self.request.user.is_authenticated:
             return News.objects.filter(
-                room_id__in=self.request.user.rooms.values_list("id", flat=True)
+                room_id__in=self.request.user.room_set.values_list("id", flat=True)
             ).prefetch_related("comments")
 
         return News.objects.none()
@@ -36,6 +37,15 @@ class WelcomePartialView(generic.TemplateView):
     def highlighted_news(self):
         ret = self._get_news_base_qs().filter(highlighted=True).first()
         return ret
+
+
+class MaintenanceView(generic.TemplateView):
+    template_name = "core/_maintenance.html"
+
+    @context
+    @property
+    def is_in_maintenance(self):
+        return settings.MAINTENANCE
 
 
 class ToastHTMXView(generic.TemplateView):
