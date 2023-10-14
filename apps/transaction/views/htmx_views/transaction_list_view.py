@@ -4,7 +4,6 @@ from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
-from apps.core.context_managers import measure_time_and_queries
 from apps.room.models import Room
 from apps.transaction.models import Transaction
 
@@ -20,7 +19,6 @@ class TransactionListHTMXView(htmx_mixins.HtmxResponseMixin, generic.ListView):
     def room(self):
         return Room.objects.get(slug=self.kwargs.get("slug"))
 
-    @measure_time_and_queries("TransactionListHTMXView.get_queryset()")
     def get_queryset(self):
         return (
             self.model.objects.filter(room__slug=self.kwargs.get("slug"))
