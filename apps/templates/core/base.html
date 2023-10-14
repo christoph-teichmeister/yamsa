@@ -45,7 +45,7 @@
     {% endblock %}
 </div>
 
-{% if not settings.MAINTENANCE %}
+{% if not is_in_maintenance %}
     {% include "_nav.html" %}
 {% endif %}
 

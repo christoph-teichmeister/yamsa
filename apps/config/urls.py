@@ -20,22 +20,25 @@ from django.urls import include, path, re_path
 from apps.config.settings import DJANGO_ADMIN_SUB_URL
 from apps.core.views import MaintenanceView
 
-urlpatterns = (
-    [
-        path("", include("apps.core.urls")),
-        path(f"{DJANGO_ADMIN_SUB_URL}/", admin.site.urls),
-        path("account/", include("apps.account.urls")),
-        path("debt/", include("apps.debt.urls")),
-        path("news/", include("apps.news.urls")),
-        path("room/", include("apps.room.urls")),
-        path("transaction/", include("apps.transaction.urls")),
-    ]
-    if not settings.MAINTENANCE
-    else [
+normal_urlpatterns = [
+    path("", include("apps.core.urls")),
+    path(f"{DJANGO_ADMIN_SUB_URL}/", admin.site.urls),
+    path("account/", include("apps.account.urls")),
+    path("debt/", include("apps.debt.urls")),
+    path("news/", include("apps.news.urls")),
+    path("room/", include("apps.room.urls")),
+    path("transaction/", include("apps.transaction.urls")),
+]
+
+if settings.MAINTENANCE:
+    urlpatterns = [
+        # TODO CT: Idea to still include all urls, but with a prefix
+        # path("maintenance/", include(normal_urlpatterns)),
         path(f"{DJANGO_ADMIN_SUB_URL}/", admin.site.urls),
         # Empty URLs
         path("", MaintenanceView.as_view(), name="core-maintenance"),
         # Any other URLs / wildcard
         re_path(r"^.*/$", MaintenanceView.as_view(), name="core-maintenance"),
     ]
-)
+else:
+    urlpatterns = normal_urlpatterns
