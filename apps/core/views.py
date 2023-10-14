@@ -22,7 +22,7 @@ class WelcomePartialView(generic.TemplateView):
     def _get_news_base_qs(self):
         if self.request.user.is_authenticated:
             return News.objects.filter(
-                room_id__in=self.request.user.rooms.values_list("id", flat=True)
+                room_id__in=self.request.user.room_set.values_list("id", flat=True)
             ).prefetch_related("comments")
 
         return News.objects.none()
