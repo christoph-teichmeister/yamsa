@@ -5,7 +5,7 @@ from django.views import generic
 from django_context_decorator import context
 
 from apps.currency.models import Currency
-from apps.debt.models import Debt, NewDebt
+from apps.debt.models import NewDebt
 from apps.room.models import Room
 
 
