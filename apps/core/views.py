@@ -44,8 +44,8 @@ class MaintenanceView(generic.TemplateView):
 
     @context
     @property
-    def settings(self):
-        return settings
+    def is_in_maintenance(self):
+        return settings.MAINTENANCE
 
 
 class ToastHTMXView(generic.TemplateView):
