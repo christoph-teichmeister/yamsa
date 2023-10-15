@@ -14,12 +14,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form action="/debt/settle/{{ debt.id }}/" method="post">
+            <form hx-post="{% url 'debt-settle' pk=debt.id %}" hx-swap="none">
                 {% csrf_token %}
 
                 <div class="modal-body">
 
-                    Are you sure that you have settled your debt ({{ debt.value }}{{ debt.currency.sign }}) to {{ debt.creditor.username }}?
+                    Are you sure that you have settled your debt ({{ debt.value }}{{ debt.currency.sign }})
+                    to {{ debt.creditor.username }}?
 
                     <div class="form-group" hidden>
                         <label for="debt_id">Debt ID</label>
@@ -43,29 +44,20 @@
                         />
                     </div>
 
-                    <div class="form-group" hidden>
-                        <label for="room_slug" class="form-label">Room Slug</label>
-                        <input id="room_slug"
-                               name="room_slug"
-                               type="text"
-                               class="form-control"
-                               required
-                               value="{{ debt.room.slug }}"
-                        />
-                    </div>
-
                 </div>
 
                 <div class="modal-footer">
                     {% if debt.creditor.paypal_me_link %}
                         <a href="{{ debt.creditor.paypal_me_link }}/{{ debt.value }}{{ debt.currency.code }}"
                            target="_blank">
-                            <button type="button" class="btn btn-secondary">No, take me to their paypal</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                No, take me to their paypal
+                            </button>
                         </a>
                     {% else %}
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
                     {% endif %}
-                    <button type="submit" class="btn btn-primary">Yes</button>
+                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Yes</button>
                 </div>
             </form>
 
