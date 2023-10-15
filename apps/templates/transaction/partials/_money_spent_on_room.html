@@ -1,0 +1,61 @@
+{% load room_tags %}
+
+<div class="row mt-4 mx-2">
+    <div class="col-1">
+        <i class="bi bi-arrow-left-circle fs-2"
+           style="cursor: pointer"
+           hx-trigger="click"
+           hx-get="{% url 'htmx-debt-list' slug=room.slug %}"
+           hx-target="#debt-tab-content"
+           hx-swap="innerHTML"></i>
+    </div>
+    <div class="col-10 d-flex align-items-center justify-content-center">
+        <h5>Overview</h5>
+    </div>
+</div>
+
+<h5 class="mt-4">Money spent</h5>
+<ul class="list-group list-group-flush">
+    <li class="list-group-item p-0"></li>
+
+    <li class="list-group-item p-4">
+        {% for money_spent in money_spent_qs %}
+            <div class="float-start">
+                <i class="bi bi-caret-right"></i>
+                {% autoescape off %}
+                    {% parse_user_text money_spent.parent_transaction__paid_by__name True %}
+                {% endautoescape %}
+            </div>
+            <div class="float-end">
+                {{ money_spent.total_spent }}{{ money_spent.parent_transaction__currency__sign }}
+            </div>
+            {% if not forloop.last %}<br><br>{% endif %}
+        {% endfor %}
+    </li>
+
+    <li class="list-group-item"></li>
+</ul>
+
+<h5 class="mt-4">Money owed</h5>
+<ul class="list-group list-group-flush">
+    <li class="list-group-item p-0"></li>
+
+    <li class="list-group-item p-4">
+        {% for money_owed in money_owed_qs %}
+            <div class="float-start">
+                <i class="bi bi-caret-right"></i>
+                {% autoescape off %}
+                    {% parse_user_text money_owed.paid_for__name True %}
+                {% endautoescape %}
+            </div>
+            <div class="float-end">
+                {{ money_owed.total_owed }}{{ money_owed.parent_transaction__currency__sign }}
+            </div>
+            {% if not forloop.last %}<br><br>{% endif %}
+        {% endfor %}
+    </li>
+
+    <li class="list-group-item p-4"></li>
+</ul>
+
+<br><br><br>
