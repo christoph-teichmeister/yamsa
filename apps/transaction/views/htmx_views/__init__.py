@@ -7,3 +7,6 @@ from apps.transaction.views.htmx_views.transaction_add_modal_view import (
 from apps.transaction.views.htmx_views.transaction_detail_view import (
     TransactionDetailHTMXView,
 )
+from apps.transaction.views.htmx_views.money_spent_on_room_view import (
+    MoneySpentOnRoomView,
+)
