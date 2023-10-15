@@ -64,6 +64,11 @@
                    data-bs-target="#debt-tab-content"
                    aria-controls="debt-tab-content"
                    aria-selected="false"
+                   hx-trigger="click, reloadDebtList from:body"
+                   hx-get="{% url 'htmx-debt-list' slug=room.slug %}"
+                   hx-target="#debt-tab-content"
+                   hx-swap="innerHTML"
+                   hx-indicator="#debt-loading-spinner"
                 >
                     <i class="bi bi-piggy-bank"></i>
                 </a>
@@ -107,7 +112,7 @@
                  aria-labelledby="debt-tab"
                  tabindex="1"
             >
-                {% include "room/partials/_debt_list.html" %}
+                {% include "shared_partials/loading_spinner.html" with spinner_id="debt-loading-spinner" %}
             </div>
 
             <div class="tab-pane fade"

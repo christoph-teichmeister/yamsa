@@ -39,13 +39,6 @@ class RoomDetailView(generic.DetailView):
     def currency_signs(self):
         return Currency.objects.all()
 
-    @context
-    @cached_property
-    def debts(self):
-        return Debt.objects.filter_for_room_id(room_id=self.object.id).order_by(
-            "settled", "currency__sign", "debitor__username"
-        )
-
     def get(self, request, *args, **kwargs):
         ret = super().get(request, *args, **kwargs)
 
