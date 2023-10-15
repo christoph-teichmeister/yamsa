@@ -3,4 +3,5 @@ from apps.transaction.views.htmx_views import (
     TransactionListHTMXView,
     TransactionDetailHTMXView,
     TransactionAddModalHTMXView,
+    MoneySpentOnRoomView,
 )

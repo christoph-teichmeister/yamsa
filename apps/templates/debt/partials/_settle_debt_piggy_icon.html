@@ -2,7 +2,7 @@
     <i class="bi bi-piggy-bank-fill debt-list-debt-settled"></i>
 {% else %}
 
-    {% if debt.debitor.username == request.user.name %}
+    {% if debt.debitor.name == request.user.name %}
         {% if debt.creditor.paypal_me_link %}
             <a class="text-reset"
                href="{{ debt.creditor.paypal_me_link }}/{{ debt.value }}{{ debt.currency.code }}"
@@ -19,6 +19,6 @@
            data-bs-title="This transaction is not yours to settle!"></i>
     {% endif %}
 
-    {% include "room/partials/_settle_payment_modal.html" with debt=debt %}
+    {% include "debt/partials/_settle_debt_modal.html" with debt=debt %}
 
 {% endif %}
