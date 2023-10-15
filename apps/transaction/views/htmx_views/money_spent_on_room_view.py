@@ -3,8 +3,8 @@ from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
+from apps.room.models import Room
 from apps.transaction.models import ChildTransaction
-from room.models import Room
 
 
 class MoneySpentOnRoomView(generic.TemplateView):
