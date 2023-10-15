@@ -2,12 +2,32 @@
 {% load room_tags %}
 
 <div class="room-detail-tab-header">
-    <h5>Debts</h5>
+    <h5>Optimised Debts</h5>
     {% if debts %}
         <small>
             If you have paid off your debt to someone, click on the white piggy-bank-icon
-            (<i class="bi bi-piggy-bank"></i>) next to the debt.
+            (<i class="bi bi-piggy-bank"></i>) next to the debt to mark it as settled.
         </small>
+
+        <ul class="list-group mt-3">
+            <li class="list-group-item">
+                <div class="row align-items-center">
+                    <div class="col-11">
+                        <small>See how much each person has paid so far</small>
+                    </div>
+
+                    <div class="col-1"
+                         hx-trigger="click"
+                         hx-get="{% url 'htmx-money-spent-on-room' slug=room.slug %}"
+                         hx-target="#debt-tab-content"
+                         hx-swap="innerHTML">
+                        <div class="float-end">
+                            <i class="bi bi-caret-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
     {% else %}
         <div class="container text-center p-4">
             - No debts yet -
