@@ -24,13 +24,16 @@ class FormHtmxResponseMixin:
     def form_valid(self, form):
         super().form_valid(form)
 
-        response = HttpResponse(201)
+        response = self.get_response()
 
         # Get attributes
         hx_trigger = self.get_hx_trigger()
 
         if isinstance(hx_trigger, str):
             hx_trigger = {f"{hx_trigger}": True}
+
+        if hx_trigger is None:
+            hx_trigger = {}
 
         # Set trigger header if set
         hx_trigger.update(
@@ -76,3 +79,10 @@ class FormHtmxResponseMixin:
         Getter for "toast_error_message" to be able to work with dynamic data
         """
         return self.toast_error_message
+
+    @staticmethod
+    def get_response():
+        """
+        Method, to allow overwriting the response type
+        """
+        return HttpResponse(201)
