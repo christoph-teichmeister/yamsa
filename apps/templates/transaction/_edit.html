@@ -1,0 +1,162 @@
+{% load room_tags %}
+
+<form hx-post="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
+      hx-target="#transaction-tab-content"
+      hx-swap="innerHTML">
+    {% csrf_token %}
+
+    <div class="row mt-4 mx-2">
+        <div class="row">
+            <div class="col-12 input-group align-items-center justify-content-space-evenly mb-3">
+
+                <div class="col-4">
+                    <label class="visually-hidden" for="paid_by_select">Paid by</label>
+                    <select name="paid_by"
+                            class="form-control form-select"
+                            id="paid_by_select"
+                            required
+                    >
+                        {% for user in form.fields.paid_by.queryset %}
+                            <option {% if user.id == form.initial.paid_by %}selected{% endif %}
+                                    value="{{ user.id }}">
+                                {{ user.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-3">
+                    <h5 class="mb-0 py-1 text-center">
+                        paid
+                    </h5>
+                </div>
+
+                <div class="col">
+                    <div class="row gx-0">
+                        <div class="col-6">
+                            <label class="visually-hidden" for="total_value_input">Total value</label>
+                            <input id="total_value_input"
+                                   name="total_value"
+                                   type="number"
+                                   class="form-control"
+                                   min="0"
+                                   step="0.01"
+                                   max="99999999"
+                                   required
+                                   value="{{ parent_transaction.value }}"
+                            />
+                        </div>
+
+                        <div class="col-6">
+                            <label class="visually-hidden" for="currency_select">Currency</label>
+                            <select name="currency"
+                                    class="form-control form-select"
+                                    id="currency_select"
+                                    required
+                            >
+                                {% for currency in form.fields.currency.queryset %}
+                                    <option {% if currency.id == form.initial.currency %}selected{% endif %}
+                                            value="{{ currency.id }}">
+                                        {{ currency.sign }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 d-flex align-items-center justify-content-center">
+                    <textarea class="form-control text-body-secondary text-center mb-0 py-1" style="font-style: italic"
+                              aria-label="Description" id="description"
+                              name="description">{{ parent_transaction.description }}</textarea>
+            </div>
+        </div>
+    </div>
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item p-4"></li>
+
+        {% for child_transaction_form in child_transaction_formset %}
+            <li class="list-group-item p-4">
+                <div class="row d-flex align-items-center justify-content-start">
+
+                    <div class="col-1">
+                        <i class="bi bi-caret-right"></i>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="row align-items-center justify-content-center">
+                            <div class="col-8 pe-0">
+                                <label class="visually-hidden" for="value_input">Total value</label>
+                                <input id="value_input"
+                                       name="value"
+                                       type="number"
+                                       class="form-control"
+                                       min="0"
+                                       step="0.01"
+                                       max="99999999"
+                                       required
+                                       value="{{ child_transaction_form.initial.value }}"
+                                />
+                            </div>
+                            <div class="col-1 ps-1">
+                                {{ parent_transaction.currency.sign }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        for
+                    </div>
+
+                    <div class="col-5">
+                        <label class="visually-hidden" for="paid_for_select">Paid by</label>
+                        <select name="paid_for"
+                                class="form-control form-select"
+                                id="paid_for_select"
+                                required
+                        >
+                            {% for user in child_transaction_form.fields.paid_for.queryset %}
+                                <option {% if user == child_transaction_form.initial.paid_for %}selected{% endif %}
+                                        value="{{ user.id }}">
+                                    {{ user.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                <div class="form-group" hidden>
+                    <label class="visually-hidden" for="child_transaction_id_input">Child Transaction ID</label>
+                    <input id="child_transaction_id_input"
+                           name="child_transaction_id"
+                           type="number"
+                           class="form-control"
+                           min="0"
+                           step="0.01"
+                           max="99999999"
+                           required
+                           value="{{ child_transaction_form.initial.id }}"
+                    />
+                </div>
+
+                </div>
+            </li>
+        {% endfor %}
+
+        <li class="list-group-item p-4"></li>
+    </ul>
+
+    <p class="text-body-secondary text-center">
+        {{ parent_transaction.created_at|date:'G:i // d.m.Y' }}
+    </p>
+
+    <button type="submit" class="btn btn-primary">
+        Save
+    </button>
+
+</form>
+
+<br><br><br><br><br><br>
