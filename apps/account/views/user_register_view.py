@@ -14,6 +14,7 @@ class RegisterUserView(generic.FormView):
         return reverse(viewname="core-welcome")
 
     def form_valid(self, form):
+        # TODO CT: Move this to form
         if self.request.user.is_anonymous:
             user = User.objects.create_user(
                 username=form.data["username"],

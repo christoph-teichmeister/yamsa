@@ -1,7 +1,5 @@
 from django.urls import path
 
-# from django.views.decorators.cache import cache_page
-
 from apps.transaction import views
 
 urlpatterns = [
@@ -19,9 +17,5 @@ urlpatterns = [
         views.TransactionAddModalHTMXView.as_view(),
         name="htmx-transaction-add-modal",
     ),
-    path(
-        "htmx/<str:slug>/money-spent",
-        views.MoneySpentOnRoomView.as_view(),
-        name="htmx-money-spent-on-room",
-    ),
+    path("htmx/<str:slug>/money-spent", views.MoneySpentOnRoomView.as_view(), name="htmx-money-spent-on-room"),
 ]

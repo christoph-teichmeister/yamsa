@@ -6,8 +6,4 @@ from apps.room.models import Room
 class RoomCreateForm(forms.ModelForm):
     class Meta:
         model = Room
-        fields = (
-            "name",
-            "preferred_currency",
-            "description",
-        )
+        fields = ("name", "preferred_currency", "description")

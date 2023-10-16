@@ -1,4 +1,4 @@
-from _decimal import Decimal
+from decimal import Decimal
 
 from django import forms
 

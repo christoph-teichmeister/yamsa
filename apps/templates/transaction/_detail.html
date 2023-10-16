@@ -9,17 +9,18 @@
            hx-target="#transaction-tab-content"
            hx-swap="innerHTML"></i>
     </div>
-    <div class="col-10">
+
+    <div class="col-9">
         <div class="row">
             <div class="col-12 d-flex align-items-center justify-content-center">
-                <h5 class="mb-0 py-1">
+                <h5 class="mb-0 py-1 text-center">
                     {% autoescape off %}{% parse_user_text parent_transaction.paid_by.name True %}{% endautoescape %}
                     paid
                     <strong>{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</strong>
                 </h5>
             </div>
             <div class="col-12 d-flex align-items-center justify-content-center">
-                <p class="text-body-secondary mb-0 py-1" style="font-style: italic">
+                <p class="text-body-secondary mb-0 py-1 text-center" style="font-style: italic">
                     "{{ parent_transaction.description }}"
                 </p>
             </div>
