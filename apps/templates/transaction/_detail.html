@@ -26,6 +26,15 @@
             </div>
         </div>
     </div>
+
+    <div class="col-1 d-flex align-items-center">
+        <i class="bi bi-pencil-square fs-2"
+           style="cursor: pointer"
+           hx-trigger="click"
+           hx-get="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
+           hx-target="#transaction-tab-content"
+           hx-swap="innerHTML"></i>
+    </div>
 </div>
 
 <ul class="list-group list-group-flush">
