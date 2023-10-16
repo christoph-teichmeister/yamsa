@@ -22,6 +22,7 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
     @context
     @cached_property
     def child_transaction_formset(self):
+        # TODO CT: This can be deleted and the original child_transactions can be used instead
         # Add child_transaction formset to get-request
         child_transaction_formset = formset_factory(ChildTransactionEditForm, extra=0)
         formset = child_transaction_formset(
