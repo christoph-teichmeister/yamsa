@@ -54,6 +54,6 @@ class TransactionEditForm(forms.ModelForm):
             objs=updated_child_transactions, fields=("paid_for", "value", "lastmodified_by", "lastmodified_at")
         )
 
-        # handle_message(ParentTransactionUpdated(context_data={"parent_transaction": instance}))
+        handle_message(ParentTransactionUpdated(context_data={"parent_transaction": instance}))
 
         return instance
