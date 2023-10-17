@@ -8,3 +8,9 @@ class ParentTransactionCreated(Event):
     @dataclass
     class Context:
         parent_transaction: ParentTransaction
+
+
+class ParentTransactionUpdated(Event):
+    @dataclass
+    class Context:
+        parent_transaction: ParentTransaction
