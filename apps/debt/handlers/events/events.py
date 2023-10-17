@@ -1,49 +1,41 @@
 from decimal import Decimal
-
-from django.db.models import Q
+from typing import Union
 
 from apps.core.event_loop.registry import message_registry
-from apps.currency.models import Currency
 from apps.debt.models import Debt
-from apps.transaction.messages.events.transaction import ParentTransactionCreated
+from apps.transaction.messages.events.transaction import ParentTransactionCreated, ParentTransactionUpdated
+from apps.transaction.models import ChildTransaction
 
 
 @message_registry.register_event(event=ParentTransactionCreated)
-def calculate_optimised_debts(context: ParentTransactionCreated.Context):
-    # Retrieve all unsettled debts in the room and store them in a tuple
-    all_debts_of_room_tuple = tuple(
-        Debt.objects.filter(room_id=context.parent_transaction.room_id, settled=False)
-        .order_by("value", "currency__sign")
-        .values_list("currency__sign", "debitor", "creditor", "value")
+@message_registry.register_event(event=ParentTransactionUpdated)
+def calculate_optimised_debts(context: Union[ParentTransactionCreated.Context | ParentTransactionUpdated.Context]):
+    # Delete all unsettled debts of the room
+    Debt.objects.filter(room_id=context.parent_transaction.room_id, settled=False).delete()
+
+    # Retrieve all child_transactions in the room and store them in a tuple
+    all_child_transactions_of_room_tuple = tuple(
+        ChildTransaction.objects.filter(parent_transaction__room_id=context.parent_transaction.room_id)
+        .order_by("value", "parent_transaction__currency")
+        .values_list("parent_transaction__currency", "paid_for", "parent_transaction__paid_by", "value")
     )
 
     # Initialize a dictionary to organize debts by currency sign
     currency_debts = {}
 
     # Group debts by currency sign
-    for currency_sign, debtor, creditor, amount in all_debts_of_room_tuple:
+    for currency, debtor, creditor, amount in all_child_transactions_of_room_tuple:
         debt_tuple = (debtor, creditor, amount)
-        if currency_debts.get(currency_sign) is None:
-            currency_debts[currency_sign] = [debt_tuple]
+        if currency_debts.get(currency) is None:
+            currency_debts[currency] = [debt_tuple]
         else:
-            currency_debts[currency_sign].append(debt_tuple)
-
-    # Insert data of created transaction into currency_debts
-    for child_transaction in context.parent_transaction.child_transactions.all():
-        debtor = child_transaction.paid_for
-        debt_tuple = (debtor.id, context.parent_transaction.paid_by.id, context.parent_transaction.value)
-        currency_sign = context.parent_transaction.currency.sign
-
-        if currency_debts.get(currency_sign) is None:
-            currency_debts[currency_sign] = [debt_tuple]
-        else:
-            currency_debts[currency_sign].append(debt_tuple)
+            currency_debts[currency].append(debt_tuple)
 
     # Initialize a dictionary to track transactions for each currency
     currency_transactions = {}
 
     # Iterate through debts grouped by currency and perform debt consolidation
-    for currency_sign, debt_list in currency_debts.items():
+    for currency, debt_list in currency_debts.items():
         # Initialize a dictionary to track how much each person owes or is owed
         balances = {}
 
@@ -90,49 +82,24 @@ def calculate_optimised_debts(context: ParentTransactionCreated.Context):
                 creditors.pop(0)
 
         # Store the resulting transactions in the dictionary
-        currency_transactions[currency_sign] = transactions
+        currency_transactions[currency] = transactions
 
     # Initialize tuples to keep track of created and touched debt IDs
-    created_debt_ids_tuple = ()
-    touched_debt_ids_tuple = ()
+    created_debt_tuple = ()
 
-    # Iterate through currency transactions and update or create debt objects
-    for currency_sign, transaction_list in currency_transactions.items():
+    # Iterate through currency transactions and instantiate new debt objects
+    for currency, transaction_list in currency_transactions.items():
         for debtor, creditor, transfer_amount in transaction_list:
-            # Query existing debt objects for the current transaction
-            debt_qs = Debt.objects.filter(
-                room_id=context.parent_transaction.room_id,
-                debitor=debtor,
-                creditor=creditor,
-                currency__sign=currency_sign,
-                settled=False,
-            )
+            if transfer_amount != Decimal(0):
+                created_debt_tuple += (
+                    Debt(
+                        debitor_id=debtor,
+                        creditor_id=creditor,
+                        room_id=context.parent_transaction.room_id,
+                        value=transfer_amount,
+                        currency_id=currency,
+                    ),
+                )
 
-            if not debt_qs.exists():
-                # Create a new debt object if it doesn't exist
-                if transfer_amount != Decimal(0):
-                    created_debt_ids_tuple += (
-                        Debt.objects.create(
-                            debitor_id=debtor,
-                            creditor_id=creditor,
-                            room_id=context.parent_transaction.room_id,
-                            value=transfer_amount,
-                            currency=Currency.objects.get(sign=currency_sign),
-                        ).id,
-                    )
-                continue
-
-            if debt_qs.count() == 1:
-                # Update or delete an existing debt object based on the transaction
-                debt = debt_qs.first()
-                if transfer_amount != Decimal(0):
-                    debt.value = transfer_amount
-                    debt.save()
-                    touched_debt_ids_tuple += (debt.id,)
-                else:
-                    debt.delete()
-
-    # Delete any unsettled debt objects that were not touched
-    Debt.objects.exclude(Q(id__in=(created_debt_ids_tuple + touched_debt_ids_tuple)) | Q(settled=True)).filter(
-        room_id=context.parent_transaction.room_id
-    ).delete()
+    # Bulk-create new debt objects
+    Debt.objects.bulk_create(created_debt_tuple)
