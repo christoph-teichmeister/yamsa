@@ -1,11 +1,10 @@
-from django.forms import formset_factory
 from django.shortcuts import render
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
+from apps.account.models import User
 from apps.core import htmx
-from apps.transaction.forms.child_transaction_edit_form import ChildTransactionEditForm
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.models import ParentTransaction
 
@@ -21,23 +20,13 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
 
     @context
     @cached_property
-    def child_transaction_formset(self):
-        # TODO CT: This can be deleted and the original child_transactions can be used instead
-        # Add child_transaction formset to get-request
-        child_transaction_formset = formset_factory(ChildTransactionEditForm, extra=0)
-        formset = child_transaction_formset(
-            initial=[
-                {
-                    "id": child_transaction.id,
-                    "paid_for": child_transaction.paid_for,
-                    "value": child_transaction.value,
-                    "room": child_transaction.parent_transaction.room,
-                }
-                for child_transaction in self.get_object().child_transactions.all()
-            ]
-        )
+    def child_transaction_qs(self):
+        return self.get_object().child_transactions.all()
 
-        return formset
+    @context
+    @cached_property
+    def room_users(self):
+        return User.objects.filter(room=self.get_object().room)
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
