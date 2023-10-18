@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
@@ -42,14 +43,6 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
         return form_kwargs
 
     def get_response(self):
-        parent_transaction = self.get_object()
-        return render(
-            request=self.request,
-            template_name="transaction/_detail.html",
-            status=201,
-            context={
-                "room": parent_transaction.room,
-                "parent_transaction": parent_transaction,
-                "child_transactions": parent_transaction.child_transactions.all(),
-            },
+        return HttpResponseRedirect(
+            redirect_to=reverse(viewname="htmx-transaction-detail", kwargs={"pk": self.get_object().id})
         )
