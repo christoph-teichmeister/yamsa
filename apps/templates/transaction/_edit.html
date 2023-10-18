@@ -25,45 +25,43 @@
                     </select>
                 </div>
 
-                <div class="col-3">
+                <div class="col-5">
                     <h5 class="mb-0 py-1 text-center">
-                        paid
+                        paid {{ parent_transaction.value }}
                     </h5>
                 </div>
 
                 <div class="col">
-                    <div class="row gx-0">
-                        <div class="col-6">
-                            <label class="visually-hidden" for="total_value_input">Total value</label>
-                            <input id="total_value_input"
-                                   name="total_value"
-                                   type="number"
-                                   class="form-control"
-                                   min="0"
-                                   step="0.01"
-                                   max="99999999"
-                                   required
-                                   value="{{ parent_transaction.value }}"
-                            />
-                        </div>
+                    {#<div class="col-6">#}
+                    {#    Use the following, when we make the total value of a transaction editable#}
+                    {#    <label class="visually-hidden" for="total_value_input">Total value</label>#}
+                    {#    <input id="total_value_input"#}
+                    {#           name="total_value"#}
+                    {#           type="number"#}
+                    {#           class="form-control"#}
+                    {#           min="0"#}
+                    {#           step="0.01"#}
+                    {#           max="99999999"#}
+                    {#           required#}
+                    {#           value="{{ parent_transaction.value }}"#}
+                    {#    />#}
+                    {#</div>#}
 
-                        <div class="col-6">
-                            <label class="visually-hidden" for="currency_select">Currency</label>
-                            <select name="currency"
-                                    class="form-control form-select"
-                                    id="currency_select"
-                                    required
-                            >
-                                {% for currency in form.fields.currency.queryset %}
-                                    <option {% if currency.id == form.initial.currency %}selected{% endif %}
-                                            value="{{ currency.id }}">
-                                        {{ currency.sign }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
+                    <label class="visually-hidden" for="currency_select">Currency</label>
+                    <select name="currency"
+                            class="form-control form-select"
+                            id="currency_select"
+                            required
+                    >
+                        {% for currency in form.fields.currency.queryset %}
+                            <option {% if currency.id == form.initial.currency %}selected{% endif %}
+                                    value="{{ currency.id }}">
+                                {{ currency.sign }}
+                            </option>
+                        {% endfor %}
+                    </select>
                 </div>
+
             </div>
         </div>
 
@@ -128,19 +126,19 @@
                         </select>
                     </div>
 
-                <div class="form-group" hidden>
-                    <label class="visually-hidden" for="child_transaction_id_input">Child Transaction ID</label>
-                    <input id="child_transaction_id_input"
-                           name="child_transaction_id"
-                           type="number"
-                           class="form-control"
-                           min="0"
-                           step="0.01"
-                           max="99999999"
-                           required
-                           value="{{ child_transaction_form.initial.id }}"
-                    />
-                </div>
+                    <div class="form-group" hidden>
+                        <label class="visually-hidden" for="child_transaction_id_input">Child Transaction ID</label>
+                        <input id="child_transaction_id_input"
+                               name="child_transaction_id"
+                               type="number"
+                               class="form-control"
+                               min="0"
+                               step="0.01"
+                               max="99999999"
+                               required
+                               value="{{ child_transaction_form.initial.id }}"
+                        />
+                    </div>
 
                 </div>
             </li>
