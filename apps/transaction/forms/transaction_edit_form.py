@@ -9,7 +9,7 @@ from apps.transaction.models import ParentTransaction, ChildTransaction
 
 
 class TransactionEditForm(forms.ModelForm):
-    total_value = forms.DecimalField(decimal_places=2, max_digits=10)
+    # total_value = forms.DecimalField(decimal_places=2, max_digits=10)
 
     # ChildTransaction fields
     paid_for = forms.ModelMultipleChoiceField(queryset=User.objects.all())
@@ -19,7 +19,7 @@ class TransactionEditForm(forms.ModelForm):
     class Meta:
         model = ParentTransaction
         fields = (
-            "total_value",
+            # "total_value",
             "description",
             "paid_by",
             "currency",
