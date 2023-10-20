@@ -35,6 +35,7 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
         if self.request.method == "POST":
             # Only edit the value, when a form is posted
             form_kwargs["data"]._mutable = True
+            # "Spread" the form-inputs for value and child_transaction_id
             form_kwargs["data"]["value"] = {**form_kwargs["data"]}["value"]
             form_kwargs["data"]["child_transaction_id"] = {**form_kwargs["data"]}["child_transaction_id"]
 
