@@ -14,6 +14,11 @@ urlpatterns = [
     path("htmx/detail/<int:pk>", views.TransactionDetailHTMXView.as_view(), name="htmx-transaction-detail"),
     path("htmx/edit/<int:pk>", views.TransactionEditHTMXView.as_view(), name="htmx-transaction-edit"),
     path(
+        "htmx/delete/child-transaction/<int:pk>",
+        views.ChildTransactionDeleteHTMXView.as_view(),
+        name="htmx-child-transaction-delete",
+    ),
+    path(
         "htmx/<str:slug>/add-payment-modal",
         views.TransactionAddModalHTMXView.as_view(),
         name="htmx-transaction-add-modal",

@@ -5,4 +5,5 @@ from apps.transaction.views.htmx_views import (
     TransactionEditHTMXView,
     TransactionAddModalHTMXView,
     MoneySpentOnRoomView,
+    ChildTransactionDeleteHTMXView,
 )
