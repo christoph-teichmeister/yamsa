@@ -4,6 +4,8 @@ from typing import Dict, Union
 from django.http import HttpResponse
 from django.urls import reverse
 
+from apps.core.http_status import HttpStatus
+
 
 class FormHtmxResponseMixin:
     """
@@ -56,12 +58,6 @@ class FormHtmxResponseMixin:
 
     # -------------- GETTER METHODS --------------
 
-    def get_hx_redirect_url(self):
-        """
-        Getter for "hx_redirect_url" to be able to work with dynamic data
-        """
-        return self.hx_redirect_url
-
     def get_hx_trigger(self):
         """
         Getter for "hx_trigger" to be able to work with dynamic data
@@ -85,4 +81,4 @@ class FormHtmxResponseMixin:
         """
         Method, to allow overwriting the response type
         """
-        return HttpResponse(201)
+        return HttpResponse(HttpStatus.HTTP_200_OK)
