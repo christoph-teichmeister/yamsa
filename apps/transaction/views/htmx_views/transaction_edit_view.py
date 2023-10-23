@@ -16,6 +16,7 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
     template_name = "transaction/_edit.html"
     context_object_name = "parent_transaction"
 
+    hx_trigger = "reloadTransactionDetailView"
     toast_success_message = "Transaction successfully updated!"
     toast_error_message = "There was an error updating the transaction"
 
@@ -42,8 +43,3 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
             form_kwargs["data"]["request_user"] = self.request.user
 
         return form_kwargs
-
-    def get_response(self):
-        return HttpResponseRedirect(
-            redirect_to=reverse(viewname="htmx-transaction-detail", kwargs={"pk": self.get_object().id})
-        )
