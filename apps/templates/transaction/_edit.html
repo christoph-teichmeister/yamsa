@@ -1,5 +1,19 @@
 {% load room_tags %}
 
+{# empty div which handles reloading the detail-view when editing the Transaction (NOT the ChildTransactions) #}
+<div hx-trigger="reloadTransactionDetailView from:body"
+     hx-get="{% url 'htmx-transaction-detail' pk=parent_transaction.id %}"
+     hx-target="#transaction-tab-content"
+     hx-swap="innerHTML">
+</div>
+
+{# empty div which handles reloading the edit-view when editing ChildTransactions #}
+<div hx-trigger="reloadTransactionEditView from:body"
+     hx-get="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
+     hx-target="#transaction-tab-content"
+     hx-swap="innerHTML">
+</div>
+
 <form hx-post="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
       hx-target="#transaction-tab-content"
       hx-swap="innerHTML">
