@@ -76,8 +76,7 @@ class FormHtmxResponseMixin:
         """
         return self.toast_error_message
 
-    @staticmethod
-    def get_response():
+    def get_response(self):
         """
         Method, to allow overwriting the response type
         """
