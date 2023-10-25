@@ -1,5 +1,3 @@
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
@@ -38,7 +36,7 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
             form_kwargs["data"]._mutable = True
             # "Spread" the form-inputs for value and child_transaction_id
             form_kwargs["data"]["value"] = {**form_kwargs["data"]}["value"]
-            form_kwargs["data"]["child_transaction_id"] = {**form_kwargs["data"]}["child_transaction_id"]
+            form_kwargs["data"]["child_transaction_id"] = {**form_kwargs["data"]}.get("child_transaction_id")
 
             form_kwargs["data"]["request_user"] = self.request.user
 
