@@ -167,6 +167,18 @@
             </li>
         {% endfor %}
 
+        <span id="add-child-transaction-container"></span>
+
+        <li class="list-group-item p-4"></li>
+
+        <li class="list-group-item p-2 d-flex justify-content-center"
+            hx-trigger="click"
+            hx-get="{% url 'htmx-child-transaction-create' %}?slug={{ parent_transaction.room.slug }}"
+            hx-target="#add-child-transaction-container"
+            hx-swap="innerHTML">
+            <i class="bi bi-plus-circle"></i>
+        </li>
+
         <li class="list-group-item p-4"></li>
     </ul>
 
