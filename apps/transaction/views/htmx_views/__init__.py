@@ -16,3 +16,6 @@ from apps.transaction.views.htmx_views.money_spent_on_room_view import (
 from apps.transaction.views.htmx_views.child_transaction_delete_view import (
     ChildTransactionDeleteHTMXView,
 )
+from apps.transaction.views.htmx_views.child_transaction_create_view import (
+    ChildTransactionCreateView,
+)
