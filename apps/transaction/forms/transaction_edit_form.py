@@ -41,14 +41,41 @@ class TransactionEditForm(forms.ModelForm):
 
         updated_child_transactions = ()
         for index, debtor in enumerate(self.cleaned_data["paid_for"]):
-            child_transaction = ChildTransaction.objects.get(id=self.cleaned_data["child_transaction_id"][index])
-            child_transaction.paid_for = debtor
-            child_transaction.value = self.cleaned_data["value"][index]
+            edit_child_transaction = False
+            add_child_transaction = False
+            try:
+                # Try to access the id at the current indexes place, if it exists, then we know that we _edited_ a
+                # child transaction, if not, then we added a child_transaction
+                _ = self.cleaned_data["child_transaction_id"][index]
+                if _ == 0:
+                    # We send id=0 with every child_transaction which is to be created
+                    raise IndexError
 
-            child_transaction.lastmodified_by = self.data.get("request_user")
-            child_transaction.lastmodified_at = timezone.now()
+                edit_child_transaction = True
+            except IndexError:
+                add_child_transaction = True
 
-            updated_child_transactions += (child_transaction,)
+            value = self.cleaned_data["value"][index]
+            request_user = self.data.get("request_user")
+
+            if edit_child_transaction:
+                child_transaction = ChildTransaction.objects.get(id=self.cleaned_data["child_transaction_id"][index])
+                child_transaction.paid_for = debtor
+                child_transaction.value = value
+
+                child_transaction.lastmodified_by = request_user
+                child_transaction.lastmodified_at = timezone.now()
+
+                updated_child_transactions += (child_transaction,)
+
+            if add_child_transaction:
+                ChildTransaction.objects.create(
+                    parent_transaction=instance,
+                    paid_for=debtor,
+                    value=value,
+                    created_by=request_user,
+                    created_at=timezone.now(),
+                )
 
         ChildTransaction.objects.bulk_update(
             objs=updated_child_transactions, fields=("paid_for", "value", "lastmodified_by", "lastmodified_at")
