@@ -39,7 +39,7 @@ class TransactionEditForm(forms.ModelForm):
         self.fields["paid_for"].queryset = room_users_qs
 
     def save(self, commit=True):
-        # Call the super class's save method and get the ParentTransaction instance
+        # Call the super class's .save() and get the ParentTransaction instance
         instance: ParentTransaction = super().save(commit)
 
         # Get the user making the request
