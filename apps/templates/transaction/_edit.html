@@ -7,7 +7,7 @@
      hx-swap="innerHTML">
 </div>
 
-{# empty div which handles reloading the edit-view when editing ChildTransactions #}
+{# empty div which handles reloading the edit-view when editing/deleting ChildTransactions #}
 <div hx-trigger="reloadTransactionEditView from:body"
      hx-get="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
      hx-target="#transaction-tab-content"
