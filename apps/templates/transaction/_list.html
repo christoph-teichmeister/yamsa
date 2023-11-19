@@ -27,6 +27,7 @@
     <ul class="list-group list-group-flush mb-3">
         {% for parent_transaction in parent_transactions %}
             <li class="list-group-item pb-4 pt-4"
+                style="cursor: pointer"
                 hx-trigger="click"
                 hx-get="{% url 'htmx-transaction-detail' pk=parent_transaction.id %}"
                 hx-target="#transaction-tab-content"

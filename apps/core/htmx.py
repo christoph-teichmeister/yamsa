@@ -4,6 +4,8 @@ from typing import Dict, Union
 from django.http import HttpResponse
 from django.urls import reverse
 
+from apps.core.http_status import HttpStatus
+
 
 class FormHtmxResponseMixin:
     """
@@ -24,7 +26,7 @@ class FormHtmxResponseMixin:
     def form_valid(self, form):
         super().form_valid(form)
 
-        response = HttpResponse(201)
+        response = self.get_response()
 
         # Get attributes
         hx_trigger = self.get_hx_trigger()
@@ -32,11 +34,14 @@ class FormHtmxResponseMixin:
         if isinstance(hx_trigger, str):
             hx_trigger = {f"{hx_trigger}": True}
 
+        if hx_trigger is None:
+            hx_trigger = {}
+
         # Set trigger header if set
         hx_trigger.update(
             {"triggerToast": {"message": self.get_toast_success_message(), "type": "text-bg-success bg-gradient"}}
         )
-        response["HX-Trigger"] = json.dumps(hx_trigger)
+        response["HX-Trigger-After-Settle"] = json.dumps(hx_trigger)
 
         # Return augmented response
         return response
@@ -47,17 +52,11 @@ class FormHtmxResponseMixin:
         # Set trigger header if set
         hx_trigger = {"triggerToast": {"message": self.get_toast_error_message(), "type": "text-bg-danger bg-gradient"}}
 
-        response["HX-Trigger"] = json.dumps(hx_trigger)
+        response["HX-Trigger-After-Settle"] = json.dumps(hx_trigger)
 
         return response
 
     # -------------- GETTER METHODS --------------
-
-    def get_hx_redirect_url(self):
-        """
-        Getter for "hx_redirect_url" to be able to work with dynamic data
-        """
-        return self.hx_redirect_url
 
     def get_hx_trigger(self):
         """
@@ -76,3 +75,9 @@ class FormHtmxResponseMixin:
         Getter for "toast_error_message" to be able to work with dynamic data
         """
         return self.toast_error_message
+
+    def get_response(self):
+        """
+        Method, to allow overwriting the response type
+        """
+        return HttpResponse(HttpStatus.HTTP_200_OK)

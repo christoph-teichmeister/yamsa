@@ -29,9 +29,13 @@
     // Add message to toast
     document.getElementById('toast-message-span').innerText = evt.detail.message
 
+    console.debug("Toast Message:", evt.detail.message)
+
     // Add class to toast
     var splitTypes = evt.detail.type.split(" ")
     splitTypes.map(typeString => document.getElementById('toast-type-div').classList.add(typeString))
+
+    console.debug("Toast Class splitTypes:", splitTypes)
 
     // Get and show toast element
     toastBootstrap.show()

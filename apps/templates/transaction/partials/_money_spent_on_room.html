@@ -42,16 +42,18 @@
 
     <li class="list-group-item p-4">
         {% for money_owed in money_owed_qs %}
-            <div class="float-start">
-                <i class="bi bi-caret-right"></i>
-                {% autoescape off %}
-                    {% parse_user_text money_owed.paid_for__name True %}
-                {% endautoescape %}
-            </div>
-            <div class="float-end">
-                {{ money_owed.total_owed }}{{ money_owed.parent_transaction__currency__sign }}
-            </div>
-            {% if not forloop.last %}<br><br>{% endif %}
+            {% if money_owed.total_owed > 0 %}
+                <div class="float-start">
+                    <i class="bi bi-caret-right"></i>
+                    {% autoescape off %}
+                        {% parse_user_text money_owed.paid_for__name True %}
+                    {% endautoescape %}
+                </div>
+                <div class="float-end">
+                    {{ money_owed.total_owed }}{{ money_owed.parent_transaction__currency__sign }}
+                </div>
+                {% if not forloop.last %}<br><br>{% endif %}
+            {% endif %}
         {% endfor %}
     </li>
 

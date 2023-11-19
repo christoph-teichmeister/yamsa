@@ -1,6 +1,6 @@
 from django.views import generic
 
-from apps.transaction.forms import TransactionCreateForm
+from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.models import ParentTransaction
 from apps.core import htmx
 
