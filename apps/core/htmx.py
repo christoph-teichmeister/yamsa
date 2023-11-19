@@ -41,7 +41,7 @@ class FormHtmxResponseMixin:
         hx_trigger.update(
             {"triggerToast": {"message": self.get_toast_success_message(), "type": "text-bg-success bg-gradient"}}
         )
-        response["HX-Trigger"] = json.dumps(hx_trigger)
+        response["HX-Trigger-After-Settle"] = json.dumps(hx_trigger)
 
         # Return augmented response
         return response
@@ -52,7 +52,7 @@ class FormHtmxResponseMixin:
         # Set trigger header if set
         hx_trigger = {"triggerToast": {"message": self.get_toast_error_message(), "type": "text-bg-danger bg-gradient"}}
 
-        response["HX-Trigger"] = json.dumps(hx_trigger)
+        response["HX-Trigger-After-Settle"] = json.dumps(hx_trigger)
 
         return response
 
