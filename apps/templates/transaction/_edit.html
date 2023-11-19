@@ -175,7 +175,7 @@
             hx-trigger="click"
             hx-get="{% url 'htmx-child-transaction-create' %}?slug={{ parent_transaction.room.slug }}"
             hx-target="#add-child-transaction-container"
-            hx-swap="innerHTML">
+            hx-swap="outerHTML">
             <i class="bi bi-plus-circle"></i>
         </li>
 
