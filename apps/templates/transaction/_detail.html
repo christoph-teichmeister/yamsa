@@ -41,7 +41,11 @@
     <li class="list-group-item p-4"></li>
 
     {% for child_transaction in child_transactions %}
-        <li class="list-group-item p-4">
+        <li class="list-group-item p-4"
+            hx-trigger="click"
+            hx-get="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
+            hx-target="#transaction-tab-content"
+            hx-swap="innerHTML">
             <i class="bi bi-caret-right"></i>
             {{ child_transaction.value }}{{ parent_transaction.currency.sign }} for
             {% autoescape off %}
