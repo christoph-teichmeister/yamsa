@@ -9,10 +9,11 @@ from apps.transaction.models import ParentTransaction, ChildTransaction
 
 
 class TransactionEditForm(forms.ModelForm):
+    # TODO CT: Uncomment if ever allowing to edit total_value of transaction
     # total_value = forms.DecimalField(decimal_places=2, max_digits=10)
 
     # ChildTransaction fields
-    paid_for = forms.ModelMultipleChoiceField(queryset=User.objects.all())
+    paid_for = SimpleArrayField(forms.IntegerField())
     value = SimpleArrayField(forms.DecimalField(decimal_places=2, max_digits=10))
     child_transaction_id = SimpleArrayField(forms.IntegerField())
 
@@ -38,40 +39,43 @@ class TransactionEditForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance: ParentTransaction = super().save(commit)
+        request_user = self.data.get("request_user")
 
         updated_child_transactions = ()
-        for index, debtor in enumerate(self.cleaned_data["paid_for"]):
-            edit_child_transaction = False
-            add_child_transaction = False
-            try:
-                # Try to access the id at the current indexes place, if it exists, then we know that we _edited_ a
-                # child transaction, if not, then we added a child_transaction
-                _ = self.cleaned_data["child_transaction_id"][index]
-                if _ == 0:
-                    # We send id=0 with every child_transaction which is to be created
-                    raise IndexError
-
-                edit_child_transaction = True
-            except IndexError:
-                add_child_transaction = True
-
+        for index, child_transaction_id in enumerate(self.cleaned_data["child_transaction_id"]):
+            debtor = self.cleaned_data["paid_for"][index]
             value = self.cleaned_data["value"][index]
-            request_user = self.data.get("request_user")
 
-            if edit_child_transaction:
-                child_transaction = ChildTransaction.objects.get(id=self.cleaned_data["child_transaction_id"][index])
-                child_transaction.paid_for = debtor
-                child_transaction.value = value
+            update_value_of_child_transaction = (
+                len(list(filter(lambda debtor_id: debtor_id == debtor, self.cleaned_data["paid_for"]))) > 1
+            ) and child_transaction_id == 0
+            # We send id=0 with every child_transaction which is to be created
+            add_child_transaction = child_transaction_id == 0 and not update_value_of_child_transaction
+            edit_child_transaction = not add_child_transaction
+
+            if edit_child_transaction or update_value_of_child_transaction:
+                child_transaction = (
+                    instance.child_transactions.get(id=child_transaction_id)
+                    if not update_value_of_child_transaction
+                    else instance.child_transactions.get(paid_for=debtor)
+                )
+                child_transaction.paid_for_id = debtor
+                child_transaction.value = (
+                    value if not update_value_of_child_transaction else (child_transaction.value + value)
+                )
 
                 child_transaction.lastmodified_by = request_user
                 child_transaction.lastmodified_at = timezone.now()
 
-                updated_child_transactions += (child_transaction,)
+                updated_child_transactions = (
+                    *tuple(filter(lambda ct: ct.id != child_transaction.id, updated_child_transactions)),
+                    child_transaction,
+                )
 
             if add_child_transaction:
                 ChildTransaction.objects.create(
                     parent_transaction=instance,
-                    paid_for=debtor,
+                    paid_for_id=debtor,
                     value=value,
                     created_by=request_user,
                     created_at=timezone.now(),

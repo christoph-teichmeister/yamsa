@@ -37,6 +37,7 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
             # "Spread" the form-inputs for value and child_transaction_id
             form_kwargs["data"]["value"] = {**form_kwargs["data"]}["value"]
             form_kwargs["data"]["child_transaction_id"] = {**form_kwargs["data"]}.get("child_transaction_id")
+            form_kwargs["data"]["paid_for"] = {**form_kwargs["data"]}.get("paid_for")
 
             form_kwargs["data"]["request_user"] = self.request.user
 
