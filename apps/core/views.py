@@ -1,6 +1,7 @@
 import time
 
 from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import generic
@@ -46,6 +47,11 @@ class MaintenanceView(generic.TemplateView):
     @property
     def is_in_maintenance(self):
         return settings.MAINTENANCE
+
+
+class ManifestView(generic.View):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(data=settings.MANIFEST)
 
 
 class ToastHTMXView(generic.TemplateView):
