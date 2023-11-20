@@ -1,8 +1,9 @@
 // Base Service Worker implementation
 
+const offlineFile = "/offline/"
 const staticCacheName = "yamsa-cache-v" + new Date().getTime();
 const filesToCache = [
-  "/offline/",
+  offlineFile,
   "static/images/favicon.ico",
   "static/images/favicon-16x16.png",
   "static/images/favicon-32x32.png",
@@ -45,7 +46,7 @@ self.addEventListener("fetch", event => {
         return response || fetch(event.request);
       })
       .catch(() => {
-        return caches.match('/offline/');
+        return caches.match(offlineFile);
       })
   )
 });
