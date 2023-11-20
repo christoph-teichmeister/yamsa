@@ -12,6 +12,4 @@ class UserUpdateView(generic.UpdateView):
     form_class = EditUserForm
 
     def get_success_url(self):
-        return reverse(
-            viewname="account-user-detail", kwargs={"pk": self.request.user.id}
-        )
+        return reverse(viewname="account-user-detail", kwargs={"pk": self.request.user.id})

@@ -1,4 +1,6 @@
+from django.utils.functional import cached_property
 from django.views import generic
+from django_context_decorator import context
 
 from apps.account.forms import EditUserForm
 from apps.account.models import User
@@ -10,9 +12,17 @@ class UserDetailView(generic.DetailView):
     context_object_name = "user"
     model = User
 
-    def get_context_data(self, **kwargs):
-        context_data = super().get_context_data(**kwargs)
-        context_data["PROJECT_BASE_URL"] = settings.PROJECT_BASE_URL
-        context_data["DJANGO_ADMIN_SUB_URL"] = settings.DJANGO_ADMIN_SUB_URL
-        context_data["form"] = EditUserForm()
-        return context_data
+    @context
+    @cached_property
+    def PROJECT_BASE_URL(self):
+        return settings.PROJECT_BASE_URL
+
+    @context
+    @cached_property
+    def DJANGO_ADMIN_SUB_URL(self):
+        return settings.DJANGO_ADMIN_SUB_URL
+
+    @context
+    @cached_property
+    def form(self):
+        return EditUserForm()
