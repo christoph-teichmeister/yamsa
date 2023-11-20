@@ -4,8 +4,10 @@ from ambient_toolbox.models import CommonInfo
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from apps.core.models.mixins import FullCleanOnSaveMixin
 
-class User(CommonInfo, AbstractUser):
+
+class User(FullCleanOnSaveMixin, CommonInfo, AbstractUser):
     name = models.CharField(max_length=50)
     rooms = models.ManyToManyField("room.Room", through="room.UserConnectionToRoom")
 

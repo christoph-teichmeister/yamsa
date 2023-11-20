@@ -1,10 +1,11 @@
 from django.db import models
 
+from apps.core.models.mixins import FullCleanOnSaveMixin
 from apps.debt.managers import NewDebtManager
 from apps.debt.querysets import NewDebtQuerySet
 
 
-class Debt(models.Model):
+class Debt(FullCleanOnSaveMixin, models.Model):
     debitor = models.ForeignKey("account.User", on_delete=models.CASCADE, related_name="debts")
     creditor = models.ForeignKey("account.User", on_delete=models.CASCADE, related_name="debts_to_be_settled")
     room = models.ForeignKey("room.Room", on_delete=models.CASCADE, related_name="debts")
