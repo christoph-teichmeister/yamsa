@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+    <div class="position-absolute top-50 start-50 translate-middle">
+        <h1 class="text-center">
+            {% if is_in_maintenance %}
+                yamsa is in Maintenance
+            {% elif called_by_get_user_offline_template_view %}
+                You are offline
+            {% endif %}
+        </h1>
+
+        <hr>
+
+        <h1 class="text-center">🚧 🚧</h1>
+
+        <hr>
+
+        <p class="text-center">Please check back later!</p>
+        {% if not called_by_get_user_offline_template_view %}
+            <p class="text-center text-muted">We are sorry for any inconveniences</p>
+        {% endif %}
+    </div>
+{% endblock %}

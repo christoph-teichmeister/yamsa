@@ -1,0 +1,18 @@
+<script type="text/javascript">
+  // Initialize the service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/serviceworker.js', {
+      scope: '{{ manifest.scope }}'
+    }).then(function (registration) {
+      // Registration was successful
+      {% if PWA_SERVICE_WORKER_DEBUG %}
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      {% endif %}
+    }, function (err) {
+      // registration failed :(
+      {% if PWA_SERVICE_WORKER_DEBUG %}
+        console.log('ServiceWorker registration failed: ', err);
+      {% endif %}
+    });
+  }
+</script>

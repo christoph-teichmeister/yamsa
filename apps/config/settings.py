@@ -201,7 +201,7 @@ STATICFILES_FINDERS = (
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# PWA Settings
+# PWA-related Settings
 MANIFEST = {
     "name": "yamsa - Yet another money split app",
     "short_name": "yamsa",
@@ -222,7 +222,12 @@ MANIFEST = {
         {"src": "static/images/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png"},
         {"src": "static/images/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png"},
     ],
+    "splash_screens": [],
 }
+
+PWA_SERVICE_WORKER_DEBUG = DEBUG
+PWA_SERVICE_WORKER_PATH = os.path.join(APPS_DIR, "templates", "core", "pwa", "serviceworker.js")
+
 
 if IS_TESTING:
     # DEBUG = False
