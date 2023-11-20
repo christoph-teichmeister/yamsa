@@ -21,6 +21,10 @@ env = environ.Env(
     MAINTENANCE=(bool, False),
     PROJECT_BASE_URL=(str, ""),
     DJANGO_ADMIN_SUB_URL=(str, ""),
+    # Webpush ENV
+    VAPID_PUBLIC_KEY=(str, ""),
+    VAPID_PRIVATE_KEY=(str, ""),
+    VAPID_ADMIN_EMAIL=(str, ""),
     # Database ENV
     DB_HOST=(str, ""),
     DB_NAME=(str, ""),
@@ -226,6 +230,12 @@ MANIFEST = {
 }
 
 PWA_SERVICE_WORKER_DEBUG = DEBUG
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": env("VAPID_PUBLIC_KEY"),
+    "VAPID_PRIVATE_KEY": env("VAPID_PRIVATE_KEY"),
+    "VAPID_ADMIN_EMAIL": env("VAPID_ADMIN_EMAIL"),
+}
 
 
 if IS_TESTING:
