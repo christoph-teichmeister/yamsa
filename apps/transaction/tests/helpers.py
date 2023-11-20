@@ -1,10 +1,10 @@
+from _decimal import Decimal
+from http import HTTPStatus
 from typing import Tuple
 
-from _decimal import Decimal
 from django.urls import reverse
 
 from apps.account.models import User
-from apps.core.http_status import HttpStatus
 from apps.room.models import Room
 
 
@@ -33,15 +33,13 @@ class TransactionHelpersMixin:
                 "value": value,
             },
         )
-        self.assertEqual(response.status_code, HttpStatus.HTTP_302_FOUND)
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
 
         created_transaction_qs = paid_by.made_transactions.filter(
             room_id=room.id,
             value=round(value / len(paid_for), 2),
             paid_for__id__in=paid_for,
         )
-        self.assertTrue(
-            created_transaction_qs.count() > 0, [e for e in created_transaction_qs]
-        )
+        self.assertTrue(created_transaction_qs.count() > 0, [e for e in created_transaction_qs])
 
         return created_transaction_qs.first()

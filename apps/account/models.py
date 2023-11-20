@@ -4,14 +4,16 @@ from ambient_toolbox.models import CommonInfo
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from apps.core.models.mixins import FullCleanOnSaveMixin
 
-class User(CommonInfo, AbstractUser):
+
+class User(FullCleanOnSaveMixin, CommonInfo, AbstractUser):
     name = models.CharField(max_length=50)
     rooms = models.ManyToManyField("room.Room", through="room.UserConnectionToRoom")
 
     is_guest = models.BooleanField(default=True)
 
-    paypal_me_link = models.URLField(max_length=200, null=True, blank=True)
+    paypal_me_username = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name = "User"

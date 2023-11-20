@@ -1,10 +1,9 @@
 import json
+from http import HTTPStatus
 from typing import Dict, Union
 
 from django.http import HttpResponse
 from django.urls import reverse
-
-from apps.core.http_status import HttpStatus
 
 
 class FormHtmxResponseMixin:
@@ -80,4 +79,4 @@ class FormHtmxResponseMixin:
         """
         Method, to allow overwriting the response type
         """
-        return HttpResponse(HttpStatus.HTTP_200_OK)
+        return HttpResponse(HTTPStatus.OK)

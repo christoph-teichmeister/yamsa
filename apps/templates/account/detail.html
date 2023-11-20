@@ -53,11 +53,11 @@
                     {% endfor %}
                 </div>
                 <div class="mb-3">
-                    <label for="paypal_me_link" class="form-label">{{ form.fields.paypal_me_link.label }}</label>
-                    <input type="text" class="form-control" id="paypal_me_link" name="paypal_me_link"
-                           value="{% if user.paypal_me_link %}{{ user.paypal_me_link }}{% endif %}" placeholder="-">
-                    {% for error_message in form.errors.paypal_me_link.data %}
-                        <small class="error" id="paypal_me_linkError">{{ error_message.message }}</small>
+                    <label for="paypal_me_username" class="form-label">{{ form.fields.paypal_me_username.label }}</label>
+                    <input type="text" class="form-control" id="paypal_me_username" name="paypal_me_username"
+                           value="{% if user.paypal_me_username %}{{ user.paypal_me_username }}{% endif %}" placeholder="-">
+                    {% for error_message in form.errors.paypal_me_username.data %}
+                        <small class="error" id="paypal_me_usernameError">{{ error_message.message }}</small>
                     {% endfor %}
                 </div>
                 <div class="float-end">

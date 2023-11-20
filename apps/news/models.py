@@ -1,8 +1,10 @@
 from ambient_toolbox.models import CommonInfo
 from django.db import models
 
+from apps.core.models.mixins import FullCleanOnSaveMixin
 
-class News(CommonInfo):
+
+class News(FullCleanOnSaveMixin, CommonInfo):
     highlighted = models.BooleanField(default=False)
     title = models.CharField(max_length=100)
     message = models.TextField(max_length=10000)

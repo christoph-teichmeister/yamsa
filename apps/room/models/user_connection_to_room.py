@@ -1,7 +1,9 @@
 from django.db import models
 
+from apps.core.models.mixins import FullCleanOnSaveMixin
 
-class UserConnectionToRoom(models.Model):
+
+class UserConnectionToRoom(FullCleanOnSaveMixin, models.Model):
     user = models.ForeignKey("account.User", on_delete=models.CASCADE)
     room = models.ForeignKey("room.Room", on_delete=models.CASCADE)
     user_has_seen_this_room = models.BooleanField(default=False)

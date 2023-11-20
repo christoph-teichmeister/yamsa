@@ -2,8 +2,10 @@ from ambient_toolbox.models import CommonInfo
 from django.db import models
 from django.db.models.aggregates import Sum
 
+from apps.core.models.mixins import FullCleanOnSaveMixin
 
-class ParentTransaction(CommonInfo):
+
+class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
     description = models.TextField(max_length=500)
     paid_by = models.ForeignKey("account.User", related_name="made_parent_transactions", on_delete=models.CASCADE)
 
@@ -25,7 +27,7 @@ class ParentTransaction(CommonInfo):
         return self.child_transactions.aggregate(Sum("value"))["value__sum"]
 
 
-class ChildTransaction(CommonInfo):
+class ChildTransaction(FullCleanOnSaveMixin, CommonInfo):
     parent_transaction = models.ForeignKey("ParentTransaction", on_delete=models.CASCADE)
 
     paid_for = models.ForeignKey("account.User", related_name="owes_child_transactions", on_delete=models.CASCADE)
