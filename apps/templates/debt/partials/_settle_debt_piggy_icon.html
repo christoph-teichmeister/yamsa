@@ -3,9 +3,9 @@
 {% else %}
 
     {% if debt.debitor.name == request.user.name %}
-        {% if debt.creditor.paypal_me_link %}
+        {% if debt.creditor.paypal_me_username %}
             <a class="text-reset"
-               href="{{ debt.creditor.paypal_me_link }}/{{ debt.value }}{{ debt.currency.code }}"
+               href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/{{ debt.value }}{{ debt.currency.code }}"
                target="_blank"><i class="bi bi-paypal"></i></a>
             &nbsp&nbsp&nbsp
         {% endif %}

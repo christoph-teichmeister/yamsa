@@ -13,7 +13,7 @@ class User(FullCleanOnSaveMixin, CommonInfo, AbstractUser):
 
     is_guest = models.BooleanField(default=True)
 
-    paypal_me_link = models.URLField(max_length=200, null=True, blank=True)
+    paypal_me_username = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name = "User"

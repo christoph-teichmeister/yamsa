@@ -6,4 +6,4 @@ from apps.account.models import User
 class EditUserForm(ModelForm):
     class Meta:
         model = User
-        fields = ("email", "paypal_me_link")
+        fields = ("email", "paypal_me_username")
