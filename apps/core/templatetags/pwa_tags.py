@@ -13,4 +13,8 @@ def load_pwa_meta_data(context):
 @register.inclusion_tag("core/pwa/load_serviceworker.html", takes_context=True)
 def load_serviceworker(context):
     # Pass MANIFEST settings into the template
-    return {"manifest": settings.MANIFEST, "PWA_SERVICE_WORKER_DEBUG": settings.PWA_SERVICE_WORKER_DEBUG}
+    return {
+        "manifest": settings.MANIFEST,
+        "PWA_SERVICE_WORKER_DEBUG": settings.PWA_SERVICE_WORKER_DEBUG,
+        "WEBPUSH_SETTINGS": settings.WEBPUSH_SETTINGS,
+    }
