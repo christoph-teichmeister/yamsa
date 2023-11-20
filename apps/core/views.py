@@ -69,11 +69,9 @@ class ManifestView(generic.View):
         return JsonResponse(data=settings.MANIFEST)
 
 
-class ServiceWorkerView(generic.View):
-    def get(self, request, *args, **kwargs):
-        return HttpResponse(
-            content=open(settings.PWA_SERVICE_WORKER_PATH).read(), content_type="application/javascript"
-        )
+class ServiceWorkerView(generic.TemplateView):
+    template_name = "core/pwa/serviceworker.js"
+    content_type = "application/javascript"
 
 
 class ToastHTMXView(generic.TemplateView):

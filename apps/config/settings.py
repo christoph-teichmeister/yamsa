@@ -226,7 +226,6 @@ MANIFEST = {
 }
 
 PWA_SERVICE_WORKER_DEBUG = DEBUG
-PWA_SERVICE_WORKER_PATH = os.path.join(APPS_DIR, "templates", "core", "pwa", "serviceworker.js")
 
 
 if IS_TESTING:
