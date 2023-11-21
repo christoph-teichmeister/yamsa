@@ -28,6 +28,7 @@ normal_urlpatterns = [
     path("news/", include("apps.news.urls")),
     path("room/", include("apps.room.urls")),
     path("transaction/", include("apps.transaction.urls")),
+    path("web-push/", include("apps.web_push.urls")),
 ]
 
 if settings.MAINTENANCE:
