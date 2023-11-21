@@ -50,8 +50,9 @@ class NotificationPayload:
     def _build_data(self) -> dict:
         action_click_urls = []
 
-        for action in self.actions:
-            action_click_urls.append({"action": action.get("action", ""), "url": action.pop("url", "")})
+        if self.actions is not None:
+            for action in self.actions:
+                action_click_urls.append({"action": action.get("action", ""), "url": action.pop("url", "")})
 
         return {"actionClickUrls": action_click_urls, "notificationClickUrl": self.click_url}
 
