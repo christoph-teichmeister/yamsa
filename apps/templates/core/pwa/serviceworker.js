@@ -53,19 +53,63 @@ self.addEventListener("fetch", event => {
 
 // Register event listener for the 'push' event.
 self.addEventListener('push', (event) => {
-    // Retrieve the textual payload from event.data (a PushMessageData object).
-    // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
-    // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
-    const data = JSON.parse(event.data.text());
-    const head = data.head || 'New Notification 🕺🕺';
-    const body = data.body || 'This is default content. Your notification didn\'t have one 🙄🙄';
-    const icon = data.icon || 'https://imgs.search.brave.com/LGnL2-rypfOYJHVZei3sskzbUj6ykFbrywdoKYCdqVI/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA1LzM5LzA1LzEy/LzM2MF9GXzUzOTA1/MTI1OF9LSXpkdkYw/VlJqTENwQzV2UTlO/M1lvOWdVUkU4cHF1/bS5qcGc';
+  // Retrieve the textual payload from event.data (a PushMessageData object).
+  // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
+  // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
+  const {head, ...options} = JSON.parse(event.data.text());
 
-    // Keep the service worker alive until the notification is created.
-    event.waitUntil(
-        self.registration.showNotification(head, {
-            body: body,
-            icon: icon
-        })
-    );
+  // Keep the service worker alive until the notification is created.
+  event.waitUntil(
+    self.registration.showNotification(head, options)
+  );
+});
+
+const navigateClientsToUrl = (event, url) => {
+  event.waitUntil(self.clients.claim().then(() => {
+    // See https://developer.mozilla.org/en-US/docs/Web/API/Clients/matchAll
+    return self.clients.matchAll({type: 'window'});
+  }).then(clients => {
+    console.log(clients)
+    return clients.map(client => {
+      // Check to make sure WindowClient.navigate() is supported.
+      if ('navigate' in client) {
+        return client.navigate(url);
+      }
+    });
+  }));
+}
+
+const getURLForAction = (action, actionClickUrls) => {
+  for (let i = 0; i < actionClickUrls.length; i++) {
+        if (actionClickUrls[i].action === action) {
+            return actionClickUrls[i].url;
+        }
+    }
+    // If no match is found, you may choose to return null or some other default value.
+    return null;
+}
+
+self.addEventListener('notificationclick', (event) => {
+  console.log("event", event)
+  console.log("self", self)
+
+  const {actionClickUrls, notificationClickUrl} = event.notification.data
+
+  if (!event.action) {
+    // Was a normal notification click
+    console.debug('Notification Click.');
+    navigateClientsToUrl(event, notificationClickUrl)
+    return;
+  }
+
+  switch (event.action) {
+    case 'click-me-action':
+      console.debug("click-me-action clicked")
+      const actionUrl = getURLForAction("click-me-action", actionClickUrls)
+      navigateClientsToUrl(event, actionUrl)
+      break;
+    default:
+      console.log(`Unknown action clicked: '${event.action}'`);
+      break;
+  }
 });
