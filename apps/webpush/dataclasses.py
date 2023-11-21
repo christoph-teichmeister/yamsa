@@ -12,6 +12,22 @@ class NotificationPayload:
 
     https://developer.mozilla.org/en-US/docs/Web/API/Notification
     https://web.dev/articles/push-notifications-display-a-notification
+
+    Exemplary instantiation:
+
+    NotificationPayload(
+        head="Debug Notification",
+        body="Click me, to go to the welcome page",
+        actions=[
+            {
+                "action": "click-me-action",
+                "type": "button",
+                "title": "Go to user profile",
+                "url": reverse(viewname="account-user-detail", kwargs={"pk": self.request.user.id}),
+            },
+        ],
+        click_url=reverse(viewname="core-welcome"),
+    )
     """
 
     head: str
