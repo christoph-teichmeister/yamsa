@@ -21,7 +21,7 @@
       browser: browser,
     };
 
-    return fetch('/webpush/save/', {
+    return fetch('/web-push/save/', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
@@ -35,7 +35,9 @@
 
   // Handle the server response
   const handleResponse = (res) => {
-    console.log(res.status);
+    {% if PWA_SERVICE_WORKER_DEBUG %}
+      console.debug(res.status);
+    {% endif %}
   };
 
   // Validate, that the correct permissions have been given
@@ -64,7 +66,7 @@
   const handleRegistrationSuccess = (registration) => {
     // Registration was successful
     {% if PWA_SERVICE_WORKER_DEBUG %}
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      console.debug('ServiceWorker registration successful with scope: ', registration.scope);
     {% endif %}
 
     if (!setupIsValid(registration))
@@ -86,7 +88,16 @@
           // Subscribe and send subscription data
           registration.pushManager.subscribe(options)
             .then(sub => sendSubData(sub))
-            .catch(error => console.error('Error subscribing:', error));
+            .catch(error => {
+              console.error('Error subscribing:', error)
+              if (error.toString().includes("AbortError: Registration failed - push service error")) {
+                window.alert(
+                  "There was an error registering you for Notifications. \n\n" +
+                  "If you are using Brave, navigate to \n'brave://settings/privacy'\n and enable " +
+                  "\n'Use Google services for push messaging'"
+                )
+              }
+            });
         }
       })
       .catch(error => console.error('Error getting subscription:', error));
@@ -101,7 +112,7 @@
       .catch(err => {
         // Registration failed :(
         {% if PWA_SERVICE_WORKER_DEBUG %}
-          console.log('ServiceWorker registration failed: ', err);
+          console.debug('ServiceWorker registration failed: ', err);
         {% endif %}
       });
   }

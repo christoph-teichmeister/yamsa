@@ -52,20 +52,20 @@ self.addEventListener("fetch", event => {
 });
 
 // Register event listener for the 'push' event.
-self.addEventListener('push', function (event) {
+self.addEventListener('push', (event) => {
     // Retrieve the textual payload from event.data (a PushMessageData object).
     // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
     // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
-    const eventInfo = event.data.text();
-    const data = JSON.parse(eventInfo);
+    const data = JSON.parse(event.data.text());
     const head = data.head || 'New Notification 🕺🕺';
     const body = data.body || 'This is default content. Your notification didn\'t have one 🙄🙄';
+    const icon = data.icon || 'https://imgs.search.brave.com/LGnL2-rypfOYJHVZei3sskzbUj6ykFbrywdoKYCdqVI/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA1LzM5LzA1LzEy/LzM2MF9GXzUzOTA1/MTI1OF9LSXpkdkYw/VlJqTENwQzV2UTlO/M1lvOWdVUkU4cHF1/bS5qcGc';
 
     // Keep the service worker alive until the notification is created.
     event.waitUntil(
         self.registration.showNotification(head, {
             body: body,
-            icon: 'https://i.imgur.com/MZM3K5w.png'
+            icon: icon
         })
     );
 });
