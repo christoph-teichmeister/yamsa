@@ -5,6 +5,7 @@ from django_context_decorator import context
 
 from apps.currency.models import Currency
 from apps.room.models import Room
+from apps.webpush.dataclasses import NotificationPayload
 from apps.webpush.services import NotificationSendService
 
 
@@ -53,11 +54,10 @@ class RoomDetailView(generic.DetailView):
         notification_service = NotificationSendService()
         notification_service.send_notification_to_user(
             user=self.request.user,
-            payload={
-                "head": "Das ist ein Raum",
-                "body": f"{self.object.name} um genau zu sein",
-                "icon": "http://localhost:8000/static/images/favicon.ico",
-            },
+            payload=NotificationPayload(
+                head="Das ist ein Raum",
+                body=f"{self.object.name} um genau zu sein",
+            ),
             ttl=1000,
         )
 
