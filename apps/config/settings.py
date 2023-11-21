@@ -21,6 +21,10 @@ env = environ.Env(
     MAINTENANCE=(bool, False),
     PROJECT_BASE_URL=(str, ""),
     DJANGO_ADMIN_SUB_URL=(str, ""),
+    # Webpush ENV
+    VAPID_PUBLIC_KEY=(str, ""),
+    VAPID_PRIVATE_KEY=(str, ""),
+    VAPID_ADMIN_EMAIL=(str, ""),
     # Database ENV
     DB_HOST=(str, ""),
     DB_NAME=(str, ""),
@@ -91,6 +95,7 @@ LOCAL_APPS = (
     "apps.news",
     "apps.room",
     "apps.transaction",
+    "apps.webpush",
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -199,8 +204,40 @@ STATICFILES_FINDERS = (
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# PWA-related Settings
+MANIFEST = {
+    "name": "yamsa - Yet another money split app",
+    "short_name": "yamsa",
+    "description": "Yet another money split app",
+    "dir": "auto",
+    "lang": "en-US",
+    "display": "standalone",
+    "orientation": "any",
+    "start_url": "/",
+    "scope": "/",
+    "background_color": "#2d2a2e",
+    "theme_color": "#2d2a2e",
+    "icons": [
+        {"src": "static/images/favicon.ico", "sizes": "48x48", "type": "image/ico"},
+        {"src": "static/images/favicon-16x16.png", "sizes": "16x16", "type": "image/png"},
+        {"src": "static/images/favicon-32x32.png", "sizes": "32x32", "type": "image/png"},
+        {"src": "static/images/apple-touch-icon.png", "sizes": "180x180", "type": "image/png"},
+        {"src": "static/images/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png"},
+        {"src": "static/images/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png"},
+    ],
+    "splash_screens": [],
+}
+
+PWA_SERVICE_WORKER_DEBUG = DEBUG
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": env("VAPID_PUBLIC_KEY"),
+    "VAPID_PRIVATE_KEY": env("VAPID_PRIVATE_KEY"),
+    "VAPID_ADMIN_EMAIL": env("VAPID_ADMIN_EMAIL"),
+}
+
 
 if IS_TESTING:
     # DEBUG = False

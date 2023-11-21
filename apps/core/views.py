@@ -1,6 +1,7 @@
 import time
 
 from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import generic
@@ -39,13 +40,38 @@ class WelcomePartialView(generic.TemplateView):
         return ret
 
 
-class MaintenanceView(generic.TemplateView):
-    template_name = "core/_maintenance.html"
+class MaintenanceOrOfflineView(generic.TemplateView):
+    template_name = "core/_maintenance_or_offline.html"
 
     @context
     @property
     def is_in_maintenance(self):
         return settings.MAINTENANCE
+
+    @context
+    @property
+    def called_by_get_user_offline_template_view(self):
+        return isinstance(self, GetUserOfflineTemplateView)
+
+
+class MaintenanceView(MaintenanceOrOfflineView):
+    """Maintenance View is automatically injected as '' parent-url if settings.MAINTENANCE is true"""
+
+    pass
+
+
+class GetUserOfflineTemplateView(MaintenanceOrOfflineView):
+    pass
+
+
+class ManifestView(generic.View):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(data=settings.MANIFEST)
+
+
+class ServiceWorkerView(generic.TemplateView):
+    template_name = "core/pwa/serviceworker.js"
+    content_type = "application/x-javascript"
 
 
 class ToastHTMXView(generic.TemplateView):

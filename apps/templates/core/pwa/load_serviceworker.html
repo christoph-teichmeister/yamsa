@@ -1,0 +1,123 @@
+<script type="text/javascript">
+
+  // Convert a base64 URL to Uint8Array
+  function urlB64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+      .replace(/\-/g, '+')
+      .replace(/_/g, '/');
+
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    return outputArray.map((output, index) => rawData.charCodeAt(index));
+  }
+
+  // Send subscription data to the server
+  const sendSubData = (subscription) => {
+    const browser = navigator.userAgent.match(/(firefox|msie|chrome|safari|trident)/ig)[0].toLowerCase();
+    const data = {
+      status_type: 'subscribe',
+      subscription: subscription.toJSON(),
+      browser: browser,
+    };
+
+    return fetch('/webpush/save/', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'content-type': 'application/json'
+      },
+      credentials: "include"
+    })
+      .then(handleResponse)
+      .catch(error => console.error('Error sending subscription data:', error));
+  };
+
+  // Handle the server response
+  const handleResponse = (res) => {
+    {% if PWA_SERVICE_WORKER_DEBUG %}
+      console.debug(res.status);
+    {% endif %}
+  };
+
+  // Validate, that the correct permissions have been given
+  const setupIsValid = (registration) => {
+    // Check if notifications are supported
+    if (!registration.showNotification) {
+      window.alert('Showing notifications isn\'t supported ☹️😢');
+      return false;
+    }
+
+    // Check if the user has denied notifications
+    if (Notification.permission === 'denied') {
+      window.alert('You prevented us from showing notifications ☹️🤔');
+      return false;
+    }
+
+    // Check if PushManager is supported
+    if (!('PushManager' in window)) {
+      window.alert("Push isn't allowed in your browser 🤔");
+      return false;
+    }
+    return true
+  }
+
+  // Handle the success of service worker registration
+  const handleRegistrationSuccess = (registration) => {
+    // Registration was successful
+    {% if PWA_SERVICE_WORKER_DEBUG %}
+      console.debug('ServiceWorker registration successful with scope: ', registration.scope);
+    {% endif %}
+
+    if (!setupIsValid(registration))
+      return
+
+    // Check for an active subscription
+    registration.pushManager.getSubscription()
+      .then(subscription => {
+        if (subscription) {
+          sendSubData(subscription);
+        } else {
+          // Get the VAPID public key and create subscription options
+          const key = "{{WEBPUSH_SETTINGS.VAPID_PUBLIC_KEY}}"
+          const options = {
+            userVisibleOnly: true,
+            ...(key && {applicationServerKey: urlB64ToUint8Array(key)})
+          };
+
+          // Subscribe and send subscription data
+          registration.pushManager.subscribe(options)
+            .then(sub => sendSubData(sub))
+            .catch(error => {
+              console.error('Error subscribing:', error)
+              if (error.toString().includes("AbortError: Registration failed - push service error")) {
+                window.alert(
+                  "There was an error registering you for Notifications. \n\n" +
+                  "If you are using Brave, navigate to \n'brave://settings/privacy'\n and enable " +
+                  "\n'Use Google services for push messaging'"
+                )
+              }
+            });
+        }
+      })
+      .catch(error => console.error('Error getting subscription:', error));
+  };
+
+  // Initialize the service worker
+  const initServiceWorker = () => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/serviceworker.js', {
+        scope: '{{ manifest.scope }}'
+      })
+        .then(handleRegistrationSuccess)
+        .catch(err => {
+          // Registration failed :(
+          {% if PWA_SERVICE_WORKER_DEBUG %}
+            console.debug('ServiceWorker registration failed: ', err);
+          {% endif %}
+        });
+    }
+  }
+  
+  initServiceWorker()
+</script>
