@@ -16,11 +16,10 @@ class NotificationPayload:
 
     head: str
     body: str
-
-    actions: list[dict]
-    vibrate: list[int]
-    sound: str
-
     icon: str = _default_icon_and_badge
     badge: str = _default_icon_and_badge
     image: str = ""
+
+    actions: list[dict] = None
+    vibrate: list[int] = None
+    sound: str = ""
