@@ -21,7 +21,7 @@
       browser: browser,
     };
 
-    return fetch('/web-push/save/', {
+    return fetch('/webpush/save/', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
@@ -104,16 +104,20 @@
   };
 
   // Initialize the service worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/serviceworker.js', {
-      scope: '{{ manifest.scope }}'
-    })
-      .then(handleRegistrationSuccess)
-      .catch(err => {
-        // Registration failed :(
-        {% if PWA_SERVICE_WORKER_DEBUG %}
-          console.debug('ServiceWorker registration failed: ', err);
-        {% endif %}
-      });
+  const initServiceWorker = () => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/serviceworker.js', {
+        scope: '{{ manifest.scope }}'
+      })
+        .then(handleRegistrationSuccess)
+        .catch(err => {
+          // Registration failed :(
+          {% if PWA_SERVICE_WORKER_DEBUG %}
+            console.debug('ServiceWorker registration failed: ', err);
+          {% endif %}
+        });
+    }
   }
+  
+  initServiceWorker()
 </script>

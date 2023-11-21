@@ -4,7 +4,7 @@ from django.conf import settings
 from django.urls import reverse
 from pywebpush import WebPushException, webpush
 
-from apps.web_push.models import WebPushInformation
+from apps.webpush.models import WebPushInformation
 
 
 def send_notification_to_user(user, payload, ttl=0):

@@ -4,8 +4,8 @@ import json
 from django.http import HttpResponse
 from django.views import generic
 
-from apps.web_push.forms.web_push_information import WebPushInformationForm
-from apps.web_push.models.web_push_information import WebPushInformation
+from apps.webpush.forms.web_push_information import WebPushInformationForm
+from apps.webpush.models.web_push_information import WebPushInformation
 
 
 class WebPushSaveView(generic.CreateView):
@@ -46,6 +46,4 @@ class WebPushSaveView(generic.CreateView):
             return HttpResponse(status=http.HTTPStatus.ACCEPTED)
 
     def form_invalid(self, form):
-        response = super().form_invalid(form)
-
-        return response
+        return HttpResponse(status=http.HTTPStatus.BAD_REQUEST, content=form.errors)

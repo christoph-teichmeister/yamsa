@@ -1,6 +1,6 @@
 from django import forms
 
-from apps.web_push.models.web_push_information import WebPushInformation
+from apps.webpush.models.web_push_information import WebPushInformation
 
 
 class WebPushInformationForm(forms.ModelForm):

@@ -5,7 +5,7 @@ from django_context_decorator import context
 
 from apps.currency.models import Currency
 from apps.room.models import Room
-from apps.web_push.utils import send_user_notification
+from apps.webpush.utils import send_user_notification
 
 
 class RoomDetailView(generic.DetailView):

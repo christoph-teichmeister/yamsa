@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin import register
 
 from apps.core.admin import YamsaCommonInfoAdminMixin
-from apps.web_push.models import WebPushInformation
+from apps.webpush.models import WebPushInformation
 
 
 @register(WebPushInformation)
