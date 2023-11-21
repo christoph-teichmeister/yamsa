@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import register
+from django.urls import reverse
 
 from apps.account.models import User
 from apps.core.admin import YamsaCommonInfoAdminMixin
@@ -18,7 +19,8 @@ def send_test_notification(modeladmin, request, queryset):
             user=user,
             payload=NotificationPayload(
                 head="Test Notification",
-                body=f"Die hier kam aus dem Admin von {request.user}",
+                body="Click me to open your profile page",
+                click_url=reverse(viewname="account-user-detail", kwargs={"pk": user.id}),
             ),
             ttl=1000,
         )

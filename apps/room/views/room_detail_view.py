@@ -58,14 +58,6 @@ class RoomDetailView(generic.DetailView):
             payload=NotificationPayload(
                 head="Debug Notification",
                 body="Click me, to go to the welcome page",
-                actions=[
-                    {
-                        "action": "click-me-action",
-                        "type": "button",
-                        "title": "Go to user profile",
-                        "url": reverse(viewname="account-user-detail", kwargs={"pk": self.request.user.id}),
-                    },
-                ],
                 click_url=reverse(viewname="core-welcome"),
             ),
             ttl=1000,
