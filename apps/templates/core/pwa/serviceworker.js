@@ -70,7 +70,10 @@ const navigateClientsToUrl = (event, url) => {
     return self.clients.matchAll({type: 'window'});
   }).then(clients => {
     console.log(clients)
-    return clients.map(client => {
+    return clients.map(async (client) => {
+      if (client.url.indexOf(new URL('./', location).href) >= 0) {
+        await client.focus();
+      }
       // Check to make sure WindowClient.navigate() is supported.
       if ('navigate' in client) {
         return client.navigate(url);
@@ -81,12 +84,12 @@ const navigateClientsToUrl = (event, url) => {
 
 const getURLForAction = (action, actionClickUrls) => {
   for (let i = 0; i < actionClickUrls.length; i++) {
-        if (actionClickUrls[i].action === action) {
-            return actionClickUrls[i].url;
-        }
+    if (actionClickUrls[i].action === action) {
+      return actionClickUrls[i].url;
     }
-    // If no match is found, you may choose to return null or some other default value.
-    return null;
+  }
+  // If no match is found, you may choose to return null or some other default value.
+  return null;
 }
 
 self.addEventListener('notificationclick', (event) => {
