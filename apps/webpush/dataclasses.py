@@ -1,5 +1,5 @@
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -39,7 +39,7 @@ class NotificationPayload:
     badge: str = None
     image: str = None
 
-    actions: list[dict] = None
+    actions: list[dict] = field(default_factory=lambda: [])
     vibrate: list[int] = None
     sound: str = None
 
@@ -50,9 +50,8 @@ class NotificationPayload:
     def _build_data(self) -> dict:
         action_click_urls = []
 
-        if self.actions is not None:
-            for action in self.actions:
-                action_click_urls.append({"action": action.get("action", ""), "url": action.pop("url", "")})
+        for action in self.actions:
+            action_click_urls.append({"action": action.get("action", ""), "url": action.pop("url", "")})
 
         return {"actionClickUrls": action_click_urls, "notificationClickUrl": self.click_url}
 
