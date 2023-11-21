@@ -64,22 +64,36 @@ self.addEventListener('push', (event) => {
   );
 });
 
-const navigateClientsToUrl = (event, url) => {
-  event.waitUntil(self.clients.claim().then(() => {
-    // See https://developer.mozilla.org/en-US/docs/Web/API/Clients/matchAll
-    return self.clients.matchAll({type: 'window'});
-  }).then(clients => {
-    console.log(clients)
-    return clients.map(async (client) => {
-      if (client.url.indexOf(new URL('./', location).href) >= 0) {
-        await client.focus();
+const navigateClientsToUrl = async (event, url) => {// Get all the Window clients
+  await event.waitUntil(self.clients.claim())
+
+  const clientArray = await self.clients.matchAll({type: "window"})
+
+  const hadWindowToFocus = clientArray.filter((windowClient) => {
+      // If a Window tab matching the targeted URL already exists, focus that;
+      if (windowClient.url === url) {
+        windowClient.focus().then()
+        return true
       }
+
       // Check to make sure WindowClient.navigate() is supported.
-      if ('navigate' in client) {
-        return client.navigate(url);
+      if ('navigate' in windowClient) {
+        windowClient.navigate(url).then();
+        return true
       }
-    });
-  }));
+
+      return false
+    }
+  ).length > 0;
+
+  // Otherwise, open a new tab to the applicable URL and focus it.
+  if (!hadWindowToFocus) {
+    const windowClient = await self.clients.openWindow(url)
+
+    if (windowClient) {
+      await windowClient.focus()
+    }
+  }
 }
 
 const getURLForAction = (action, actionClickUrls) => {
@@ -92,16 +106,19 @@ const getURLForAction = (action, actionClickUrls) => {
   return null;
 }
 
-self.addEventListener('notificationclick', (event) => {
-  console.log("event", event)
-  console.log("self", self)
+self.addEventListener('notificationclick', async (event) => {
+  // Close the notification popout
+  event.notification.close();
+
+  // console.log("event", event)
+  // console.log("self", self)
 
   const {actionClickUrls, notificationClickUrl} = event.notification.data
 
   if (!event.action) {
     // Was a normal notification click
-    console.debug('Notification Click.');
-    navigateClientsToUrl(event, notificationClickUrl)
+    console.log('Notification Click.');
+    await navigateClientsToUrl(event, notificationClickUrl)
     return;
   }
 
