@@ -1,5 +1,3 @@
-import json
-
 from django.conf import settings
 from pywebpush import WebPushException, webpush
 
@@ -25,7 +23,7 @@ class NotificationSendService:
                     "endpoint": web_push_info.endpoint,
                     "keys": {"p256dh": web_push_info.p256dh, "auth": web_push_info.auth},
                 },
-                data=json.dumps(payload.__dict__),
+                data=payload.format_for_webpush(),
                 ttl=ttl,
                 **NotificationSendService._get_vapid_data(),
             )

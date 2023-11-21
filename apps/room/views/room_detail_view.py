@@ -1,4 +1,5 @@
 from django.db.models import F
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
@@ -55,8 +56,17 @@ class RoomDetailView(generic.DetailView):
         notification_service.send_notification_to_user(
             user=self.request.user,
             payload=NotificationPayload(
-                head="Das ist ein Raum",
-                body=f"{self.object.name} um genau zu sein",
+                head="Debug Notification",
+                body="Click me, to go to the welcome page",
+                actions=[
+                    {
+                        "action": "click-me-action",
+                        "type": "button",
+                        "title": "Go to user profile",
+                        "url": reverse(viewname="account-user-detail", kwargs={"pk": self.request.user.id}),
+                    },
+                ],
+                click_url=reverse(viewname="core-welcome"),
             ),
             ttl=1000,
         )

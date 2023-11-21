@@ -12,8 +12,9 @@ class WebPushInformationForm(forms.ModelForm):
 
     def save_or_delete(self):
         status_type = self.cleaned_data.pop("status_type")
+        defaults = {"browser": self.cleaned_data.pop("browser")}
 
-        push_info, created = WebPushInformation.objects.get_or_create(**self.cleaned_data)
+        push_info, created = WebPushInformation.objects.get_or_create(**self.cleaned_data, defaults=defaults)
 
         # If unsubscribe is called, that means need to delete the browser and notification info from server.
         if status_type == "unsubscribe":
