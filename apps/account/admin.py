@@ -5,10 +5,27 @@ from apps.account.models import User
 from apps.core.admin import YamsaCommonInfoAdminMixin
 from apps.room.admin import UserConnectionToRoomInline
 from apps.transaction.admin import ParentTransactionPaidByInline
+from apps.webpush.utils import send_user_notification
+
+
+@admin.action(description="Send test notification to selected users")
+def make_published(modeladmin, request, queryset):
+    # TODO CT: Delete this once testing is done
+    for user in queryset:
+        send_user_notification(
+            user=user,
+            payload={
+                "head": "Test Notification",
+                "body": f"Die hier kam aus dem Admin von {request.user}",
+                "icon": "http://localhost:8000/static/images/favicon.ico",
+            },
+            ttl=1000,
+        )
 
 
 @register(User)
 class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
+    actions = (make_published,)
     list_display = ("name", "email", "is_guest", "is_superuser")
     list_filter = ("is_guest",)
     search_fields = ("name",)
