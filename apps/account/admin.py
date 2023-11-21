@@ -9,7 +9,7 @@ from apps.transaction.admin import ParentTransactionPaidByInline
 
 @register(User)
 class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
-    list_display = ("name", "email", "is_guest")
+    list_display = ("name", "email", "is_guest", "is_superuser")
     list_filter = ("is_guest",)
     search_fields = ("name",)
     fieldsets = (
