@@ -12,6 +12,7 @@ django-extensions = "==3.2.*"
 gunicorn = "==20.1.*"
 model-bakery = "==1.10.*"
 psycopg2-binary = "==2.9.*"
+pywebpush = "==1.14.*"
 whitenoise = "==6.3.*"
 
 [dev-packages]
