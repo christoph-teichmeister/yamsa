@@ -1,22 +1,9 @@
+import json
 from dataclasses import dataclass
 
-import json
 from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.core.exceptions import ValidationError
 from django.templatetags.static import static
-
-
-@dataclass
-class NotificationPayloadData:
-    notification_click_url: str = ""
-    action_click_urls: list[dict] = None
-
-    def format_for_webpush(self):
-        return {
-            "notificationClickUrl": self.notification_click_url,
-            "actionClickUrls": self.action_click_urls,
-        }
 
 
 @dataclass
@@ -31,7 +18,8 @@ class NotificationPayload:
 
     head: str
     body: str
-    data: NotificationPayloadData
+
+    click_url: str = ""
 
     icon: str = _default_icon_and_badge
     badge: str = _default_icon_and_badge
@@ -45,17 +33,13 @@ class NotificationPayload:
     def _default_icon_and_badge(self):
         return settings.PROJECT_BASE_URL + static("images/favicon-32x32.png")
 
-    def _validate_data_attr(self):
-        for action_dict in self.actions:
-            action_id = action_dict.get("action")
-            if len(list(filter(lambda entry: entry.get("action") == action_id, self.data.action_click_urls))) == 0:
-                raise ValidationError("Huen")
+    def _build_data(self) -> dict:
+        action_click_urls = []
+
+        for action in self.actions:
+            action_click_urls.append({"action": action.get("action", ""), "url": action.pop("url", "")})
+
+        return {"actionClickUrls": action_click_urls, "notificationClickUrl": self.click_url}
 
     def format_for_webpush(self):
-        self._validate_data_attr()
-        return json.dumps(
-            {
-                **self.__dict__,
-                "data": self.data.format_for_webpush(),
-            }
-        )
+        return json.dumps({**self.__dict__, "data": self._build_data()})
