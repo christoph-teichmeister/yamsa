@@ -5,7 +5,7 @@ from django_context_decorator import context
 
 from apps.currency.models import Currency
 from apps.room.models import Room
-from apps.webpush.utils import send_user_notification
+from apps.webpush.services import NotificationSendService
 
 
 class RoomDetailView(generic.DetailView):
@@ -50,7 +50,8 @@ class RoomDetailView(generic.DetailView):
                 connection.save()
 
         # TODO CT: Remove this at some point
-        send_user_notification(
+        notification_service = NotificationSendService()
+        notification_service.send_notification_to_user(
             user=self.request.user,
             payload={
                 "head": "Das ist ein Raum",

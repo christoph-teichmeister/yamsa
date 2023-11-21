@@ -5,14 +5,15 @@ from apps.account.models import User
 from apps.core.admin import YamsaCommonInfoAdminMixin
 from apps.room.admin import UserConnectionToRoomInline
 from apps.transaction.admin import ParentTransactionPaidByInline
-from apps.webpush.utils import send_user_notification
+from apps.webpush.services import NotificationSendService
 
 
 @admin.action(description="Send test notification to selected users")
 def make_published(modeladmin, request, queryset):
     # TODO CT: Delete this once testing is done
     for user in queryset:
-        send_user_notification(
+        notification_service = NotificationSendService()
+        notification_service.send_notification_to_user(
             user=user,
             payload={
                 "head": "Test Notification",
