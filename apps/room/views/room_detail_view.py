@@ -1,12 +1,11 @@
-from ambient_toolbox.view_layer import htmx_mixins
 from django.db.models import F
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
 from apps.currency.models import Currency
-from apps.debt.models import Debt
 from apps.room.models import Room
+from apps.web_push.utils import send_user_notification
 
 
 class RoomDetailView(generic.DetailView):
@@ -40,7 +39,7 @@ class RoomDetailView(generic.DetailView):
         return Currency.objects.all()
 
     def get(self, request, *args, **kwargs):
-        ret = super().get(request, *args, **kwargs)
+        response = super().get(request, *args, **kwargs)
 
         if not self.request.user.is_anonymous:
             connection = self.object.userconnectiontoroom_set.filter(
@@ -50,4 +49,15 @@ class RoomDetailView(generic.DetailView):
                 connection.user_has_seen_this_room = True
                 connection.save()
 
-        return ret
+        # TODO CT: Remove this at some point
+        send_user_notification(
+            user=self.request.user,
+            payload={
+                "head": "Das ist ein Raum",
+                "body": f"{self.object.name} um genau zu sein",
+                "icon": "http://localhost:8000/static/images/favicon.ico",
+            },
+            ttl=1000,
+        )
+
+        return response

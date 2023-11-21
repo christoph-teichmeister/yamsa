@@ -1,4 +1,5 @@
 from _decimal import Decimal
+
 from django.urls import reverse
 from model_bakery import baker
 
@@ -29,24 +30,15 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
 
         base_data = {"room": self.room}
         self.create_transaction(
-            **base_data,
-            paid_for=(self.guest_user_2.id,),
-            paid_by=self.guest_user_1,
-            value=Decimal(10)
+            **base_data, paid_for=(self.guest_user_2.id,), paid_by=self.guest_user_1, value=Decimal(10)
         )
 
         self.create_transaction(
-            **base_data,
-            paid_for=(self.guest_user_3.id,),
-            paid_by=self.guest_user_2,
-            value=Decimal(5)
+            **base_data, paid_for=(self.guest_user_3.id,), paid_by=self.guest_user_2, value=Decimal(5)
         )
 
         self.create_transaction(
-            **base_data,
-            paid_for=(self.guest_user_1.id,),
-            paid_by=self.guest_user_3,
-            value=Decimal(5)
+            **base_data, paid_for=(self.guest_user_1.id,), paid_by=self.guest_user_3, value=Decimal(5)
         )
 
         self.assertEqual(self.guest_user_1.money_flows.first().incoming, Decimal(5))
@@ -74,10 +66,7 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
 
         base_data = {"room": self.room}
         self.create_transaction(
-            **base_data,
-            paid_by=self.guest_user_1,
-            paid_for=(self.guest_user_2.id,),
-            value=Decimal(1)
+            **base_data, paid_by=self.guest_user_1, paid_for=(self.guest_user_2.id,), value=Decimal(1)
         )
         self.assertEqual(self.guest_user_1.money_flows.first().incoming, Decimal(1))
         self.assertEqual(self.guest_user_1.money_flows.first().outgoing, Decimal(0))
@@ -98,10 +87,7 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
         self.assertEqual(self.guest_user_3.money_flows.first().outgoing, Decimal(2.5))
 
         self.create_transaction(
-            **base_data,
-            paid_by=self.guest_user_3,
-            paid_for=(self.guest_user_2.id,),
-            value=Decimal(5)
+            **base_data, paid_by=self.guest_user_3, paid_for=(self.guest_user_2.id,), value=Decimal(5)
         )
         self.assertEqual(self.guest_user_3.money_flows.first().incoming, Decimal(2.5))
         self.assertEqual(self.guest_user_3.money_flows.first().outgoing, Decimal(0))
@@ -122,10 +108,7 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
         self.assertEqual(self.guest_user_3.money_flows.first().outgoing, Decimal(0.5))
 
         self.create_transaction(
-            **base_data,
-            paid_by=self.guest_user_1,
-            paid_for=(self.guest_user_3.id,),
-            value=Decimal(8)
+            **base_data, paid_by=self.guest_user_1, paid_for=(self.guest_user_3.id,), value=Decimal(8)
         )
         self.assertEqual(self.guest_user_1.money_flows.first().incoming, Decimal(9))
         self.assertEqual(self.guest_user_1.money_flows.first().outgoing, Decimal(0))
@@ -149,10 +132,7 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
         self.assertEqual(self.guest_user_3.money_flows.first().outgoing, Decimal(9.5))
 
         self.create_transaction(
-            **base_data,
-            paid_by=self.guest_user_3,
-            paid_for=(self.guest_user_2.id,),
-            value=Decimal(10)
+            **base_data, paid_by=self.guest_user_3, paid_for=(self.guest_user_2.id,), value=Decimal(10)
         )
         self.assertEqual(self.guest_user_3.money_flows.first().incoming, Decimal(0.5))
         self.assertEqual(self.guest_user_3.money_flows.first().outgoing, Decimal(0))
@@ -220,9 +200,7 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
             paid_for=(self.guest_user_1.id, self.guest_user_2.id, self.guest_user_5.id),
             value=Decimal(10)
         )
-        self.assert_money_flow_values(
-            user=self.guest_user_1, incoming=16.66, outgoing=0
-        )
+        self.assert_money_flow_values(user=self.guest_user_1, incoming=16.66, outgoing=0)
         self.assert_money_flow_values(user=self.guest_user_2, incoming=0, outgoing=8.33)
         self.assert_money_flow_values(user=self.guest_user_5, incoming=0, outgoing=3.33)
 
@@ -237,9 +215,7 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
         )
         self.assert_money_flow_values(user=self.guest_user_4, incoming=20, outgoing=0)
         self.assert_money_flow_values(user=self.guest_user_1, incoming=6.66, outgoing=0)
-        self.assert_money_flow_values(
-            user=self.guest_user_2, incoming=0, outgoing=18.33
-        )
+        self.assert_money_flow_values(user=self.guest_user_2, incoming=0, outgoing=18.33)
 
         self.create_transaction(
             **base_data,
@@ -252,9 +228,7 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
         )
         self.assert_money_flow_values(user=self.guest_user_4, incoming=40, outgoing=0)
         self.assert_money_flow_values(user=self.guest_user_1, incoming=0, outgoing=3.34)
-        self.assert_money_flow_values(
-            user=self.guest_user_2, incoming=0, outgoing=28.33
-        )
+        self.assert_money_flow_values(user=self.guest_user_2, incoming=0, outgoing=28.33)
 
         self.create_transaction(
             **base_data,
@@ -266,12 +240,8 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
             value=Decimal(20)
         )
         self.assert_money_flow_values(user=self.guest_user_4, incoming=60, outgoing=0)
-        self.assert_money_flow_values(
-            user=self.guest_user_1, incoming=0, outgoing=13.34
-        )
-        self.assert_money_flow_values(
-            user=self.guest_user_2, incoming=0, outgoing=38.33
-        )
+        self.assert_money_flow_values(user=self.guest_user_1, incoming=0, outgoing=13.34)
+        self.assert_money_flow_values(user=self.guest_user_2, incoming=0, outgoing=38.33)
 
         self.create_transaction(
             **base_data,
@@ -283,30 +253,16 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
             ),
             value=Decimal(20)
         )
-        self.assert_money_flow_values(
-            user=self.guest_user_4, incoming=73.34, outgoing=0
-        )
-        self.assert_money_flow_values(
-            user=self.guest_user_1, incoming=0, outgoing=20.01
-        )
-        self.assert_money_flow_values(
-            user=self.guest_user_3, incoming=0, outgoing=11.67
-        )
+        self.assert_money_flow_values(user=self.guest_user_4, incoming=73.34, outgoing=0)
+        self.assert_money_flow_values(user=self.guest_user_1, incoming=0, outgoing=20.01)
+        self.assert_money_flow_values(user=self.guest_user_3, incoming=0, outgoing=11.67)
 
         # Final Assertions after everything has been done
 
-        self.assert_money_flow_values(
-            user=self.guest_user_1, incoming=0, outgoing=20.01
-        )
-        self.assert_money_flow_values(
-            user=self.guest_user_2, incoming=0, outgoing=38.33
-        )
-        self.assert_money_flow_values(
-            user=self.guest_user_3, incoming=0, outgoing=11.67
-        )
-        self.assert_money_flow_values(
-            user=self.guest_user_4, incoming=73.34, outgoing=0
-        )
+        self.assert_money_flow_values(user=self.guest_user_1, incoming=0, outgoing=20.01)
+        self.assert_money_flow_values(user=self.guest_user_2, incoming=0, outgoing=38.33)
+        self.assert_money_flow_values(user=self.guest_user_3, incoming=0, outgoing=11.67)
+        self.assert_money_flow_values(user=self.guest_user_4, incoming=73.34, outgoing=0)
         self.assert_money_flow_values(user=self.guest_user_5, incoming=0, outgoing=3.33)
 
     def test_money_flow_creation_on_transaction_creation(self):
