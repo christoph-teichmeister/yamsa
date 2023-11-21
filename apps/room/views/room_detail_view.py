@@ -1,11 +1,12 @@
 from django.db.models import F
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
 from apps.currency.models import Currency
 from apps.room.models import Room
-from apps.webpush.dataclasses import NotificationPayload
+from apps.webpush.dataclasses import NotificationPayload, NotificationPayloadData
 from apps.webpush.services import NotificationSendService
 
 
@@ -57,6 +58,22 @@ class RoomDetailView(generic.DetailView):
             payload=NotificationPayload(
                 head="Das ist ein Raum",
                 body=f"{self.object.name} um genau zu sein",
+                actions=[
+                    {
+                        "action": "click-me-action",
+                        "type": "button",
+                        "title": "Go there",
+                    },
+                ],
+                data=NotificationPayloadData(
+                    notification_click_url=reverse(viewname="core-welcome"),
+                    action_click_urls=[
+                        {
+                            "action": "click-me-action",
+                            "url": reverse(viewname="room-detail", kwargs={"slug": self.object.slug}),
+                        }
+                    ],
+                ),
             ),
             ttl=1000,
         )
