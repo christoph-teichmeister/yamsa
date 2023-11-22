@@ -54,36 +54,7 @@ self.addEventListener('push', (event) => {
   event.waitUntil(self.registration.showNotification(head, options));
 });
 
-const navigateClientsToUrl = async (event, url) => {// Get all the Window clients
-  await event.waitUntil(self.clients.claim())
-
-  const clientArray = await self.clients.matchAll({type: "window"})
-
-  const hadWindowToFocus = clientArray.filter((windowClient) => {
-      // If a Window tab matching the targeted URL already exists, focus that;
-      if (windowClient.url === url) {
-        windowClient.focus().then()
-        return true
-      }
-
-      // Check to make sure WindowClient.navigate() is supported.
-      if ('navigate' in windowClient) {
-        windowClient.navigate(url).then();
-        return true
-      }
-
-      return false
-    }
-  ).length > 0;
-
-  // Otherwise, open a new tab to the applicable URL and focus it.
-  if (!hadWindowToFocus) {
-    const windowClient = await self.clients.openWindow(url)
-
-    if (windowClient) {
-      await windowClient.focus()
-    }
-  }
+const navigateClientsToUrl = (event, Aurl) => {
 }
 
 const getURLForAction = (action, actionClickUrls) => {
@@ -96,7 +67,7 @@ const getURLForAction = (action, actionClickUrls) => {
   return null;
 }
 
-self.addEventListener('notificationclick', async (event) => {
+self.addEventListener('notificationclick', function (event) {
   // Close the notification popout
   event.notification.close();
 
@@ -107,8 +78,25 @@ self.addEventListener('notificationclick', async (event) => {
 
   if (!event.action) {
     // Was a normal notification click
-    console.log('Notification Click.');
-    await navigateClientsToUrl(event, notificationClickUrl)
+    // console.debug('Notification Click.');
+
+    // console.debug("url", notificationClickUrl)
+
+    event.waitUntil(
+      clients.matchAll({includeUncontrolled: true, type: 'window'})
+        .then(clientsArray => {
+          // clients is an array with all the clients
+          if (clientsArray.length > 0) {
+            // if you have multiple clients, choose the first client
+            return clientsArray[0].navigate(notificationClickUrl)
+              .then(client => client.focus());
+          } else {
+            // if you don't have any clients, open a window
+            return clients.openWindow(notificationClickUrl);
+          }
+        })
+    );
+
     return;
   }
 
