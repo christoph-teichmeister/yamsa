@@ -16,39 +16,31 @@ const filesToCache = [
 // Cache on install
 self.addEventListener("install", event => {
   this.skipWaiting();
-  event.waitUntil(
-    caches.open(staticCacheName)
-      .then(cache => {
-        return cache.addAll(filesToCache);
-      })
-  )
+  event.waitUntil(caches.open(staticCacheName)
+    .then(cache => {
+      return cache.addAll(filesToCache);
+    }))
 });
 
 // Clear cache on activate
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames
-          .filter(cacheName => (cacheName.startsWith("yamsa-cache-")))
-          .filter(cacheName => (cacheName !== staticCacheName))
-          .map(cacheName => caches.delete(cacheName))
-      );
-    })
-  );
+  event.waitUntil(caches.keys().then(cacheNames => {
+    return Promise.all(cacheNames
+      .filter(cacheName => (cacheName.startsWith("yamsa-cache-")))
+      .filter(cacheName => (cacheName !== staticCacheName))
+      .map(cacheName => caches.delete(cacheName)));
+  }));
 });
 
 // Serve from Cache
 self.addEventListener("fetch", event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
-      })
-      .catch(() => {
-        return caches.match(offlineFile);
-      })
-  )
+  event.respondWith(caches.match(event.request)
+    .then(response => {
+      return response || fetch(event.request);
+    })
+    .catch(() => {
+      return caches.match(offlineFile);
+    }))
 });
 
 // Register event listener for the 'push' event.
@@ -59,9 +51,7 @@ self.addEventListener('push', (event) => {
   const {head, ...options} = JSON.parse(event.data.text());
 
   // Keep the service worker alive until the notification is created.
-  event.waitUntil(
-    self.registration.showNotification(head, options)
-  );
+  event.waitUntil(self.registration.showNotification(head, options));
 });
 
 const navigateClientsToUrl = async (event, url) => {// Get all the Window clients
