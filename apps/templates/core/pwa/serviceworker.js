@@ -36,9 +36,7 @@ self.addEventListener("fetch", event => {
     .then(response => {
       return response || fetch(event.request);
     })
-    .catch(() => {
-      return caches.match(offlineFile);
-    }))
+    .catch(() => caches.match(offlineFile)))
 });
 
 // Register event listener for the 'push' event.
@@ -83,7 +81,7 @@ self.addEventListener('notificationclick', function (event) {
   event.notification.close();
 
   // Extract relevant data from the notification
-  const { actionClickUrls, notificationClickUrl } = event.notification.data;
+  const {actionClickUrls, notificationClickUrl} = event.notification.data;
 
   // Check if an action was clicked
   if (!event.action) {
