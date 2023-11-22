@@ -15,11 +15,11 @@ class UserListForRoomHTMXView(generic.ListView):
     @context
     @cached_property
     def room(self):
-        return Room.objects.get(slug=self.kwargs.get("slug"))
+        return Room.objects.get(slug=self.kwargs.get("room_slug"))
 
     def get_queryset(self):
         return (
-            self.model.objects.filter(rooms__slug=self.kwargs.get("slug"))
+            self.model.objects.filter(rooms__slug=self.kwargs.get("room_slug"))
             .values("name", "id", "is_guest")
             .annotate(user_has_seen_this_room=F("userconnectiontoroom__user_has_seen_this_room"))
             .order_by("user_has_seen_this_room", "name")

@@ -5,7 +5,7 @@ from apps.transaction import views
 urlpatterns = [
     path("add/", views.TransactionCreateView.as_view(), name="transaction-add"),
     path(
-        "htmx/<str:slug>/list",
+        "<str:room_slug>/htmx/transaction/list",
         # Cached for 10 minutes
         # cache_page(60 * 10)(views.TransactionListHTMXView.as_view()),
         views.TransactionListHTMXView.as_view(),

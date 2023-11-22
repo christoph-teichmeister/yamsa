@@ -5,7 +5,7 @@
         <i class="bi bi-arrow-left-circle fs-2"
            style="cursor: pointer"
            hx-trigger="click"
-           hx-get="{% url 'htmx-transaction-list' slug=room.slug %}"
+           hx-get="{% url 'htmx-transaction-list' room_slug=room.slug %}"
            hx-target="#transaction-tab-content"
            hx-swap="innerHTML"></i>
     </div>

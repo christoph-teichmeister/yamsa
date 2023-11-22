@@ -17,7 +17,7 @@ class TransactionListHTMXView(generic.ListView):
 
     def dispatch(self, request, *args, **kwargs):
         # Set room here, so that only one query is made and room is accessible throughout the other methods
-        self._room = Room.objects.get(slug=self.kwargs.get("slug"))
+        self._room = Room.objects.get(slug=self.kwargs.get("room_slug"))
         return super().dispatch(request, *args, **kwargs)
 
     @context

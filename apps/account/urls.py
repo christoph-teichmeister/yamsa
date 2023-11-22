@@ -11,7 +11,7 @@ urlpatterns = [
     path("login/", views.LogInUserView.as_view(), name="account-user-login"),
     path("logout/", views.LogOutUserView.as_view(), name="account-user-logout"),
     path(
-        "htmx/<str:slug>/list",
+        "<str:room_slug>/htmx/account/list",
         # Cached for 10 minutes
         # vary_on_headers("Cookie")(
         #     cache_page(timeout=60 * 10, key_prefix="htmx-account-list")(

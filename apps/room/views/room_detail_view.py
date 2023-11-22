@@ -37,6 +37,11 @@ class RoomDetailView(generic.DetailView):
     def currency_signs(self):
         return Currency.objects.all()
 
+    @context
+    @cached_property
+    def active_tab(self):
+        return self.request.GET.get("active_tab", "transaction")
+
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
 

@@ -10,7 +10,7 @@ class DebtSettleView(htmx.FormHtmxResponseMixin, generic.UpdateView):
     fields = ("id", "settled", "settled_at")
     template_name = "debt/partials/_settle_debt_modal.html"
 
-    hx_trigger = "reloadDebtList"
+    hx_trigger = "loadDebtList"
     toast_success_message = "Debt successfully settled!"
     toast_error_message = "There was an error settling this debt"
 
