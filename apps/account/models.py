@@ -15,6 +15,8 @@ class User(FullCleanOnSaveMixin, CommonInfo, AbstractUser):
 
     paypal_me_username = models.CharField(max_length=100, null=True, blank=True)
 
+    wants_to_receive_webpush_notifications = models.BooleanField(default=True)
+
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
