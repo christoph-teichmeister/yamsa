@@ -5,11 +5,11 @@ from django.http import HttpResponse
 from django.views import generic
 
 from apps.webpush.forms.web_push_information import WebPushInformationForm
-from apps.webpush.models.web_push_information import WebPushInformation
+from apps.webpush.models.web_push_information import WebpushInformation
 
 
 class WebPushSaveView(generic.CreateView):
-    model = WebPushInformation
+    model = WebpushInformation
     form_class = WebPushInformationForm
     template_name = ""
 

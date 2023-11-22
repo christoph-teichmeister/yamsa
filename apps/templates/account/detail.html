@@ -52,12 +52,28 @@
                         <small class="error" id="emailError">{{ error_message.message }}</small>
                     {% endfor %}
                 </div>
+
                 <div class="mb-3">
-                    <label for="paypal_me_username" class="form-label">{{ form.fields.paypal_me_username.label }}</label>
+                    <label for="paypal_me_username"
+                           class="form-label">{{ form.fields.paypal_me_username.label }}</label>
                     <input type="text" class="form-control" id="paypal_me_username" name="paypal_me_username"
-                           value="{% if user.paypal_me_username %}{{ user.paypal_me_username }}{% endif %}" placeholder="-">
+                           value="{% if user.paypal_me_username %}{{ user.paypal_me_username }}{% endif %}"
+                           placeholder="-">
                     {% for error_message in form.errors.paypal_me_username.data %}
                         <small class="error" id="paypal_me_usernameError">{{ error_message.message }}</small>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <input type="checkbox" class="form-check-input me-1" id="wants_to_receive_webpush_notifications"
+                           name="wants_to_receive_webpush_notifications"
+                           {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}>
+                    <label for="wants_to_receive_webpush_notifications" class="form-check-label">
+                        {{ form.fields.wants_to_receive_webpush_notifications.label }}
+                    </label>
+                    {% for error_message in form.errors.wants_to_receive_webpush_notifications.data %}
+                        <small class="error"
+                               id="wants_to_receive_webpush_notificationsError">{{ error_message.message }}</small>
                     {% endfor %}
                 </div>
                 <div class="float-end">

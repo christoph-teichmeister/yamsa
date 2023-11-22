@@ -31,15 +31,17 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     search_fields = ("name",)
     fieldsets = (
         (None, {"fields": ("email", "password", "is_guest")}),
-        (
-            "Personal Information",
-            {
-                "fields": ("name", "paypal_me_username"),
-            },
-        ),
+        ("Personal Information", {"fields": ("name", "paypal_me_username")}),
         (
             "Permissions",
-            {"fields": (("is_superuser", "is_staff"), "groups", "user_permissions")},
+            {
+                "fields": (
+                    "wants_to_receive_webpush_notifications",
+                    ("is_superuser", "is_staff"),
+                    "groups",
+                    "user_permissions",
+                )
+            },
         ),
     )
     extra_fields_for_fieldset = ("last_login",)

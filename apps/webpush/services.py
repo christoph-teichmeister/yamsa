@@ -3,7 +3,7 @@ from pywebpush import WebPushException, webpush
 
 from apps.account.models import User
 from apps.webpush.dataclasses import Notification
-from apps.webpush.models import WebPushInformation
+from apps.webpush.models import WebpushInformation
 
 
 class NotificationSendService:
@@ -16,7 +16,7 @@ class NotificationSendService:
             self._send_notification(web_push_info, payload, ttl)
 
     @staticmethod
-    def _send_notification(web_push_info: WebPushInformation, payload: str, ttl: int):
+    def _send_notification(web_push_info: WebpushInformation, payload: str, ttl: int):
         try:
             return webpush(
                 subscription_info={
