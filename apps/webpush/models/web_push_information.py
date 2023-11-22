@@ -5,7 +5,7 @@ from django.db import models
 from apps.core.models.mixins import FullCleanOnSaveMixin
 
 
-class WebPushInformation(FullCleanOnSaveMixin, CommonInfo):
+class WebpushInformation(FullCleanOnSaveMixin, CommonInfo):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="webpush_infos", on_delete=models.CASCADE)
 
     browser = models.CharField(max_length=100)
@@ -15,8 +15,8 @@ class WebPushInformation(FullCleanOnSaveMixin, CommonInfo):
     p256dh = models.CharField(max_length=100)
 
     class Meta:
-        verbose_name = "WebPushInformation"
-        verbose_name_plural = "WebPushInformations"
+        verbose_name = "Webpush Information"
+        verbose_name_plural = "Webpush Informations"
 
     def __str__(self):
-        return f"WebPushInformation for {self.user}"
+        return f"Webpush Information for {self.user}"

@@ -2,12 +2,13 @@ from django.contrib import admin
 from django.contrib.admin import register
 
 from apps.core.admin import YamsaCommonInfoAdminMixin
-from apps.webpush.models import WebPushInformation
+from apps.webpush.models import WebpushInformation
 
 
-@register(WebPushInformation)
+@register(WebpushInformation)
 class WebPushInformationAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
-    list_display = ("__str__", "user")
+    list_display = ("__str__", "browser", "user", "created_at")
+    list_filter = ("user",)
     search_fields = ("user",)
     fieldsets = (
         (
