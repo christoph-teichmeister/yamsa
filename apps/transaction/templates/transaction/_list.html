@@ -1,6 +1,5 @@
 {% load room_tags %}
 
-
 <div id="add-transaction-modal-container"
      hx-trigger="load"
      hx-get="{% url 'htmx-transaction-add-modal' slug=room.slug %}"
@@ -30,9 +29,10 @@
             <li class="list-group-item pb-4 pt-4"
                 style="cursor: pointer"
                 hx-trigger="click"
-                hx-get="{% url 'htmx-transaction-detail' pk=parent_transaction.id %}"
-                hx-target="#transaction-tab-content"
+                hx-get="{% url 'htmx-transaction-detail' room_slug=room.slug pk=parent_transaction.id %}"
+                hx-target="#body"
                 hx-swap="innerHTML"
+                hx-push-url="true"
             >
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">

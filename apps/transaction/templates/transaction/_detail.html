@@ -1,63 +1,71 @@
+{% extends "room/detail.html" %}
+{% load static %}
 {% load room_tags %}
 
-<div class="row mt-4 mx-2 justify-content-center">
-    <div class="col-1 d-flex align-items-center justify-content-end">
-        <i class="bi bi-arrow-left-circle fs-2"
-           style="cursor: pointer"
-           hx-trigger="click"
-           hx-get="{% url 'htmx-transaction-list' room_slug=room.slug %}"
-           hx-target="#transaction-tab-content"
-           hx-swap="innerHTML"></i>
-    </div>
+{% block transaction_content %}
 
-    <div class="col-9">
-        <div class="row">
-            <div class="col-12 d-flex align-items-center justify-content-center">
-                <h5 class="mb-0 py-1 text-center">
-                    {% autoescape off %}{% parse_user_text parent_transaction.paid_by.name True %}{% endautoescape %}
-                    paid
-                    <strong>{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</strong>
-                </h5>
+    <div class="row mt-4 mx-2 justify-content-center">
+        <div class="col-1 d-flex align-items-center justify-content-end">
+            <i class="bi bi-arrow-left-circle fs-2"
+               style="cursor: pointer"
+               hx-trigger="click"
+               hx-get="{% url 'room-detail' slug=room.slug %}?active_tab=transaction"
+               hx-target="#body"
+               hx-swap="innerHTML"
+               hx-push-url="true"></i>
+        </div>
+
+        <div class="col-9">
+            <div class="row">
+                <div class="col-12 d-flex align-items-center justify-content-center">
+                    <h5 class="mb-0 py-1 text-center">
+                        {% autoescape off %}
+                            {% parse_user_text parent_transaction.paid_by.name True %}{% endautoescape %}
+                        paid
+                        <strong>{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</strong>
+                    </h5>
+                </div>
+                <div class="col-12 d-flex align-items-center justify-content-center">
+                    <p class="text-body-secondary mb-0 py-1 text-center" style="font-style: italic">
+                        "{{ parent_transaction.description }}"
+                    </p>
+                </div>
             </div>
-            <div class="col-12 d-flex align-items-center justify-content-center">
-                <p class="text-body-secondary mb-0 py-1 text-center" style="font-style: italic">
-                    "{{ parent_transaction.description }}"
-                </p>
-            </div>
+        </div>
+
+        <div class="col-1 d-flex align-items-center justify-content-start">
+            <i class="bi bi-pencil-square fs-2"
+               style="cursor: pointer"
+               hx-trigger="click"
+               hx-get="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
+               hx-target="#transaction-tab-content"
+               hx-swap="innerHTML"></i>
         </div>
     </div>
 
-    <div class="col-1 d-flex align-items-center justify-content-start">
-        <i class="bi bi-pencil-square fs-2"
-           style="cursor: pointer"
-           hx-trigger="click"
-           hx-get="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
-           hx-target="#transaction-tab-content"
-           hx-swap="innerHTML"></i>
-    </div>
-</div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item p-4"></li>
 
-<ul class="list-group list-group-flush">
-    <li class="list-group-item p-4"></li>
+        {% for child_transaction in child_transactions %}
+            <li class="list-group-item p-4"
+                style="cursor: pointer"
+                hx-trigger="click"
+                hx-get="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
+                hx-target="#transaction-tab-content"
+                hx-swap="innerHTML">
+                <i class="bi bi-caret-right"></i>
+                {{ child_transaction.value }}{{ parent_transaction.currency.sign }} for
+                {% autoescape off %}
+                    {% parse_user_text child_transaction.paid_for.name True %}
+                {% endautoescape %}
+            </li>
+        {% endfor %}
 
-    {% for child_transaction in child_transactions %}
-        <li class="list-group-item p-4"
-            style="cursor: pointer"
-            hx-trigger="click"
-            hx-get="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
-            hx-target="#transaction-tab-content"
-            hx-swap="innerHTML">
-            <i class="bi bi-caret-right"></i>
-            {{ child_transaction.value }}{{ parent_transaction.currency.sign }} for
-            {% autoescape off %}
-                {% parse_user_text child_transaction.paid_for.name True %}
-            {% endautoescape %}
-        </li>
-    {% endfor %}
+        <li class="list-group-item p-4"></li>
+    </ul>
 
-    <li class="list-group-item p-4"></li>
-</ul>
+    <p class="text-body-secondary text-center">
+        {{ parent_transaction.created_at|date:'G:i // d.m.Y' }}
+    </p>
 
-<p class="text-body-secondary text-center">
-    {{ parent_transaction.created_at|date:'G:i // d.m.Y' }}
-</p>
+{% endblock %}

@@ -19,3 +19,8 @@ class TransactionDetailHTMXView(generic.DetailView):
     @cached_property
     def room(self):
         return self.object.room
+
+    @context
+    @cached_property
+    def active_tab(self):
+        return "transaction"

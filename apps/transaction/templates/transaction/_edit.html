@@ -2,9 +2,10 @@
 
 {# empty div which handles reloading the detail-view when editing the Transaction (NOT the ChildTransactions) #}
 <div hx-trigger="reloadTransactionDetailView from:body"
-     hx-get="{% url 'htmx-transaction-detail' pk=parent_transaction.id %}"
-     hx-target="#transaction-tab-content"
-     hx-swap="innerHTML">
+     hx-get="{% url 'htmx-transaction-detail' room_slug=room.slug pk=parent_transaction.id %}"
+     hx-target="#body"
+     hx-swap="innerHTML"
+     hx-push-url="true">
 </div>
 
 {# empty div which handles reloading the edit-view when editing/deleting ChildTransactions #}
@@ -15,8 +16,9 @@
 </div>
 
 <form hx-post="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
-      hx-target="#transaction-tab-content"
-      hx-swap="none">
+      hx-target="#body"
+      hx-swap="innerHTML"
+      hx-push-url="true">
     {% csrf_token %}
 
     <div class="row mt-4 mx-2 justify-content-center">

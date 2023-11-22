@@ -20,6 +20,12 @@ def send_notification_on_transaction_create_or_update(
                 head=f"Transaction {action_string}",
                 body=f"{context.parent_transaction.lastmodified_by.name} just {action_string} a transaction. "
                 f"Have a look!",
-                click_url=reverse(viewname="room-detail", kwargs={"slug": context.parent_transaction.room.slug}),
+                click_url=reverse(
+                    viewname="htmx-transaction-detail",
+                    kwargs={
+                        "room_slug": context.parent_transaction.room.slug,
+                        "pk": context.parent_transaction.id,
+                    },
+                ),
             ),
         ).send_to_user(child_transaction.paid_for)

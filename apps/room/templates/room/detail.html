@@ -106,13 +106,15 @@
                  aria-labelledby="transaction-tab"
                  tabindex="0"
             >
-                <div hx-trigger="{% if active_tab == "transaction" %}load delay:500ms{% endif %}, loadTransactionList from:body"
-                     hx-get="{% url 'htmx-transaction-list' room_slug=room.slug %}"
-                     hx-target="this"
-                     hx-swap="innerHTML"
-                     hx-indicator="#transaction-loading-spinner"
-                ></div>
-                {% include "shared_partials/loading_spinner.html" with spinner_id="transaction-loading-spinner" %}
+                {% block transaction_content %}
+                    <div hx-trigger="{% if active_tab == "transaction" %}load{% endif %}, loadTransactionList from:body"
+                         hx-get="{% url 'htmx-transaction-list' room_slug=room.slug %}"
+                         hx-target="this"
+                         hx-swap="outerHTML"
+                         hx-indicator="#transaction-loading-spinner"
+                    ></div>
+                    {% include "shared_partials/loading_spinner.html" with spinner_id="transaction-loading-spinner" %}
+                {% endblock %}
             </div>
 
             <div class="tab-pane fade {% if active_tab == "debt" %}show active{% endif %}"
@@ -124,7 +126,7 @@
                 <div hx-trigger="{% if active_tab == "debt" %}load{% endif %}, loadDebtList from:body"
                      hx-get="{% url 'htmx-debt-list' room_slug=room.slug %}"
                      hx-target="this"
-                     hx-swap="innerHTML"
+                     hx-swap="outerHTML"
                      hx-indicator="#debt-loading-spinner"
                 ></div>
                 {% include "shared_partials/loading_spinner.html" with spinner_id="debt-loading-spinner" %}
@@ -139,7 +141,7 @@
                 <div hx-trigger="{% if active_tab == "people" %}load{% endif %}, loadPeopleList from:body"
                      hx-get="{% url 'htmx-account-list' room_slug=room.slug %}"
                      hx-target="this"
-                     hx-swap="innerHTML"
+                     hx-swap="outerHTML"
                      hx-indicator="#people-loading-spinner"
                 ></div>
                 {% include "shared_partials/loading_spinner.html" with spinner_id="people-loading-spinner" %}
