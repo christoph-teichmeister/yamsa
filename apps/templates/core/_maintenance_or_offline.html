@@ -19,6 +19,8 @@
         <p class="text-center">Please check back later!</p>
         {% if is_in_maintenance %}
             <p class="text-center text-muted">We are sorry for any inconveniences</p>
+        {% elif called_by_get_user_offline_template_view %}
+            <p class="text-center text-muted">yamsa needs internet to work</p>
         {% endif %}
     </div>
     {% if called_by_get_user_offline_template_view %}
