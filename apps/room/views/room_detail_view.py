@@ -6,8 +6,7 @@ from django_context_decorator import context
 
 from apps.currency.models import Currency
 from apps.room.models import Room
-from apps.webpush.dataclasses import NotificationPayload
-from apps.webpush.services import NotificationSendService
+from apps.webpush.dataclasses import Notification
 
 
 class RoomDetailView(generic.DetailView):
@@ -52,15 +51,12 @@ class RoomDetailView(generic.DetailView):
                 connection.save()
 
         # TODO CT: Remove this at some point
-        notification_service = NotificationSendService()
-        notification_service.send_notification_to_user(
-            user=self.request.user,
-            payload=NotificationPayload(
+        Notification(
+            payload=Notification.Payload(
                 head="Debug Notification",
                 body="Click me, to go to the welcome page",
                 click_url=reverse(viewname="core-welcome"),
-            ),
-            ttl=1000,
-        )
+            )
+        ).send_to_user(user=self.request.user)
 
         return response

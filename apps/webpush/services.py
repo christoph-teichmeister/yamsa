@@ -2,12 +2,12 @@ from django.conf import settings
 from pywebpush import WebPushException, webpush
 
 from apps.account.models import User
-from apps.webpush.dataclasses import NotificationPayload
+from apps.webpush.dataclasses import Notification
 from apps.webpush.models import WebPushInformation
 
 
 class NotificationSendService:
-    def send_notification_to_user(self, user: User, payload: NotificationPayload, ttl: int = 0):
+    def send_notification_to_user(self, user: User, payload: str, ttl: int = 0):
         if not user.is_superuser:
             return
 
@@ -16,14 +16,14 @@ class NotificationSendService:
             self._send_notification(web_push_info, payload, ttl)
 
     @staticmethod
-    def _send_notification(web_push_info: WebPushInformation, payload: NotificationPayload, ttl: int):
+    def _send_notification(web_push_info: WebPushInformation, payload: str, ttl: int):
         try:
             return webpush(
                 subscription_info={
                     "endpoint": web_push_info.endpoint,
                     "keys": {"p256dh": web_push_info.p256dh, "auth": web_push_info.auth},
                 },
-                data=payload.format_for_webpush(),
+                data=payload,
                 ttl=ttl,
                 **NotificationSendService._get_vapid_data(),
             )

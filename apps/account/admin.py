@@ -6,24 +6,21 @@ from apps.account.models import User
 from apps.core.admin import YamsaCommonInfoAdminMixin
 from apps.room.admin import UserConnectionToRoomInline
 from apps.transaction.admin import ParentTransactionPaidByInline
-from apps.webpush.dataclasses import NotificationPayload
-from apps.webpush.services import NotificationSendService
+from apps.webpush.dataclasses import Notification
 
 
 @admin.action(description="Send test notification to selected users")
 def send_test_notification(modeladmin, request, queryset):
     # TODO CT: Delete this once testing is done
+    notification = Notification(
+        payload=Notification.Payload(
+            head="Test Notification",
+            body="Click me to open your profile page",
+        ),
+    )
     for user in queryset:
-        notification_service = NotificationSendService()
-        notification_service.send_notification_to_user(
-            user=user,
-            payload=NotificationPayload(
-                head="Test Notification",
-                body="Click me to open your profile page",
-                click_url=reverse(viewname="account-user-detail", kwargs={"pk": user.id}),
-            ),
-            ttl=1000,
-        )
+        notification.payload.click_url = reverse(viewname="account-user-detail", kwargs={"pk": user.id})
+        notification.send_to_user(user)
 
 
 @register(User)
