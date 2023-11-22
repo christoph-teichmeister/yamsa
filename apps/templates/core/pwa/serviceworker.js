@@ -1,5 +1,3 @@
-// Base Service Worker implementation
-
 const offlineFile = "/offline/"
 const staticCacheName = "yamsa-cache-v" + new Date().getTime();
 const filesToCache = [
@@ -54,59 +52,55 @@ self.addEventListener('push', (event) => {
   event.waitUntil(self.registration.showNotification(head, options));
 });
 
-const navigateClientsToUrl = (event, Aurl) => {
-}
-
+// Function to get the URL for a specific action from a list of actionClickUrls
 const getURLForAction = (action, actionClickUrls) => {
-  for (let i = 0; i < actionClickUrls.length; i++) {
-    if (actionClickUrls[i].action === action) {
-      return actionClickUrls[i].url;
+  for (const clickUrl of actionClickUrls) {
+    if (clickUrl.action === action) {
+      return clickUrl.url;
     }
   }
   // If no match is found, you may choose to return null or some other default value.
   return null;
-}
+};
 
+// Function to navigate the client to a URL, handling different scenarios
+const navigateClientToUrl = (event, url) => event.waitUntil(
+  clients.matchAll({ includeUncontrolled: true, type: 'window' })
+    .then(clientsArray => {
+      if (clientsArray.length > 0) {
+        // If multiple clients are available, choose the first one and navigate
+        return clientsArray[0].navigate(url).then(client => client.focus());
+      } else {
+        // If no clients are available, open a new window
+        return clients.openWindow(url);
+      }
+    })
+);
+
+// Event listener for the 'notificationclick' event
 self.addEventListener('notificationclick', function (event) {
   // Close the notification popout
   event.notification.close();
 
-  // console.log("event", event)
-  // console.log("self", self)
+  // Extract relevant data from the notification
+  const { actionClickUrls, notificationClickUrl } = event.notification.data;
 
-  const {actionClickUrls, notificationClickUrl} = event.notification.data
-
+  // Check if an action was clicked
   if (!event.action) {
-    // Was a normal notification click
-    // console.debug('Notification Click.');
-
-    // console.debug("url", notificationClickUrl)
-
-    event.waitUntil(
-      clients.matchAll({includeUncontrolled: true, type: 'window'})
-        .then(clientsArray => {
-          // clients is an array with all the clients
-          if (clientsArray.length > 0) {
-            // if you have multiple clients, choose the first client
-            return clientsArray[0].navigate(notificationClickUrl)
-              .then(client => client.focus());
-          } else {
-            // if you don't have any clients, open a window
-            return clients.openWindow(notificationClickUrl);
-          }
-        })
-    );
-
+    // If no specific action was clicked,
+    // navigate to the default notificationClickUrl
+    navigateClientToUrl(event, notificationClickUrl);
     return;
   }
 
+  // Handle different actions
   switch (event.action) {
     case 'click-me-action':
-      console.debug("click-me-action clicked")
-      const actionUrl = getURLForAction("click-me-action", actionClickUrls)
-      navigateClientsToUrl(event, actionUrl)
+      // For the 'click-me-action', navigate to the corresponding URL
+      navigateClientToUrl(event, getURLForAction('click-me-action', actionClickUrls));
       break;
     default:
+      // Log unknown actions to the console
       console.log(`Unknown action clicked: '${event.action}'`);
       break;
   }
