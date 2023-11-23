@@ -7,10 +7,7 @@ from apps.account.models import User
 
 
 class AuthenticateGuestUserView(generic.View):
-    http_method_names = [
-        "post",
-        "options",
-    ]
+    http_method_names = ["post", "options"]
 
     def post(self, request, *args, **kwargs):
         room_slug = self.request.POST.get("room_slug")
