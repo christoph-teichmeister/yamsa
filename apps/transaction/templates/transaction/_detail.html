@@ -37,9 +37,10 @@
             <i class="bi bi-pencil-square fs-2"
                style="cursor: pointer"
                hx-trigger="click"
-               hx-get="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
-               hx-target="#transaction-tab-content"
-               hx-swap="innerHTML"></i>
+               hx-get="{% url 'htmx-transaction-edit' room_slug=room.slug pk=parent_transaction.id %}"
+               hx-target="#body"
+               hx-swap="innerHTML"
+               hx-push-url="true"></i>
         </div>
     </div>
 
@@ -50,9 +51,10 @@
             <li class="list-group-item p-4"
                 style="cursor: pointer"
                 hx-trigger="click"
-                hx-get="{% url 'htmx-transaction-edit' pk=parent_transaction.id %}"
-                hx-target="#transaction-tab-content"
-                hx-swap="innerHTML">
+                hx-get="{% url 'htmx-transaction-edit' room_slug=room.slug pk=parent_transaction.id %}"
+                hx-target="#body"
+                hx-swap="innerHTML"
+                hx-push-url="true">
                 <i class="bi bi-caret-right"></i>
                 {{ child_transaction.value }}{{ parent_transaction.currency.sign }} for
                 {% autoescape off %}
