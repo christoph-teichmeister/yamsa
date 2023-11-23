@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load room_tags %}
 
 {% block title %}yamsa | {{ room.name }}{% endblock %}
 
@@ -47,7 +48,7 @@
                    aria-controls="transaction-tab-content"
                    aria-selected="true"
                    hx-trigger="click"
-                   hx-get="{% url 'room-detail' room_slug=room.slug %}?active_tab=transaction"
+                   hx-get="{% room_url 'room-detail' %}?active_tab=transaction"
                    hx-target="#body"
                    hx-swap="innerHTML"
                    hx-indicator="#transaction-loading-spinner"
@@ -66,7 +67,7 @@
                    aria-controls="debt-tab-content"
                    aria-selected="false"
                    hx-trigger="click"
-                   hx-get="{% url 'room-detail' room_slug=room.slug %}?active_tab=debt"
+                   hx-get="{% room_url 'room-detail' %}?active_tab=debt"
                    hx-target="#body"
                    hx-swap="innerHTML"
                    hx-indicator="#debt-loading-spinner"
@@ -85,7 +86,7 @@
                    aria-controls="people-tab-content"
                    aria-selected="false"
                    hx-trigger="click"
-                   hx-get="{% url 'room-detail' room_slug=room.slug %}?active_tab=people"
+                   hx-get="{% room_url 'room-detail' %}?active_tab=people"
                    hx-target="#body"
                    hx-swap="innerHTML"
                    hx-indicator="#people-loading-spinner"
@@ -108,7 +109,7 @@
             >
                 {% block transaction_content %}
                     <div hx-trigger="{% if active_tab == "transaction" %}load{% endif %}, loadTransactionList from:body"
-                         hx-get="{% url 'htmx-transaction-list' room_slug=room.slug %}"
+                         hx-get="{% room_url 'htmx-transaction-list' %}"
                          hx-target="this"
                          hx-swap="outerHTML"
                          hx-indicator="#transaction-loading-spinner"
@@ -124,7 +125,7 @@
                  tabindex="1"
             >
                 <div hx-trigger="{% if active_tab == "debt" %}load{% endif %}, loadDebtList from:body"
-                     hx-get="{% url 'htmx-debt-list' room_slug=room.slug %}"  <!-- TODO CT: Rewrite url to roomurl-->
+                     hx-get="{% room_url 'htmx-debt-list' %}"
                      hx-target="this"
                      hx-swap="outerHTML"
                      hx-indicator="#debt-loading-spinner"
@@ -139,7 +140,7 @@
                  tabindex="2"
             >
                 <div hx-trigger="{% if active_tab == "people" %}load{% endif %}, loadPeopleList from:body"
-                     hx-get="{% url 'htmx-account-list' room_slug=room.slug %}"
+                     hx-get="{% room_url 'htmx-account-list' %}"
                      hx-target="this"
                      hx-swap="outerHTML"
                      hx-indicator="#people-loading-spinner"

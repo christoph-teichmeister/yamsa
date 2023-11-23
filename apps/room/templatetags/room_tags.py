@@ -1,4 +1,5 @@
 from django import template
+from django.template.defaulttags import url
 
 register = template.Library()
 
@@ -14,3 +15,9 @@ def parse_user_text(context, user_name: str, start_of_sentence: bool = False):
         user_text = f"<strong>{user_name}</strong>"
 
     return user_text
+
+
+@register.tag
+def room_url(parser, token):
+    token.contents += " room_slug=room.slug"
+    return url(parser, token)
