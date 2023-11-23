@@ -29,9 +29,9 @@ urlpatterns = [
                 name="htmx-transaction-edit",
             ),
             path(
-                "htmx/add-payment-modal",
-                views.TransactionAddModalHTMXView.as_view(),
-                name="htmx-transaction-add-modal",
+                "htmx/get-add-payment-modal",
+                views.GetTransactionAddModalHTMXView.as_view(),
+                name="htmx-get-transaction-add-modal",
             ),
             path(
                 "htmx/money-spent",

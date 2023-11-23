@@ -18,8 +18,8 @@ def send_notification_on_transaction_create_or_update(
         Notification(
             payload=Notification.Payload(
                 head=f"Transaction {action_string}",
-                body=f"{context.parent_transaction.lastmodified_by.name} just {action_string} a transaction. "
-                f"Have a look!",
+                body=f"{context.parent_transaction.lastmodified_by.name} just {action_string} a transaction."
+                f"({context.parent_transaction.description})\nHave a look!",
                 click_url=reverse(
                     viewname="htmx-transaction-detail",
                     kwargs={

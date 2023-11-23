@@ -8,7 +8,7 @@ from apps.room.models import UserConnectionToRoom
 from apps.room.views.mixins.room_specific_mixin import RoomSpecificMixin
 
 
-class TransactionAddModalHTMXView(RoomSpecificMixin, generic.TemplateView):
+class GetTransactionAddModalHTMXView(RoomSpecificMixin, generic.TemplateView):
     template_name = "transaction/partials/transaction_add_modal.html"
 
     @context

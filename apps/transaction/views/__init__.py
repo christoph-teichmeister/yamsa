@@ -3,7 +3,7 @@ from apps.transaction.views.htmx_views import (
     TransactionListHTMXView,
     TransactionDetailHTMXView,
     TransactionEditHTMXView,
-    TransactionAddModalHTMXView,
+    GetTransactionAddModalHTMXView,
     MoneySpentOnRoomView,
     ChildTransactionDeleteHTMXView,
     ChildTransactionCreateView,

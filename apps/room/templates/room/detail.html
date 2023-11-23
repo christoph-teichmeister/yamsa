@@ -47,7 +47,7 @@
                    data-bs-target="#transaction-tab-content"
                    aria-controls="transaction-tab-content"
                    aria-selected="true"
-                   hx-trigger="click"
+                   hx-trigger="click, loadTransactionList from:body"
                    hx-get="{% room_url 'room-detail' %}?active_tab=transaction"
                    hx-target="#body"
                    hx-swap="innerHTML"
