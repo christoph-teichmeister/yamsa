@@ -4,13 +4,13 @@ from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
-from apps.account.models import User
 from apps.core import htmx
+from apps.room.views.mixins.room_specific_mixin import RoomSpecificMixin
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.models import ParentTransaction
 
 
-class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
+class TransactionEditHTMXView(RoomSpecificMixin, htmx.FormHtmxResponseMixin, generic.UpdateView):
     model = ParentTransaction
     form_class = TransactionEditForm
     template_name = "transaction/_edit.html"
@@ -24,7 +24,7 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
         return HttpResponseRedirect(
             reverse(
                 viewname="htmx-transaction-detail",
-                kwargs={"room_slug": self.object.room.slug, "pk": self.object.id},
+                kwargs={"room_slug": self._room.slug, "pk": self.object.id},
             )
         )
 
@@ -37,16 +37,6 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
     @cached_property
     def active_tab(self):
         return "transaction"
-
-    @context
-    @cached_property
-    def room(self):
-        return self.object.room
-
-    @context
-    @cached_property
-    def room_users(self):
-        return User.objects.filter(room=self.get_object().room)
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()

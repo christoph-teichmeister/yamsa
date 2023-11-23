@@ -2,7 +2,7 @@
 
 <div id="add-transaction-modal-container"
      hx-trigger="load"
-     hx-get="{% url 'htmx-transaction-add-modal' slug=room.slug %}"
+     hx-get="{% url 'htmx-transaction-add-modal' room_slug=room.slug %}"
      hx-target="#add-transaction-modal-container"
      hx-swap="innerHTML"
 >

@@ -10,6 +10,7 @@ from apps.room.models import Room
 class RoomDetailView(generic.DetailView):
     template_name = "room/detail.html"
     context_object_name = "room"
+    slug_url_kwarg = "room_slug"
     model = Room
 
     @context

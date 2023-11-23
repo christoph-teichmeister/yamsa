@@ -12,7 +12,7 @@
         <ul class="list-group mt-3">
             <li class="list-group-item"
                 hx-trigger="click"
-                hx-get="{% url 'htmx-money-spent-on-room' slug=room.slug %}"
+                hx-get="{% url 'htmx-money-spent-on-room' room_slug=room.slug %}"
                 hx-target="#debt-tab-content"
                 hx-swap="innerHTML">
                 <div class="row align-items-center" style="cursor: pointer">
