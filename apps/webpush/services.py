@@ -2,15 +2,11 @@ from django.conf import settings
 from pywebpush import WebPushException, webpush
 
 from apps.account.models import User
-from apps.webpush.dataclasses import Notification
 from apps.webpush.models import WebpushInformation
 
 
 class NotificationSendService:
     def send_notification_to_user(self, user: User, payload: str, ttl: int = 0):
-        if not user.is_superuser:
-            return
-
         # Get all the web_push_info of the user
         for web_push_info in user.webpush_infos.all():
             self._send_notification(web_push_info, payload, ttl)

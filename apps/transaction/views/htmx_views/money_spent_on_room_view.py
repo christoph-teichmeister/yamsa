@@ -1,30 +1,16 @@
 from django.db.models import Sum
-from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
-from apps.room.models import Room
+from apps.room.views.mixins.room_specific_mixin import RoomSpecificMixin
 from apps.transaction.models import ChildTransaction
 
 
-class MoneySpentOnRoomView(generic.TemplateView):
+class MoneySpentOnRoomView(RoomSpecificMixin, generic.TemplateView):
     template_name = "transaction/partials/_money_spent_on_room.html"
-
-    # Custom attributes
-    _room = None
-
-    def dispatch(self, request, *args, **kwargs):
-        # Set room here, so that only one query is made and room is accessible throughout the other methods
-        self._room = Room.objects.get(slug=self.kwargs.get("slug"))
-        return super().dispatch(request, *args, **kwargs)
 
     def get_base_queryset(self):
         return ChildTransaction.objects.filter(parent_transaction__room=self._room)
-
-    @context
-    @cached_property
-    def room(self):
-        return self._room
 
     @context
     @property

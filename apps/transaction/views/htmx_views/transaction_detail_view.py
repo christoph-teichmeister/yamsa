@@ -2,10 +2,11 @@ from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
+from apps.room.views.mixins.room_specific_mixin import RoomSpecificMixin
 from apps.transaction.models import ParentTransaction
 
 
-class TransactionDetailHTMXView(generic.DetailView):
+class TransactionDetailHTMXView(RoomSpecificMixin, generic.DetailView):
     model = ParentTransaction
     context_object_name = "parent_transaction"
     template_name = "transaction/_detail.html"
@@ -17,5 +18,5 @@ class TransactionDetailHTMXView(generic.DetailView):
 
     @context
     @cached_property
-    def room(self):
-        return self.object.room
+    def active_tab(self):
+        return "transaction"

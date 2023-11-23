@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load room_tags %}
 
 {% block title %}yamsa | {{ room.name }}{% endblock %}
 
@@ -40,17 +41,18 @@
 
             <li class="nav-item" role="presentation" style="cursor: pointer">
                 <a id="transaction-tab"
-                   class="nav-link active"
+                   class="nav-link {% if active_tab == "transaction" %}active{% endif %}"
                    role="tab"
                    data-bs-toggle="tab"
                    data-bs-target="#transaction-tab-content"
                    aria-controls="transaction-tab-content"
                    aria-selected="true"
-                   hx-trigger="click,load,reloadTransactionList from:body"
-                   hx-get="{% url 'htmx-transaction-list' slug=room.slug %}"
-                   hx-target="#transaction-tab-content"
+                   hx-trigger="click, loadTransactionList from:body"
+                   hx-get="{% room_url 'room-detail' %}?active_tab=transaction"
+                   hx-target="#body"
                    hx-swap="innerHTML"
-                   hx-indicator="#debt-loading-spinner"
+                   hx-indicator="#transaction-loading-spinner"
+                   hx-push-url="true"
                 >
                     <i class="bi bi-wallet"></i>
                 </a>
@@ -58,17 +60,18 @@
 
             <li class="nav-item" role="presentation" style="cursor: pointer">
                 <a id="debt-tab"
-                   class="nav-link"
+                   class="nav-link {% if active_tab == "debt" %}active{% endif %}"
                    role="tab"
                    data-bs-toggle="tab"
                    data-bs-target="#debt-tab-content"
                    aria-controls="debt-tab-content"
                    aria-selected="false"
-                   hx-trigger="click, reloadDebtList from:body"
-                   hx-get="{% url 'htmx-debt-list' slug=room.slug %}"
-                   hx-target="#debt-tab-content"
+                   hx-trigger="click"
+                   hx-get="{% room_url 'room-detail' %}?active_tab=debt"
+                   hx-target="#body"
                    hx-swap="innerHTML"
                    hx-indicator="#debt-loading-spinner"
+                   hx-push-url="true"
                 >
                     <i class="bi bi-piggy-bank"></i>
                 </a>
@@ -76,17 +79,18 @@
 
             <li class="nav-item" role="presentation" style="cursor: pointer">
                 <a id="people-tab"
-                   class="nav-link"
+                   class="nav-link {% if active_tab == "people" %}active{% endif %}"
                    role="tab"
                    data-bs-toggle="tab"
                    data-bs-target="#people-tab-content"
                    aria-controls="people-tab-content"
                    aria-selected="false"
-                   hx-trigger="click, reloadPeopleList from:body"
-                   hx-get="{% url 'htmx-account-list' slug=room.slug %}"
-                   hx-target="#people-tab-content"
+                   hx-trigger="click"
+                   hx-get="{% room_url 'room-detail' %}?active_tab=people"
+                   hx-target="#body"
                    hx-swap="innerHTML"
                    hx-indicator="#people-loading-spinner"
+                   hx-push-url="true"
                 >
                     <i class="bi bi-people"></i>
                 </a>
@@ -97,30 +101,50 @@
         {# Room Tab-Contents #}
         <div class="tab-content" id="tab-content">
 
-            <div class="tab-pane fade show active"
+            <div class="tab-pane fade {% if active_tab == "transaction" %}show active{% endif %}"
                  id="transaction-tab-content"
                  role="tabpanel"
                  aria-labelledby="transaction-tab"
                  tabindex="0"
             >
-                {% include "shared_partials/loading_spinner.html" with spinner_id="debt-loading-spinner" %}
+                {% block transaction_content %}
+                    <div hx-trigger="{% if active_tab == "transaction" %}load{% endif %}, loadTransactionList from:body"
+                         hx-get="{% room_url 'htmx-transaction-list' %}"
+                         hx-target="this"
+                         hx-swap="outerHTML"
+                         hx-indicator="#transaction-loading-spinner"
+                    ></div>
+                    {% include "shared_partials/loading_spinner.html" with spinner_id="transaction-loading-spinner" %}
+                {% endblock %}
             </div>
 
-            <div class="tab-pane fade"
+            <div class="tab-pane fade {% if active_tab == "debt" %}show active{% endif %}"
                  id="debt-tab-content"
                  role="tabpanel"
                  aria-labelledby="debt-tab"
                  tabindex="1"
             >
+                <div hx-trigger="{% if active_tab == "debt" %}load{% endif %}, loadDebtList from:body"
+                     hx-get="{% room_url 'htmx-debt-list' %}"
+                     hx-target="this"
+                     hx-swap="outerHTML"
+                     hx-indicator="#debt-loading-spinner"
+                ></div>
                 {% include "shared_partials/loading_spinner.html" with spinner_id="debt-loading-spinner" %}
             </div>
 
-            <div class="tab-pane fade"
+            <div class="tab-pane fade {% if active_tab == "people" %}show active{% endif %}"
                  id="people-tab-content"
                  role="tabpanel"
                  aria-labelledby="people-tab"
                  tabindex="2"
             >
+                <div hx-trigger="{% if active_tab == "people" %}load{% endif %}, loadPeopleList from:body"
+                     hx-get="{% room_url 'htmx-account-list' %}"
+                     hx-target="this"
+                     hx-swap="outerHTML"
+                     hx-indicator="#people-loading-spinner"
+                ></div>
                 {% include "shared_partials/loading_spinner.html" with spinner_id="people-loading-spinner" %}
             </div>
 

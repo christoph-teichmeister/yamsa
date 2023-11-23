@@ -10,6 +10,6 @@ class TransactionCreateView(htmx.FormHtmxResponseMixin, generic.CreateView):
     form_class = TransactionCreateForm
     template_name = "transaction/partials/transaction_add_modal.html"
 
-    hx_trigger = "reloadTransactionList"
+    hx_trigger = "loadTransactionList"
     toast_success_message = "Transaction created successfully!"
     toast_error_message = "There was an error creating the Transaction"

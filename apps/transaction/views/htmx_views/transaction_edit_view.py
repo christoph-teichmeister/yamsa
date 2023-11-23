@@ -1,22 +1,32 @@
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
-from apps.account.models import User
 from apps.core import htmx
+from apps.room.views.mixins.room_specific_mixin import RoomSpecificMixin
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.models import ParentTransaction
 
 
-class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
+class TransactionEditHTMXView(RoomSpecificMixin, htmx.FormHtmxResponseMixin, generic.UpdateView):
     model = ParentTransaction
     form_class = TransactionEditForm
     template_name = "transaction/_edit.html"
     context_object_name = "parent_transaction"
 
-    hx_trigger = "reloadTransactionDetailView"
+    # hx_trigger = "reloadTransactionDetailView"
     toast_success_message = "Transaction successfully updated!"
     toast_error_message = "There was an error updating the transaction"
+
+    def get_response(self):
+        return HttpResponseRedirect(
+            reverse(
+                viewname="htmx-transaction-detail",
+                kwargs={"room_slug": self._room.slug, "pk": self.object.id},
+            )
+        )
 
     @context
     @cached_property
@@ -25,8 +35,8 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
 
     @context
     @cached_property
-    def room_users(self):
-        return User.objects.filter(room=self.get_object().room)
+    def active_tab(self):
+        return "transaction"
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()

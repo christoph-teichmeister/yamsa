@@ -1,4 +1,5 @@
 {% extends "core/base.html" %}
+{% load room_tags %}
 
 {% block content %}
 
@@ -10,7 +11,7 @@
                         <div class="card"
                              style="background-color: #181618"
                              hx-trigger="click"
-                             hx-get="{% url 'room-detail' slug=room.slug %}"
+                             hx-get="{% room_url 'room-detail' %}?active_tab=transaction"
                              hx-target="#body"
                              hx-swap="innerHTML"
                              hx-push-url="true"

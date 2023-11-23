@@ -1,17 +1,16 @@
 from django.db.models import F
-from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
 from apps.currency.models import Currency
 from apps.room.models import Room
-from apps.webpush.dataclasses import Notification
 
 
 class RoomDetailView(generic.DetailView):
     template_name = "room/detail.html"
     context_object_name = "room"
+    slug_url_kwarg = "room_slug"
     model = Room
 
     @context
@@ -39,6 +38,11 @@ class RoomDetailView(generic.DetailView):
     def currency_signs(self):
         return Currency.objects.all()
 
+    @context
+    @cached_property
+    def active_tab(self):
+        return self.request.GET.get("active_tab", "transaction")
+
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
 
@@ -49,14 +53,5 @@ class RoomDetailView(generic.DetailView):
             if connection is not None:
                 connection.user_has_seen_this_room = True
                 connection.save()
-
-        # TODO CT: Remove this at some point
-        Notification(
-            payload=Notification.Payload(
-                head="Debug Notification",
-                body="Click me, to go to the welcome page",
-                click_url=reverse(viewname="core-welcome"),
-            )
-        ).send_to_user(user=self.request.user)
 
         return response

@@ -12,7 +12,7 @@ class GuestCreateView(htmx.FormHtmxResponseMixin, generic.CreateView):
     form_class = GuestCreateForm
     template_name = "account/partials/_guest_add_modal.html"
 
-    hx_trigger = "reloadPeopleList"
+    hx_trigger = "loadPeopleList"
     toast_success_message = "Guest created successfully!"
     toast_error_message = "There was an error creating the guest"
 

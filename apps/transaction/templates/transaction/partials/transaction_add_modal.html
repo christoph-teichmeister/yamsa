@@ -9,7 +9,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form hx-post="{% url 'transaction-add' %}" hx-swap="none">
+            <form hx-post="{% url 'transaction-add' %}" hx-swap="none" hx-indicator="#transaction-loading-spinner">
                 {% csrf_token %}
 
                 <div class="modal-body">
@@ -104,7 +104,10 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
                     <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
                         Add payment
                     </button>
