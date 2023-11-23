@@ -6,7 +6,7 @@ from apps.transaction.models import ChildTransaction
 from apps.webpush.dataclasses import Notification
 
 
-@message_registry.register_event(event=ParentTransactionUpdated)
+@message_registry.register_event(event=ParentTransactionCreated)
 def send_notification_on_transaction_create(context: ParentTransactionCreated.Context):
     parent_transaction = context.parent_transaction
 
@@ -14,8 +14,9 @@ def send_notification_on_transaction_create(context: ParentTransactionCreated.Co
         Notification(
             payload=Notification.Payload(
                 head="Transaction created",
-                body=f"{parent_transaction.paid_by.name} just paid {parent_transaction.value} "
-                f"({parent_transaction.description})\n"
+                body=f"{parent_transaction.paid_by.name} just paid "
+                f"{parent_transaction.value}{parent_transaction.currency.sign} "
+                f'("{parent_transaction.description}")\n'
                 f"Have a look!",
                 click_url=reverse(
                     viewname="htmx-transaction-detail",
@@ -36,8 +37,8 @@ def send_notification_on_transaction_update(context: ParentTransactionUpdated.Co
         Notification(
             payload=Notification.Payload(
                 head="Transaction updated",
-                body=f"{parent_transaction.lastmodified_by.name} just updated a transaction."
-                f"({parent_transaction.description})\n"
+                body=f"{parent_transaction.lastmodified_by.name} just updated a transaction "
+                f'("{parent_transaction.description}")\n'
                 f"Have a look!",
                 click_url=reverse(
                     viewname="htmx-transaction-detail",
