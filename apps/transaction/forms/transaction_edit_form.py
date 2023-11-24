@@ -102,7 +102,7 @@ class TransactionEditForm(forms.ModelForm):
             )
 
         # Handle any necessary post-update actions
-        handle_message(ParentTransactionUpdated(context_data={"parent_transaction": instance}))
+        handle_message(ParentTransactionUpdated(context_data={"parent_transaction": instance, "room": instance.room}))
 
         # Return the saved ParentTransaction instance
         return instance

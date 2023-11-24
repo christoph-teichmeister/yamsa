@@ -3,19 +3,28 @@ from typing import Union
 
 from apps.core.event_loop.registry import message_registry
 from apps.debt.models import Debt
-from apps.transaction.messages.events.transaction import ParentTransactionCreated, ParentTransactionUpdated
+from apps.transaction.messages.events.transaction import (
+    ParentTransactionCreated,
+    ParentTransactionUpdated,
+    AnyTransactionDeleted,
+)
 from apps.transaction.models import ChildTransaction
 
 
 @message_registry.register_event(event=ParentTransactionCreated)
 @message_registry.register_event(event=ParentTransactionUpdated)
-def calculate_optimised_debts(context: Union[ParentTransactionCreated.Context | ParentTransactionUpdated.Context]):
+@message_registry.register_event(event=AnyTransactionDeleted)
+def calculate_optimised_debts(
+    context: Union[ParentTransactionCreated.Context | ParentTransactionUpdated.Context | AnyTransactionDeleted.Context],
+):
+    room_id = context.room.id
+
     # Delete all unsettled debts of the room
-    Debt.objects.filter(room_id=context.parent_transaction.room_id, settled=False).delete()
+    Debt.objects.filter(room_id=room_id, settled=False).delete()
 
     # Retrieve all child_transactions in the room and store them in a tuple
     all_child_transactions_of_room_tuple = tuple(
-        ChildTransaction.objects.filter(parent_transaction__room_id=context.parent_transaction.room_id)
+        ChildTransaction.objects.filter(parent_transaction__room_id=room_id)
         .order_by("value", "parent_transaction__currency")
         .values_list("parent_transaction__currency", "paid_for", "parent_transaction__paid_by", "value")
     )
@@ -95,7 +104,7 @@ def calculate_optimised_debts(context: Union[ParentTransactionCreated.Context | 
                     Debt(
                         debitor_id=debtor,
                         creditor_id=creditor,
-                        room_id=context.parent_transaction.room_id,
+                        room_id=room_id,
                         value=transfer_amount,
                         currency_id=currency,
                     ),

@@ -36,6 +36,6 @@ class TransactionCreateForm(forms.ModelForm):
         for debtor in self.cleaned_data["paid_for"]:
             ChildTransaction.objects.create(parent_transaction=instance, paid_for=debtor, value=value_per_debtor)
 
-        handle_message(ParentTransactionCreated(context_data={"parent_transaction": instance}))
+        handle_message(ParentTransactionCreated(context_data={"parent_transaction": instance, "room": instance.room}))
 
         return instance
