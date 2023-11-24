@@ -15,7 +15,7 @@ def triggers_debt_calculation_for_all_rooms(apps, schema_editor):
     for room in Room.objects.using(db_alias).all():
         transaction = room.transactions.first()
 
-        handle_message(ParentTransactionCreated(context_data={"transaction": transaction}))
+        handle_message(ParentTransactionCreated(context_data={"parent_transaction": transaction, "room": room}))
 
 
 class Migration(migrations.Migration):

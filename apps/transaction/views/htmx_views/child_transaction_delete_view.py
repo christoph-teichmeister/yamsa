@@ -3,6 +3,8 @@ from django.utils.functional import cached_property
 from django.views import generic
 
 from apps.core import htmx
+from apps.core.event_loop.runner import handle_message
+from apps.transaction.messages.events.transaction import AnyTransactionDeleted
 from apps.transaction.models import ChildTransaction
 
 
@@ -26,6 +28,16 @@ class ChildTransactionDeleteHTMXView(htmx.FormHtmxResponseMixin, generic.DeleteV
             form_valid_return["HX-Redirect"] = reverse(
                 viewname="room-detail", kwargs={"room_slug": self.object.parent_transaction.room.slug}
             )
+
+        # Handle any necessary post-update actions
+        handle_message(
+            AnyTransactionDeleted(
+                context_data={
+                    "parent_transaction": None,
+                    "room": self.object.parent_transaction.room,
+                }
+            )
+        )
 
         return form_valid_return
 
