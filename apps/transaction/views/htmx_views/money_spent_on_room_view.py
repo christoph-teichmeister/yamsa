@@ -1,4 +1,4 @@
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.views import generic
 from django_context_decorator import context
 
@@ -14,20 +14,34 @@ class MoneySpentOnRoomView(RoomSpecificMixin, generic.TemplateView):
 
     @context
     @property
-    def money_spent_qs(self):
+    def money_spent_per_person_qs(self):
         return (
             self.get_base_queryset()
             .values("parent_transaction__paid_by__name", "parent_transaction__currency__sign")
-            .annotate(total_spent=Sum("value"))
+            .annotate(
+                paid_by_name=F("parent_transaction__paid_by__name"),
+                currency_sign=F("parent_transaction__currency__sign"),
+                total_spent_per_person=Sum("value"),
+            )
             .order_by("parent_transaction__paid_by__name")
         )
 
     @context
     @property
-    def money_owed_qs(self):
+    def total_money_spent(self):
+        # TODO CT: Idk, this is weird
+        return list(
+            self.get_base_queryset()
+            .values("parent_transaction__currency__sign")
+            .annotate(currency_sign=F("parent_transaction__currency__sign"), total_spent=Sum("value"))
+        )[0]
+
+    @context
+    @property
+    def money_owed_per_person_qs(self):
         return (
             self.get_base_queryset()
             .values("paid_for__name", "parent_transaction__currency__sign")
-            .annotate(total_owed=Sum("value"))
+            .annotate(currency_sign=F("parent_transaction__currency__sign"), total_owed_per_person=Sum("value"))
             .order_by("paid_for__name")
         )
