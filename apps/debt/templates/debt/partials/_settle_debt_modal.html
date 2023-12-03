@@ -9,7 +9,7 @@
 
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="addTransactionModalLabel">
-                    Your debt to {{ debt.creditor.username }}
+                    Your debt to {{ debt.creditor.name }}
                 </h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -20,7 +20,7 @@
                 <div class="modal-body">
 
                     Are you sure that you have settled your debt ({{ debt.value }}{{ debt.currency.sign }})
-                    to {{ debt.creditor.username }}?
+                    to {{ debt.creditor.name }}?
 
                     <div class="form-group" hidden>
                         <label for="debt_id">Debt ID</label>

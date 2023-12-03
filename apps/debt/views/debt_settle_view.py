@@ -2,6 +2,8 @@ from django.utils import timezone
 from django.views import generic
 
 from apps.core import htmx
+from apps.core.event_loop.runner import handle_message
+from apps.debt.messages.events.debt_settled import DebtSettled
 from apps.debt.models import Debt
 
 
@@ -17,4 +19,7 @@ class DebtSettleView(htmx.FormHtmxResponseMixin, generic.UpdateView):
     def form_valid(self, form):
         if self.object.settled:
             self.object.settled_at = timezone.now()
+
+        handle_message(DebtSettled(context_data={"debt": self.object}))
+
         return super().form_valid(form)
