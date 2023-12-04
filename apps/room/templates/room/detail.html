@@ -7,7 +7,10 @@
     <div class="row align-items-center mt-3">
         <h5>Room Settings</h5>
 
-        <form action="{% room_url 'room-detail' %}" method="post" class="flex-grow-1">
+        <form hx-post="{% room_url 'room-detail' %}"
+              hx-target="#body"
+              hx-swap="innerHTML"
+              class="flex-grow-1">
             {% csrf_token %}
 
             <div class="mb-3">
