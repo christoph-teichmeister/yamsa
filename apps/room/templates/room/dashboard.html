@@ -96,6 +96,25 @@
                 </a>
             </li>
 
+            <li class="nav-item" role="presentation" style="cursor: pointer">
+                <a id="settings-tab"
+                   class="nav-link {% if active_tab == "settings" %}active{% endif %}"
+                   role="tab"
+                   data-bs-toggle="tab"
+                   data-bs-target="#settings-tab-content"
+                   aria-controls="settings-tab-content"
+                   aria-selected="false"
+                   hx-trigger="click, loadSettings from:body"
+                   hx-get="{% room_url 'room-dashboard' %}?active_tab=settings"
+                   hx-target="#body"
+                   hx-swap="innerHTML"
+                   hx-indicator="#settings-loading-spinner"
+                   hx-push-url="true"
+                >
+                    <i class="bi bi-gear"></i>
+                </a>
+            </li>
+
         </ul>
 
         {# Room Tab-Contents #}
@@ -146,6 +165,23 @@
                      hx-indicator="#people-loading-spinner"
                 ></div>
                 {% include "shared_partials/loading_spinner.html" with spinner_id="people-loading-spinner" %}
+            </div>
+
+            <div class="tab-pane fade {% if active_tab == "settings" %}show active{% endif %}"
+                 id="settings-tab-content"
+                 role="tabpanel"
+                 aria-labelledby="settings-tab"
+                 tabindex="0"
+            >
+                {% block settings_content %}
+                    <div hx-trigger="{% if active_tab == "settings" %}load{% endif %}, loadSettings from:body"
+                         hx-get="{% room_url 'room-detail' %}"
+                         hx-target="this"
+                         hx-swap="outerHTML"
+                         hx-indicator="#settings-loading-spinner"
+                    ></div>
+                    {% include "shared_partials/loading_spinner.html" with spinner_id="settings-loading-spinner" %}
+                {% endblock %}
             </div>
 
         </div>
