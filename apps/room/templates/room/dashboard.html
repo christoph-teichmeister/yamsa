@@ -176,12 +176,12 @@
                 {% block settings_content %}
                     <div hx-trigger="{% if active_tab == "settings" %}load{% endif %}, loadSettings from:body"
                          hx-get="{% room_url 'room-detail' %}"
-                         hx-target="this"
-                         hx-swap="outerHTML"
+                         hx-target="#body"
+                         hx-swap="innerHTML"
                          hx-indicator="#settings-loading-spinner"
                     ></div>
-                    {% include "shared_partials/loading_spinner.html" with spinner_id="settings-loading-spinner" %}
                 {% endblock %}
+                {% include "shared_partials/loading_spinner.html" with spinner_id="settings-loading-spinner" %}
             </div>
 
         </div>

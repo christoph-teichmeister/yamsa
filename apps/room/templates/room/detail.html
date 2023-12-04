@@ -1,7 +1,59 @@
+{% extends "room/dashboard.html" %}
 {% load static %}
 {% load room_tags %}
 
-<div class="row align-items-center mt-3">
+{% block settings_content %}
 
-    <h2>Bruder keine Ahnung nope</h2>
-</div>
+    <div class="row align-items-center mt-3">
+        <h5>Room Settings</h5>
+
+        <form action="{% room_url 'room-detail' %}" method="post" class="flex-grow-1">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="name" class="form-label">{{ form.fields.name.label }}</label>
+                <input type="text" class="form-control" id="name" name="name"
+                       required value="{{ room.name }}">
+                {% for error_message in form.errors.name.data %}
+                    <small class="error" id="nameError">{{ error_message.message }}</small>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                <label for="description"
+                       class="form-label">{{ form.fields.description.label }}</label>
+                <input type="text" class="form-control" id="description" name="description"
+                       value="{{ room.description }}"
+                       placeholder="-">
+                {% for error_message in form.errors.description.data %}
+                    <small class="error" id="descriptionError">{{ error_message.message }}</small>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                <label for="preferred_currency"
+                       class="form-label">{{ form.fields.preferred_currency.label }}</label>
+                <select name="preferred_currency"
+                        class="form-control form-select"
+                        id="preferred_currency"
+                        required
+                >
+                    {% for currency in currencies %}
+                        <option {% if currency == room.preferred_currency %}selected{% endif %}
+                                value="{{ currency.id }}">
+                            {{ currency }}
+                        </option>
+                    {% endfor %}
+                </select>
+                {% for error_message in form.errors.preferred_currency.data %}
+                    <small class="error" id="preferred_currencyError">{{ error_message.message }}</small>
+                {% endfor %}
+            </div>
+
+            <div class="float-end">
+                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
