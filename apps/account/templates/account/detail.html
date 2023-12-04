@@ -29,7 +29,7 @@
             </div>
         {% endif %}
 
-        <div class="text-left px-3">
+        <div class="px-3">
             <p>{{ user.username }}</p>
             <p>{{ user.email }}</p>
         </div>
@@ -40,7 +40,7 @@
             <h5>Your data:</h5>
         </div>
 
-        <div class="text-left px-3">
+        <div class="px-3">
             <form action="/account/update/{{ user.id }}/" method="post" class="flex-grow-1">
                 {% csrf_token %}
 
