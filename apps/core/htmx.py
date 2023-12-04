@@ -14,7 +14,7 @@ class FormHtmxResponseMixin:
     the signal and the value is a parameter passed to the frontend. If you don't need the value, set it to None.
     """
 
-    hx_trigger: Union[str, Dict[str, str]] = None
+    hx_trigger: Union[str, Dict[str, str]] = {}
 
     toast_success_message: str = None
     toast_error_message: str = None
@@ -29,18 +29,20 @@ class FormHtmxResponseMixin:
 
         # Get attributes
         hx_trigger = self.get_hx_trigger()
+        toast_success_message = self.get_toast_success_message()
 
+        # if hx_trigger is of type dict, we can leave it as it is, if it is of type string, format it accordingly
         if isinstance(hx_trigger, str):
             hx_trigger = {f"{hx_trigger}": True}
 
-        if hx_trigger is None:
-            hx_trigger = {}
+        # Add toast_success_message to hx_trigger if it exists
+        if toast_success_message:
+            hx_trigger.update(
+                {"triggerToast": {"message": self.get_toast_success_message(), "type": "text-bg-success bg-gradient"}}
+            )
 
-        # Set trigger header if set
-        hx_trigger.update(
-            {"triggerToast": {"message": self.get_toast_success_message(), "type": "text-bg-success bg-gradient"}}
-        )
-        response["HX-Trigger-After-Settle"] = json.dumps(hx_trigger)
+        if hx_trigger is not {}:
+            response["HX-Trigger-After-Settle"] = json.dumps(hx_trigger)
 
         # Return augmented response
         return response
@@ -57,7 +59,7 @@ class FormHtmxResponseMixin:
 
     # -------------- GETTER METHODS --------------
 
-    def get_hx_trigger(self):
+    def get_hx_trigger(self) -> str | dict:
         """
         Getter for "hx_trigger" to be able to work with dynamic data
         """
