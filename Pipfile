@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 ambient-toolbox = "==8.0.*"
 django = "==4.1.*"
+django-browser-reload = "==1.12.*"
 django-context-decorator = "==1.6.*"
 django-environ = "==0.9.*"
 django-extensions = "==3.2.*"

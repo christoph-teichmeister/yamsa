@@ -84,6 +84,7 @@ DJANGO_APPS = (
 
 THIRD_PARTY_APPS = (
     "ambient_toolbox",
+    "django_browser_reload",
     "django_extensions",
 )
 
@@ -110,6 +111,7 @@ MIDDLEWARE = (
     "ambient_toolbox.middleware.current_user.CurrentUserMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 )
 
 ROOT_URLCONF = "apps.config.urls"
