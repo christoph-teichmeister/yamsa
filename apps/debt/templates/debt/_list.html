@@ -1,7 +1,7 @@
 {% load static %}
 {% load room_tags %}
 
-<div class="room-detail-tab-header">
+<div class="row align-items-center mt-3">
     <h5>Optimised Debts</h5>
     {% if debts %}
         <small>
@@ -9,7 +9,7 @@
             (<i class="bi bi-piggy-bank"></i>) next to the debt to mark it as settled.
         </small>
 
-        <ul class="list-group mt-3">
+        <ul class="list-group mt-3 ps-3">
             <li class="list-group-item"
                 hx-trigger="click"
                 hx-get="{% room_url 'htmx-money-spent-on-room' %}"
@@ -35,7 +35,7 @@
     {% endif %}
 </div>
 
-<ul class="list-group mb-5">
+<ul class="list-group mb-5 mt-3">
     {% for debt in debts %}
         <li class="list-group-item">
             <div class="row align-items-center">

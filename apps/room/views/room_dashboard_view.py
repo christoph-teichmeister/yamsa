@@ -7,8 +7,8 @@ from apps.currency.models import Currency
 from apps.room.models import Room
 
 
-class RoomDetailView(generic.DetailView):
-    template_name = "room/detail.html"
+class RoomDashboardView(generic.DetailView):
+    template_name = "room/dashboard.html"
     context_object_name = "room"
     slug_url_kwarg = "room_slug"
     model = Room
