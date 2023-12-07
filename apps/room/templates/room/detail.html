@@ -5,7 +5,7 @@
 {% block settings_content %}
 
     <div class="row align-items-center mt-3">
-        <h5>Room Settings</h5>
+        <h5 class="mb-4">Room Settings</h5>
 
         <form hx-post="{% room_url 'room-detail' %}"
               hx-target="#body"
@@ -53,8 +53,19 @@
                 {% endfor %}
             </div>
 
-            <div class="float-end">
-                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            <div class="mt-4">
+                <div class="float-start">
+                    <button type="button"
+                            class="btn btn-danger btn-sm"
+                            hx-post="{% room_url 'room-close' %}"
+                            hx-target="#body"
+                            hx-swap="innerHTML">
+                        Close room
+                    </button>
+                </div>
+                <div class="float-end">
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                </div>
             </div>
         </form>
     </div>

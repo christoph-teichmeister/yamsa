@@ -31,3 +31,8 @@ class Room(FullCleanOnSaveMixin, CommonInfo):
         if not self.slug:
             self.slug = uuid.uuid4()
         super().save(*args, **kwargs)
+
+    @property
+    def can_be_closed(self):
+        # TODO CT: Do this
+        return False
