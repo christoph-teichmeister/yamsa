@@ -1,0 +1,91 @@
+{% extends "room/dashboard.html" %}
+{% load static %}
+{% load room_tags %}
+
+{% block settings_content %}
+
+    <form>
+
+        <div class="row mt-4 d-flex w-100 justify-content-between align-items-center">
+            <div class="col d-flex align-items-center">
+                <i class="bi bi-arrow-left-circle fs-2 float-start"
+                   style="cursor: pointer"
+                   hx-trigger="click"
+                   hx-get="{% room_url 'room-detail' %}"
+                   hx-target="#body"
+                   hx-swap="innerHTML"
+                   hx-push-url="true"
+                ></i>
+                <h5 class="m-0 ms-3">Edit Room</h5>
+            </div>
+            <div class="col p-0">
+                <button class="btn btn-primary btn-sm float-end px-3"
+                        type="submit"
+                        hx-post="{% room_url 'room-edit' %}"
+                        hx-target="#body"
+                        hx-swap="innerHTML">
+                    Save
+                </button>
+            </div>
+        </div>
+
+        {% csrf_token %}
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"></li>
+
+            <li class="list-group-item py-4 px-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <label for="name">{{ form.fields.name.label }}</label>
+                    <input type="text" class="form-control w-50" id="name" name="name"
+                           required value="{{ room.name }}">
+                </div>
+                {% for error_message in form.errors.name.data %}
+                    <small class="error" id="nameError">{{ error_message.message }}</small>
+                {% endfor %}
+
+                <br/>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <label for="description">{{ form.fields.description.label }}</label>
+                    <input type="text" class="form-control w-50" id="description" name="description"
+                           value="{{ room.description }}"
+                           placeholder="-" maxlength="50">
+                </div>
+                {% for error_message in form.errors.description.data %}
+                    <small class="error" id="descriptionError">{{ error_message.message }}</small>
+                {% endfor %}
+
+                <br/>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <label for="preferred_currency">{{ form.fields.preferred_currency.label }}</label>
+                    <select name="preferred_currency"
+                            class="form-control form-select w-50"
+                            id="preferred_currency"
+                            required>
+                        {% for currency in currencies %}
+                            <option {% if currency == room.preferred_currency %}selected{% endif %}
+                                    value="{{ currency.id }}">
+                                {{ currency }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% for error_message in form.errors.preferred_currency.data %}
+                    <small class="error" id="preferred_currencyError">{{ error_message.message }}</small>
+                {% endfor %}
+            </li>
+
+            <li class="list-group-item"></li>
+        </ul>
+    </form>
+
+    <button type="button"
+            class="btn btn-danger btn-sm"
+            hx-post="{% room_url 'room-close' %}"
+            hx-target="#body"
+            hx-swap="innerHTML">
+        Close room
+    </button>
+
+{% endblock %}

@@ -179,8 +179,10 @@
                          hx-target="#body"
                          hx-swap="innerHTML"
                          hx-indicator="#settings-loading-spinner"
+                         hx-push-url="true"
                     ></div>
                 {% endblock %}
+                <br/><br/><br/><br/>
                 {% include "shared_partials/loading_spinner.html" with spinner_id="settings-loading-spinner" %}
             </div>
 

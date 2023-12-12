@@ -13,7 +13,7 @@ class Room(FullCleanOnSaveMixin, CommonInfo):
 
     slug = models.UUIDField(unique=True)
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=500)
+    description = models.TextField(max_length=50)
     status = models.SmallIntegerField(choices=StatusChoices.choices, default=StatusChoices.OPEN)
 
     preferred_currency = models.ForeignKey("currency.Currency", related_name="rooms", on_delete=models.DO_NOTHING)
