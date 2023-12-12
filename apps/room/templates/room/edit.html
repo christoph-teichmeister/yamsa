@@ -5,6 +5,7 @@
 {% block settings_content %}
 
     <form>
+        {% csrf_token %}
 
         <div class="row mt-4 d-flex w-100 justify-content-between align-items-center">
             <div class="col d-flex align-items-center">
@@ -29,7 +30,6 @@
             </div>
         </div>
 
-        {% csrf_token %}
         <ul class="list-group list-group-flush">
             <li class="list-group-item"></li>
 
@@ -74,18 +74,66 @@
                 {% for error_message in form.errors.preferred_currency.data %}
                     <small class="error" id="preferred_currencyError">{{ error_message.message }}</small>
                 {% endfor %}
+
+                <div class="form-group" hidden>
+                    <label for="status">Status</label>
+                    <input id="status"
+                           type="number"
+                           name="status"
+                           class="form-control"
+                           required
+                           value={{ room.status }}
+                    />
+                </div>
+
             </li>
 
             <li class="list-group-item"></li>
         </ul>
     </form>
 
-    <button type="button"
-            class="btn btn-danger btn-sm"
-            hx-post="{% room_url 'room-close' %}"
-            hx-target="#body"
-            hx-swap="innerHTML">
-        Close room
-    </button>
+    <form>
+        {% csrf_token %}
+
+        <div class="form-group" hidden>
+            <label for="name">{{ form.fields.name.label }}</label>
+            <input type="text" class="form-control w-50" id="name" name="name" required value="{{ room.name }}">
+        </div>
+        <div class="form-group" hidden>
+            <label for="description">{{ form.fields.description.label }}</label>
+            <input type="text" class="form-control w-50" id="description" name="description"
+                   value="{{ room.description }}" placeholder="-" maxlength="50">
+        </div>
+        <div class="form-group" hidden>
+            <label for="preferred_currency">{{ form.fields.preferred_currency.label }}</label>
+            <input id="preferred_currency" type="number" name="preferred_currency" class="form-control" required
+                   value="{{ room.preferred_currency.id }}"/>
+        </div>
+
+        <div class="form-group" hidden>
+            <label for="status">{{ form.fields.status.label }}</label>
+            <input id="status" type="number" name="status" class="form-control" required value="{{ other_status }}"/>
+        </div>
+
+        <div class="row my-4 d-flex justify-content-center">
+            <button type="button"
+                    class="btn {% if room.status == room_statuses.OPEN %}btn-danger{% elif room.status == room_statuses.CLOSED %}btn-primary{% endif %} btn-sm w-50"
+                    hx-post="{% room_url 'room-edit' %}"
+                    hx-target="#body"
+                    hx-swap="innerHTML">
+                {% if room.status == room_statuses.OPEN %}
+                    Close room
+                {% elif room.status == room_statuses.CLOSED %}
+                    Reopen room
+                {% endif %}
+            </button>
+        </div>
+
+        <div class="row">
+            {% for error_message in form.errors.status.data %}
+                <small class="error text-center" id="statusError">{{ error_message.message }}</small>
+            {% endfor %}
+        </div>
+    </form>
 
 {% endblock %}

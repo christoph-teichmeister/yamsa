@@ -4,6 +4,7 @@ from ambient_toolbox.models import CommonInfo
 from django.db import models
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
+from apps.room.managers import RoomManager
 
 
 class Room(FullCleanOnSaveMixin, CommonInfo):
@@ -20,6 +21,8 @@ class Room(FullCleanOnSaveMixin, CommonInfo):
 
     users = models.ManyToManyField("account.User", through="room.UserConnectionToRoom")
 
+    objects = RoomManager()
+
     class Meta:
         verbose_name = "Room"
         verbose_name_plural = "Rooms"
@@ -34,5 +37,4 @@ class Room(FullCleanOnSaveMixin, CommonInfo):
 
     @property
     def can_be_closed(self):
-        # TODO CT: Do this
-        return False
+        return not self.debts.filter(settled=False).exists()
