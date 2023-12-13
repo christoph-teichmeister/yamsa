@@ -23,7 +23,7 @@
                         id="preferred_currency"
                         required
                 >
-                    {% for currency in currencies %}
+                    {% for currency in all_currencies %}
                         <option {% if forloop.first %}selected{% endif %}
                                 value="{{ currency.id }}">
                             {{ currency.sign }}

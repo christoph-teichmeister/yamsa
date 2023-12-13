@@ -50,7 +50,7 @@
                                         required
                                 >
                                     <option value="{{ room.preferred_currency.id }}">{{ room.preferred_currency.sign }}</option>
-                                    {% for currency in currency_signs %}
+                                    {% for currency in all_currencies %}
                                         {% if currency != room.preferred_currency %}
                                             <option value="{{ currency.id }}">{{ currency.sign }}</option>
                                         {% endif %}

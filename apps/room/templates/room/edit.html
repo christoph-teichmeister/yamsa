@@ -63,7 +63,7 @@
                             class="form-control form-select w-50"
                             id="preferred_currency"
                             required>
-                        {% for currency in currencies %}
+                        {% for currency in all_currencies %}
                             <option {% if currency == room.preferred_currency %}selected{% endif %}
                                     value="{{ currency.id }}">
                                 {{ currency }}
@@ -117,13 +117,13 @@
 
         <div class="row my-4 d-flex justify-content-center">
             <button type="button"
-                    class="btn {% if room.status == room_statuses.OPEN %}btn-danger{% elif room.status == room_statuses.CLOSED %}btn-primary{% endif %} btn-sm w-50"
+                    class="btn {% if current_room.is_open %}btn-danger{% elif current_room.is_closed %}btn-primary{% endif %} btn-sm w-50"
                     hx-post="{% room_url 'room-edit' %}"
                     hx-target="#body"
                     hx-swap="innerHTML">
-                {% if room.status == room_statuses.OPEN %}
+                {% if current_room.is_open %}
                     Close room
-                {% elif room.status == room_statuses.CLOSED %}
+                {% elif current_room.is_closed %}
                     Reopen room
                 {% endif %}
             </button>
