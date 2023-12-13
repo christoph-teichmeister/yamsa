@@ -10,6 +10,6 @@ class DebtListHTMXView(RoomSpecificMixin, generic.ListView):
     template_name = "debt/_list.html"
 
     def get_queryset(self):
-        return self.model.objects.filter_for_room_id(room_id=self._room.id).order_by(
+        return self.model.objects.filter_for_room_id(room_id=self.request.room.id).order_by(
             "settled", "currency__sign", "debitor__username"
         )
