@@ -10,9 +10,15 @@ class RoomToRequestMiddleware:
         # Code to be executed for each request before
         # the view (and later middleware) are called.
 
-        cleaned_path_list = list(filter(lambda split_content: split_content != "", request.path.split("/")))
-        if "room" in cleaned_path_list:
-            room_slug = cleaned_path_list[1]
+        slug_field = filter(lambda field: field.attname == "slug", Room._meta.fields).__next__()
+
+        # TODO CT: Why are the auto-generated slugs not 32 long but 36 instead?
+
+        cleaned_path_list = list(
+            filter(lambda split_content: len(split_content) == slug_field.max_length + 4, request.path.split("/"))
+        )
+        if len(cleaned_path_list) != 0:
+            room_slug = cleaned_path_list[0]
             setattr(request, "room", Room.objects.get(slug=room_slug))
 
         response = self.get_response(request)
