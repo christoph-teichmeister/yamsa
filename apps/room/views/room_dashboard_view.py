@@ -30,16 +30,6 @@ class RoomDashboardView(generic.DetailView):
 
     @context
     @cached_property
-    def preferred_currency_sign(self):
-        return self.object.preferred_currency.sign
-
-    @context
-    @cached_property
-    def currency_signs(self):
-        return Currency.objects.all()
-
-    @context
-    @cached_property
     def active_tab(self):
         return self.request.GET.get("active_tab", "transaction")
 

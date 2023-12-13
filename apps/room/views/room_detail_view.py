@@ -14,10 +14,5 @@ class RoomDetailView(generic.DetailView):
 
     @context
     @cached_property
-    def currencies(self):
-        return Currency.objects.all()
-
-    @context
-    @cached_property
     def active_tab(self):
         return self.request.GET.get("active_tab", "settings")
