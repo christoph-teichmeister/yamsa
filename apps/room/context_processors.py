@@ -11,5 +11,7 @@ def room_context(request):
         "current_room": {
             "is_closed": room.status == room.StatusChoices.CLOSED,
             "is_open": room.status == room.StatusChoices.OPEN,
+            "name": room.name,
+            "slug": room.slug,
         },
     }
