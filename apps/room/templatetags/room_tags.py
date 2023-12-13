@@ -19,5 +19,5 @@ def parse_user_text(context, user_name: str, start_of_sentence: bool = False):
 
 @register.tag
 def room_url(parser, token):
-    token.contents += " room_slug=room.slug"
+    token.contents += " room_slug=room.slug"  # TODO CT: This will need to be adjusted? {{room_slug=current_room.slug}}
     return url(parser, token)
