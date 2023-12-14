@@ -47,4 +47,14 @@
         <li class="list-group-item"></li>
     </ul>
 
+    <div class="row my-4">
+        <p class="text-center text-muted">
+            {% if current_room.is_open %}
+                Room is open
+            {% elif current_room.is_closed %}
+                Room is closed
+            {% endif %}
+        </p>
+    </div>
+
 {% endblock %}

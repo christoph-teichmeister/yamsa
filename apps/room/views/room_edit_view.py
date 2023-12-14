@@ -13,8 +13,6 @@ class RoomEditView(generic.UpdateView):
     model = Room
     form_class = RoomEditForm
 
-    # TODO CT: Disable quite a few things when a room is closed!
-
     def get_success_url(self):
         return reverse("room-edit", kwargs={"room_slug": self.object.slug})
 

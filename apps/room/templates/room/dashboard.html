@@ -13,20 +13,31 @@
     {% endif %}
 
     {# Room name and copy room button #}
-    <div class="row align-items-center mt-3">
+    <div class="row align-items-center my-3">
         <div class="col-9 col-md-5 text-break">
-            <h1>{{ current_room.name }}</h1>
+            <h1 class="mb-0" {% if current_room.is_closed %}style="text-decoration: line-through"{% endif %}>
+                {{ current_room.name }}
+            </h1>
         </div>
-        <div class="col-3 col-md-7">
-            <button class="btn btn-light btn-sm float-end me-4"
-                    onclick="copyShareURL()"
-                    data-bs-toggle="tooltip"
-                    data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
-                    hx-get="{% url 'htmx-checked-clipboard' %}"
-                    hx-swap="innerHTML"
-            >
-                {% include "shared_partials/clipboard_icon_unchecked.html" %}
-            </button>
+        <div class=" col-3 col-md-7 d-flex justify-content-center">
+            {% if current_room.is_open %}
+                <button class="btn btn-light btn-sm"
+                        onclick="copyShareURL()"
+                        data-bs-toggle="tooltip"
+                        data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
+                        hx-get="{% url 'htmx-checked-clipboard' %}"
+                        hx-swap="innerHTML"
+                >
+                    {% include "shared_partials/clipboard_icon_unchecked.html" %}
+                </button>
+            {% elif current_room.is_closed %}
+                <h1 class="mb-0"><i class="bi bi-dash-circle"
+                       hx-get="{% room_url 'room-edit' %}"
+                       hx-target="#body"
+                       hx-swap="innerHTML"
+                       hx-push-url="true"
+                ></i></h1>
+            {% endif %}
         </div>
     </div>
 

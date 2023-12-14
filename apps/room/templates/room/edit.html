@@ -20,13 +20,15 @@
                 <h5 class="m-0 ms-3">Edit Room</h5>
             </div>
             <div class="col p-0">
-                <button class="btn btn-primary btn-sm float-end px-3"
-                        type="submit"
-                        hx-post="{% room_url 'room-edit' %}"
-                        hx-target="#body"
-                        hx-swap="innerHTML">
-                    Save
-                </button>
+                {% if current_room.is_open %}
+                    <button class="btn btn-primary btn-sm float-end px-3"
+                            type="submit"
+                            hx-post="{% room_url 'room-edit' %}"
+                            hx-target="#body"
+                            hx-swap="innerHTML">
+                        Save
+                    </button>
+                {% endif %}
             </div>
         </div>
 
@@ -37,7 +39,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <label for="name">{{ form.fields.name.label }}</label>
                     <input type="text" class="form-control w-50" id="name" name="name"
-                           required value="{{ current_room.name }}">
+                           required value="{{ current_room.name }}" {% if current_room.is_closed %}disabled{% endif %}>
                 </div>
                 {% for error_message in form.errors.name.data %}
                     <small class="error" id="nameError">{{ error_message.message }}</small>
@@ -48,8 +50,8 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <label for="description">{{ form.fields.description.label }}</label>
                     <input type="text" class="form-control w-50" id="description" name="description"
-                           value="{{ current_room.description }}"
-                           placeholder="-" maxlength="50">
+                           value="{{ current_room.description }}" placeholder="-" maxlength="50"
+                           {% if current_room.is_closed %}disabled{% endif %}>
                 </div>
                 {% for error_message in form.errors.description.data %}
                     <small class="error" id="descriptionError">{{ error_message.message }}</small>
@@ -62,7 +64,9 @@
                     <select name="preferred_currency"
                             class="form-control form-select w-50"
                             id="preferred_currency"
-                            required>
+                            required
+                            {% if current_room.is_closed %}disabled{% endif %}
+                    >
                         {% for currency in all_currencies %}
                             <option {% if currency == current_room.preferred_currency %}selected{% endif %}
                                     value="{{ currency.id }}">
