@@ -2,7 +2,6 @@ from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
-from apps.currency.models import Currency
 from apps.room.models import Room
 
 
