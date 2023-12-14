@@ -38,12 +38,17 @@
                                         {% endif %}
                                         <div class="row w-100">
                                             <div class="col">
-                                                <h5 class="card-title {% if request.user.is_superuser and request.user not in room.users.all %}text-muted{% endif %}">{{ room.name }}</h5>
+                                                <h5 class="card-title {% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-muted{% endif %}"
+                                                >
+                                                    {{ room.name }}
+                                                </h5>
                                             </div>
                                         </div>
                                         <div class="row w-100">
                                             <div class="col">
-                                                <p class="card-text {% if request.user.is_superuser and request.user not in room.users.all %}text-muted{% endif %}">{{ room.description }}</p>
+                                                <p class="card-text {% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-muted{% endif %}">
+                                                    {{ room.description }}
+                                                </p>
                                             </div>
                                         </div>
 
