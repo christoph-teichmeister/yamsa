@@ -9,12 +9,16 @@ def room_context(request):
 
     return {
         "current_room": {
+            # Model fields
+            "id": room.id,
+            "slug": room.slug,
+            "name": room.name,
+            "description": room.description,
+            "status": room.status,
+            "preferred_currency": room.preferred_currency,
+            "users": room.room_users,
+            # Calculated info
             "is_closed": room.status == room.StatusChoices.CLOSED,
             "is_open": room.status == room.StatusChoices.OPEN,
-            "name": room.name,
-            "slug": room.slug,
-            "id": room.id,
-            "preferred_currency": room.preferred_currency,
-            "room_users": room.room_users,
         },
     }

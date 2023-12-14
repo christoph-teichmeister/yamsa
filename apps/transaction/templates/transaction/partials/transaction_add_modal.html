@@ -22,7 +22,7 @@
                                 required
                         >
                             <option value="{{ request.user.id }}">{{ request.user.name }}</option>
-                            {% for room_user in current_room.room_users %}
+                            {% for room_user in current_room.users %}
                                 {% if room_user.id != request.user.id %}
                                     <option value="{{ room_user.id }}">{{ room_user.name }}</option>
                                 {% endif %}
@@ -68,7 +68,7 @@
                                 id="paidForSelect"
                                 required
                         >
-                            {% for room_user in current_room.room_users %}
+                            {% for room_user in current_room.users %}
                                 <option value="{{ room_user.id }}">{{ room_user.name }}</option>
                             {% endfor %}
                         </select>

@@ -138,7 +138,7 @@
                                     id="paid_for_select"
                                     required
                             >
-                                {% for user in current_room.room_users %}
+                                {% for user in current_room.users %}
                                     <option {% if user == child_transaction.paid_for %}selected{% endif %}
                                             value="{{ user.id }}">
                                         {{ user.name }}

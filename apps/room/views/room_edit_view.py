@@ -9,7 +9,6 @@ from apps.room.models import Room
 
 class RoomEditView(generic.UpdateView):
     template_name = "room/edit.html"
-    context_object_name = "room"
     slug_url_kwarg = "room_slug"
     model = Room
     form_class = RoomEditForm

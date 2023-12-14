@@ -37,7 +37,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <label for="name">{{ form.fields.name.label }}</label>
                     <input type="text" class="form-control w-50" id="name" name="name"
-                           required value="{{ room.name }}">
+                           required value="{{ current_room.name }}">
                 </div>
                 {% for error_message in form.errors.name.data %}
                     <small class="error" id="nameError">{{ error_message.message }}</small>
@@ -48,7 +48,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <label for="description">{{ form.fields.description.label }}</label>
                     <input type="text" class="form-control w-50" id="description" name="description"
-                           value="{{ room.description }}"
+                           value="{{ current_room.description }}"
                            placeholder="-" maxlength="50">
                 </div>
                 {% for error_message in form.errors.description.data %}
@@ -64,7 +64,7 @@
                             id="preferred_currency"
                             required>
                         {% for currency in all_currencies %}
-                            <option {% if currency == room.preferred_currency %}selected{% endif %}
+                            <option {% if currency == current_room.preferred_currency %}selected{% endif %}
                                     value="{{ currency.id }}">
                                 {{ currency }}
                             </option>
@@ -82,7 +82,7 @@
                            name="status"
                            class="form-control"
                            required
-                           value={{ room.status }}
+                           value={{ current_room.status }}
                     />
                 </div>
 
@@ -97,17 +97,17 @@
 
         <div class="form-group" hidden>
             <label for="name">{{ form.fields.name.label }}</label>
-            <input type="text" class="form-control w-50" id="name" name="name" required value="{{ room.name }}">
+            <input type="text" class="form-control w-50" id="name" name="name" required value="{{ current_room.name }}">
         </div>
         <div class="form-group" hidden>
             <label for="description">{{ form.fields.description.label }}</label>
             <input type="text" class="form-control w-50" id="description" name="description"
-                   value="{{ room.description }}" placeholder="-" maxlength="50">
+                   value="{{ current_room.description }}" placeholder="-" maxlength="50">
         </div>
         <div class="form-group" hidden>
             <label for="preferred_currency">{{ form.fields.preferred_currency.label }}</label>
             <input id="preferred_currency" type="number" name="preferred_currency" class="form-control" required
-                   value="{{ room.preferred_currency.id }}"/>
+                   value="{{ current_room.preferred_currency.id }}"/>
         </div>
 
         <div class="form-group" hidden>
@@ -117,7 +117,7 @@
 
         <div class="row my-4 d-flex justify-content-center">
             <button type="button"
-                    class="btn {% if current_room.is_open %}btn-danger{% elif current_room.is_closed %}btn-primary{% endif %} btn-sm w-50"
+                    class="btn {% if current_room.is_open %}btn-danger{% elif current_room.is_closed %}btn-primary{% endif %} btn-sm w-50 {% if form.errors.status.data %}disabled{% endif %}"
                     hx-post="{% room_url 'room-edit' %}"
                     hx-target="#body"
                     hx-swap="innerHTML">
