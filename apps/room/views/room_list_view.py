@@ -9,6 +9,7 @@ class RoomListView(generic.ListView):
     template_name = "room/list.html"
 
     def get_queryset(self):
+        # TODO CT: Move this to Queryset method
         user = self.request.user
 
         qs = Room.objects.filter(users=user)

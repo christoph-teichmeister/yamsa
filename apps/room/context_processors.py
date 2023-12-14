@@ -26,5 +26,6 @@ def room_context(request):
             # Calculated info
             "is_closed": room.status == room.StatusChoices.CLOSED,
             "is_open": room.status == room.StatusChoices.OPEN,
+            "has_guests": room.has_guests,
         },
     }

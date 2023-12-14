@@ -41,6 +41,10 @@ class Room(FullCleanOnSaveMixin, CommonInfo):
     def room_users(self):
         return User.objects.filter(room=self)
 
+    @cached_property
+    def has_guests(self):
+        return self.room_users.filter(is_guest=True).exists()
+
     @property
     def can_be_closed(self):
         return not self.debts.filter(settled=False).exists()

@@ -20,7 +20,7 @@
             </h1>
         </div>
         <div class=" col-3 col-md-7 d-flex justify-content-center">
-            {% if current_room.is_open %}
+            {% if current_room.is_open and current_room.has_guests%}
                 <button class="btn btn-light btn-sm"
                         onclick="copyShareURL()"
                         data-bs-toggle="tooltip"
