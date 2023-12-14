@@ -16,6 +16,14 @@ class RoomEditView(generic.UpdateView):
     def get_success_url(self):
         return reverse("room-edit", kwargs={"room_slug": self.object.slug})
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+
+        # Add user to form
+        setattr(form, "user", self.request.user)
+
+        return form
+
     @context
     @cached_property
     def other_status(self):

@@ -1,10 +1,16 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.urls import reverse
+from django.utils import timezone
 
+from apps.account.models import User
 from apps.room.models import Room
+from apps.webpush.dataclasses import Notification
 
 
 class RoomEditForm(forms.ModelForm):
+    user: User = None
+
     class Meta:
         model = Room
         fields = ("name", "description", "preferred_currency", "status")
@@ -17,3 +23,22 @@ class RoomEditForm(forms.ModelForm):
             raise ValidationError("This room still has open debts and can not be closed", code="invalid")
 
         return new_status
+
+    def save(self, commit=True):
+        # Notify users when a room is closed
+        if self.instance.status == self.instance.StatusChoices.CLOSED:
+            notification = Notification(
+                payload=Notification.Payload(
+                    head="Room closed",
+                    body=f"{self.user.name} closed {self.instance.name}",
+                ),
+            )
+            for user in self.instance.room_users.exclude(id=self.user.id):
+                notification.payload.click_url = reverse("room-dashboard", kwargs={"room_slug": self.instance.slug})
+                notification.send_to_user(user)
+
+        # Set lastmodified fields
+        self.instance.lastmodified_by = self.user
+        self.instance.lastmodified_at = timezone.now()
+
+        return super().save(commit)
