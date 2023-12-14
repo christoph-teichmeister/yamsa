@@ -1,7 +1,6 @@
 from django.utils.functional import cached_property
 from django_context_decorator import context
 
-from apps.account.models import User
 from apps.room.models import Room
 
 
@@ -23,4 +22,4 @@ class RoomSpecificMixin:
     @cached_property
     def room_users(self):
         # TODO CT: Look for this and replace
-        return User.objects.filter(room=self._room)
+        return self._room.room_users
