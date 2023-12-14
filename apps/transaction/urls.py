@@ -4,7 +4,6 @@ from apps.room.urls import build_room_specific_paths
 from apps.transaction import views
 
 urlpatterns = [
-    path("add/", views.TransactionCreateView.as_view(), name="transaction-add"),
     path(
         "htmx/delete/child-transaction/<int:pk>",
         views.ChildTransactionDeleteHTMXView.as_view(),
@@ -12,6 +11,11 @@ urlpatterns = [
     ),
     build_room_specific_paths(
         [
+            path(
+                "add/",
+                views.TransactionCreateView.as_view(),
+                name="transaction-create",
+            ),
             path(
                 "list",
                 views.TransactionListView.as_view(),
@@ -31,11 +35,6 @@ urlpatterns = [
                 "htmx/add/",
                 views.ChildTransactionCreateView.as_view(),
                 name="htmx-child-transaction-create",
-            ),
-            path(
-                "htmx/get-add-payment-modal",
-                views.GetTransactionAddModalHTMXView.as_view(),
-                name="htmx-get-transaction-add-modal",
             ),
             path(
                 "htmx/money-spent",

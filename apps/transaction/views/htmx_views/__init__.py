@@ -1,6 +1,3 @@
-from apps.transaction.views.htmx_views.get_transaction_add_modal_view import (
-    GetTransactionAddModalHTMXView,
-)
 from apps.transaction.views.htmx_views.transaction_detail_view import (
     TransactionDetailHTMXView,
 )
