@@ -5,7 +5,6 @@ from apps.transaction import views
 
 urlpatterns = [
     path("add/", views.TransactionCreateView.as_view(), name="transaction-add"),
-    path("htmx/add/", views.ChildTransactionCreateView.as_view(), name="htmx-child-transaction-create"),
     path(
         "htmx/delete/child-transaction/<int:pk>",
         views.ChildTransactionDeleteHTMXView.as_view(),
@@ -27,6 +26,11 @@ urlpatterns = [
                 "htmx/edit/<int:pk>",
                 views.TransactionEditHTMXView.as_view(),
                 name="htmx-transaction-edit",
+            ),
+            path(
+                "htmx/add/",
+                views.ChildTransactionCreateView.as_view(),
+                name="htmx-child-transaction-create",
             ),
             path(
                 "htmx/get-add-payment-modal",

@@ -180,7 +180,7 @@
 
             <li class="list-group-item p-2 d-flex justify-content-center"
                 hx-trigger="click"
-                hx-get="{% url 'htmx-child-transaction-create' %}?slug={{ current_room.slug }}"
+                hx-get="{% room_url 'htmx-child-transaction-create' %}"
                 hx-target="#add-child-transaction-container"
                 hx-swap="outerHTML">
                 <i class="bi bi-plus-circle"></i>

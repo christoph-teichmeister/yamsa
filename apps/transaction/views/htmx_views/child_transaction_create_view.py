@@ -16,8 +16,4 @@ class ChildTransactionCreateView(htmx.FormHtmxResponseMixin, generic.CreateView)
     @context
     @cached_property
     def room_users(self):
-        return User.objects.filter(room__slug=self.request.GET.get("slug"))
-
-    def get(self, request, *args, **kwargs):
-        ret = super().get(request, *args, **kwargs)
-        return ret
+        return User.objects.filter(room=self.request.room)

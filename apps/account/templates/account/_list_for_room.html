@@ -12,9 +12,9 @@
     </div>
 </div>
 
-{% if room_users %}
+{% if user_qs_for_room %}
     <div class="row row-cols-1 row-cols-md-3 g-4 mt-1 mb-3">
-        {% for user in room_users %}
+        {% for user in user_qs_for_room %}
             {% include "shared_partials/user_card.html" with user=user %}
         {% endfor %}
     </div>
