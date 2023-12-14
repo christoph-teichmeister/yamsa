@@ -141,10 +141,11 @@
             >
                 {% block transaction_content %}
                     <div hx-trigger="{% if active_tab == "transaction" %}load{% endif %}, loadTransactionList from:body"
-                         hx-get="{% room_url 'htmx-transaction-list' %}"
-                         hx-target="this"
-                         hx-swap="outerHTML"
+                         hx-get="{% room_url 'transaction-list' %}"
+                         hx-target="body"
+                         hx-swap="innerHTML"
                          hx-indicator="#transaction-loading-spinner"
+                         hx-push-url="true"
                     ></div>
                     {% include "shared_partials/loading_spinner.html" with spinner_id="transaction-loading-spinner" %}
                 {% endblock %}
@@ -196,7 +197,7 @@
                          hx-push-url="true"
                     ></div>
                 {% endblock %}
-                <br/><br/><br/><br/>
+                <br><br><br><br><br><br>
                 {% include "shared_partials/loading_spinner.html" with spinner_id="settings-loading-spinner" %}
             </div>
 

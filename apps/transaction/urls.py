@@ -13,9 +13,9 @@ urlpatterns = [
     build_room_specific_paths(
         [
             path(
-                "htmx/list",
-                views.TransactionListHTMXView.as_view(),
-                name="htmx-transaction-list",
+                "list",
+                views.TransactionListView.as_view(),
+                name="transaction-list",
             ),
             path(
                 "htmx/detail/<int:pk>",
