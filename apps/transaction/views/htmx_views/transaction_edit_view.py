@@ -5,12 +5,11 @@ from django.views import generic
 from django_context_decorator import context
 
 from apps.core import htmx
-from apps.room.views.mixins.room_specific_mixin import RoomSpecificMixin
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.models import ParentTransaction
 
 
-class TransactionEditHTMXView(RoomSpecificMixin, htmx.FormHtmxResponseMixin, generic.UpdateView):
+class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
     model = ParentTransaction
     form_class = TransactionEditForm
     template_name = "transaction/_edit.html"
@@ -24,9 +23,15 @@ class TransactionEditHTMXView(RoomSpecificMixin, htmx.FormHtmxResponseMixin, gen
         return HttpResponseRedirect(
             reverse(
                 viewname="htmx-transaction-detail",
-                kwargs={"room_slug": self._room.slug, "pk": self.object.id},
+                kwargs={"room_slug": self.request.room.slug, "pk": self.object.id},
             )
         )
+
+    @context
+    @property
+    def room(self):
+        # TODO CT: Fix room_url templatetag
+        return self.request.room
 
     @context
     @cached_property
