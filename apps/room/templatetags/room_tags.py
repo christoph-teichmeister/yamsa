@@ -19,5 +19,14 @@ def parse_user_text(context, user_name: str, start_of_sentence: bool = False):
 
 @register.tag
 def room_url(parser, token):
-    token.contents += " room_slug=current_room.slug"  # TODO CT: Room list is broken, fix this
+    # Templates using the room_url tag, will have "current_room" available in their context
+    room_context_name = "current_room"
+
+    # room/list.html does not and can not have current_room as context_variable, but it does iterate over a room_qs
+    # calling each entry "room", so use that instead
+    if "room/list.html" in parser.origin.name:
+        room_context_name = "room"
+
+    token.contents += f" room_slug={room_context_name}.slug"
+
     return url(parser, token)
