@@ -17,7 +17,10 @@
 <div class="row mt-4 d-flex w-100 justify-content-between">
     <h5 class="w-50">Money spent</h5>
     <h5 class="w-50 d-flex justify-content-end">
-        {{ total_money_spent.total_spent }} {{ total_money_spent.currency_sign }}
+        {% for total_money_spent_entry in total_money_spent %}
+            {{ total_money_spent_entry.total_spent }}{{ total_money_spent_entry.currency_sign }}
+            {% if not forloop.last %}  /  {% endif %}
+        {% endfor %}
     </h5>
 </div>
 <ul class="list-group list-group-flush">

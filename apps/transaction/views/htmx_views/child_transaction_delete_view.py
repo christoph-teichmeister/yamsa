@@ -26,7 +26,7 @@ class ChildTransactionDeleteHTMXView(htmx.FormHtmxResponseMixin, generic.DeleteV
         if self.parent_transactions_has_no_child_transactions_anymore:
             self.object.parent_transaction.delete()
             form_valid_return["HX-Redirect"] = reverse(
-                viewname="room-detail", kwargs={"room_slug": self.object.parent_transaction.room.slug}
+                viewname="room-dashboard", kwargs={"room_slug": self.object.parent_transaction.room.slug}
             )
 
         # Handle any necessary post-update actions

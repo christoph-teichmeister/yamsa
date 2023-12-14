@@ -1,8 +1,8 @@
 from django.db import models
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
-from apps.debt.managers import NewDebtManager
-from apps.debt.querysets import NewDebtQuerySet
+from apps.debt.managers import DebtManager
+from apps.debt.querysets import DebtQuerySet
 
 
 class Debt(FullCleanOnSaveMixin, models.Model):
@@ -17,7 +17,7 @@ class Debt(FullCleanOnSaveMixin, models.Model):
     settled = models.BooleanField(default=False)
     settled_at = models.DateField(blank=True, null=True)
 
-    objects = NewDebtManager.from_queryset(NewDebtQuerySet)()
+    objects = DebtManager.from_queryset(DebtQuerySet)()
 
     class Meta:
         verbose_name = "Debt"

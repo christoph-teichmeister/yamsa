@@ -1,26 +1,25 @@
 {% include "account/partials/_guest_add_modal.html" %}
 
-{% if room_users %}
-
-    <div class="row align-items-center mt-4">
-        <div class="col-7">
-            <h5>People</h5>
-        </div>
-        <div class="col-5 d-flex justify-content-end">
-            <button type="button" class="btn btn-primary btn-sm me-2 mb-2" data-bs-toggle="modal"
-                    data-bs-target="#addGuestModal">
-                Add guest
-            </button>
-        </div>
+<div class="row align-items-center mt-3">
+    <div class="col-7">
+        <h5>People</h5>
     </div>
+    <div class="col-5 d-flex justify-content-end">
+        <button type="button" class="btn btn-primary btn-sm me-2 mb-2 {% if current_room.is_closed %}disabled{% endif %}" data-bs-toggle="modal"
+                data-bs-target="#addGuestModal">
+            Add guest
+        </button>
+    </div>
+</div>
 
+{% if user_qs_for_room %}
     <div class="row row-cols-1 row-cols-md-3 g-4 mt-1 mb-3">
-        {% for user in room_users %}
+        {% for user in user_qs_for_room %}
             {% include "shared_partials/user_card.html" with user=user %}
         {% endfor %}
     </div>
-
-    <br/>
-    <br/>
-    <br/>
 {% endif %}
+
+<br/>
+<br/>
+<br/>

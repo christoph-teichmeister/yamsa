@@ -23,7 +23,7 @@
                         id="preferred_currency"
                         required
                 >
-                    {% for currency in currencies %}
+                    {% for currency in all_currencies %}
                         <option {% if forloop.first %}selected{% endif %}
                                 value="{{ currency.id }}">
                             {{ currency.sign }}
@@ -34,7 +34,8 @@
 
             <div class="mb-3">
                 <label for="description" class="form-label">{{ form.fields.description.label }}</label>
-                <textarea class="form-control" id="description" name="description" required rows="3"></textarea>
+                <textarea class="form-control" id="description" name="description" required rows="2" maxlength="50"
+                          minlength="1"></textarea>
                 {% for error_message in form.errors.description.data %}
                     <small class="error" id="descriptionError">{{ error_message.message }}</small>
                 {% endfor %}

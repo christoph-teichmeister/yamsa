@@ -65,6 +65,8 @@ class GetUserOfflineTemplateView(MaintenanceOrOfflineView):
 
 
 class ManifestView(generic.View):
+    http_method_names = ["get", "options"]
+
     def get(self, request, *args, **kwargs):
         return JsonResponse(data=settings.MANIFEST)
 

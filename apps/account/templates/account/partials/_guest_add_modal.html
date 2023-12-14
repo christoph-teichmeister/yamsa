@@ -4,7 +4,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="addGuestModalLabel">Add a guest for {{ room.name }}</h1>
+                <h1 class="modal-title fs-5" id="addGuestModalLabel">Add a guest for {{ current_room.name }}</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -24,7 +24,7 @@
                                type="text"
                                class="form-control"
                                required
-                               value="{{ room.slug }}"
+                               value="{{ current_room.slug }}"
                         />
                     </div>
                 </div>

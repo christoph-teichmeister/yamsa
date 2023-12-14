@@ -23,7 +23,7 @@
                 id="userSelect"
                 required
         >
-            {% for room_user in room_users %}
+            {% for room_user in current_room.users %}
                 {% if room_user.is_guest %}
                     <option value="{{ room_user.id }}">
                         {{ room_user.name }}
@@ -40,7 +40,7 @@
                type="text"
                class="form-control"
                required
-               value="{{ room.slug }}"
+               value="{{ current_room.slug }}"
         />
     </div>
 

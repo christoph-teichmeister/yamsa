@@ -84,6 +84,7 @@ DJANGO_APPS = (
 
 THIRD_PARTY_APPS = (
     "ambient_toolbox",
+    "django_browser_reload",
     "django_extensions",
 )
 
@@ -110,6 +111,8 @@ MIDDLEWARE = (
     "ambient_toolbox.middleware.current_user.CurrentUserMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
+    "apps.room.middleware.RoomToRequestMiddleware",
 )
 
 ROOT_URLCONF = "apps.config.urls"
@@ -125,6 +128,8 @@ TEMPLATES = (
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "apps.currency.context_processors.currency_context",
+                "apps.room.context_processors.room_context",
             ],
         },
     },

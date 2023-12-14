@@ -5,16 +5,19 @@ from apps.room.models import Room
 
 class RoomListView(generic.ListView):
     model = Room
-    context_object_name = "rooms"
+    context_object_name = "room_qs"
     template_name = "room/list.html"
 
     def get_queryset(self):
+        # TODO CT: Move this to Queryset method
         user = self.request.user
+
+        qs = Room.objects.filter(users=user)
 
         if user.is_anonymous:
             return Room.objects.none()
 
         if user.is_superuser:
-            return Room.objects.all()
+            qs = Room.objects.all()
 
-        return Room.objects.filter(users=user)
+        return qs.order_by("status", "name")

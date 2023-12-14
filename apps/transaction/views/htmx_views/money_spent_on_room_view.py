@@ -2,15 +2,14 @@ from django.db.models import Sum, F
 from django.views import generic
 from django_context_decorator import context
 
-from apps.room.views.mixins.room_specific_mixin import RoomSpecificMixin
 from apps.transaction.models import ChildTransaction
 
 
-class MoneySpentOnRoomView(RoomSpecificMixin, generic.TemplateView):
+class MoneySpentOnRoomView(generic.TemplateView):
     template_name = "transaction/partials/_money_spent_on_room.html"
 
     def get_base_queryset(self):
-        return ChildTransaction.objects.filter(parent_transaction__room=self._room)
+        return ChildTransaction.objects.filter(parent_transaction__room=self.request.room)
 
     @context
     @property
@@ -29,12 +28,11 @@ class MoneySpentOnRoomView(RoomSpecificMixin, generic.TemplateView):
     @context
     @property
     def total_money_spent(self):
-        # TODO CT: Idk, this is weird
-        return list(
+        return (
             self.get_base_queryset()
             .values("parent_transaction__currency__sign")
             .annotate(currency_sign=F("parent_transaction__currency__sign"), total_spent=Sum("value"))
-        )[0]
+        )
 
     @context
     @property

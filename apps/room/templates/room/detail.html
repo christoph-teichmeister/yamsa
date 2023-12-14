@@ -1,209 +1,60 @@
-{% extends "core/base.html" %}
+{% extends "room/dashboard.html" %}
 {% load static %}
 {% load room_tags %}
 
-{% block title %}yamsa | {{ room.name }}{% endblock %}
+{% block settings_content %}
 
-{% block content %}
-    {# Hey <username >#}
-    {% if request.user.is_authenticated %}
-        <small>Hey
-            <span class="text-primary-emphasis">{{ request.user.name }}</span>!
-        </small>
-    {% endif %}
-
-    {# Room name and copy room button #}
-    <div class="row align-items-center mt-3">
-        <div class="col-9 col-md-5 text-break">
-            <h1>{{ room.name }}</h1>
+    <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
+        <div class="col">
+            <h5 class="m-0">Room</h5>
         </div>
-        <div class="col-3 col-md-7">
-            <button class="btn btn-light btn-sm float-end me-4"
-                    onclick="copyShareURL()"
-                    data-bs-toggle="tooltip"
-                    data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
-                    hx-get="{% url 'htmx-checked-clipboard' %}"
+        <div class="col p-0">
+            <button class="btn btn-primary btn-sm float-end px-3"
+                    hx-get="{% room_url 'room-edit' %}"
+                    hx-target="#body"
                     hx-swap="innerHTML"
+                    hx-push-url="true"
             >
-                {% include "shared_partials/clipboard_icon_unchecked.html" %}
+                Edit
             </button>
         </div>
     </div>
 
-    {# Room description #}
-    <div class="mb-3">
-        <small>{{ room.description }}</small>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"></li>
+
+        <li class="list-group-item py-4 px-2">
+            <div class="d-flex py-1 justify-content-between align-items-center">
+                Name:
+                <span class="w-50">{{ room.name }}</span>
+            </div>
+
+            <br/>
+
+            <div class="d-flex py-1 justify-content-between align-items-center">
+                Description:
+                <span class="w-50">{{ room.description }}</span>
+            </div>
+
+            <br/>
+
+            <div class="d-flex py-1 justify-content-between align-items-center">
+                Preferred Currency:
+                <span class="w-50">{{ room.preferred_currency }}</span>
+            </div>
+        </li>
+
+        <li class="list-group-item"></li>
+    </ul>
+
+    <div class="row my-4">
+        <p class="text-center text-muted">
+            {% if current_room.is_open %}
+                Room is open
+            {% elif current_room.is_closed %}
+                Room is closed
+            {% endif %}
+        </p>
     </div>
 
-    {% if request.user.is_authenticated %}
-        {# Room Tab-Headers #}
-        <ul class="nav nav-tabs nav-fill" id="roomTab" role="tablist">
-
-            <li class="nav-item" role="presentation" style="cursor: pointer">
-                <a id="transaction-tab"
-                   class="nav-link {% if active_tab == "transaction" %}active{% endif %}"
-                   role="tab"
-                   data-bs-toggle="tab"
-                   data-bs-target="#transaction-tab-content"
-                   aria-controls="transaction-tab-content"
-                   aria-selected="true"
-                   hx-trigger="click, loadTransactionList from:body"
-                   hx-get="{% room_url 'room-detail' %}?active_tab=transaction"
-                   hx-target="#body"
-                   hx-swap="innerHTML"
-                   hx-indicator="#transaction-loading-spinner"
-                   hx-push-url="true"
-                >
-                    <i class="bi bi-wallet"></i>
-                </a>
-            </li>
-
-            <li class="nav-item" role="presentation" style="cursor: pointer">
-                <a id="debt-tab"
-                   class="nav-link {% if active_tab == "debt" %}active{% endif %}"
-                   role="tab"
-                   data-bs-toggle="tab"
-                   data-bs-target="#debt-tab-content"
-                   aria-controls="debt-tab-content"
-                   aria-selected="false"
-                   hx-trigger="click, loadDebtList from:body"
-                   hx-get="{% room_url 'room-detail' %}?active_tab=debt"
-                   hx-target="#body"
-                   hx-swap="innerHTML"
-                   hx-indicator="#debt-loading-spinner"
-                   hx-push-url="true"
-                >
-                    <i class="bi bi-piggy-bank"></i>
-                </a>
-            </li>
-
-            <li class="nav-item" role="presentation" style="cursor: pointer">
-                <a id="people-tab"
-                   class="nav-link {% if active_tab == "people" %}active{% endif %}"
-                   role="tab"
-                   data-bs-toggle="tab"
-                   data-bs-target="#people-tab-content"
-                   aria-controls="people-tab-content"
-                   aria-selected="false"
-                   hx-trigger="click, loadPeopleList from:body"
-                   hx-get="{% room_url 'room-detail' %}?active_tab=people"
-                   hx-target="#body"
-                   hx-swap="innerHTML"
-                   hx-indicator="#people-loading-spinner"
-                   hx-push-url="true"
-                >
-                    <i class="bi bi-people"></i>
-                </a>
-            </li>
-
-        </ul>
-
-        {# Room Tab-Contents #}
-        <div class="tab-content" id="tab-content">
-
-            <div class="tab-pane fade {% if active_tab == "transaction" %}show active{% endif %}"
-                 id="transaction-tab-content"
-                 role="tabpanel"
-                 aria-labelledby="transaction-tab"
-                 tabindex="0"
-            >
-                {% block transaction_content %}
-                    <div hx-trigger="{% if active_tab == "transaction" %}load{% endif %}, loadTransactionList from:body"
-                         hx-get="{% room_url 'htmx-transaction-list' %}"
-                         hx-target="this"
-                         hx-swap="outerHTML"
-                         hx-indicator="#transaction-loading-spinner"
-                    ></div>
-                    {% include "shared_partials/loading_spinner.html" with spinner_id="transaction-loading-spinner" %}
-                {% endblock %}
-            </div>
-
-            <div class="tab-pane fade {% if active_tab == "debt" %}show active{% endif %}"
-                 id="debt-tab-content"
-                 role="tabpanel"
-                 aria-labelledby="debt-tab"
-                 tabindex="1"
-            >
-                <div hx-trigger="{% if active_tab == "debt" %}load{% endif %}, loadDebtList from:body"
-                     hx-get="{% room_url 'htmx-debt-list' %}"
-                     hx-target="this"
-                     hx-swap="outerHTML"
-                     hx-indicator="#debt-loading-spinner"
-                ></div>
-                {% include "shared_partials/loading_spinner.html" with spinner_id="debt-loading-spinner" %}
-            </div>
-
-            <div class="tab-pane fade {% if active_tab == "people" %}show active{% endif %}"
-                 id="people-tab-content"
-                 role="tabpanel"
-                 aria-labelledby="people-tab"
-                 tabindex="2"
-            >
-                <div hx-trigger="{% if active_tab == "people" %}load{% endif %}, loadPeopleList from:body"
-                     hx-get="{% room_url 'htmx-account-list' %}"
-                     hx-target="this"
-                     hx-swap="outerHTML"
-                     hx-indicator="#people-loading-spinner"
-                ></div>
-                {% include "shared_partials/loading_spinner.html" with spinner_id="people-loading-spinner" %}
-            </div>
-
-        </div>
-    {% else %}
-        {% include "room/partials/_detail_who_are_you.html" %}
-    {% endif %}
-
-    <script type="text/javascript">
-      var copyShareURL = () => {
-        const url = document.URL
-        navigator.clipboard.writeText(url).then(() => {
-          // clipboard successfully set
-          console.log(`${url} successfully copied to clipboard`)
-        }, () => {
-          // clipboard write failed
-          console.error("Something went wrong here")
-        });
-      }
-    </script>
-
-    <script type="module">
-      // TODO CT: Joa keine Ahnung, fix this I guess
-      /*
-      const triggerTabList = document.querySelectorAll('#roomTab a')
-
-      let currentActiveTab = undefined
-      let nextTabToBeActive = undefined
-
-      const getNextIndex = (index, swipeDirection) => {
-        if (swipeDirection === "swipeleft") {
-          return index + 1 > triggerTabList.length - 1 ? 0 : index + 1
-        } else if (swipeDirection === "swiperight") {
-          return index - 1 < 0 ? triggerTabList.length - 1 : index - 1
-        }
-        return index
-      }
-
-      $(function () {
-        $("#tab-content").on("swipeleft", swipeHandler).on("swiperight", swipeHandler);
-
-        // Callback function references the event target and adds the 'swipe' class to it
-        function swipeHandler(event) {
-          console.log(event.type)
-          console.log("currentActiveTab", currentActiveTab)
-          console.log("nextTabToBeActive", nextTabToBeActive)
-
-          triggerTabList.forEach((el, index) => {
-            if (el.getAttribute("aria-selected") === "true") {
-              currentActiveTab = el
-
-              nextTabToBeActive = triggerTabList[getNextIndex(index, event.type)]
-
-              window.bootstrap.Tab.getOrCreateInstance(nextTabToBeActive).show()
-              return false;
-            }
-          })
-        }
-      });
-       */
-    </script>
 {% endblock %}

@@ -2,8 +2,11 @@ import uuid
 
 from ambient_toolbox.models import CommonInfo
 from django.db import models
+from functools import cached_property
 
+from apps.account.models import User
 from apps.core.models.mixins import FullCleanOnSaveMixin
+from apps.room.managers import RoomManager
 
 
 class Room(FullCleanOnSaveMixin, CommonInfo):
@@ -13,12 +16,14 @@ class Room(FullCleanOnSaveMixin, CommonInfo):
 
     slug = models.UUIDField(unique=True)
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=500)
+    description = models.TextField(max_length=50)
     status = models.SmallIntegerField(choices=StatusChoices.choices, default=StatusChoices.OPEN)
 
     preferred_currency = models.ForeignKey("currency.Currency", related_name="rooms", on_delete=models.DO_NOTHING)
 
     users = models.ManyToManyField("account.User", through="room.UserConnectionToRoom")
+
+    objects = RoomManager()
 
     class Meta:
         verbose_name = "Room"
@@ -31,3 +36,15 @@ class Room(FullCleanOnSaveMixin, CommonInfo):
         if not self.slug:
             self.slug = uuid.uuid4()
         super().save(*args, **kwargs)
+
+    @cached_property
+    def room_users(self):
+        return User.objects.filter(room=self)
+
+    @cached_property
+    def has_guests(self):
+        return self.room_users.filter(is_guest=True).exists()
+
+    @property
+    def can_be_closed(self):
+        return not self.debts.filter(settled=False).exists()

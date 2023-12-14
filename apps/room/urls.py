@@ -15,5 +15,11 @@ urlpatterns = [
         views.CheckedClipboardHTMXView.as_view(),
         name="htmx-checked-clipboard",
     ),
-    build_room_specific_paths([path("detail", views.RoomDetailView.as_view(), name="room-detail")]),
+    build_room_specific_paths(
+        [
+            path("dashboard", views.RoomDashboardView.as_view(), name="room-dashboard"),
+            path("detail", views.RoomDetailView.as_view(), name="room-detail"),
+            path("edit", views.RoomEditView.as_view(), name="room-edit"),
+        ]
+    ),
 ]
