@@ -5,7 +5,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="addTransactionModalLabel">Add payment for {{ room.name }}</h1>
+                <h1 class="modal-title fs-5" id="addTransactionModalLabel">Add payment for {{ current_room.name }}</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -22,7 +22,7 @@
                                 required
                         >
                             <option value="{{ request.user.id }}">{{ request.user.name }}</option>
-                            {% for room_user in room_users %}
+                            {% for room_user in current_room.room_users %}
                                 {% if room_user.id != request.user.id %}
                                     <option value="{{ room_user.id }}">{{ room_user.name }}</option>
                                 {% endif %}
@@ -49,9 +49,9 @@
                                         id="currencySelect"
                                         required
                                 >
-                                    <option value="{{ room.preferred_currency.id }}">{{ room.preferred_currency.sign }}</option>
+                                    <option value="{{ current_room.preferred_currency.id }}">{{ current_room.preferred_currency.sign }}</option>
                                     {% for currency in all_currencies %}
-                                        {% if currency != room.preferred_currency %}
+                                        {% if currency != current_room.preferred_currency %}
                                             <option value="{{ currency.id }}">{{ currency.sign }}</option>
                                         {% endif %}
                                     {% endfor %}
@@ -68,7 +68,7 @@
                                 id="paidForSelect"
                                 required
                         >
-                            {% for room_user in room_users %}
+                            {% for room_user in current_room.room_users %}
                                 <option value="{{ room_user.id }}">{{ room_user.name }}</option>
                             {% endfor %}
                         </select>
@@ -86,7 +86,7 @@
                                type="text"
                                class="form-control"
                                required
-                               value="{{ room.slug }}"
+                               value="{{ current_room.slug }}"
                         />
                     </div>
 
@@ -97,7 +97,7 @@
                                type="number"
                                class="form-control"
                                required
-                               value="{{ room.id }}"
+                               value="{{ current_room.id }}"
                         />
                     </div>
 

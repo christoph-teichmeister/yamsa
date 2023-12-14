@@ -2,7 +2,9 @@ import uuid
 
 from ambient_toolbox.models import CommonInfo
 from django.db import models
+from functools import cached_property
 
+from apps.account.models import User
 from apps.core.models.mixins import FullCleanOnSaveMixin
 from apps.room.managers import RoomManager
 
@@ -34,6 +36,10 @@ class Room(FullCleanOnSaveMixin, CommonInfo):
         if not self.slug:
             self.slug = uuid.uuid4()
         super().save(*args, **kwargs)
+
+    @cached_property
+    def room_users(self):
+        return User.objects.filter(room=self)
 
     @property
     def can_be_closed(self):

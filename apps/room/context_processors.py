@@ -13,5 +13,8 @@ def room_context(request):
             "is_open": room.status == room.StatusChoices.OPEN,
             "name": room.name,
             "slug": room.slug,
+            "id": room.id,
+            "preferred_currency": room.preferred_currency,
+            "room_users": room.room_users,
         },
     }
