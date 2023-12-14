@@ -5,7 +5,7 @@ from apps.room.models import Room
 
 class RoomListView(generic.ListView):
     model = Room
-    context_object_name = "rooms"
+    context_object_name = "room_qs"
     template_name = "room/list.html"
 
     def get_queryset(self):
