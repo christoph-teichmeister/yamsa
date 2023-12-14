@@ -13,12 +13,6 @@ class MoneySpentOnRoomView(generic.TemplateView):
 
     @context
     @property
-    def room(self):
-        # TODO CT: Fix room_url templatetag
-        return self.request.room
-
-    @context
-    @property
     def money_spent_per_person_qs(self):
         return (
             self.get_base_queryset()

@@ -3,19 +3,17 @@ from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
-from apps.currency.models import Currency
 from apps.room.models import Room
 
 
 class RoomDashboardView(generic.DetailView):
     template_name = "room/dashboard.html"
-    context_object_name = "room"
     slug_url_kwarg = "room_slug"
     model = Room
 
     @context
     @cached_property
-    def room_users(self):
+    def room_users_for_who_are_you(self):
         return (
             self.object.userconnectiontoroom_set.all()
             .select_related("user")

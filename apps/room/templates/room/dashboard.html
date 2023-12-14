@@ -15,7 +15,7 @@
     {# Room name and copy room button #}
     <div class="row align-items-center mt-3">
         <div class="col-9 col-md-5 text-break">
-            <h1>{{ room.name }}</h1>
+            <h1>{{ current_room.name }}</h1>
         </div>
         <div class="col-3 col-md-7">
             <button class="btn btn-light btn-sm float-end me-4"
@@ -32,7 +32,7 @@
 
     {# Room description #}
     <div class="mb-3">
-        <small>{{ room.description }}</small>
+        <small>{{ current_room.description }}</small>
     </div>
 
     {% if request.user.is_authenticated %}

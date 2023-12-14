@@ -28,12 +28,6 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
         )
 
     @context
-    @property
-    def room(self):
-        # TODO CT: Fix room_url templatetag
-        return self.request.room
-
-    @context
     @cached_property
     def child_transaction_qs(self):
         return self.get_object().child_transactions.all()
