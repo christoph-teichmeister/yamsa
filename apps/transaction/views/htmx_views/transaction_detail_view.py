@@ -11,12 +11,6 @@ class TransactionDetailHTMXView(generic.DetailView):
     template_name = "transaction/_detail.html"
 
     @context
-    @property
-    def room(self):
-        # TODO CT: Fix room_url templatetag
-        return self.request.room
-
-    @context
     @cached_property
     def child_transactions(self):
         return self.object.child_transactions.all()
