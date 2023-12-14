@@ -23,7 +23,7 @@
                 id="userSelect"
                 required
         >
-            {% for room_user in room_users_for_who_are_you %}  # TODO CT: Fix this
+            {% for room_user in current_room.users %}
                 {% if room_user.is_guest %}
                     <option value="{{ room_user.id }}">
                         {{ room_user.name }}
