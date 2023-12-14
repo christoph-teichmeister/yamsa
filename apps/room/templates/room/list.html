@@ -9,21 +9,29 @@
                 <div class="col-12 col-lg-6" style="cursor: pointer">
                     <div class="p-1">
                         <div class="card"
-                             style="background-color: #181618"
+                             style="background-color: #181618; height:8rem"
                              hx-trigger="click"
                              hx-get="{% room_url 'room-dashboard' %}?active_tab=transaction"
                              hx-target="#body"
                              hx-swap="innerHTML"
                              hx-push-url="true"
                         >
-                            <div class="card-body">
+                            <div class="card-body container d-flex align-items-center justify-content-center flex-wrap">
                                 {% if request.user.is_superuser and request.user not in room.users.all %}
                                     <small style="font-style: italic">
                                         {{ room.created_by }}
                                     </small>
                                 {% endif %}
-                                <h5 class="card-title">{{ room.name }}</h5>
-                                <p class="card-text">{{ room.description }}</p>
+                                <div class="row w-100">
+                                    <div class="col">
+                                        <h5 class="card-title {% if request.user.is_superuser and request.user not in room.users.all %}text-muted{% endif %}">{{ room.name }}</h5>
+                                    </div>
+                                </div>
+                                <div class="row w-100">
+                                    <div class="col">
+                                        <p class="card-text {% if request.user.is_superuser and request.user not in room.users.all %}text-muted{% endif %}">{{ room.description }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -47,7 +55,6 @@
                     </div>
                 </div>
             </div>
-
 
         </div>
     </div>
