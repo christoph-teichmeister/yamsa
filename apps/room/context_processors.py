@@ -2,12 +2,18 @@ from apps.room.models import Room
 
 
 def room_context(request):
+    base_context = {
+        "ROOM_STATUS_OPEN": Room.StatusChoices.OPEN.value,
+        "ROOM_STATUS_CLOSED": Room.StatusChoices.CLOSED.value,
+    }
+
     room: Room = getattr(request, "room", None)
 
     if room is None:
-        return {}
+        return base_context
 
     return {
+        **base_context,
         "current_room": {
             # Model fields
             "id": room.id,

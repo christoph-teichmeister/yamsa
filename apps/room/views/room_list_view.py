@@ -11,10 +11,12 @@ class RoomListView(generic.ListView):
     def get_queryset(self):
         user = self.request.user
 
+        qs = Room.objects.filter(users=user)
+
         if user.is_anonymous:
             return Room.objects.none()
 
         if user.is_superuser:
-            return Room.objects.all()
+            qs = Room.objects.all()
 
-        return Room.objects.filter(users=user)
+        return qs.order_by("status", "name")
