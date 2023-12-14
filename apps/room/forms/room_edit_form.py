@@ -30,7 +30,7 @@ class RoomEditForm(forms.ModelForm):
             notification = Notification(
                 payload=Notification.Payload(
                     head="Room closed",
-                    body=f"{self.user.name} closed {self.instance.name}",
+                    body=f'{self.user.name} closed "{self.instance.name}"',
                 ),
             )
             for user in self.instance.room_users.exclude(id=self.user.id):
