@@ -20,7 +20,7 @@
             </h1>
         </div>
         <div class=" col-3 col-md-7 d-flex justify-content-center">
-            {% if current_room.is_open and current_room.has_guests%}
+            {% if current_room.is_open and current_room.has_guests %}
                 <button class="btn btn-light btn-sm"
                         onclick="copyShareURL()"
                         data-bs-toggle="tooltip"
@@ -173,13 +173,17 @@
                  aria-labelledby="people-tab"
                  tabindex="2"
             >
-                <div hx-trigger="{% if active_tab == "people" %}load{% endif %}, loadPeopleList from:body"
-                     hx-get="{% room_url 'htmx-account-list' %}"
-                     hx-target="this"
-                     hx-swap="outerHTML"
-                     hx-indicator="#people-loading-spinner"
-                ></div>
-                {% include "shared_partials/loading_spinner.html" with spinner_id="people-loading-spinner" %}
+                {% block people_content %}
+                    <div hx-trigger="{% if active_tab == "people" %}load{% endif %}, loadPeopleList from:body"
+                         hx-get="{% room_url 'htmx-account-list' %}"
+                         hx-target="body"
+                         hx-swap="innerHTML"
+                         hx-indicator="#people-loading-spinner"
+                         hx-push-url="true"
+                    ></div>
+                    {% include "shared_partials/loading_spinner.html" with spinner_id="people-loading-spinner" %}
+                    <br><br><br><br><br><br>
+                {% endblock %}
             </div>
 
             <div class="tab-pane fade {% if active_tab == "settings" %}show active{% endif %}"
