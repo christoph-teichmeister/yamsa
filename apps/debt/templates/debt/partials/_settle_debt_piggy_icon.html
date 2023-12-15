@@ -1,3 +1,5 @@
+{% load room_tags %}
+
 {% if debt.settled %}
     <i class="bi bi-piggy-bank-fill debt-list-debt-settled"></i>
 {% else %}
@@ -10,15 +12,16 @@
             &nbsp&nbsp&nbsp
         {% endif %}
         <i class="bi bi-piggy-bank"
-           data-bs-toggle="modal"
-           data-bs-target="#settleDebtModal{{ debt.id }}"></i>
+           hx-get="{% room_url 'debt-settle' pk=debt.id %}"
+           hx-target="#body"
+           hx-swap="innerHTML"
+           hx-push-url="true"
+        ></i>
     {% else %}
         <i class="bi bi-piggy-bank" style="opacity: 25%; cursor:pointer;"
            data-bs-toggle="tooltip"
            data-bs-placement="top"
            data-bs-title="This transaction is not yours to settle!"></i>
     {% endif %}
-
-    {% include "debt/partials/_settle_debt_modal.html" with debt=debt %}
 
 {% endif %}

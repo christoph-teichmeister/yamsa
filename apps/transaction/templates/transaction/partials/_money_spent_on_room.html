@@ -1,71 +1,77 @@
+{% extends "room/dashboard.html" %}
+{% load static %}
 {% load room_tags %}
 
-<div class="row mt-4 mx-2">
-    <div class="col-1">
-        <i class="bi bi-arrow-left-circle fs-2"
-           style="cursor: pointer"
-           hx-trigger="click"
-           hx-get="{% room_url 'htmx-debt-list' %}"
-           hx-target="#debt-tab-content"
-           hx-swap="innerHTML"></i>
+{% block debt_content %}
+
+    <div class="row mt-4 mx-2">
+        <div class="col-1">
+            <i class="bi bi-arrow-left-circle fs-2"
+               style="cursor: pointer"
+               hx-trigger="click"
+               hx-get="{% room_url 'debt-list' %}"
+               hx-target="#body"
+               hx-swap="innerHTML"
+               hx-push-url="true"
+            ></i>
+        </div>
+        <div class="col-10 d-flex align-items-center justify-content-center">
+            <h5>Overview</h5>
+        </div>
     </div>
-    <div class="col-10 d-flex align-items-center justify-content-center">
-        <h5>Overview</h5>
+
+    <div class="row mt-4 d-flex w-100 justify-content-between">
+        <h5 class="w-50">Money spent</h5>
+        <h5 class="w-50 d-flex justify-content-end">
+            {% for total_money_spent_entry in total_money_spent %}
+                {{ total_money_spent_entry.total_spent }}{{ total_money_spent_entry.currency_sign }}
+                {% if not forloop.last %}  /  {% endif %}
+            {% endfor %}
+        </h5>
     </div>
-</div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item p-0"></li>
 
-<div class="row mt-4 d-flex w-100 justify-content-between">
-    <h5 class="w-50">Money spent</h5>
-    <h5 class="w-50 d-flex justify-content-end">
-        {% for total_money_spent_entry in total_money_spent %}
-            {{ total_money_spent_entry.total_spent }}{{ total_money_spent_entry.currency_sign }}
-            {% if not forloop.last %}  /  {% endif %}
-        {% endfor %}
-    </h5>
-</div>
-<ul class="list-group list-group-flush">
-    <li class="list-group-item p-0"></li>
-
-    <li class="list-group-item p-4">
-        {% for money_spent in money_spent_per_person_qs %}
-            <div class="float-start">
-                <i class="bi bi-caret-right"></i>
-                {% autoescape off %}
-                    {% parse_user_text money_spent.paid_by_name True %}
-                {% endautoescape %}
-            </div>
-            <div class="float-end">
-                {{ money_spent.total_spent_per_person }} {{ money_spent.currency_sign }}
-            </div>
-            {% if not forloop.last %}<br><br>{% endif %}
-        {% endfor %}
-    </li>
-
-    <li class="list-group-item"></li>
-</ul>
-
-<h5 class="mt-4">Money owed</h5>
-<ul class="list-group list-group-flush">
-    <li class="list-group-item p-0"></li>
-
-    <li class="list-group-item p-4">
-        {% for money_owed in money_owed_per_person_qs %}
-            {% if money_owed.total_owed_per_person > 0 %}
+        <li class="list-group-item p-4">
+            {% for money_spent in money_spent_per_person_qs %}
                 <div class="float-start">
                     <i class="bi bi-caret-right"></i>
                     {% autoescape off %}
-                        {% parse_user_text money_owed.paid_for__name True %}
+                        {% parse_user_text money_spent.paid_by_name True %}
                     {% endautoescape %}
                 </div>
                 <div class="float-end">
-                    {{ money_owed.total_owed_per_person }} {{ money_owed.currency_sign }}
+                    {{ money_spent.total_spent_per_person }} {{ money_spent.currency_sign }}
                 </div>
                 {% if not forloop.last %}<br><br>{% endif %}
-            {% endif %}
-        {% endfor %}
-    </li>
+            {% endfor %}
+        </li>
 
-    <li class="list-group-item p-4"></li>
-</ul>
+        <li class="list-group-item"></li>
+    </ul>
 
-<br><br><br>
+    <h5 class="mt-4">Money owed</h5>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item p-0"></li>
+
+        <li class="list-group-item p-4">
+            {% for money_owed in money_owed_per_person_qs %}
+                {% if money_owed.total_owed_per_person > 0 %}
+                    <div class="float-start">
+                        <i class="bi bi-caret-right"></i>
+                        {% autoescape off %}
+                            {% parse_user_text money_owed.paid_for__name True %}
+                        {% endautoescape %}
+                    </div>
+                    <div class="float-end">
+                        {{ money_owed.total_owed_per_person }} {{ money_owed.currency_sign }}
+                    </div>
+                    {% if not forloop.last %}<br><br>{% endif %}
+                {% endif %}
+            {% endfor %}
+        </li>
+
+        <li class="list-group-item p-4"></li>
+    </ul>
+
+{% endblock %}

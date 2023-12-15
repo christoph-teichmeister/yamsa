@@ -8,7 +8,7 @@ from apps.transaction.models import ChildTransaction
 
 
 class ChildTransactionCreateView(htmx.FormHtmxResponseMixin, generic.CreateView):
-    template_name = "transaction/partials/_child_transaction_add_partial.html"
+    template_name = "transaction/child_transaction_create.html"
 
     model = ChildTransaction
     fields = ("parent_transaction", "paid_for", "value")

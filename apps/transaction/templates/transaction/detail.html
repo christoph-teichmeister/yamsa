@@ -38,7 +38,7 @@
                     {% if current_room.is_open %}
                style="cursor: pointer"
                hx-trigger="click"
-               hx-get="{% room_url 'htmx-transaction-edit' pk=parent_transaction.id %}"
+               hx-get="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
                hx-target="#body"
                hx-swap="innerHTML"
                hx-push-url="true"
@@ -55,7 +55,7 @@
                     {% if current_room.is_open %}
                 style="cursor: pointer"
                 hx-trigger="click"
-                hx-get="{% room_url 'htmx-transaction-edit' pk=parent_transaction.id %}"
+                hx-get="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
                 hx-target="#body"
                 hx-swap="innerHTML"
                 hx-push-url="true"

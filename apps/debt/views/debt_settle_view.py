@@ -1,5 +1,7 @@
 from django.utils import timezone
 from django.views import generic
+from django_context_decorator import context
+from functools import cached_property
 
 from apps.core import htmx
 from apps.core.event_loop.runner import handle_message
@@ -23,3 +25,8 @@ class DebtSettleView(htmx.FormHtmxResponseMixin, generic.UpdateView):
         handle_message(DebtSettled(context_data={"debt": self.object}))
 
         return super().form_valid(form)
+
+    @context
+    @cached_property
+    def active_tab(self):
+        return self.request.GET.get("active_tab", "debt")

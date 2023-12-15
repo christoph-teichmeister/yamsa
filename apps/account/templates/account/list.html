@@ -1,0 +1,32 @@
+{% extends "room/dashboard.html" %}
+{% load static %}
+{% load room_tags %}
+
+{% block people_content %}
+
+    <div class="row align-items-center mt-3">
+        <div class="col-7">
+            <h5>People</h5>
+        </div>
+        <div class="col-5 d-flex justify-content-end">
+            <button type="button"
+                    class="btn btn-primary btn-sm me-2 mb-2 {% if current_room.is_closed %}disabled{% endif %}"
+                    hx-get="{% room_url 'account-create-guest' %}"
+                    hx-target="#body"
+                    hx-swap="innerHTML"
+                    hx-push-url="true"
+            >
+                Add guest
+            </button>
+        </div>
+    </div>
+
+    {% if user_qs_for_room %}
+        <div class="row row-cols-1 row-cols-md-3 g-4 mt-1 mb-3">
+            {% for user in user_qs_for_room %}
+                {% include "shared_partials/user_card.html" with user=user %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+{% endblock %}

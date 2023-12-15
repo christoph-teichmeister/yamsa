@@ -30,7 +30,7 @@
                 <li class="list-group-item pb-4 pt-4"
                     style="cursor: pointer"
                     hx-trigger="click"
-                    hx-get="{% room_url 'htmx-transaction-detail' pk=parent_transaction.id %}"
+                    hx-get="{% room_url 'transaction-detail' pk=parent_transaction.id %}"
                     hx-target="#body"
                     hx-swap="innerHTML"
                     hx-push-url="true"

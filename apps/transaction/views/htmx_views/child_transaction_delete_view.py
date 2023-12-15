@@ -8,9 +8,9 @@ from apps.transaction.messages.events.transaction import AnyTransactionDeleted
 from apps.transaction.models import ChildTransaction
 
 
-class ChildTransactionDeleteHTMXView(htmx.FormHtmxResponseMixin, generic.DeleteView):
+class ChildTransactionDeleteView(htmx.FormHtmxResponseMixin, generic.DeleteView):
     model = ChildTransaction
-    template_name = "transaction/_edit.html"
+    template_name = "transaction/edit.html"
 
     toast_success_message = "Transaction successfully deleted!"
     toast_error_message = "There was an error deleting the transaction"
