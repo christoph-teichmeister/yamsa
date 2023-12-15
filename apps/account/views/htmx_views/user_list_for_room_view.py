@@ -9,7 +9,7 @@ from apps.account.models import User
 class UserListForRoomHTMXView(generic.ListView):
     model = User
     context_object_name = "user_qs_for_room"
-    template_name = "account/_list_for_room.html"
+    template_name = "account/list.html"
 
     def get_queryset(self):
         return (
