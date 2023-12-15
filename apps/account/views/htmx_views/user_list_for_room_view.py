@@ -6,7 +6,7 @@ from functools import cached_property
 from apps.account.models import User
 
 
-class UserListForRoomHTMXView(generic.ListView):
+class UserListForRoomView(generic.ListView):
     model = User
     context_object_name = "user_qs_for_room"
     template_name = "account/list.html"

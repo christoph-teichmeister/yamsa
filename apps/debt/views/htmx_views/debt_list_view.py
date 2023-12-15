@@ -5,7 +5,7 @@ from functools import cached_property
 from apps.debt.models import Debt
 
 
-class DebtListHTMXView(generic.ListView):
+class DebtListView(generic.ListView):
     model = Debt
     context_object_name = "debts"
     template_name = "debt/list.html"

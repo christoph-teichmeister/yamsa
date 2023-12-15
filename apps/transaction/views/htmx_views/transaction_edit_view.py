@@ -9,7 +9,7 @@ from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.models import ParentTransaction
 
 
-class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
+class TransactionEditView(htmx.FormHtmxResponseMixin, generic.UpdateView):
     model = ParentTransaction
     form_class = TransactionEditForm
     template_name = "transaction/edit.html"

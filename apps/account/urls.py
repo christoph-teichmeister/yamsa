@@ -14,7 +14,7 @@ urlpatterns = [
         [
             path(
                 "list",
-                views.UserListForRoomHTMXView.as_view(),
+                views.UserListForRoomView.as_view(),
                 name="account-list",
             ),
             path(
