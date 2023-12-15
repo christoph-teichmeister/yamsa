@@ -175,7 +175,7 @@
             >
                 {% block people_content %}
                     <div hx-trigger="{% if active_tab == "people" %}load{% endif %}, loadPeopleList from:body"
-                         hx-get="{% room_url 'htmx-account-list' %}"
+                         hx-get="{% room_url 'account-list' %}"
                          hx-target="body"
                          hx-swap="innerHTML"
                          hx-indicator="#people-loading-spinner"

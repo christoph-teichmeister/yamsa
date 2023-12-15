@@ -4,8 +4,6 @@
 
 {% block people_content %}
 
-    {% include "account/partials/_guest_add_modal.html" %}
-
     <div class="row align-items-center mt-3">
         <div class="col-7">
             <h5>People</h5>
@@ -13,8 +11,11 @@
         <div class="col-5 d-flex justify-content-end">
             <button type="button"
                     class="btn btn-primary btn-sm me-2 mb-2 {% if current_room.is_closed %}disabled{% endif %}"
-                    data-bs-toggle="modal"
-                    data-bs-target="#addGuestModal">
+                    hx-get="{% room_url 'account-create-guest' %}"
+                    hx-target="#body"
+                    hx-swap="innerHTML"
+                    hx-push-url="true"
+            >
                 Add guest
             </button>
         </div>
