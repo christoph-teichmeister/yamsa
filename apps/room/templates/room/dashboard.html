@@ -158,13 +158,17 @@
                  aria-labelledby="debt-tab"
                  tabindex="1"
             >
-                <div hx-trigger="{% if active_tab == "debt" %}load{% endif %}, loadDebtList from:body"
-                     hx-get="{% room_url 'htmx-debt-list' %}"
-                     hx-target="this"
-                     hx-swap="outerHTML"
-                     hx-indicator="#debt-loading-spinner"
-                ></div>
-                {% include "shared_partials/loading_spinner.html" with spinner_id="debt-loading-spinner" %}
+                {% block debt_content %}
+                    <div hx-trigger="{% if active_tab == "debt" %}load{% endif %}, loadDebtList from:body"
+                         hx-get="{% room_url 'debt-list' %}"
+                         hx-target="body"
+                         hx-swap="innerHTML"
+                         hx-indicator="#debt-loading-spinner"
+                         hx-push-url="true"
+                    ></div>
+                    {% include "shared_partials/loading_spinner.html" with spinner_id="debt-loading-spinner" %}
+                {% endblock %}
+                <br><br><br><br><br><br>
             </div>
 
             <div class="tab-pane fade {% if active_tab == "people" %}show active{% endif %}"

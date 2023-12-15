@@ -8,7 +8,7 @@ from apps.transaction.models import ParentTransaction
 class TransactionDetailHTMXView(generic.DetailView):
     model = ParentTransaction
     context_object_name = "parent_transaction"
-    template_name = "transaction/_detail.html"
+    template_name = "transaction/detail.html"
 
     @context
     @cached_property

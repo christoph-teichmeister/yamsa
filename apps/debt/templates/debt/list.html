@@ -1,0 +1,68 @@
+{% extends "room/dashboard.html" %}
+{% load static %}
+{% load room_tags %}
+
+{% block debt_content %}
+
+    <div class="row align-items-center mt-3">
+        <div class="col">
+            <h5>Optimised Debts</h5>
+            {% if debts %}
+                <small>
+                    If you have paid off your debt to someone, click on the white piggy-bank-icon
+                    (<i class="bi bi-piggy-bank"></i>) next to the debt to mark it as settled.
+                </small>
+
+                <ul class="list-group mt-3">
+                    <li class="list-group-item"
+                        hx-trigger="click"
+                        hx-get="{% room_url 'money-spent-on-room' %}"
+                        hx-target="#body"
+                        hx-swap="innerHTML"
+                        hx-push-url="true"
+                    >
+                        <div class="row align-items-center" style="cursor: pointer">
+                            <div class="col-11">
+                                <small>See how much each person has paid so far</small>
+                            </div>
+
+                            <div class="col-1">
+                                <div class="float-end">
+                                    <i class="bi bi-caret-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            {% else %}
+                <div class="container text-center p-4">
+                    - No debts yet -
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <ul class="list-group mb-5 mt-3">
+        {% for debt in debts %}
+            <li class="list-group-item">
+                <div class="row align-items-center">
+                    <div class="col-9">
+                        {% if debt.settled %}<span style="text-decoration: line-through;">{% endif %}
+                        {% autoescape off %}{% parse_user_text debt.debitor.name True %}{% endautoescape %}
+                        {% if request.user.name == debt.debitor.name %}owe{% else %}owes{% endif %}
+                        {{ debt.value }}{{ debt.currency.sign }} to
+                        {% autoescape off %}{% parse_user_text debt.creditor.name %}{% endautoescape %}
+                        {% if debt.settled %}</span>{% endif %}
+                    </div>
+
+                    <div class="col-3">
+                        <div class="float-end">
+                            {% include "debt/partials/_settle_debt_piggy_icon.html" with debt=debt %}
+                        </div>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

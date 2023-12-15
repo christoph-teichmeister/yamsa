@@ -22,24 +22,24 @@ urlpatterns = [
                 name="transaction-list",
             ),
             path(
-                "htmx/detail/<int:pk>",
+                "detail/<int:pk>",
                 views.TransactionDetailHTMXView.as_view(),
-                name="htmx-transaction-detail",
+                name="transaction-detail",
             ),
             path(
-                "htmx/edit/<int:pk>",
+                "edit/<int:pk>",
                 views.TransactionEditHTMXView.as_view(),
-                name="htmx-transaction-edit",
+                name="transaction-edit",
             ),
             path(
-                "htmx/add/",
+                "add/",
                 views.ChildTransactionCreateView.as_view(),
-                name="htmx-child-transaction-create",
+                name="child-transaction-create",
             ),
             path(
-                "htmx/money-spent",
+                "money-spent",
                 views.MoneySpentOnRoomView.as_view(),
-                name="htmx-money-spent-on-room",
+                name="money-spent-on-room",
             ),
         ]
     ),

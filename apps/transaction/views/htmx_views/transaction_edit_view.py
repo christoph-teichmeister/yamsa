@@ -12,7 +12,7 @@ from apps.transaction.models import ParentTransaction
 class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
     model = ParentTransaction
     form_class = TransactionEditForm
-    template_name = "transaction/_edit.html"
+    template_name = "transaction/edit.html"
     context_object_name = "parent_transaction"
 
     # hx_trigger = "reloadTransactionDetailView"
@@ -22,7 +22,7 @@ class TransactionEditHTMXView(htmx.FormHtmxResponseMixin, generic.UpdateView):
     def get_response(self):
         return HttpResponseRedirect(
             reverse(
-                viewname="htmx-transaction-detail",
+                viewname="transaction-detail",
                 kwargs={"room_slug": self.request.room.slug, "pk": self.object.id},
             )
         )
