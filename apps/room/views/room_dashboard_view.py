@@ -1,10 +1,10 @@
-from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
 from apps.room.dataclasses import DashboardTab
 from apps.room.models import Room
+from apps.room.services.dashboard_tab_service import DashboardTabService
 
 
 class RoomDashboardView(generic.DetailView):
@@ -19,27 +19,9 @@ class RoomDashboardView(generic.DetailView):
 
     @context
     @cached_property
-    def dashboard_tabs(self):
-        return [
-            DashboardTab(
-                name="transaction",
-                get_url=reverse("room-dashboard", kwargs={"room_slug": self.request.room.slug})
-                + "?active_tab=transaction",
-            ),
-            DashboardTab(
-                name="debt",
-                get_url=reverse("room-dashboard", kwargs={"room_slug": self.request.room.slug}) + "?active_tab=debt",
-            ),
-            DashboardTab(
-                name="people",
-                get_url=reverse("room-dashboard", kwargs={"room_slug": self.request.room.slug}) + "?active_tab=people",
-            ),
-            DashboardTab(
-                name="settings",
-                get_url=reverse("room-dashboard", kwargs={"room_slug": self.request.room.slug})
-                + "?active_tab=settings",
-            ),
-        ]
+    def dashboard_tabs(self) -> list[DashboardTab]:
+        service = DashboardTabService(room=self.request.room)
+        return service.get_tabs_as_list()
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
