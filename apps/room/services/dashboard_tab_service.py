@@ -25,6 +25,16 @@ class DashboardTabService:
                 room=self.room,
                 get_url=reverse("debt-list", kwargs={"room_slug": self.room.slug}),
             ),
-            DashboardTab(name="people", icon_class="bi bi-people", room=self.room),
-            DashboardTab(name="settings", icon_class="bi bi-gear", room=self.room),
+            DashboardTab(
+                name="people",
+                icon_class="bi bi-people",
+                room=self.room,
+                get_url=reverse("account-list", kwargs={"room_slug": self.room.slug}),
+            ),
+            DashboardTab(
+                name="room",
+                icon_class="bi bi-gear",
+                room=self.room,
+                get_url=reverse("room-detail", kwargs={"room_slug": self.room.slug}),
+            ),
         ]

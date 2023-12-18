@@ -1,34 +1,35 @@
 from django.urls import reverse
-from django.utils.functional import cached_property
 from django.views import generic
 
-from apps.core import htmx
 from apps.core.event_loop.runner import handle_message
 from apps.transaction.messages.events.transaction import AnyTransactionDeleted
 from apps.transaction.models import ChildTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class ChildTransactionDeleteView(TransactionBaseContext, htmx.FormHtmxResponseMixin, generic.DeleteView):
+class ChildTransactionDeleteView(TransactionBaseContext, generic.DeleteView):
     model = ChildTransaction
     template_name = "transaction/edit.html"
 
-    toast_success_message = "Transaction successfully deleted!"
-    toast_error_message = "There was an error deleting the transaction"
+    def get_success_url(self):
+        # If the count is 1, then that means that we are currently deleting the last child_transaction,
+        # so the parent_transaction _will_ have no child_transactions anymore, after this operation is executed
+        if self.object.parent_transaction.child_transactions.count() == 1:
+            return reverse(
+                viewname="transaction-list",
+                kwargs={"room_slug": self.request.room.slug},
+            )
 
-    def get_hx_trigger(self):
-        if self.parent_transactions_has_no_child_transactions_anymore:
-            return None
-        return "reloadTransactionEditView"
+        return reverse(
+            viewname="transaction-edit",
+            kwargs={"pk": self.object.parent_transaction.id, "room_slug": self.request.room.slug},
+        )
 
     def form_valid(self, form):
         form_valid_return = super().form_valid(form)
 
-        if self.parent_transactions_has_no_child_transactions_anymore:
+        if self.object.parent_transaction.child_transactions.count() == 0:
             self.object.parent_transaction.delete()
-            form_valid_return["HX-Redirect"] = reverse(
-                viewname="room-dashboard", kwargs={"room_slug": self.object.parent_transaction.room.slug}
-            )
 
         # Handle any necessary post-update actions
         handle_message(
@@ -41,7 +42,3 @@ class ChildTransactionDeleteView(TransactionBaseContext, htmx.FormHtmxResponseMi
         )
 
         return form_valid_return
-
-    @cached_property
-    def parent_transactions_has_no_child_transactions_anymore(self):
-        return self.object.parent_transaction.child_transactions.count() == 0

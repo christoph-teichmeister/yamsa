@@ -3,12 +3,11 @@ from django.views import generic
 from django_context_decorator import context
 
 from apps.account.models import User
-from apps.core import htmx
 from apps.transaction.models import ChildTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class ChildTransactionCreateView(TransactionBaseContext, htmx.FormHtmxResponseMixin, generic.CreateView):
+class ChildTransactionCreateView(TransactionBaseContext, generic.CreateView):
     template_name = "transaction/child_transaction_create.html"
 
     model = ChildTransaction

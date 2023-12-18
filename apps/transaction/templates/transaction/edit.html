@@ -152,7 +152,9 @@
                                hx-trigger="click"
                                hx-post="{% room_url 'child-transaction-delete' pk=child_transaction.id %}"
                                hx-confirm="Are you sure you wish to delete this transaction?"
-                               hx-swap="none"
+                               hx-target="#body"
+                               hx-swap="innerHTML"
+                               hx-push-url="true"
                             ></i>
                         </div>
 
@@ -182,7 +184,9 @@
                 hx-trigger="click"
                 hx-get="{% room_url 'child-transaction-create' %}"
                 hx-target="#add-child-transaction-container"
-                hx-swap="outerHTML">
+                hx-swap="outerHTML"
+                hx-push-url="false"
+            >
                 <i class="bi bi-plus-circle"></i>
             </li>
 
