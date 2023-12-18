@@ -6,9 +6,10 @@ from apps.core import htmx
 from apps.core.event_loop.runner import handle_message
 from apps.transaction.messages.events.transaction import AnyTransactionDeleted
 from apps.transaction.models import ChildTransaction
+from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class ChildTransactionDeleteView(htmx.FormHtmxResponseMixin, generic.DeleteView):
+class ChildTransactionDeleteView(TransactionBaseContext, htmx.FormHtmxResponseMixin, generic.DeleteView):
     model = ChildTransaction
     template_name = "transaction/edit.html"
 

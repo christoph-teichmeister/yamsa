@@ -2,7 +2,7 @@
 {% load static %}
 {% load room_tags %}
 
-{% block transaction_content %}
+{% block tab_content %}
 
     <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
         <div class="col">
@@ -12,7 +12,10 @@
         </div>
     </div>
 
-    <form hx-post="{% room_url 'transaction-create' %}" hx-swap="none" hx-indicator="#transaction-loading-spinner">
+    <form hx-post="{% room_url 'transaction-create' %}"
+          hx-target="#body"
+          hx-swap="innerHTML"
+          hx-push-url="true">
         {% csrf_token %}
 
         <ul class="list-group list-group-flush">
