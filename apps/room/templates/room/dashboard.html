@@ -86,16 +86,8 @@
                      tabindex="0"
                 >
                     {% block tab_content %}
-                        <div hx-trigger=""
-                             hx-get="{% room_url 'transaction-list' %}"
-                             hx-target="body"
-                             hx-swap="innerHTML"
-                             hx-indicator="#loading-spinner"
-                             hx-push-url="true"
-                        ></div>
+                        {% include "shared_partials/loading_spinner.html" with spinner_id="loading-spinner" %}
                     {% endblock %}
-
-                    {% include "shared_partials/loading_spinner.html" with spinner_id="loading-spinner" %}
 
                     <br><br><br><br>
                 </div>
