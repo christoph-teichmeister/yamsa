@@ -14,17 +14,6 @@ class TransactionEditView(TransactionBaseContext, generic.UpdateView):
     template_name = "transaction/edit.html"
     context_object_name = "parent_transaction"
 
-    def get_success_url(self):
-        return reverse(
-            viewname="transaction-detail",
-            kwargs={"room_slug": self.request.room.slug, "pk": self.object.id},
-        )
-
-    @context
-    @cached_property
-    def child_transaction_qs(self):
-        return self.get_object().child_transactions.all()
-
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
 
@@ -39,3 +28,14 @@ class TransactionEditView(TransactionBaseContext, generic.UpdateView):
             form_kwargs["data"]["request_user"] = self.request.user
 
         return form_kwargs
+
+    def get_success_url(self):
+        return reverse(
+            viewname="transaction-detail",
+            kwargs={"room_slug": self.request.room.slug, "pk": self.object.id},
+        )
+
+    @context
+    @cached_property
+    def child_transaction_qs(self):
+        return self.get_object().child_transactions.all()

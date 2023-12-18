@@ -6,16 +6,23 @@ from apps.debt.models import Debt
 from apps.transaction.messages.events.transaction import (
     ParentTransactionCreated,
     ParentTransactionUpdated,
-    AnyTransactionDeleted,
+    ChildTransactionDeleted,
+    ParentTransactionDeleted,
 )
 from apps.transaction.models import ChildTransaction
 
 
 @message_registry.register_event(event=ParentTransactionCreated)
 @message_registry.register_event(event=ParentTransactionUpdated)
-@message_registry.register_event(event=AnyTransactionDeleted)
+@message_registry.register_event(event=ParentTransactionDeleted)
+@message_registry.register_event(event=ChildTransactionDeleted)
 def calculate_optimised_debts(
-    context: Union[ParentTransactionCreated.Context | ParentTransactionUpdated.Context | AnyTransactionDeleted.Context],
+    context: Union[
+        ParentTransactionCreated.Context
+        | ParentTransactionUpdated.Context
+        | ChildTransactionDeleted.Context
+        | ParentTransactionDeleted.Context
+    ],
 ):
     room_id = context.room.id
 

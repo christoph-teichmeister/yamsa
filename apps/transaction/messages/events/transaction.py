@@ -19,8 +19,15 @@ class ParentTransactionUpdated(Event):
         room: Room
 
 
-class AnyTransactionDeleted(Event):
+class ParentTransactionDeleted(Event):
     @dataclass
     class Context:
-        parent_transaction = None
+        parent_transaction: ParentTransaction
+        room: Room
+
+
+class ChildTransactionDeleted(Event):
+    @dataclass
+    class Context:
+        parent_transaction: ParentTransaction
         room: Room

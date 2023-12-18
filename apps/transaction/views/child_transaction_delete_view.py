@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
-from apps.transaction.messages.events.transaction import AnyTransactionDeleted
+from apps.transaction.messages.events.transaction import ParentTransactionDeleted
 from apps.transaction.models import ChildTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
@@ -27,18 +27,22 @@ class ChildTransactionDeleteView(TransactionBaseContext, generic.DeleteView):
 
     def form_valid(self, form):
         form_valid_return = super().form_valid(form)
+        parent_transaction = self.object.parent_transaction
 
-        if self.object.parent_transaction.child_transactions.count() == 0:
-            self.object.parent_transaction.delete()
-
-        # Handle any necessary post-update actions
-        handle_message(
-            AnyTransactionDeleted(
-                context_data={
-                    "parent_transaction": None,
-                    "room": self.object.parent_transaction.room,
-                }
+        if parent_transaction.child_transactions.count() == 0:
+            handle_message(
+                ParentTransactionDeleted(
+                    context_data={
+                        "parent_transaction": parent_transaction,
+                        "room": self.object.parent_transaction.room,
+                    }
+                )
             )
-        )
+
+            parent_transaction.delete()
+
+        # There is no need to send a notification, when a child_transaction has been deleted, as this can only be
+        # done when editing a transaction anyway - a user would have to save the form afterward, which will trigger
+        # a ParentTransactionUpdated event, which notifies everyone
 
         return form_valid_return
