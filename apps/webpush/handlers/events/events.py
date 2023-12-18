@@ -89,7 +89,7 @@ def send_notification_on_child_transaction_deleted(context: ParentTransactionUpd
             f'("{parent_transaction.description}")\n'
             f"Have a look!",
             click_url=reverse(
-                viewname="transaction-detail",
+                viewname="transaction-list",
                 kwargs={
                     "room_slug": parent_transaction.room.slug,
                 },
