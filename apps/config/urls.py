@@ -21,11 +21,6 @@ from apps.config.settings import DJANGO_ADMIN_SUB_URL
 from apps.core.views import MaintenanceView
 
 
-def trigger_error(request):
-    # TODO CT: Remove once Sentry testing is done
-    division_by_zero = 1 / 0
-
-
 normal_urlpatterns = [
     path("", include("apps.core.urls")),
     path(f"{DJANGO_ADMIN_SUB_URL}/", admin.site.urls),
@@ -35,7 +30,6 @@ normal_urlpatterns = [
     path("room/", include("apps.room.urls")),
     path("transaction/", include("apps.transaction.urls")),
     path("webpush/", include("apps.webpush.urls")),
-    path("sentry-debug/", trigger_error),
 ]
 
 
