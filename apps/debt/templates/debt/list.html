@@ -2,7 +2,7 @@
 {% load static %}
 {% load room_tags %}
 
-{% block debt_content %}
+{% block tab_content %}
 
     <div class="row align-items-center mt-3">
         <div class="col">
@@ -18,7 +18,7 @@
                         hx-trigger="click"
                         hx-get="{% room_url 'money-spent-on-room' %}"
                         hx-target="#body"
-                        hx-swap="innerHTML"
+                        hx-swap="morph:innerHTML"
                         hx-push-url="true"
                     >
                         <div class="row align-items-center" style="cursor: pointer">

@@ -2,7 +2,6 @@ from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
-from apps.account.forms import EditUserForm
 from apps.account.models import User
 from apps.config import settings
 
@@ -21,8 +20,3 @@ class UserDetailView(generic.DetailView):
     @cached_property
     def DJANGO_ADMIN_SUB_URL(self):
         return settings.DJANGO_ADMIN_SUB_URL
-
-    @context
-    @cached_property
-    def form(self):
-        return EditUserForm()

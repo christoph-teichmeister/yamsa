@@ -2,16 +2,16 @@
 {% load static %}
 {% load room_tags %}
 
-{% block transaction_content %}
+{% block tab_content %}
 
     <div class="row mt-4 mx-2 justify-content-center">
         <div class="col-1 d-flex align-items-center justify-content-end">
             <i class="bi bi-arrow-left-circle fs-2"
                style="cursor: pointer"
                hx-trigger="click"
-               hx-get="{% room_url 'room-dashboard' %}?active_tab=transaction"
+               hx-get="{% room_url 'transaction-list' %}"
                hx-target="#body"
-               hx-swap="innerHTML"
+               hx-swap="morph:innerHTML"
                hx-push-url="true"></i>
         </div>
 
@@ -40,7 +40,7 @@
                hx-trigger="click"
                hx-get="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
                hx-target="#body"
-               hx-swap="innerHTML"
+               hx-swap="morph:innerHTML"
                hx-push-url="true"
                     {% endif %}
             ></i>
@@ -57,7 +57,7 @@
                 hx-trigger="click"
                 hx-get="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
                 hx-target="#body"
-                hx-swap="innerHTML"
+                hx-swap="morph:innerHTML"
                 hx-push-url="true"
                     {% endif %}
             >

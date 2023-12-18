@@ -5,9 +5,10 @@ from django_context_decorator import context
 
 from apps.room.forms.room_edit_form import RoomEditForm
 from apps.room.models import Room
+from apps.room.views.mixins.room_base_context import RoomBaseContext
 
 
-class RoomEditView(generic.UpdateView):
+class RoomEditView(RoomBaseContext, generic.UpdateView):
     template_name = "room/edit.html"
     slug_url_kwarg = "room_slug"
     model = Room
@@ -30,8 +31,3 @@ class RoomEditView(generic.UpdateView):
         return list(
             filter(lambda choice_option: choice_option != self.object.status, self.object.StatusChoices.values)
         )[0]
-
-    @context
-    @cached_property
-    def active_tab(self):
-        return self.request.GET.get("active_tab", "settings")

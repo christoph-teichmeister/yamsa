@@ -14,7 +14,7 @@
         <i class="bi bi-piggy-bank"
            hx-get="{% room_url 'debt-settle' pk=debt.id %}"
            hx-target="#body"
-           hx-swap="innerHTML"
+           hx-swap="morph:innerHTML"
            hx-push-url="true"
         ></i>
     {% else %}

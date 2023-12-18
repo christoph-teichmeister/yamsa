@@ -1,13 +1,12 @@
-from functools import cached_property
-
 from django.db.models import Sum, F
 from django.views import generic
 from django_context_decorator import context
 
+from apps.debt.views.mixins.debt_base_context import DebtBaseContext
 from apps.transaction.models import ChildTransaction
 
 
-class MoneySpentOnRoomView(generic.TemplateView):
+class MoneySpentOnRoomView(DebtBaseContext, generic.TemplateView):
     template_name = "transaction/partials/_money_spent_on_room.html"
 
     def get_base_queryset(self):
@@ -45,8 +44,3 @@ class MoneySpentOnRoomView(generic.TemplateView):
             .annotate(currency_sign=F("parent_transaction__currency__sign"), total_owed_per_person=Sum("value"))
             .order_by("paid_for__name")
         )
-
-    @context
-    @cached_property
-    def active_tab(self):
-        return self.request.GET.get("active_tab", "debt")

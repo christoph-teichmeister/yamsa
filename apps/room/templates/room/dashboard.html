@@ -26,7 +26,7 @@
                         data-bs-toggle="tooltip"
                         data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
                         hx-get="{% url 'htmx-checked-clipboard' %}"
-                        hx-swap="innerHTML"
+                        hx-swap="morph:innerHTML"
                 >
                     {% include "shared_partials/clipboard_icon_unchecked.html" %}
                 </button>
@@ -35,7 +35,7 @@
                     <i class="bi bi-dash-circle"
                        hx-get="{% room_url 'room-edit' %}"
                        hx-target="#body"
-                       hx-swap="innerHTML"
+                       hx-swap="morph:innerHTML"
                        hx-push-url="true"
                     ></i>
                 </h1>
@@ -52,184 +52,54 @@
         {# Room Tab-Headers #}
         <ul class="nav nav-tabs nav-fill" id="roomTab" role="tablist">
 
-{#        TODO CT: Continue working on this#}
-{#            {% for tab in dashboard_tabs %}#}
-{#                <li class="nav-item" role="presentation" style="cursor: pointer">#}
-{#                    <a id="{{ tab.name }}-tab"#}
-{#                       class="nav-link {% if active_tab == tab.name %}active{% endif %}"#}
-{#                       role="tab"#}
-{#                       data-bs-toggle="tab"#}
-{#                       data-bs-target="#{{ tab.name }}-tab-content"#}
-{#                       aria-controls="{{ tab.name }}-tab-content"#}
-{#                       aria-selected="true"#}
-{#                       hx-trigger="click, loadTransactionList from:body"#}
-{#                       hx-get="{{ tab.get_url }}"#}
-{#                       hx-target="#body"#}
-{#                       hx-swap="innerHTML"#}
-{#                       hx-indicator="#{{ tab.name }}-loading-spinner"#}
-{#                       hx-push-url="true"#}
-{#                    >#}
-{#                        <i class="bi bi-wallet"></i>#}
-{#                    </a>#}
-{#                </li>#}
-{#            {% endfor %}#}
-
-            <li class="nav-item" role="presentation" style="cursor: pointer">
-                <a id="transaction-tab"
-                   class="nav-link {% if active_tab == "transaction" %}active{% endif %}"
-                   role="tab"
-                   data-bs-toggle="tab"
-                   data-bs-target="#transaction-tab-content"
-                   aria-controls="transaction-tab-content"
-                   aria-selected="true"
-                   hx-trigger="click, loadTransactionList from:body"
-                   hx-get="{% room_url 'room-dashboard' %}?active_tab=transaction"
-                   hx-target="#body"
-                   hx-swap="innerHTML"
-                   hx-indicator="#transaction-loading-spinner"
-                   hx-push-url="true"
-                >
-                    <i class="bi bi-wallet"></i>
-                </a>
-            </li>
-
-            <li class="nav-item" role="presentation" style="cursor: pointer">
-                <a id="debt-tab"
-                   class="nav-link {% if active_tab == "debt" %}active{% endif %}"
-                   role="tab"
-                   data-bs-toggle="tab"
-                   data-bs-target="#debt-tab-content"
-                   aria-controls="debt-tab-content"
-                   aria-selected="false"
-                   hx-trigger="click, loadDebtList from:body"
-                   hx-get="{% room_url 'room-dashboard' %}?active_tab=debt"
-                   hx-target="#body"
-                   hx-swap="innerHTML"
-                   hx-indicator="#debt-loading-spinner"
-                   hx-push-url="true"
-                >
-                    <i class="bi bi-piggy-bank"></i>
-                </a>
-            </li>
-
-            <li class="nav-item" role="presentation" style="cursor: pointer">
-                <a id="people-tab"
-                   class="nav-link {% if active_tab == "people" %}active{% endif %}"
-                   role="tab"
-                   data-bs-toggle="tab"
-                   data-bs-target="#people-tab-content"
-                   aria-controls="people-tab-content"
-                   aria-selected="false"
-                   hx-trigger="click, loadPeopleList from:body"
-                   hx-get="{% room_url 'room-dashboard' %}?active_tab=people"
-                   hx-target="#body"
-                   hx-swap="innerHTML"
-                   hx-indicator="#people-loading-spinner"
-                   hx-push-url="true"
-                >
-                    <i class="bi bi-people"></i>
-                </a>
-            </li>
-
-            <li class="nav-item" role="presentation" style="cursor: pointer">
-                <a id="settings-tab"
-                   class="nav-link {% if active_tab == "settings" %}active{% endif %}"
-                   role="tab"
-                   data-bs-toggle="tab"
-                   data-bs-target="#settings-tab-content"
-                   aria-controls="settings-tab-content"
-                   aria-selected="false"
-                   hx-trigger="click, loadSettings from:body"
-                   hx-get="{% room_url 'room-dashboard' %}?active_tab=settings"
-                   hx-target="#body"
-                   hx-swap="innerHTML"
-                   hx-indicator="#settings-loading-spinner"
-                   hx-push-url="true"
-                >
-                    <i class="bi bi-gear"></i>
-                </a>
-            </li>
+            {% for tab in dashboard_tabs %}
+                <li class="nav-item" role="presentation" style="cursor: pointer">
+                    <a id="{{ tab.name }}-tab"
+                       class="nav-link {% if active_tab == tab.name %}active{% endif %}"
+                       role="tab"
+                       data-bs-toggle="tab"
+                       data-bs-target="#{{ tab.name }}-tab-content"
+                       aria-controls="{{ tab.name }}-tab-content"
+                       aria-selected="true"
+                       hx-trigger="click"
+                       hx-get="{{ tab.get_url }}"
+                       hx-target="#body"
+                       hx-swap="morph:innerHTML"
+                       hx-indicator="#loading-spinner"
+                       hx-push-url="true"
+                    >
+                        <i class="{{ tab.icon_class }}"></i>
+                    </a>
+                </li>
+            {% endfor %}
 
         </ul>
 
         {# Room Tab-Contents #}
         <div class="tab-content" id="tab-content">
 
-            <div class="tab-pane fade {% if active_tab == "transaction" %}show active{% endif %}"
-                 id="transaction-tab-content"
-                 role="tabpanel"
-                 aria-labelledby="transaction-tab"
-                 tabindex="0"
-            >
-                {% block transaction_content %}
-                    <div hx-trigger="{% if active_tab == "transaction" %}load{% endif %}, loadTransactionList from:body"
-                         hx-get="{% room_url 'transaction-list' %}"
-                         hx-target="body"
-                         hx-swap="innerHTML"
-                         hx-indicator="#transaction-loading-spinner"
-                         hx-push-url="true"
-                    ></div>
-                    {% include "shared_partials/loading_spinner.html" with spinner_id="transaction-loading-spinner" %}
-                {% endblock %}
-                <br><br><br><br><br><br>
-            </div>
+            {% for tab in dashboard_tabs %}
+                <div class="tab-pane fade {% if active_tab == tab.name %}show active{% endif %}"
+                     id="{{ tab.name }}-tab-content"
+                     role="tabpanel"
+                     aria-labelledby="{{ tab.name }}-tab"
+                     tabindex="0"
+                >
+                    {% block tab_content %}
+                        <div hx-trigger=""
+                             hx-get="{% room_url 'transaction-list' %}"
+                             hx-target="body"
+                             hx-swap="morph:innerHTML"
+                             hx-indicator="#loading-spinner"
+                             hx-push-url="true"
+                        ></div>
+                    {% endblock %}
 
-            <div class="tab-pane fade {% if active_tab == "debt" %}show active{% endif %}"
-                 id="debt-tab-content"
-                 role="tabpanel"
-                 aria-labelledby="debt-tab"
-                 tabindex="1"
-            >
-                {% block debt_content %}
-                    <div hx-trigger="{% if active_tab == "debt" %}load{% endif %}, loadDebtList from:body"
-                         hx-get="{% room_url 'debt-list' %}"
-                         hx-target="body"
-                         hx-swap="innerHTML"
-                         hx-indicator="#debt-loading-spinner"
-                         hx-push-url="true"
-                    ></div>
-                    {% include "shared_partials/loading_spinner.html" with spinner_id="debt-loading-spinner" %}
-                {% endblock %}
-                <br><br><br><br><br><br>
-            </div>
+                    {% include "shared_partials/loading_spinner.html" with spinner_id="loading-spinner" %}
 
-            <div class="tab-pane fade {% if active_tab == "people" %}show active{% endif %}"
-                 id="people-tab-content"
-                 role="tabpanel"
-                 aria-labelledby="people-tab"
-                 tabindex="2"
-            >
-                {% block people_content %}
-                    <div hx-trigger="{% if active_tab == "people" %}load{% endif %}, loadPeopleList from:body"
-                         hx-get="{% room_url 'account-list' %}"
-                         hx-target="body"
-                         hx-swap="innerHTML"
-                         hx-indicator="#people-loading-spinner"
-                         hx-push-url="true"
-                    ></div>
-                    {% include "shared_partials/loading_spinner.html" with spinner_id="people-loading-spinner" %}
-                    <br><br><br><br><br><br>
-                {% endblock %}
-            </div>
-
-            <div class="tab-pane fade {% if active_tab == "settings" %}show active{% endif %}"
-                 id="settings-tab-content"
-                 role="tabpanel"
-                 aria-labelledby="settings-tab"
-                 tabindex="0"
-            >
-                {% block settings_content %}
-                    <div hx-trigger="{% if active_tab == "settings" %}load{% endif %}, loadSettings from:body"
-                         hx-get="{% room_url 'room-detail' %}"
-                         hx-target="#body"
-                         hx-swap="innerHTML"
-                         hx-indicator="#settings-loading-spinner"
-                         hx-push-url="true"
-                    ></div>
-                {% endblock %}
-                <br><br><br><br><br><br>
-                {% include "shared_partials/loading_spinner.html" with spinner_id="settings-loading-spinner" %}
-            </div>
+                    <br><br><br><br>
+                </div>
+            {% endfor %}
 
         </div>
     {% else %}

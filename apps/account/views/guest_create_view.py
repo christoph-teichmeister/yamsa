@@ -1,22 +1,17 @@
+from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
-from django_context_decorator import context
-from functools import cached_property
 
 from apps.account.forms import GuestCreateForm
 from apps.account.models import User
-from apps.core import htmx
 from apps.room.models import Room, UserConnectionToRoom
+from apps.account.views.mixins.account_base_context import AccountBaseContext
 
 
-class GuestCreateView(htmx.FormHtmxResponseMixin, generic.CreateView):
+class GuestCreateView(AccountBaseContext, generic.CreateView):
     model = User
     form_class = GuestCreateForm
     template_name = "account/create_guest.html"
-
-    hx_trigger = "loadPeopleList"
-    toast_success_message = "Guest created successfully!"
-    toast_error_message = "There was an error creating the guest"
 
     def form_valid(self, form):
         created_guest: User = form.instance
@@ -31,7 +26,5 @@ class GuestCreateView(htmx.FormHtmxResponseMixin, generic.CreateView):
 
         return response
 
-    @context
-    @cached_property
-    def active_tab(self):
-        return self.request.GET.get("active_tab", "people")
+    def get_success_url(self):
+        return reverse(viewname="account-list", kwargs={"room_slug": self.request.room.slug})
