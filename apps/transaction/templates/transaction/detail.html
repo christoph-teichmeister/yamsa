@@ -11,7 +11,7 @@
                hx-trigger="click"
                hx-get="{% room_url 'transaction-list' %}"
                hx-target="#body"
-               hx-swap="innerHTML"
+               hx-swap="morph:innerHTML"
                hx-push-url="true"></i>
         </div>
 
@@ -40,7 +40,7 @@
                hx-trigger="click"
                hx-get="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
                hx-target="#body"
-               hx-swap="innerHTML"
+               hx-swap="morph:innerHTML"
                hx-push-url="true"
                     {% endif %}
             ></i>
@@ -57,7 +57,7 @@
                 hx-trigger="click"
                 hx-get="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
                 hx-target="#body"
-                hx-swap="innerHTML"
+                hx-swap="morph:innerHTML"
                 hx-push-url="true"
                     {% endif %}
             >

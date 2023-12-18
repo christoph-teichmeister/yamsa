@@ -14,7 +14,7 @@
 
     <form hx-post="{% room_url 'transaction-create' %}"
           hx-target="#body"
-          hx-swap="innerHTML"
+          hx-swap="morph:innerHTML"
           hx-push-url="true">
         {% csrf_token %}
 
