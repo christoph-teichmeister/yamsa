@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 import sys
+import sentry_sdk
 from pathlib import Path
 
 import environ
@@ -25,6 +26,9 @@ env = environ.Env(
     VAPID_PUBLIC_KEY=(str, ""),
     VAPID_PRIVATE_KEY=(str, ""),
     VAPID_ADMIN_EMAIL=(str, ""),
+    # Sentry ENV
+    SENTRY_ENVIRONMENT=(str, "LOCAL"),
+    SENTRY_DSN=(str, ""),
     # Database ENV
     DB_HOST=(str, ""),
     DB_NAME=(str, ""),
@@ -243,6 +247,24 @@ WEBPUSH_SETTINGS = {
     "VAPID_ADMIN_EMAIL": env("VAPID_ADMIN_EMAIL"),
 }
 
+if env("SENTRY_ENVIRONMENT") != "LOCAL":
+    sentry_sdk.init(
+        dsn=env("SENTRY_DSN"),
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        traces_sample_rate=1.0,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0,
+        environment=env("SENTRY_ENVIRONMENT"),
+        integrations=[
+            # DjangoIntegration(
+            #     transaction_style="url",
+            # ),
+            # CeleryIntegration(),
+        ],
+    )
 
 if IS_TESTING:
     # DEBUG = False
