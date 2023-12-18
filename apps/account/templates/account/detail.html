@@ -27,62 +27,85 @@
                     </a>
                 </div>
             </div>
+
+            <br/><br/><br/>
         {% endif %}
 
-        <div class="px-3">
-            <p>{{ user.username }}</p>
-            <p>{{ user.email }}</p>
-        </div>
-
-        <br><br>
-
-        <div class="row py-1 d-flex w-100 justify-content-between align-items-center">
-            <div class="col">
-                <h5 class="m-0">Your data:</h5>
+        <div class="row h-75 d-flex align-content-center justify-content-center">
+            <div class="row py-1 d-flex justify-content-between align-items-center">
+                <div class="col">
+                    <h5 class="m-0">Your data:</h5>
+                </div>
+                <div class="col p-0">
+                    <button class="btn btn-primary btn-sm float-end px-3"
+                            hx-get="{% url 'account-user-update' pk=user.id %}"
+                            hx-target="#body"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true"
+                    >
+                        Edit
+                    </button>
+                </div>
             </div>
-            <div class="col p-0">
-                <button class="btn btn-primary btn-sm float-end px-3"
-                        hx-get="{% url 'account-user-update' pk=user.id %}"
-                        hx-target="#body"
-                        hx-swap="morph:innerHTML"
-                        hx-push-url="true"
-                >
-                    Edit
-                </button>
-            </div>
-        </div>
 
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item"></li>
+            <div class="row">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"></li>
 
-            <li class="list-group-item py-4 px-2">
-                E-Mail: <br/>
-                <span class="float-end">{{ user.email }}</span>
-            </li>
+                    <li class="list-group-item py-4 px-2">
+                        <strong>
+                            Username:
+                        </strong>
+                        <span class="float-end">
+                    {{ user.username }}
+                </span>
+                    </li>
 
-            <li class="list-group-item py-4 px-2">
-                Paypal.me Username: <br/>
-                <span class="float-end">
+                    <li class="list-group-item py-4 px-2">
+                        <strong>
+                            Name:
+                        </strong>
+                        <span class="float-end">
+                    {{ user.name }}
+                </span>
+                    </li>
+
+                    <li class="list-group-item py-4 px-2">
+                        <strong>
+                            E-Mail:
+                        </strong>
+                        <span class="float-end">
+                    {{ user.email }}
+                </span>
+                    </li>
+
+                    <li class="list-group-item py-4 px-2">
+                        <strong>
+                            Paypal.me Username:
+                        </strong>
+                        <span class="float-end">
                         {% if user.paypal_me_username %}
                             {{ user.paypal_me_username }}
                         {% else %}
                             -
                         {% endif %}
-                    </span>
-            </li>
+                </span>
+                    </li>
 
-            <li class="list-group-item py-4 px-2">
-                <label for="wants_to_receive_webpush_notifications" class="form-check-label">
-                    Receive push notifications:
-                </label>
-                <input type="checkbox" class="form-check-input ms-2" id="wants_to_receive_webpush_notifications"
-                       name="wants_to_receive_webpush_notifications"
-                       {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}
-                       disabled>
-            </li>
+                    <li class="list-group-item py-4 px-2">
+                        <label for="wants_to_receive_webpush_notifications" class="form-check-label">
+                            <strong>Receive push notifications:</strong>
+                        </label>
+                        <input type="checkbox" class="form-check-input ms-2" id="wants_to_receive_webpush_notifications"
+                               name="wants_to_receive_webpush_notifications"
+                               {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}
+                               disabled>
+                    </li>
 
-            <li class="list-group-item"></li>
-        </ul>
+                    <li class="list-group-item"></li>
+                </ul>
+            </div>
+        </div>
 
         <div class="fixed-bottom mb-5">
             <div class="row float-end mb-5 me-2">

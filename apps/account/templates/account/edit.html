@@ -2,87 +2,95 @@
 {% load static %}
 
 {% block content %}
-    {% if request.user.is_superuser %}
-        <div class="row float-end me-2">
-            <div class="col">
-                <a href="{{ PROJECT_BASE_URL }}/{{ DJANGO_ADMIN_SUB_URL }}/login" target="_blank">
-                    <i class="bi bi-terminal"></i>
-                </a>
-            </div>
-        </div>
-    {% endif %}
+    <div class="row h-100 px-3 d-flex align-content-center justify-content-center">
 
-    <div class="px-3">
-        <p>{{ user.username }}</p>
-        <p>{{ user.email }}</p>
+        <form>
+            {% csrf_token %}
+
+            <div class="row py-1 d-flex justify-content-between align-items-center">
+                <div class="col">
+                    <h5 class="m-0">Your data:</h5>
+                </div>
+                <div class="col p-0">
+                    <button class="btn btn-primary btn-sm float-end px-3"
+                            type="submit"
+                            hx-post="{% url 'account-user-update' pk=user.id %}"
+                            hx-target="#body"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true"
+                    >
+                        Save
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"></li>
+
+                    <li class="list-group-item py-4 px-2">
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">{{ form.fields.username.label }}</label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                   autocomplete="username"
+                                   required value="{{ user.username }}">
+                            {% for error_message in form.errors.username.data %}
+                                <small class="error" id="usernameError">{{ error_message.message }}</small>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">{{ form.fields.name.label }}</label>
+                            <input type="text" class="form-control" id="name" name="name" autocomplete="name"
+                                   required value="{{ user.name }}">
+                            {% for error_message in form.errors.email.data %}
+                                <small class="error" id="nameError">{{ error_message.message }}</small>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">{{ form.fields.email.label }}</label>
+                            <input type="email" class="form-control" id="email" name="email" autocomplete="email"
+                                   required value="{{ user.email }}">
+                            {% for error_message in form.errors.email.data %}
+                                <small class="error" id="emailError">{{ error_message.message }}</small>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="paypal_me_username"
+                                   class="form-label">{{ form.fields.paypal_me_username.label }}</label>
+                            <input type="text" class="form-control" id="paypal_me_username" name="paypal_me_username"
+                                   value="{% if user.paypal_me_username %}{{ user.paypal_me_username }}{% endif %}"
+                                   placeholder="-">
+                            {% for error_message in form.errors.paypal_me_username.data %}
+                                <small class="error" id="paypal_me_usernameError">{{ error_message.message }}</small>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <input type="checkbox" class="form-check-input me-1"
+                                   id="wants_to_receive_webpush_notifications"
+                                   name="wants_to_receive_webpush_notifications"
+                                   {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}>
+                            <label for="wants_to_receive_webpush_notifications" class="form-check-label">
+                                {{ form.fields.wants_to_receive_webpush_notifications.label }}
+                            </label>
+                            {% for error_message in form.errors.wants_to_receive_webpush_notifications.data %}
+                                <small class="error"
+                                       id="wants_to_receive_webpush_notificationsError">{{ error_message.message }}</small>
+                            {% endfor %}
+                        </div>
+
+                    </li>
+
+                    <li class="list-group-item"></li>
+
+                </ul>
+            </div>
+        </form>
     </div>
-
-    <br><br>
-
-    <form class="flex-grow-1">
-        {% csrf_token %}
-
-        <div class="row py-1 d-flex w-100 justify-content-between align-items-center">
-            <div class="col">
-                <h5 class="m-0">Your data:</h5>
-            </div>
-            <div class="col p-0">
-                <button class="btn btn-primary btn-sm float-end px-3"
-                        type="submit"
-                        hx-post="{% url 'account-user-update' pk=user.id %}"
-                        hx-target="#body"
-                        hx-swap="morph:innerHTML"
-                        hx-push-url="true"
-                >
-                    Save
-                </button>
-            </div>
-        </div>
-
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item"></li>
-
-            <li class="list-group-item py-4 px-2">
-
-                <div class="mb-3">
-                    <label for="email" class="form-label">{{ form.fields.email.label }}</label>
-                    <input type="email" class="form-control" id="email" name="email" autocomplete="email"
-                           required value="{{ user.email }}">
-                    {% for error_message in form.errors.email.data %}
-                        <small class="error" id="emailError">{{ error_message.message }}</small>
-                    {% endfor %}
-                </div>
-
-                <div class="mb-3">
-                    <label for="paypal_me_username"
-                           class="form-label">{{ form.fields.paypal_me_username.label }}</label>
-                    <input type="text" class="form-control" id="paypal_me_username" name="paypal_me_username"
-                           value="{% if user.paypal_me_username %}{{ user.paypal_me_username }}{% endif %}"
-                           placeholder="-">
-                    {% for error_message in form.errors.paypal_me_username.data %}
-                        <small class="error" id="paypal_me_usernameError">{{ error_message.message }}</small>
-                    {% endfor %}
-                </div>
-
-                <div class="mb-3">
-                    <input type="checkbox" class="form-check-input me-1" id="wants_to_receive_webpush_notifications"
-                           name="wants_to_receive_webpush_notifications"
-                           {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}>
-                    <label for="wants_to_receive_webpush_notifications" class="form-check-label">
-                        {{ form.fields.wants_to_receive_webpush_notifications.label }}
-                    </label>
-                    {% for error_message in form.errors.wants_to_receive_webpush_notifications.data %}
-                        <small class="error"
-                               id="wants_to_receive_webpush_notificationsError">{{ error_message.message }}</small>
-                    {% endfor %}
-                </div>
-
-            </li>
-
-            <li class="list-group-item"></li>
-
-        </ul>
-    </form>
 
     <div class="fixed-bottom mb-5">
         <div class="row float-end mb-5 me-2">
