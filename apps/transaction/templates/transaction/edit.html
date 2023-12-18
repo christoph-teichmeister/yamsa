@@ -4,22 +4,6 @@
 
 {% block tab_content %}
 
-    {# empty div which handles reloading the detail-view when editing the Transaction (NOT the ChildTransactions) #}
-    <div hx-trigger="reloadTransactionDetailView from:body"
-         hx-get="{% room_url 'transaction-detail' pk=parent_transaction.id %}"
-         hx-target="#body"
-         hx-swap="innerHTML"
-         hx-push-url="true">
-    </div>
-
-    {# empty div which handles reloading the edit-view when editing/deleting ChildTransactions #}
-    <div hx-trigger="reloadTransactionEditView from:body"
-         hx-get="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
-         hx-target="#body"
-         hx-swap="innerHTML"
-         hx-push-url="true">
-    </div>
-
     <form hx-post="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
           hx-target="#body"
           hx-swap="innerHTML"
