@@ -85,10 +85,13 @@
                      aria-labelledby="{{ tab.name }}-tab"
                      tabindex="0"
                 >
-                    {% block tab_content %}
+                    {% if active_tab == tab.name %}
+                        {% block tab_content %}
+                            {% include "shared_partials/loading_spinner.html" with spinner_id="loading-spinner" %}
+                        {% endblock %}
+                    {% else %}
                         {% include "shared_partials/loading_spinner.html" with spinner_id="loading-spinner" %}
-                    {% endblock %}
-
+                    {% endif %}
                     <br><br><br><br>
                 </div>
             {% endfor %}
