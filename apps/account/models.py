@@ -3,6 +3,9 @@ from time import time
 from ambient_toolbox.models import CommonInfo
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Q
+
+from apps.room.models import Room
 
 
 class User(CommonInfo, AbstractUser):
@@ -34,3 +37,16 @@ class User(CommonInfo, AbstractUser):
             self.password = f"{self.name}-{timestamp}"
 
         super().clean()
+
+    def can_be_removed_from_room(self, room_id) -> bool:
+        return not (
+            Room.objects.filter(
+                Q(parent_transactions__paid_by_id=self.id)
+                | Q(parent_transactions__child_transactions__paid_for_id=self.id)
+                | Q(debts__debitor_id=self.id)
+                | Q(debts__creditor_id=self.id),
+                id=room_id,
+            )
+            .distinct()
+            .exists()
+        )
