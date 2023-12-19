@@ -9,15 +9,14 @@ class RoomListView(generic.ListView):
     template_name = "room/list.html"
 
     def get_queryset(self):
-        # TODO CT: Move this to Queryset method
-        user = self.request.user
-
-        qs = Room.objects.filter(users=user)
-
-        if user.is_anonymous:
-            return Room.objects.none()
-
-        if user.is_superuser:
-            qs = Room.objects.all()
-
-        return qs.order_by("status", "name")
+        return (
+            self.model.objects.visible_for(user=self.request.user)
+            .order_by("status", "name")
+            .values(
+                "created_by",
+                "description",
+                "name",
+                "slug",
+                "status",
+            )
+        )
