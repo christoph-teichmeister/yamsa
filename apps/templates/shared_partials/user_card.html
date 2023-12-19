@@ -1,12 +1,16 @@
+{% load room_tags %}
 <div class="col">
     <div class="card" style="max-width: 540px;">
         <div class="row g-0">
+
             <div class="col-3 d-flex align-items-center justify-content-center" style="font-size: 4em">
                 <i class="bi bi-file-person"></i>
             </div>
-            <div class="col-9">
+
+            <div class="col-8">
                 <div class="card-body">
                     <p class="card-text">{{ user.name }}</p>
+
                     <p class="card-text">
                         <small class="text-body-secondary">
                             {% if user.is_guest %}
@@ -16,6 +20,7 @@
                             {% endif %}
                         </small>
                     </p>
+
                     <p class="card-text">
                         <small>
                             {% if user.user_has_seen_this_room %}
@@ -27,6 +32,17 @@
                     </p>
                 </div>
             </div>
+
+            <div class="col-1 p-2 d-flex justify-content-end">
+                <i class="bi bi-x-octagon"
+                   hx-post="{% room_url 'account-remove-from-room' pk=user.id %}"
+                   hx-include="[name='csrfmiddlewaretoken']"
+                   hx-target="#body"
+                   hx-swap="morph:innerHTML"
+                   hx-confirm="Are you sure you wish to remove this user from this room?"
+                ></i>
+            </div>
+
         </div>
     </div>
 </div>
