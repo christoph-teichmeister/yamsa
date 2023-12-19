@@ -38,7 +38,7 @@ def handle_command(command: Command, queue: list[Message]):
             # todo logger bauen, den man über das django logging in den settings konfigurieren kann
             #  context, request-datum, user etc.
             print(
-                f"\n Handling command '{command.__class__.__name__}' ({command.uuid}) with handler '{handler.__name__}'"
+                f"\nHandling command '{command.__class__.__name__}' ({command.uuid}) with handler '{handler.__name__}'"
             )
             # todo das sollte um das ganze handle_message
             with transaction.atomic():
