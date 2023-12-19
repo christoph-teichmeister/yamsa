@@ -1,5 +1,6 @@
 from django.urls import reverse
 
+from apps.account.messages.events.user_removed_from_room import UserRemovedFromRoom
 from apps.core.event_loop.registry import message_registry
 from apps.debt.messages.events.debt_settled import DebtSettled
 from apps.transaction.messages.events.transaction import (
@@ -118,3 +119,18 @@ def send_notification_on_debt_settled(context: DebtSettled.Context):
             click_url=reverse(viewname="debt-list", kwargs={"room_slug": debt.room.slug}),
         ),
     ).send_to_user(debt.creditor)
+
+
+@message_registry.register_event(event=UserRemovedFromRoom)
+def send_notification_on_user_removed_from_room(context: UserRemovedFromRoom.Context):
+    notification = Notification(
+        payload=Notification.Payload(
+            head="User removed",
+            body=f"{context.user_requesting_removal.name} just removed "
+            f"{context.user_to_be_removed.name} from {context.room.name}",
+            click_url=reverse(viewname="account-list", kwargs={"room_slug": context.room.slug}),
+        ),
+    )
+
+    for user in context.room.users.exclude(id=context.user_requesting_removal.id):
+        notification.send_to_user(user)
