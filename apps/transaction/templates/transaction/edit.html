@@ -177,9 +177,15 @@
             <li class="list-group-item p-4"></li>
         </ul>
 
-        <p class="text-body-secondary text-center">
-            {{ parent_transaction.created_at|date:'G:i // d.m.Y' }}
-        </p>
+        <div class="text-center">
+            <label class="visually-hidden" for="created_at_input">Created at</label>
+            <input type="datetime-local"
+                   id="created_at_input"
+                   name="created_at"
+                   value="{{ parent_transaction.created_at|date:"Y-m-d" }}T{{ parent_transaction.created_at|time:"H:i" }}"
+                   min="2018-04-04T00:00"
+                   max="2099-12-31T00:00"/>
+        </div>
 
         <div class="row mt-4 mx-2">
             <div class="col">
