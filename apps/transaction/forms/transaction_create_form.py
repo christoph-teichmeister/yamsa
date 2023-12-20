@@ -17,6 +17,7 @@ class TransactionCreateForm(forms.ModelForm):
         model = ParentTransaction
         fields = (
             "description",
+            "further_notes",
             "currency",
             "paid_by",
             "room",

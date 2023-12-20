@@ -6,7 +6,8 @@ from apps.core.models.mixins import FullCleanOnSaveMixin
 
 
 class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
-    description = models.TextField(max_length=500)
+    description = models.TextField(max_length=50)
+    further_notes = models.TextField(max_length=5000, blank=True, null=True)
     paid_by = models.ForeignKey("account.User", related_name="made_parent_transactions", on_delete=models.CASCADE)
 
     room = models.ForeignKey("room.Room", on_delete=models.CASCADE, related_name="parent_transactions")
@@ -41,6 +42,6 @@ class ChildTransaction(FullCleanOnSaveMixin, CommonInfo):
 
     def __str__(self):
         return (
-            f"{self.parent_transaction.paid_by} paid {self.value}{self.parent_transaction.currency.sign} for"
-            f" {self.paid_for}"
+            f"{self.parent_transaction.paid_by} paid {self.value}{self.parent_transaction.currency.sign} for "
+            f"{self.paid_for}"
         )
