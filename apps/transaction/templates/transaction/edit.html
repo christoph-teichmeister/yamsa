@@ -72,9 +72,10 @@
 
             <div class="row">
                 <div class="col-12 d-flex align-items-center justify-content-center">
-                    <textarea class="form-control text-body-secondary text-center mb-0 py-1" style="font-style: italic"
-                              aria-label="Description" id="description"
-                              name="description">{{ parent_transaction.description }}</textarea>
+                    <textarea class="form-control text-center mb-0 py-1"
+                              aria-label="Description" id="description" name="description"
+                              rows="2" maxlength="50" minlength="1"
+                    >{{ parent_transaction.description }}</textarea>
                 </div>
             </div>
         </div>
@@ -176,6 +177,12 @@
 
             <li class="list-group-item p-4"></li>
         </ul>
+
+        <label class="visually-hidden" for="further_notes">Notes</label>
+        <textarea class="form-control mb-5"
+                  aria-label="Notes" id="further_notes" name="further_notes"
+                  rows="3" maxlength="500" minlength="1"
+        >{{ parent_transaction.further_notes }}</textarea>
 
         <div class="text-center">
             <label class="visually-hidden" for="created_at_input">Created at</label>

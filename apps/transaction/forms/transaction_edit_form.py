@@ -23,6 +23,7 @@ class TransactionEditForm(forms.ModelForm):
         fields = (
             # "total_value",
             "description",
+            "further_notes",
             "paid_by",
             "currency",
             "created_at",
