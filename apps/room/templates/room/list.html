@@ -31,9 +31,9 @@
                                 {% endif %}
                                 <div class="col p-0">
                                     <div class="card-body container d-flex align-items-center justify-content-center flex-wrap {% if room.status == ROOM_STATUS_CLOSED %}text-start{% else %}{% endif %}">
-                                        {% if request.user.is_superuser and request.user not in room.users.all %}
+                                        {% if request.user.is_superuser and not room.user_is_in_room %}
                                             <small style="font-style: italic">
-                                                {{ room.created_by }}
+                                                {{ room.created_by__name }}
                                             </small>
                                         {% endif %}
                                         <div class="row w-100">

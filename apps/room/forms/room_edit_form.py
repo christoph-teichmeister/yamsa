@@ -11,6 +11,11 @@ from apps.webpush.dataclasses import Notification
 
 
 class RoomEditForm(forms.ModelForm):
+    """
+    Form, which allows editing the name, description and preferred_currency of a room via the "normal" form in
+    room-detail page and allows editing the status via the "close room" "reopen room" buttons in the room-detail page.
+    """
+
     user: User = None
 
     class Meta:

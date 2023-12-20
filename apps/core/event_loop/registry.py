@@ -82,13 +82,13 @@ class MessageRegistry:
         # Log to shell which functions have been detected
         print("\nMessage autodiscovery running for commands...")
         for command in self.command_dict:
-            handler_list = ", ".join(str(x) for x in self.command_dict[command])
-            print(f"* {command}: [{handler_list}]")
+            handler_list = ", ".join(x.__name__ for x in self.command_dict[command])
+            print(f"* {command.__name__}: [{handler_list}]")
 
         print("\nMessage autodiscovery running for events...")
         for event in self.event_dict:
-            handler_list = ", ".join(str(x) for x in self.event_dict[event])
-            print(f"* {event}: [{handler_list}]")
+            handler_list = ", ".join(x.__name__ for x in self.event_dict[event])
+            print(f"* {event.__name__}: [{handler_list}]")
 
         print(f"\n### {len(self.command_dict) + len(self.event_dict)} message functions detected. ###\n")
 

@@ -22,6 +22,11 @@ urlpatterns = [
                 views.GuestCreateView.as_view(),
                 name="account-create-guest",
             ),
+            path(
+                "remove-from-room/<int:pk>/",
+                views.UserRemoveFromRoomView.as_view(),
+                name="account-remove-from-room",
+            ),
         ]
     ),
 ]
