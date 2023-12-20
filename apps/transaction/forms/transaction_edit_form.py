@@ -25,6 +25,7 @@ class TransactionEditForm(forms.ModelForm):
             "description",
             "paid_by",
             "currency",
+            "created_at",
             # ChildTransaction fields
             "paid_for",
             "value",
@@ -42,6 +43,15 @@ class TransactionEditForm(forms.ModelForm):
         # Call the super class's .save() and get the ParentTransaction instance
         instance: ParentTransaction = super().save(commit)
 
+        self._save_child_transactions(instance)
+
+        # Handle any necessary post-update actions
+        handle_message(ParentTransactionUpdated(context_data={"parent_transaction": instance, "room": instance.room}))
+
+        # Return the saved ParentTransaction instance
+        return instance
+
+    def _save_child_transactions(self, instance: ParentTransaction):
         # Get the user making the request
         request_user = self.data.get("request_user")
 
@@ -100,9 +110,3 @@ class TransactionEditForm(forms.ModelForm):
             ChildTransaction.objects.bulk_update(
                 objs=updated_child_transactions, fields=("paid_for", "value", "lastmodified_by", "lastmodified_at")
             )
-
-        # Handle any necessary post-update actions
-        handle_message(ParentTransactionUpdated(context_data={"parent_transaction": instance, "room": instance.room}))
-
-        # Return the saved ParentTransaction instance
-        return instance
