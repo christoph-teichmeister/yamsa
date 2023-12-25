@@ -5,49 +5,6 @@
 {% block title %}yamsa | {{ current_room.name }}{% endblock %}
 
 {% block content %}
-    {# Hey <username >#}
-    {% if request.user.is_authenticated %}
-        <small>Hey
-            <span class="text-primary-emphasis">{{ request.user.name }}</span>!
-        </small>
-    {% endif %}
-
-    {# Room name and copy room button #}
-    <div class="row align-items-center my-3">
-        <div class="col-9 col-md-5 text-break">
-            <h1 class="mb-0" {% if current_room.is_closed %}style="text-decoration: line-through"{% endif %}>
-                {{ current_room.name }}
-            </h1>
-        </div>
-        <div class=" col-3 col-md-7 d-flex justify-content-center">
-            {% if current_room.is_open and current_room.has_guests %}
-                <button class="btn btn-light btn-sm"
-                        onclick="copyShareURL()"
-                        data-bs-toggle="tooltip"
-                        data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
-                        hx-get="{% url 'htmx-checked-clipboard' %}"
-                        hx-swap="morph:innerHTML"
-                >
-                    {% include "shared_partials/clipboard_icon_unchecked.html" %}
-                </button>
-            {% elif current_room.is_closed %}
-                <h1 class="mb-0">
-                    <i class="bi bi-dash-circle"
-                       hx-get="{% room_url 'room-edit' %}"
-                       hx-target="#body"
-                       hx-swap="morph:innerHTML"
-                       hx-push-url="true"
-                    ></i>
-                </h1>
-            {% endif %}
-        </div>
-    </div>
-
-    {# Room description #}
-    <div class="mb-3">
-        <small>{{ current_room.description }}</small>
-    </div>
-
     {% if request.user.is_authenticated %}
         {# Room Tab-Headers #}
         <ul class="nav nav-tabs nav-fill" id="roomTab" role="tablist">
@@ -92,7 +49,7 @@
                     {% else %}
                         {% include "shared_partials/loading_spinner.html" with spinner_id="loading-spinner" %}
                     {% endif %}
-                    <br><br><br><br>
+                    <br><br><br>
                 </div>
             {% endfor %}
 
@@ -100,19 +57,6 @@
     {% else %}
         {% include "room/partials/_detail_who_are_you.html" %}
     {% endif %}
-
-    <script type="text/javascript">
-      var copyShareURL = () => {
-        const url = document.URL
-        navigator.clipboard.writeText(url).then(() => {
-          // clipboard successfully set
-          console.log(`${url} successfully copied to clipboard`)
-        }, () => {
-          // clipboard write failed
-          console.error("Something went wrong here")
-        });
-      }
-    </script>
 
     <script type="module">
       // TODO CT: Joa keine Ahnung, fix this I guess
