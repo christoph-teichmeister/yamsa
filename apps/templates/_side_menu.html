@@ -54,8 +54,11 @@
 
         </div>
 
-        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar"
-             aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas offcanvas-start"
+             tabindex="-1"
+             id="offcanvasNavbar"
+             aria-labelledby="offcanvasNavbarLabel"
+        >
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -78,21 +81,12 @@
                     >
                         <i class="bi bi-person-circle" style="font-size: 3em;"></i>
                         <a class="nav-link">
-                            {{ request.user.name }}
+                            {% if request.user.is_anonymous %}
+                                Profile
+                            {% else %}
+                                {{ request.user.name }}
+                            {% endif %}
                         </a>
-                    </div>
-                </div>
-
-                <div class="row p-1">
-                    <div class="col"
-                         data-bs-dismiss="offcanvas"
-                         hx-trigger="click"
-                         hx-get="{% url 'room-list' %}"
-                         hx-target="#body"
-                         hx-swap="innerHTML"
-                         hx-push-url="true"
-                    >
-                        Room list
                     </div>
                 </div>
 
@@ -106,6 +100,19 @@
                          hx-push-url="true"
                     >
                         Home
+                    </div>
+                </div>
+
+                <div class="row p-1">
+                    <div class="col"
+                         data-bs-dismiss="offcanvas"
+                         hx-trigger="click"
+                         hx-get="{% url 'room-list' %}"
+                         hx-target="#body"
+                         hx-swap="innerHTML"
+                         hx-push-url="true"
+                    >
+                        Room list
                     </div>
                 </div>
 
