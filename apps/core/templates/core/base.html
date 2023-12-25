@@ -49,14 +49,14 @@
     {% include "_side_menu.html" %}
 {% endif %}
 
-<div class="container-fluid h-100 mt-5 pt-4 pb-3 px-2">
+<div class="container-fluid mt-5 pt-4 pb-3 px-2">
     {% block content %}
     {% endblock %}
 </div>
 
-{#{% if not is_in_maintenance and not called_by_get_user_offline_template_view %}#}
-{#    {% include "_nav.html" %}#}
-{#{% endif %}#}
+{% if dashboard_tabs %}
+    {% include "room/partials/_dashboard_nav.html" with dashboard_tabs=dashboard_tabs %}
+{% endif %}
 
 <!-- Popper CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
