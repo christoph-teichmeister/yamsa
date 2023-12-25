@@ -45,15 +45,18 @@
 
 {% include "shared_partials/toast.html" %}
 
-<div class="container-fluid h-100" style="padding: 2rem 1rem;">
+{% if not is_in_maintenance and not called_by_get_user_offline_template_view %}
+    {% include "_side_menu.html" %}
+{% endif %}
+
+<div class="container-fluid h-100 mt-5 pt-4 pb-3 px-2">
     {% block content %}
     {% endblock %}
-    <br><br><br><br>
 </div>
 
-{% if not is_in_maintenance and not called_by_get_user_offline_template_view %}
-    {% include "_nav.html" %}
-{% endif %}
+{#{% if not is_in_maintenance and not called_by_get_user_offline_template_view %}#}
+{#    {% include "_nav.html" %}#}
+{#{% endif %}#}
 
 <!-- Popper CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
