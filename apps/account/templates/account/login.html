@@ -4,9 +4,10 @@
 {% block content %}
     <h1>Login</h1>
 
-    <div class="row h-100 align-items-center">
-        <div class="col-2 col-md-5"></div>
-        <div class="col-8 col-md-2 d-flex">
+    <div class="row gx-0">
+        <div class="col-2 col-md-5 p-0"></div>
+
+        <div class="col-8 col-md-2 p-0 d-flex">
             <form action="/account/login/" method="post" class="flex-grow-1">
                 {% csrf_token %}
 
@@ -35,7 +36,8 @@
                 </div>
             </form>
         </div>
-        <div class="col-2 col-md-5"></div>
+
+        <div class="col-2 col-md-5 p-0"></div>
     </div>
 
     <small class="fixed-bottom ps-3" style="margin-bottom: 5em;">

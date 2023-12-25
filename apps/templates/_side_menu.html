@@ -15,15 +15,17 @@
 
             {% if current_room %}
                 <div class="col-10 p-0 text-center">
-                <h6 class="mb-0">{{ current_room.name }}</h6>
-                <span class="text-muted" style="font-size: 0.7em">{{ current_room.description|truncatechars:50 }}</span>
+                    <h6 class="mb-0">{{ current_room.name }}</h6>
+                    <span class="text-muted"
+                          style="font-size: 0.7em">{{ current_room.description|truncatechars:50 }}</span>
+                </div>
 
             {% else %}
                 <div class="col-11 d-flex align-items-center justify-content-end">
-                <h3 class="mb-0">yamsa</h3>
+                    <h3 class="mb-0">yamsa</h3>
+                </div>
 
             {% endif %}
-            </div>
 
             {% if current_room %}
                 <div class="col-1 px-0 d-flex align-items-center justify-content-end">
@@ -50,78 +52,80 @@
                 </div>
             {% endif %}
 
+        </div>
+
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar"
+             aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
 
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar"
-                 aria-labelledby="offcanvasNavbarLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
+            <div class="offcanvas-body">
 
-                <div class="offcanvas-body">
-
-                    <div class="row p-1">
-                        <div class="col text-center"
-                             data-bs-dismiss="offcanvas"
-                             hx-trigger="click"
-                             hx-get="{% if request.user.is_authenticated %}
+                <div class="row p-1">
+                    <div class="col text-center"
+                         data-bs-dismiss="offcanvas"
+                         hx-trigger="click"
+                         hx-get="{% if request.user.is_authenticated %}
                                 {% url 'account-user-detail' pk=request.user.id %}
                                 {% else %}
                                 {% url 'account-user-login' %}
                                 {% endif %}"
-                             hx-target="#body"
-                             hx-swap="morph:innerHTML"
-                             hx-push-url="true"
-                        >
-                            <i class="bi bi-person-circle" style="font-size: 3em;"></i>
-                            <a class="nav-link">
-                                {{ request.user.name }}
-                            </a>
-                        </div>
+                         hx-target="#body"
+                         hx-swap="morph:innerHTML"
+                         hx-push-url="true"
+                    >
+                        <i class="bi bi-person-circle" style="font-size: 3em;"></i>
+                        <a class="nav-link">
+                            {{ request.user.name }}
+                        </a>
                     </div>
-
-                    <div class="row p-1">
-                        <div class="col"
-                             data-bs-dismiss="offcanvas"
-                             hx-trigger="click"
-                             hx-get="{% url 'room-list' %}"
-                             hx-target="#body"
-                             hx-swap="innerHTML"
-                             hx-push-url="true"
-                        >
-                            Room list
-                        </div>
-                    </div>
-
-                    <div class="row p-1">
-                        <div class="col"
-                             data-bs-dismiss="offcanvas"
-                             hx-trigger="click"
-                             hx-get="{% url 'core-welcome' %}"
-                             hx-target="#body"
-                             hx-swap="morph:innerHTML"
-                             hx-push-url="true"
-                        >
-                            Home
-                        </div>
-                    </div>
-
                 </div>
-            </div>
 
+                <div class="row p-1">
+                    <div class="col"
+                         data-bs-dismiss="offcanvas"
+                         hx-trigger="click"
+                         hx-get="{% url 'room-list' %}"
+                         hx-target="#body"
+                         hx-swap="innerHTML"
+                         hx-push-url="true"
+                    >
+                        Room list
+                    </div>
+                </div>
+
+                <div class="row p-1">
+                    <div class="col"
+                         data-bs-dismiss="offcanvas"
+                         hx-trigger="click"
+                         hx-get="{% url 'core-welcome' %}"
+                         hx-target="#body"
+                         hx-swap="morph:innerHTML"
+                         hx-push-url="true"
+                    >
+                        Home
+                    </div>
+                </div>
+
+            </div>
         </div>
+
+    </div>
 </nav>
 
-<script type="text/javascript">
-  var copyShareURL = () => {
-    const url = document.URL
-    navigator.clipboard.writeText(url).then(() => {
-      // clipboard successfully set
-      console.log(`${url} successfully copied to clipboard`)
-    }, () => {
-      // clipboard write failed
-      console.error("Something went wrong here")
-    });
-  }
-</script>
+{% if current_room %}
+    <script type="text/javascript">
+      var copyShareURL = () => {
+        const url = document.URL
+        navigator.clipboard.writeText(url).then(() => {
+          // clipboard successfully set
+          console.log(`${url} successfully copied to clipboard`)
+        }, () => {
+          // clipboard write failed
+          console.error("Something went wrong here")
+        });
+      }
+    </script>
+{% endif %}

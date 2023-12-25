@@ -4,7 +4,7 @@
 
 {% block tab_content %}
 
-    <div class="row align-items-center mt-3">
+    <div class="row gx-0 align-items-center mt-3">
         <div class="col-7">
             <h5>People</h5>
         </div>
@@ -22,7 +22,7 @@
     </div>
 
     {% if user_qs_for_room %}
-        <div class="row row-cols-1 row-cols-md-3 g-4 mt-1 mb-3">
+        <div class="row gx-0 gy-4 row-cols-1 row-cols-md-3 mt-1 mb-3">
             {# Include csrf_token form, so that the "x" in each users card has a csrf_token #}
             {% csrf_token %}
             {% for user in user_qs_for_room %}
