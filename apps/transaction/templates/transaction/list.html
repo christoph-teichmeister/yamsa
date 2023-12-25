@@ -44,7 +44,7 @@
                         </h5>
                         <small>{{ parent_transaction.created_at|date:'d.m.Y' }}</small>
                     </div>
-                    <small style="font-style: italic">"{{ parent_transaction.description }}"</small>
+                    <small style="font-style: italic">"{{ parent_transaction.description|truncatechars:35 }}"</small>
                 </li>
             {% endfor %}
         </ul>
