@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-    {% if request.user.is_anonymous or user.is_guest %}
+    {% if user.is_guest %}
         <div class="text-center">
             <p>- You are a guest -</p>
 

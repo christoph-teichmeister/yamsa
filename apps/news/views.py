@@ -1,3 +1,4 @@
+from django.contrib.auth import mixins
 from django.urls import reverse
 from django.views import generic
 
@@ -15,7 +16,7 @@ class OpenedNewsHTMXView(generic.DetailView):
         return context
 
 
-class NewsCommentCreateHTMXView(generic.CreateView):
+class NewsCommentCreateHTMXView(mixins.LoginRequiredMixin, generic.CreateView):
     model = NewsComment
     form_class = NewsCommentCreateForm
     template_name = "shared_partials/news_card.html"

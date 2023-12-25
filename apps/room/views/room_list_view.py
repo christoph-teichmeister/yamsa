@@ -1,3 +1,4 @@
+from django.contrib.auth import mixins
 from django.db.models import OuterRef, ExpressionWrapper, Exists, BooleanField
 from django.views import generic
 
@@ -5,7 +6,7 @@ from apps.account.models import User
 from apps.room.models import Room
 
 
-class RoomListView(generic.ListView):
+class RoomListView(mixins.LoginRequiredMixin, generic.ListView):
     model = Room
     context_object_name = "room_qs"
     template_name = "room/list.html"
