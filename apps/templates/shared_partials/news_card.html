@@ -1,4 +1,4 @@
-<li id="news-{{ news.id }}" class="list-group-item {% if news.highlighted %}pt-4{% else %}pb-2 pt-4{% endif %}">
+<li id="news-{{ news.id }}" class="list-group-item {% if not news.highlighted %}pb-2 pt-4{% endif %}">
     <div class="row">
         <div class="col-1">
             {% if news.highlighted %}

@@ -24,7 +24,3 @@ body {
     color: var(--bs-primary-text-emphasis);
     opacity: 50%;
 }
-
-.room-dashboard-tab-header {
-    padding: 1rem;
-}

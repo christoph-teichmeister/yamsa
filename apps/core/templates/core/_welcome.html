@@ -1,10 +1,6 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-    <div class="room-dashboard-tab-header">
-        <h5>Welcome to yamsa</h5>
-    </div>
-
     {% if request.user.is_authenticated %}
         {% if highlighted_news %}
             <ul class="list-group list-group-flush">
