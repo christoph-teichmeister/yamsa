@@ -16,6 +16,10 @@ body {
     color: var(--bs-primary-text-emphasis);
 }
 
+.p-e-color {
+    color: var(--bs-primary-text-emphasis);
+}
+
 .debt-list-debt-settled {
     color: var(--bs-primary-text-emphasis);
     opacity: 50%;
