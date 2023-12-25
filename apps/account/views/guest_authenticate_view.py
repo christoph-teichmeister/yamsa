@@ -13,7 +13,7 @@ class AuthenticateGuestUserView(generic.View):
         room_slug = self.request.POST.get("room_slug")
 
         redirect_response = HttpResponseRedirect(
-            redirect_to=reverse(viewname="room-dashboard", kwargs={"room_slug": room_slug})
+            redirect_to=reverse(viewname="transaction-list", kwargs={"room_slug": room_slug})
         )
 
         if not request.user.is_authenticated:
