@@ -1,3 +1,5 @@
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.views import generic
 from django_context_decorator import context
 
@@ -6,6 +8,11 @@ from apps.news.models import News
 
 class WelcomePartialView(generic.TemplateView):
     template_name = "core/_welcome.html"
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_anonymous:
+            return HttpResponseRedirect(redirect_to=reverse(viewname="account-user-login"))
+        return super().get(request, *args, **kwargs)
 
     def _get_news_base_qs(self):
         if self.request.user.is_authenticated:
@@ -23,5 +30,4 @@ class WelcomePartialView(generic.TemplateView):
     @context
     @property
     def highlighted_news(self):
-        ret = self._get_news_base_qs().filter(highlighted=True).first()
-        return ret
+        return self._get_news_base_qs().filter(highlighted=True).first()
