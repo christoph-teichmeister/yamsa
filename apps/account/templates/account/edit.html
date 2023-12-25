@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-    <div class="row h-100 px-3 d-flex align-content-center justify-content-center">
+    <div class="row gx-0 px-3 d-flex align-content-center justify-content-center">
 
         <form>
             {% csrf_token %}
@@ -90,22 +90,5 @@
                 </ul>
             </div>
         </form>
-    </div>
-
-    <div class="fixed-bottom mb-5">
-        <div class="row float-end mb-5 me-2">
-            <div class="col">
-                <button type="button"
-                        class="btn btn-primary"
-                        hx-trigger="click"
-                        hx-get="{% url 'account-user-logout' %}"
-                        hx-target="#body"
-                        hx-swap="morph:innerHTML"
-                        hx-push-url="true"
-                >
-                    Log me out
-                </button>
-            </div>
-        </div>
     </div>
 {% endblock %}

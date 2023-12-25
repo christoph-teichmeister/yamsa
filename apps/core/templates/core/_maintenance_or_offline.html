@@ -24,7 +24,7 @@
         {% endif %}
     </div>
     {% if called_by_offline_view %}
-        <div class="fixed-bottom d-flex justify-content-center" style="margin-bottom: 5em">
+        <div class="fixed-bottom z-0 d-flex justify-content-center mb-5">
             <button class="btn btn-primary"
                     hx-trigger="click"
                     hx-get="{% url 'core-welcome' %}"
