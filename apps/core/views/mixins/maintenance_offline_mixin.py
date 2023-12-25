@@ -12,5 +12,7 @@ class MaintenanceOrOfflineView:
 
     @context
     @property
-    def called_by_get_user_offline_template_view(self):
-        return isinstance(self, GetUserOfflineTemplateView)
+    def called_by_offline_view(self):
+        from apps.core.views import OfflineView
+
+        return isinstance(self, OfflineView)
