@@ -51,7 +51,7 @@
     <br><br><br><br>
 </div>
 
-{% if not is_in_maintenance and not called_by_get_user_offline_template_view %}
+{% if not is_in_maintenance and not called_by_offline_view %}
     {% include "_nav.html" %}
 {% endif %}
 
