@@ -13,12 +13,12 @@ body {
 
 .me-involved {
     font-weight: bold;
-    color: var(--bs-primary-text-emphasis)
+    color: var(--bs-primary-text-emphasis);
 }
 
 .debt-list-debt-settled {
     color: var(--bs-primary-text-emphasis);
-    opacity: 50%
+    opacity: 50%;
 }
 
 .room-dashboard-tab-header {
