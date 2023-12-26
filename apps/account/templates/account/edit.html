@@ -16,6 +16,7 @@
                             type="submit"
                             hx-post="{% url 'account-user-update' pk=user.id %}"
                             hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"
                             hx-push-url="true"
                     >

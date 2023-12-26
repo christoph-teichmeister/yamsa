@@ -50,3 +50,21 @@ body {
     border-color: var(--bs-primary-text-emphasis);
 }
 
+.htmx-indicator {
+    opacity: 0;
+    z-index: -1;
+    transition: none !important;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+    z-index: 2000;
+    transition: all 200ms ease-in !important;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+    z-index: 2000;
+    transition: all 200ms ease-in !important;;
+}
+

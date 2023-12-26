@@ -6,6 +6,7 @@
 
     <form hx-post="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
           hx-target="#body"
+          hx-indicator="#body-loading-spinner"
           hx-swap="morph:innerHTML"
           hx-push-url="true">
         {% csrf_token %}
@@ -138,6 +139,7 @@
                                hx-post="{% room_url 'child-transaction-delete' pk=child_transaction.id %}"
                                hx-confirm="Are you sure you wish to delete this transaction?"
                                hx-target="#body"
+                               hx-indicator="#body-loading-spinner"
                                hx-swap="morph:innerHTML"
                                hx-push-url="true"
                             ></i>

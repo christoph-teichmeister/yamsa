@@ -18,6 +18,7 @@
 
     <form hx-post="{% room_url 'debt-settle' pk=debt.id %}"
           hx-target="#body"
+          hx-indicator="#body-loading-spinner"
           hx-swap="morph:innerHTML"
           hx-push-url="true">
         {% csrf_token %}

@@ -13,6 +13,7 @@
                    {% if active_tab == tab.name %}aria-current="page"{% endif %}
                    hx-trigger="click"
                    hx-get="{{ tab.get_url }}"
+                   hx-indicator="#body-loading-spinner"
                    hx-target="#body"
                    hx-swap="morph:innerHTML"
                    hx-push-url="true"
