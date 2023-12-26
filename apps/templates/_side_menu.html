@@ -97,20 +97,20 @@
                     </div>
                 </div>
 
-                <div class="row py-1 cursor-pointer d-flex justify-content-center align-items-center{% if request.path == "/welcome/" %} p-e-color{% endif %}">
+                <div class="row py-1 cursor-pointer d-flex justify-content-center align-items-center{% if request.path == "/welcome/" %} p-e-color{% endif %}"
+                     data-bs-dismiss="offcanvas"
+                     data-bs-target="#offcanvasNavbar"
+                     hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
+                     hx-get="{% url 'core-welcome' %}"
+                     hx-indicator="#body-loading-spinner"
+                     hx-target="#body"
+                     hx-swap="morph:innerHTML"
+                     hx-push-url="true"
+                >
                     <div class="col-4 text-center fs-1">
                         <i class="bi bi-house"></i>
                     </div>
-                    <div class="col-8"
-                         data-bs-dismiss="offcanvas"
-                         data-bs-target="#offcanvasNavbar"
-                         hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-                         hx-get="{% url 'core-welcome' %}"
-                         hx-indicator="#body-loading-spinner"
-                         hx-target="#body"
-                         hx-swap="morph:innerHTML"
-                         hx-push-url="true"
-                    >
+                    <div class="col-8">
                         Home
                     </div>
                 </div>
