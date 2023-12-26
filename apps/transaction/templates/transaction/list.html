@@ -27,8 +27,7 @@
     {% if parent_transactions %}
         <ul class="list-group list-group-flush mb-3">
             {% for parent_transaction in parent_transactions %}
-                <li class="list-group-item pb-4 pt-4"
-                    style="cursor: pointer"
+                <li class="list-group-item pb-4 pt-4 cursor-pointer"
                     hx-trigger="click"
                     hx-get="{% room_url 'transaction-detail' pk=parent_transaction.id %}"
                     hx-target="#body"

@@ -67,7 +67,7 @@
             <div class="offcanvas-body">
 
                 <div class="row p-1">
-                    <div class="col text-center"
+                    <div class="col text-center cursor-pointer"
                          data-bs-dismiss="offcanvas"
                          hx-trigger="click"
                          hx-get="{% if request.user.is_authenticated %}
@@ -91,7 +91,7 @@
                 </div>
 
                 <div class="row p-1">
-                    <div class="col"
+                    <div class="col cursor-pointer"
                          data-bs-dismiss="offcanvas"
                          hx-trigger="click"
                          hx-get="{% url 'core-welcome' %}"
@@ -104,7 +104,7 @@
                 </div>
 
                 <div class="row p-1">
-                    <div class="col"
+                    <div class="col cursor-pointer"
                          data-bs-dismiss="offcanvas"
                          hx-trigger="click"
                          hx-get="{% url 'room-list' %}"
