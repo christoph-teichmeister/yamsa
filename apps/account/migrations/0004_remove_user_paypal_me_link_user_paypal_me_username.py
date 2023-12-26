@@ -25,7 +25,7 @@ def migrate_paypal_me_usernames_to_paypal_me_links(apps, schema_editor):
         if not user.paypal_me_username:
             continue
 
-        user.paypal_me_link = f"http://paypal.me/{user.paypal_me_username}"
+        user.paypal_me_link = f"https://paypal.me/{user.paypal_me_username}"
         user.save()
 
 

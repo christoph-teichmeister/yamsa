@@ -22,7 +22,7 @@
         {% if request.user.is_superuser %}
             <div class="row float-end me-2">
                 <div class="col">
-                    <a href="{{ PROJECT_BASE_URL }}/{{ DJANGO_ADMIN_SUB_URL }}/login" target="_blank">
+                    <a href="{{ core.PROJECT_BASE_URL }}/{{ core.DJANGO_ADMIN_SUB_URL }}/login" target="_blank">
                         <i class="bi bi-terminal"></i>
                     </a>
                 </div>
@@ -82,11 +82,11 @@
 
                     <li class="list-group-item py-4 px-2">
                         <strong>
-                            Paypal.me Username:
+                            PayPal.me Username:
                         </strong>
                         <span class="float-end">
                         {% if user.paypal_me_username %}
-                            {{ user.paypal_me_username }}
+                            @{{ user.paypal_me_username }}
                         {% else %}
                             -
                         {% endif %}

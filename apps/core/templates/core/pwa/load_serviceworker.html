@@ -42,7 +42,11 @@
 
   // Validate, that the correct permissions have been given
   const setupIsValid = (registration) => {
-    Notification.requestPermission()
+    let requestedPermissionResult = "denied"
+
+    Notification.requestPermission((result) => {
+      requestedPermissionResult = result
+    })
 
     // Check if notifications are supported
     if (!registration.showNotification) {
