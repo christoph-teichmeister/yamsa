@@ -41,7 +41,7 @@
 
     <link rel="stylesheet" href="{% static 'base.css' %}">
 </head>
-<body hx-ext="morph" id="body">
+<body hx-ext="idiomorph" id="body">
 
 {% include "shared_partials/toast.html" %}
 
@@ -49,7 +49,7 @@
     {% include "_side_menu.html" %}
 {% endif %}
 
-<div class="container-fluid my-5 py-4 px-2">
+<div class="container-fluid my-5 py-4 px-2" id="base-content">
     {% block content %}
     {% endblock %}
 </div>

@@ -70,7 +70,7 @@
                 <div class="row py-3">
                     <div class="col text-center cursor-pointer"
                          data-bs-dismiss="offcanvas"
-                         hx-trigger="click"
+                         hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
                          hx-get="{% if request.user.is_authenticated %}
                                 {% url 'account-user-detail' pk=request.user.id %}
                                 {% else %}
@@ -97,7 +97,7 @@
                     </div>
                     <div class="col ps-2"
                          data-bs-dismiss="offcanvas"
-                         hx-trigger="click"
+                         hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
                          hx-get="{% url 'core-welcome' %}"
                          hx-target="#body"
                          hx-swap="morph:innerHTML"
@@ -110,7 +110,7 @@
                 <div class="row py-3 cursor-pointer d-flex justify-content-center">
                     <div class="col "
                          data-bs-dismiss="offcanvas"
-                         hx-trigger="click"
+                         hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
                          hx-get="{% url 'room-list' %}"
                          hx-target="#body"
                          hx-swap="innerHTML"
