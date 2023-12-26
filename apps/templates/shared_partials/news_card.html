@@ -1,23 +1,26 @@
-<li id="news-{{ news.id }}" class="list-group-item {% if not news.highlighted %}pb-2 pt-4{% endif %}">
+<li id="news-{{ news.id }}"
+    class="list-group-item {% if not news.highlighted %}pb-2 pt-4{% endif %}"
+        {% if not news.highlighted %}
+    hx-trigger="click"
+    hx-target="#news-{{ news.id }}"
+    hx-swap="outerHTML"
+    hx-indicator="#body-loading-spinner"
+            {% if opened %}
+    hx-get="{% url 'htmx-closed-news' pk=news.id %}"
+            {% else %}
+    hx-get="{% url 'htmx-opened-news' pk=news.id %}"
+            {% endif %}
+        {% endif %}
+>
     <div class="row">
         <div class="col-1">
             {% if news.highlighted %}
                 ✨
             {% else %}
                 {% if opened %}
-                    <i class="bi bi-caret-down"
-                       hx-trigger="click"
-                       hx-get="{% url 'htmx-closed-news' pk=news.id %}"
-                       hx-target="#news-{{ news.id }}"
-                       hx-swap="outerHTML"
-                    ></i>
+                    <i class="bi {% if opened %}bi-caret-down{% else %}bi-caret-right{% endif %}"></i>
                 {% else %}
-                    <i class="bi bi-caret-right {% if news.comments.count %}text-primary-emphasis{% endif %}"
-                       hx-trigger="click"
-                       hx-get="{% url 'htmx-opened-news' pk=news.id %}"
-                       hx-target="#news-{{ news.id }}"
-                       hx-swap="outerHTML"
-                    >
+                    <i class="bi bi-caret-right {% if news.comments.count %}text-primary-emphasis{% endif %}">
                     </i>
                 {% endif %}
             {% endif %}
