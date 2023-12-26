@@ -48,11 +48,13 @@
       requestedPermissionResult = result
     })
 
+    /* TODO CT: Temporarily disable this
     // Check if notifications are supported
     if (!registration.showNotification) {
       window.alert("Showing notifications isn't supported ☹️😢");
       return false;
     }
+    */
 
     // Check if the user has denied notifications
     if (Notification.permission === 'denied') {
