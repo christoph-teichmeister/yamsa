@@ -44,28 +44,30 @@
     </div>
 </div>
 
-{% include "side_menu_components/room_list_title.html" with title="Closed" %}
+{% if current_user.closed_room_qs_for_list %}
+    {% include "side_menu_components/room_list_title.html" with title="Closed" %}
 
-{% for room in current_user.closed_room_qs_for_list %}
-    <div class="row cursor-pointer{% if current_room.slug == room.slug %} p-e-color{% endif %}"
-         data-bs-dismiss="offcanvas"
-         data-bs-target="#offcanvasNavbar"
-         hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-         hx-get="{% room_url 'room-edit' %}"
-         hx-target="#body"
-         hx-swap="innerHTML"
-         hx-push-url="true"
-    >
-        <div class="col-4 d-flex flex-column justify-content-center align-items-center">
-            <div class="room-circle closed{% if current_room.slug == room.slug %} selected{% endif %}">
-                {{ room.name|slice:":2"|upper }}
+    {% for room in current_user.closed_room_qs_for_list %}
+        <div class="row cursor-pointer{% if current_room.slug == room.slug %} p-e-color{% endif %}"
+             data-bs-dismiss="offcanvas"
+             data-bs-target="#offcanvasNavbar"
+             hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
+             hx-get="{% room_url 'room-edit' %}"
+             hx-target="#body"
+             hx-swap="innerHTML"
+             hx-push-url="true"
+        >
+            <div class="col-4 d-flex flex-column justify-content-center align-items-center">
+                <div class="room-circle closed{% if current_room.slug == room.slug %} selected{% endif %}">
+                    {{ room.name|slice:":2"|upper }}
+                </div>
+            </div>
+            <div class="col-8 d-flex align-items-center">
+                {{ room.name|truncatechars:8 }}
             </div>
         </div>
-        <div class="col-8 d-flex align-items-center">
-            {{ room.name|truncatechars:8 }}
-        </div>
-    </div>
-{% endfor %}
+    {% endfor %}
+{% endif %}
 
 {% if current_user.other_rooms_qs_for_list %}
     {% include "side_menu_components/room_list_title.html" with title="Other" %}

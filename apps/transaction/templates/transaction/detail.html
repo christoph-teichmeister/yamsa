@@ -69,9 +69,11 @@
         <li class="list-group-item p-4"></li>
     </ul>
 
-    <p class="text-body-secondary text-center text-break fst-italic">
-        "{{ parent_transaction.further_notes }}"
-    </p>
+    {% if parent_transaction.further_notes %}
+        <p class="text-body-secondary text-center text-break fst-italic">
+            "{{ parent_transaction.further_notes }}"
+        </p>
+    {% endif %}
 
     <p class="text-body-secondary text-center">
         {{ parent_transaction.created_at|date:'G:i // d.m.Y' }}
