@@ -15,7 +15,6 @@ import sentry_sdk
 from pathlib import Path
 
 import environ
-from django.urls import reverse
 
 env = environ.Env(
     SECRET_KEY=(str, ""),
