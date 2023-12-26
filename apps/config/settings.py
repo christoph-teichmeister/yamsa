@@ -225,7 +225,7 @@ MANIFEST = {
     "description": "Yet another money split app",
     "dir": "auto",
     "lang": "en-US",
-    "display": "standalone",
+    "display": "fullscreen",
     "orientation": "any",
     "start_url": "/",
     "scope": "/",

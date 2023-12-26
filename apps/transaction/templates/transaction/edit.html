@@ -183,8 +183,8 @@
         <label class="visually-hidden" for="further_notes">Notes</label>
         <textarea class="form-control mb-5"
                   aria-label="Notes" id="further_notes" name="further_notes"
-                  rows="3" maxlength="500" minlength="1"
-        >{{ parent_transaction.further_notes }}</textarea>
+                  rows="3" maxlength="500" minlength="1" placeholder="Add extra notes here"
+        >{{ parent_transaction.further_notes|default:"" }}</textarea>
 
         <div class="text-center">
             <label class="visually-hidden" for="created_at_input">Created at</label>
