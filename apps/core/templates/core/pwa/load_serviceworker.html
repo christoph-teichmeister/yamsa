@@ -48,13 +48,11 @@
       requestedPermissionResult = result
     })
 
-    /* TODO CT: Reenable this
     // Check if notifications are supported
     if (!registration.showNotification) {
       window.alert("Showing notifications isn't supported ☹️😢");
       return false;
     }
-    */
 
     // Check if the user has denied notifications
     if (Notification.permission === 'denied') {
@@ -62,13 +60,11 @@
       return false;
     }
 
-    /* TODO CT: Reenable this
     // Check if PushManager is supported
     if (!('PushManager' in window)) {
       window.alert("Push isn't allowed in your browser 🤔");
       return false;
     }
-    */
     return true
   }
 
