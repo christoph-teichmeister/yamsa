@@ -62,9 +62,12 @@
                         <div class="mb-3">
                             <label for="paypal_me_username"
                                    class="form-label">{{ form.fields.paypal_me_username.label }}</label>
+                            <div class="input-group">
+                            <span class="input-group-text">@</span>
                             <input type="text" class="form-control" id="paypal_me_username" name="paypal_me_username"
                                    value="{% if user.paypal_me_username %}{{ user.paypal_me_username }}{% endif %}"
                                    placeholder="-">
+                            </div>
                             {% for error_message in form.errors.paypal_me_username.data %}
                                 <small class="error" id="paypal_me_usernameError">{{ error_message.message }}</small>
                             {% endfor %}

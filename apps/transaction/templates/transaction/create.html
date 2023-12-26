@@ -87,14 +87,20 @@
                 <div class="mb-3 form-group">
                     <label for="description">Description</label>
                     <textarea id="description" name="description" class="form-control"
-                              rows="2" maxlength="50" minlength="1"
+                              rows="1" maxlength="50" minlength="1" placeholder=""
                               required></textarea>
+                    <div id="descriptionHelpBlock" class="form-text">
+                        Maximum 50 characters.
+                    </div>
                 </div>
 
                 <div class="mb-3 form-group">
                     <label for="further_notes">Notes</label>
                     <textarea id="further_notes" name="further_notes" class="form-control"
-                              rows="3" maxlength="5000" minlength="1"></textarea>
+                              rows="3" maxlength="5000" minlength="1" placeholder="Add extra notes"></textarea>
+                    <div id="descriptionHelpBlock" class="form-text">
+                        Up to 5000 characters.
+                    </div>
                 </div>
 
                 <div class="form-group" hidden>

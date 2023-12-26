@@ -27,13 +27,7 @@
                     {% endfor %}
                 </div>
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">{{ form.fields.password.label }}</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                    {% for error_message in form.errors.password.data %}
-                        <small class="error" id="passwordError">{{ error_message.message }}</small>
-                    {% endfor %}
-                </div>
+                {% include "account/shared_partials/password_input_component.html" %}
 
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary">Register</button>

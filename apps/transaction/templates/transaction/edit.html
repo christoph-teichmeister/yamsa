@@ -72,11 +72,15 @@
             </div>
 
             <div class="row">
-                <div class="col-12 d-flex align-items-center justify-content-center">
-                    <textarea class="form-control text-center mb-0 py-1"
+                <div class="col-12 d-flex flex-column align-items-center justify-content-center">
+                    <textarea class="form-control mb-0 py-1"
                               aria-label="Description" id="description" name="description"
                               rows="2" maxlength="50" minlength="1"
                     >{{ parent_transaction.description }}</textarea>
+
+                    <div class="col-12 text-start form-text">
+                        Maximum 50 characters.
+                    </div>
                 </div>
             </div>
         </div>

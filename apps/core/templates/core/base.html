@@ -6,7 +6,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>{% block title %}yamsa{% endblock %}</title>
+    <title>
+        {% if core.IS_LOCALHOST %}
+            ⚒️
+        {% endif %}
+        {% block title %}
+            yamsa
+        {% endblock %}
+    </title>
     <link rel="icon" href="{% static 'images/favicon.ico' %}">
 
     {% load_pwa_meta_data %}
@@ -45,6 +52,15 @@
     <meta name="htmx-config" content='{"includeIndicatorStyles": false}'>
 </head>
 <body hx-ext="idiomorph" id="body">
+
+{% if core.IS_LOCALHOST %}
+    <div class="w-100 d-flex align-items-center justify-content-center"
+         style="opacity: 20%; z-index:3000; height: 3.2em; position: fixed; top: 0; background-color: darkred">
+        <h1 class="mb-0">
+            💀 Deadzone 💀
+        </h1>
+    </div>
+{% endif %}
 
 {% include "shared_partials/toast.html" %}
 
@@ -86,6 +102,7 @@
   var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
   var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 </script>
+
 </body>
 </html>
 

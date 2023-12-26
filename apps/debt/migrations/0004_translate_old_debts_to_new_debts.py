@@ -5,8 +5,6 @@ from django.conf import settings
 from django.db import migrations
 from django.db.models import Q
 
-from apps.core.utils import add_or_update_dict
-
 
 def translate_old_debts_to_new_debts(apps, schema_editor):
     OldDebt = apps.get_model("debt", "Debt")
