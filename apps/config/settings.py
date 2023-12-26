@@ -15,6 +15,7 @@ import sentry_sdk
 from pathlib import Path
 
 import environ
+from django.urls import reverse
 
 env = environ.Env(
     SECRET_KEY=(str, ""),
@@ -44,6 +45,7 @@ BASE_DIR = APPS_DIR.parent
 
 PROJECT_BASE_URL = env("PROJECT_BASE_URL")
 DJANGO_ADMIN_SUB_URL = env("DJANGO_ADMIN_SUB_URL")
+LOGIN_URL = "/account/login/"
 
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(CONFIG_DIR, ".env"))
@@ -132,6 +134,7 @@ TEMPLATES = (
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "apps.account.context_processors.user_context",
                 "apps.currency.context_processors.currency_context",
                 "apps.room.context_processors.room_context",
             ],

@@ -24,7 +24,7 @@ def room_url(parser, token):
 
     # room/list.html does not and can not have current_room as context_variable, but it does iterate over a room_qs
     # calling each entry "room", so use that instead
-    if "room/list.html" in parser.origin.name:
+    if "room/list.html" in parser.origin.name or "_side_menu_room_list.html" in parser.origin.name:
         room_context_name = "room"
 
     token.contents += f" room_slug={room_context_name}.slug"

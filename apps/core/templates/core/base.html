@@ -41,18 +41,21 @@
 
     <link rel="stylesheet" href="{% static 'base.css' %}">
 </head>
-<body hx-ext="morph" id="body" style="height: 90vh">
+<body hx-ext="idiomorph" id="body">
 
 {% include "shared_partials/toast.html" %}
 
-<div class="container-fluid h-100" style="padding: 2rem 1rem;">
+{% if not is_in_maintenance and not called_by_offline_view and not request.user.is_anonymous %}
+    {% include "_side_menu.html" %}
+{% endif %}
+
+<div class="container-fluid my-5 py-4 px-2" id="base-content">
     {% block content %}
     {% endblock %}
-    <br><br><br><br>
 </div>
 
-{% if not is_in_maintenance and not called_by_offline_view %}
-    {% include "_nav.html" %}
+{% if dashboard_tabs and not request.user.is_anonymous %}
+    {% include "room/partials/_dashboard_nav.html" with dashboard_tabs=dashboard_tabs %}
 {% endif %}
 
 <!-- Popper CDN -->
@@ -73,6 +76,10 @@
   // Enable Toasts
   var toastElList = document.querySelectorAll('.toast')
   var toastList = [...toastElList].map(toastEl => new bootstrap.Toast(toastEl))
+
+  // Enable Popovers
+  var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+  var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 </script>
 </body>
 </html>

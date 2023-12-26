@@ -1,3 +1,4 @@
+from django.contrib.auth import mixins
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
@@ -7,7 +8,7 @@ from apps.room.models import Room
 from apps.room.models import UserConnectionToRoom
 
 
-class RoomCreateView(generic.CreateView):
+class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
     model = Room
     form_class = RoomCreateForm
     template_name = "room/create.html"

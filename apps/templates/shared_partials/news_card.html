@@ -1,4 +1,4 @@
-<li id="news-{{ news.id }}" class="list-group-item {% if news.highlighted %}pt-4{% else %}pb-2 pt-4{% endif %}">
+<li id="news-{{ news.id }}" class="list-group-item {% if not news.highlighted %}pb-2 pt-4{% endif %}">
     <div class="row">
         <div class="col-1">
             {% if news.highlighted %}
@@ -9,14 +9,14 @@
                        hx-trigger="click"
                        hx-get="{% url 'htmx-closed-news' pk=news.id %}"
                        hx-target="#news-{{ news.id }}"
-                       hx-swap="morph:outerHTML"
+                       hx-swap="outerHTML"
                     ></i>
                 {% else %}
                     <i class="bi bi-caret-right {% if news.comments.count %}text-primary-emphasis{% endif %}"
                        hx-trigger="click"
                        hx-get="{% url 'htmx-opened-news' pk=news.id %}"
                        hx-target="#news-{{ news.id }}"
-                       hx-swap="morph:outerHTML"
+                       hx-swap="outerHTML"
                     >
                     </i>
                 {% endif %}

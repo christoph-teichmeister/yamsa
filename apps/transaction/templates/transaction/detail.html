@@ -6,8 +6,7 @@
 
     <div class="row mt-4 mx-2 justify-content-center">
         <div class="col-1 d-flex align-items-center justify-content-end">
-            <i class="bi bi-arrow-left-circle fs-2"
-               style="cursor: pointer"
+            <i class="bi bi-arrow-left-circle fs-2 cursor-pointer"
                hx-trigger="click"
                hx-get="{% room_url 'transaction-list' %}"
                hx-target="#body"
@@ -34,9 +33,8 @@
         </div>
 
         <div class="col-1 d-flex align-items-center justify-content-start">
-            <i class="bi bi-pencil-square fs-2 {% if current_room.is_closed %}text-muted{% endif %}"
+            <i class="bi bi-pencil-square fs-2 {% if current_room.is_closed %}text-muted{% else %}cursor-pointer{% endif %}"
                     {% if current_room.is_open %}
-               style="cursor: pointer"
                hx-trigger="click"
                hx-get="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
                hx-target="#body"
@@ -51,9 +49,8 @@
         <li class="list-group-item p-4"></li>
 
         {% for child_transaction in child_transactions %}
-            <li class="list-group-item p-4"
+            <li class="list-group-item p-4 {% if current_room.is_open %}cursor-pointer{% endif %}"
                     {% if current_room.is_open %}
-                style="cursor: pointer"
                 hx-trigger="click"
                 hx-get="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
                 hx-target="#body"
@@ -72,9 +69,11 @@
         <li class="list-group-item p-4"></li>
     </ul>
 
-    <p class="text-body-secondary text-center text-break fst-italic">
-        "{{ parent_transaction.further_notes }}"
-    </p>
+    {% if parent_transaction.further_notes %}
+        <p class="text-body-secondary text-center text-break fst-italic">
+            "{{ parent_transaction.further_notes }}"
+        </p>
+    {% endif %}
 
     <p class="text-body-secondary text-center">
         {{ parent_transaction.created_at|date:'G:i // d.m.Y' }}

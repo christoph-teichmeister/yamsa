@@ -1,9 +1,10 @@
+from functools import cached_property
 from time import time
 
 from ambient_toolbox.models import CommonInfo
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, ExpressionWrapper, Exists, OuterRef, BooleanField
 
 from apps.room.models import Room
 
@@ -49,4 +50,26 @@ class User(CommonInfo, AbstractUser):
             )
             .distinct()
             .exists()
+        )
+
+    @cached_property
+    def room_qs_for_list(self):
+        return (
+            Room.objects.visible_for(user=self)
+            .prefetch_related("users")
+            .annotate(
+                user_is_in_room=ExpressionWrapper(
+                    Exists(User.objects.filter(id=self.id, rooms=OuterRef("id"))),
+                    output_field=BooleanField(),
+                ),
+            )
+            .order_by("-user_is_in_room", "status", "name")
+            .values(
+                "created_by__name",
+                "description",
+                "name",
+                "slug",
+                "status",
+                "user_is_in_room",
+            )
         )
