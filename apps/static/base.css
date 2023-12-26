@@ -46,7 +46,7 @@ body {
     border-color: darkred;
 }
 
-.room-circle.selected {
+.room-circle.selected:not(.closed) {
     border-color: var(--bs-primary-text-emphasis);
 }
 

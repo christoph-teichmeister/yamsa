@@ -1,7 +1,7 @@
 {% load room_tags %}
 
 <nav class="navbar fixed-top" style="background-color: #1e1b1e;">
-    <div class="container-fluid pt-1 justify-content-center">
+    <div class="container-fluid pt-1 justify-content-center" id="offcanvasContainer">
 
         <div class="row w-100 d-flex justify-content-between">
 
@@ -69,7 +69,7 @@
 
             <div class="offcanvas-body">
 
-                <div class="row py-3">
+                <div class="row py-3 {% if "/account/detail/" in request.path %} p-e-color{% endif %}">
                     <div class="col text-center cursor-pointer"
                          data-bs-dismiss="offcanvas"
                          data-bs-target="#offcanvasNavbar"
@@ -95,11 +95,11 @@
                     </div>
                 </div>
 
-                <div class="row py-3 cursor-pointer d-flex justify-content-center">
-                    <div class="col-4 text-end">
+                <div class="row py-1 cursor-pointer d-flex justify-content-center align-items-center{% if request.path == "/welcome/" %} p-e-color{% endif %}">
+                    <div class="col-4 text-center fs-1">
                         <i class="bi bi-house"></i>
                     </div>
-                    <div class="col ps-2"
+                    <div class="col-8"
                          data-bs-dismiss="offcanvas"
                          data-bs-target="#offcanvasNavbar"
                          hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
@@ -112,92 +112,7 @@
                     </div>
                 </div>
 
-                {#                <div class="row py-3 cursor-pointer d-flex justify-content-center">#}
-                {#                    <div class="col "#}
-                {#                         data-bs-dismiss="offcanvas"#}
-                {#                         hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-                {#                         hx-get="{% url 'room-list' %}"#}
-                {#                         hx-target="#body"#}
-                {#                         hx-swap="innerHTML"#}
-                {#                         hx-push-url="true"#}
-                {#                    >#}
-                {#                        Room list#}
-                {#                    </div>#}
-                {#                </div>#}
-
-                {% for room in current_user.open_room_qs_for_list %}
-                    <div class="row{% if request.user.is_superuser and not room.user_is_in_room %} fst-italic text-muted{% endif %}{% if current_room.slug == room.slug %} p-e-color{% endif %}"
-                         data-bs-dismiss="offcanvas"
-                         data-bs-target="#offcanvasNavbar"
-                         hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-                         hx-get="{% room_url 'transaction-list' %}"
-                         hx-target="#body"
-                         hx-swap="innerHTML"
-                         hx-push-url="true"
-                    >
-                        <div class="col-4 d-flex flex-column justify-content-center align-items-center">
-                            <div class="room-circle{% if current_room.slug == room.slug %} selected{% endif %}">
-                                {{ room.name|slice:":2"|upper }}
-                            </div>
-                        </div>
-                        <div class="col-8 d-flex align-items-center">
-                            {{ room.name|truncatechars:8 }}
-                        </div>
-                    </div>
-                {% endfor %}
-
-                <hr>
-
-                {% for room in current_user.closed_room_qs_for_list %}
-                    <div class="row{% if request.user.is_superuser and not room.user_is_in_room %} fst-italic text-muted{% endif %}{% if current_room.slug == room.slug %} p-e-color{% endif %}"
-                         data-bs-dismiss="offcanvas"
-                         data-bs-target="#offcanvasNavbar"
-                         hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-                         hx-get="{% room_url 'room-edit' %}"
-                         hx-target="#body"
-                         hx-swap="innerHTML"
-                         hx-push-url="true"
-                    >
-                        <div class="col-4 d-flex flex-column justify-content-center align-items-center">
-                            <div class="room-circle closed{% if current_room.slug == room.slug %} selected{% endif %}">
-                                {{ room.name|slice:":2"|upper }}
-                            </div>
-                        </div>
-                        <div class="col-8 d-flex align-items-center">
-                            {{ room.name|truncatechars:8 }}
-                        </div>
-                    </div>
-                {% endfor %}
-
-                {% if current_user.other_rooms_qs_for_list %}
-                    <hr>
-                    <hr>
-
-                    {% for room in current_user.other_rooms_qs_for_list %}
-                        <div class="row{% if request.user.is_superuser and not room.user_is_in_room %} fst-italic text-muted{% endif %}{% if current_room.slug == room.slug %} p-e-color{% endif %}"
-                             data-bs-dismiss="offcanvas"
-                             data-bs-target="#offcanvasNavbar"
-                             hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-                                {% if room.status == ROOM_STATUS_CLOSED %}
-                             hx-get="{% room_url 'room-edit' %}"
-                                {% else %}
-                             hx-get="{% room_url 'transaction-list' %}"
-                                {% endif %}
-                             hx-target="#body"
-                             hx-swap="innerHTML"
-                             hx-push-url="true"
-                        >
-                            <div class="col-4 d-flex flex-column justify-content-center align-items-center">
-                                <div class="room-circle{% if room.status == ROOM_STATUS_CLOSED %} closed{% endif %}{% if current_room.slug == room.slug %} selected{% endif %}">
-                                    {{ room.name|slice:":2"|upper }}
-                                </div>
-                            </div>
-                            <div class="col-8 d-flex align-items-center">
-                                {{ room.name|truncatechars:8 }}
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
+                {% include "_side_menu_room_list.html" %}
 
             </div>
         </div>
@@ -219,3 +134,20 @@
       }
     </script>
 {% endif %}
+
+<script type="text/javascript">
+  var myOffcanvas = document.getElementById('offcanvasNavbar');
+
+  function removeExcessBackdrops() {
+    let fade = document.getElementsByClassName('offcanvas-backdrop fade show')
+    for (let i = 0; i < fade.length; i++) {
+      while (fade.length > 1) {
+        fade[i].remove()
+      }
+    }
+  }
+
+  myOffcanvas.addEventListener('show.bs.offcanvas', event => removeExcessBackdrops());
+  myOffcanvas.addEventListener('hide.bs.offcanvas', event => removeExcessBackdrops());
+
+</script>
