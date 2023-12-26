@@ -54,10 +54,11 @@
 
         </div>
 
-        <div class="offcanvas offcanvas-start"
+        <div class="offcanvas offcanvas-start w-50"
+             data-bs-backdrop="true"
+             aria-labelledby="offcanvasNavbarLabel"
              tabindex="-1"
              id="offcanvasNavbar"
-             aria-labelledby="offcanvasNavbarLabel"
         >
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
@@ -66,7 +67,7 @@
 
             <div class="offcanvas-body">
 
-                <div class="row p-1">
+                <div class="row py-3">
                     <div class="col text-center cursor-pointer"
                          data-bs-dismiss="offcanvas"
                          hx-trigger="click"
@@ -90,8 +91,11 @@
                     </div>
                 </div>
 
-                <div class="row p-1">
-                    <div class="col cursor-pointer"
+                <div class="row py-3 cursor-pointer d-flex justify-content-center">
+                    <div class="col-4 text-end">
+                        <i class="bi bi-house"></i>
+                    </div>
+                    <div class="col ps-2"
                          data-bs-dismiss="offcanvas"
                          hx-trigger="click"
                          hx-get="{% url 'core-welcome' %}"
@@ -103,8 +107,8 @@
                     </div>
                 </div>
 
-                <div class="row p-1">
-                    <div class="col cursor-pointer"
+                <div class="row py-3 cursor-pointer d-flex justify-content-center">
+                    <div class="col "
                          data-bs-dismiss="offcanvas"
                          hx-trigger="click"
                          hx-get="{% url 'room-list' %}"
