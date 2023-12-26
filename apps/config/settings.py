@@ -134,6 +134,7 @@ TEMPLATES = (
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "apps.account.context_processors.user_context",
                 "apps.currency.context_processors.currency_context",
                 "apps.room.context_processors.room_context",
             ],
