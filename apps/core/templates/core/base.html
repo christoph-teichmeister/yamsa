@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>
-        {% if core.is_localhost %}
+        {% if core.IS_LOCALHOST %}
             ⚒️
         {% endif %}
         {% block title %}
@@ -53,7 +53,7 @@
 </head>
 <body hx-ext="idiomorph" id="body">
 
-{% if core.is_localhost %}
+{% if core.IS_LOCALHOST %}
     <div class="w-100 d-flex align-items-center justify-content-center"
          style="opacity: 20%; z-index:3000; height: 3.2em; position: fixed; top: 0; background-color: darkred">
         <h1 class="mb-0">
