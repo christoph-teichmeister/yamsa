@@ -43,7 +43,7 @@
                 <div class="float-end">
                     {{ money_spent.total_spent_per_person }} {{ money_spent.currency_sign }}
                 </div>
-                {% if not forloop.last %}<br><br>{% endif %}
+                {% if not forloop.last %}<br/><br/>{% endif %}
             {% endfor %}
         </li>
 
@@ -66,7 +66,7 @@
                     <div class="float-end">
                         {{ money_owed.total_owed_per_person }} {{ money_owed.currency_sign }}
                     </div>
-                    {% if not forloop.last %}<br><br>{% endif %}
+                    {% if not forloop.last %}<br/><br/>{% endif %}
                 {% endif %}
             {% endfor %}
         </li>
