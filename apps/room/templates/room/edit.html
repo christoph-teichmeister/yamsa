@@ -13,6 +13,7 @@
                    hx-trigger="click"
                    hx-get="{% room_url 'room-detail' %}"
                    hx-target="#body"
+                   hx-indicator="#body-loading-spinner"
                    hx-swap="morph:innerHTML"
                    hx-push-url="true"
                 ></i>
@@ -24,6 +25,7 @@
                             type="submit"
                             hx-post="{% room_url 'room-edit' %}"
                             hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML">
                         Save
                     </button>
@@ -123,6 +125,7 @@
                     class="btn {% if current_room.is_open %}btn-danger{% elif current_room.is_closed %}btn-primary{% endif %} btn-sm w-50 {% if form.errors.status.data %}disabled{% endif %}"
                     hx-post="{% room_url 'room-edit' %}"
                     hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML">
                 {% if current_room.is_open %}
                     Close room

@@ -18,6 +18,7 @@
                         hx-trigger="click"
                         hx-get="{% room_url 'money-spent-on-room' %}"
                         hx-target="#body"
+                        hx-indicator="#body-loading-spinner"
                         hx-swap="morph:innerHTML"
                         hx-push-url="true"
                     >

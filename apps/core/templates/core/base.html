@@ -40,10 +40,15 @@
     -->
 
     <link rel="stylesheet" href="{% static 'base.css' %}">
+
+    <!-- Disable default hx-indicator styling -->
+    <meta name="htmx-config" content='{"includeIndicatorStyles": false}'>
 </head>
 <body hx-ext="idiomorph" id="body">
 
 {% include "shared_partials/toast.html" %}
+
+{% include "shared_partials/loading_spinner.html" with spinner_id="body-loading-spinner" %}
 
 {% if not is_in_maintenance and not called_by_offline_view and not request.user.is_anonymous %}
     {% include "_side_menu.html" %}

@@ -7,49 +7,48 @@
 {% block content %}
     {% if request.user.is_authenticated %}
         {% block tab_content %}
-            {% include "shared_partials/loading_spinner.html" with spinner_id="loading-spinner" %}
         {% endblock %}
 
     {% else %}
         {% include "room/partials/_detail_who_are_you.html" %}
     {% endif %}
 
-{#    <script type="module">#}
-{#      // TODO CT: Joa keine Ahnung, fix this I guess#}
-{#      const triggerTabList = document.querySelectorAll('#roomTab a')#}
-{##}
-{#      let currentActiveTab = undefined#}
-{#      let nextTabToBeActive = undefined#}
-{##}
-{#      const getNextIndex = (index, swipeDirection) => {#}
-{#        if (swipeDirection === "swipeleft") {#}
-{#          return index + 1 > triggerTabList.length - 1 ? 0 : index + 1#}
-{#        } else if (swipeDirection === "swiperight") {#}
-{#          return index - 1 < 0 ? triggerTabList.length - 1 : index - 1#}
-{#        }#}
-{#        return index#}
-{#      }#}
-{##}
-{#      $(function () {#}
-{#        $("#tab-content").on("swipeleft", swipeHandler).on("swiperight", swipeHandler);#}
-{##}
-{#        // Callback function references the event target and adds the 'swipe' class to it#}
-{#        function swipeHandler(event) {#}
-{#          console.log(event.type)#}
-{#          console.log("currentActiveTab", currentActiveTab)#}
-{#          console.log("nextTabToBeActive", nextTabToBeActive)#}
-{##}
-{#          triggerTabList.forEach((el, index) => {#}
-{#            if (el.getAttribute("aria-selected") === "true") {#}
-{#              currentActiveTab = el#}
-{##}
-{#              nextTabToBeActive = triggerTabList[getNextIndex(index, event.type)]#}
-{##}
-{#              window.bootstrap.Tab.getOrCreateInstance(nextTabToBeActive).show()#}
-{#              return false;#}
-{#            }#}
-{#          })#}
-{#        }#}
-{#      });#}
-{#    </script>#}
+    {#    <script type="module">#}
+    {#      // TODO CT: Joa keine Ahnung, fix this I guess#}
+    {#      const triggerTabList = document.querySelectorAll('#roomTab a')#}
+    {##}
+    {#      let currentActiveTab = undefined#}
+    {#      let nextTabToBeActive = undefined#}
+    {##}
+    {#      const getNextIndex = (index, swipeDirection) => {#}
+    {#        if (swipeDirection === "swipeleft") {#}
+    {#          return index + 1 > triggerTabList.length - 1 ? 0 : index + 1#}
+    {#        } else if (swipeDirection === "swiperight") {#}
+    {#          return index - 1 < 0 ? triggerTabList.length - 1 : index - 1#}
+    {#        }#}
+    {#        return index#}
+    {#      }#}
+    {##}
+    {#      $(function () {#}
+    {#        $("#tab-content").on("swipeleft", swipeHandler).on("swiperight", swipeHandler);#}
+    {##}
+    {#        // Callback function references the event target and adds the 'swipe' class to it#}
+    {#        function swipeHandler(event) {#}
+    {#          console.log(event.type)#}
+    {#          console.log("currentActiveTab", currentActiveTab)#}
+    {#          console.log("nextTabToBeActive", nextTabToBeActive)#}
+    {##}
+    {#          triggerTabList.forEach((el, index) => {#}
+    {#            if (el.getAttribute("aria-selected") === "true") {#}
+    {#              currentActiveTab = el#}
+    {##}
+    {#              nextTabToBeActive = triggerTabList[getNextIndex(index, event.type)]#}
+    {##}
+    {#              window.bootstrap.Tab.getOrCreateInstance(nextTabToBeActive).show()#}
+    {#              return false;#}
+    {#            }#}
+    {#          })#}
+    {#        }#}
+    {#      });#}
+    {#    </script>#}
 {% endblock %}

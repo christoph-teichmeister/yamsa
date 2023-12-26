@@ -45,6 +45,7 @@
                             <i class="bi bi-dash-circle"
                                hx-get="{% room_url 'room-edit' %}"
                                hx-target="#body"
+                               hx-indicator="#body-loading-spinner"
                                hx-swap="morph:innerHTML"
                                hx-push-url="true"
                             ></i>
@@ -81,6 +82,7 @@
                                 {% url 'account-user-login' %}
                             {% endif %}"
                          hx-target="#body"
+                         hx-indicator="#body-loading-spinner"
                          hx-swap="morph:innerHTML"
                          hx-push-url="true"
                     >
@@ -104,6 +106,7 @@
                          data-bs-target="#offcanvasNavbar"
                          hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
                          hx-get="{% url 'core-welcome' %}"
+                         hx-indicator="#body-loading-spinner"
                          hx-target="#body"
                          hx-swap="morph:innerHTML"
                          hx-push-url="true"

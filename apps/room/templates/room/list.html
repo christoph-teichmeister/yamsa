@@ -13,6 +13,7 @@
                              hx-trigger="click"
                              hx-get="{% room_url 'transaction-list' %}"
                              hx-target="#body"
+                             hx-indicator="#body-loading-spinner"
                              hx-swap="innerHTML"
                              hx-push-url="true"
                         >
@@ -23,6 +24,7 @@
                                             <i class="bi bi-dash-circle"
                                                hx-get="{% room_url 'room-edit' %}"
                                                hx-target="#body"
+                                               hx-indicator="#body-loading-spinner"
                                                hx-swap="morph:innerHTML"
                                                hx-push-url="true"
                                             ></i>
@@ -67,6 +69,7 @@
                          hx-trigger="click"
                          hx-get="{% url 'room-create' %}"
                          hx-target="#body"
+                         hx-indicator="#body-loading-spinner"
                          hx-swap="morph:innerHTML"
                          hx-push-url="true">
                         <div class="card-body">

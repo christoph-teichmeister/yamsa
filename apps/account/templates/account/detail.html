@@ -40,6 +40,7 @@
                     <button class="btn btn-primary btn-sm float-end px-3"
                             hx-get="{% url 'account-user-update' pk=user.id %}"
                             hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"
                             hx-push-url="true"
                     >
@@ -115,6 +116,7 @@
                             hx-trigger="click"
                             hx-get="{% url 'account-user-logout' %}"
                             hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"
                             hx-push-url="true"
                     >
