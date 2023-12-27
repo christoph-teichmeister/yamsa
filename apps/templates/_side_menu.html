@@ -1,6 +1,6 @@
 {% load room_tags %}
 
-<nav class="navbar fixed-top pt-4" style="background-color: #1e1b1e;">
+<nav class="navbar fixed-top pt-4">
     <div class="container-fluid pt-4 justify-content-center" id="offcanvasContainer">
 
         <div class="row w-100 d-flex justify-content-between">
@@ -69,6 +69,25 @@
             </div>
 
             <div class="offcanvas-body">
+
+                <div class="row justify-content-center">
+                    <div class="col-2 p-0 me-1">
+                        <button type="button"
+                                class="btn btn-primary btn-sm d-flex align-items-center"
+                                data-bs-theme-value="light"
+                        >
+                            <i class="bi bi-sun-fill"></i>
+                        </button>
+                    </div>
+                    <div class="col-2 p-0 ms-1">
+                        <button type="button"
+                                class="btn btn-primary btn-sm d-flex align-items-center"
+                                data-bs-theme-value="dark"
+                        >
+                            <i class="bi bi-moon-fill"></i>
+                        </button>
+                    </div>
+                </div>
 
                 <div class="row py-3 {% if "/account/detail/" in request.path %} p-e-color{% endif %}">
                     <div class="col text-center cursor-pointer"
@@ -153,4 +172,78 @@
   myOffcanvas.addEventListener('show.bs.offcanvas', event => removeExcessBackdrops());
   myOffcanvas.addEventListener('hide.bs.offcanvas', event => removeExcessBackdrops());
 
+</script>
+
+<!-- Theme Switcher -->
+<script>
+  var getStoredTheme = () => localStorage.getItem('theme')
+  var setStoredTheme = theme => localStorage.setItem('theme', theme)
+
+  var getPreferredTheme = () => {
+    const storedTheme = getStoredTheme()
+    if (storedTheme) {
+      return storedTheme
+    }
+
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  }
+
+  var setTheme = theme => {
+    if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-bs-theme', 'dark')
+    } else {
+      document.documentElement.setAttribute('data-bs-theme', theme)
+    }
+  }
+
+  setTheme(getPreferredTheme())
+
+  var showActiveTheme = (theme, focus = false) => {
+    const themeSwitcher = document.querySelector('#bd-theme')
+
+    if (!themeSwitcher) {
+      return
+    }
+
+    const themeSwitcherText = document.querySelector('#bd-theme-text')
+    const activeThemeIcon = document.querySelector('.theme-icon-active use')
+    const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
+    const svgOfActiveBtn = btnToActive.querySelector('svg use').getAttribute('href')
+
+    document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+      element.classList.remove('active')
+      element.setAttribute('aria-pressed', 'false')
+    })
+
+    btnToActive.classList.add('active')
+    btnToActive.setAttribute('aria-pressed', 'true')
+    activeThemeIcon.setAttribute('href', svgOfActiveBtn)
+    const themeSwitcherLabel = `${themeSwitcherText.textContent} (${btnToActive.dataset.bsThemeValue})`
+    themeSwitcher.setAttribute('aria-label', themeSwitcherLabel)
+
+    if (focus) {
+      themeSwitcher.focus()
+    }
+  }
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    const storedTheme = getStoredTheme()
+    if (storedTheme !== 'light' && storedTheme !== 'dark') {
+      setTheme(getPreferredTheme())
+    }
+  })
+
+  window.addEventListener('DOMContentLoaded', () => {
+    showActiveTheme(getPreferredTheme())
+
+    document.querySelectorAll('[data-bs-theme-value]')
+      .forEach(toggle => {
+        toggle.addEventListener('click', () => {
+          const theme = toggle.getAttribute('data-bs-theme-value')
+          setStoredTheme(theme)
+          setTheme(theme)
+          showActiveTheme(theme, true)
+        })
+      })
+  })
 </script>
