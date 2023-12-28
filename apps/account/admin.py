@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from apps.account.models import User
 from apps.core.admin import YamsaCommonInfoAdminMixin
+from apps.mail.services.send_test_mail_service import TestEmail
 from apps.room.admin import UserConnectionToRoomInline
 from apps.transaction.admin import ParentTransactionPaidByInline
 from apps.webpush.dataclasses import Notification
@@ -23,9 +24,16 @@ def send_test_notification(modeladmin, request, queryset):
         notification.send_to_user(user)
 
 
+@admin.action(description="Send test email to selected users")
+def send_test_email(modeladmin, request, queryset):
+    # TODO CT: Delete this once testing is done
+    service = TestEmail(recipient_email_list=queryset.values_list("email", flat=True))
+    service.process()
+
+
 @register(User)
 class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
-    actions = (send_test_notification,)
+    actions = (send_test_notification, send_test_email)
     list_display = ("name", "email", "is_guest", "is_superuser")
     list_filter = ("is_guest",)
     search_fields = ("name",)
