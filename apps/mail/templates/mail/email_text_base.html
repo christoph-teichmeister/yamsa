@@ -1,0 +1,21 @@
+{% extends "mail/email_base.html" %}
+
+{% block header %}
+    {{ context.header }}
+{% endblock header %}
+
+{% block greeting %}
+    {{ context.greeting }}
+{% endblock greeting %}
+
+{% block text %}
+    {{ context.text }}
+{% endblock text %}
+
+{% block footer_text %}
+    {{ context.footer }}
+{% endblock footer_text %}
+
+{% block sub_footer %}
+    {{ context.sub_footer }}
+{% endblock sub_footer %}

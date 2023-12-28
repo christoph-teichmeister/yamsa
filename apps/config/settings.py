@@ -35,6 +35,10 @@ env = environ.Env(
     DB_PASSWORD=(str, ""),
     DB_PORT=(str, ""),
     DB_USER=(str, ""),
+    # Email ENV
+    EMAIL_HOST=(str, ""),
+    EMAIL_HOST_USER=(str, ""),
+    EMAIL_HOST_PASSWORD=(str, ""),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -60,6 +64,15 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 
 MAINTENANCE = env("MAINTENANCE")
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_PORT = 587
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+
 
 IS_TESTING = False
 if "test" in sys.argv or "test_coverage" in sys.argv:
@@ -92,6 +105,7 @@ THIRD_PARTY_APPS = (
     "ambient_toolbox",
     "django_browser_reload",
     "django_extensions",
+    "django_pony_express",
 )
 
 LOCAL_APPS = (
@@ -99,6 +113,7 @@ LOCAL_APPS = (
     "apps.currency",
     "apps.core",
     "apps.debt",
+    "apps.mail",
     "apps.news",
     "apps.room",
     "apps.transaction",
