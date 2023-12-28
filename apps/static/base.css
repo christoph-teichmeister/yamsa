@@ -1,5 +1,4 @@
 [data-bs-theme=light] {
-    /*--bs-body-bg: #dcdcdc;*/
     --bs-body-bg: white;
     --bs-body-color: black;
     --bs-primary-text-emphasis: #0d6efd;
@@ -16,6 +15,7 @@
     --bs-body-color: white;
 
     --offcanvas-and-nav-bg: #1e1b1e;
+    --list-group-border-color: white;
 }
 
 body {
