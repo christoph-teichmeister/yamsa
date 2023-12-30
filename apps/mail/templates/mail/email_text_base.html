@@ -9,7 +9,10 @@
 {% endblock greeting %}
 
 {% block text %}
-    {{ context.text }}
+    <br/>
+    {% for text in context.text_list %}
+        {{ text }} {% if not forloop.last %}<br/>{% endif %}
+    {% endfor %}
 {% endblock text %}
 
 {% block footer_text %}

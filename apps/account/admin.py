@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from apps.account.models import User
 from apps.core.admin import YamsaCommonInfoAdminMixin
-from apps.mail.services.send_test_mail_service import TestEmail
+from apps.mail.services.send_test_mail_service import TestEmailService
 from apps.room.admin import UserConnectionToRoomInline
 from apps.transaction.admin import ParentTransactionPaidByInline
 from apps.webpush.dataclasses import Notification
@@ -27,8 +27,9 @@ def send_test_notification(modeladmin, request, queryset):
 @admin.action(description="Send test email to selected users")
 def send_test_email(modeladmin, request, queryset):
     # TODO CT: Delete this once testing is done
-    service = TestEmail(recipient_email_list=queryset.values_list("email", flat=True))
-    service.process()
+    for user in queryset:
+        service = TestEmailService(recipient=user)
+        service.process()
 
 
 @register(User)
@@ -38,8 +39,8 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     list_filter = ("is_guest",)
     search_fields = ("name",)
     fieldsets = (
-        (None, {"fields": ("email", "password", "is_guest")}),
-        ("Personal Information", {"fields": ("name", "paypal_me_username")}),
+        (None, {"fields": ("password", "is_guest")}),
+        ("Personal Information", {"fields": ("name", "username", "paypal_me_username")}),
         (
             "Permissions",
             {
@@ -48,6 +49,15 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
                     ("is_superuser", "is_staff"),
                     "groups",
                     "user_permissions",
+                )
+            },
+        ),
+        (
+            "E-Mail",
+            {
+                "fields": (
+                    "email",
+                    ("invitation_email_sent", "invitation_email_sent_at"),
                 )
             },
         ),

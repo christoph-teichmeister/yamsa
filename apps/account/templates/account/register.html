@@ -8,7 +8,7 @@
         <div class="col-2 col-md-5 p-0"></div>
 
         <div class="col-8 col-md-2 p-0 d-flex">
-            <form action="/account/register/" method="post" class="flex-grow-1">
+            <form action="{% url "account-user-register" %}" method="post" class="flex-grow-1">
                 {% csrf_token %}
 
                 <div class="mb-3">
@@ -21,7 +21,8 @@
 
                 <div class="mb-3">
                     <label for="email" class="form-label">{{ form.fields.email.label }}</label>
-                    <input type="text" class="form-control" id="email" name="email" required>
+                    <input type="text" class="form-control" id="email" name="email" required
+                           value="{% if email_from_invitation_email %}{{ email_from_invitation_email }}{% endif %}">
                     {% for error_message in form.errors.email.data %}
                         <small class="error" id="emailError">{{ error_message.message }}</small>
                     {% endfor %}

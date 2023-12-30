@@ -1,0 +1,43 @@
+{% extends "room/dashboard.html" %}
+{% load static %}
+{% load room_tags %}
+
+{% block tab_content %}
+
+    <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
+        <div class="col">
+            <h5 class="m-0">
+                Invite {{ user.name }} to "{{ current_room.name }}"
+            </h5>
+        </div>
+    </div>
+
+    <form action="{% room_url 'account-send-guest-invitation-email' pk=user.id %}"
+          method="post">
+        {% csrf_token %}
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"></li>
+
+            <li class="list-group-item py-4 px-2">
+                <div class="mb-3 form-group">
+                    <label for="email">{{ form.fields.email.label }}</label>
+                    <input id="email" name="email" type="email" class="form-control" required/>
+                    {% for error_message in form.errors.email.data %}
+                        <small class="error" id="emailError">{{ error_message.message }}</small>
+                    {% endfor %}
+                </div>
+            </li>
+
+            <li class="list-group-item"></li>
+        </ul>
+
+        <div class="row d-flex justify-content-end me-2">
+            <button type="submit" class="btn btn-primary w-50">
+                Send invite
+            </button>
+        </div>
+
+    </form>
+
+{% endblock %}
