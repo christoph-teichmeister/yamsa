@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from apps.account.models import User
 from apps.core.admin import YamsaCommonInfoAdminMixin
-from apps.mail.services.send_test_mail_service import TestEmailService
+from apps.mail.services.test_mail_service import TestEmailService
 from apps.room.admin import UserConnectionToRoomInline
 from apps.transaction.admin import ParentTransactionPaidByInline
 from apps.webpush.dataclasses import Notification

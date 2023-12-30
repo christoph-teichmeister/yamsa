@@ -4,7 +4,9 @@ from django.views import generic
 from django_context_decorator import context
 
 from apps.account.forms import RegisterForm
+from apps.account.messages.commands.send_post_register_email import SendPostRegisterEmail
 from apps.account.models import User
+from apps.core.event_loop.runner import handle_message
 
 
 class RegisterUserView(generic.FormView):
@@ -67,5 +69,7 @@ class RegisterUserView(generic.FormView):
         user = authenticate(username=user.username, password=user.password)
 
         login(request=self.request, user=user)
+
+        handle_message(SendPostRegisterEmail(context_data={"user": self.request.user}))
 
         return super().form_valid(form)

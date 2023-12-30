@@ -11,7 +11,8 @@ class EmailBaseTextContext:
     SUBJECT_PREFIX: str = "yamsa | "
 
     header: str = "yamsa"
-    footer: str = "Your yamsa team"
+    # footer: str = "Your yamsa team"
+    footer: str = ""
     sub_footer: str = "yamsa | Yet another money split app"
 
 
@@ -38,15 +39,16 @@ class BaseYamsaEmailService(BaseEmailService):
     FROM_EMAIL = "yamsa.hello@gmail.com"
     REPLY_TO_ADDRESS = "yamsa.hello+reply@gmail.com"
 
+    recipient: User = None
+
     email_base_text_context: EmailBaseTextContext = EmailBaseTextContext()
-    email_user_text_context: EmailUserTextContext = None  # set in init
+    email_user_text_context: EmailUserTextContext = EmailUserTextContext()
     email_extra_context: EmailExtraContext = EmailExtraContext()
 
     template_name = "mail/email_text_base.html"
 
     def __init__(self, recipient: User, recipient_email_list: Union[list, tuple, str] = None, *args, **kwargs) -> None:
-        self.email_user_text_context = self.get_email_user_text_context()
-        self.email_user_text_context.user = recipient
+        self.recipient = recipient
 
         super().__init__(recipient_email_list or [recipient.email], *args, **kwargs)
 
@@ -67,8 +69,8 @@ class BaseYamsaEmailService(BaseEmailService):
     def get_greeting(self):
         context = self.email_user_text_context
 
-        if context.user is not None:
-            return f"{context.greeting_prefix} {context.user.name} {context.greeting_suffix}"
+        if self.recipient is not None:
+            return f"{context.greeting_prefix} {self.recipient.name} {context.greeting_suffix}"
         return f"{context.greeting_prefix} {context.greeting_suffix}"
 
     def get_email_base_text_context(self):

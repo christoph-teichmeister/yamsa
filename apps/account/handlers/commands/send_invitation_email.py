@@ -3,11 +3,11 @@ from django.utils import timezone
 from apps.account.messages.commands.send_invitation_email import SendInvitationEmail
 from apps.account.messages.events.invitation_email_sent import InvitationEmailSent
 from apps.core.event_loop.registry import message_registry
-from apps.mail.services.send_invitation_mail_service import InvitationEmailService
+from apps.mail.services.invitation_mail_service import InvitationEmailService
 
 
 @message_registry.register_command(command=SendInvitationEmail)
-def handle_remove_user_from_room(context: SendInvitationEmail.Context) -> InvitationEmailSent:
+def handle_send_invitation_email(context: SendInvitationEmail.Context) -> InvitationEmailSent:
     service = InvitationEmailService(
         invited_by=context.inviter, recipient=context.invitee, recipient_email_list=[context.invitee_email]
     )

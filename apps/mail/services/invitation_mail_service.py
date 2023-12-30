@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.urls import reverse
 
 from apps.account.models import User
 from apps.mail.services.base_email_service import BaseYamsaEmailService, EmailExtraContext, EmailUserTextContext
@@ -24,6 +25,6 @@ class InvitationEmailService(BaseYamsaEmailService):
     def get_email_extra_context(self):
         return EmailExtraContext(
             show_cta=True,
-            cta_btn_link=f"{settings.PROJECT_BASE_URL}/account/register/?with_email={self.recipient_email_list[0]}&for_guest={self.email_user_text_context.user.id}",
+            cta_btn_link=f"{settings.PROJECT_BASE_URL}{reverse(viewname='account-user-register')}?with_email={self.recipient_email_list[0]}&for_guest={self.recipient.id}",
             cta_btn_text="Register here",
         )

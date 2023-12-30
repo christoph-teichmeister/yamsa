@@ -12,8 +12,12 @@
         </div>
     </div>
 
-    <form action="{% room_url 'account-send-guest-invitation-email' pk=user.id %}"
-          method="post">
+    <form hx-post="{% room_url 'account-send-guest-invitation-email' pk=user.id %}"
+          hx-target="#body"
+          hx-indicator="#body-loading-spinner"
+          hx-swap="morph:innerHTML"
+          hx-push-url="true"
+    >
         {% csrf_token %}
 
         <ul class="list-group list-group-flush">
