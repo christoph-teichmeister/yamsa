@@ -8,7 +8,12 @@
         <div class="col-2 col-md-5 p-0"></div>
 
         <div class="col-8 col-md-2 p-0 d-flex">
-            <form action="{% url "account-user-register" %}" method="post" class="flex-grow-1">
+            <form hx-post="{% url "account-user-register" %}"
+                  hx-target="#body"
+                  hx-indicator="#body-loading-spinner"
+                  hx-swap="morph:innerHTML"
+                  hx-push-url="true"
+                  class="flex-grow-1">
                 {% csrf_token %}
 
                 <div class="mb-3">
@@ -22,13 +27,32 @@
                 <div class="mb-3">
                     <label for="email" class="form-label">{{ form.fields.email.label }}</label>
                     <input type="text" class="form-control" id="email" name="email" required
-                           value="{% if email_from_invitation_email %}{{ email_from_invitation_email }}{% endif %}">
+                           value="{% if form.initial.email %}{{ form.initial.email }}{% endif %}">
                     {% for error_message in form.errors.email.data %}
                         <small class="error" id="emailError">{{ error_message.message }}</small>
                     {% endfor %}
                 </div>
 
                 {% include "account/shared_partials/password_input_component.html" %}
+
+                <div class="form-group" hidden>
+                    <label for="id" class="form-label">User ID</label>
+                    <input id="id"
+                           name="id"
+                           type="number"
+                           class="form-control"
+                           value="{% if form.initial.id %}{{ form.initial.id }}{% elif not request.user.is_anonymous %}{{ request.user.id }}{% endif %}"
+                    />
+                </div>
+
+                <div class="form-group" hidden>
+                    <label for="is_guest" class="form-label">Is Guest</label>
+                    <input id="is_guest"
+                           name="is_guest"
+                           type="checkbox"
+                           class="form-control"
+                    />
+                </div>
 
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary">Register</button>
