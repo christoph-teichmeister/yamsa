@@ -1,6 +1,7 @@
 from apps.account.views.guest_authenticate_view import AuthenticateGuestUserView  # noqa: F401
 from apps.account.views.guest_create_view import GuestCreateView  # noqa: F401
 from apps.account.views.guest_send_invitation_email_view import GuestSendInvitationEmailView  # noqa: F401
+from apps.account.views.user_change_password_view import UserChangePasswordView  # noqa: F401
 from apps.account.views.user_detail_view import UserDetailView  # noqa: F401
 from apps.account.views.user_list_for_room_view import UserListForRoomView  # noqa: F401
 from apps.account.views.user_login_view import LogInUserView  # noqa: F401

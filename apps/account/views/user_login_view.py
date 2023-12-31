@@ -13,18 +13,12 @@ class LogInUserView(generic.FormView):
         return reverse(viewname="core-welcome")
 
     def form_valid(self, form):
-        possible_user = authenticate(
-            username=form.data["username"], password=form.data["password"]
-        )
+        possible_user = authenticate(username=form.data["username"], password=form.data["password"])
 
         if possible_user is not None:
             login(request=self.request, user=possible_user)
         else:
-            self.extra_context = {
-                "errors": {
-                    "auth_failed": "The combination of username and password does not match"
-                }
-            }
+            self.extra_context = {"errors": {"auth_failed": "The combination of username and password does not match"}}
             return super().form_invalid(form)
 
         return super().form_valid(form)
