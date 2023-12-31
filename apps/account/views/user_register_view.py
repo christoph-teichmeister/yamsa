@@ -35,7 +35,7 @@ class RegisterUserView(generic.CreateView):
         authenticate(username=self.object.username, password=self.object.password)
         login(request=self.request, user=self.request.user)
 
-        # Send POstRegisterEmail
+        # Send PostRegisterEmail
         handle_message(SendPostRegisterEmail(context_data={"user": self.request.user}))
 
         return response
