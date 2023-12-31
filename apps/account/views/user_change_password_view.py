@@ -1,4 +1,4 @@
-from django.contrib.auth import mixins, authenticate, login
+from django.contrib.auth import mixins, login
 from django.urls import reverse
 from django.views import generic
 
