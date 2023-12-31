@@ -16,15 +16,12 @@
                             {% if user.is_guest %}
                                 Is a guest
                                 <br/>
-                                <span class="cursor-pointer"
-                                      hx-get="{% room_url "account-send-guest-invitation-email" pk=user.id %}"
-                                      hx-target="#body"
-                                      hx-indicator="#body-loading-spinner"
-                                      hx-swap="morph:innerHTML"
-                                      hx-push-url="true"
-                                >
-                                <i class="bi bi-envelope"></i>
-                                Send invitation email
+                                <span id="invitation-email-div">
+                                {% if user.invitation_email_can_be_sent %}
+                                    {% include "shared_partials/invitation_email_not_yet_sent.html" %}
+                                {% else %}
+                                    {% include "shared_partials/invitation_email_sent.html" %}
+                                {% endif %}
                                 </span>
                             {% else %}
                                 Is a registered user
