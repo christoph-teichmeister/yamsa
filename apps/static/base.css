@@ -19,6 +19,15 @@
     --list-group-border-color: white;
 }
 
+/* Breakpoint px values:
+    --bs-breakpoint-xs: 0;
+    --bs-breakpoint-sm: 576px;
+    --bs-breakpoint-md: 768px;
+    --bs-breakpoint-lg: 992px;
+    --bs-breakpoint-xl: 1200px;
+    --bs-breakpoint-xxl: 1400px;
+ */
+
 body {
     padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
 }
@@ -30,6 +39,18 @@ body {
 .offcanvas {
     --bs-offcanvas-bg: var(--offcanvas-and-nav-bg);
     --bs-offcanvas-color: var(--offcanvas-and-nav-color);
+
+    --bs-offcanvas-width: 50%;
+}
+
+@media (min-width: 768px) {
+    .offcanvas {
+        --bs-offcanvas-width: 18%;
+    }
+
+    .container-fluid {
+        width: 50%;
+    }
 }
 
 .navbar {
@@ -106,4 +127,3 @@ body {
     z-index: 2000;
     transition: all 200ms ease-in !important;;
 }
-
