@@ -8,7 +8,12 @@
         <div class="col-2 col-md-5 p-0"></div>
 
         <div class="col-8 col-md-2 p-0 d-flex">
-            <form action="/account/login/" method="post" class="flex-grow-1">
+            <form hx-post="{% url "account-user-login" %}"
+                  hx-target="#body"
+                  hx-indicator="#body-loading-spinner"
+                  hx-swap="morph:innerHTML"
+                  hx-push-url="true"
+                  class="flex-grow-1">
                 {% csrf_token %}
 
                 <div class="mb-3">
@@ -21,6 +26,19 @@
                 </div>
 
                 {% include "account/shared_partials/password_input_component.html" %}
+                <div class="mb-3 d-flex justify-content-end">
+                    <small>
+                        <a class="htmx-a"
+                           hx-get="{% url 'account-user-forgot-password' %}"
+                           hx-target="#body"
+                           hx-indicator="#body-loading-spinner"
+                           hx-swap="morph:innerHTML"
+                           hx-push-url="true"
+                        >
+                            Forgot password?
+                        </a>
+                    </small>
+                </div>
 
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary">Login</button>
@@ -36,7 +54,16 @@
     </div>
 
     <small class="fixed-bottom z-0 ps-3 pb-3">
-        Don't have an account yet? <a href="{% url 'account-user-register' %}">Register here!</a>
+        Don't have an account yet?
+        <a class="htmx-a"
+           hx-get="{% url 'account-user-register' %}"
+           hx-target="#body"
+           hx-indicator="#body-loading-spinner"
+           hx-swap="morph:innerHTML"
+           hx-push-url="true"
+        >
+            Register here!
+        </a>
     </small>
 
 {% endblock %}

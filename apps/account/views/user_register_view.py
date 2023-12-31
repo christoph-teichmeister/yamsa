@@ -1,41 +1,41 @@
-from django.contrib.auth import authenticate, login, hashers
+from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.views import generic
+from django_context_decorator import context
 
 from apps.account.forms import RegisterForm
-from apps.account.models import User
+from apps.account.messages.commands.send_post_register_email import SendPostRegisterEmail
+from apps.core.event_loop.runner import handle_message
 
 
-class RegisterUserView(generic.FormView):
+class RegisterUserView(generic.CreateView):
     template_name = "account/register.html"
     form_class = RegisterForm
+
+    @context
+    @property
+    def email_from_invitation_email(self):
+        return self.request.GET.get("with_email")
 
     def get_success_url(self):
         return reverse(viewname="core-welcome")
 
+    def get_initial(self):
+        return {
+            **super().get_initial(),
+            "id": self.request.GET.get("for_guest"),
+            "email": self.request.GET.get("with_email"),
+        }
+
     def form_valid(self, form):
-        # TODO CT: Move this to form
-        if self.request.user.is_anonymous:
-            user = User.objects.create_user(
-                username=form.data["username"],
-                password=form.data["password"],
-                name=form.data["username"],
-                email=form.data["email"],
-                is_guest=False,
-            )
-            self.request.user = user
-        else:
-            user = self.request.user
-            user.username = form.data["username"]
-            user.name = form.data["username"]
-            user.email = form.data["email"]
-            user.password = hashers.make_password(form.data["password"])
-            user.is_guest = False
+        response = super().form_valid(form)
 
-            user.save()
+        # Immediately log the created user in
+        self.request.user = self.object
+        authenticate(username=self.object.username, password=self.object.password)
+        login(request=self.request, user=self.request.user)
 
-        user = authenticate(username=user.username, password=user.password)
+        # Send PostRegisterEmail
+        handle_message(SendPostRegisterEmail(context_data={"user": self.request.user}))
 
-        login(request=self.request, user=user)
-
-        return super().form_valid(form)
+        return response

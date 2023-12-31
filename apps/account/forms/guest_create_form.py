@@ -8,7 +8,4 @@ class GuestCreateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = (
-            "name",
-            "room_slug",
-        )
+        fields = ("name", "room_slug")

@@ -1,7 +1,12 @@
 from functools import cached_property
 from time import time
 
+import string
+
+import random
+from ambient_toolbox.mixins.validation import CleanOnSaveMixin
 from ambient_toolbox.models import CommonInfo
+from django.contrib.auth import hashers
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q, ExpressionWrapper, Exists, OuterRef, BooleanField
@@ -9,8 +14,10 @@ from django.db.models import Q, ExpressionWrapper, Exists, OuterRef, BooleanFiel
 from apps.room.models import Room
 
 
-class User(CommonInfo, AbstractUser):
+class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
     name = models.CharField(max_length=50)
+    email = models.EmailField(unique=True)
+
     rooms = models.ManyToManyField("room.Room", through="room.UserConnectionToRoom")
 
     is_guest = models.BooleanField(default=True)
@@ -19,6 +26,9 @@ class User(CommonInfo, AbstractUser):
 
     wants_to_receive_webpush_notifications = models.BooleanField(default=True)
 
+    invitation_email_sent = models.BooleanField(default=False)
+    invitation_email_sent_at = models.DateTimeField(null=True, blank=True)
+
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
@@ -26,12 +36,9 @@ class User(CommonInfo, AbstractUser):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        self.clean()
-        super().save(*args, **kwargs)
-
     def clean(self):
         if self.is_guest and not self.is_superuser:
+            # If a user has been added and is a guest, give them unique username, email and password
             timestamp = time()
             self.username = f"{self.name}-{timestamp}"
             self.email = f"{self.username}@local.local"
@@ -51,6 +58,15 @@ class User(CommonInfo, AbstractUser):
             .distinct()
             .exists()
         )
+
+    def generate_random_password_with_length(self, length):
+        characters = string.ascii_letters + string.digits
+        new_password = "".join(random.choice(characters) for _ in range(length))
+
+        self.password = hashers.make_password(new_password)
+        self.save()
+
+        return new_password
 
     @cached_property
     def room_qs_for_list(self):

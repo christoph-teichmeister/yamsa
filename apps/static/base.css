@@ -51,6 +51,11 @@ body {
     color: var(--bs-primary-text-emphasis);
 }
 
+.htmx-a {
+    color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+    text-decoration: underline;
+}
+
 .p-e-color {
     color: var(--bs-primary-text-emphasis);
 }
