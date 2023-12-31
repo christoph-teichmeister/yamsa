@@ -1,8 +1,12 @@
 from functools import cached_property
 from time import time
 
+import string
+
+import random
 from ambient_toolbox.mixins.validation import CleanOnSaveMixin
 from ambient_toolbox.models import CommonInfo
+from django.contrib.auth import hashers
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q, ExpressionWrapper, Exists, OuterRef, BooleanField
@@ -54,6 +58,15 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
             .distinct()
             .exists()
         )
+
+    def generate_random_password_with_length(self, length):
+        characters = string.ascii_letters + string.digits
+        new_password = "".join(random.choice(characters) for _ in range(length))
+
+        self.password = hashers.make_password(new_password)
+        self.save()
+
+        return new_password
 
     @cached_property
     def room_qs_for_list(self):

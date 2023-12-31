@@ -68,7 +68,16 @@
     </div>
 
     <small class="fixed-bottom z-0 ps-3 pb-3">
-        Already have an account? <a href="{% url 'account-user-login' %}">Login here!</a>
+        Already have an account?
+        <a class="htmx-a"
+           hx-get="{% url 'account-user-login' %}"
+           hx-target="#body"
+           hx-indicator="#body-loading-spinner"
+           hx-swap="morph:innerHTML"
+           hx-push-url="true"
+        >
+            Login here!
+        </a>
     </small>
 
 {% endblock %}

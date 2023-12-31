@@ -11,6 +11,7 @@ urlpatterns = [
     path("register/", views.RegisterUserView.as_view(), name="account-user-register"),
     path("login/", views.LogInUserView.as_view(), name="account-user-login"),
     path("logout/", views.LogOutUserView.as_view(), name="account-user-logout"),
+    path("forgot-password/", views.UserForgotPasswordView.as_view(), name="account-user-forgot-password"),
     build_room_specific_paths(
         [
             path(

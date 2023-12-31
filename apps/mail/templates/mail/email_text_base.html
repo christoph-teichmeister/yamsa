@@ -11,7 +11,7 @@
 {% block text %}
     <br/>
     {% for text in context.text_list %}
-        {{ text }} {% if not forloop.last %}<br/>{% endif %}
+        {{ text }}{% if not forloop.last %}<br/>{% endif %}
     {% endfor %}
 {% endblock text %}
 
