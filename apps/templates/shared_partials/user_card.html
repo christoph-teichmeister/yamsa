@@ -1,13 +1,25 @@
 {% load room_tags %}
-<div class="col p-1">
-    <div class="card" style="max-width: 540px;">
-        <div class="row g-0">
+<div class="col col-xl-6 p-1">
+    <div class="card h-100 {% if not user.is_guest %}cursor-pointer{% endif %}"
+         style="max-width: 540px;min-height: 162px;"
+         {% if not user.is_guest %}
+             hx-trigger="click"
+             hx-get="{% url 'account-user-detail' pk=user.id %}"
+             hx-target="#body"
+             hx-indicator="#body-loading-spinner"
+             hx-swap="morph:innerHTML"
+             hx-push-url="true"
+         {% endif %}
+    >
+        <div class="row g-0 h-100">
 
-            <div class="col-3 d-flex align-items-center justify-content-center" style="font-size: 4em">
+            <div class="col-3 d-flex align-items-center justify-content-center"
+                 style="font-size: 4em"
+            >
                 <i class="bi bi-file-person"></i>
             </div>
 
-            <div class="col-8">
+            <div class="col-8 d-flex align-items-center justify-content-center">
                 <div class="card-body">
                     <p class="card-text">{{ user.name }}</p>
 
@@ -17,11 +29,13 @@
                                 Is a guest
                                 <br/>
                                 <span id="invitation-email-div">
-                                {% if user.invitation_email_can_be_sent %}
-                                    {% include "shared_partials/invitation_email_not_yet_sent.html" %}
-                                {% else %}
-                                    {% include "shared_partials/invitation_email_sent.html" %}
-                                {% endif %}
+                                    {% if request.user.id != user.id %}
+                                        {% if user.invitation_email_can_be_sent %}
+                                            {% include "shared_partials/invitation_email_not_yet_sent.html" %}
+                                        {% else %}
+                                            {% include "shared_partials/invitation_email_sent.html" %}
+                                        {% endif %}
+                                    {% endif %}
                                 </span>
                             {% else %}
                                 Is a registered user

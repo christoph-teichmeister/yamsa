@@ -21,6 +21,7 @@ whitenoise = "==6.3.*"
 [dev-packages]
 black = "*"
 django-upgrade = "*"
+djhtml = "*"
 flake8 = "*"
 flake8-bugbear = "*"
 isort = "*"

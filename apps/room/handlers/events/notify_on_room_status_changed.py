@@ -19,7 +19,7 @@ def send_notification_on_room_status_changed(context: RoomStatusChanged.Context)
             ),
         )
         for user in room.room_users.exclude(id=room.lastmodified_by.id):
-            notification.payload.click_url = reverse("room-dashboard", kwargs={"room_slug": room.slug})
+            notification.payload.click_url = reverse("room-detail", kwargs={"room_slug": room.slug})
             notification.send_to_user(user)
 
     # Notify users when a room is reopened
@@ -31,5 +31,5 @@ def send_notification_on_room_status_changed(context: RoomStatusChanged.Context)
             ),
         )
         for user in room.room_users.exclude(id=room.lastmodified_by.id):
-            notification.payload.click_url = reverse("room-dashboard", kwargs={"room_slug": room.slug})
+            notification.payload.click_url = reverse("room-detail", kwargs={"room_slug": room.slug})
             notification.send_to_user(user)

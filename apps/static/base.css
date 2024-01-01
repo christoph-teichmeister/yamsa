@@ -1,13 +1,23 @@
 [data-bs-theme=light] {
-    --bs-body-bg: white;
+    --bs-body-bg: #ecf5ff;
     --bs-body-color: black;
-    --bs-primary-text-emphasis: #0d6efd;
+    --bs-primary-text-emphasis: #6ea8fe;
 
-    --offcanvas-and-nav-bg: #434343;
+    --offcanvas-and-nav-bg: #2d2a2e;
     --offcanvas-and-nav-color: white;
-    --offcanvas-and-nav-text-muted: #b3b3b3;
-    --nav-active-color: white;
+    --offcanvas-and-nav-text-muted: #606060;
+    --nav-active-color: #6ea8fe;
     --list-group-border-color: black;
+
+    .navbar-nav {
+        .p-e-color {
+            color: var(--offcanvas-and-nav-color);
+        }
+
+        .p-e-color:hover {
+            color: var(--nav-active-color);
+        }
+    }
 }
 
 [data-bs-theme=dark] {
@@ -65,65 +75,4 @@ body {
 
 .error {
     color: red;
-}
-
-.me-involved {
-    font-weight: bold;
-    color: var(--bs-primary-text-emphasis);
-}
-
-.htmx-a {
-    color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
-    text-decoration: underline;
-}
-
-.p-e-color {
-    color: var(--bs-primary-text-emphasis);
-}
-
-.debt-list-debt-settled {
-    color: var(--bs-primary-text-emphasis);
-    opacity: 50%;
-}
-
-.cursor-pointer {
-    cursor: pointer;
-}
-
-.room-circle {
-    width: 3em;
-    height: 3em;
-    border: 2px solid white;
-    border-radius: 50%;
-
-    margin: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.room-circle.closed {
-    border-color: darkred;
-}
-
-.room-circle.selected:not(.closed) {
-    border-color: var(--bs-primary-text-emphasis);
-}
-
-.htmx-indicator {
-    opacity: 0;
-    z-index: -1;
-    transition: none !important;
-}
-
-.htmx-request .htmx-indicator {
-    opacity: 1;
-    z-index: 2000;
-    transition: all 200ms ease-in !important;
-}
-
-.htmx-request.htmx-indicator {
-    opacity: 1;
-    z-index: 2000;
-    transition: all 200ms ease-in !important;;
 }

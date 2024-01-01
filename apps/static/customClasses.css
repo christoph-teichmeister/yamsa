@@ -1,0 +1,42 @@
+.me-involved {
+    font-weight: bold;
+    color: var(--bs-primary-text-emphasis);
+}
+
+.htmx-a {
+    color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+    text-decoration: underline;
+}
+
+.p-e-color {
+    color: var(--bs-primary-text-emphasis);
+}
+
+.debt-list-debt-settled {
+    color: var(--bs-primary-text-emphasis);
+    opacity: 50%;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.room-circle {
+    width: 3em;
+    height: 3em;
+    border: 2px solid white;
+    border-radius: 50%;
+
+    margin: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.room-circle.closed {
+    border-color: darkred;
+}
+
+.room-circle.selected:not(.closed) {
+    border-color: var(--bs-primary-text-emphasis);
+}
