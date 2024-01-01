@@ -43,7 +43,7 @@
                             {% autoescape off %}
                                 {% parse_user_text parent_transaction.paid_by.name True %}{% endautoescape %}
                             paid
-                            <strong>{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</strong>
+                            <strong>{{ parent_transaction.total_child_value }}{{ parent_transaction.currency.sign }}</strong>
                         </h5>
                         <small>{{ parent_transaction.created_at|date:'d.m.Y' }}</small>
                     </div>
