@@ -4,10 +4,8 @@
 {% block content %}
     <h1 class="ps-3 mb-4">Login</h1>
 
-    <div class="row gx-0">
-        <div class="col-2 col-md-5 p-0"></div>
-
-        <div class="col-8 col-md-2 p-0 d-flex">
+    <div class="row gx-0 d-flex justify-content-center">
+        <div class="col-8 col-sm-4 col-md-6 col-xl-4 p-0 d-flex">
             <form hx-post="{% url "account-user-login" %}"
                   hx-target="#body"
                   hx-indicator="#body-loading-spinner"
@@ -27,7 +25,7 @@
 
                 {% include "account/shared_partials/password_input_component.html" %}
                 <div class="mb-3 d-flex justify-content-end">
-                    <small>
+                    <small class="cursor-pointer">
                         <a class="htmx-a"
                            hx-get="{% url 'account-user-forgot-password' %}"
                            hx-target="#body"
@@ -49,11 +47,9 @@
                 </div>
             </form>
         </div>
-
-        <div class="col-2 col-md-5 p-0"></div>
     </div>
 
-    <small class="fixed-bottom z-0 ps-3 pb-3">
+    <small class="fixed-bottom z-0 ps-3 pb-3 cursor-pointer">
         Don't have an account yet?
         <a class="htmx-a"
            hx-get="{% url 'account-user-register' %}"
