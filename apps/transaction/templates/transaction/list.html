@@ -28,9 +28,10 @@
     </div>
 
     {% if parent_transactions %}
-        <ul class="list-group list-group-flush mb-3">
+        <ul id="transaction-list" class="list-group list-group-flush mb-3" style="position:relative">
             {% for parent_transaction in parent_transactions %}
-                <li class="list-group-item pb-4 pt-4 cursor-pointer"
+                <li id="transaction-{{ parent_transaction.id }}"
+                    class="list-group-item pb-4 pt-4 cursor-pointer"
                     hx-trigger="click"
                     hx-get="{% room_url 'transaction-detail' pk=parent_transaction.id %}"
                     hx-target="#body"
@@ -43,7 +44,8 @@
                             {% autoescape off %}
                                 {% parse_user_text parent_transaction.paid_by.name True %}{% endautoescape %}
                             paid
-                            <strong>{{ parent_transaction.total_child_value }}{{ parent_transaction.currency.sign }}</strong>
+                            <strong>
+                                {{ parent_transaction.total_child_value }}{{ parent_transaction.currency.sign }}</strong>
                         </h5>
                         <small>{{ parent_transaction.created_at|date:'d.m.Y' }}</small>
                     </div>
@@ -52,5 +54,39 @@
             {% endfor %}
         </ul>
     {% endif %}
+
+    <!-- Observer to scroll to correct element when anchor tags are in url -->
+    <script type="text/javascript">
+      // Callback function to execute when mutations are observed
+        var callback = (mutationList, observer) => {
+            if (window.location.href.includes("list#transaction")) {
+                var hash = window.location.hash;
+
+                if (hash === '' || hash === '#' || hash === undefined) {
+                    return false;
+                }
+
+                var target = document.querySelector(hash);
+                var headerHeight = 101;
+
+                target = target ? target : document.querySelector('[name=' + hash.slice(1) + ']');
+
+                if (target) {
+                    var offset = target.getBoundingClientRect().top + window.scrollY - headerHeight;
+
+                    window.scrollTo({
+                        top: offset,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }
+
+      // Create an observer instance linked to the callback function
+        var observer = new MutationObserver(callback);
+
+      // Start observing the target node for configured mutations
+        observer.observe(document.getElementById("body"), {childList: true});
+    </script>
 
 {% endblock %}
