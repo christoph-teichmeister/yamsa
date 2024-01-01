@@ -1,13 +1,23 @@
 [data-bs-theme=light] {
-    --bs-body-bg: white;
+    --bs-body-bg: #ecf5ff;
     --bs-body-color: black;
     --bs-primary-text-emphasis: #6ea8fe;
 
-    --offcanvas-and-nav-bg: #434343;
+    --offcanvas-and-nav-bg: #2d2a2e;
     --offcanvas-and-nav-color: white;
-    --offcanvas-and-nav-text-muted: #b3b3b3;
-    --nav-active-color: white;
+    --offcanvas-and-nav-text-muted: #606060;
+    --nav-active-color: #6ea8fe;
     --list-group-border-color: black;
+
+    .navbar-nav {
+        .p-e-color {
+            color: var(--offcanvas-and-nav-color);
+        }
+
+        .p-e-color:hover {
+            color: var(--nav-active-color);
+        }
+    }
 }
 
 [data-bs-theme=dark] {
