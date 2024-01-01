@@ -1,4 +1,4 @@
-from functools import cached_property
+from functools import cached_property, cache
 from time import time
 
 import string
@@ -11,7 +11,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q, ExpressionWrapper, Exists, OuterRef, BooleanField
 
-from apps.room.models import Room
+from apps.room.models import Room, UserConnectionToRoom
 
 
 class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
@@ -46,28 +46,6 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
 
         super().clean()
 
-    def can_be_removed_from_room(self, room_id) -> bool:
-        return not (
-            Room.objects.filter(
-                Q(parent_transactions__paid_by_id=self.id)
-                | Q(parent_transactions__child_transactions__paid_for_id=self.id)
-                | Q(debts__debitor_id=self.id)
-                | Q(debts__creditor_id=self.id),
-                id=room_id,
-            )
-            .distinct()
-            .exists()
-        )
-
-    def generate_random_password_with_length(self, length):
-        characters = string.ascii_letters + string.digits
-        new_password = "".join(random.choice(characters) for _ in range(length))
-
-        self.password = hashers.make_password(new_password)
-        self.save()
-
-        return new_password
-
     @cached_property
     def room_qs_for_list(self):
         return (
@@ -89,3 +67,30 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
                 "user_is_in_room",
             )
         )
+
+    @cache
+    def has_seen_room(self, room: Room) -> tuple[UserConnectionToRoom, bool]:
+        connections = self.userconnectiontoroom_set.filter(room_id=room.id)
+        return connections.first(), connections.filter(user_has_seen_this_room=True).exists()
+
+    def can_be_removed_from_room(self, room_id) -> bool:
+        return not (
+            Room.objects.filter(
+                Q(parent_transactions__paid_by_id=self.id)
+                | Q(parent_transactions__child_transactions__paid_for_id=self.id)
+                | Q(debts__debitor_id=self.id)
+                | Q(debts__creditor_id=self.id),
+                id=room_id,
+            )
+            .distinct()
+            .exists()
+        )
+
+    def generate_random_password_with_length(self, length):
+        characters = string.ascii_letters + string.digits
+        new_password = "".join(random.choice(characters) for _ in range(length))
+
+        self.password = hashers.make_password(new_password)
+        self.save()
+
+        return new_password
