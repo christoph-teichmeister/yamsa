@@ -1,28 +1,30 @@
 {% load room_tags %}
 
-{% include "side_menu_components/room_list_title.html" with title="Open" %}
+{% if current_user.open_room_qs_for_list %}
+    {% include "side_menu_components/room_list_title.html" with title="Open" %}
 
-{% for room in current_user.open_room_qs_for_list %}
-    <div class="row cursor-pointer{% if current_room.slug == room.slug %} p-e-color{% endif %}"
-         data-bs-dismiss="offcanvas"
-         data-bs-target="#offcanvasNavbar"
-         hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-         hx-get="{% room_url 'transaction-list' %}"
-         hx-target="#body"
-         hx-indicator="#body-loading-spinner"
-         hx-swap="innerHTML"
-         hx-push-url="true"
-    >
-        <div class="col-4 d-flex flex-column justify-content-center align-items-center">
-            <div class="room-circle{% if current_room.slug == room.slug %} selected{% endif %}">
-                {{ room.name|slice:":2"|upper }}
+    {% for room in current_user.open_room_qs_for_list %}
+        <div class="row cursor-pointer{% if current_room.slug == room.slug %} p-e-color{% endif %}"
+             data-bs-dismiss="offcanvas"
+             data-bs-target="#offcanvasNavbar"
+             hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
+             hx-get="{% room_url 'transaction-list' %}"
+             hx-target="#body"
+             hx-indicator="#body-loading-spinner"
+             hx-swap="innerHTML"
+             hx-push-url="true"
+        >
+            <div class="col-4 d-flex flex-column justify-content-center align-items-center">
+                <div class="room-circle{% if current_room.slug == room.slug %} selected{% endif %}">
+                    {{ room.name|slice:":2"|upper }}
+                </div>
+            </div>
+            <div class="col-8 d-flex align-items-center">
+                {{ room.name|truncatechars:8 }}
             </div>
         </div>
-        <div class="col-8 d-flex align-items-center">
-            {{ room.name|truncatechars:8 }}
-        </div>
-    </div>
-{% endfor %}
+    {% endfor %}
+{% endif %}
 
 {% include "side_menu_components/room_list_title.html" with title="New" %}
 
@@ -54,7 +56,7 @@
              data-bs-dismiss="offcanvas"
              data-bs-target="#offcanvasNavbar"
              hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-             hx-get="{% room_url 'room-edit' %}"
+             hx-get="{% room_url 'room-detail' %}"
              hx-target="#body"
              hx-indicator="#body-loading-spinner"
              hx-swap="innerHTML"
@@ -81,7 +83,7 @@
              data-bs-target="#offcanvasNavbar"
              hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
                 {% if room.status == ROOM_STATUS_CLOSED %}
-             hx-get="{% room_url 'room-edit' %}"
+             hx-get="{% room_url 'room-detail' %}"
                 {% else %}
              hx-get="{% room_url 'transaction-list' %}"
                 {% endif %}
@@ -101,5 +103,3 @@
         </div>
     {% endfor %}
 {% endif %}
-
-<br/><br/>

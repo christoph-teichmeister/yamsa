@@ -43,7 +43,7 @@
                     {% elif current_room.is_closed %}
                         <h1 class="mb-0">
                             <i class="bi bi-dash-circle"
-                               hx-get="{% room_url 'room-edit' %}"
+                               hx-get="{% room_url 'room-detail' %}"
                                hx-target="#body"
                                hx-indicator="#body-loading-spinner"
                                hx-swap="morph:innerHTML"
@@ -137,6 +137,24 @@
                 </div>
 
                 {% include "_side_menu_room_list.html" %}
+
+                {% include "side_menu_components/room_list_title.html" %}
+
+                <div class="row mt-3 py-1 d-flex justify-content-center">
+                    <button type="button"
+                            class="btn btn-primary w-50"
+                            hx-trigger="click"
+                            hx-get="{% url 'account-user-logout' %}"
+                            hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true"
+                    >
+                        Log out
+                    </button>
+                </div>
+
+                <br/><br/>
 
             </div>
         </div>

@@ -7,9 +7,11 @@
     <div class="row gx-0 align-items-center mt-3">
         <div class="col-7">
             <h5>Transactions made</h5>
-            <small>
-                Click on a transaction to see it in full detail.
-            </small>
+            {% if parent_transactions %}
+                <small>
+                    Click on a transaction to see it in full detail.
+                </small>
+            {% endif %}
         </div>
         <div class="col-5 d-flex justify-content-end">
             <button type="button"
