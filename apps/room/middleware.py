@@ -19,11 +19,12 @@ class RoomToRequestMiddleware:
             room = Room.objects.get(slug=room_slug)
             setattr(request, "room", room)
 
-            # ...check whether the DB knows that the user has seen the room
-            connection, has_seen_room = request.user.has_seen_room(room)
-            if not has_seen_room:
-                connection.user_has_seen_this_room = True
-                connection.save()
+            if not request.user.is_anonymous:
+                # ...check whether the DB knows that the user has seen the room
+                connection, has_seen_room = request.user.has_seen_room(room)
+                if not has_seen_room:
+                    connection.user_has_seen_this_room = True
+                    connection.save()
 
         response = self.get_response(request)
 
