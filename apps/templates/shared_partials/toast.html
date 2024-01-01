@@ -19,25 +19,25 @@
 </div>
 
 <script type="module">
-  var toastElement = document.getElementById('toast-id')
-  var toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastElement)
+    var toastElement = document.getElementById('toast-id')
+    var toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastElement)
 
-  document.body.addEventListener("triggerToast", (evt) => {
+    document.body.addEventListener("triggerToast", (evt) => {
     // Return early, if toast is already shown
-    if (toastBootstrap.isShown()) return
+        if (toastBootstrap.isShown()) return
 
     // Add message to toast
-    document.getElementById('toast-message-span').innerText = evt.detail.message
+        document.getElementById('toast-message-span').innerText = evt.detail.message
 
-    console.debug("Toast Message:", evt.detail.message)
+        console.debug("Toast Message:", evt.detail.message)
 
     // Add class to toast
-    var splitTypes = evt.detail.type.split(" ")
-    splitTypes.map(typeString => document.getElementById('toast-type-div').classList.add(typeString))
+        var splitTypes = evt.detail.type.split(" ")
+        splitTypes.map(typeString => document.getElementById('toast-type-div').classList.add(typeString))
 
-    console.debug("Toast Class splitTypes:", splitTypes)
+        console.debug("Toast Class splitTypes:", splitTypes)
 
     // Get and show toast element
-    toastBootstrap.show()
-  })
+        toastBootstrap.show()
+    })
 </script>

@@ -97,11 +97,11 @@
                          data-bs-target="#offcanvasNavbar"
                          hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
                          hx-get="
-                            {% if request.user.is_authenticated %}
-                                {% url 'account-user-detail' pk=request.user.id %}
-                            {% else %}
-                                {% url 'account-user-login' %}
-                            {% endif %}"
+                                 {% if request.user.is_authenticated %}
+                                     {% url 'account-user-detail' pk=request.user.id %}
+                                 {% else %}
+                                     {% url 'account-user-login' %}
+                                 {% endif %}"
                          hx-target="#body"
                          hx-indicator="#body-loading-spinner"
                          hx-swap="morph:innerHTML"
@@ -165,75 +165,75 @@
 {% if current_room %}
     <!-- Clipboard Copy -->
     <script type="text/javascript">
-      var copyShareURL = () => {
-        const url = document.URL
-        navigator.clipboard.writeText(url).then(() => {
+        var copyShareURL = () => {
+            const url = document.URL
+            navigator.clipboard.writeText(url).then(() => {
           // clipboard successfully set
-          console.log(`${url} successfully copied to clipboard`)
-        }, () => {
+                console.log(`${url} successfully copied to clipboard`)
+            }, () => {
           // clipboard write failed
-          console.error("Something went wrong here")
-        });
-      }
+                console.error("Something went wrong here")
+            });
+        }
     </script>
 {% endif %}
 
 <!-- Remove excess offcanvas backdrops -->
 <script type="text/javascript">
-  var myOffcanvas = document.getElementById('offcanvasNavbar');
+    var myOffcanvas = document.getElementById('offcanvasNavbar');
 
-  function removeExcessBackdrops() {
-    let fade = document.getElementsByClassName('offcanvas-backdrop fade show')
-    for (let i = 0; i < fade.length; i++) {
-      while (fade.length > 1) {
-        fade[i].remove()
-      }
+    function removeExcessBackdrops() {
+        let fade = document.getElementsByClassName('offcanvas-backdrop fade show')
+        for (let i = 0; i < fade.length; i++) {
+            while (fade.length > 1) {
+                fade[i].remove()
+            }
+        }
     }
-  }
 
-  myOffcanvas.addEventListener('show.bs.offcanvas', event => removeExcessBackdrops());
-  myOffcanvas.addEventListener('hide.bs.offcanvas', event => removeExcessBackdrops());
+    myOffcanvas.addEventListener('show.bs.offcanvas', event => removeExcessBackdrops());
+    myOffcanvas.addEventListener('hide.bs.offcanvas', event => removeExcessBackdrops());
 
 </script>
 
 <!-- Theme Switcher -->
 <script type="text/javascript">
-  function getStoredTheme() {
-    return localStorage.getItem('theme')
-  }
-
-  function setStoredTheme(theme) {
-    localStorage.setItem('theme', theme)
-  }
-
-  function getPreferredTheme() {
-    const storedTheme = getStoredTheme()
-    if (storedTheme) {
-      return storedTheme
+    function getStoredTheme() {
+        return localStorage.getItem('theme')
     }
 
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  }
-
-  function setTheme(theme) {
-    if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.documentElement.setAttribute('data-bs-theme', 'dark')
-    } else {
-      document.documentElement.setAttribute('data-bs-theme', theme)
+    function setStoredTheme(theme) {
+        localStorage.setItem('theme', theme)
     }
-  }
 
-  setTheme(getPreferredTheme())
+    function getPreferredTheme() {
+        const storedTheme = getStoredTheme()
+        if (storedTheme) {
+            return storedTheme
+        }
 
-  function handleThemeClick(theme) {
-    setStoredTheme(theme)
-    setTheme(theme)
-  }
-
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    const storedTheme = getStoredTheme()
-    if (storedTheme !== 'light' && storedTheme !== 'dark') {
-      setTheme(getPreferredTheme())
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     }
-  })
+
+    function setTheme(theme) {
+        if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-bs-theme', 'dark')
+        } else {
+            document.documentElement.setAttribute('data-bs-theme', theme)
+        }
+    }
+
+    setTheme(getPreferredTheme())
+
+    function handleThemeClick(theme) {
+        setStoredTheme(theme)
+        setTheme(theme)
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        const storedTheme = getStoredTheme()
+        if (storedTheme !== 'light' && storedTheme !== 'dark') {
+            setTheme(getPreferredTheme())
+        }
+    })
 </script>

@@ -67,8 +67,8 @@
                             Username:
                         </strong>
                         <span class="float-end">
-                    {{ user.username }}
-                </span>
+                            {{ user.username }}
+                        </span>
                     </li>
 
                     <li class="list-group-item py-4 px-2">
@@ -94,12 +94,12 @@
                             PayPal.me Username:
                         </strong>
                         <span class="float-end">
-                        {% if user.paypal_me_username %}
-                            @{{ user.paypal_me_username }}
-                        {% else %}
-                            -
-                        {% endif %}
-                </span>
+                            {% if user.paypal_me_username %}
+                                @{{ user.paypal_me_username }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </span>
                     </li>
 
                     <li class="list-group-item py-4 px-2">
