@@ -21,7 +21,7 @@
       browser: browser,
     };
 
-    return fetch('/webpush/save/', {
+    return fetch({% url "webpush:save" %}, {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
