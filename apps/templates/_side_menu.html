@@ -122,7 +122,7 @@
                      data-bs-dismiss="offcanvas"
                      data-bs-target="#offcanvasNavbar"
                      hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-                     hx-get="{% url 'core-welcome' %}"
+                     hx-get="{% url 'core:welcome' %}"
                      hx-indicator="#body-loading-spinner"
                      hx-target="#body"
                      hx-swap="morph:innerHTML"

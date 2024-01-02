@@ -18,7 +18,7 @@ class RegisterUserView(generic.CreateView):
         return self.request.GET.get("with_email")
 
     def get_success_url(self):
-        return reverse(viewname="core-welcome")
+        return reverse(viewname="core:welcome")
 
     def get_initial(self):
         return {
