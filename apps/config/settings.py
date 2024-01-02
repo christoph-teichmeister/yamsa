@@ -252,7 +252,12 @@ MANIFEST = {
         {"src": "static/images/favicon-16x16.png", "sizes": "16x16", "type": "image/png"},
         {"src": "static/images/favicon-32x32.png", "sizes": "32x32", "type": "image/png"},
         {"src": "static/images/apple-touch-icon.png", "sizes": "180x180", "type": "image/png"},
-        {"src": "static/images/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png"},
+        {
+            "src": "static/images/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable",
+        },
         {"src": "static/images/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png"},
     ],
     "splash_screens": [],
