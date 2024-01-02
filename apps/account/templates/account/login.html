@@ -6,7 +6,7 @@
 
     <div class="row gx-0 d-flex justify-content-center">
         <div class="col-8 col-sm-4 col-md-6 col-xl-4 p-0 d-flex">
-            <form hx-post="{% url "account-user-login" %}"
+            <form hx-post="{% url "account:login" %}"
                   hx-target="#body"
                   hx-indicator="#body-loading-spinner"
                   hx-swap="morph:innerHTML"
@@ -27,7 +27,7 @@
                 <div class="mb-3 d-flex justify-content-end">
                     <small class="cursor-pointer">
                         <a class="htmx-a"
-                           hx-get="{% url 'account-user-forgot-password' %}"
+                           hx-get="{% url 'account:forgot-password' %}"
                            hx-target="#body"
                            hx-indicator="#body-loading-spinner"
                            hx-swap="morph:innerHTML"
@@ -52,7 +52,7 @@
     <small class="fixed-bottom z-0 ps-3 pb-3 cursor-pointer">
         Don't have an account yet?
         <a class="htmx-a"
-           hx-get="{% url 'account-user-register' %}"
+           hx-get="{% url 'account:register' %}"
            hx-target="#body"
            hx-indicator="#body-loading-spinner"
            hx-swap="morph:innerHTML"

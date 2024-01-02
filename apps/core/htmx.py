@@ -20,7 +20,7 @@ class FormHtmxResponseMixin:
     toast_error_message: str = None
 
     def get_success_url(self):
-        return reverse(viewname="core-welcome")
+        return reverse(viewname="core:welcome")
 
     def form_valid(self, form):
         super().form_valid(form)

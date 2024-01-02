@@ -11,7 +11,7 @@
             <div class="col d-flex align-items-center">
                 <i class="bi bi-arrow-left-circle fs-2 float-start cursor-pointer"
                    hx-trigger="click"
-                   hx-get="{% room_url 'room-detail' %}"
+                   hx-get="{% room_url 'room:detail' %}"
                    hx-target="#body"
                    hx-indicator="#body-loading-spinner"
                    hx-swap="morph:innerHTML"
@@ -23,7 +23,7 @@
                 {% if current_room.is_open %}
                     <button class="btn btn-primary btn-sm float-end px-3"
                             type="submit"
-                            hx-post="{% room_url 'room-edit' %}"
+                            hx-post="{% room_url 'room:edit' %}"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML">
@@ -123,7 +123,7 @@
         <div class="row gx-0 my-4 d-flex justify-content-center">
             <button type="button"
                     class="btn {% if current_room.is_open %}btn-danger{% elif current_room.is_closed %}btn-primary{% endif %} btn-sm w-50 {% if form.errors.status.data %}disabled{% endif %}"
-                    hx-post="{% room_url 'room-edit' %}"
+                    hx-post="{% room_url 'room:edit' %}"
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML">

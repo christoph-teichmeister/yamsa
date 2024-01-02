@@ -15,7 +15,7 @@ class RoomEditView(RoomBaseContext, generic.UpdateView):
     form_class = RoomEditForm
 
     def get_success_url(self):
-        return reverse("room-edit", kwargs={"room_slug": self.object.slug})
+        return reverse("room:edit", kwargs={"room_slug": self.object.slug})
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)

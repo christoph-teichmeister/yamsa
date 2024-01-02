@@ -47,7 +47,7 @@ class RoomDetailViewTestCase(TransactionHelpersMixin, BaseTestSetUp):
         self.assertEqual(self.guest_user_2.money_flows.first().incoming, Decimal(0))
         self.assertEqual(self.guest_user_2.money_flows.first().outgoing, Decimal(5))
 
-        res = self.client.get(reverse("room-dashboard", kwargs={"room_slug": self.room.slug}))
+        res = self.client.get(reverse("room:dashboard", kwargs={"room_slug": self.room.slug}))
         print(res)
 
     def test_simple_test_case_2(self):

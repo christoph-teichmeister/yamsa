@@ -22,7 +22,7 @@ class NewsCommentCreateHTMXView(mixins.LoginRequiredMixin, generic.CreateView):
     template_name = "shared_partials/news_card.html"
 
     def get_success_url(self):
-        return reverse(viewname="htmx-opened-news", kwargs={"pk": self.object.news.id})
+        return reverse(viewname="news:htmx-opened-news", kwargs={"pk": self.object.news.id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

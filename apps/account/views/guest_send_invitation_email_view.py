@@ -30,4 +30,4 @@ class GuestSendInvitationEmailView(AccountBaseContext, generic.UpdateView):
         return form_valid
 
     def get_success_url(self):
-        return reverse(viewname="account-list", kwargs={"room_slug": self.request.room.slug})
+        return reverse(viewname="account:list", kwargs={"room_slug": self.request.room.slug})

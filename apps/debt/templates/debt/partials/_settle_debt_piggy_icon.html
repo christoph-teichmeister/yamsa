@@ -12,7 +12,7 @@
             &nbsp&nbsp&nbsp
         {% endif %}
         <i class="bi bi-piggy-bank"
-           hx-get="{% room_url 'debt-settle' pk=debt.id %}"
+           hx-get="{% room_url 'debt:settle' pk=debt.id %}"
            hx-target="#body"
            hx-indicator="#body-loading-spinner"
            hx-swap="morph:innerHTML"

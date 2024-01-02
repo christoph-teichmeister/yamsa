@@ -4,7 +4,7 @@
 
 {% block tab_content %}
 
-    <form hx-post="{% room_url 'transaction-edit' pk=parent_transaction.id %}"
+    <form hx-post="{% room_url 'transaction:edit' pk=parent_transaction.id %}"
           hx-target="#body"
           hx-indicator="#body-loading-spinner"
           hx-swap="morph:innerHTML"
@@ -140,7 +140,7 @@
                         <div class="col-1 ps-1">
                             <i class="bi bi-trash"
                                hx-trigger="click"
-                               hx-post="{% room_url 'child-transaction-delete' pk=child_transaction.id %}"
+                               hx-post="{% room_url 'transaction:child-transaction-delete' pk=child_transaction.id %}"
                                hx-confirm="Are you sure you wish to delete this transaction?"
                                hx-target="#body"
                                hx-indicator="#body-loading-spinner"
@@ -173,7 +173,7 @@
 
             <li class="list-group-item p-2 d-flex justify-content-center"
                 hx-trigger="click"
-                hx-get="{% room_url 'child-transaction-create' %}"
+                hx-get="{% room_url 'transaction:child-transaction-create' %}"
                 hx-target="#add-child-transaction-container"
                 hx-swap="morph:outerHTML"
                 hx-push-url="false"

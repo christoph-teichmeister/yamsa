@@ -25,7 +25,7 @@ def send_notification_on_transaction_create(context: ParentTransactionCreated.Co
             f'("{parent_transaction.description}")\n'
             f"Have a look!",
             click_url=reverse(
-                viewname="transaction-detail",
+                viewname="transaction:detail",
                 kwargs={
                     "room_slug": parent_transaction.room.slug,
                     "pk": parent_transaction.id,
@@ -58,7 +58,7 @@ def send_notification_on_transaction_update(context: ParentTransactionUpdated.Co
             f'("{parent_transaction.description}")\n'
             f"Have a look!",
             click_url=reverse(
-                viewname="transaction-detail",
+                viewname="transaction:detail",
                 kwargs={
                     "room_slug": parent_transaction.room.slug,
                     "pk": parent_transaction.id,
@@ -90,7 +90,7 @@ def send_notification_on_child_transaction_deleted(context: ParentTransactionUpd
             f'("{parent_transaction.description}")\n'
             f"Have a look!",
             click_url=reverse(
-                viewname="transaction-list",
+                viewname="transaction:list",
                 kwargs={
                     "room_slug": parent_transaction.room.slug,
                 },
@@ -116,7 +116,7 @@ def send_notification_on_debt_settled(context: DebtSettled.Context):
         payload=Notification.Payload(
             head="Debt settled",
             body=f"{debt.debitor} just settled their debt of {debt.value}{debt.currency.sign} to you",
-            click_url=reverse(viewname="debt-list", kwargs={"room_slug": debt.room.slug}),
+            click_url=reverse(viewname="debt:list", kwargs={"room_slug": debt.room.slug}),
         ),
     ).send_to_user(debt.creditor)
 
@@ -128,7 +128,7 @@ def send_notification_on_user_removed_from_room(context: UserRemovedFromRoom.Con
             head="User removed",
             body=f"{context.user_requesting_removal.name} just removed "
             f"{context.user_to_be_removed.name} from {context.room.name}",
-            click_url=reverse(viewname="account-list", kwargs={"room_slug": context.room.slug}),
+            click_url=reverse(viewname="account:list", kwargs={"room_slug": context.room.slug}),
         ),
     )
 

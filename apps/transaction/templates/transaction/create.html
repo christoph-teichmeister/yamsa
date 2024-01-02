@@ -12,7 +12,7 @@
         </div>
     </div>
 
-    <form hx-post="{% room_url 'transaction-create' %}"
+    <form hx-post="{% room_url 'transaction:create' %}"
           hx-target="#body"
           hx-indicator="#body-loading-spinner"
           hx-swap="morph:innerHTML"

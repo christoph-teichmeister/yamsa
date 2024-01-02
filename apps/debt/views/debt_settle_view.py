@@ -22,4 +22,4 @@ class DebtSettleView(DebtBaseContext, generic.UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("debt-list", kwargs={"room_slug": self.request.room.slug})
+        return reverse("debt:list", kwargs={"room_slug": self.request.room.slug})

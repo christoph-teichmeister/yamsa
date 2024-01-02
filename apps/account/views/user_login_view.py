@@ -10,7 +10,7 @@ class LogInUserView(generic.FormView):
     form_class = LoginForm
 
     def get_success_url(self):
-        return reverse(viewname="core-welcome")
+        return reverse(viewname="core:welcome")
 
     def form_valid(self, form):
         possible_user = authenticate(username=form.data["username"], password=form.data["password"])

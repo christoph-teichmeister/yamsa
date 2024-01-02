@@ -31,7 +31,7 @@ class TransactionEditView(TransactionBaseContext, generic.UpdateView):
 
     def get_success_url(self):
         return reverse(
-            viewname="transaction-detail",
+            viewname="transaction:detail",
             kwargs={"room_slug": self.request.room.slug, "pk": self.object.id},
         )
 

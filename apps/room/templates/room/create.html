@@ -5,7 +5,7 @@
     <h1>Create Room</h1>
 
     <div class="d-flex align-items-center account-login-register-container">
-        <form action="{% url 'room-create' %}" method="post" class="flex-grow-1">
+        <form action="{% url 'room:create' %}" method="post" class="flex-grow-1">
             {% csrf_token %}
 
             <div class="mb-3">

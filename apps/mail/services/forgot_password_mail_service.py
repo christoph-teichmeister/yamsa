@@ -9,7 +9,7 @@ class ForgotPasswordEmailService(BaseYamsaEmailService):
 
     email_extra_context = EmailExtraContext(
         show_cta=True,
-        cta_btn_link=f"{settings.PROJECT_BASE_URL}{reverse(viewname='account-user-login')}",
+        cta_btn_link=f"{settings.PROJECT_BASE_URL}{reverse(viewname='account:login')}",
         cta_btn_text="Log in with new password",
     )
 

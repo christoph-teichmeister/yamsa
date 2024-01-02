@@ -26,4 +26,4 @@ class UserForgotPasswordView(generic.FormView):
         return form_valid
 
     def get_success_url(self):
-        return reverse(viewname="account-user-login")
+        return reverse(viewname="account:login")

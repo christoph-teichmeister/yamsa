@@ -35,7 +35,7 @@
                                 onclick="copyShareURL()"
                                 data-bs-toggle="tooltip"
                                 data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
-                                hx-get="{% url 'htmx-checked-clipboard' %}"
+                                hx-get="{% url 'room:htmx-checked-clipboard' %}"
                                 hx-swap="morph:innerHTML"
                         >
                             {% include "shared_partials/clipboard_icon_unchecked.html" %}
@@ -43,7 +43,7 @@
                     {% elif current_room.is_closed %}
                         <h1 class="mb-0">
                             <i class="bi bi-dash-circle"
-                               hx-get="{% room_url 'room-detail' %}"
+                               hx-get="{% room_url 'room:detail' %}"
                                hx-target="#body"
                                hx-indicator="#body-loading-spinner"
                                hx-swap="morph:innerHTML"
@@ -98,9 +98,9 @@
                          hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
                          hx-get="
                                  {% if request.user.is_authenticated %}
-                                     {% url 'account-user-detail' pk=request.user.id %}
+                                     {% url 'account:detail' pk=request.user.id %}
                                  {% else %}
-                                     {% url 'account-user-login' %}
+                                     {% url 'account:login' %}
                                  {% endif %}"
                          hx-target="#body"
                          hx-indicator="#body-loading-spinner"
@@ -122,7 +122,7 @@
                      data-bs-dismiss="offcanvas"
                      data-bs-target="#offcanvasNavbar"
                      hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-                     hx-get="{% url 'core-welcome' %}"
+                     hx-get="{% url 'core:welcome' %}"
                      hx-indicator="#body-loading-spinner"
                      hx-target="#body"
                      hx-swap="morph:innerHTML"
@@ -144,7 +144,7 @@
                     <button type="button"
                             class="btn btn-primary w-50"
                             hx-trigger="click"
-                            hx-get="{% url 'account-user-logout' %}"
+                            hx-get="{% url 'account:logout' %}"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"
