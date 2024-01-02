@@ -16,12 +16,12 @@ class ChildTransactionDeleteView(TransactionBaseContext, generic.DeleteView):
         # so the parent_transaction _will_ have no child_transactions anymore, after this operation is executed
         if self.object.parent_transaction.child_transactions.count() == 1:
             return reverse(
-                viewname="transaction-list",
+                viewname="transaction:list",
                 kwargs={"room_slug": self.request.room.slug},
             )
 
         return reverse(
-            viewname="transaction-edit",
+            viewname="transaction:edit",
             kwargs={"pk": self.object.parent_transaction.id, "room_slug": self.request.room.slug},
         )
 

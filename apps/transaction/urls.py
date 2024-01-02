@@ -3,28 +3,29 @@ from django.urls import path
 from apps.room.urls import build_room_specific_paths
 from apps.transaction import views
 
+app_name = "transaction"
 urlpatterns = [
     build_room_specific_paths(
         [
             path(
                 "add/",
                 views.TransactionCreateView.as_view(),
-                name="transaction-create",
+                name="create",
             ),
             path(
                 "list",
                 views.TransactionListView.as_view(),
-                name="transaction-list",
+                name="list",
             ),
             path(
                 "detail/<int:pk>",
                 views.TransactionDetailView.as_view(),
-                name="transaction-detail",
+                name="detail",
             ),
             path(
                 "edit/<int:pk>",
                 views.TransactionEditView.as_view(),
-                name="transaction-edit",
+                name="edit",
             ),
             path(
                 "child-transaction/add/",

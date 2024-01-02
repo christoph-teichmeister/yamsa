@@ -14,4 +14,4 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
     _active_tab = "transaction"
 
     def get_success_url(self):
-        return reverse("transaction-list", kwargs={"room_slug": self.request.room.slug})
+        return reverse("transaction:list", kwargs={"room_slug": self.request.room.slug})

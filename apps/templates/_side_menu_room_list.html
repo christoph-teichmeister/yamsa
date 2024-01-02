@@ -8,7 +8,7 @@
              data-bs-dismiss="offcanvas"
              data-bs-target="#offcanvasNavbar"
              hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-             hx-get="{% room_url 'transaction-list' %}"
+             hx-get="{% room_url 'transaction:list' %}"
              hx-target="#body"
              hx-indicator="#body-loading-spinner"
              hx-swap="innerHTML"
@@ -85,7 +85,7 @@
              {% if room.status == ROOM_STATUS_CLOSED %}
                  hx-get="{% room_url 'room:detail' %}"
              {% else %}
-                 hx-get="{% room_url 'transaction-list' %}"
+                 hx-get="{% room_url 'transaction:list' %}"
              {% endif %}
              hx-target="#body"
              hx-indicator="#body-loading-spinner"

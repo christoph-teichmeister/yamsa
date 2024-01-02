@@ -17,7 +17,7 @@ class DashboardTabService:
                 name="transaction",
                 icon_class="bi bi-wallet",
                 room=self.room,
-                get_url=reverse("transaction-list", kwargs={"room_slug": self.room.slug}),
+                get_url=reverse("transaction:list", kwargs={"room_slug": self.room.slug}),
             ),
             DashboardTab(
                 name="debt",
