@@ -6,9 +6,9 @@
         hx-swap="outerHTML"
         hx-indicator="#body-loading-spinner"
         {% if opened %}
-            hx-get="{% url 'htmx-closed-news' pk=news.id %}"
+            hx-get="{% url 'news:htmx-closed-news' pk=news.id %}"
         {% else %}
-            hx-get="{% url 'htmx-opened-news' pk=news.id %}"
+            hx-get="{% url 'news:htmx-opened-news' pk=news.id %}"
         {% endif %}
     {% endif %}
 >
@@ -75,7 +75,7 @@
                                         <button class="btn btn-outline-secondary"
                                                 id="button-addon2"
                                                 type="submit"
-                                                hx-post="{% url 'htmx-newscomment-create' %}"
+                                                hx-post="{% url 'news:htmx-newscomment-create' %}"
                                                 hx-target="#news-{{ news.id }}"
                                                 hx-swap="morph:outerHTML"
                                         >
