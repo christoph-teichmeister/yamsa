@@ -23,7 +23,7 @@ class DashboardTabService:
                 name="debt",
                 icon_class="bi bi-piggy-bank",
                 room=self.room,
-                get_url=reverse("debt-list", kwargs={"room_slug": self.room.slug}),
+                get_url=reverse("debt:list", kwargs={"room_slug": self.room.slug}),
             ),
             DashboardTab(
                 name="people",

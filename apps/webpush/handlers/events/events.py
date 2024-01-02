@@ -116,7 +116,7 @@ def send_notification_on_debt_settled(context: DebtSettled.Context):
         payload=Notification.Payload(
             head="Debt settled",
             body=f"{debt.debitor} just settled their debt of {debt.value}{debt.currency.sign} to you",
-            click_url=reverse(viewname="debt-list", kwargs={"room_slug": debt.room.slug}),
+            click_url=reverse(viewname="debt:list", kwargs={"room_slug": debt.room.slug}),
         ),
     ).send_to_user(debt.creditor)
 
