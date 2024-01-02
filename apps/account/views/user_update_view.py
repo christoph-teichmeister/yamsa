@@ -26,4 +26,4 @@ class UserUpdateView(mixins.LoginRequiredMixin, generic.UpdateView):
         return settings.DJANGO_ADMIN_SUB_URL
 
     def get_success_url(self):
-        return reverse(viewname="account-user-detail", kwargs={"pk": self.request.user.id})
+        return reverse(viewname="account:detail", kwargs={"pk": self.request.user.id})

@@ -8,8 +8,6 @@ from apps.mail.services.base_email_service import BaseYamsaEmailService, EmailEx
 
 
 class PostRegisterEmailService(BaseYamsaEmailService):
-    """Email to invite guests to yamsa"""
-
     subject = "Welcome to yamsa ❤️"
     user_has_rooms = False
 

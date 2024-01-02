@@ -128,7 +128,7 @@ def send_notification_on_user_removed_from_room(context: UserRemovedFromRoom.Con
             head="User removed",
             body=f"{context.user_requesting_removal.name} just removed "
             f"{context.user_to_be_removed.name} from {context.room.name}",
-            click_url=reverse(viewname="account-list", kwargs={"room_slug": context.room.slug}),
+            click_url=reverse(viewname="account:list", kwargs={"room_slug": context.room.slug}),
         ),
     )
 

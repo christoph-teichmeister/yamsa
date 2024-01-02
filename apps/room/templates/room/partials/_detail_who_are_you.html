@@ -1,6 +1,6 @@
 <h2 class="mb-5">{{ current_room.name }}</h2>
 
-<form action="{% url "account-authenticate-guest-user" %}" method="post">
+<form action="{% url "account:authenticate-guest" %}" method="post">
     {% csrf_token %}
 
     <div class="mb-3 form-group">

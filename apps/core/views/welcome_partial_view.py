@@ -11,7 +11,7 @@ class WelcomePartialView(generic.TemplateView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_anonymous:
-            return HttpResponseRedirect(redirect_to=reverse(viewname="account-user-login"))
+            return HttpResponseRedirect(redirect_to=reverse(viewname="account:login"))
         return super().get(request, *args, **kwargs)
 
     def _get_news_base_qs(self):

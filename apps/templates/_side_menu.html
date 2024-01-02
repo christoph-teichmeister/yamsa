@@ -98,9 +98,9 @@
                          hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
                          hx-get="
                                  {% if request.user.is_authenticated %}
-                                     {% url 'account-user-detail' pk=request.user.id %}
+                                     {% url 'account:detail' pk=request.user.id %}
                                  {% else %}
-                                     {% url 'account-user-login' %}
+                                     {% url 'account:login' %}
                                  {% endif %}"
                          hx-target="#body"
                          hx-indicator="#body-loading-spinner"
@@ -144,7 +144,7 @@
                     <button type="button"
                             class="btn btn-primary w-50"
                             hx-trigger="click"
-                            hx-get="{% url 'account-user-logout' %}"
+                            hx-get="{% url 'account:logout' %}"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"

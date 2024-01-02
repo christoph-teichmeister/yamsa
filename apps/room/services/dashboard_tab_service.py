@@ -29,7 +29,7 @@ class DashboardTabService:
                 name="people",
                 icon_class="bi bi-people",
                 room=self.room,
-                get_url=reverse("account-list", kwargs={"room_slug": self.room.slug}),
+                get_url=reverse("account:list", kwargs={"room_slug": self.room.slug}),
             ),
             DashboardTab(
                 name="room",

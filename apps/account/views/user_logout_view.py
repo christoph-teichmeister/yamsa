@@ -9,4 +9,4 @@ class LogOutUserView(generic.View):
 
     def get(self, request, *args, **kwargs):
         logout(request=request)
-        return HttpResponseRedirect(redirect_to=reverse(viewname="account-user-login"))
+        return HttpResponseRedirect(redirect_to=reverse(viewname="account:login"))

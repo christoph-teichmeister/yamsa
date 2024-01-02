@@ -20,7 +20,7 @@ def send_test_notification(modeladmin, request, queryset):
         ),
     )
     for user in queryset:
-        notification.payload.click_url = reverse(viewname="account-user-detail", kwargs={"pk": user.id})
+        notification.payload.click_url = reverse(viewname="account:detail", kwargs={"pk": user.id})
         notification.send_to_user(user)
 
 

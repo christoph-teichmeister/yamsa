@@ -1,7 +1,7 @@
 {% load room_tags %}
 
 <span class="cursor-pointer"
-      hx-get="{% room_url "account-send-guest-invitation-email" pk=user.id %}"
+      hx-get="{% room_url "account:guest-send-invitation-email" pk=user.id %}"
       hx-target="#body"
       hx-indicator="#body-loading-spinner"
       hx-swap="morph:innerHTML"
