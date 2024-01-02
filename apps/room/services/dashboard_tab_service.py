@@ -35,6 +35,6 @@ class DashboardTabService:
                 name="room",
                 icon_class="bi bi-gear",
                 room=self.room,
-                get_url=reverse("room-detail", kwargs={"room_slug": self.room.slug}),
+                get_url=reverse("room:detail", kwargs={"room_slug": self.room.slug}),
             ),
         ]

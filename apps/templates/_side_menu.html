@@ -35,7 +35,7 @@
                                 onclick="copyShareURL()"
                                 data-bs-toggle="tooltip"
                                 data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
-                                hx-get="{% url 'htmx-checked-clipboard' %}"
+                                hx-get="{% url 'room:htmx-checked-clipboard' %}"
                                 hx-swap="morph:innerHTML"
                         >
                             {% include "shared_partials/clipboard_icon_unchecked.html" %}
@@ -43,7 +43,7 @@
                     {% elif current_room.is_closed %}
                         <h1 class="mb-0">
                             <i class="bi bi-dash-circle"
-                               hx-get="{% room_url 'room-detail' %}"
+                               hx-get="{% room_url 'room:detail' %}"
                                hx-target="#body"
                                hx-indicator="#body-loading-spinner"
                                hx-swap="morph:innerHTML"

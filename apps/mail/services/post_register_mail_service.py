@@ -27,11 +27,11 @@ class PostRegisterEmailService(BaseYamsaEmailService):
         return EmailUserTextContext(text_list=text_list)
 
     def get_email_extra_context(self):
-        cta_btn_link = reverse(viewname="room-create")
+        cta_btn_link = reverse(viewname="room:create")
         cta_btn_text = "Create a room"
 
         if self.user_has_rooms:
-            cta_btn_link = reverse(viewname="room-list")
+            cta_btn_link = reverse(viewname="room:list")
             cta_btn_text = "See your rooms"
 
         return EmailExtraContext(

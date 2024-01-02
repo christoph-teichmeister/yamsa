@@ -18,6 +18,6 @@ class DashboardTab:
         self.icon_class = icon_class
 
         if get_url is None:
-            get_url = f'{reverse("room-dashboard", kwargs={"room_slug": room.slug})}?active_tab={name}'
+            get_url = f'{reverse("room:dashboard", kwargs={"room_slug": room.slug})}?active_tab={name}'
 
         self.get_url = get_url
