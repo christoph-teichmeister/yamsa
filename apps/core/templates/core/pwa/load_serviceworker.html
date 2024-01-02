@@ -21,7 +21,7 @@
       browser: browser,
     };
 
-    return fetch({% url "webpush:save" %}, {
+    return fetch('{% url "webpush:save" %}', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
@@ -42,11 +42,8 @@
 
   // Validate, that the correct permissions have been given
   const setupIsValid = (registration) => {
-    let requestedPermissionResult = "denied"
 
-    Notification.requestPermission((result) => {
-      requestedPermissionResult = result
-    })
+    Notification.requestPermission();
 
     // Check if notifications are supported
     if (!registration.showNotification) {
@@ -124,6 +121,10 @@
         });
     }
   }
+
+  {% if PWA_SERVICE_WORKER_DEBUG %}
+    console.debug('ServiceWorker initialising');
+  {% endif %}
 
   initServiceWorker()
 </script>
