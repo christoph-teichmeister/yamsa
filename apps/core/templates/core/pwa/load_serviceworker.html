@@ -36,15 +36,21 @@
   // Handle the server response
   const handleResponse = (res) => {
     {% if PWA_SERVICE_WORKER_DEBUG %}
-      console.debug(res.status);
+      console.debug("handleResponse, status:", res.status);
     {% endif %}
   };
 
   // Validate, that the correct permissions have been given
   const setupIsValid = (registration) => {
 
+    {% if PWA_SERVICE_WORKER_DEBUG %}
+      console.log("Notification.permission", Notification.permission)
+    {% endif %}
+
     {# TODO CT: This results in a violation. I can only request Permission on a user gesture #}
-    Notification.requestPermission();
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
 
     // Check if notifications are supported
     if (!registration.showNotification) {
@@ -68,11 +74,6 @@
 
   // Handle the success of service worker registration
   const handleRegistrationSuccess = (registration) => {
-    // Registration was successful
-    {% if PWA_SERVICE_WORKER_DEBUG %}
-      console.debug('ServiceWorker registration successful with scope: ', registration.scope);
-    {% endif %}
-
     if (!setupIsValid(registration))
       return
 
@@ -110,14 +111,23 @@
   // Initialize the service worker
   const initServiceWorker = () => {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/serviceworker.js', {
+      navigator.serviceWorker.register('{% url "core:serviceworker" %}', {
         scope: '{{ manifest.scope }}'
       })
-        .then(handleRegistrationSuccess)
+        .then((registration) => {
+          // Registration was successful
+          {% if PWA_SERVICE_WORKER_DEBUG %}
+            console.info('ServiceWorker registration successful with scope: ', registration.scope);
+          {% endif %}
+
+          if ("{{ user.wants_to_receive_webpush_notifications }}" === "True") {
+            handleRegistrationSuccess(registration);
+          }
+        })
         .catch(err => {
           // Registration failed :(
           {% if PWA_SERVICE_WORKER_DEBUG %}
-            console.debug('ServiceWorker registration failed: ', err);
+            console.error('ServiceWorker registration failed: ', err);
           {% endif %}
         });
     }
@@ -128,4 +138,34 @@
   {% endif %}
 
   initServiceWorker()
+
+  document.addEventListener("notificationsEnabled", (evt) => {
+    var notificationsEnabled = evt.detail.value
+
+    navigator.serviceWorker.getRegistrations().then(registrationArray => {
+      registrationArray.map(registration => {
+        if (notificationsEnabled === true) {
+          handleRegistrationSuccess(registration)
+        } else {
+          registration.pushManager.getSubscription().then((subscription) => {
+            subscription
+              .unsubscribe()
+              .then((successful) => {
+                // Successfully unsubscribed
+                Notification.permission = "denied"
+
+                {% if PWA_SERVICE_WORKER_DEBUG %}
+                  console.log("unsubscribed")
+                {% endif %}
+              })
+              .catch((e) => {
+                // Unsubscribing failed
+                console.error(e)
+              });
+          });
+        }
+      })
+    })
+
+  })
 </script>
