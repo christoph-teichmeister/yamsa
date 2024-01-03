@@ -22,7 +22,7 @@
 
         {% include "core/partials/_head_links_and_scripts.html" %}
 
-    <!-- Disable default hx-indicator styling -->
+         <!-- Disable default hx-indicator styling -->
         <meta name="htmx-config" content='{"includeIndicatorStyles": false}'>
     </head>
     <body hx-ext="idiomorph" id="body">
@@ -65,15 +65,15 @@
 
         <!-- Activate various Bootstrap components -->
         <script type="text/javascript">
-  // Enable all Tooltips
+            // Enable all Tooltips
             var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
             var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
-  // Enable Toasts
+            // Enable Toasts
             var toastElList = document.querySelectorAll('.toast')
             var toastList = [...toastElList].map(toastEl => new bootstrap.Toast(toastEl))
 
-  // Enable Popovers
+            // Enable Popovers
             var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
             var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
         </script>

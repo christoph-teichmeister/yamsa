@@ -14,6 +14,7 @@ def load_pwa_meta_data(context):
 def load_serviceworker(context):
     # Pass MANIFEST settings into the template
     return {
+        "user": context.request.user,
         "manifest": settings.MANIFEST,
         "PWA_SERVICE_WORKER_DEBUG": settings.PWA_SERVICE_WORKER_DEBUG,
         "WEBPUSH_SETTINGS": settings.WEBPUSH_SETTINGS,

@@ -24,7 +24,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
 
     paypal_me_username = models.CharField(max_length=100, null=True, blank=True)
 
-    wants_to_receive_webpush_notifications = models.BooleanField(default=True)
+    wants_to_receive_webpush_notifications = models.BooleanField(default=False)
 
     invitation_email_sent = models.BooleanField(default=False)
     invitation_email_sent_at = models.DateTimeField(null=True, blank=True)

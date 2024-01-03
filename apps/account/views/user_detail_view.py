@@ -1,3 +1,4 @@
+import json
 from django.contrib.auth import mixins
 from django.views import generic
 
@@ -17,3 +18,10 @@ class UserDetailView(mixins.LoginRequiredMixin, generic.DetailView):
             return self.handle_no_permission()
 
         return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        response["HX-Trigger"] = json.dumps(
+            {"notificationsEnabled": self.object.wants_to_receive_webpush_notifications}
+        )
+        return response
