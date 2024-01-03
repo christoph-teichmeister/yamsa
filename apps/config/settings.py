@@ -264,6 +264,7 @@ MANIFEST = {
         {"src": "static/images/384x384.webp", "sizes": "384x384", "type": "image/webp"},
         {"src": "static/images/512x512.webp", "sizes": "512x512", "type": "image/webp", "purpose": "any"},
         {"src": "static/images/512x512.webp", "sizes": "512x512", "type": "image/webp", "purpose": "maskable"},
+        {"src": "static/images/512x512.png", "sizes": "512x512", "type": "image/png"},
     ],
     "id": "yamsa",
     "lang": "en-US",

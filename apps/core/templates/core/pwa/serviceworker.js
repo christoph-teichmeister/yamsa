@@ -20,6 +20,7 @@ const filesToCache = [
   "static/images/256x256.webp",
   "static/images/384x384.webp",
   "static/images/512x512.webp",
+  "static/images/512x512.png",
 // TODO CT: Add splash images here
 ];
 

@@ -43,6 +43,7 @@
   // Validate, that the correct permissions have been given
   const setupIsValid = (registration) => {
 
+    {# TODO CT: This results in a violation. I can only request Permission on a user gesture #}
     Notification.requestPermission();
 
     // Check if notifications are supported
