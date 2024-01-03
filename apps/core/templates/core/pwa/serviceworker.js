@@ -3,11 +3,23 @@ const staticCacheName = "yamsa-cache-v" + new Date().getTime();
 const filesToCache = [
   offlineFile,
   "static/images/favicon.ico",
-  "static/images/favicon-16x16.png",
-  "static/images/favicon-32x32.png",
-  "static/images/apple-touch-icon.png",
-  "static/images/android-chrome-192x192.png",
-  "static/images/android-chrome-512x512.png"
+  "static/images/16x16.webp",
+  "static/images/32x32.webp",
+  "static/images/48x48.webp",
+  "static/images/57x57-ios.webp",
+  "static/images/60x60-ios.webp",
+  "static/images/72x72-ios.webp",
+  "static/images/76x76-ios.webp",
+  "static/images/96x96.webp",
+  "static/images/114x114-ios.webp",
+  "static/images/120x120-ios.webp",
+  "static/images/144x144.webp",
+  "static/images/152x152-ios.webp",
+  "static/images/180x180-ios.webp",
+  "static/images/192x192.webp",
+  "static/images/256x256.webp",
+  "static/images/384x384.webp",
+  "static/images/512x512.webp",
 // TODO CT: Add splash images here
 ];
 
