@@ -43,7 +43,7 @@ class Notification:
 
         @property
         def _default_icon_and_badge(self):
-            return settings.PROJECT_BASE_URL + static("images/favicon-32x32.png")
+            return settings.PROJECT_BASE_URL + static("images/32x32.webp")
 
         def _build_data(self) -> dict:
             action_click_urls = []

@@ -13,7 +13,7 @@ class UserListForRoomView(AccountBaseContext, generic.ListView):
     template_name = "account/list.html"
 
     def get_queryset(self):
-        ret = (
+        return (
             self.model.objects.filter(rooms__slug=self.request.room.slug)
             .values("name", "id", "is_guest")
             .annotate(
@@ -27,4 +27,3 @@ class UserListForRoomView(AccountBaseContext, generic.ListView):
             )
             .order_by("user_has_seen_this_room", "name")
         )
-        return ret

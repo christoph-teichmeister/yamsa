@@ -1,6 +1,6 @@
-{% with manifest.icons|first as first_icon %}
+{% with manifest.icons|first as favicon %}
     <!-- favicon -->
-    <link rel="icon" sizes="{{ first_icon.sizes }}" href="{{ first_icon.src }}">
+    <link rel="icon" sizes="{{ favicon.sizes }}" href="{{ favicon.src }}">
 
     <!-- Path to manifest.json -->
     <link rel="manifest" href="{% url 'core:manifest' %}">
@@ -27,5 +27,5 @@
 
     <!-- Tile for Win8 -->
     <meta name="msapplication-TileColor" content="{{ manifest.background_color }}">
-    <meta name="msapplication-TileImage" content="{{ first_icon.src }}">
+    <meta name="msapplication-TileImage" content="{{ favicon.src }}">
 {% endwith %}
