@@ -12,9 +12,16 @@ def load_pwa_meta_data(context):
 
 @register.inclusion_tag("core/pwa/load_serviceworker.html", takes_context=True)
 def load_serviceworker(context):
-    # Pass MANIFEST settings into the template
+    # For some reason, context does not always have request
+    # (See https://chris-teichmeister.sentry.io/issues/4814658034/?project=4506417250107392)
+    # ...take care of this here
+    user = None
+    if hasattr(context, "request"):
+        user = context.request.user
+
+    # Pass some objects into the template
     return {
-        "user": context.request.user,
+        "user": user,
         "manifest": settings.MANIFEST,
         "PWA_SERVICE_WORKER_DEBUG": settings.PWA_SERVICE_WORKER_DEBUG,
         "WEBPUSH_SETTINGS": settings.WEBPUSH_SETTINGS,
