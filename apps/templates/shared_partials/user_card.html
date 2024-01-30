@@ -2,14 +2,15 @@
 <div class="col col-xl-6 p-1">
     <div class="card h-100 {% if not user.is_guest %}cursor-pointer{% endif %}"
          style="max-width: 540px;min-height: 162px;"
-         {% if not user.is_guest %}
-             hx-trigger="click"
-             hx-get="{% url 'account:detail' pk=user.id %}"
-             hx-target="#body"
-             hx-indicator="#body-loading-spinner"
-             hx-swap="morph:innerHTML"
-             hx-push-url="true"
-         {% endif %}
+            {% if not user.is_guest %}
+         hx-trigger="click"
+         hx-get="{% url 'account:detail' pk=user.id %}"
+         hx-target="#body"
+         hx-indicator="#body-loading-spinner"
+         hx-swap="morph:innerHTML"
+         hx-push-url="true"
+         hx-sync="#remove-user-icon:abort" {# TODO CT: Still, sometimes the Toast on error is not displayed #}
+            {% endif %}
     >
         <div class="row g-0 h-100">
 
@@ -56,7 +57,8 @@
             </div>
 
             <div class="col-1 p-2 d-flex justify-content-end">
-                <i class="bi bi-x-octagon"
+                <i class="bi bi-x-octagon cursor-pointer z-3"
+                   id="remove-user-icon"
                    hx-post="{% room_url 'account:remove-from-room' pk=user.id %}"
                    hx-include="[name='csrfmiddlewaretoken']"
                    hx-target="#body"

@@ -57,7 +57,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
                     output_field=BooleanField(),
                 ),
             )
-            .order_by("-user_is_in_room", "status", "name")
+            .order_by("-user_is_in_room", "status", "-lastmodified_at")
             .values(
                 "created_by__name",
                 "description",
