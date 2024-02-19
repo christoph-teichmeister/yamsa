@@ -21,5 +21,6 @@ class UserChangePasswordView(mixins.LoginRequiredMixin, generic.UpdateView):
         return form
 
     def form_valid(self, form):
+        super_form_valid = super().form_valid(form)
         login(request=self.request, user=form.instance)
-        return super().form_valid(form)
+        return super_form_valid

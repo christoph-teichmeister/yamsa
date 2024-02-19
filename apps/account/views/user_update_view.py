@@ -1,10 +1,6 @@
-from functools import cached_property
-
-from django.conf import settings
 from django.contrib.auth import mixins
 from django.urls import reverse
 from django.views import generic
-from django_context_decorator import context
 
 from apps.account.forms import EditUserForm
 from apps.account.models import User
