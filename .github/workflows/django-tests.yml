@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: python-coverage
-          path: ./test-reports/python-coverage.xml
+          path: test-reports/python-coverage.xml
 
   coverage:
     needs: test
@@ -55,13 +55,15 @@ jobs:
       - name: Download python-coverage.xml
         uses: actions/download-artifact@master
         with:
-          name: python-coverage
-          path: ./test-reports/python-coverage.xml
+          path: artifacts
+
+      - name: list artifacts
+        run: ls artifacts
 
       - name: Code Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: ./test-reports/python-coverage.xml
+          filename: artifacts/python-coverage.xml
           badge: true
           fail_below_min: true
           format: markdown
