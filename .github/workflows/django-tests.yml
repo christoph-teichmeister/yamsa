@@ -56,12 +56,11 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: python-coverage
-          path: ./test-reports/python-coverage.xml
 
       - name: Code Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: ./test-reports/python-coverage.xml
+          filename: /home/runner/work/yamsa/yamsa/test-reports/python-coverage.xml
           badge: true
           fail_below_min: true
           format: markdown
