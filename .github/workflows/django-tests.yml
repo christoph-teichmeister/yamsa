@@ -37,6 +37,14 @@ jobs:
         env:
           SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
 
+  coverage:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [ 3.11 ]
+
+    steps:
       - name: Code Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
