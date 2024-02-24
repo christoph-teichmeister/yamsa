@@ -38,6 +38,7 @@ jobs:
           SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
 
   coverage:
+    needs: test
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
