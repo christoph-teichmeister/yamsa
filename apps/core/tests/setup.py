@@ -10,6 +10,8 @@ class BaseTestSetUp(TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
+        cls.user = baker.make_recipe("apps.account.tests.user")
+
         cls.superuser = baker.make_recipe("apps.account.tests.superuser")
         cls.reauthenticate_user(cls.superuser)
 

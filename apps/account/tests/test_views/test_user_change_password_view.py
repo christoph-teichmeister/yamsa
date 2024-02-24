@@ -2,19 +2,13 @@ import http
 
 from django.contrib.auth import authenticate
 from django.urls import reverse
-from model_bakery import baker
 
 from apps.account.tests.baker_recipes import default_password
 from apps.account.views import UserChangePasswordView, UserDetailView
 from apps.core.tests.setup import BaseTestSetUp
 
 
-class UserChangePasswordViewBaseTest(BaseTestSetUp):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.user = baker.make_recipe("apps.account.tests.user")
-
+class UserChangePasswordViewTestCase(BaseTestSetUp):
     def test_get_regular(self):
         self.client = self.reauthenticate_user(self.user)
 

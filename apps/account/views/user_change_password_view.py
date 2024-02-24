@@ -15,10 +15,10 @@ class UserChangePasswordView(mixins.LoginRequiredMixin, generic.UpdateView):
     def get_success_url(self):
         return reverse(viewname="account:detail", kwargs={"pk": self.request.user.id})
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.user = self.request.user
-        return form
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs.update({"instance": self.request.user})
+        return form_kwargs
 
     def form_valid(self, form):
         super_form_valid = super().form_valid(form)

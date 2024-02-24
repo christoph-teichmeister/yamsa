@@ -115,10 +115,12 @@ precision = 2
 
 show_missing = true
 
+# Don’t report files that have no executable code (such as __init__.py files).
+skip_empty = true
+
 # Regexes for lines to exclude from consideration
 exclude_also = [
     # Don't complain about missing debug-only code:
-    "def __repr__",
     "if self\\.debug",
     # Don't complain if tests don't hit defensive assertion code:
     "raise AssertionError",
