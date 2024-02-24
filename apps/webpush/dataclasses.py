@@ -37,7 +37,7 @@ class Notification:
         badge: str = None
         image: str = None
 
-        actions: list[dict] = field(default_factory=lambda: [])
+        actions: list[dict] = field(default_factory=list)
         vibrate: list[int] = None
         sound: str = None
 

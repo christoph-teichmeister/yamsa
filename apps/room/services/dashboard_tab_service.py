@@ -1,7 +1,6 @@
 from django.urls import reverse
 
 from apps.room.dataclasses import DashboardTab
-
 from apps.room.models import Room
 
 

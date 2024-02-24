@@ -4,10 +4,10 @@ from typing import Union
 from apps.core.event_loop.registry import message_registry
 from apps.debt.models import Debt
 from apps.transaction.messages.events.transaction import (
-    ParentTransactionCreated,
-    ParentTransactionUpdated,
     ChildTransactionDeleted,
+    ParentTransactionCreated,
     ParentTransactionDeleted,
+    ParentTransactionUpdated,
 )
 from apps.transaction.models import ChildTransaction
 

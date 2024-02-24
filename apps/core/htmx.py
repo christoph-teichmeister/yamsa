@@ -1,6 +1,6 @@
 import json
 from http import HTTPStatus
-from typing import Dict, Union
+from typing import Union
 
 from django.http import HttpResponse
 from django.urls import reverse
@@ -14,7 +14,7 @@ class FormHtmxResponseMixin:
     the signal and the value is a parameter passed to the frontend. If you don't need the value, set it to None.
     """
 
-    hx_trigger: Union[str, Dict[str, str]] = {}
+    hx_trigger: Union[str, dict[str, str]] = {}
 
     toast_success_message: str = None
     toast_error_message: str = None

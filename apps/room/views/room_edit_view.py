@@ -21,7 +21,7 @@ class RoomEditView(RoomBaseContext, generic.UpdateView):
         form = super().get_form(form_class)
 
         # Add user to form
-        setattr(form, "user", self.request.user)
+        form.user = self.request.user
 
         return form
 

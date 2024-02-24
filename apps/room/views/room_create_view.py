@@ -4,8 +4,7 @@ from django.utils import timezone
 from django.views import generic
 
 from apps.room.forms import RoomCreateForm
-from apps.room.models import Room
-from apps.room.models import UserConnectionToRoom
+from apps.room.models import Room, UserConnectionToRoom
 
 
 class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):

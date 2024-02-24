@@ -5,7 +5,7 @@ from django import forms
 from apps.account.models import User
 from apps.core.event_loop.runner import handle_message
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
-from apps.transaction.models import ParentTransaction, ChildTransaction
+from apps.transaction.models import ChildTransaction, ParentTransaction
 
 
 class TransactionCreateForm(forms.ModelForm):

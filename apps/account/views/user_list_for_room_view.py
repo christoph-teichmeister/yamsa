@@ -1,5 +1,5 @@
 from dateutil.relativedelta import relativedelta
-from django.db.models import F, fields, Case, When, Value
+from django.db.models import Case, F, Value, When, fields
 from django.utils import timezone
 from django.views import generic
 

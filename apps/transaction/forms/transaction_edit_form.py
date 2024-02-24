@@ -6,7 +6,7 @@ from django.utils import timezone
 from apps.account.models import User
 from apps.core.event_loop.runner import handle_message
 from apps.transaction.messages.events.transaction import ParentTransactionUpdated
-from apps.transaction.models import ParentTransaction, ChildTransaction
+from apps.transaction.models import ChildTransaction, ParentTransaction
 
 
 class TransactionEditForm(forms.ModelForm):

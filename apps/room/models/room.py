@@ -1,8 +1,8 @@
 import uuid
+from functools import cached_property
 
 from ambient_toolbox.models import CommonInfo
 from django.db import models
-from functools import cached_property
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
 from apps.room.managers import RoomManager

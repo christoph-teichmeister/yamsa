@@ -1,4 +1,5 @@
 import json
+
 from django.contrib.auth import mixins
 from django.views import generic
 
