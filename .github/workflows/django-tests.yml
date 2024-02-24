@@ -28,7 +28,6 @@ jobs:
         run: |-
           python manage.py collectstatic --no-input
           coverage run manage.py test apps -v3
-          coverage combine
           coverage report --skip-covered --skip-empty
           coverage xml -o ./test-reports/python-coverage.xml
 
