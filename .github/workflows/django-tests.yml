@@ -26,7 +26,7 @@ jobs:
       - run: pipenv install --system --deploy --dev
       - name: Run Tests
         run: |-
-          manage.py collectstatic --no-input
+          python manage.py collectstatic --no-input
           coverage run manage.py test apps -v3
           coverage combine
           coverage report --skip-covered --skip-empty
