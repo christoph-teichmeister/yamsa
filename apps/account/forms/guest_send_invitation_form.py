@@ -6,7 +6,7 @@ from apps.account.models import User
 
 class GuestSendInvitationEmailForm(forms.ModelForm):
     class ExceptionMessage:
-        EMAIL_ALREADY_EXISTS = "User with email address '%email' already exists"
+        EMAIL_ALREADY_EXISTS = "User with email address '{email}' already exists"
 
     class Meta:
         model = User

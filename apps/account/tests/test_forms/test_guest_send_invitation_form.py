@@ -22,4 +22,6 @@ class GuestSendInvitationEmailFormTestCase(BaseTestSetUp):
         form = self.form(instance=self.user, data={"email": self.superuser.email})
         self.assertFalse(form.is_valid())
 
-        self.assertEqual(form.errors["email"][0], form.ExceptionMessage.EMAIL_ALREADY_EXISTS)
+        self.assertEqual(
+            form.errors["email"][0], form.ExceptionMessage.EMAIL_ALREADY_EXISTS.format(email=self.superuser.email)
+        )
