@@ -35,12 +35,7 @@
             <div class="row py-1 d-flex justify-content-between align-items-center">
                 <div class="col">
                     <h5 class="m-0">
-                        {% if request.user.id != user.id %}
-                            Their
-                        {% else %}
-                            Your
-                        {% endif %}
-                        data:
+                        {% if request.user.id != user.id %}Their{% else %}Your{% endif %} data:
                     </h5>
                 </div>
                 {% if request.user.id == user.id %}
