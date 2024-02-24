@@ -3,7 +3,6 @@ from datetime import UTC, datetime
 
 from django.urls import reverse
 from freezegun import freeze_time
-from model_bakery import baker
 
 from apps.account.models import User
 from apps.account.views import GuestCreateView, UserListForRoomView
@@ -13,12 +12,6 @@ from apps.room.models import UserConnectionToRoom
 
 @freeze_time("2020-04-04 04:20")
 class GuestCreateViewTestCase(BaseTestSetUp):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.room = baker.make_recipe("apps.room.tests.room")
-        cls.room.users.add(cls.user)
-
     def test_get_regular(self):
         client = self.reauthenticate_user(self.user)
         response = client.get(reverse("account:guest-create", kwargs={"room_slug": self.room.slug}))
@@ -26,6 +19,8 @@ class GuestCreateViewTestCase(BaseTestSetUp):
 
         self.assertTrue(response.template_name[0], GuestCreateView.template_name)
         self.assertIn(f'Add a guest for "{self.room.name}"', str(response.content))
+
+        self.assertEqual(response.context_data["active_tab"], "people")
 
     def test_post_regular(self):
         guest_name = "Guest Name"
@@ -41,6 +36,8 @@ class GuestCreateViewTestCase(BaseTestSetUp):
         # Assert, that we've been redirected to the transaction list view
         self.assertTrue(response.template_name[0], UserListForRoomView.template_name)
         self.assertIn("People", str(response.content))
+
+        self.assertEqual(response.context_data["active_tab"], "people")
 
         new_guest = User.objects.get(name=guest_name)
         self.assertTrue(new_guest.is_guest)

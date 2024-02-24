@@ -10,9 +10,8 @@ from apps.core.tests.setup import BaseTestSetUp
 
 class UserChangePasswordViewTestCase(BaseTestSetUp):
     def test_get_regular(self):
-        self.client = self.reauthenticate_user(self.user)
-
-        response = self.client.get(reverse("account:change-password", args=(self.user.id,)))
+        client = self.reauthenticate_user(self.user)
+        response = client.get(reverse("account:change-password", args=(self.user.id,)))
 
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserChangePasswordView.template_name)
@@ -22,10 +21,10 @@ class UserChangePasswordViewTestCase(BaseTestSetUp):
     def test_post_regular(self):
         new_password = "my_new_password"
 
-        self.client = self.reauthenticate_user(self.user)
+        client = self.reauthenticate_user(self.user)
 
         # Change password
-        response = self.client.post(
+        response = client.post(
             reverse("account:change-password", args=(self.user.id,)),
             data={
                 "old_password": default_password,
