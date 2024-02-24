@@ -14,7 +14,7 @@ class UserDetailView(mixins.LoginRequiredMixin, generic.DetailView):
         if not (
             request.user.is_superuser
             or request.user.rooms.filter(id__in=self.get_object().rooms.values_list("id", flat=True))
-        ):
+        ) and request.user.id != kwargs["pk"]:
             return self.handle_no_permission()
 
         return super().dispatch(request, *args, **kwargs)
