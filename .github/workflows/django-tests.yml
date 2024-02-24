@@ -46,6 +46,8 @@ jobs:
   coverage:
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     strategy:
       max-parallel: 4
       matrix:
@@ -57,9 +59,6 @@ jobs:
         with:
           name: python-coverage
           path: artifacts
-
-      - name: list artifacts
-        run: ls artifacts
 
       - name: Code Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
