@@ -23,7 +23,7 @@ jobs:
           cache: 'pipenv' # caching pipenv dependencies
       - name: Install pipenv
         run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
-      - run: pipenv install --system --deploy
+      - run: pipenv install --system --deploy --dev
       - name: Run Tests
         run: coverage manage.py test apps -v3
         env:
