@@ -8,7 +8,7 @@ from apps.transaction.views import TransactionListView
 
 class AuthenticateGuestUserViewTestCase(BaseTestSetUp):
     def test_post_as_guest(self):
-        self.client.logout()
+        self.client.force_login(self.guest_user)
         response = self.client.post(
             reverse("account:guest-login"),
             data={"room_slug": self.room.slug, "user_id": self.guest_user.id},
