@@ -20,10 +20,11 @@ class MessageRegistry:
         def decorator(decoratee):
             # Ensure that registered message is of correct type
             if not (issubclass(command, Command)):
-                msg = f'Trying to register message function of wrong type: "{command.__name__}" on handler "{decoratee.__name__}".'
-                raise TypeError(
-                    msg
+                msg = (
+                    f'Trying to register message function of wrong type: "{command.__name__}" '
+                    f'on handler "{decoratee.__name__}".'
                 )
+                raise TypeError(msg)
 
             # Add decoratee to dependency list
             if command not in self.command_dict:
@@ -40,10 +41,11 @@ class MessageRegistry:
         def decorator(decoratee):
             # Ensure that registered message is of correct type
             if not (issubclass(event, Event)):
-                msg = f'Trying to register message function of wrong type: "{event.__name__}" on handler "{decoratee.__name__}".'
-                raise TypeError(
-                    msg
+                msg = (
+                    f'Trying to register message function of wrong type: "{event.__name__}" '
+                    f'on handler "{decoratee.__name__}".'
                 )
+                raise TypeError(msg)
 
             # Add decoratee to dependency list
             if event not in self.event_dict:
@@ -65,7 +67,7 @@ class MessageRegistry:
 
         # Import all notification.pys in all installed apps to trigger notification class registration via decorator
         for app in settings.INSTALLED_APPS:
-            if app[:5] != 'apps.':
+            if app[:5] != "apps.":
                 continue
             custom_package = app.replace("apps.", "")
             for message_type in ["commands", "events"]:

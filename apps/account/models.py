@@ -1,6 +1,6 @@
 import random
 import string
-from functools import cache, cached_property
+from functools import cached_property, lru_cache
 from time import time
 
 from ambient_toolbox.mixins.validation import CleanOnSaveMixin
@@ -11,6 +11,14 @@ from django.db import models
 from django.db.models import BooleanField, Exists, ExpressionWrapper, OuterRef, Q
 
 from apps.room.models import Room, UserConnectionToRoom
+
+
+@lru_cache
+def get_has_seen_room(userconnectiontoroom_set, room_id: int) -> tuple[UserConnectionToRoom, bool]:
+    # Refactored because of Error B019
+    # => https://docs.astral.sh/ruff/rules/cached-instance-method/#cached-instance-method-b019
+    connections = userconnectiontoroom_set.filter(room_id=room_id)
+    return connections.first(), connections.filter(user_has_seen_this_room=True).exists()
 
 
 class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
@@ -67,10 +75,8 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
             )
         )
 
-    @cache
     def has_seen_room(self, room: Room) -> tuple[UserConnectionToRoom, bool]:
-        connections = self.userconnectiontoroom_set.filter(room_id=room.id)
-        return connections.first(), connections.filter(user_has_seen_this_room=True).exists()
+        return get_has_seen_room(self.userconnectiontoroom_set, room.id)
 
     def can_be_removed_from_room(self, room_id) -> bool:
         return not (
