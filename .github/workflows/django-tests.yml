@@ -25,6 +25,6 @@ jobs:
         run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
       - run: pipenv install --system --deploy --dev
       - name: Run Tests
-        run: coverage manage.py test apps -v3
+        run: coverage run manage.py test apps -v3
         env:
           SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
