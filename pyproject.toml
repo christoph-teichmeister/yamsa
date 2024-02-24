@@ -1,58 +1,58 @@
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
-select =  [
-    "E",       # pycodestyle errors
-    "W",       # pycodestyle warnings
-    "F",       # Pyflakes
-    "N",       # pep8-naming
-    "I",       # isort
-    "B",       # flake8-bugbear
-    "A",       # flake8-builtins
-    "DTZ",     # flake8-datetimez
-    "DJ",      # flake8-django
-    "EM",      # flake8-errmsg
-    "RUF",     # Removes unnecessary "#noqa" comments
-    "YTT",     # Avoid non-future-prove usages of "sys"
+select = [
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # Pyflakes
+    "N", # pep8-naming
+    "I", # isort
+    "B", # flake8-bugbear
+    "A", # flake8-builtins
+    "DTZ", # flake8-datetimez
+    "DJ", # flake8-django
+    "EM", # flake8-errmsg
+    "RUF", # Removes unnecessary "#noqa" comments
+    "YTT", # Avoid non-future-prove usages of "sys"
     # "FBT",     # Protects you from the "boolean trap bug"
-    "C4",      # Checks for unnecessary comprehensions
-    "PIE",     # Bunch of useful rules
-    "SIM",     # Simplifies your code
-    "INT",     # Validates your gettext translation strings
-    "PERF",    # Perflint
-    "PGH",     # No all-purpose "# noqa" and eval validation
-    "UP",      # PyUpgrade
+    "C4", # Checks for unnecessary comprehensions
+    "PIE", # Bunch of useful rules
+    "SIM", # Simplifies your code
+    "INT", # Validates your gettext translation strings
+    "PERF", # Perflint
+    "PGH", # No all-purpose "# noqa" and eval validation
+    "UP", # PyUpgrade
 ]
 ignore = [
-    'N999',     # Project name contains underscore, not fixable
-    'A003',     # Django attributes shadow python builtins
-    'DJ001',    # Django model text-based fields shouldn't be nullable
-    'DJ012',    # Odd ordering of Django model methods
-    'RUF012',   # Mutable class attributes should be annotated with `typing.ClassVar`
-    'PERF401',  # Use a list comprehension to create a transformed list
+    'N999', # Project name contains underscore, not fixable
+    'A003', # Django attributes shadow python builtins
+    'DJ001', # Django model text-based fields shouldn't be nullable
+    'DJ012', # Odd ordering of Django model methods
+    'RUF012', # Mutable class attributes should be annotated with `typing.ClassVar`
+    'PERF401', # Use a list comprehension to create a transformed list
 ]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
-fixable =  [
-    "E",       # pycodestyle errors
-    "W",       # pycodestyle warnings
-    "F",       # Pyflakes
-    "N",       # pep8-naming
-    "I",       # isort
-    "B",       # flake8-bugbear
-    "A",       # flake8-builtins
-    "DTZ",     # flake8-datetimez
-    "DJ",      # flake8-django
-    "EM",      # flake8-errmsg
-    "RUF",     # Removes unnecessary "#noqa" comments
-    "YTT",     # Avoid non-future-prove usages of "sys"
+fixable = [
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # Pyflakes
+    "N", # pep8-naming
+    "I", # isort
+    "B", # flake8-bugbear
+    "A", # flake8-builtins
+    "DTZ", # flake8-datetimez
+    "DJ", # flake8-django
+    "EM", # flake8-errmsg
+    "RUF", # Removes unnecessary "#noqa" comments
+    "YTT", # Avoid non-future-prove usages of "sys"
     # "FBT",     # Protects you from the "boolean trap bug"
-    "C4",      # Checks for unnecessary comprehensions
-    "PIE",     # Bunch of useful rules
-    "SIM",     # Simplifies your code
-    "INT",     # Validates your gettext translation strings
-    "PERF",    # Perflint
-    "PGH",     # No all-purpose "# noqa" and eval validation
-    "UP",      # PyUpgrade
+    "C4", # Checks for unnecessary comprehensions
+    "PIE", # Bunch of useful rules
+    "SIM", # Simplifies your code
+    "INT", # Validates your gettext translation strings
+    "PERF", # Perflint
+    "PGH", # No all-purpose "# noqa" and eval validation
+    "UP", # PyUpgrade
 ]
 unfixable = []
 
@@ -90,3 +90,47 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 # Assume Python 3.12.
 target-version = "py312"
+
+[tool.coverage.run]
+branch = true
+# do not test these things
+omit = [
+    "*/config/*",
+    "*/migrations/*",
+    "*/templates/*",
+    "*/tests/*",
+    "*/apps.py",
+    "*/__init__.py",
+    "*/scripts/*.py",
+    "*/management/commands/*.py",
+    "*.html",
+    "*.txt",
+    "*.json",
+    "*.env",
+    "*.sh",
+]
+
+[tool.coverage.report]
+precision = 2
+
+show_missing = true
+
+# Regexes for lines to exclude from consideration
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+]
+
+ignore_errors = true
+
+[tool.coverage.html]
+directory = "coverage_html_report"
