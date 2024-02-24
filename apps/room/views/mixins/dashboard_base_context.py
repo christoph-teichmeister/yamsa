@@ -1,5 +1,6 @@
-from django_context_decorator import context
 from functools import cached_property
+
+from django_context_decorator import context
 
 from apps.room.dataclasses import DashboardTab
 from apps.room.services.dashboard_tab_service import DashboardTabService

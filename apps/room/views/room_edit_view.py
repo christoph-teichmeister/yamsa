@@ -21,13 +21,11 @@ class RoomEditView(RoomBaseContext, generic.UpdateView):
         form = super().get_form(form_class)
 
         # Add user to form
-        setattr(form, "user", self.request.user)
+        form.user = self.request.user
 
         return form
 
     @context
     @cached_property
     def other_status(self):
-        return list(
-            filter(lambda choice_option: choice_option != self.object.status, self.object.StatusChoices.values)
-        )[0]
+        return next(filter(lambda choice_option: choice_option != self.object.status, self.object.StatusChoices.values))

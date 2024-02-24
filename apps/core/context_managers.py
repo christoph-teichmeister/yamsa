@@ -4,7 +4,7 @@ from contextlib import ContextDecorator
 from django.db import connection
 
 
-class measure_time_and_queries_context_manager(ContextDecorator):
+class MeasureTimeAndQueriesContextManager(ContextDecorator):
     # TODO CT: Why does this not work anymore?
     def __init__(self, function_name: str) -> None:
         self.function_name = function_name

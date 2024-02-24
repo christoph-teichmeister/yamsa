@@ -1,3 +1,4 @@
+import contextlib
 import importlib
 import os
 
@@ -19,10 +20,11 @@ class MessageRegistry:
         def decorator(decoratee):
             # Ensure that registered message is of correct type
             if not (issubclass(command, Command)):
-                raise TypeError(
+                msg = (
                     f'Trying to register message function of wrong type: "{command.__name__}" '
                     f'on handler "{decoratee.__name__}".'
                 )
+                raise TypeError(msg)
 
             # Add decoratee to dependency list
             if command not in self.command_dict:
@@ -39,10 +41,11 @@ class MessageRegistry:
         def decorator(decoratee):
             # Ensure that registered message is of correct type
             if not (issubclass(event, Event)):
-                raise TypeError(
+                msg = (
                     f'Trying to register message function of wrong type: "{event.__name__}" '
                     f'on handler "{decoratee.__name__}".'
                 )
+                raise TypeError(msg)
 
             # Add decoratee to dependency list
             if event not in self.event_dict:
@@ -64,7 +67,7 @@ class MessageRegistry:
 
         # Import all notification.pys in all installed apps to trigger notification class registration via decorator
         for app in settings.INSTALLED_APPS:
-            if not app[:5] == "apps.":
+            if app[:5] != "apps.":
                 continue
             custom_package = app.replace("apps.", "")
             for message_type in ["commands", "events"]:
@@ -72,10 +75,8 @@ class MessageRegistry:
                     for module in os.listdir(settings.APPS_DIR / custom_package / "handlers" / message_type):
                         if module[-3:] == ".py":
                             module_name = module.replace(".py", "")
-                            try:
+                            with contextlib.suppress(ModuleNotFoundError):
                                 importlib.import_module(f"{app}.handlers.{message_type}.{module_name}")
-                            except ModuleNotFoundError:
-                                pass
                 except FileNotFoundError:
                     pass
 

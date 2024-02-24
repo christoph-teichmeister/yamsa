@@ -19,13 +19,9 @@ sentry-sdk = {extras = ["django"], version = "==1.40.*"}
 whitenoise = "==6.6.*"
 
 [dev-packages]
-black = "*"
 django-upgrade = "*"
 djhtml = "*"
-flake8 = "*"
-flake8-bugbear = "*"
-isort = "*"
-pyupgrade = "*"
+ruff = "*"
 
 [requires]
 python_version = "3.11"

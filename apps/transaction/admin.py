@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin import register
 
 from apps.core.admin import YamsaCommonInfoAdminMixin
-from apps.transaction.models import ParentTransaction, ChildTransaction
+from apps.transaction.models import ChildTransaction, ParentTransaction
 
 
 class ParentTransactionPaidByInline(admin.TabularInline):

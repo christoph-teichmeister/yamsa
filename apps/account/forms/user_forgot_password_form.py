@@ -13,6 +13,7 @@ class UserForgotPasswordForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data["email"]
         if not User.objects.filter(email=email).exists():
-            raise ValidationError(f"The email address '{email}' is not registered with yamsa")
+            msg = f"The email address '{email}' is not registered with yamsa"
+            raise ValidationError(msg)
 
         return email

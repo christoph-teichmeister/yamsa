@@ -5,10 +5,7 @@ from apps.core.event_loop.registry import message_registry
 
 
 def handle_message(message_list: Message | list[Message]):
-    if isinstance(message_list, list):
-        queue = message_list
-    else:
-        queue = [message_list]
+    queue = message_list if isinstance(message_list, list) else [message_list]
 
     # TODO CT: I moved this to core.apps - idk if this is necessary here
     # # Run auto-registry
@@ -27,11 +24,12 @@ def handle_message(message_list: Message | list[Message]):
             handle_command(message, queue)
             continue
 
-        raise Exception(f"{message} was not an Event or Command")
+        msg = f"{message} was not an Event or Command"
+        raise Exception(msg)
 
 
 def handle_command(command: Command, queue: list[Message]):
-    handler_list = message_registry.command_dict.get(command.__class__, list())
+    handler_list = message_registry.command_dict.get(command.__class__, [])
     for handler in handler_list:
         try:
             # todo warum ist der rückgabewert hier wichtig?
@@ -44,25 +42,25 @@ def handle_command(command: Command, queue: list[Message]):
             with transaction.atomic():
                 new_messages = handler(command.Context) or []
                 new_messages = new_messages if isinstance(new_messages, list) else [new_messages]
-                uuid_list = [f"{str(m)}" for m in new_messages]
-                print(f"New messages: {str(uuid_list)}")
+                uuid_list = [f"{m!s}" for m in new_messages]
+                print(f"New messages: {uuid_list!s}")
                 queue.extend(new_messages)
         except Exception as e:
-            print(f"Exception handling command {command.__class__.__name__}: {str(e)}")
+            print(f"Exception handling command {command.__class__.__name__}: {e!s}")
             raise e
 
 
 def handle_event(event: Event, queue: list[Message]):
-    handler_list = message_registry.event_dict.get(event.__class__, list())
+    handler_list = message_registry.event_dict.get(event.__class__, [])
     for handler in handler_list:
         try:
             print(f"\nHandling event '{event.__class__.__name__}' ({event.uuid}) with handler '{handler.__name__}'")
             with transaction.atomic():
                 new_messages = handler(event.Context) or []
                 new_messages = new_messages if isinstance(new_messages, list) else [new_messages]
-                uuid_list = [f"{str(m)}" for m in new_messages]
-                print(f"New messages: {str(uuid_list)}")
+                uuid_list = [f"{m!s}" for m in new_messages]
+                print(f"New messages: {uuid_list!s}")
                 queue.extend(new_messages)
         except Exception as e:
-            print(f"Exception handling event {event.__class__.__name__}: {str(e)}")
+            print(f"Exception handling event {event.__class__.__name__}: {e!s}")
             raise e

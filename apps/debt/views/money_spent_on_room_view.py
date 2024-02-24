@@ -1,4 +1,4 @@
-from django.db.models import Sum, F
+from django.db.models import F, Sum
 from django.views import generic
 from django_context_decorator import context
 

@@ -31,7 +31,7 @@ class Message:
         self.uuid = str(uuid.uuid4())
         self.Context = self._from_dict_to_dataclass(context_data=context_data)
 
-        print(f"\nCreating message '{self.__name__()}' ({self.uuid}) with {str(context_data)}.")
+        print(f"\nCreating message '{self.__name__()}' ({self.uuid}) with {context_data!s}.")
 
 
 class Command(Message):

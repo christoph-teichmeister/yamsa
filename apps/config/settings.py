@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 import sys
-import sentry_sdk
 from pathlib import Path
 
 import environ
+import sentry_sdk
 
 env = environ.Env(
     SECRET_KEY=(str, ""),

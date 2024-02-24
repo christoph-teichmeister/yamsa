@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Union
 
 from django_pony_express.services.base import BaseEmailService
 
@@ -47,7 +46,9 @@ class BaseYamsaEmailService(BaseEmailService):
 
     template_name = "mail/email_text_base.html"
 
-    def __init__(self, recipient: User, recipient_email_list: Union[list, tuple, str] = None, *args, **kwargs) -> None:
+    def __init__(
+        self, recipient: User, recipient_email_list: list | (tuple | str) | None = None, *args, **kwargs
+    ) -> None:
         self.recipient = recipient
 
         super().__init__(recipient_email_list or [recipient.email], *args, **kwargs)

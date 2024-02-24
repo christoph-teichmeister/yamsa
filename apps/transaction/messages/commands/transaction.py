@@ -1,5 +1,6 @@
-from _decimal import Decimal
 from dataclasses import dataclass
+
+from _decimal import Decimal
 
 from apps.account.models import User
 from apps.core.event_loop.messages import Command
