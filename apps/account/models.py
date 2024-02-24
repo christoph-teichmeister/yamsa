@@ -91,7 +91,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
             .exists()
         )
 
-    def generate_random_password_with_length(self, length):
+    def generate_random_password_with_length(self, length) -> str:
         characters = string.ascii_letters + string.digits
         new_password = "".join(random.choice(characters) for _ in range(length))
 
