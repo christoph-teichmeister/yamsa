@@ -55,7 +55,8 @@ jobs:
       - name: Download python-coverage.xml
         uses: actions/download-artifact@master
         with:
-          path: artifacts/python-coverage.xml
+          name: python-coverage
+          path: artifacts
 
       - name: list artifacts
         run: ls artifacts
