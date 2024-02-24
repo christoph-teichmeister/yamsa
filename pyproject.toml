@@ -93,7 +93,7 @@ target-version = "py312"
 
 [tool.coverage.run]
 branch = true
-source = "apps"
+source = ["apps"]
 # do not test these things
 omit = [
     "*/config/*",
