@@ -12,6 +12,7 @@ class GuestSendInvitationEmailForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data["email"]
         if User.objects.filter(email=email).exists():
-            raise ValidationError(f"User with email address '{email}' already exists")
+            msg = f"User with email address '{email}' already exists"
+            raise ValidationError(msg)
 
         return email

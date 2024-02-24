@@ -1,4 +1,3 @@
-from typing import Union
 
 from django.conf import settings
 from django.urls import reverse
@@ -11,7 +10,7 @@ class PostRegisterEmailService(BaseYamsaEmailService):
     subject = "Welcome to yamsa ❤️"
     user_has_rooms = False
 
-    def __init__(self, recipient: User, recipient_email_list: Union[list, tuple, str] = None, *args, **kwargs) -> None:
+    def __init__(self, recipient: User, recipient_email_list: list | (tuple | str) | None = None, *args, **kwargs) -> None:
         self.user_has_rooms = recipient.room_qs_for_list.exists()
         super().__init__(recipient, recipient_email_list, *args, **kwargs)
 

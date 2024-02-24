@@ -17,7 +17,8 @@ class ChangePasswordForm(forms.ModelForm):
     def clean_old_password(self):
         possible_user = authenticate(username=self.user.username, password=self.cleaned_data["old_password"])
         if possible_user is None:
-            raise ValidationError("Your current password is incorrect")
+            msg = "Your current password is incorrect"
+            raise ValidationError(msg)
 
     def clean(self):
         cleaned_data = super().clean()

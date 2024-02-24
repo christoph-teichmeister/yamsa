@@ -25,7 +25,8 @@ class RoomEditForm(forms.ModelForm):
         old_status = self.instance.status
 
         if new_status != old_status and not self.instance.can_be_closed:
-            raise ValidationError("This room still has open debts and can not be closed", code="invalid")
+            msg = "This room still has open debts and can not be closed"
+            raise ValidationError(msg, code="invalid")
 
         return new_status
 

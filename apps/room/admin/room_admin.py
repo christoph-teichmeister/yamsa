@@ -28,4 +28,4 @@ class RoomAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     def get_inlines(self, request, obj):
         from apps.room.admin import UserConnectionToRoomInline
 
-        return super().get_inlines(request, obj) + (UserConnectionToRoomInline,)
+        return (*super().get_inlines(request, obj), UserConnectionToRoomInline)

@@ -28,6 +28,4 @@ class RoomEditView(RoomBaseContext, generic.UpdateView):
     @context
     @cached_property
     def other_status(self):
-        return list(
-            filter(lambda choice_option: choice_option != self.object.status, self.object.StatusChoices.values)
-        )[0]
+        return next(filter(lambda choice_option: choice_option != self.object.status, self.object.StatusChoices.values))

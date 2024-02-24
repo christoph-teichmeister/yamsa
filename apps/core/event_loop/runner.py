@@ -5,10 +5,7 @@ from apps.core.event_loop.registry import message_registry
 
 
 def handle_message(message_list: Message | list[Message]):
-    if isinstance(message_list, list):
-        queue = message_list
-    else:
-        queue = [message_list]
+    queue = message_list if isinstance(message_list, list) else [message_list]
 
     # TODO CT: I moved this to core.apps - idk if this is necessary here
     # # Run auto-registry
@@ -27,11 +24,12 @@ def handle_message(message_list: Message | list[Message]):
             handle_command(message, queue)
             continue
 
-        raise Exception(f"{message} was not an Event or Command")
+        msg = f"{message} was not an Event or Command"
+        raise Exception(msg)
 
 
 def handle_command(command: Command, queue: list[Message]):
-    handler_list = message_registry.command_dict.get(command.__class__, list())
+    handler_list = message_registry.command_dict.get(command.__class__, [])
     for handler in handler_list:
         try:
             # todo warum ist der rückgabewert hier wichtig?
@@ -53,7 +51,7 @@ def handle_command(command: Command, queue: list[Message]):
 
 
 def handle_event(event: Event, queue: list[Message]):
-    handler_list = message_registry.event_dict.get(event.__class__, list())
+    handler_list = message_registry.event_dict.get(event.__class__, [])
     for handler in handler_list:
         try:
             print(f"\nHandling event '{event.__class__.__name__}' ({event.uuid}) with handler '{handler.__name__}'")

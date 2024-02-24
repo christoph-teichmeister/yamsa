@@ -1,3 +1,4 @@
+import contextlib
 import importlib
 import os
 
@@ -19,9 +20,9 @@ class MessageRegistry:
         def decorator(decoratee):
             # Ensure that registered message is of correct type
             if not (issubclass(command, Command)):
+                msg = f'Trying to register message function of wrong type: "{command.__name__}" on handler "{decoratee.__name__}".'
                 raise TypeError(
-                    f'Trying to register message function of wrong type: "{command.__name__}" '
-                    f'on handler "{decoratee.__name__}".'
+                    msg
                 )
 
             # Add decoratee to dependency list
@@ -39,9 +40,9 @@ class MessageRegistry:
         def decorator(decoratee):
             # Ensure that registered message is of correct type
             if not (issubclass(event, Event)):
+                msg = f'Trying to register message function of wrong type: "{event.__name__}" on handler "{decoratee.__name__}".'
                 raise TypeError(
-                    f'Trying to register message function of wrong type: "{event.__name__}" '
-                    f'on handler "{decoratee.__name__}".'
+                    msg
                 )
 
             # Add decoratee to dependency list
@@ -72,10 +73,8 @@ class MessageRegistry:
                     for module in os.listdir(settings.APPS_DIR / custom_package / "handlers" / message_type):
                         if module[-3:] == ".py":
                             module_name = module.replace(".py", "")
-                            try:
+                            with contextlib.suppress(ModuleNotFoundError):
                                 importlib.import_module(f"{app}.handlers.{message_type}.{module_name}")
-                            except ModuleNotFoundError:
-                                pass
                 except FileNotFoundError:
                     pass
 

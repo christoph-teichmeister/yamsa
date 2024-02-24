@@ -1,5 +1,4 @@
 from decimal import Decimal
-from typing import Union
 
 from apps.core.event_loop.registry import message_registry
 from apps.debt.models import Debt
@@ -17,12 +16,10 @@ from apps.transaction.models import ChildTransaction
 @message_registry.register_event(event=ParentTransactionDeleted)
 @message_registry.register_event(event=ChildTransactionDeleted)
 def calculate_optimised_debts(
-    context: Union[
-        ParentTransactionCreated.Context
+    context: ParentTransactionCreated.Context
         | ParentTransactionUpdated.Context
         | ChildTransactionDeleted.Context
-        | ParentTransactionDeleted.Context
-    ],
+        | ParentTransactionDeleted.Context,
 ):
     room_id = context.room.id
 
