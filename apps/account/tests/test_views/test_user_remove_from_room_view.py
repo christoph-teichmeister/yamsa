@@ -33,8 +33,9 @@ class UserRemoveFromRoomViewTestCase(BaseTestSetUp):
         self.assertTrue(response.template_name[0], UserListForRoomView.template_name)
         self.assertEqual(
             response.headers["HX-Trigger-After-Settle"],
-            '{"triggerToast": {"message": "\\"Guest User 1\\" can not be removed from this room, because they still '
-            'have either transactions or open debts.", "type": "text-bg-danger bg-gradient"}}',
+            '{"triggerToast": {"message": "\\"'
+            + f"{self.guest_user.name}"
+            + '\\" can not be removed from this room, because they still have either transactions or open debts.", "type": "text-bg-danger bg-gradient"}}',
         )
 
     def test_post_user_can_be_removed_from_room(self):
