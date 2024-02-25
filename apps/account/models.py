@@ -8,7 +8,7 @@ from ambient_toolbox.models import CommonInfo
 from django.contrib.auth import hashers
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import BooleanField, Exists, ExpressionWrapper, OuterRef, Q
+from django.db.models import Q
 
 from apps.account.managers import UserManager
 from apps.room.models import Room, UserConnectionToRoom
@@ -57,16 +57,11 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
         super().clean()
 
     @cached_property
-    def room_qs_for_list(self):
+    def room_qs_for_list(self) -> dict:
         return (
             Room.objects.visible_for(user=self)
             .prefetch_related("users")
-            .annotate(
-                user_is_in_room=ExpressionWrapper(
-                    Exists(User.objects.filter(id=self.id, rooms=OuterRef("id"))),
-                    output_field=BooleanField(),
-                ),
-            )
+            .annotate_user_is_in_room_for_user_id(user_id=self.id)
             .order_by("-user_is_in_room", "status", "-lastmodified_at")
             .values(
                 "created_by__name",
@@ -78,8 +73,8 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
             )
         )
 
-    def has_seen_room(self, room: Room) -> tuple[UserConnectionToRoom, bool]:
-        return get_has_seen_room(self.userconnectiontoroom_set, room.id)
+    def has_seen_room(self, room_id: int) -> tuple[UserConnectionToRoom, bool]:
+        return get_has_seen_room(self.userconnectiontoroom_set, room_id)
 
     def can_be_removed_from_room(self, room_id) -> bool:
         return not (
@@ -94,7 +89,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
             .exists()
         )
 
-    def generate_random_password_with_length(self, length) -> str:
+    def generate_random_password_with_length(self, length: int) -> str:
         characters = string.ascii_letters + string.digits
         new_password = "".join(random.choice(characters) for _ in range(length))
 
