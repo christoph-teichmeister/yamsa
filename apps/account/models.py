@@ -10,6 +10,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import BooleanField, Exists, ExpressionWrapper, OuterRef, Q
 
+from apps.account.managers import UserManager
 from apps.room.models import Room, UserConnectionToRoom
 
 
@@ -35,6 +36,8 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
 
     invitation_email_sent = models.BooleanField(default=False)
     invitation_email_sent_at = models.DateTimeField(null=True, blank=True)
+
+    objects = UserManager()
 
     class Meta:
         verbose_name = "User"
