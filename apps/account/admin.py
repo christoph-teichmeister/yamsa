@@ -11,7 +11,7 @@ from apps.webpush.dataclasses import Notification
 
 
 @admin.action(description="Send test notification to selected users")
-def send_test_notification(modeladmin, request, queryset):
+def send_test_notification(modeladmin, request, queryset):  # pragma: no cover
     # TODO CT: Delete this once testing is done
     notification = Notification(
         payload=Notification.Payload(
@@ -25,7 +25,7 @@ def send_test_notification(modeladmin, request, queryset):
 
 
 @admin.action(description="Send test email to selected users")
-def send_test_email(modeladmin, request, queryset):
+def send_test_email(modeladmin, request, queryset):  # pragma: no cover
     # TODO CT: Delete this once testing is done
     for user in queryset:
         service = TestEmailService(recipient=user)
