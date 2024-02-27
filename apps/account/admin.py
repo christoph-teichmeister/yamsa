@@ -54,12 +54,7 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
         ),
         (
             "E-Mail",
-            {
-                "fields": (
-                    "email",
-                    ("invitation_email_sent", "invitation_email_sent_at"),
-                )
-            },
+            {"fields": ("email", ("invitation_email_sent", "invitation_email_sent_at"))},
         ),
     )
     extra_fields_for_fieldset = ("last_login",)
