@@ -43,7 +43,7 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
         user_list = baker.make_recipe("apps.account.tests.user", _quantity=2)
         guest_user_list = baker.make_recipe("apps.account.tests.guest_user", _quantity=2)
 
-        default_kwargs = {"room": self.room, "parent_transaction_kwargs": {{"currency": currency}}}
+        default_kwargs = {"room": self.room, "parent_transaction_kwargs": {"currency": currency}}
 
         self.room.users.add(*user_list + guest_user_list)
 
