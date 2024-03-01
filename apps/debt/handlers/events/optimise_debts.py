@@ -17,14 +17,16 @@ from apps.transaction.models import ChildTransaction
 @message_registry.register_event(event=ChildTransactionDeleted)
 def calculate_optimised_debts(
     context: ParentTransactionCreated.Context
-        | ParentTransactionUpdated.Context
-        | ChildTransactionDeleted.Context
-        | ParentTransactionDeleted.Context,
+    | ParentTransactionUpdated.Context
+    | ChildTransactionDeleted.Context
+    | ParentTransactionDeleted.Context,
 ):
     room_id = context.room.id
 
+    base_debt_qs = Debt.objects.filter(room_id=room_id)
+
     # Delete all unsettled debts of the room
-    Debt.objects.filter(room_id=room_id, settled=False).delete()
+    base_debt_qs.filter(settled=False).delete()
 
     # Retrieve all child_transactions in the room and store them in a tuple
     all_child_transactions_of_room_tuple = tuple(
@@ -32,6 +34,50 @@ def calculate_optimised_debts(
         .order_by("value", "parent_transaction__currency")
         .values_list("parent_transaction__currency", "paid_for", "parent_transaction__paid_by", "value")
     )
+
+    # Retrieve all settled debts of the room and store them in a tuple
+    settled_debts_values_list = base_debt_qs.filter(settled=True).values_list(
+        "currency", "debitor", "creditor", "value"
+    )
+
+    # child_transactions will include transactions made from person A to themselves - exclude those here
+    excluded_child_transactions = tuple(filter(lambda ct: ct[1] != ct[2], all_child_transactions_of_room_tuple))
+
+    # Iterate over settled debts
+    for settled_debt in settled_debts_values_list:
+        currency, debitor, creditor, settled_value = settled_debt
+
+        # Find corresponding child transactions of the debt debitor
+        debitor_child_transactions = tuple(
+            filter(
+                lambda ct: ct[0] == currency and ct[1] == debitor,
+                excluded_child_transactions,
+            )
+        )
+
+        # Reduce the value of child transactions by settled debt value
+        for transaction in debitor_child_transactions:
+            transaction_currency, paid_for, paid_by, value = transaction
+            if value >= settled_value:
+                # If the transaction value is greater than or equal to the settled debt value,
+                # reduce the transaction value by the settled debt value
+                value -= settled_value
+                settled_value = 0
+            else:
+                # If the transaction value is less than the settled debt value,
+                # reduce the settled debt value by the transaction value
+                settled_value -= value
+                value = 0
+
+            # Update the value of the transaction
+            all_child_transactions_of_room_tuple = tuple(
+                (t[0], t[1], t[2], value if (t[0] == transaction_currency and t[1] == paid_for) else t[3])
+                for t in all_child_transactions_of_room_tuple
+            )
+
+            # If settled debt value becomes 0, break the loop
+            if settled_value == 0:
+                break
 
     # Initialize a dictionary to organize debts by currency sign
     currency_debts = {}
