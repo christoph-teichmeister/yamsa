@@ -1,5 +1,8 @@
 from decimal import Decimal
+from http import HTTPStatus
 
+from django.urls import reverse
+from freezegun import freeze_time
 from model_bakery import baker
 
 from apps.core.tests.setup import BaseTestSetUp
@@ -57,8 +60,101 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
 
         self.assertEqual(self.user.debts.count(), 0)
 
+    @freeze_time("2020-04-04 4:20:00")
     def test_simple_reduction_single_currency_with_settle(self):
-        pass
+        currency = baker.make_recipe("apps.currency.tests.currency")
+
+        create_parent_transaction_with_optimisation(
+            room=self.room,
+            paid_by=self.user,
+            paid_for_tuple=(self.user, self.guest_user),
+            parent_transaction_kwargs={"currency": currency},
+            child_transaction_kwargs={"value": Decimal(10)},
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=self.guest_user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            10,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=self.user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            10,
+        )
+
+        create_parent_transaction_with_optimisation(
+            room=self.room,
+            paid_by=self.guest_user,
+            paid_for_tuple=(self.user,),
+            parent_transaction_kwargs={"currency": currency},
+            child_transaction_kwargs={"value": Decimal(5)},
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=self.guest_user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            5,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=self.user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            5,
+        )
+
+        debt = self.room.debts.first()
+        response = self.client.post(
+            reverse("debt:settle", kwargs={"room_slug": self.room.slug, "pk": debt.id}),
+            data={"settled": True},
+            follow=True,
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+        self.assertEqual(self.room.debts.filter(settled=False).count(), 0)
+
+        create_parent_transaction_with_optimisation(
+            room=self.room,
+            paid_by=self.guest_user,
+            paid_for_tuple=(self.user, self.guest_user),
+            parent_transaction_kwargs={"currency": currency},
+            child_transaction_kwargs={"value": Decimal(20)},
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=self.user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            20,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=self.guest_user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            20,
+        )
+
+        create_parent_transaction_with_optimisation(
+            room=self.room,
+            paid_by=self.user,
+            paid_for_tuple=(self.user, self.guest_user),
+            parent_transaction_kwargs={"currency": currency},
+            child_transaction_kwargs={"value": Decimal(15)},
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=self.user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            15,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=self.guest_user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            15,
+        )
+
+        self.assertEqual(self.room.debts.filter(settled=False).count(), 1)
 
     def test_complicated_reduction_two_currencies_no_settle(self):
         currency_list = baker.make_recipe("apps.currency.tests.currency", _quantity=2)
