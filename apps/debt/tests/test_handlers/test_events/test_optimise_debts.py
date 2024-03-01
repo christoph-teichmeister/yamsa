@@ -20,13 +20,13 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
         )
 
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_to_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
                 debitor_id=self.guest_user.id, room_id=self.room.id, currency_id=currency.id
             ),
             10,
         )
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_by_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
                 creditor_id=self.user.id, room_id=self.room.id, currency_id=currency.id
             ),
             10,
@@ -43,13 +43,13 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
         self.assertEqual(self.guest_user.debts.count(), 1)
 
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_to_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
                 debitor_id=self.guest_user.id, room_id=self.room.id, currency_id=currency.id
             ),
             5,
         )
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_by_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
                 creditor_id=self.user.id, room_id=self.room.id, currency_id=currency.id
             ),
             5,
@@ -199,25 +199,25 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
 
         # Assert currency_1 statements
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_to_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
                 debitor_id=user_2.id, room_id=self.room.id, currency_id=currency_1.id
             ),
             20,
         )
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_to_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
                 debitor_id=guest_user_1.id, room_id=self.room.id, currency_id=currency_1.id
             ),
             10,
         )
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_by_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
                 creditor_id=user_1.id, room_id=self.room.id, currency_id=currency_1.id
             ),
             10,
         )
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_by_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
                 creditor_id=user_3.id, room_id=self.room.id, currency_id=currency_1.id
             ),
             20,
@@ -225,31 +225,31 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
 
         # Assert currency_2 statements
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_to_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
                 debitor_id=guest_user_2.id, room_id=self.room.id, currency_id=currency_2.id
             ),
             10,
         )
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_to_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
                 debitor_id=user_3.id, room_id=self.room.id, currency_id=currency_2.id
             ),
             10,
         )
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_to_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
                 debitor_id=user_3.id, room_id=self.room.id, currency_id=currency_2.id
             ),
             10,
         )
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_by_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
                 creditor_id=user_2.id, room_id=self.room.id, currency_id=currency_2.id
             ),
             20,
         )
         self.assertEqual(
-            Debt.objects.get_total_money_of_currency_owed_by_others_for_a_room(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
                 creditor_id=guest_user_3.id, room_id=self.room.id, currency_id=currency_2.id
             ),
             10,
