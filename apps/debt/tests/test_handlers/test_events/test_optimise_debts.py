@@ -19,9 +19,18 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
             child_transaction_kwargs={"value": Decimal(10)},
         )
 
-        guest_user_debt = self.guest_user.debts.first()
-        self.assertEqual(guest_user_debt.value, Decimal(10))
-        self.assertEqual(guest_user_debt.creditor, self.user)
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_owed_to_others_for_a_room(
+                debitor_id=self.guest_user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            10,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_owed_by_others_for_a_room(
+                creditor_id=self.user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            10,
+        )
 
         create_parent_transaction_with_optimisation(
             room=self.room,
@@ -32,11 +41,24 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
         )
 
         self.assertEqual(self.guest_user.debts.count(), 1)
-        guest_user_debt = self.guest_user.debts.first()
-        self.assertEqual(guest_user_debt.value, Decimal(5))
-        self.assertEqual(guest_user_debt.creditor, self.user)
+
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_owed_to_others_for_a_room(
+                debitor_id=self.guest_user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            5,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_owed_by_others_for_a_room(
+                creditor_id=self.user.id, room_id=self.room.id, currency_id=currency.id
+            ),
+            5,
+        )
 
         self.assertEqual(self.user.debts.count(), 0)
+
+    def test_simple_reduction_single_currency_with_settle(self):
+        pass
 
     def test_complicated_reduction_two_currencies_no_settle(self):
         currency_list = baker.make_recipe("apps.currency.tests.currency", _quantity=2)
