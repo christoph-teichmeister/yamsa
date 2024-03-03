@@ -524,3 +524,172 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
         # Assert, that all debts have been cleared, and no debts remain
 
         self.assertEqual(self.room.debts.count(), 0)
+
+    @freeze_time("2020-04-04 4:20:00")
+    def test_complicated_reduction_two_currencies_with_settle(self):
+        currency_list = baker.make_recipe("apps.currency.tests.currency", _quantity=2)
+        currency_1 = currency_list[0]
+        currency_2 = currency_list[1]
+
+        user_list = baker.make_recipe("apps.account.tests.user", _quantity=2)
+        guest_user_list = baker.make_recipe("apps.account.tests.guest_user", _quantity=2)
+
+        default_kwargs = {"room": self.room}
+        currency_1_kwargs = {**default_kwargs, "parent_transaction_kwargs": {"currency": currency_1}}
+        currency_2_kwargs = {**default_kwargs, "parent_transaction_kwargs": {"currency": currency_2}}
+
+        self.room.users.add(*user_list + guest_user_list)
+
+        user_1 = self.user
+        user_2 = user_list[0]
+        user_3 = user_list[1]
+        guest_user_1 = self.guest_user
+        guest_user_2 = guest_user_list[0]
+        guest_user_3 = guest_user_list[1]
+
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=user_1,
+            paid_for_tuple=(user_1, user_2, guest_user_1),
+            child_transaction_kwargs={"value": Decimal(5)},
+        )
+        """
+        currency_1:
+            user_1:
+                user_2:         5
+                guest_user_1:   5
+        """
+
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=user_2, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            5,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=guest_user_1, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            5,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=user_1, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            10,
+        )
+
+        debt = self.room.debts.get(debitor=user_2, creditor=user_1)
+        response = self.client.post(
+            reverse("debt:settle", kwargs={"room_slug": self.room.slug, "pk": debt.id}),
+            data={"settled": True},
+            follow=True,
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        """
+        currency_1:
+            user_1:
+                guest_user_1:   5
+        """
+
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=guest_user_1, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            5,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=user_1, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            5,
+        )
+
+        create_parent_transaction_with_optimisation(
+            **currency_2_kwargs,
+            paid_by=user_1,
+            paid_for_tuple=(user_1, guest_user_1),
+            child_transaction_kwargs={"value": Decimal(10)},
+        )
+        """
+        currency_1:
+            user_1:
+                guest_user_1:   5
+        currency_2:
+            user_1:
+                guest_user_1:   10
+        """
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=guest_user_1, room_id=self.room.id, currency_id=currency_2.id
+            ),
+            10,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=user_1, room_id=self.room.id, currency_id=currency_2.id
+            ),
+            10,
+        )
+
+        create_parent_transaction_with_optimisation(
+            **currency_2_kwargs,
+            paid_by=guest_user_3,
+            paid_for_tuple=(user_1, guest_user_1),
+            child_transaction_kwargs={"value": Decimal(5)},
+        )
+        """
+        currency_1:
+            user_1:
+                guest_user_1:   5
+        currency_2:
+            user_1:
+                guest_user_1:   10
+            guest_user_3:
+                user_1:         5
+                guest_user_1:   5
+
+            => user_1 would receive 10 currency_2 units from guest_user_1 and would have to pay them forward to
+            guest_user_3. This operation can be reduced, if guest_user_1 reduces their currency_2 debt to user_1 by
+            the amount user_1 owes guest_user_3, resulting in:
+
+        currency_1:
+            user_1:
+                guest_user_1:   5
+        currency_2:
+            user_1:
+                guest_user_1:   5
+            guest_user_3:
+                guest_user_1:   10
+        """
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=guest_user_1, room_id=self.room.id, currency_id=currency_2.id
+            ),
+            15,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=user_1, room_id=self.room.id, currency_id=currency_2.id
+            ),
+            5,
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=guest_user_3, room_id=self.room.id, currency_id=currency_2.id
+            ),
+            10,
+        )
+
+        debt = self.room.debts.get(debitor=user_2, creditor=user_1)
+        response = self.client.post(
+            reverse("debt:settle", kwargs={"room_slug": self.room.slug, "pk": debt.id}),
+            data={"settled": True},
+            follow=True,
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        """
+        currency_1:
+            user_1:
+                guest_user_1:   5
+        """
