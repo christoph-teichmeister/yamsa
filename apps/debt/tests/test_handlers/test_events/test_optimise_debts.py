@@ -531,21 +531,17 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
         currency_1 = currency_list[0]
         currency_2 = currency_list[1]
 
-        user_list = baker.make_recipe("apps.account.tests.user", _quantity=2)
-        guest_user_list = baker.make_recipe("apps.account.tests.guest_user", _quantity=2)
+        user_1 = self.user
+        user_2 = baker.make_recipe("apps.account.tests.user")
+
+        guest_user_1 = self.guest_user
+        guest_user_2 = baker.make_recipe("apps.account.tests.guest_user")
 
         default_kwargs = {"room": self.room}
         currency_1_kwargs = {**default_kwargs, "parent_transaction_kwargs": {"currency": currency_1}}
         currency_2_kwargs = {**default_kwargs, "parent_transaction_kwargs": {"currency": currency_2}}
 
-        self.room.users.add(*user_list + guest_user_list)
-
-        user_1 = self.user
-        user_2 = user_list[0]
-        user_3 = user_list[1]
-        guest_user_1 = self.guest_user
-        guest_user_2 = guest_user_list[0]
-        guest_user_3 = guest_user_list[1]
+        self.room.users.add(user_2, guest_user_2)
 
         create_parent_transaction_with_optimisation(
             **currency_1_kwargs,
@@ -634,7 +630,7 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
 
         create_parent_transaction_with_optimisation(
             **currency_2_kwargs,
-            paid_by=guest_user_3,
+            paid_by=guest_user_2,
             paid_for_tuple=(user_1, guest_user_1),
             child_transaction_kwargs={"value": Decimal(5)},
         )
@@ -676,12 +672,12 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
         )
         self.assertEqual(
             Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
-                creditor_id=guest_user_3, room_id=self.room.id, currency_id=currency_2.id
+                creditor_id=guest_user_2, room_id=self.room.id, currency_id=currency_2.id
             ),
             10,
         )
 
-        debt = self.room.debts.get(debitor=user_2, creditor=user_1)
+        debt = self.room.debts.get(debitor=guest_user_1, creditor=user_1, currency=currency_1)
         response = self.client.post(
             reverse("debt:settle", kwargs={"room_slug": self.room.slug, "pk": debt.id}),
             data={"settled": True},
@@ -689,7 +685,32 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
         """
-        currency_1:
+        currency_2:
             user_1:
                 guest_user_1:   5
+            guest_user_3:
+                guest_user_1:   10
         """
+
+        create_parent_transaction_with_optimisation(
+            **currency_2_kwargs,
+            paid_by=guest_user_1,
+            paid_for_tuple=(user_1, guest_user_2),
+            child_transaction_kwargs={"value": Decimal(5)},
+        )
+        """
+        currency_2:
+            guest_user_3:
+                guest_user_1:   5
+        """
+
+        debt = self.room.debts.get(debitor=guest_user_1, creditor=guest_user_2, currency=currency_2)
+        response = self.client.post(
+            reverse("debt:settle", kwargs={"room_slug": self.room.slug, "pk": debt.id}),
+            data={"settled": True},
+            follow=True,
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+        # Now, all debts should be settled
+        self.assertEqual(self.room.debts.filter(settled=False).count(), 0)
