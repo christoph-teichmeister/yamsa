@@ -5,6 +5,9 @@ from apps.account.models import User
 
 
 class GuestSendInvitationEmailForm(forms.ModelForm):
+    class ExceptionMessage:
+        EMAIL_ALREADY_EXISTS = "User with email address '{email}' already exists"
+
     class Meta:
         model = User
         fields = ("email",)
@@ -12,7 +15,6 @@ class GuestSendInvitationEmailForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data["email"]
         if User.objects.filter(email=email).exists():
-            msg = f"User with email address '{email}' already exists"
-            raise ValidationError(msg)
+            raise ValidationError(self.ExceptionMessage.EMAIL_ALREADY_EXISTS.format(email=email))
 
         return email

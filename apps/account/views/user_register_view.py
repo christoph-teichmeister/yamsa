@@ -32,8 +32,8 @@ class RegisterUserView(generic.CreateView):
 
         # Immediately log the created user in
         self.request.user = self.object
-        authenticate(username=self.object.username, password=self.object.password)
-        login(request=self.request, user=self.request.user)
+        user = authenticate(username=self.object.username, password=self.object.password)
+        login(request=self.request, user=user)
 
         # Send PostRegisterEmail
         handle_message(SendPostRegisterEmail(context_data={"user": self.request.user}))

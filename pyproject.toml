@@ -1,4 +1,37 @@
 [tool.ruff]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "*/migrations/*",
+]
+
+# Same as Black.
+line-length = 120
+
+fix = true
+
+# Assume Python 3.12.
+target-version = "py312"
+
+[tool.ruff.lint]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 select = [
     "E", # pycodestyle errors
@@ -56,40 +89,8 @@ fixable = [
 ]
 unfixable = []
 
-exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "venv",
-    "*/migrations/*",
-]
-
-# Same as Black.
-line-length = 120
-
-fix = true
-
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-# Assume Python 3.12.
-target-version = "py312"
 
 [tool.coverage.run]
 branch = true
@@ -115,10 +116,12 @@ precision = 2
 
 show_missing = true
 
+# Don’t report files that have no executable code (such as __init__.py files).
+skip_empty = true
+
 # Regexes for lines to exclude from consideration
 exclude_also = [
     # Don't complain about missing debug-only code:
-    "def __repr__",
     "if self\\.debug",
     # Don't complain if tests don't hit defensive assertion code:
     "raise AssertionError",

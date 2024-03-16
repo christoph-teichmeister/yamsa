@@ -15,26 +15,14 @@ urlpatterns = [
     path("forgot-password/", views.UserForgotPasswordView.as_view(), name="forgot-password"),
     build_room_specific_paths(
         [
-            path(
-                "list",
-                views.UserListForRoomView.as_view(),
-                name="list",
-            ),
-            path(
-                "guest/create/",
-                views.GuestCreateView.as_view(),
-                name="guest-create",
-            ),
+            path("list", views.UserListForRoomView.as_view(), name="list"),
+            path("guest/create/", views.GuestCreateView.as_view(), name="guest-create"),
             path(
                 "guest/<int:pk>/send-invite-email/",
                 views.GuestSendInvitationEmailView.as_view(),
                 name="guest-send-invitation-email",
             ),
-            path(
-                "remove-from-room/<int:pk>/",
-                views.UserRemoveFromRoomView.as_view(),
-                name="remove-from-room",
-            ),
+            path("remove-from-room/<int:pk>/", views.UserRemoveFromRoomView.as_view(), name="remove-from-room"),
         ]
     ),
 ]

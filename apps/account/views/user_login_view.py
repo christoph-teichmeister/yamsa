@@ -9,6 +9,9 @@ class LogInUserView(generic.FormView):
     template_name = "account/login.html"
     form_class = LoginForm
 
+    class ExceptionMessage:
+        AUTH_FAILED = "The combination of username and password does not match"
+
     def get_success_url(self):
         return reverse(viewname="core:welcome")
 
@@ -18,7 +21,7 @@ class LogInUserView(generic.FormView):
         if possible_user is not None:
             login(request=self.request, user=possible_user)
         else:
-            self.extra_context = {"errors": {"auth_failed": "The combination of username and password does not match"}}
+            self.extra_context = {"errors": {"auth_failed": self.ExceptionMessage.AUTH_FAILED}}
             return super().form_invalid(form)
 
         return super().form_valid(form)
