@@ -37,7 +37,10 @@ def send_notification_on_transaction_create(context: ParentTransactionCreated.Co
 
     for child_transaction in ChildTransaction.objects.filter(parent_transaction_id=parent_transaction.id):
         # If a user created this transaction on another ones behalf and is a debtor, do not notify them
-        if parent_transaction.created_by == child_transaction.paid_for:
+        if (
+            parent_transaction.created_by == child_transaction.paid_for
+            or parent_transaction.paid_by == child_transaction.paid_for
+        ):
             continue
 
         notification.send_to_user(child_transaction.paid_for)
