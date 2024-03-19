@@ -26,10 +26,7 @@ def send_notification_on_transaction_create(context: ParentTransactionCreated.Co
             f"Have a look!",
             click_url=reverse(
                 viewname="transaction:detail",
-                kwargs={
-                    "room_slug": parent_transaction.room.slug,
-                    "pk": parent_transaction.id,
-                },
+                kwargs={"room_slug": parent_transaction.room.slug, "pk": parent_transaction.id},
             ),
         ),
     )
@@ -59,10 +56,7 @@ def send_notification_on_transaction_update(context: ParentTransactionUpdated.Co
             f"Have a look!",
             click_url=reverse(
                 viewname="transaction:detail",
-                kwargs={
-                    "room_slug": parent_transaction.room.slug,
-                    "pk": parent_transaction.id,
-                },
+                kwargs={"room_slug": parent_transaction.room.slug, "pk": parent_transaction.id},
             ),
         ),
     )
