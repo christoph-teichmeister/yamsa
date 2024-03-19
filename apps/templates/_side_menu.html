@@ -73,11 +73,11 @@
                 <div class="row justify-content-center">
                     <div class="col-2 p-0 me-1">
                         <button type="button"
-                                class="btn btn-primary btn-sm d-flex align-items-center"
+                                class="btn btn-primary btn-sm"
                                 data-bs-theme-value="light"
                                 onclick="handleThemeClick('light')"
                         >
-                            <i class="bi bi-sun-fill"></i>
+                            <i class="bi bi-sun-fill d-flex align-items-center justify-content-center"></i>
                         </button>
                     </div>
                     <div class="col-2 p-0 ms-1">
@@ -86,7 +86,7 @@
                                 data-bs-theme-value="dark"
                                 onclick="handleThemeClick('dark')"
                         >
-                            <i class="bi bi-moon-fill"></i>
+                            <i class="bi bi-moon-fill d-flex align-items-center justify-content-center"></i>
                         </button>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
                     </div>
                 </div>
 
-                <div class="row py-1 cursor-pointer d-flex justify-content-center align-items-center{% if request.path == "/welcome/" %} p-e-color{% endif %}"
+                <div class="row py-1 cursor-pointer d-flex justify-content-center align-items-center {% if request.path == "/welcome/" %}p-e-color{% endif %}"
                      data-bs-dismiss="offcanvas"
                      data-bs-target="#offcanvasNavbar"
                      hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
@@ -128,7 +128,7 @@
                      hx-swap="morph:innerHTML"
                      hx-push-url="true"
                 >
-                    <div class="col-4 text-center fs-1">
+                    <div class="col-4 text-center room-circle {% if request.path == "/welcome/" %}selected{% endif %}">
                         <i class="bi bi-house"></i>
                     </div>
                     <div class="col-8">

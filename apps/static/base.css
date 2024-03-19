@@ -40,6 +40,18 @@
     --yamsa-room-circle-color: white;
 }
 
+:root {
+    --bs-nav-link-font-size: 1.3rem;
+
+    .navbar {
+        --bs-navbar-toggler-font-size: 1.7rem;
+
+        .btn-sm {
+            --bs-btn-font-size: 1.1rem;
+        }
+    }
+}
+
 /* Breakpoint px values:
     --bs-breakpoint-xs: 0;
     --bs-breakpoint-sm: 576px;
