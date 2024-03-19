@@ -72,4 +72,4 @@ class EventTestCase(BaseTestSetUp):
             mocked_send.assert_any_call(self.guest_user)
             mocked_send.assert_any_call(self.user)
 
-            self.assertEqual(mocked_send.call_count, 2)
+            self.assertEqual(mocked_send.call_count, 2, mocked_send.call_args_list)
