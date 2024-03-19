@@ -24,7 +24,7 @@
 .room-circle {
     width: 3em;
     height: 3em;
-    border: 2px solid white;
+    border: 2px solid var(--yamsa-room-circle-color);
     border-radius: 50%;
 
     margin: 0.5rem;
