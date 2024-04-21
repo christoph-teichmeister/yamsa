@@ -15,11 +15,11 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <label for="username" class="form-label">{{ form.fields.username.label }}</label>
-                    <input type="text" class="form-control" id="username" name="username" autocomplete="username"
+                    <label for="email" class="form-label">{{ form.fields.email.label }}</label>
+                    <input type="text" class="form-control" id="email" name="email" autocomplete="email"
                            required>
-                    {% for error_message in form.errors.username.data %}
-                        <small class="error" id="usernameError">{{ error_message.message }}</small>
+                    {% for error_message in form.errors.email.data %}
+                        <small class="error" id="emailError">{{ error_message.message }}</small>
                     {% endfor %}
                 </div>
 

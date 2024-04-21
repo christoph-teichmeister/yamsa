@@ -23,6 +23,9 @@ def get_has_seen_room(userconnectiontoroom_set, room_id: int) -> tuple[UserConne
 
 
 class User(CleanOnSaveMixin, CommonInfo, AbstractUser):
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ("username",)
+
     name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
 
