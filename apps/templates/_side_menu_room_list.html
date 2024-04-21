@@ -20,7 +20,9 @@
                 </div>
             </div>
             <div class="col-8 d-flex align-items-center">
-                {{ room.name|truncatechars:8 }}
+                <div class="d-inline-block text-truncate">
+                    {{ room.name }}
+                </div>
             </div>
         </div>
     {% endfor %}
@@ -68,7 +70,9 @@
                 </div>
             </div>
             <div class="col-8 d-flex align-items-center">
-                {{ room.name|truncatechars:8 }}
+                <div class="d-inline-block text-truncate">
+                    {{ room.name }}
+                </div>
             </div>
         </div>
     {% endfor %}
@@ -82,11 +86,11 @@
              data-bs-dismiss="offcanvas"
              data-bs-target="#offcanvasNavbar"
              hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-             {% if room.status == ROOM_STATUS_CLOSED %}
-                 hx-get="{% room_url 'room:detail' %}"
-             {% else %}
-                 hx-get="{% room_url 'transaction:list' %}"
-             {% endif %}
+                {% if room.status == ROOM_STATUS_CLOSED %}
+             hx-get="{% room_url 'room:detail' %}"
+                {% else %}
+             hx-get="{% room_url 'transaction:list' %}"
+                {% endif %}
              hx-target="#body"
              hx-indicator="#body-loading-spinner"
              hx-swap="innerHTML"
@@ -98,7 +102,9 @@
                 </div>
             </div>
             <div class="col-8 d-flex align-items-center">
-                {{ room.name|truncatechars:8 }}
+                <div class="d-inline-block text-truncate">
+                    {{ room.name }}
+                </div>
             </div>
         </div>
     {% endfor %}
