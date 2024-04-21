@@ -8,11 +8,10 @@ class UserForgotPasswordForm(forms.Form):
     class ExceptionMessage:
         UNKNOWN_EMAIL_ADDRESS = "The email address '{email}' is not registered with yamsa"
 
-    email = forms.EmailField()
+    email = forms.EmailField(label="E-Mail", help_text="E-Mail your account is linked to")
 
     class Meta:
         fields = ("email",)
-        help_texts = {"email": "E-Mail your account is linked to"}
 
     def clean_email(self):
         email = self.cleaned_data["email"]
