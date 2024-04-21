@@ -1,19 +1,19 @@
 <li id="news-{{ news.id }}"
     class="list-group-item {% if not news.highlighted %}pb-2 pt-4{% endif %}"
-        {% if not news.highlighted %}
-    hx-trigger="click"
-    hx-target="#news-{{ news.id }}"
-    hx-swap="outerHTML"
-    hx-indicator="#body-loading-spinner"
-            {% if opened %}
-    hx-get="{% url 'news:htmx-closed-news' pk=news.id %}"
-            {% else %}
-    hx-get="{% url 'news:htmx-opened-news' pk=news.id %}"
-            {% endif %}
-        {% endif %}
-        {# TODO CT: apps/templates/shared_partials/user_card.html:12 (hx-sync) to stop not being able to comment #}
 >
-    <div class="row">
+    <div class="row"
+            {% if not news.highlighted %}
+         hx-trigger="click"
+         hx-target="#news-{{ news.id }}"
+         hx-swap="outerHTML"
+         hx-indicator="#body-loading-spinner"
+                {% if opened %}
+         hx-get="{% url 'news:htmx-closed-news' pk=news.id %}"
+                {% else %}
+         hx-get="{% url 'news:htmx-opened-news' pk=news.id %}"
+                {% endif %}
+            {% endif %}
+    >
         <div class="col-1">
             {% if news.highlighted %}
                 ✨
@@ -37,12 +37,18 @@
             <p class="my-2">
                 {{ news.message }}
             </p>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-1">
+        </div>
+        <div class="col-11">
             {% if opened %}
                 <br/>
                 <ul class="list-group">
                     {% for comment_object in news.comments.all %}
-                        <li class="list-group-item pb-2">
+                        <li class="list-group-item border-opacity-50 pb-2">
                             <small>
                                 {{ comment_object.comment }}
                                 <div class="fw-lighter">
@@ -58,8 +64,8 @@
                             </small>
                         </li>
                     {% endfor %}
-                    <li class="list-group-item">
-                        <form>
+                    <li class="list-group-item border-opacity-25">
+                        <form id="submit-comment-form">
                             {% csrf_token %}
 
                             <div class="modal-body">
@@ -74,11 +80,11 @@
                                                placeholder="Add a comment"
                                                required>
                                         <button class="btn btn-outline-secondary"
-                                                id="button-addon2"
+                                                id="submit-comment"
                                                 type="submit"
                                                 hx-post="{% url 'news:htmx-newscomment-create' %}"
                                                 hx-target="#news-{{ news.id }}"
-                                                hx-swap="morph:outerHTML"
+                                                hx-swap="outerHTML"
                                         >
                                             <i class="bi bi-arrow-up-short"></i>
                                         </button>
