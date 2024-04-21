@@ -8,7 +8,6 @@ class EditUserFormTestCase(BaseTestSetUp):
 
     def test_regular(self):
         new_data = {
-            "username": "new_username",
             "name": "new_name",
             "email": "new_email@local.local",
             "paypal_me_username": "new_paypal_me_username",
@@ -30,7 +29,6 @@ class EditUserFormTestCase(BaseTestSetUp):
 
         required_message = "This field is required."
 
-        self.assertEqual(form.errors["username"][0], required_message)
         self.assertEqual(form.errors["name"][0], required_message)
         self.assertEqual(form.errors["email"][0], required_message)
 
@@ -56,7 +54,6 @@ class EditUserFormTestCase(BaseTestSetUp):
         self.assertTrue(WebpushInformation.objects.filter(user=self.user).exists())
 
         new_data = {
-            "username": self.user.username,
             "name": self.user.name,
             "email": self.user.email,
             "wants_to_receive_webpush_notifications": False,

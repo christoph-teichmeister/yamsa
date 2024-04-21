@@ -28,7 +28,6 @@ class Command(BaseCommand):
 
         superuser = User.objects.create(
             name="yamsa-admin",
-            username="yamsa-admin",
             password=default_password,
             email="admin@yamsa.local",
             is_superuser=True,
@@ -45,7 +44,6 @@ class Command(BaseCommand):
         for i in range(1, 6):
             registered_user = User.objects.create(
                 name=f"registered_user_{i}",
-                username=f"registered_user_{i}",
                 password=default_password,
                 email=f"registered_user_{i}@yamsa.local",
                 is_superuser=False,
@@ -62,7 +60,6 @@ class Command(BaseCommand):
         for i in range(1, 6):
             guest_user = User.objects.create(
                 name=f"guest_{i}",
-                username=f"guest_{i}",
                 password=make_password(f"guest_{i}"),
                 is_superuser=False,
                 is_staff=False,

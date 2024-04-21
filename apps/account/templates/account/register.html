@@ -16,10 +16,10 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <label for="username" class="form-label">{{ form.fields.username.label }}</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
-                    {% for error_message in form.errors.username.data %}
-                        <small class="error" id="usernameError">{{ error_message.message }}</small>
+                    <label for="name" class="form-label">{{ form.fields.name.label }}</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                    {% for error_message in form.errors.name.data %}
+                        <small class="error" id="nameError">{{ error_message.message }}</small>
                     {% endfor %}
                 </div>
 

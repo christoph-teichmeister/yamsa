@@ -26,13 +26,13 @@ class LogInUserViewTestCase(BaseTestSetUp):
     def test_post_regular(self):
         self.client.logout()
         response = self.client.post(
-            reverse("account:login"), data={"username": self.user.username, "password": default_password}, follow=True
+            reverse("account:login"), data={"email": self.user.email, "password": default_password}, follow=True
         )
 
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], WelcomePartialView.template_name)
 
-    def test_post_username_and_password_are_required(self):
+    def test_post_email_and_password_are_required(self):
         self.client.logout()
         response = self.client.post(reverse("account:login"))
 
@@ -42,15 +42,15 @@ class LogInUserViewTestCase(BaseTestSetUp):
         stringed_content = str(response.content)
 
         self.assertIn("passwordError", stringed_content)
-        self.assertIn("usernameError", stringed_content)
+        self.assertIn("emailError", stringed_content)
         self.assertIn("This field is required", stringed_content)
 
-    def test_post_username_and_password_do_not_match(self):
+    def test_post_email_and_password_do_not_match(self):
         self.client.logout()
 
         # Wrong password
         response = self.client.post(
-            reverse("account:login"), data={"username": self.user.username, "password": "wrong_password"}
+            reverse("account:login"), data={"email": self.user.email, "password": "wrong_password"}
         )
 
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
@@ -58,9 +58,9 @@ class LogInUserViewTestCase(BaseTestSetUp):
 
         self.assertIn(LogInUserView.ExceptionMessage.AUTH_FAILED, str(response.content))
 
-        # Wrong username
+        # Wrong email
         response = self.client.post(
-            reverse("account:login"), data={"username": f"{self.user.username}-wrong", "password": default_password}
+            reverse("account:login"), data={"email": f"{self.user.email}-wrong", "password": default_password}
         )
 
         self.assertEqual(response.status_code, http.HTTPStatus.OK)

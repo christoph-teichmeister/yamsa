@@ -25,7 +25,7 @@ class ChangePasswordFormTestCase(BaseTestSetUp):
         form.save()
         self.user.refresh_from_db()
 
-        user = authenticate(username=self.user.username, password=new_password)
+        user = authenticate(email=self.user.email, password=new_password)
         self.assertEqual(user, self.user)
 
     def test_password_incorrect(self):

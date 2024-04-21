@@ -32,7 +32,7 @@ class RegisterUserView(generic.CreateView):
 
         # Immediately log the created user in
         self.request.user = self.object
-        user = authenticate(username=self.object.username, password=self.object.password)
+        user = authenticate(email=self.object.email, password=self.object.password)
         login(request=self.request, user=user)
 
         # Send PostRegisterEmail

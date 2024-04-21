@@ -11,5 +11,5 @@ class DebtListView(DebtBaseContext, generic.ListView):
 
     def get_queryset(self):
         return self.model.objects.filter(room_id=self.request.room.id).order_by(
-            "settled", "currency__sign", "debitor__username"
+            "settled", "currency__sign", "debitor__name"
         )

@@ -19,7 +19,6 @@ class UserDetailViewTestCase(BaseTestSetUp):
 
         stringed_content = str(response.content)
         self.assertIn("Your data", stringed_content)
-        self.assertIn(self.user.username, stringed_content)
         self.assertIn(self.user.name, stringed_content)
         self.assertIn(self.user.email, stringed_content)
         self.assertIn(f"@{self.user.paypal_me_username}", stringed_content)
@@ -37,7 +36,6 @@ class UserDetailViewTestCase(BaseTestSetUp):
 
         stringed_content = str(response.content)
         self.assertIn("Their data", stringed_content)
-        self.assertIn(self.superuser.username, stringed_content)
         self.assertIn(self.superuser.name, stringed_content)
         self.assertIn(self.superuser.email, stringed_content)
 
@@ -79,7 +77,6 @@ class UserDetailViewTestCase(BaseTestSetUp):
 
         stringed_content = str(response.content)
         self.assertIn("Their data", stringed_content)
-        self.assertIn(self.user.username, stringed_content)
         self.assertIn(self.user.name, stringed_content)
         self.assertIn(self.user.email, stringed_content)
         self.assertIn(f"@{self.user.paypal_me_username}", stringed_content)
@@ -95,7 +92,6 @@ class UserDetailViewTestCase(BaseTestSetUp):
 
         stringed_content = str(response.content)
         self.assertIn("Your data", stringed_content)
-        self.assertIn(self.superuser.username, stringed_content)
         self.assertIn(self.superuser.name, stringed_content)
         self.assertIn(self.superuser.email, stringed_content)
 
@@ -114,7 +110,6 @@ class UserDetailViewTestCase(BaseTestSetUp):
 
         stringed_content = str(response.content)
         self.assertIn("Their data", stringed_content)
-        self.assertIn(self.user.username, stringed_content)
         self.assertIn(self.user.name, stringed_content)
         self.assertIn(self.user.email, stringed_content)
 

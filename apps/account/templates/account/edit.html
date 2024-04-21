@@ -32,16 +32,6 @@
                     <li class="list-group-item py-4 px-2">
 
                         <div class="mb-3">
-                            <label for="username" class="form-label">{{ form.fields.username.label }}</label>
-                            <input type="text" class="form-control" id="username" name="username"
-                                   autocomplete="username"
-                                   required value="{{ user.username }}">
-                            {% for error_message in form.errors.username.data %}
-                                <small class="error" id="usernameError">{{ error_message.message }}</small>
-                            {% endfor %}
-                        </div>
-
-                        <div class="mb-3">
                             <label for="name" class="form-label">{{ form.fields.name.label }}</label>
                             <input type="text" class="form-control" id="name" name="name" autocomplete="name"
                                    required value="{{ user.name }}">
