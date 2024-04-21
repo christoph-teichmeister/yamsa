@@ -19,7 +19,7 @@ class ChangePasswordForm(forms.ModelForm):
         fields = ("id", "old_password", "new_password", "new_password_confirmation")
 
     def clean_old_password(self):
-        possible_user = authenticate(username=self.instance.username, password=self.cleaned_data["old_password"])
+        possible_user = authenticate(email=self.instance.email, password=self.cleaned_data["old_password"])
         if possible_user is None:
             raise ValidationError(self.ExceptionMessage.PASSWORD_INCORRECT)
 

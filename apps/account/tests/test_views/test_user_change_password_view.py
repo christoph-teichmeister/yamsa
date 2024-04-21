@@ -40,4 +40,4 @@ class UserChangePasswordViewTestCase(BaseTestSetUp):
         self.assertIn("Your data:", str(response.content))
 
         # Assert, that the password-change worked
-        self.assertEqual(self.user, authenticate(username=self.user.username, password=new_password))
+        self.assertEqual(self.user, authenticate(email=self.user.email, password=new_password))

@@ -20,12 +20,12 @@ class UserUpdateViewTestCase(BaseTestSetUp):
         self.assertIn("Change password", stringed_content)
 
     def test_post_regular(self):
-        new_username = "new_username"
+        new_name = "new_name"
 
         client = self.reauthenticate_user(self.user)
         response = client.post(
             reverse("account:update", kwargs={"pk": self.user.id}),
-            data={"username": new_username, "name": self.user.name, "email": self.user.email},
+            data={"name": new_name, "email": self.user.email},
             follow=True,
         )
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
@@ -38,4 +38,4 @@ class UserUpdateViewTestCase(BaseTestSetUp):
         self.assertIn("Edit", stringed_content)
 
         self.user.refresh_from_db()
-        self.assertEqual(self.user.username, new_username)
+        self.assertEqual(self.user.name, new_name)

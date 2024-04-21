@@ -44,7 +44,7 @@ class RegisterUserViewTestCase(BaseTestSetUp):
         self.assertIn("Login here!", str(response.content))
 
     def test_post_regular(self):
-        new_username = "new_username"
+        new_name = "new_name"
         new_email = "new_email@local.local"
         new_password = "a_password"
 
@@ -53,7 +53,7 @@ class RegisterUserViewTestCase(BaseTestSetUp):
         with mock.patch("apps.account.views.user_register_view.handle_message") as mocked_handle_message:
             response = self.client.post(
                 reverse("account:register"),
-                data={"username": new_username, "email": new_email, "password": new_password},
+                data={"name": new_name, "email": new_email, "password": new_password},
                 follow=True,
             )
             self.assertEqual(response.status_code, http.HTTPStatus.OK)
@@ -64,11 +64,11 @@ class RegisterUserViewTestCase(BaseTestSetUp):
         self.assertTrue(response.template_name[0], WelcomePartialView.template_name)
 
         self.assertNotIsInstance(response.wsgi_request.user, AnonymousUser)
-        self.assertEqual(response.wsgi_request.user.username, new_username)
+        self.assertEqual(response.wsgi_request.user.name, new_name)
         self.assertEqual(response.wsgi_request.user.email, new_email)
 
     def test_post_from_invitation_email(self):
-        guest_username = "guest_username"
+        guest_name = "guest_name"
         guest_email = "guest_email@local.local"
         guest_password = "guest_password"
 
@@ -79,7 +79,7 @@ class RegisterUserViewTestCase(BaseTestSetUp):
                 reverse("account:register"),
                 data={
                     "id": self.guest_user.id,
-                    "username": guest_username,
+                    "name": guest_name,
                     "email": guest_email,
                     "password": guest_password,
                 },
@@ -93,7 +93,7 @@ class RegisterUserViewTestCase(BaseTestSetUp):
         self.assertTrue(response.template_name[0], WelcomePartialView.template_name)
 
         self.assertNotIsInstance(response.wsgi_request.user, AnonymousUser)
-        self.assertEqual(response.wsgi_request.user.username, guest_username)
+        self.assertEqual(response.wsgi_request.user.name, guest_name)
         self.assertEqual(response.wsgi_request.user.email, guest_email)
 
         self.guest_user.refresh_from_db()
@@ -112,4 +112,4 @@ class RegisterUserViewTestCase(BaseTestSetUp):
 
         self.assertIn('id="emailError"', stringed_content)
         self.assertIn('id="passwordError"', stringed_content)
-        self.assertIn('id="usernameError"', stringed_content)
+        self.assertIn('id="nameError"', stringed_content)

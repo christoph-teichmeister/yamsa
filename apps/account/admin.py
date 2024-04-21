@@ -40,7 +40,7 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     search_fields = ("name",)
     fieldsets = (
         (None, {"fields": ("password", "is_guest")}),
-        ("Personal Information", {"fields": ("name", "username", "paypal_me_username")}),
+        ("Personal Information", {"fields": ("name", "paypal_me_username")}),
         (
             "Permissions",
             {
@@ -53,7 +53,7 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
             },
         ),
         (
-            "E-Mail",
+            "Email",
             {"fields": ("email", ("invitation_email_sent", "invitation_email_sent_at"))},
         ),
     )

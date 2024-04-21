@@ -23,7 +23,6 @@ class UserListForRoomViewTestCase(BaseTestSetUp):
             self.assertIn("People", stringed_content)
 
             self.assertIn(self.user.name, stringed_content)
-            self.assertNotIn(self.user.username, stringed_content)
 
             self.assertIn("Is a registered user", stringed_content)
             self.assertIn("Has seen this room!", stringed_content)

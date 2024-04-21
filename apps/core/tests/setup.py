@@ -24,7 +24,7 @@ class BaseTestSetUp(TestCase):
     @classmethod
     def reauthenticate_user(cls, user: User) -> Client:
         cls.client = Client()
-        login = cls.client.login(username=user.username, password=default_password)
+        login = cls.client.login(email=user.email, password=default_password)
         cls.assertTrue(cls(), login)
 
         return cls.client

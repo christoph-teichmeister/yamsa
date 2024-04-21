@@ -15,28 +15,27 @@ class UserModelTestCase(BaseTestSetUp):
     def test_clean_for_guests(self):
         timestamp = time()
 
-        username_before = self.guest_user.username
+        name_before = self.guest_user.name
         email_before = self.guest_user.email
         password_before = self.guest_user.password
 
         self.guest_user.clean()
 
-        self.assertNotEqual(username_before, self.guest_user.username)
+        self.assertEqual(name_before, self.guest_user.name)
         self.assertNotEqual(email_before, self.guest_user.email)
         self.assertNotEqual(password_before, self.guest_user.password)
 
-        self.assertEqual(self.guest_user.username, f"{self.guest_user.name}-{timestamp}")
-        self.assertEqual(self.guest_user.email, f"{self.guest_user.username}@local.local")
+        self.assertEqual(self.guest_user.email, f"{self.guest_user.name}-{timestamp}@local.local")
         self.assertEqual(self.guest_user.password, f"{self.guest_user.name}-{timestamp}")
 
     def test_clean_for_regular_user(self):
-        username_before = self.user.username
+        name_before = self.user.name
         email_before = self.user.email
         password_before = self.user.password
 
         self.user.clean()
 
-        self.assertEqual(username_before, self.user.username)
+        self.assertEqual(name_before, self.user.name)
         self.assertEqual(email_before, self.user.email)
         self.assertEqual(password_before, self.user.password)
 
