@@ -88,15 +88,18 @@
                         </span>
                     </li>
 
-                    <li class="list-group-item py-4 px-2">
-                        <label for="wants_to_receive_webpush_notifications" class="form-check-label">
-                            <strong>Receive push notifications:</strong>
-                        </label>
-                        <input type="checkbox" class="form-check-input ms-2" id="wants_to_receive_webpush_notifications"
-                               name="wants_to_receive_webpush_notifications"
-                               {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}
-                               disabled>
-                    </li>
+                    {% if request.user == user %}
+                        <li class="list-group-item py-4 px-2">
+                            <label for="wants_to_receive_webpush_notifications" class="form-check-label">
+                                <strong>Receive push notifications:</strong>
+                            </label>
+                            <input type="checkbox" class="form-check-input ms-2"
+                                   id="wants_to_receive_webpush_notifications"
+                                   name="wants_to_receive_webpush_notifications"
+                                   {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}
+                                   disabled>
+                        </li>
+                    {% endif %}
 
                     <li class="list-group-item"></li>
                 </ul>
