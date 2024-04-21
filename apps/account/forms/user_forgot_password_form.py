@@ -8,7 +8,7 @@ class UserForgotPasswordForm(forms.Form):
     class ExceptionMessage:
         UNKNOWN_EMAIL_ADDRESS = "The email address '{email}' is not registered with yamsa"
 
-    email = forms.EmailField(label="E-Mail", help_text="E-Mail your account is linked to")
+    email = forms.EmailField(label="Email", help_text="Email your account is linked to")
 
     class Meta:
         fields = ("email",)

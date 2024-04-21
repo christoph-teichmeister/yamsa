@@ -53,7 +53,7 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
             },
         ),
         (
-            "E-Mail",
+            "Email",
             {"fields": ("email", ("invitation_email_sent", "invitation_email_sent_at"))},
         ),
     )

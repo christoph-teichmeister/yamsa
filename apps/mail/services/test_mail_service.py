@@ -6,7 +6,7 @@ class TestEmailService(BaseYamsaEmailService):
     Email to my admins to inform them about something important.
     """
 
-    subject = "Test E-Mail!"
+    subject = "Test Email!"
 
     email_extra_context = EmailExtraContext(
         show_cta=True,
