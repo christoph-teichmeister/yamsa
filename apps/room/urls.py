@@ -1,6 +1,7 @@
 from django.urls import include, path
 
 from apps.room import views
+from apps.room.views.user_connection_to_room_create_view import UserConnectionToRoomCreateView
 
 
 def build_room_specific_paths(list_of_url_paths: list):
@@ -21,6 +22,11 @@ urlpatterns = [
             path("dashboard", views.RoomDashboardView.as_view(), name="dashboard"),
             path("detail", views.RoomDetailView.as_view(), name="detail"),
             path("edit", views.RoomEditView.as_view(), name="edit"),
+            path(
+                "userconnectiontoroom/create",
+                UserConnectionToRoomCreateView.as_view(),
+                name="userconnectiontoroom-create",
+            ),
         ]
     ),
 ]
