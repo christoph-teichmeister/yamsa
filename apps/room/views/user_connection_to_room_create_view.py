@@ -11,12 +11,5 @@ class UserConnectionToRoomCreateView(AccountBaseContext, generic.CreateView):
     form_class = UserConnectionToRoomCreateForm
     template_name = "room/userconnectiontoroom_create.html"
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-
-        # UserConnectionToRoom.objects.create(user=created_guest, room=Room.objects.get(slug=room_slug))
-
-        return response
-
     def get_success_url(self):
         return reverse(viewname="account:list", kwargs={"room_slug": self.request.room.slug})
