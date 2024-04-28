@@ -26,7 +26,8 @@ class UserConnectionToRoomCreateForm(forms.ModelForm):
             raise ValidationError({"email": "User with this email address is already in this room"})
 
     def _post_clean(self):
-        self.instance.user = User.objects.get(email=self.cleaned_data["email"])
-        self.instance.room = Room.objects.get(slug=self.cleaned_data["room_slug"])
+        if len(self.errors) == 0:
+            self.instance.user = User.objects.get(email=self.cleaned_data["email"])
+            self.instance.room = Room.objects.get(slug=self.cleaned_data["room_slug"])
 
         super()._post_clean()
