@@ -9,17 +9,6 @@
             <h5>People</h5>
         </div>
         <div class="col-5 d-flex justify-content-end">
-            <button type="button"
-                    class="btn btn-primary btn-sm me-2 mb-2 {% if current_room.is_closed %}disabled{% endif %}"
-                    hx-get="{% room_url 'account:guest-create' %}"
-                    hx-target="#body"
-                    hx-indicator="#body-loading-spinner"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true"
-            >
-                Add guest
-            </button>
-
             <div class="dropdown">
                 <button class="btn btn-primary btn-sm dropdown-toggle {% if current_room.is_closed %}disabled{% endif %}"
                         type="button"
@@ -49,7 +38,6 @@
                         >
                             Add guest
                         </a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
                 </ul>
             </div>
         </div>
