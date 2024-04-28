@@ -19,6 +19,39 @@
             >
                 Add guest
             </button>
+
+            <div class="dropdown">
+                <button class="btn btn-primary btn-sm dropdown-toggle {% if current_room.is_closed %}disabled{% endif %}"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <i class="bi bi-person-plus-fill"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item"
+                           href="#"
+                           hx-get="{% room_url 'room:userconnectiontoroom-create' %}"
+                           hx-target="#body"
+                           hx-indicator="#body-loading-spinner"
+                           hx-swap="morph:innerHTML"
+                           hx-push-url="true"
+                    >
+                        Add existing user
+                    </a></li>
+
+                    <li><a class="dropdown-item"
+                           href="#"
+                           hx-get="{% room_url 'account:guest-create' %}"
+                           hx-target="#body"
+                           hx-indicator="#body-loading-spinner"
+                           hx-swap="morph:innerHTML"
+                           hx-push-url="true"
+                    >
+                        Add guest
+                    </a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 
