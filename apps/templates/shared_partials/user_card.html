@@ -63,7 +63,7 @@
                    hx-include="[name='csrfmiddlewaretoken']"
                    hx-target="#body"
                    hx-indicator="#body-loading-spinner"
-                   hx-swap="morph:innerHTML"
+                   hx-swap="innerHTML"
                    hx-confirm="{% if user.id == request.user.id %}Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!{% else %}Are you sure you wish to remove this user from this room?{% endif %}"
                 ></i>
             </div>
