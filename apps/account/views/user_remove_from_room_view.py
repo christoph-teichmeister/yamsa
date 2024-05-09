@@ -28,7 +28,7 @@ class UserRemoveFromRoomView(UserListForRoomView):
 
             # If a user is removing themselves, redirect to room-list
             if user_to_be_removed.id == self.request.user.id:
-                response = HttpResponseRedirect(redirect_to=reverse(viewname="room:list"))
+                response = HttpResponseRedirect(redirect_to=reverse(viewname="core:welcome"))
 
         else:
             response["HX-Trigger-After-Settle"] = json.dumps(
