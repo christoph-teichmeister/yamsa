@@ -10,13 +10,14 @@
         </div>
         <div class="col-5 d-flex justify-content-end">
             <div class="dropdown" id="addPersonDropdown">
-                <button class="btn btn-primary btn-sm dropdown-toggle {% if current_room.is_closed %}disabled{% endif %}"
+                <button class="btn btn-primary btn-sm {% if current_room.is_closed %}disabled{% endif %} dropdown-toggle"
+                        id="dropdownToggleButton"
                         type="button"
                         data-bs-toggle="dropdown"
                         aria-expanded="false">
                     <i class="bi bi-person-plus-fill"></i>
                 </button>
-                <ul class="dropdown-menu">
+                <ul id="dropdownMenu" class="dropdown-menu" aria-labelledby="dropdownToggleButton">
                     <li><a class="dropdown-item"
                            href="#"
                            hx-get="{% room_url 'room:userconnectiontoroom-create' %}"
@@ -24,9 +25,9 @@
                            hx-indicator="#body-loading-spinner"
                            hx-swap="morph:innerHTML"
                            hx-push-url="true"
-                        >
-                            Add existing user
-                        </a></li>
+                    >
+                        Add existing user
+                    </a></li>
 
                     <li><a class="dropdown-item"
                            href="#"
@@ -35,9 +36,9 @@
                            hx-indicator="#body-loading-spinner"
                            hx-swap="morph:innerHTML"
                            hx-push-url="true"
-                        >
-                            Add guest
-                        </a></li>
+                    >
+                        Add guest
+                    </a></li>
                 </ul>
             </div>
         </div>
@@ -55,5 +56,28 @@
             </div>
         </div>
     {% endif %}
+
+    <script>
+      {# TODO CT: This still does not work... #}
+      var ddToggle = document.getElementById("dropdownToggleButton")
+      var ddMenu = document.getElementById("dropdownMenu")
+
+      ddToggle.addEventListener("click", (e) => {
+        console.log("clicked")
+        e.preventDefault();
+
+        var bsToggler = new bootstrap.Dropdown(ddToggle)
+
+        // idk why, but isShown returns true when hiding and false when shown
+        var showing = !bsToggler._isShown()
+        if (showing) {
+          console.log("hiding")
+          bsToggler.hide()
+        } else {
+          console.log("showing")
+          bsToggler.show()
+        }
+      });
+    </script>
 
 {% endblock %}
