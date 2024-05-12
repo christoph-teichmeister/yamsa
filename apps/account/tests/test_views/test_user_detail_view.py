@@ -17,8 +17,8 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content)
-        self.assertIn("Your data", stringed_content)
+        stringed_content = str(response.content).replace("\\n", "")
+        self.assertInHTML("Your data:", stringed_content)
         self.assertIn(self.user.name, stringed_content)
         self.assertIn(self.user.email, stringed_content)
         self.assertIn(f"@{self.user.paypal_me_username}", stringed_content)
@@ -34,8 +34,8 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content)
-        self.assertIn("Their data", stringed_content)
+        stringed_content = str(response.content).replace("\\n", "")
+        self.assertInHTML("Their data:", stringed_content)
         self.assertIn(self.superuser.name, stringed_content)
         self.assertIn(self.superuser.email, stringed_content)
 
@@ -75,8 +75,8 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content)
-        self.assertIn("Their data", stringed_content)
+        stringed_content = str(response.content).replace("\\n", "")
+        self.assertInHTML("Their data:", stringed_content)
         self.assertIn(self.user.name, stringed_content)
         self.assertIn(self.user.email, stringed_content)
         self.assertIn(f"@{self.user.paypal_me_username}", stringed_content)
@@ -90,8 +90,8 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content)
-        self.assertIn("Your data", stringed_content)
+        stringed_content = str(response.content).replace("\\n", "")
+        self.assertInHTML("Your data:", stringed_content)
         self.assertIn(self.superuser.name, stringed_content)
         self.assertIn(self.superuser.email, stringed_content)
 
@@ -108,8 +108,8 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content)
-        self.assertIn("Their data", stringed_content)
+        stringed_content = str(response.content).replace("\\n", "")
+        self.assertInHTML("Their data:", stringed_content)
         self.assertIn(self.user.name, stringed_content)
         self.assertIn(self.user.email, stringed_content)
 

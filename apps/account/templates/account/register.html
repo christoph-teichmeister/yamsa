@@ -1,11 +1,8 @@
 {% extends "core/base.html" %}
 {% load static %}
-
 {% block content %}
     <h1 class="ps-3 mb-4">Register</h1>
-
     <div class="row gx-0 d-flex justify-content-center">
-
         <div class="col-8 col-sm-4 col-md-6 col-xl-4 p-0 d-flex">
             <form hx-post="{% url "account:register" %}"
                   hx-target="#body"
@@ -14,7 +11,6 @@
                   hx-push-url="true"
                   class="flex-grow-1">
                 {% csrf_token %}
-
                 <div class="mb-3">
                     <label for="name" class="form-label">{{ form.fields.name.label }}</label>
                     <input type="text" class="form-control" id="name" name="name" required>
@@ -22,49 +18,40 @@
                         <small class="error" id="nameError">{{ error_message.message }}</small>
                     {% endfor %}
                 </div>
-
                 <div class="mb-3">
                     <label for="email" class="form-label">{{ form.fields.email.label }}</label>
-                    <input type="text" class="form-control" id="email" name="email" required
+                    <input type="text"
+                           class="form-control"
+                           id="email"
+                           name="email"
+                           required
                            value="{% if form.initial.email %}{{ form.initial.email }}{% endif %}">
                     {% for error_message in form.errors.email.data %}
                         <small class="error" id="emailError">{{ error_message.message }}</small>
                     {% endfor %}
                 </div>
-
                 {% include "account/shared_partials/password_input_component.html" %}
-
                 <div class="form-group" hidden>
                     <label for="id" class="form-label">User ID</label>
                     <input id="id"
                            name="id"
                            type="number"
                            class="form-control"
-                           value="{% if form.initial.id %}{{ form.initial.id }}{% elif not request.user.is_anonymous %}{{ request.user.id }}{% endif %}"
-                    />
+                           value="{% if form.initial.id %}{{ form.initial.id }}{% elif not request.user.is_anonymous %}{{ request.user.id }}{% endif %}" />
                 </div>
-
                 <div class="form-group" hidden>
                     <label for="is_guest" class="form-label">Is Guest</label>
-                    <input id="is_guest"
-                           name="is_guest"
-                           type="checkbox"
-                           class="form-control"
-                    />
+                    <input id="is_guest" name="is_guest" type="checkbox" class="form-control" />
                 </div>
-
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary">Register</button>
                 </div>
-
                 <div class="mt-5">
                     <small class="error">{{ errors.auth_failed }}</small>
                 </div>
             </form>
         </div>
-
     </div>
-
     <small class="fixed-bottom z-0 ps-3 pb-3 cursor-pointer">
         Already have an account?
         <a class="htmx-a"
@@ -72,10 +59,6 @@
            hx-target="#body"
            hx-indicator="#body-loading-spinner"
            hx-swap="morph:innerHTML"
-           hx-push-url="true"
-        >
-            Login here!
-        </a>
+           hx-push-url="true">Login here!</a>
     </small>
-
 {% endblock %}

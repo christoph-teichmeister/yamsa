@@ -20,10 +20,10 @@ sentry-sdk = {extras = ["django"], version = "==1.40.*"}
 whitenoise = "==6.6.*"
 
 [dev-packages]
-django-upgrade = "*"
-djhtml = "*"
-ruff = "*"
 coverage = "*"
+django-upgrade = "*"
+djlint = "*"
+ruff = "*"
 
 [requires]
 python_version = "3.11"

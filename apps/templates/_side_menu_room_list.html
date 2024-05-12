@@ -1,110 +1,92 @@
 {% load room_tags %}
-
 {% if current_user.open_room_qs_for_list %}
     {% include "side_menu_components/room_list_title.html" with title="Open" %}
-
     {% for room in current_user.open_room_qs_for_list %}
         <div class="row cursor-pointer{% if current_room.slug == room.slug %} p-e-color{% endif %}"
-             data-bs-dismiss="offcanvas"
-             data-bs-target="#offcanvasNavbar"
-             hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-             hx-get="{% room_url 'transaction:list' %}"
-             hx-target="#body"
-             hx-indicator="#body-loading-spinner"
-             hx-swap="innerHTML"
-             hx-push-url="true"
-        >
+            data-bs-dismiss="offcanvas"
+            data-bs-target="#offcanvasNavbar"
+            hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
+            hx-get="{% room_url 'transaction:list' %}"
+            hx-target="#body"
+            hx-indicator="#body-loading-spinner"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            >
             <div class="col-4 d-flex flex-column justify-content-center align-items-center">
                 <div class="room-circle{% if current_room.slug == room.slug %} selected{% endif %}">
                     {{ room.name|slice:":2"|upper }}
                 </div>
             </div>
             <div class="col-8 d-flex align-items-center">
-                <div class="d-inline-block text-truncate">
-                    {{ room.name }}
-                </div>
+                <div class="d-inline-block text-truncate">{{ room.name }}</div>
             </div>
         </div>
     {% endfor %}
 {% endif %}
-
 {% include "side_menu_components/room_list_title.html" with title="New" %}
-
 <div class="row cursor-pointer{% if request.path == "/room/create/" %} p-e-color{% endif %}"
-     data-bs-dismiss="offcanvas"
-     data-bs-target="#offcanvasNavbar"
-     hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-     hx-get="{% url 'room:create' %}"
-     hx-target="#body"
-     hx-indicator="#body-loading-spinner"
-     hx-swap="innerHTML"
-     hx-push-url="true"
->
+    data-bs-dismiss="offcanvas"
+    data-bs-target="#offcanvasNavbar"
+    hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
+    hx-get="{% url 'room:create' %}"
+    hx-target="#body"
+    hx-indicator="#body-loading-spinner"
+    hx-swap="innerHTML"
+    hx-push-url="true"
+    >
     <div class="col-4 d-flex flex-column justify-content-center align-items-center">
-        <div class="room-circle{% if request.path == "/room/create/" %} selected{% endif %}">
-            +
-        </div>
+        <div class="room-circle{% if request.path == "/room/create/" %} selected{% endif %}">+</div>
     </div>
-    <div class="col-8 d-flex align-items-center">
-        New room
-    </div>
+    <div class="col-8 d-flex align-items-center">New room</div>
 </div>
-
 {% if current_user.closed_room_qs_for_list %}
     {% include "side_menu_components/room_list_title.html" with title="Closed" %}
-
     {% for room in current_user.closed_room_qs_for_list %}
         <div class="row cursor-pointer{% if current_room.slug == room.slug %} p-e-color{% endif %}"
-             data-bs-dismiss="offcanvas"
-             data-bs-target="#offcanvasNavbar"
-             hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-             hx-get="{% room_url 'room:detail' %}"
-             hx-target="#body"
-             hx-indicator="#body-loading-spinner"
-             hx-swap="innerHTML"
-             hx-push-url="true"
-        >
+            data-bs-dismiss="offcanvas"
+            data-bs-target="#offcanvasNavbar"
+            hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
+            hx-get="{% room_url 'room:detail' %}"
+            hx-target="#body"
+            hx-indicator="#body-loading-spinner"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            >
             <div class="col-4 d-flex flex-column justify-content-center align-items-center">
                 <div class="room-circle closed{% if current_room.slug == room.slug %} selected{% endif %}">
                     {{ room.name|slice:":2"|upper }}
                 </div>
             </div>
             <div class="col-8 d-flex align-items-center">
-                <div class="d-inline-block text-truncate">
-                    {{ room.name }}
-                </div>
+                <div class="d-inline-block text-truncate">{{ room.name }}</div>
             </div>
         </div>
     {% endfor %}
 {% endif %}
-
 {% if current_user.other_rooms_qs_for_list %}
     {% include "side_menu_components/room_list_title.html" with title="Other" %}
-
     {% for room in current_user.other_rooms_qs_for_list %}
         <div class="row cursor-pointer fst-italic text-muted{% if current_room.slug == room.slug %} p-e-color{% endif %}"
-             data-bs-dismiss="offcanvas"
-             data-bs-target="#offcanvasNavbar"
-             hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-             {% if room.status == ROOM_STATUS_CLOSED %}
-                 hx-get="{% room_url 'room:detail' %}"
-             {% else %}
-                 hx-get="{% room_url 'transaction:list' %}"
-             {% endif %}
-             hx-target="#body"
-             hx-indicator="#body-loading-spinner"
-             hx-swap="innerHTML"
-             hx-push-url="true"
-        >
+            data-bs-dismiss="offcanvas"
+            data-bs-target="#offcanvasNavbar"
+            hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
+            {% if room.status == ROOM_STATUS_CLOSED %}
+                hx-get="{% room_url 'room:detail' %}"
+            {% else %}
+                hx-get="{% room_url 'transaction:list' %}"
+            {% endif %}
+            hx-target="#body"
+            hx-indicator="#body-loading-spinner"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+            >
             <div class="col-4 d-flex flex-column justify-content-center align-items-center">
                 <div class="room-circle{% if room.status == ROOM_STATUS_CLOSED %} closed{% endif %}{% if current_room.slug == room.slug %} selected{% endif %}">
                     {{ room.name|slice:":2"|upper }}
                 </div>
             </div>
             <div class="col-8 d-flex align-items-center">
-                <div class="d-inline-block text-truncate">
-                    {{ room.name }}
-                </div>
+                <div class="d-inline-block text-truncate">{{ room.name }}</div>
             </div>
         </div>
     {% endfor %}

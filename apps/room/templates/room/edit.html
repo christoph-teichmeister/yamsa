@@ -1,12 +1,9 @@
 {% extends "room/dashboard.html" %}
 {% load static %}
 {% load room_tags %}
-
 {% block tab_content %}
-
     <form>
         {% csrf_token %}
-
         <div class="row gx-0 mt-4 d-flex w-100 justify-content-between align-items-center">
             <div class="col d-flex align-items-center">
                 <i class="bi bi-arrow-left-circle fs-2 float-start cursor-pointer"
@@ -15,8 +12,7 @@
                    hx-target="#body"
                    hx-indicator="#body-loading-spinner"
                    hx-swap="morph:innerHTML"
-                   hx-push-url="true"
-                ></i>
+                   hx-push-url="true"></i>
                 <h5 class="m-0 ms-3">Edit Room</h5>
             </div>
             <div class="col p-0">
@@ -26,100 +22,105 @@
                             hx-post="{% room_url 'room:edit' %}"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
-                            hx-swap="morph:innerHTML">
-                        Save
-                    </button>
+                            hx-swap="morph:innerHTML">Save</button>
                 {% endif %}
             </div>
         </div>
-
         <ul class="list-group list-group-flush">
             <li class="list-group-item"></li>
-
             <li class="list-group-item py-4 px-2">
                 <div class="d-flex justify-content-between align-items-center">
                     <label for="name">{{ form.fields.name.label }}</label>
-                    <input type="text" class="form-control w-50" id="name" name="name"
-                           required value="{{ current_room.name }}" {% if current_room.is_closed %}disabled{% endif %}>
+                    <input type="text"
+                           class="form-control w-50"
+                           id="name"
+                           name="name"
+                           required
+                           value="{{ current_room.name }}"
+                           {% if current_room.is_closed %}disabled{% endif %}>
                 </div>
                 {% for error_message in form.errors.name.data %}
                     <small class="error" id="nameError">{{ error_message.message }}</small>
                 {% endfor %}
-
-                <br/>
-
+                <br />
                 <div class="d-flex justify-content-between align-items-center">
                     <label for="description">{{ form.fields.description.label }}</label>
-                    <input type="text" class="form-control w-50" id="description" name="description"
-                           value="{{ current_room.description }}" placeholder="-" maxlength="50"
+                    <input type="text"
+                           class="form-control w-50"
+                           id="description"
+                           name="description"
+                           value="{{ current_room.description }}"
+                           placeholder="-"
+                           maxlength="50"
                            {% if current_room.is_closed %}disabled{% endif %}>
                 </div>
                 {% for error_message in form.errors.description.data %}
                     <small class="error" id="descriptionError">{{ error_message.message }}</small>
                 {% endfor %}
-
-                <br/>
-
+                <br />
                 <div class="d-flex justify-content-between align-items-center">
                     <label for="preferred_currency">{{ form.fields.preferred_currency.label }}</label>
                     <select name="preferred_currency"
                             class="form-control form-select w-50"
                             id="preferred_currency"
                             required
-                            {% if current_room.is_closed %}disabled{% endif %}
-                    >
+                            {% if current_room.is_closed %}disabled{% endif %}>
                         {% for currency in all_currencies %}
                             <option {% if currency == current_room.preferred_currency %}selected{% endif %}
-                                    value="{{ currency.id }}">
-                                {{ currency }}
-                            </option>
+                                    value="{{ currency.id }}">{{ currency }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 {% for error_message in form.errors.preferred_currency.data %}
                     <small class="error" id="preferred_currencyError">{{ error_message.message }}</small>
                 {% endfor %}
-
                 <div class="form-group" hidden>
                     <label for="status">Status</label>
-                    <input id="status"
-                           type="number"
-                           name="status"
-                           class="form-control"
-                           required
-                           value={{ current_room.status }}
-                    />
+                    <input id="status" type="number" name="status" class="form-control" required value={{ current_room.status }} />
                 </div>
-
             </li>
-
             <li class="list-group-item"></li>
         </ul>
     </form>
-
     <form>
         {% csrf_token %}
-
         <div class="form-group" hidden>
             <label for="name">{{ form.fields.name.label }}</label>
-            <input type="text" class="form-control w-50" id="name" name="name" required value="{{ current_room.name }}">
+            <input type="text"
+                   class="form-control w-50"
+                   id="name"
+                   name="name"
+                   required
+                   value="{{ current_room.name }}">
         </div>
         <div class="form-group" hidden>
             <label for="description">{{ form.fields.description.label }}</label>
-            <input type="text" class="form-control w-50" id="description" name="description"
-                   value="{{ current_room.description }}" placeholder="-" maxlength="50">
+            <input type="text"
+                   class="form-control w-50"
+                   id="description"
+                   name="description"
+                   value="{{ current_room.description }}"
+                   placeholder="-"
+                   maxlength="50">
         </div>
         <div class="form-group" hidden>
             <label for="preferred_currency">{{ form.fields.preferred_currency.label }}</label>
-            <input id="preferred_currency" type="number" name="preferred_currency" class="form-control" required
-                   value="{{ current_room.preferred_currency.id }}"/>
+            <input id="preferred_currency"
+                   type="number"
+                   name="preferred_currency"
+                   class="form-control"
+                   required
+                   value="{{ current_room.preferred_currency.id }}" />
         </div>
-
         <div class="form-group" hidden>
             <label for="status">{{ form.fields.status.label }}</label>
-            <input id="status" type="number" name="status" class="form-control" required value="{{ other_status }}"/>
+            <input id="status"
+                   type="number"
+                   name="status"
+                   class="form-control"
+                   required
+                   value="{{ other_status }}" />
         </div>
-
         <div class="row gx-0 my-4 d-flex justify-content-center">
             <button type="button"
                     class="btn {% if current_room.is_open %}btn-danger{% elif current_room.is_closed %}btn-primary{% endif %} btn-sm w-50 {% if form.errors.status.data %}disabled{% endif %}"
@@ -134,12 +135,10 @@
                 {% endif %}
             </button>
         </div>
-
         <div class="row">
             {% for error_message in form.errors.status.data %}
                 <small class="error text-center" id="statusError">{{ error_message.message }}</small>
             {% endfor %}
         </div>
     </form>
-
 {% endblock %}

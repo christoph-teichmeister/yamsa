@@ -1,9 +1,7 @@
 {% extends "room/dashboard.html" %}
 {% load static %}
 {% load room_tags %}
-
 {% block tab_content %}
-
     <div class="row gx-0 align-items-center mt-3">
         <div class="col-7">
             <h5>People</h5>
@@ -11,53 +9,49 @@
         <div class="col-5 d-flex justify-content-end">
             <div class="dropdown" id="addPersonDropdown">
                 <button class="btn btn-primary btn-sm {% if current_room.is_closed %}disabled{% endif %} dropdown-toggle"
-                        id="dropdownToggleButton"
-                        type="button"
-                        {# I manually handle toggling visibility, because I think that all the re-rendering with HTMX breaks the process somehow #}
-                        {# data-bs-toggle="dropdown" #}
-                        aria-expanded="false">
+                    id="dropdownToggleButton"
+                    type="button"
+                    {# I manually handle toggling visibility, because I think that all the re-rendering with HTMX breaks the process somehow #}
+                    {# data-bs-toggle="dropdown" #}
+                    aria-expanded="false">
                     <i class="bi bi-person-plus-fill"></i>
                 </button>
-                <ul id="dropdownMenu" class="dropdown-menu" aria-labelledby="dropdownToggleButton">
-                    <li><a class="dropdown-item"
+                <ul id="dropdownMenu"
+                    class="dropdown-menu"
+                    aria-labelledby="dropdownToggleButton">
+                    <li>
+                        <a class="dropdown-item"
                            href="#"
                            hx-get="{% room_url 'room:userconnectiontoroom-create' %}"
                            hx-target="#body"
                            hx-indicator="#body-loading-spinner"
                            hx-swap="morph:innerHTML"
-                           hx-push-url="true"
-                        >
-                            Add existing user
-                        </a></li>
-
-                    <li><a class="dropdown-item"
+                           hx-push-url="true">Add existing user</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item"
                            href="#"
                            hx-get="{% room_url 'account:guest-create' %}"
                            hx-target="#body"
                            hx-indicator="#body-loading-spinner"
                            hx-swap="morph:innerHTML"
-                           hx-push-url="true"
-                        >
-                            Add guest
-                        </a></li>
+                           hx-push-url="true">Add guest</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
-
     {% if user_qs_for_room %}
         <div class="container overflow-hidden">
             <div class="row gx-0 gy-4 row-cols-1 row-cols-xl-6 mt-1 mb-3">
                 {# Include csrf_token form, so that the "x" in each users card has a csrf_token #}
                 {% csrf_token %}
-
                 {% for user in user_qs_for_room %}
                     {% include "shared_partials/user_card.html" with user=user %}
                 {% endfor %}
             </div>
         </div>
     {% endif %}
-
     <script>
         var ddToggle = document.getElementById("dropdownToggleButton")
         var ddMenu = document.getElementById("dropdownMenu")
@@ -77,5 +71,4 @@
             }
         });
     </script>
-
 {% endblock %}

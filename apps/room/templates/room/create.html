@@ -1,13 +1,10 @@
 {% extends "core/base.html" %}
 {% load static %}
-
 {% block content %}
     <h1>Create Room</h1>
-
     <div class="d-flex align-items-center account-login-register-container">
         <form action="{% url 'room:create' %}" method="post" class="flex-grow-1">
             {% csrf_token %}
-
             <div class="mb-3">
                 <label for="name" class="form-label">{{ form.fields.name.label }}</label>
                 <input type="text" class="form-control" id="name" name="name" required>
@@ -15,37 +12,33 @@
                     <small class="error" id="nameError">{{ error_message.message }}</small>
                 {% endfor %}
             </div>
-
             <div class="mb-3">
                 <label for="preferred_currency">Preferred Currency</label>
                 <select name="preferred_currency"
                         class="form-control form-select"
                         id="preferred_currency"
-                        required
-                >
+                        required>
                     {% for currency in all_currencies %}
-                        <option {% if forloop.first %}selected{% endif %}
-                                value="{{ currency.id }}">
-                            {{ currency.sign }}
-                        </option>
+                        <option {% if forloop.first %}selected{% endif %} value="{{ currency.id }}">{{ currency.sign }}</option>
                     {% endfor %}
                 </select>
             </div>
-
             <div class="mb-3">
                 <label for="description" class="form-label">{{ form.fields.description.label }}</label>
-                <textarea class="form-control" id="description" name="description" required rows="2" maxlength="50"
+                <textarea class="form-control"
+                          id="description"
+                          name="description"
+                          required
+                          rows="2"
+                          maxlength="50"
                           minlength="1"></textarea>
                 {% for error_message in form.errors.description.data %}
                     <small class="error" id="descriptionError">{{ error_message.message }}</small>
                 {% endfor %}
             </div>
-
             <div class="d-flex justify-content-center">
                 <button type="submit" class="btn btn-primary">Create</button>
             </div>
-
         </form>
     </div>
-
 {% endblock %}

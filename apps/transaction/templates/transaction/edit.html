@@ -1,42 +1,31 @@
 {% extends "room/dashboard.html" %}
 {% load static %}
 {% load room_tags %}
-
 {% block tab_content %}
-
     <form hx-post="{% room_url 'transaction:edit' pk=parent_transaction.id %}"
           hx-target="#body"
           hx-indicator="#body-loading-spinner"
           hx-swap="morph:innerHTML"
           hx-push-url="true">
         {% csrf_token %}
-
         <div class="row mt-4 mx-2 justify-content-center">
             <div class="row">
                 <div class="col-12 input-group align-items-center justify-content-space-evenly mb-3">
-
                     <div class="col-4">
                         <label class="visually-hidden" for="paid_by_select">Paid by</label>
                         <select name="paid_by"
                                 class="form-control form-select"
                                 id="paid_by_select"
-                                required
-                        >
+                                required>
                             {% for user in form.fields.paid_by.queryset %}
                                 <option {% if user.id == form.initial.paid_by %}selected{% endif %}
-                                        value="{{ user.id }}">
-                                    {{ user.name }}
-                                </option>
+                                        value="{{ user.id }}">{{ user.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-
                     <div class="col-5">
-                        <h5 class="mb-0 py-1 text-center">
-                            paid {{ parent_transaction.value }}
-                        </h5>
+                        <h5 class="mb-0 py-1 text-center">paid {{ parent_transaction.value }}</h5>
                     </div>
-
                     <div class="col">
                         {#<div class="col-6">#}
                         {#    Use the following, when we make the total value of a transaction editable#}
@@ -52,50 +41,40 @@
                         {#           value="{{ parent_transaction.value }}"#}
                         {#    />#}
                         {#</div>#}
-
                         <label class="visually-hidden" for="currency_select">Currency</label>
                         <select name="currency"
                                 class="form-control form-select"
                                 id="currency_select"
-                                required
-                        >
+                                required>
                             {% for currency in form.fields.currency.queryset %}
                                 <option {% if currency.id == form.initial.currency %}selected{% endif %}
-                                        value="{{ currency.id }}">
-                                    {{ currency.sign }}
-                                </option>
+                                        value="{{ currency.id }}">{{ currency.sign }}</option>
                             {% endfor %}
                         </select>
                     </div>
-
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-12 d-flex flex-column align-items-center justify-content-center">
                     <textarea class="form-control mb-0 py-1"
-                              aria-label="Description" id="description" name="description"
-                              rows="2" maxlength="50" minlength="1"
-                    >{{ parent_transaction.description }}</textarea>
-
-                    <div class="col-12 text-start form-text">
-                        Maximum 50 characters.
-                    </div>
+                              aria-label="Description"
+                              id="description"
+                              name="description"
+                              rows="2"
+                              maxlength="50"
+                              minlength="1">{{ parent_transaction.description }}</textarea>
+                    <div class="col-12 text-start form-text">Maximum 50 characters.</div>
                 </div>
             </div>
         </div>
-
         <ul class="list-group list-group-flush">
             <li class="list-group-item p-4"></li>
-
             {% for child_transaction in child_transaction_qs %}
                 <li class="list-group-item py-4 px-3">
                     <div class="row d-flex align-items-center justify-content-start">
-
                         <div class="col-1 ps-1 pe-0">
                             <i class="bi bi-caret-right"></i>
                         </div>
-
                         <div class="col-4 px-1">
                             <div class="row align-items-center justify-content-center">
                                 <div class="col-8 px-0">
@@ -108,35 +87,24 @@
                                            step="0.01"
                                            max="99999999"
                                            required
-                                           value="{{ child_transaction.value }}"
-                                    />
+                                           value="{{ child_transaction.value }}" />
                                 </div>
-                                <div class="col-1 ps-1 me-3">
-                                    {{ parent_transaction.currency.sign }}
-                                </div>
+                                <div class="col-1 ps-1 me-3">{{ parent_transaction.currency.sign }}</div>
                             </div>
                         </div>
-
-                        <div class="col ps-1 pe-3 d-flex justify-content-center">
-                            for
-                        </div>
-
+                        <div class="col ps-1 pe-3 d-flex justify-content-center">for</div>
                         <div class="col-4 px-1">
                             <label class="visually-hidden" for="paid_for_select">Paid by</label>
                             <select name="paid_for"
                                     class="form-control form-select"
                                     id="paid_for_select"
-                                    required
-                            >
+                                    required>
                                 {% for user in current_room.users %}
                                     <option {% if user == child_transaction.paid_for %}selected{% endif %}
-                                            value="{{ user.id }}">
-                                        {{ user.name }}
-                                    </option>
+                                            value="{{ user.id }}">{{ user.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
                         <div class="col-1 ps-1">
                             <i class="bi bi-trash"
                                hx-trigger="click"
@@ -145,10 +113,8 @@
                                hx-target="#body"
                                hx-indicator="#body-loading-spinner"
                                hx-swap="morph:innerHTML"
-                               hx-push-url="true"
-                            ></i>
+                               hx-push-url="true"></i>
                         </div>
-
                         <div class="form-group" hidden>
                             <label class="visually-hidden" for="child_transaction_id_input">Child Transaction ID</label>
                             <input id="child_transaction_id_input"
@@ -159,37 +125,32 @@
                                    step="0.01"
                                    max="99999999"
                                    required
-                                   value="{{ child_transaction.id }}"
-                            />
+                                   value="{{ child_transaction.id }}" />
                         </div>
-
                     </div>
                 </li>
             {% endfor %}
-
             <span id="add-child-transaction-container"></span>
-
             <li class="list-group-item p-4"></li>
-
             <li class="list-group-item p-2 d-flex justify-content-center"
                 hx-trigger="click"
                 hx-get="{% room_url 'transaction:child-transaction-create' %}"
                 hx-target="#add-child-transaction-container"
                 hx-swap="morph:outerHTML"
-                hx-push-url="false"
-            >
+                hx-push-url="false">
                 <i class="bi bi-plus-circle"></i>
             </li>
-
             <li class="list-group-item p-4"></li>
         </ul>
-
         <label class="visually-hidden" for="further_notes">Notes</label>
         <textarea class="form-control mb-5"
-                  aria-label="Notes" id="further_notes" name="further_notes"
-                  rows="3" maxlength="500" minlength="1" placeholder="Add extra notes here"
-        >{{ parent_transaction.further_notes|default:"" }}</textarea>
-
+                  aria-label="Notes"
+                  id="further_notes"
+                  name="further_notes"
+                  rows="3"
+                  maxlength="500"
+                  minlength="1"
+                  placeholder="Add extra notes here">{{ parent_transaction.further_notes|default:"" }}</textarea>
         <div class="text-center">
             <label class="visually-hidden" for="created_at_input">Created at</label>
             <input type="datetime-local"
@@ -197,17 +158,12 @@
                    name="created_at"
                    value="{{ parent_transaction.created_at|date:"Y-m-d" }}T{{ parent_transaction.created_at|time:"H:i" }}"
                    min="2018-04-04T00:00"
-                   max="2099-12-31T00:00"/>
+                   max="2099-12-31T00:00" />
         </div>
-
         <div class="row mt-4 mx-2">
             <div class="col">
-                <button type="submit" class="btn btn-primary float-end w-25">
-                    Save
-                </button>
+                <button type="submit" class="btn btn-primary float-end w-25">Save</button>
             </div>
         </div>
-
     </form>
-
 {% endblock %}

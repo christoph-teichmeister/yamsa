@@ -1,9 +1,7 @@
 {% load room_tags %}
-
 {% if debt.settled %}
     <i class="bi bi-piggy-bank-fill debt-list-debt-settled"></i>
 {% else %}
-
     {% if debt.debitor.name == request.user.name %}
         {% if debt.creditor.paypal_me_username %}
             <a class="text-reset"
@@ -16,13 +14,12 @@
            hx-target="#body"
            hx-indicator="#body-loading-spinner"
            hx-swap="morph:innerHTML"
-           hx-push-url="true"
-        ></i>
+           hx-push-url="true"></i>
     {% else %}
-        <i class="bi bi-piggy-bank cursor-pointer" style="opacity: 25%;"
+        <i class="bi bi-piggy-bank cursor-pointer"
+           style="opacity: 25%"
            data-bs-toggle="tooltip"
            data-bs-placement="top"
            data-bs-title="This transaction is not yours to settle!"></i>
     {% endif %}
-
 {% endif %}

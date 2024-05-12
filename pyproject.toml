@@ -1,3 +1,52 @@
+[tool.coverage.run]
+branch = true
+# do not test these things
+omit = [
+    "*/config/*",
+    "*/migrations/*",
+    "*/templates/*",
+    "*/tests/*",
+    "*/apps.py",
+    "*/__init__.py",
+    "*/scripts/*.py",
+    "*/management/commands/*.py",
+    "*.html",
+    "*.txt",
+    "*.json",
+    "*.env",
+    "*.sh",
+]
+
+[tool.coverage.report]
+precision = 2
+
+show_missing = true
+
+# Don’t report files that have no executable code (such as __init__.py files).
+skip_empty = true
+
+# Regexes for lines to exclude from consideration
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "if self\\.debug",
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+]
+
+ignore_errors = true
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+
+[tool.djlint]
+profile = "django"
+
 [tool.ruff]
 exclude = [
     ".bzr",
@@ -91,49 +140,3 @@ unfixable = []
 
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-[tool.coverage.run]
-branch = true
-# do not test these things
-omit = [
-    "*/config/*",
-    "*/migrations/*",
-    "*/templates/*",
-    "*/tests/*",
-    "*/apps.py",
-    "*/__init__.py",
-    "*/scripts/*.py",
-    "*/management/commands/*.py",
-    "*.html",
-    "*.txt",
-    "*.json",
-    "*.env",
-    "*.sh",
-]
-
-[tool.coverage.report]
-precision = 2
-
-show_missing = true
-
-# Don’t report files that have no executable code (such as __init__.py files).
-skip_empty = true
-
-# Regexes for lines to exclude from consideration
-exclude_also = [
-    # Don't complain about missing debug-only code:
-    "if self\\.debug",
-    # Don't complain if tests don't hit defensive assertion code:
-    "raise AssertionError",
-    "raise NotImplementedError",
-    # Don't complain if non-runnable code isn't run:
-    "if 0:",
-    "if __name__ == .__main__.:",
-    # Don't complain about abstract methods, they aren't run:
-    "@(abc\\.)?abstractmethod",
-]
-
-ignore_errors = true
-
-[tool.coverage.html]
-directory = "coverage_html_report"
