@@ -7,38 +7,26 @@
             <h5>People</h5>
         </div>
         <div class="col-5 d-flex justify-content-end">
-            <div class="dropdown" id="addPersonDropdown">
-                <button class="btn btn-primary btn-sm {% if current_room.is_closed %}disabled{% endif %} dropdown-toggle"
-                    id="dropdownToggleButton"
+            <button class="btn btn-primary btn-sm me-2 d-flex align-items-center {% if current_room.is_closed %}disabled{% endif %}"
                     type="button"
-                    {# I manually handle toggling visibility, because I think that all the re-rendering with HTMX breaks the process somehow #}
-                    {# data-bs-toggle="dropdown" #}
-                    aria-expanded="false">
-                    <i class="bi bi-person-plus-fill"></i>
-                </button>
-                <ul id="dropdownMenu"
-                    class="dropdown-menu"
-                    aria-labelledby="dropdownToggleButton">
-                    <li>
-                        <a class="dropdown-item"
-                           href="#"
-                           hx-get="{% room_url 'room:userconnectiontoroom-create' %}"
-                           hx-target="#body"
-                           hx-indicator="#body-loading-spinner"
-                           hx-swap="morph:innerHTML"
-                           hx-push-url="true">Add existing user</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item"
-                           href="#"
-                           hx-get="{% room_url 'account:guest-create' %}"
-                           hx-target="#body"
-                           hx-indicator="#body-loading-spinner"
-                           hx-swap="morph:innerHTML"
-                           hx-push-url="true">Add guest</a>
-                    </li>
-                </ul>
-            </div>
+                    hx-get="{% room_url 'room:userconnectiontoroom-create' %}"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true">
+                <i class="bi bi-person-plus-fill me-2"></i>
+                Add existing user
+            </button>
+            <button class="btn btn-primary btn-sm d-flex align-items-center {% if current_room.is_closed %}disabled{% endif %}"
+                    type="button"
+                    hx-get="{% room_url 'account:guest-create' %}"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true">
+                <i class="bi bi-person-plus me-2"></i>
+                Add guest
+            </button>
         </div>
     </div>
     {% if user_qs_for_room %}
@@ -52,23 +40,4 @@
             </div>
         </div>
     {% endif %}
-    <script>
-        var ddToggle = document.getElementById("dropdownToggleButton")
-        var ddMenu = document.getElementById("dropdownMenu")
-
-        ddToggle.addEventListener("click", (e) => {
-            e.preventDefault();
-
-            var bsToggler = new bootstrap.Dropdown(ddToggle)
-            var showing = ddMenu.classList.contains("show")
-
-            if (showing) {
-                ddMenu.classList.remove("show")
-                bsToggler.hide()
-            } else {
-                ddMenu.classList.add("show")
-                bsToggler.show()
-            }
-        });
-    </script>
 {% endblock %}
