@@ -32,7 +32,6 @@ class Command(BaseCommand):
             email="admin@yamsa.local",
             is_superuser=True,
             is_staff=True,
-            is_active=True,
             is_guest=False,
         )
 
@@ -48,7 +47,6 @@ class Command(BaseCommand):
                 email=f"registered_user_{i}@yamsa.local",
                 is_superuser=False,
                 is_staff=False,
-                is_active=True,
                 is_guest=False,
             )
 
@@ -63,7 +61,6 @@ class Command(BaseCommand):
                 password=make_password(f"guest_{i}"),
                 is_superuser=False,
                 is_staff=False,
-                is_active=True,
                 is_guest=True,
             )
 

@@ -73,6 +73,10 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+    EMAIL_FILE_PATH = f"{BASE_DIR}/tmp/emails"
+
 
 IS_TESTING = False
 if "test" in sys.argv or "test_coverage" in sys.argv:

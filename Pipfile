@@ -15,7 +15,7 @@ freezegun = "==1.4.*"
 gunicorn = "==21.2.*"
 model-bakery = "==1.17.*"
 psycopg2-binary = "==2.9.*"
-pywebpush = "==1.14.*"
+pywebpush = "==2.0.*"
 sentry-sdk = {extras = ["django"], version = "==1.40.*"}
 whitenoise = "==6.6.*"
 

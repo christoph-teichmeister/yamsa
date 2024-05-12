@@ -2,15 +2,15 @@
 <div class="col col-xl-6 p-1">
     <div class="card h-100 {% if not user.is_guest %}cursor-pointer{% endif %}"
          style="max-width: 540px;min-height: 162px;"
-            {% if not user.is_guest %}
-         hx-trigger="click"
-         hx-get="{% url 'account:detail' pk=user.id %}"
-         hx-target="#body"
-         hx-indicator="#body-loading-spinner"
-         hx-swap="morph:innerHTML"
-         hx-push-url="true"
-         hx-sync="#remove-user-icon:abort" {# TODO CT: Still, sometimes the Toast on error is not displayed #}
-            {% endif %}
+         {% if not user.is_guest %}
+             hx-trigger="click"
+             hx-get="{% url 'account:detail' pk=user.id %}"
+             hx-target="#body"
+             hx-indicator="#body-loading-spinner"
+             hx-swap="morph:innerHTML"
+             hx-push-url="true"
+             hx-sync="#remove-user-icon:abort" {# TODO CT: Still, sometimes the Toast on error is not displayed #}
+         {% endif %}
     >
         <div class="row g-0 h-100">
 
@@ -63,7 +63,7 @@
                    hx-include="[name='csrfmiddlewaretoken']"
                    hx-target="#body"
                    hx-indicator="#body-loading-spinner"
-                   hx-swap="morph:innerHTML"
+                   hx-swap="innerHTML"
                    hx-confirm="{% if user.id == request.user.id %}Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!{% else %}Are you sure you wish to remove this user from this room?{% endif %}"
                 ></i>
             </div>
