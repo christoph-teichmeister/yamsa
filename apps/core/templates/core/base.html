@@ -3,94 +3,94 @@
 
 <!doctype html>
 <html lang="en" data-bs-theme="dark">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>
-        {% if core.IS_LOCALHOST %}
-            ⚒️
-        {% endif %}
-        {% block title %}
-            yamsa
-        {% endblock %}
-    </title>
-    <link rel="icon" href="{% static 'images/favicon.ico' %}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <title>
+            {% if core.IS_LOCALHOST %}
+                ⚒️
+            {% endif %}
+            {% block title %}
+                yamsa
+            {% endblock %}
+        </title>
+        <link rel="icon" href="{% static 'images/favicon.ico' %}">
 
-    {% load_pwa_meta_data %}
+        {% load_pwa_meta_data %}
 
-    {% load_serviceworker %}
+        {% load_serviceworker %}
 
-    {% include "core/partials/_head_links_and_scripts.html" %}
+        {% include "core/partials/_head_links_and_scripts.html" %}
 
     <!-- Disable default hx-indicator styling -->
-    <meta name="htmx-config" content='{"includeIndicatorStyles": false}'>
-</head>
-<body hx-ext="idiomorph" id="body">
+        <meta name="htmx-config" content='{"includeIndicatorStyles": false}'>
+    </head>
+    <body hx-ext="idiomorph" id="body">
 
-{% if core.IS_LOCALHOST %}
-    <div class="w-100 d-flex align-items-center justify-content-center"
-         style="opacity: 20%; z-index:3000; height: 3.2em; position: fixed; top: 0; background-color: darkred">
-        <h1 class="mb-0">
-            💀 Deadzone 💀
-        </h1>
-    </div>
-{% endif %}
+        {% if core.IS_LOCALHOST %}
+            <div class="w-100 d-flex align-items-center justify-content-center"
+                 style="opacity: 20%; z-index:3000; height: 3.2em; position: fixed; top: 0; background-color: darkred">
+                <h1 class="mb-0">
+                    💀 Deadzone 💀
+                </h1>
+            </div>
+        {% endif %}
 
-{% include "shared_partials/toast.html" %}
+        {% include "shared_partials/toast.html" %}
 
-{% include "shared_partials/loading_spinner.html" with spinner_id="body-loading-spinner" %}
+        {% include "shared_partials/loading_spinner.html" with spinner_id="body-loading-spinner" %}
 
-{% if not is_in_maintenance and not called_by_offline_view and not request.user.is_anonymous %}
-    {% include "_side_menu.html" %}
-{% endif %}
+        {% if not is_in_maintenance and not called_by_offline_view and not request.user.is_anonymous %}
+            {% include "_side_menu.html" %}
+        {% endif %}
 
-<div class="container-fluid my-5 py-5 px-2" id="base-content">
-    {% block content %}
-    {% endblock %}
-</div>
+        <div class="container-fluid my-5 py-5 px-2" id="base-content">
+            {% block content %}
+            {% endblock %}
+        </div>
 
-{% if dashboard_tabs and not request.user.is_anonymous %}
-    {% include "room/partials/_dashboard_nav.html" with dashboard_tabs=dashboard_tabs %}
-{% endif %}
+        {% if dashboard_tabs and not request.user.is_anonymous %}
+            {% include "room/partials/_dashboard_nav.html" with dashboard_tabs=dashboard_tabs %}
+        {% endif %}
 
 <!-- jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js" defer></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js" defer></script>
 
 <!-- Bootstrap CDN -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+                crossorigin="anonymous"></script>
 
 <!-- HTMX -->
-<script src="https://unpkg.com/htmx.org@1.8.5"
-        integrity="sha384-7aHh9lqPYGYZ7sTHvzP1t3BAfLhYSTy9ArHdP3Xsr9/3TlGurYgcPBoFmXX2TX/w"
-        crossorigin="anonymous" defer></script>
+        <script src="https://unpkg.com/htmx.org@1.8.5"
+                integrity="sha384-7aHh9lqPYGYZ7sTHvzP1t3BAfLhYSTy9ArHdP3Xsr9/3TlGurYgcPBoFmXX2TX/w"
+                crossorigin="anonymous" defer></script>
 
 <!-- Idomorph for cool HTMX morph swapping -->
-<script src="https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js" defer></script>
+        <script src="https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js" defer></script>
 
 <!-- Activate various Bootstrap components -->
-<script type="text/javascript">
+        <script type="text/javascript">
   {# TODO CT: I think all of this is really unnecessary #}
 
   // Enable all Tooltips
-  var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-  var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+            var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
   // Enable Toasts
-  var toastElList = document.querySelectorAll('.toast')
-  var toastList = [...toastElList].map(toastEl => new bootstrap.Toast(toastEl))
+            var toastElList = document.querySelectorAll('.toast')
+            var toastList = [...toastElList].map(toastEl => new bootstrap.Toast(toastEl))
 
   // Enable Popovers
-  var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-  var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+            var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+            var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
   {# // Enable Dropdowns #}
   {# var dropdownElementList = document.querySelectorAll('.dropdown-toggle')#}
   {# var dropdownList = [...dropdownElementList].map(dropdownToggleEl => new bootstrap.Dropdown(dropdownToggleEl))#}
-</script>
+        </script>
 
-</body>
+    </body>
 </html>
 
 

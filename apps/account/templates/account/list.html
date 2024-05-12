@@ -26,9 +26,9 @@
                            hx-indicator="#body-loading-spinner"
                            hx-swap="morph:innerHTML"
                            hx-push-url="true"
-                    >
-                        Add existing user
-                    </a></li>
+                        >
+                            Add existing user
+                        </a></li>
 
                     <li><a class="dropdown-item"
                            href="#"
@@ -37,9 +37,9 @@
                            hx-indicator="#body-loading-spinner"
                            hx-swap="morph:innerHTML"
                            hx-push-url="true"
-                    >
-                        Add guest
-                    </a></li>
+                        >
+                            Add guest
+                        </a></li>
                 </ul>
             </div>
         </div>
@@ -59,23 +59,23 @@
     {% endif %}
 
     <script>
-      var ddToggle = document.getElementById("dropdownToggleButton")
-      var ddMenu = document.getElementById("dropdownMenu")
+        var ddToggle = document.getElementById("dropdownToggleButton")
+        var ddMenu = document.getElementById("dropdownMenu")
 
-      ddToggle.addEventListener("click", (e) => {
-        e.preventDefault();
+        ddToggle.addEventListener("click", (e) => {
+            e.preventDefault();
 
-        var bsToggler = new bootstrap.Dropdown(ddToggle)
-        var showing = ddMenu.classList.contains("show")
+            var bsToggler = new bootstrap.Dropdown(ddToggle)
+            var showing = ddMenu.classList.contains("show")
 
-        if (showing) {
-          ddMenu.classList.remove("show")
-          bsToggler.hide()
-        } else {
-          ddMenu.classList.add("show")
-          bsToggler.show()
-        }
-      });
+            if (showing) {
+                ddMenu.classList.remove("show")
+                bsToggler.hide()
+            } else {
+                ddMenu.classList.add("show")
+                bsToggler.show()
+            }
+        });
     </script>
 
 {% endblock %}
