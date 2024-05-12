@@ -17,7 +17,12 @@ class GuestSendInvitationEmailFormTestCase(BaseTestSetUp):
         form = self.form_class(data=data)
         self.assertTrue(form.is_valid())
 
-        self.assertTrue(UserConnectionToRoom.objects.filter(user=self.user, room=new_room).exists())
+        created_userconnectiontoroom = form.save()
+        self.assertIsNotNone(created_userconnectiontoroom)
+
+        new_room.refresh_from_db()
+
+        self.assertTrue(new_room.users.filter(email=self.user.email).exists())
 
     def test_clean_email_regular(self):
         new_room = baker.make_recipe("apps.room.tests.room")
