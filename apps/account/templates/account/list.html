@@ -13,7 +13,8 @@
                 <button class="btn btn-primary btn-sm {% if current_room.is_closed %}disabled{% endif %} dropdown-toggle"
                         id="dropdownToggleButton"
                         type="button"
-                        data-bs-toggle="dropdown"
+                        {# I manually handle toggling visibility, because I think that all the re-rendering with HTMX breaks the process somehow #}
+                        {# data-bs-toggle="dropdown" #}
                         aria-expanded="false">
                     <i class="bi bi-person-plus-fill"></i>
                 </button>
@@ -58,23 +59,20 @@
     {% endif %}
 
     <script>
-      {# TODO CT: This still does not work... #}
       var ddToggle = document.getElementById("dropdownToggleButton")
       var ddMenu = document.getElementById("dropdownMenu")
 
       ddToggle.addEventListener("click", (e) => {
-        console.log("clicked")
         e.preventDefault();
 
         var bsToggler = new bootstrap.Dropdown(ddToggle)
+        var showing = ddMenu.classList.contains("show")
 
-        // idk why, but isShown returns true when hiding and false when shown
-        var showing = !bsToggler._isShown()
         if (showing) {
-          console.log("hiding")
+          ddMenu.classList.remove("show")
           bsToggler.hide()
         } else {
-          console.log("showing")
+          ddMenu.classList.add("show")
           bsToggler.show()
         }
       });
