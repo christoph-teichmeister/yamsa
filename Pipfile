@@ -22,7 +22,6 @@ whitenoise = "==6.6.*"
 [dev-packages]
 coverage = "*"
 django-upgrade = "*"
-djhtml = "*"
 djlint = "*"
 ruff = "*"
 
