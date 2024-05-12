@@ -1,9 +1,7 @@
 {% extends "room/dashboard.html" %}
 {% load static %}
 {% load room_tags %}
-
 {% block tab_content %}
-
     <div class="row gx-0 py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
         <div class="col">
             <h5 class="m-0">Room</h5>
@@ -14,40 +12,29 @@
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
-                    hx-push-url="true"
-            >
-                Edit
-            </button>
+                    hx-push-url="true">Edit</button>
         </div>
     </div>
-
     <ul class="list-group list-group-flush">
         <li class="list-group-item"></li>
-
         <li class="list-group-item py-4 px-2">
             <div class="d-flex py-1 justify-content-between align-items-center">
                 Name:
                 <span class="w-50">{{ room.name }}</span>
             </div>
-
-            <br/>
-
+            <br />
             <div class="d-flex py-1 justify-content-between align-items-center">
                 Description:
                 <span class="w-50">{{ room.description }}</span>
             </div>
-
-            <br/>
-
+            <br />
             <div class="d-flex py-1 justify-content-between align-items-center">
                 Preferred Currency:
                 <span class="w-50">{{ room.preferred_currency }}</span>
             </div>
         </li>
-
         <li class="list-group-item"></li>
     </ul>
-
     <div class="row gx-0 my-4">
         <p class="text-center text-muted">
             {% if current_room.is_open %}
@@ -57,5 +44,4 @@
             {% endif %}
         </p>
     </div>
-
 {% endblock %}

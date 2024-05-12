@@ -1,9 +1,7 @@
 {% extends "room/dashboard.html" %}
 {% load static %}
 {% load room_tags %}
-
 {% block tab_content %}
-
     <div class="row mt-4 mx-2 justify-content-center">
         <div class="col-1 d-flex align-items-center justify-content-end">
             <i class="bi bi-arrow-left-circle fs-2 cursor-pointer"
@@ -14,53 +12,32 @@
                hx-swap="innerHTML"
                hx-push-url="true"></i>
         </div>
-
         <div class="col-9">
             <div class="row">
                 <div class="col-12 d-flex align-items-center justify-content-center">
                     <h5 class="mb-0 py-1 text-center">
                         {% autoescape off %}
-                            {% parse_user_text parent_transaction.paid_by.name True %}{% endautoescape %}
+                            {% parse_user_text parent_transaction.paid_by.name True %}
+                        {% endautoescape %}
                         paid
                         <strong>{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</strong>
                     </h5>
                 </div>
                 <div class="col-12 d-flex align-items-center justify-content-center">
-                    <p class="text-body-secondary mb-0 py-1 text-center text-break fst-italic">
-                        "{{ parent_transaction.description }}"
-                    </p>
+                    <p class="text-body-secondary mb-0 py-1 text-center text-break fst-italic">"{{ parent_transaction.description }}"</p>
                 </div>
             </div>
         </div>
-
         <div class="col-1 d-flex align-items-center justify-content-start">
             <i class="bi bi-pencil-square fs-2 {% if current_room.is_closed %}text-muted{% else %}cursor-pointer{% endif %}"
-               {% if current_room.is_open %}
-                   hx-trigger="click"
-                   hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}"
-                   hx-target="#body"
-                   hx-indicator="#body-loading-spinner"
-                   hx-swap="morph:innerHTML"
-                   hx-push-url="true"
-               {% endif %}
-            ></i>
+               {% if current_room.is_open %} hx-trigger="click" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}></i>
         </div>
     </div>
-
     <ul class="list-group list-group-flush">
         <li class="list-group-item p-4"></li>
-
         {% for child_transaction in child_transactions %}
             <li class="list-group-item p-4 {% if current_room.is_open %}cursor-pointer{% endif %}"
-                {% if current_room.is_open %}
-                    hx-trigger="click"
-                    hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}"
-                    hx-target="#body"
-                    hx-indicator="#body-loading-spinner"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true"
-                {% endif %}
-            >
+                {% if current_room.is_open %} hx-trigger="click" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
                 <i class="bi bi-caret-right"></i>
                 {{ child_transaction.value }}{{ parent_transaction.currency.sign }} for
                 {% autoescape off %}
@@ -68,18 +45,10 @@
                 {% endautoescape %}
             </li>
         {% endfor %}
-
         <li class="list-group-item p-4"></li>
     </ul>
-
     {% if parent_transaction.further_notes %}
-        <p class="text-body-secondary text-center text-break fst-italic">
-            "{{ parent_transaction.further_notes }}"
-        </p>
+        <p class="text-body-secondary text-center text-break fst-italic">"{{ parent_transaction.further_notes }}"</p>
     {% endif %}
-
-    <p class="text-body-secondary text-center">
-        {{ parent_transaction.created_at|date:'G:i // d.m.Y' }}
-    </p>
-
+    <p class="text-body-secondary text-center">{{ parent_transaction.created_at|date:'G:i // d.m.Y' }}</p>
 {% endblock %}

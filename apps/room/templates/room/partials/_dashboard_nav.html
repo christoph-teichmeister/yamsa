@@ -1,7 +1,5 @@
 {% load room_tags %}
-
 <nav class="navbar fixed-bottom z-0 pb-4">
-
     <div class="container-fluid">
         <div class="navbar-nav w-100 d-flex flex-row justify-content-around">
             {% for tab in dashboard_tabs %}
@@ -16,12 +14,10 @@
                    hx-indicator="#body-loading-spinner"
                    hx-target="#body"
                    hx-swap="morph:innerHTML"
-                   hx-push-url="true"
-                >
+                   hx-push-url="true">
                     <i class="{{ tab.icon_class }}"></i>
                 </a>
             {% endfor %}
         </div>
     </div>
-
 </nav>

@@ -1,18 +1,13 @@
 {% extends "core/base.html" %}
 {% load static %}
 {% load room_tags %}
-
 {% block title %}yamsa | {{ current_room.name }}{% endblock %}
-
 {% block content %}
     {% if request.user.is_authenticated %}
-        {% block tab_content %}
-        {% endblock %}
-
+        {% block tab_content %}{% endblock %}
     {% else %}
         {% include "room/partials/_detail_who_are_you.html" %}
     {% endif %}
-
     {#    <script type="module">#}
     {#      // TODO CT: Joa keine Ahnung, fix this I guess#}
     {#      const triggerTabList = document.querySelectorAll('#roomTab a')#}

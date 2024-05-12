@@ -1,8 +1,6 @@
 <h2 class="mb-5">{{ current_room.name }}</h2>
-
 <form action="{% url "account:guest-login" %}" method="post">
     {% csrf_token %}
-
     <div class="mb-3 form-group">
         <div class="row gx-0 px-2 my-2">
             <div class="col">
@@ -14,29 +12,21 @@
                 <small class="cursor-pointer"
                        data-bs-toggle="popover"
                        data-bs-placement="top"
-                       data-bs-content="Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account try logging in."
-                >
+                       data-bs-content="Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account try logging in.">
                     Not seeing your name <i class="bi bi-question-circle"></i>
                 </small>
             </div>
         </div>
-
         <select id="user_id"
                 name="user_id"
                 class="form-control form-select mb-3"
                 id="userSelect"
-                required
-        >
+                required>
             {% for room_user in current_room.users %}
-                {% if room_user.is_guest %}
-                    <option value="{{ room_user.id }}">
-                        {{ room_user.name }}
-                    </option>
-                {% endif %}
+                {% if room_user.is_guest %}<option value="{{ room_user.id }}">{{ room_user.name }}</option>{% endif %}
             {% endfor %}
         </select>
     </div>
-
     <div class="form-group" hidden>
         <label for="room_slug" class="form-label">Room</label>
         <input id="room_slug"
@@ -44,10 +34,8 @@
                type="text"
                class="form-control"
                required
-               value="{{ current_room.slug }}"
-        />
+               value="{{ current_room.slug }}" />
     </div>
-
     <div class="d-flex justify-content-center">
         <button type="submit" class="btn btn-primary">That's me!</button>
     </div>

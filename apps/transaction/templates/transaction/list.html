@@ -1,17 +1,11 @@
 {% extends "room/dashboard.html" %}
 {% load static %}
 {% load room_tags %}
-
 {% block tab_content %}
-
     <div class="row gx-0 align-items-center mt-3">
         <div class="col-7">
             <h5>Transactions made</h5>
-            {% if parent_transactions %}
-                <small>
-                    Click on a transaction to see it in full detail.
-                </small>
-            {% endif %}
+            {% if parent_transactions %}<small>Click on a transaction to see it in full detail.</small>{% endif %}
         </div>
         <div class="col-5 d-flex justify-content-end">
             <button type="button"
@@ -20,15 +14,13 @@
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
-                    hx-push-url="true"
-            >
-                Add transaction
-            </button>
+                    hx-push-url="true">Add transaction</button>
         </div>
     </div>
-
     {% if parent_transactions %}
-        <ul id="transaction:list" class="list-group list-group-flush mb-3" style="position:relative">
+        <ul id="transaction:list"
+            class="list-group list-group-flush mb-3"
+            style="position:relative">
             {% for parent_transaction in parent_transactions %}
                 <li id="transaction-{{ parent_transaction.id }}"
                     class="list-group-item pb-4 pt-4 cursor-pointer"
@@ -37,15 +29,14 @@
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
-                    hx-push-url="true"
-                >
+                    hx-push-url="true">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">
                             {% autoescape off %}
-                                {% parse_user_text parent_transaction.paid_by.name True %}{% endautoescape %}
+                                {% parse_user_text parent_transaction.paid_by.name True %}
+                            {% endautoescape %}
                             paid
-                            <strong>
-                                {{ parent_transaction.total_child_value }}{{ parent_transaction.currency.sign }}</strong>
+                            <strong>{{ parent_transaction.total_child_value }}{{ parent_transaction.currency.sign }}</strong>
                         </h5>
                         <small>{{ parent_transaction.created_at|date:'d.m.Y' }}</small>
                     </div>
@@ -54,7 +45,6 @@
             {% endfor %}
         </ul>
     {% endif %}
-
     <!-- Observer to scroll to correct element when anchor tags are in url -->
     <script type="text/javascript">
       // Callback function to execute when mutations are observed
@@ -88,5 +78,4 @@
       // Start observing the target node for configured mutations
         observer.observe(document.getElementById("body"), {childList: true});
     </script>
-
 {% endblock %}

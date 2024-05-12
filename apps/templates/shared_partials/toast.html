@@ -3,21 +3,19 @@
          id="toast-id"
          role="alert"
          aria-live="assertive"
-         aria-atomic="true"
-    >
-        <div id="toast-type-div" class="d-flex align-items-center rounded-3 {{ toast_type }}">
+         aria-atomic="true">
+        <div id="toast-type-div"
+             class="d-flex align-items-center rounded-3 {{ toast_type }}">
             <div class="toast-body w-100 d-flex justify-content-between">
                 <span id="toast-message-span"></span>
                 <button type="button"
                         class="btn-close btn-close-white me-2 m-auto"
                         data-bs-dismiss="toast"
-                        aria-label="Close"
-                ></button>
+                        aria-label="Close"></button>
             </div>
         </div>
     </div>
 </div>
-
 <!-- Toast handler -->
 <script type="module">
     var toastElement = document.getElementById('toast-id')

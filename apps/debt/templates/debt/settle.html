@@ -1,41 +1,28 @@
 {% extends "room/dashboard.html" %}
 {% load static %}
 {% load room_tags %}
-
 {% block tab_content %}
-
     <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
         <div class="col">
-            <h5>
-                Your debt to {{ debt.creditor.name }}
-            </h5>
+            <h5>Your debt to {{ debt.creditor.name }}</h5>
             <small>
                 Are you sure that you have settled your debt ({{ debt.value }}{{ debt.currency.sign }})
                 to {{ debt.creditor.name }}?
             </small>
         </div>
     </div>
-
     <form hx-post="{% room_url 'debt:settle' pk=debt.id %}"
           hx-target="#body"
           hx-indicator="#body-loading-spinner"
           hx-swap="morph:innerHTML"
           hx-push-url="true">
         {% csrf_token %}
-
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
                 <div class="form-group" hidden>
                     <label for="debt_id">Debt ID</label>
-                    <input id="debt_id"
-                           type="number"
-                           name="debt_id"
-                           class="form-control"
-                           required
-                           value={{ debt.id }}
-                    />
+                    <input id="debt_id" type="number" name="debt_id" class="form-control" required value={{ debt.id }} />
                 </div>
-
                 <div class="form-group" hidden>
                     <label for="settled" class="form-label">Settled?</label>
                     <input id="settled"
@@ -43,21 +30,16 @@
                            type="checkbox"
                            checked
                            class="form-control"
-                           required
-                    />
+                           required />
                 </div>
             </li>
         </ul>
-
         <div class="row d-flex justify-content-end me-2">
             {% if debt.creditor.paypal_me_username %}
                 <div class="col-9">
-                    <a href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/
-                             {{ debt.value }}{{ debt.currency.code }}"
+                    <a href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/ {{ debt.value }}{{ debt.currency.code }}"
                        target="_blank">
-                        <button type="button" class="btn btn-secondary w-100">
-                            No, take me to their paypal
-                        </button>
+                        <button type="button" class="btn btn-secondary w-100">No, take me to their paypal</button>
                     </a>
                 </div>
             {% else %}
@@ -69,10 +51,6 @@
                 <button type="submit" class="btn btn-primary w-100">Yes</button>
             </div>
         </div>
-
-        <div class="modal-footer">
-
-        </div>
+        <div class="modal-footer"></div>
     </form>
-
 {% endblock %}

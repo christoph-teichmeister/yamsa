@@ -1,33 +1,25 @@
 {% extends "room/dashboard.html" %}
 {% load static %}
 {% load room_tags %}
-
 {% block tab_content %}
-
     <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
         <div class="col">
-            <h5 class="m-0">
-                Add a guest for "{{ current_room.name }}"
-            </h5>
+            <h5 class="m-0">Add a guest for "{{ current_room.name }}"</h5>
         </div>
     </div>
-
     <form hx-post="{% room_url 'account:guest-create' %}"
           hx-target="#body"
           hx-indicator="#body-loading-spinner"
           hx-swap="morph:innerHTML"
           hx-push-url="true">
         {% csrf_token %}
-
         <ul class="list-group list-group-flush">
             <li class="list-group-item"></li>
-
             <li class="list-group-item py-4 px-2">
                 <div class="mb-3 form-group">
                     <label for="name">Their name</label>
-                    <input id="name" name="name" type="text" class="form-control" required/>
+                    <input id="name" name="name" type="text" class="form-control" required />
                 </div>
-
                 <div class="form-group" hidden>
                     <label for="room_slug" class="form-label">Room Slug</label>
                     <input id="room_slug"
@@ -35,20 +27,13 @@
                            type="text"
                            class="form-control"
                            required
-                           value="{{ current_room.slug }}"
-                    />
+                           value="{{ current_room.slug }}" />
                 </div>
             </li>
-
             <li class="list-group-item"></li>
         </ul>
-
         <div class="row d-flex justify-content-end me-2">
-            <button type="submit" class="btn btn-primary w-50">
-                Add guest
-            </button>
+            <button type="submit" class="btn btn-primary w-50">Add guest</button>
         </div>
-
     </form>
-
 {% endblock %}

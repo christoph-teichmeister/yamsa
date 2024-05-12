@@ -1,41 +1,44 @@
 {% extends "core/base.html" %}
 {% load static %}
-
 {% block content %}
     {% if user.is_guest %}
         <div class="text-center">
             <p>- You are a guest -</p>
-
             <p>Thank you for using yamsa, {{ user.name }}!</p>
-
             <small>Not you? <a href="{% url 'account:logout' %}">Click here!</a></small>
-
             <div class="fixed-bottom z-0 mb-3">
-                <p>Maybe consider <a href="{% url 'account:register' %}">registering</a>? :)</p>
-
-                <p>Already have an account? <a href="{% url 'account:login' %}">Login here!</a></p>
+                <p>
+                    Maybe consider <a href="{% url 'account:register' %}">registering</a>? :)
+                </p>
+                <p>
+                    Already have an account? <a href="{% url 'account:login' %}">Login here!</a>
+                </p>
             </div>
-
         </div>
     {% else %}
-
         {% if request.user.is_superuser and user.is_superuser %}
             <div id="superuser-admin-link" class="row float-end me-2">
                 <div class="col">
-                    <a href="{{ core.PROJECT_BASE_URL }}/{{ core.DJANGO_ADMIN_SUB_URL }}/login" target="_blank">
+                    <a href="{{ core.PROJECT_BASE_URL }}/{{ core.DJANGO_ADMIN_SUB_URL }}/login"
+                       target="_blank">
                         <i class="bi bi-terminal"></i>
                     </a>
                 </div>
             </div>
-
-            <br/><br/><br/>
+            <br />
+            <br />
+            <br />
         {% endif %}
-
         <div class="row gx-0 d-flex align-content-center justify-content-center">
             <div class="row py-1 d-flex justify-content-between align-items-center">
                 <div class="col">
                     <h5 class="m-0">
-                        {% if request.user.id != user.id %}Their{% else %}Your{% endif %} data:
+                        {% if request.user.id != user.id %}
+                            Their
+                        {% else %}
+                            Your
+                        {% endif %}
+                        data:
                     </h5>
                 </div>
                 {% if request.user.id == user.id %}
@@ -45,40 +48,23 @@
                                 hx-target="#body"
                                 hx-indicator="#body-loading-spinner"
                                 hx-swap="morph:innerHTML"
-                                hx-push-url="true"
-                        >
-                            Edit
-                        </button>
+                                hx-push-url="true">Edit</button>
                     </div>
                 {% endif %}
             </div>
-
             <div class="row">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item"></li>
-
                     <li class="list-group-item py-4 px-2">
-                        <strong>
-                            Name:
-                        </strong>
-                        <span class="float-end">
-                            {{ user.name }}
-                        </span>
+                        <strong>Name:</strong>
+                        <span class="float-end">{{ user.name }}</span>
                     </li>
-
                     <li class="list-group-item py-4 px-2">
-                        <strong>
-                            Email:
-                        </strong>
-                        <span class="float-end text-break">
-                            {{ user.email }}
-                        </span>
+                        <strong>Email:</strong>
+                        <span class="float-end text-break">{{ user.email }}</span>
                     </li>
-
                     <li class="list-group-item py-4 px-2">
-                        <strong>
-                            PayPal.me Username:
-                        </strong>
+                        <strong>PayPal.me Username:</strong>
                         <span class="float-end">
                             {% if user.paypal_me_username %}
                                 @{{ user.paypal_me_username }}
@@ -87,24 +73,22 @@
                             {% endif %}
                         </span>
                     </li>
-
                     {% if request.user == user %}
                         <li class="list-group-item py-4 px-2">
                             <label for="wants_to_receive_webpush_notifications" class="form-check-label">
                                 <strong>Receive push notifications:</strong>
                             </label>
-                            <input type="checkbox" class="form-check-input ms-2"
+                            <input type="checkbox"
+                                   class="form-check-input ms-2"
                                    id="wants_to_receive_webpush_notifications"
                                    name="wants_to_receive_webpush_notifications"
                                    {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}
                                    disabled>
                         </li>
                     {% endif %}
-
                     <li class="list-group-item"></li>
                 </ul>
             </div>
         </div>
-
     {% endif %}
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends "core/base.html" %}
-
 {% block content %}
     {% if request.user.is_authenticated %}
         {% if highlighted_news %}
@@ -7,7 +6,6 @@
                 {% include "shared_partials/news_card.html" with news=highlighted_news %}
             </ul>
         {% endif %}
-
         {% if news %}
             <hr style="margin-bottom: 0">
             <ul class="list-group list-group-flush">
@@ -17,5 +15,4 @@
             </ul>
         {% endif %}
     {% endif %}
-
 {% endblock %}

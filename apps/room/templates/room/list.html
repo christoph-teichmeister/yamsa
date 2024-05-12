@@ -1,22 +1,20 @@
 {% extends "core/base.html" %}
 {% load room_tags %}
-
 {% block content %}
-
     <div class="container text-center">
         <div class="row g-1">
             {% for room in room_qs %}
                 <div class="col-12 col-lg-6 cursor-pointer">
                     <div class="p-1">
                         <div class="card container d-flex justify-content-center"
-                             style="background-color: #181618; height:8rem"
+                             style="background-color: #181618;
+                                    height:8rem"
                              hx-trigger="click"
                              hx-get="{% room_url 'transaction:list' %}"
                              hx-target="#body"
                              hx-indicator="#body-loading-spinner"
                              hx-swap="innerHTML"
-                             hx-push-url="true"
-                        >
+                             hx-push-url="true">
                             <div class="row">
                                 {% if room.status == ROOM_STATUS_CLOSED %}
                                     <div class="col-1 ms-5 p-0 d-flex justify-content-center align-items-center">
@@ -26,22 +24,18 @@
                                                hx-target="#body"
                                                hx-indicator="#body-loading-spinner"
                                                hx-swap="morph:innerHTML"
-                                               hx-push-url="true"
-                                            ></i>
+                                               hx-push-url="true"></i>
                                         </h1>
                                     </div>
                                 {% endif %}
                                 <div class="col p-0">
                                     <div class="card-body container d-flex align-items-center justify-content-center flex-wrap {% if room.status == ROOM_STATUS_CLOSED %}text-start{% else %}{% endif %}">
                                         {% if request.user.is_superuser and not room.user_is_in_room %}
-                                            <small style="font-style: italic">
-                                                {{ room.created_by__name }}
-                                            </small>
+                                            <small style="font-style: italic">{{ room.created_by__name }}</small>
                                         {% endif %}
                                         <div class="row w-100">
                                             <div class="col">
-                                                <h5 class="card-title {% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-muted{% endif %}"
-                                                >
+                                                <h5 class="card-title {% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-muted{% endif %}">
                                                     {{ room.name }}
                                                 </h5>
                                             </div>
@@ -53,7 +47,6 @@
                                                 </p>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
@@ -61,7 +54,6 @@
                     </div>
                 </div>
             {% endfor %}
-
             <div class="col-12 col-lg-6 cursor-pointer">
                 <div class="p-1">
                     <div class="card"
@@ -80,8 +72,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-
 {% endblock %}

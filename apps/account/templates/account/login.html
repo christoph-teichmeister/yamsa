@@ -1,9 +1,7 @@
 {% extends "core/base.html" %}
 {% load static %}
-
 {% block content %}
     <h1 class="ps-3 mb-4">Login</h1>
-
     <div class="row gx-0 d-flex justify-content-center">
         <div class="col-8 col-sm-4 col-md-6 col-xl-4 p-0 d-flex">
             <form hx-post="{% url "account:login" %}"
@@ -13,16 +11,18 @@
                   hx-push-url="true"
                   class="flex-grow-1">
                 {% csrf_token %}
-
                 <div class="mb-3">
                     <label for="email" class="form-label">{{ form.fields.email.label }}</label>
-                    <input type="text" class="form-control" id="email" name="email" autocomplete="email"
+                    <input type="text"
+                           class="form-control"
+                           id="email"
+                           name="email"
+                           autocomplete="email"
                            required>
                     {% for error_message in form.errors.email.data %}
                         <small class="error" id="emailError">{{ error_message.message }}</small>
                     {% endfor %}
                 </div>
-
                 {% include "account/shared_partials/password_input_component.html" %}
                 <div class="mb-3 d-flex justify-content-end">
                     <small class="cursor-pointer">
@@ -31,24 +31,18 @@
                            hx-target="#body"
                            hx-indicator="#body-loading-spinner"
                            hx-swap="morph:innerHTML"
-                           hx-push-url="true"
-                        >
-                            Forgot password?
-                        </a>
+                           hx-push-url="true">Forgot password?</a>
                     </small>
                 </div>
-
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary">Login</button>
                 </div>
-
                 <div class="mt-5">
                     <small class="error">{{ errors.auth_failed }}</small>
                 </div>
             </form>
         </div>
     </div>
-
     <small class="fixed-bottom z-0 ps-3 pb-3 cursor-pointer">
         Don't have an account yet?
         <a class="htmx-a"
@@ -56,10 +50,6 @@
            hx-target="#body"
            hx-indicator="#body-loading-spinner"
            hx-swap="morph:innerHTML"
-           hx-push-url="true"
-        >
-            Register here!
-        </a>
+           hx-push-url="true">Register here!</a>
     </small>
-
 {% endblock %}
