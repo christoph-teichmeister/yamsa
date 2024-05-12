@@ -32,9 +32,9 @@ class UserUpdateViewTestCase(BaseTestSetUp):
 
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content)
+        stringed_content = str(response.content).replace("\\n", "")
 
-        self.assertIn("Your data", stringed_content)
+        self.assertInHTML("Your data:", stringed_content)
         self.assertIn("Edit", stringed_content)
 
         self.user.refresh_from_db()
