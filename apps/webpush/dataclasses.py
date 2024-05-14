@@ -73,13 +73,13 @@ class Notification:
         try:
             # If the user does not want to receive webpush notifications, do not send them
             if not user.wants_to_receive_webpush_notifications:
-                return
+                return []
 
             from apps.webpush.services import NotificationSendService
 
             service = NotificationSendService()
-            service.send_notification_to_user(user, self.payload.format_for_webpush(), self.ttl)
-        except Exception:
+            return service.send_notification_to_user(user, self.payload.format_for_webpush(), self.ttl)
+        except Exception as e:
             # TODO CT: Fix this
             # https://chris-teichmeister.sentry.io/issues/5348322468/?project=4506417250107392&query=is%3Aunresolved&referrer=issue-stream&stream_index=0
-            pass
+            print(e)

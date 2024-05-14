@@ -26,4 +26,4 @@ djlint = "*"
 ruff = "*"
 
 [requires]
-python_version = "3.11"
+python_version = "3.11.9"  # Fixed version from onrender.com (If you change this, also change it in the Dockerfile!)
