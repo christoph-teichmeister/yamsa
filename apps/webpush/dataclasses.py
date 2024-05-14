@@ -87,6 +87,6 @@ class TestNotification(Notification):
         if not user.wants_to_receive_webpush_notifications:
             return
 
-        from apps.webpush.services.test_notification_send_service import _notification_list
+        from apps.webpush.services.notification_send_test_service import _notification_list
 
         _notification_list.append(self)

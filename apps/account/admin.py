@@ -7,7 +7,7 @@ from apps.core.admin import YamsaCommonInfoAdminMixin
 from apps.mail.services.test_mail_service import TestEmailService
 from apps.room.admin import UserConnectionToRoomInline
 from apps.transaction.admin import ParentTransactionPaidByInline
-from apps.webpush.dataclasses import Notification
+from apps.webpush.utils import Notification
 
 
 @admin.action(description="Send test notification to selected users")
