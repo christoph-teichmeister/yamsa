@@ -74,7 +74,7 @@ class Notification:
         if not user.wants_to_receive_webpush_notifications:
             return
 
-        from apps.webpush.services import NotificationSendService
+        from apps.webpush.services.notification_send_service import NotificationSendService
 
         service = NotificationSendService()
         service.send_notification_to_user(user, self.payload.format_for_webpush(), self.ttl)
