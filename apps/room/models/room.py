@@ -20,7 +20,14 @@ class Room(FullCleanOnSaveMixin, CommonInfo):
 
     preferred_currency = models.ForeignKey("currency.Currency", related_name="rooms", on_delete=models.DO_NOTHING)
 
-    users = models.ManyToManyField("account.User", through="room.UserConnectionToRoom")
+    users = models.ManyToManyField(
+        "account.User",
+        through="room.UserConnectionToRoom",
+        through_fields=(
+            "room",
+            "user",
+        ),
+    )
 
     objects = RoomManager()
 

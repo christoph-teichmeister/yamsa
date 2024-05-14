@@ -19,4 +19,5 @@ class UserConnectionToRoomAdmin(admin.ModelAdmin):
 
 class UserConnectionToRoomInline(admin.TabularInline):
     model = UserConnectionToRoom
+    fk_name = "user"
     extra = 0

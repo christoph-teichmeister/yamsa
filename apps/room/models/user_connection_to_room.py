@@ -1,10 +1,11 @@
+from ambient_toolbox.models import CommonInfo
 from django.db import models
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
 from apps.core.models.mixins.emit_model_created_event_on_save import EmitModelCreatedEventOnSaveMixin
 
 
-class UserConnectionToRoom(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, models.Model):
+class UserConnectionToRoom(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     user = models.ForeignKey("account.User", on_delete=models.CASCADE)
     room = models.ForeignKey("room.Room", on_delete=models.CASCADE)
     user_has_seen_this_room = models.BooleanField(default=False)

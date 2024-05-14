@@ -41,7 +41,14 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
 
     wants_to_receive_webpush_notifications = models.BooleanField(default=False)
 
-    rooms = models.ManyToManyField("room.Room", through="room.UserConnectionToRoom")
+    rooms = models.ManyToManyField(
+        "room.Room",
+        through="room.UserConnectionToRoom",
+        through_fields=(
+            "user",
+            "room",
+        ),
+    )
 
     invitation_email_sent = models.BooleanField(default=False)
     invitation_email_sent_at = models.DateTimeField(null=True, blank=True)
