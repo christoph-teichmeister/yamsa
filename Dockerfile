@@ -1,4 +1,5 @@
 # Set Python
+# Fixed version from onrender.com (If you change this, also change it in the Pipfile!)
 ARG PYTHON_MINOR_VERSION=3.11
 
 # Set global variable to export path from "builder-python" in production image
