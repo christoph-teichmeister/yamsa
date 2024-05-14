@@ -72,9 +72,9 @@ class Notification:
     def send_to_user(self, user: User):
         # If the user does not want to receive webpush notifications, do not send them
         if not user.wants_to_receive_webpush_notifications:
-            return
+            return []
 
         from apps.webpush.services import NotificationSendService
 
         service = NotificationSendService()
-        service.send_notification_to_user(user, self.payload.format_for_webpush(), self.ttl)
+        return service.send_notification_to_user(user, self.payload.format_for_webpush(), self.ttl)
