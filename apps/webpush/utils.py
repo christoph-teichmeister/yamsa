@@ -1,5 +1,8 @@
 from django.conf import settings
 from django.urls import reverse
+from django.utils.module_loading import import_string
+
+Notification = import_string(settings.WEBPUSH_NOTIFICATION_CLASS)
 
 
 def get_templatetag_context(context):
