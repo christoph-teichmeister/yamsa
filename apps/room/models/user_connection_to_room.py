@@ -16,3 +16,7 @@ class UserConnectionToRoom(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixi
 
     def __str__(self):
         return f"{self.user} belongs to {self.room}"
+
+    @property
+    def created_by_is_connection_user(self) -> bool:
+        return self.created_by == self.user
