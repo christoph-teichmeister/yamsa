@@ -11,7 +11,7 @@ def send_notification_on_user_connection_to_room_created(context: UserConnection
     user_connection_to_room = context.instance
 
     # Do not notify the user who has just created the room (and hence a user_connection_to_room for himself)
-    if user_connection_to_room.created_by_is_connection_user:
+    if user_connection_to_room.created_by_is_connection_user or user_connection_to_room.user.is_guest:
         return
 
     # Notify users that they have been added to a room
@@ -22,7 +22,6 @@ def send_notification_on_user_connection_to_room_created(context: UserConnection
             click_url=reverse("room:detail", kwargs={"room_slug": user_connection_to_room.room.slug}),
         ),
     )
-    # TODO CT: Something was wrong here
     notification.send_to_user(user_connection_to_room.user)
 
 
