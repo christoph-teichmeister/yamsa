@@ -6,10 +6,13 @@ from apps.webpush.models import WebpushInformation
 
 
 class NotificationSendService:
-    def send_notification_to_user(self, user: User, payload: str, ttl: int = 0):
+    def send_notification_to_user(self, user: User, payload: str, ttl: int = 0) -> list:
         # Get all the web_push_info of the user
+        response_list = []
         for web_push_info in user.webpush_infos.all():
-            self._send_notification(web_push_info, payload, ttl)
+            response_list.append(self._send_notification(web_push_info, payload, ttl))
+
+        return response_list
 
     @staticmethod
     def _send_notification(web_push_info: WebpushInformation, payload: str, ttl: int):
@@ -26,9 +29,8 @@ class NotificationSendService:
         except WebPushException as e:
             # If the subscription has expired, delete it.
             if e.response.status_code == 410:
-                web_push_info.delete()
-            else:
-                raise e
+                return web_push_info.delete()
+            raise e
 
     @staticmethod
     def _get_vapid_data():
