@@ -82,6 +82,8 @@ class Notification:
 
 @dataclass
 class TestNotification(Notification):
+    recipient = None
+
     def send_to_user(self, user: User):
         # If the user does not want to receive webpush notifications, do not send them
         if not user.wants_to_receive_webpush_notifications:
@@ -89,4 +91,5 @@ class TestNotification(Notification):
 
         from apps.webpush.services.notification_send_test_service import _notification_list
 
+        self.recipient = user
         _notification_list.append(self)
