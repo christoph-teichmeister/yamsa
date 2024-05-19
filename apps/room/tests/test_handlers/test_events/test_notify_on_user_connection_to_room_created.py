@@ -17,12 +17,14 @@ class NotifyOnUserConnectionToRoomCreatedTestCase(BaseTestSetUp):
         UserConnectionToRoom.objects.create(user=self.user, room=self.room, created_by=self.user)
 
         self.assertEqual(self.email_test_service.all().count(), 0)
+        self.assertEqual(len(self.notification_test_service.all()), 0)
 
     def test_registered_user_invited_to_room_receives_an_email(self):
         another_user = baker.make_recipe("apps.account.tests.user")
         UserConnectionToRoom.objects.create(user=another_user, room=self.room, created_by=self.user)
 
-        print(self.notification_test_service.filter(user=another_user))
+        self.assertEqual(len(self.notification_test_service.all()), 1)
+        self.assertEqual(len(self.notification_test_service.filter(user=another_user)), 1)
 
         self.assertEqual(self.email_test_service.all().count(), 1)
         self.assertEqual(self.email_test_service.filter(to=another_user.email).count(), 1)
@@ -31,3 +33,4 @@ class NotifyOnUserConnectionToRoomCreatedTestCase(BaseTestSetUp):
         UserConnectionToRoom.objects.create(user=self.guest_user, room=self.room, created_by=self.user)
 
         self.assertEqual(self.email_test_service.all().count(), 0)
+        self.assertEqual(len(self.notification_test_service.all()), 0)
