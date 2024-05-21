@@ -121,24 +121,27 @@ def calculate_optimised_debts(
 
         # Perform debt consolidation
         while debtors and creditors:
-            debtor, debt = debtors[0]
-            creditor, credit = creditors[0]
+            debtor, debt = debtors.pop(0)
+            creditor, credit = creditors.pop(0)
 
             # Calculate the amount to transfer
             transfer_amount = min(-debt, credit)
 
             # Update balances and create a transaction
             balances[debtor] += transfer_amount
+            debt += transfer_amount
+
             balances[creditor] -= transfer_amount
+            credit -= transfer_amount
 
             # Add the transaction to the list
             transactions.append((debtor, creditor, transfer_amount))
 
             # Remove debtors and creditors with zero balance
-            if balances[debtor] == 0:
-                debtors.pop(0)
-            if balances[creditor] == 0:
-                creditors.pop(0)
+            if balances[debtor] != 0:
+                debtors.append((debtor, debt))
+            if balances[creditor] != 0:
+                creditors.append((creditor, credit))
 
         # Store the resulting transactions in the dictionary
         currency_transactions[currency] = transactions
