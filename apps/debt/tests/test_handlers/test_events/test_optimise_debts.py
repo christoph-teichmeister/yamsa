@@ -714,3 +714,175 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
 
         # Now, all debts should be settled
         self.assertEqual(self.room.debts.filter(settled=False).count(), 0)
+
+    @freeze_time("2020-04-04 4:20:00")
+    def test_debt_optimisation_bug_real_life_example(self):
+        currency_1 = baker.make_recipe("apps.currency.tests.currency")
+
+        chris = self.user
+        carina = baker.make_recipe("apps.account.tests.user")
+        oliver = baker.make_recipe("apps.account.tests.user")
+
+        rici = self.guest_user
+
+        default_kwargs = {"room": self.room}
+        currency_1_kwargs = {**default_kwargs, "parent_transaction_kwargs": {"currency": currency_1}}
+
+        self.room.users.add(carina, rici)
+
+        # Create all transactions of room
+
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=oliver,
+            paid_for_tuple=(oliver, chris, carina, rici),
+            child_transaction_kwargs={"value": Decimal(18.75)},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=oliver,
+            paid_for_tuple=(chris,),
+            child_transaction_kwargs={"value": Decimal(8.50)},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=oliver,
+            paid_for_tuple=(oliver, rici),
+            child_transaction_kwargs={"value": Decimal(5)},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=oliver,
+            paid_for_tuple=(oliver, chris, carina, rici),
+            child_transaction_kwargs={"value": Decimal(25)},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=oliver,
+            paid_for_tuple=(oliver, chris, carina, rici),
+            child_transaction_kwargs={"value": Decimal("2.06")},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=chris,
+            paid_for_tuple=(oliver, rici, carina, chris),
+            child_transaction_kwargs={"value": Decimal("13.12")},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=oliver,
+            paid_for_tuple=(oliver, rici, carina, chris),
+            child_transaction_kwargs={"value": Decimal(2.75)},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=oliver,
+            paid_for_tuple=(oliver, rici, carina, chris),
+            child_transaction_kwargs={"value": Decimal(7.50)},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=chris,
+            paid_for_tuple=(oliver, rici, carina, chris),
+            child_transaction_kwargs={"value": Decimal(12.50)},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=carina,
+            paid_for_tuple=(oliver, rici, carina, chris),
+            child_transaction_kwargs={"value": Decimal(12.50)},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=oliver,
+            paid_for_tuple=(oliver, rici, carina, chris),
+            child_transaction_kwargs={"value": Decimal(6)},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=oliver,
+            paid_for_tuple=(oliver, carina),
+            child_transaction_kwargs={"value": Decimal(4)},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=oliver,
+            paid_for_tuple=(oliver, rici, carina, chris),
+            child_transaction_kwargs={"value": Decimal(2)},
+        )
+        create_parent_transaction_with_optimisation(
+            **currency_1_kwargs,
+            paid_by=chris,
+            paid_for_tuple=(oliver, rici, carina, chris),
+            child_transaction_kwargs={"value": Decimal("20.35")},
+        )
+
+        # Assert general debts
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=carina.id, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            Decimal("76.53"),
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=rici.id, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            Decimal("127.53"),
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=chris.id, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            Decimal("0"),
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
+                debitor_id=oliver.id, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            Decimal("0"),
+        )
+
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=rici.id, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            Decimal("0"),
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=carina.id, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            Decimal("0"),
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=chris.id, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            Decimal("52.85"),
+        )
+        self.assertEqual(
+            Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
+                creditor_id=oliver.id, room_id=self.room.id, currency_id=currency_1.id
+            ),
+            Decimal("151.21"),
+        )
+
+        # Assert Transaction-Proposals
+        carina_debt_to_chris = Debt.objects.filter(
+            creditor_id=chris.id, debitor_id=carina.id, room_id=self.room.id, currency_id=currency_1.id
+        )
+        self.assertTrue(carina_debt_to_chris.exists())
+        self.assertEqual(carina_debt_to_chris.first().value, Decimal("52.85"))
+
+        carina_debt_to_oliver = Debt.objects.filter(
+            creditor_id=oliver.id, debitor_id=carina.id, room_id=self.room.id, currency_id=currency_1.id
+        )
+        self.assertTrue(carina_debt_to_oliver.exists())
+        self.assertEqual(carina_debt_to_oliver.first().value, Decimal("23.68"))
+
+        rici_debt_to_oliver = Debt.objects.filter(
+            creditor_id=oliver.id, debitor_id=rici.id, room_id=self.room.id, currency_id=currency_1.id
+        )
+        self.assertTrue(rici_debt_to_oliver.exists())
+        self.assertEqual(rici_debt_to_oliver.first().value, Decimal("127.53"))
