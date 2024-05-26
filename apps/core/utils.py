@@ -1,13 +1,4 @@
-def add_or_update_dict(dictionary: dict, update_value: dict):
-    if not isinstance(update_value, dict):
-        msg = "Non-dict values not handled yet"
-        raise ValueError(msg)
-
-    if isinstance(update_value, dict):
-        for key, value in update_value.items():
-            if dictionary.get(key) is None:
-                dictionary[key] = value
-            else:
-                dictionary = add_or_update_dict(dictionary[key], value)
-
-    return dictionary
+def determine_upload_to(instance, filename: str):
+    if instance.UPLOAD_FOLDER_NAME is None:
+        return f"{instance._meta.app_label}/{instance._meta.model_name}/{filename}"
+    return f"{instance._meta.app_label}/{instance._meta.model_name}/{instance.UPLOAD_FOLDER_NAME}/{filename}"

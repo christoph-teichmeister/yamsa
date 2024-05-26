@@ -40,6 +40,10 @@ env = environ.Env(
     EMAIL_HOST=(str, ""),
     EMAIL_HOST_USER=(str, ""),
     EMAIL_HOST_PASSWORD=(str, ""),
+    # Cloudinary ENV
+    CLOUDINARY_CLOUD_NAME=(str, ""),
+    CLOUDINARY_API_KEY=(str, ""),
+    CLOUDINARY_API_SECRET=(str, ""),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -66,6 +70,7 @@ DEBUG = env("DEBUG")
 
 MAINTENANCE = env("MAINTENANCE")
 
+# E-Mail Settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_USE_TLS = True
@@ -108,6 +113,8 @@ DJANGO_APPS = (
 
 THIRD_PARTY_APPS = (
     "ambient_toolbox",
+    "cloudinary",
+    "cloudinary_storage",
     "django_browser_reload",
     "django_extensions",
     "django_pony_express",
@@ -225,15 +232,35 @@ STATIC_URL = "/static/"
 STATICFILES_FOLDER = "static" if DEBUG else "staticfiles"
 STATIC_ROOT = os.path.join(BASE_DIR, STATICFILES_FOLDER)
 
-# Turn on WhiteNoise storage backend that takes care of compressing static files
-# and creating unique names for each version, so they can safely be cached forever.
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
 STATICFILES_DIRS = (os.path.join(APPS_DIR, "static"),)
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        # Turn on WhiteNoise storage backend that takes care of compressing static files
+        # and creating unique names for each version, so they can safely be cached forever.
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# media
+MEDIA_URL = "/media/"
+MEDIAFILES_FOLDER = "media" if DEBUG else "mediafiles"
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIAFILES_FOLDER)
+
+if not DEBUG:
+    STORAGES["default"]["BACKEND"] = "cloudinary_storage.storage.MediaCloudinaryStorage"
+    CLOUDINARY_STORAGE = {
+        "CLOUD_NAME": env("CLOUDINARY_CLOUD_NAME"),
+        "API_KEY": env("CLOUDINARY_API_KEY"),
+        "API_SECRET": env("CLOUDINARY_API_SECRET"),
+    }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
