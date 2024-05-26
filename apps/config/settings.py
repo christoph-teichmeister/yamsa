@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+
 import os
 import sys
 from pathlib import Path
@@ -292,6 +293,7 @@ WEBPUSH_SETTINGS = {
     "VAPID_PRIVATE_KEY": env("VAPID_PRIVATE_KEY"),
     "VAPID_ADMIN_EMAIL": env("VAPID_ADMIN_EMAIL"),
 }
+WEBPUSH_NOTIFICATION_CLASS = "apps.webpush.dataclasses.Notification"
 
 if env("SENTRY_ENVIRONMENT") != "LOCAL":
     sentry_sdk.init(
@@ -319,3 +321,4 @@ if IS_TESTING:
     # EMAIL_BACKEND = "memorymail://"
     # PYTHONUNBUFFERED = 0
     TEST_RUN = True
+    WEBPUSH_NOTIFICATION_CLASS = "apps.webpush.dataclasses.TestNotification"

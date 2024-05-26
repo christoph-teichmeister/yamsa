@@ -9,6 +9,7 @@ default_password_hashed = "pbkdf2_sha256$390000$spnzZngacBx7WjSs7WGucD$vSfEn1OcG
 base_user_data = {
     "is_superuser": False,
     "is_staff": False,
+    "wants_to_receive_webpush_notifications": True,
 }
 
 guest_user = Recipe(

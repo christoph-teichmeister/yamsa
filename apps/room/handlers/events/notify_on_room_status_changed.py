@@ -3,7 +3,7 @@ from django.urls import reverse
 from apps.core.event_loop.registry import message_registry
 from apps.room.messages.events.room_status_changed import RoomStatusChanged
 from apps.room.models import Room
-from apps.webpush.dataclasses import Notification
+from apps.webpush.utils import Notification
 
 
 @message_registry.register_event(event=RoomStatusChanged)

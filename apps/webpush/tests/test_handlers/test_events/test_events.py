@@ -6,7 +6,7 @@ from model_bakery import baker
 from apps.core.tests.setup import BaseTestSetUp
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
 from apps.transaction.tests.baker_recipes import create_parent_transaction_with_optimisation
-from apps.webpush.dataclasses import Notification
+from apps.webpush.utils import Notification
 from apps.webpush.handlers.events.events import send_notification_on_transaction_create
 
 

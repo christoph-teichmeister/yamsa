@@ -10,7 +10,7 @@ from apps.transaction.messages.events.transaction import (
     ParentTransactionUpdated,
 )
 from apps.transaction.models import ChildTransaction
-from apps.webpush.dataclasses import Notification
+from apps.webpush.utils import Notification
 
 
 @message_registry.register_event(event=ParentTransactionCreated)
