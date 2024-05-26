@@ -6,4 +6,5 @@ apps/config/.env
 /.cache/
 /.local/
 /staticfiles/
+/media/
 /tmp/
