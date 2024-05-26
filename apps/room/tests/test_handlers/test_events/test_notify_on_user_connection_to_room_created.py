@@ -7,11 +7,17 @@ from apps.webpush.services.notification_send_test_service import NotificationSen
 
 
 class NotifyOnUserConnectionToRoomCreatedTestCase(BaseTestSetUp):
+    email_test_service = None
+    notification_test_service = None
+
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
         cls.email_test_service = EmailTestService()
+        cls.email_test_service.empty()
+
         cls.notification_test_service = NotificationSendTestService()
+        cls.notification_test_service.empty()
 
     def test_creator_of_room_does_not_receive_an_email_when_creating_room(self):
         UserConnectionToRoom.objects.create(user=self.user, room=self.room, created_by=self.user)
