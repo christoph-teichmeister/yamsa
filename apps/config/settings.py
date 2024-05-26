@@ -40,6 +40,10 @@ env = environ.Env(
     EMAIL_HOST=(str, ""),
     EMAIL_HOST_USER=(str, ""),
     EMAIL_HOST_PASSWORD=(str, ""),
+    # Cloudinary ENV
+    CLOUDINARY_CLOUD_NAME=(str, ""),
+    CLOUDINARY_API_KEY=(str, ""),
+    CLOUDINARY_API_SECRET=(str, ""),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
