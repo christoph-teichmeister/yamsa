@@ -34,11 +34,7 @@ class EmitModelCreatedEventOnSaveMixin:
             if len(event_handler_class_list) > 0:
                 event_handler_class = event_handler_class_list[0]
 
-            setattr(
-                self,
-                model_event.attr_name,
-                event_handler_class,
-            )
+            setattr(self, model_event.attr_name, event_handler_class)
 
     def expand_model_event_context(self) -> dict:
         return {}
