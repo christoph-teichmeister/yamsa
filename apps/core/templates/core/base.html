@@ -40,6 +40,21 @@
 {% if dashboard_tabs and not request.user.is_anonymous %}
     {% include "room/partials/_dashboard_nav.html" with dashboard_tabs=dashboard_tabs %}
 {% endif %}
+{% if not dashboard_tabs %}
+    {% load room_tags %}
+    <nav class="navbar fixed-bottom z-0 pb-4">
+        <div class="container-fluid">
+            <div class="navbar-nav w-100 d-flex flex-row justify-content-around">
+                <div class="nav-link">
+                    <a href="https://www.buymeacoffee.com/Teichmeister" target="_blank"><img
+                            src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee"
+                            style="aspect-ratio: 217 / 60; height: 2em;"></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+{% endif %}
 <!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"
         defer></script>
