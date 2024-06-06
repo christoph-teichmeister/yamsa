@@ -47,6 +47,9 @@ directory = "coverage_html_report"
 [tool.djlint]
 profile = "django"
 
+[tool.kolo.filters]
+ignore_request_paths = ["favicon", "serviceworker", "manifest", "__reload__", "favicon"]
+
 [tool.ruff]
 exclude = [
     ".bzr",
