@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "703745aaa12bfda38a49d46e217a8ba1c91d07a5646a7badc6fc5b56980131e4"
+            "sha256": "70a98fb45a506025e20b749926d4bf346fd6ad031b66638d2e593d037fa38d0e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -108,11 +108,11 @@
         },
         "ambient-toolbox": {
             "hashes": [
-                "sha256:56b87a295872a66f88e4046a2cb8833f6f21011df48b8cd592da1985856f1a34",
-                "sha256:610ac7d57593eea89fa180614ecf58588f6bd5dddfdf8837b3ed27a74e313d24"
+                "sha256:9a5a40cf5e1c1fa508feef324bd4718e68f564cf2f1cc165994da85b062c179b",
+                "sha256:d03270a67c43f4cef7cd6e0bc79b955f013adbfabb02d4181ef7983052782037"
             ],
             "index": "pypi",
-            "version": "==9.5.1"
+            "version": "==10.0.0"
         },
         "anyio": {
             "hashes": [
@@ -1068,6 +1068,13 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==2.9.0.post0"
+        },
+        "pytz": {
+            "hashes": [
+                "sha256:2a29735ea9c18baf14b448846bde5a48030ed267578472d8955cd0e7443a9812",
+                "sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319"
+            ],
+            "version": "==2024.1"
         },
         "pywebpush": {
             "hashes": [
