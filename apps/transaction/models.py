@@ -28,6 +28,14 @@ class ParentTransaction(EmitModelEventOnSaveMixin, FullCleanOnSaveMixin, CommonI
     def value(self):
         return self.child_transactions.aggregate(Sum("value"))["value__sum"]
 
+    def expand_model_event_context(self) -> dict:
+        return {
+            "created": {
+                "parent_transaction": self,
+                "room": self.room,
+            }
+        }
+
 
 class ChildTransaction(EmitModelEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     parent_transaction = models.ForeignKey("ParentTransaction", on_delete=models.CASCADE)
