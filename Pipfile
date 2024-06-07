@@ -23,10 +23,10 @@ sentry-sdk = {extras = ["django"], version = "==2.*"}       # https://github.com
 whitenoise = "==6.*"                                        # https://whitenoise.readthedocs.io/en/stable/changelog.html
 
 [dev-packages]
-coverage = "*"
-django-upgrade = "*"
-djlint = "*"
-ruff = "*"
+coverage = "*"                                              # https://github.com/nedbat/coveragepy/releases
+django-upgrade = "*"                                        # https://github.com/adamchainz/django-upgrade/blob/main/CHANGELOG.rst
+djlint = "*"                                                # https://github.com/djlint/djLint/releases
+ruff = "*"                                                  # https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md
 
 [requires]
 python_version = "3.11.9"  # Fixed version from onrender.com (If you change this, also change it in the Dockerfile!)
