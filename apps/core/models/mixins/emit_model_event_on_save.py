@@ -2,7 +2,7 @@ from apps.core.event_loop.registry import message_registry
 from apps.core.event_loop.runner import handle_message
 
 
-class EmitModelCreatedEventOnSaveMixin:
+class EmitModelEventOnSaveMixin:
     class ModelEvents:
         class Created:
             label = "Created"
