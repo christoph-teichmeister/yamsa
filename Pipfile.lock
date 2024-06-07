@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7b4688af21b702d14d2cf212f92ace56a42480d04253fbb7c2cd8db649897a43"
+            "sha256": "05207bb21ff1df19ed75cbfb11d987360889dbcebb8a8f0c8c132772ce7babb8"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -422,11 +422,11 @@
         },
         "django-pony-express": {
             "hashes": [
-                "sha256:1a324fb67d78156bbe8350ef3896ab6471e792fb95232fb67239f23b0cd83f0e",
-                "sha256:ff76d1f39769f2de9f370918a9a94ff361a11e00e90a2d8515fb96423fceeb46"
+                "sha256:24704fc7e3a2127098b99d5b4e040bb0bd2ff7850cec2e8c77da6084b7677c21",
+                "sha256:926153a91df6feddc311f2148320bd4c6b5c9c5a22e85e0c4952a76f6be7ed7b"
             ],
             "index": "pypi",
-            "version": "==1.3.0"
+            "version": "==2.1.1"
         },
         "freezegun": {
             "hashes": [
