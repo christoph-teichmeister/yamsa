@@ -15,7 +15,7 @@ django-pony-express = "==2.*"                               # https://django-pon
 freezegun = "==1.*"                                         # https://github.com/spulec/freezegun/blob/master/CHANGELOG
 gunicorn = "==22.*"                                         # https://docs.gunicorn.org/en/stable/news.html
 kolo = "==2.*"                                              # https://docs.kolo.app/en/latest/python-changelog.html
-model-bakery = "==1.17.*"
+model-bakery = "==1.*"                                      # https://github.com/model-bakers/model_bakery/releases
 pillow = "==10.3.*"
 psycopg2-binary = "==2.9.*"
 pywebpush = "==2.0.*"
