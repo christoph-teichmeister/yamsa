@@ -15,6 +15,7 @@ parent_transaction = Recipe(
     paid_by=foreign_key(user),
     room=foreign_key(room),
     currency=foreign_key(currency),
+    created_by=foreign_key(user),
 )
 
 child_transaction = Recipe(
