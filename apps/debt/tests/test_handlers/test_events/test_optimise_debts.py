@@ -104,7 +104,9 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
             5,
         )
 
-        debt = self.room.debts.first()
+        debt = self.room.debts.get(
+            creditor_id=self.user.id, debitor_id=self.guest_user.id, currency_id=currency.id, value=Decimal(5)
+        )
         response = self.client.post(
             reverse("debt:settle", kwargs={"room_slug": self.room.slug, "pk": debt.id}),
             data={"settled": True},
@@ -722,7 +724,6 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
         chris = self.user
         carina = baker.make_recipe("apps.account.tests.user")
         oliver = baker.make_recipe("apps.account.tests.user")
-
         rici = self.guest_user
 
         default_kwargs = {"room": self.room}
