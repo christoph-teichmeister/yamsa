@@ -33,7 +33,15 @@ class ParentTransaction(EmitModelEventOnSaveMixin, FullCleanOnSaveMixin, CommonI
             "created": {
                 "parent_transaction": self,
                 "room": self.room,
-            }
+            },
+            "updated": {
+                "parent_transaction": self,
+                "room": self.room,
+            },
+            "deleted": {
+                "parent_transaction": self,
+                "room": self.room,
+            },
         }
 
 
