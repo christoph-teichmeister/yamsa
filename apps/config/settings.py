@@ -147,6 +147,7 @@ MIDDLEWARE = (
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_browser_reload.middleware.BrowserReloadMiddleware",
     "apps.room.middleware.RoomToRequestMiddleware",
+    "apps.core.middleware.maintenance_middleware.MaintenanceMiddleware",
 )
 
 ROOT_URLCONF = "apps.config.urls"
