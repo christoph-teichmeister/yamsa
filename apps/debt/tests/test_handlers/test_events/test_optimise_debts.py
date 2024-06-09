@@ -745,7 +745,7 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
         default_kwargs = {"room": self.room}
         currency_1_kwargs = {**default_kwargs, "parent_transaction_kwargs": {"currency": currency_1}}
 
-        self.room.users.add(carina, rici, oliver)
+        self.room.users.add(carina, oliver)
 
         # Create all transactions of room
 
