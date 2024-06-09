@@ -171,38 +171,31 @@ class DebtOptimiseService:
         for currency in Currency.objects.all():
             balances = {}
             for user in User.objects.filter(rooms=room_id):
-                money_spent_qs = (
-                    ChildTransaction.objects.filter(
-                        parent_transaction__room_id=room_id,
-                        parent_transaction__currency_id=currency.id,
-                        parent_transaction__paid_by_id=user.id,
-                    )
-                    .exclude(paid_for_id=user.id)
-                    .annotate(total_spent=Sum("value"))
-                )
-                total_spent = money_spent_qs.first().total_spent if money_spent_qs.exists() else Decimal(0)
+                total_spent = ChildTransaction.objects.filter(
+                    parent_transaction__room_id=room_id,
+                    parent_transaction__currency_id=currency.id,
+                    parent_transaction__paid_by_id=user.id,
+                ).exclude(paid_for_id=user.id).aggregate(total_spent=Sum("value"))["total_spent"] or Decimal(0)
                 balances[user.id] = total_spent
 
-                money_owed_qs = (
-                    ChildTransaction.objects.filter(
-                        parent_transaction__room_id=room_id,
-                        parent_transaction__currency_id=currency.id,
-                        paid_for_id=user.id,
-                    )
-                    .exclude(parent_transaction__paid_by_id=user.id)
-                    .annotate(total_spent=Sum("value"))
-                )
-                total_owed = money_owed_qs.first().total_spent if money_owed_qs.exists() else Decimal(0)
-
+                total_owed = ChildTransaction.objects.filter(
+                    parent_transaction__room_id=room_id,
+                    parent_transaction__currency_id=currency.id,
+                    paid_for_id=user.id,
+                ).exclude(parent_transaction__paid_by_id=user.id).aggregate(total_owed=Sum("value"))[
+                    "total_owed"
+                ] or Decimal(0)
                 balances[user.id] -= total_owed
 
-                qs_of_user_settled_debts = settled_debts_qs.filter(debitor_id=user.id, currency_id=currency.id)
-                if qs_of_user_settled_debts.exists():
-                    total_debt_settled_value = qs_of_user_settled_debts[0]["value"]
-                else:
-                    total_debt_settled_value = Decimal(0)
+                total_where_they_owed_something = settled_debts_qs.filter(
+                    debitor_id=user.id, currency_id=currency.id
+                ).aggregate(total_owed_settled=Sum("value"))["total_owed_settled"] or Decimal(0)
+                balances[user.id] += total_where_they_owed_something
 
-                balances[user.id] += total_debt_settled_value
+                total_where_they_credited_something = settled_debts_qs.filter(
+                    creditor_id=user.id, currency_id=currency.id
+                ).aggregate(total_credited_settled=Sum("value"))["total_credited_settled"] or Decimal(0)
+                balances[user.id] -= total_where_they_credited_something
 
             # Initialize lists for debtors and creditors, ignoring those with a balance of 0
             debtors = []
