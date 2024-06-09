@@ -71,6 +71,10 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
             parent_transaction_kwargs={"currency": currency},
             child_transaction_kwargs={"value": Decimal(10)},
         )
+        """
+        guest_user owes 10 to user
+        user owes 10 to "themselves"
+        """
         self.assertEqual(
             Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
                 debitor_id=self.guest_user.id, room_id=self.room.id, currency_id=currency.id
@@ -91,6 +95,10 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
             parent_transaction_kwargs={"currency": currency},
             child_transaction_kwargs={"value": Decimal(5)},
         )
+        """
+        guest_user now owes 5 to user
+        user technically still owes 10 to "themselves"
+        """
         self.assertEqual(
             Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
                 debitor_id=self.guest_user.id, room_id=self.room.id, currency_id=currency.id
@@ -114,6 +122,7 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
+        # All debts are settled, noone owes anything to anyone
         self.assertEqual(self.room.debts.filter(settled=False).count(), 0)
 
         create_parent_transaction_with_optimisation(
@@ -123,6 +132,10 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
             parent_transaction_kwargs={"currency": currency},
             child_transaction_kwargs={"value": Decimal(20)},
         )
+        """
+        user now owes 20 to guest_user
+        guest_user technically owes 20 to themselves
+        """
         self.assertEqual(
             Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
                 debitor_id=self.user.id, room_id=self.room.id, currency_id=currency.id
@@ -143,17 +156,20 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
             parent_transaction_kwargs={"currency": currency},
             child_transaction_kwargs={"value": Decimal(15)},
         )
+        """
+        user now owes 5 to guest_user
+        """
         self.assertEqual(
             Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
                 debitor_id=self.user.id, room_id=self.room.id, currency_id=currency.id
             ),
-            15,
+            5,
         )
         self.assertEqual(
             Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
                 creditor_id=self.guest_user.id, room_id=self.room.id, currency_id=currency.id
             ),
-            15,
+            5,
         )
 
         self.assertEqual(self.room.debts.filter(settled=False).count(), 1)
