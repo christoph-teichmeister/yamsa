@@ -14,8 +14,7 @@ class BaseTestSetUp(TestCase):
         cls.guest_user = baker.make_recipe("apps.account.tests.guest_user")
 
         cls.room = baker.make_recipe("apps.room.tests.room")
-        cls.room.users.add(cls.user)
-        cls.room.users.add(cls.guest_user)
+        cls.room.users.add(cls.user, cls.guest_user)
 
         cls.superuser = baker.make_recipe("apps.account.tests.superuser")
 
