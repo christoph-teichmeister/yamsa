@@ -168,9 +168,12 @@ class DebtOptimiseService:
             "debitor_id", "value", "currency_id"
         )
 
-        for currency in Currency.objects.all():
+        currencies_qs = Currency.objects.all()
+        users_of_room_qs = User.objects.filter(rooms=room_id)
+
+        for currency in currencies_qs:
             balances = {}
-            for user in User.objects.filter(rooms=room_id):
+            for user in users_of_room_qs:
                 total_spent = ChildTransaction.objects.filter(
                     parent_transaction__room_id=room_id,
                     parent_transaction__currency_id=currency.id,
