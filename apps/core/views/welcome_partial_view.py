@@ -30,4 +30,4 @@ class WelcomePartialView(generic.TemplateView):
     @context
     @property
     def globally_visible_news(self):
-        return self._get_news_base_qs().get(globally_visible=True)
+        return News.objects.get(globally_visible=True)
