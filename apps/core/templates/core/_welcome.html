@@ -1,9 +1,9 @@
 {% extends "core/base.html" %}
 {% block content %}
     {% if request.user.is_authenticated %}
-        {% if highlighted_news %}
+        {% if globally_visible_news %}
             <ul class="list-group list-group-flush">
-                {% include "shared_partials/news_card.html" with news=highlighted_news %}
+                {% include "shared_partials/news_card.html" with news=globally_visible_news %}
             </ul>
         {% endif %}
         {% if news %}

@@ -25,9 +25,9 @@ class WelcomePartialView(generic.TemplateView):
     @context
     @property
     def news(self):
-        return self._get_news_base_qs().exclude(highlighted=True)
+        return self._get_news_base_qs().exclude(globally_visible=True)
 
     @context
     @property
-    def highlighted_news(self):
-        return self._get_news_base_qs().filter(highlighted=True).first()
+    def globally_visible_news(self):
+        return self._get_news_base_qs().get(globally_visible=True)
