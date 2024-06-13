@@ -17,12 +17,11 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path, re_path
+from django.urls import include, path
 
 from apps.config.settings import DJANGO_ADMIN_SUB_URL
-from apps.core.views import MaintenanceView
 
-normal_urlpatterns = [
+urlpatterns = [
     path("", include("apps.core.urls")),
     path(f"{DJANGO_ADMIN_SUB_URL}/", admin.site.urls),
     path("account/", include("apps.account.urls")),
@@ -32,20 +31,6 @@ normal_urlpatterns = [
     path("transaction/", include("apps.transaction.urls")),
     path("webpush/", include("apps.webpush.urls")),
 ]
-
-
-if settings.MAINTENANCE:
-    urlpatterns = [
-        # TODO CT: Idea to still include all urls, but with a prefix
-        # path("maintenance/", include(normal_urlpatterns)),
-        path(f"{DJANGO_ADMIN_SUB_URL}/", admin.site.urls),
-        # Empty URLs
-        path("", MaintenanceView.as_view(), name="core-maintenance"),
-        # Any other URLs / wildcard
-        re_path(r"^.*/$", MaintenanceView.as_view(), name="core-maintenance"),
-    ]
-else:
-    urlpatterns = normal_urlpatterns
 
 if settings.DEBUG:
     urlpatterns.append(
