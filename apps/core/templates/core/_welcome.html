@@ -7,7 +7,6 @@
             </ul>
         {% endif %}
         {% if news %}
-            <hr style="margin-bottom: 0">
             <ul class="list-group list-group-flush">
                 {% for news_object in news %}
                     {% include "shared_partials/news_card.html" with news=news_object %}

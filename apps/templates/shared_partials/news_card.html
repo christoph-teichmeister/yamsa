@@ -1,7 +1,7 @@
 <li id="news-{{ news.id }}"
-    class="list-group-item {% if not news.highlighted %}pb-2 pt-4{% endif %}">
+    class="list-group-item {% if not news.highlighted %}pb-2 pt-4{% else %}pb-4{% endif %}">
     <div class="row"
-         {% if not news.highlighted %} hx-trigger="click" hx-target="#news-{{ news.id }}" hx-swap="outerHTML" hx-indicator="#body-loading-spinner" {% if opened %} hx-get="{% url 'news:htmx-closed-news' pk=news.id %}" {% else %} hx-get="{% url 'news:htmx-opened-news' pk=news.id %}" {% endif %}
+         {% if not news.highlighted %}hx-trigger="click" hx-target="#news-{{ news.id }}" hx-swap="outerHTML" hx-indicator="#body-loading-spinner" {% if opened %} hx-get="{% url 'news:htmx-closed-news' pk=news.id %}" {% else %} hx-get="{% url 'news:htmx-opened-news' pk=news.id %}" {% endif %}
          {% endif %}>
         <div class="col-1">
             {% if news.highlighted %}
@@ -85,3 +85,6 @@
         </div>
     </div>
 </li>
+{% if news.highlighted %}
+    <li class="list-group-item p-0"></li>
+{% endif %}
