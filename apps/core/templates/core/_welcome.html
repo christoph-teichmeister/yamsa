@@ -1,5 +1,7 @@
 {% extends "core/base.html" %}
+
 {% block content %}
+    <news_card/>
     {% if request.user.is_authenticated %}
         {% if globally_visible_news %}
             <ul class="list-group list-group-flush">
