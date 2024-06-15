@@ -1,0 +1,25 @@
+{% load get_attribute %}
+<table class="table table-borderless">
+    <tbody hx-get="{% url "news:htmx-list" %}?page=1"
+           hx-indicator="#body-loading-spinner"
+           hx-trigger="load once">
+    {% for object in object_list %}
+        <tr>
+            {% for key in table_config.keys %}
+                <td>
+                    {{ object|getattribute:key }}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    {% if page_obj.has_next %}
+        <span>
+
+        </span>
+    {% endif %}
+    </tbody>
+</table>
+
+
+<a href="?page={{ page_obj.next_page_number }}">next</a>
+<a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
