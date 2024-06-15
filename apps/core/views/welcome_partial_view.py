@@ -18,8 +18,6 @@ class WelcomePartialView(generic.TemplateView):
     @property
     def news(self):
         if self.request.user.is_authenticated:
-            return News.objects.filter(
-                room_id__in=self.request.user.room_set.values_list("id", flat=True)
-            ).prefetch_related("comments")
+            return News.objects.filter(room_id__in=self.request.user.room_set.values_list("id", flat=True))
 
         return News.objects.none()
