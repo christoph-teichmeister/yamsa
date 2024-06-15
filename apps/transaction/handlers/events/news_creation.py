@@ -10,7 +10,7 @@ from apps.transaction.messages.events.transaction import (
 @message_registry.register_event(event=ParentTransactionCreated)
 def create_news_on_parent_transaction_creation(context: ParentTransactionCreated.Context):
     News.objects.create(
-        title=f'{context.parent_transaction.paid_by.name} paid for "{context.parent_transaction.description}"',
+        title=f'paid for "{context.parent_transaction.description}"',
         message=f"-{context.room.name}",
         room=context.room,
         created_by=context.parent_transaction.created_by,
@@ -20,7 +20,7 @@ def create_news_on_parent_transaction_creation(context: ParentTransactionCreated
 @message_registry.register_event(event=ParentTransactionUpdated)
 def create_news_on_parent_transaction_update(context: ParentTransactionUpdated.Context):
     News.objects.create(
-        title=f'{context.parent_transaction.lastmodified_by.name} modified "{context.parent_transaction.description}"',
+        title=f'modified "{context.parent_transaction.description}"',
         message=f"-{context.room.name}",
         room=context.room,
         created_by=context.parent_transaction.created_by,
@@ -30,7 +30,7 @@ def create_news_on_parent_transaction_update(context: ParentTransactionUpdated.C
 @message_registry.register_event(event=ParentTransactionDeleted)
 def create_news_on_parent_transaction_deleted(context: ParentTransactionDeleted.Context):
     News.objects.create(
-        title=f'{context.parent_transaction.lastmodified_by.name} deleted "{context.parent_transaction.description}"',
+        title=f'deleted "{context.parent_transaction.description}"',
         message=f"-{context.room.name}",
         room=context.room,
         created_by=context.parent_transaction.created_by,
