@@ -3,6 +3,12 @@
 
 {% block content %}
     {% if request.user.is_authenticated %}
+        <div hx-get="{% url "news:htmx-list" %}"
+             hx-indicator="#body-loading-spinner"
+             hx-swap="innerHTML"
+             hx-trigger="load">
+
+        </div>
         {% if globally_visible_news %}
             <ul class="list-group list-group-flush">
                 {% include "shared_partials/news_card.html" with news=globally_visible_news %}
