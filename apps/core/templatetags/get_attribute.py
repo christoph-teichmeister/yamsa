@@ -1,5 +1,4 @@
 from django import template
-from django.conf import settings
 
 register = template.Library()
 
@@ -10,5 +9,13 @@ def getattribute(value, arg):
 
     if hasattr(value, str(arg)):
         return getattr(value, arg)
-    else:
-        return settings.TEMPLATE_STRING_IF_INVALID
+
+    if "." in arg:
+        split_arg_list = arg.split(".")
+        value = value
+        for split_arg in split_arg_list:
+            if hasattr(value, str(split_arg)):
+                value = getattr(value, str(split_arg))
+        return value
+
+    raise AttributeError(f"{value} has no attribute {arg}")
