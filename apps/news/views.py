@@ -11,3 +11,11 @@ class OpenedNewsHTMXView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context["opened"] = True
         return context
+
+
+class NewsListHTMXView(generic.ListView):
+    paginate_by = 20
+    template_name = "htmx/news_list.html"
+
+    def get_queryset(self):
+        return News.objects.visible_for(user=self.request.user)
