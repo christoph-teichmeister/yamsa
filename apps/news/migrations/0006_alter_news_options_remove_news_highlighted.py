@@ -4,18 +4,24 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('news', '0005_news_room'),
+        ("news", "0005_news_room"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='news',
-            options={'ordering': ('-id',), 'verbose_name': 'News', 'verbose_name_plural': 'News'},
+            name="news",
+            options={"ordering": ("-id",), "verbose_name": "News", "verbose_name_plural": "News"},
         ),
         migrations.RemoveField(
-            model_name='news',
-            name='highlighted',
+            model_name="news",
+            name="highlighted",
+        ),
+        migrations.RemoveField(
+            model_name="news",
+            name="message",
+        ),
+        migrations.DeleteModel(
+            name="NewsComment",
         ),
     ]
