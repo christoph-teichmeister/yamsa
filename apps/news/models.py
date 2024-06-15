@@ -16,17 +16,3 @@ class News(FullCleanOnSaveMixin, CommonInfo):
 
     def __str__(self):
         return f"{self.title}: {self.message[:20]}..."
-
-
-class NewsComment(CommonInfo):
-    news = models.ForeignKey(News, on_delete=models.CASCADE)
-    comment = models.TextField(max_length=10000)
-
-    class Meta:
-        verbose_name = "Comment"
-        verbose_name_plural = "Comment"
-        default_related_name = "comments"
-        ordering = ("id",)
-
-    def __str__(self):
-        return f'"{self.comment[:20]}" on {self.news.title}'
