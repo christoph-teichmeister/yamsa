@@ -9,8 +9,13 @@ from apps.transaction.messages.events.transaction import (
 
 @message_registry.register_event(event=ParentTransactionCreated)
 def create_news_on_parent_transaction_creation(context: ParentTransactionCreated.Context):
+    description = (
+        context.parent_transaction.description[:85] + "..."
+        if len(context.parent_transaction.description) > 90
+        else context.parent_transaction.description
+    )
     News.objects.create(
-        title=f'"{context.parent_transaction.description}" created',
+        title=f'"{description}" created',
         room=context.room,
         created_by=context.parent_transaction.created_by,
     )
@@ -18,8 +23,13 @@ def create_news_on_parent_transaction_creation(context: ParentTransactionCreated
 
 @message_registry.register_event(event=ParentTransactionUpdated)
 def create_news_on_parent_transaction_update(context: ParentTransactionUpdated.Context):
+    description = (
+        context.parent_transaction.description[:75] + "..."
+        if len(context.parent_transaction.description) > 80
+        else context.parent_transaction.description
+    )
     News.objects.create(
-        title=f'"{context.parent_transaction.description}" was modified',
+        title=f'"{description}" was modified',
         room=context.room,
         created_by=context.parent_transaction.lastmodified_by,
     )
@@ -27,8 +37,13 @@ def create_news_on_parent_transaction_update(context: ParentTransactionUpdated.C
 
 @message_registry.register_event(event=ParentTransactionDeleted)
 def create_news_on_parent_transaction_deleted(context: ParentTransactionDeleted.Context):
+    description = (
+        context.parent_transaction.description[:75] + "..."
+        if len(context.parent_transaction.description) > 80
+        else context.parent_transaction.description
+    )
     News.objects.create(
-        title=f'"{context.parent_transaction.description}" was deleted',
+        title=f'"{description}" was deleted',
         room=context.room,
         created_by=context.parent_transaction.lastmodified_by,
     )

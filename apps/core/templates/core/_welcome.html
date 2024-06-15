@@ -13,15 +13,16 @@
                 {% for news_object in news %}
                     <news_card>
                         <news_card.title>
-                            {% autoescape off %}
-                                {% parse_user_text news_object.created_by.name True %} {{ news_object.title }}
-                            {% endautoescape %}
+                            {{ news_object.title }}
                         </news_card.title>
                         <news_card.title_top_left>
                             {{ news_object.created_at|date:'G:i // d.m.Y' }}
                         </news_card.title_top_left>
                         <news_card.body>
-                            {{ news_object.room.name }}
+                            {% autoescape off %}
+                                {% parse_user_text news_object.created_by.name True %}
+                            {% endautoescape %}
+                            in {{ news_object.room.name }}
                         </news_card.body>
                     </news_card>
                 {% endfor %}
