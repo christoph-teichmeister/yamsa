@@ -1,7 +1,6 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-    <news_card/>
     {% if request.user.is_authenticated %}
         {% if globally_visible_news %}
             <ul class="list-group list-group-flush">
@@ -11,7 +10,7 @@
         {% if news %}
             <ul class="list-group list-group-flush">
                 {% for news_object in news %}
-                    {% include "shared_partials/news_card.html" with news=news_object %}
+                    <news_card news=news_object />
                 {% endfor %}
             </ul>
         {% endif %}
