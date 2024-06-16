@@ -1,5 +1,7 @@
+from django.urls import reverse
 from django.views import generic
 
+from apps.core.components.paginated_lazy_table.paginated_lazy_table import TableConfig
 from apps.news.models import News
 
 
@@ -19,3 +21,9 @@ class NewsListHTMXView(generic.ListView):
 
     def get_queryset(self):
         return News.objects.visible_for(user=self.request.user)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super().get_context_data(object_list=object_list, **kwargs)
+        ctx["table_config"] = TableConfig(keys=["title", "created_at", "room.name"])
+        ctx["view_url"] = reverse("news:htmx-list")
+        return ctx

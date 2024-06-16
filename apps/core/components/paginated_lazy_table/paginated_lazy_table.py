@@ -13,10 +13,5 @@ class TableConfig:
 class PaginatedLazyTable(component.Component):
     template_name = "paginated_lazy_table/template.html"
 
-    def get_context_data(
-        self, view_url: str, object_list: list[dict], table_config: TableConfig = None
-    ) -> dict[str, Any]:
-        if table_config is None or table_config == "":
-            table_config = TableConfig()
-
-        return {"view_url": view_url, "object_list": object_list, "table_config": table_config}
+    def get_context_data(self, view_url: str) -> dict[str, Any]:
+        return {"view_url": view_url}

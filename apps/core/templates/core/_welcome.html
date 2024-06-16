@@ -3,36 +3,32 @@
 
 {% block content %}
     {% if request.user.is_authenticated %}
-        <div hx-get="{% url "news:htmx-list" %}"
-             hx-indicator="#body-loading-spinner"
-             hx-swap="innerHTML"
-             hx-trigger="load">
+        <NewsList></NewsList>
 
-        </div>
-        {% if globally_visible_news %}
-            <ul class="list-group list-group-flush">
-                {% include "shared_partials/news_card.html" with news=globally_visible_news %}
-            </ul>
-        {% endif %}
-        {% if news %}
-            <ul class="list-group list-group-flush">
-                {% for news_object in news %}
-                    <news_card>
-                        <news_card.title>
-                            {{ news_object.title }}
-                        </news_card.title>
-                        <news_card.title_top_left>
-                            {{ news_object.created_at|date:'G:i // d.m.Y' }}
-                        </news_card.title_top_left>
-                        <news_card.body>
-                            {% autoescape off %}
-                                {% parse_user_text news_object.created_by.name True %}
-                            {% endautoescape %}
-                            in {{ news_object.room.name }}
-                        </news_card.body>
-                    </news_card>
-                {% endfor %}
-            </ul>
-        {% endif %}
+{#        {% if globally_visible_news %}#}
+{#            <ul class="list-group list-group-flush">#}
+{#                {% include "shared_partials/news_card.html" with news=globally_visible_news %}#}
+{#            </ul>#}
+{#        {% endif %}#}
+{#        {% if news %}#}
+{#            <ul class="list-group list-group-flush">#}
+{#                {% for news_object in news %}#}
+{#                    <news_card>#}
+{#                        <news_card.title>#}
+{#                            {{ news_object.title }}#}
+{#                        </news_card.title>#}
+{#                        <news_card.title_top_left>#}
+{#                            {{ news_object.created_at|date:'G:i // d.m.Y' }}#}
+{#                        </news_card.title_top_left>#}
+{#                        <news_card.body>#}
+{#                            {% autoescape off %}#}
+{#                                {% parse_user_text news_object.created_by.name True %}#}
+{#                            {% endautoescape %}#}
+{#                            in {{ news_object.room.name }}#}
+{#                        </news_card.body>#}
+{#                    </news_card>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+{#        {% endif %}#}
     {% endif %}
 {% endblock %}
