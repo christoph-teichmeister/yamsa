@@ -3,7 +3,7 @@ from django.db import models
 from apps.account.models import User
 
 
-class NewsQuerySet(models.QuerySet):
+class FeedItemQuerySet(models.QuerySet):
     """Custom implementation of QuerySet"""
 
     def visible_for(self, user: User):

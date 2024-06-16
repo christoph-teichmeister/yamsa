@@ -1,18 +1,7 @@
 from django.urls import reverse
 from django.views import generic
 
-from apps.core.components.paginated_lazy_table.paginated_lazy_table import TableConfig
-from apps.news.models import News
-
-
-class OpenedNewsHTMXView(generic.DetailView):
-    queryset = News.objects.all()
-    template_name = "shared_partials/news_card.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["opened"] = True
-        return context
+from apps.news.models import FeedItem
 
 
 class HTMXFeedListContentListView(generic.ListView):
@@ -20,10 +9,9 @@ class HTMXFeedListContentListView(generic.ListView):
     template_name = "htmx/feed_list_content_list.html"
 
     def get_queryset(self):
-        return News.objects.visible_for(user=self.request.user)
+        return FeedItem.objects.visible_for(user=self.request.user)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         ctx = super().get_context_data(object_list=object_list, **kwargs)
-        ctx["table_config"] = TableConfig(keys=["title", "created_at", "room.name"])
         ctx["view_url"] = reverse("news:htmx-list")
         return ctx
