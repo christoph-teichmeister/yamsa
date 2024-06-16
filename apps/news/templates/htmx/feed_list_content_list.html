@@ -1,20 +1,16 @@
 {% load get_attribute %}
 
 {% for news in news_list %}
-    <tr>
+    <li class="list-group-item">
         {% for key in table_config.keys %}
-            <td>
-                {{ news|getattribute:key }}
-            </td>
+            {{ news|getattribute:key }} |
         {% endfor %}
-    </tr>
+    </li>
 {% endfor %}
 {% if page_obj.has_next %}
-    <tr hx-get="{{ view_url }}?page={{ page_obj.next_page_number }}"
+    <li hx-get="{{ view_url }}?page={{ page_obj.next_page_number }}"
         hx-indicator="#body-loading-spinner"
         hx-trigger="revealed"
-            {#        hx-trigger="click"#}
         hx-swap="outerHTML">
-        <td></td>
-    </tr>
+    </li>
 {% endif %}

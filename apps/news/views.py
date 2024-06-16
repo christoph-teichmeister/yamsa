@@ -15,9 +15,9 @@ class OpenedNewsHTMXView(generic.DetailView):
         return context
 
 
-class NewsListHTMXView(generic.ListView):
+class HTMXFeedListContentListView(generic.ListView):
     paginate_by = 20
-    template_name = "htmx/news_list.html"
+    template_name = "htmx/feed_list_content_list.html"
 
     def get_queryset(self):
         return News.objects.visible_for(user=self.request.user)
