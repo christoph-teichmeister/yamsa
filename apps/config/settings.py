@@ -16,6 +16,7 @@ from pathlib import Path
 
 import environ
 import sentry_sdk
+from django_components_preprocessor import with_components_preprocessor
 
 env = environ.Env(
     SECRET_KEY=(str, ""),
@@ -116,6 +117,7 @@ THIRD_PARTY_APPS = (
     "cloudinary",
     "cloudinary_storage",
     "django_browser_reload",
+    "django_components",
     "django_extensions",
     "django_pony_express",
 )
@@ -156,7 +158,6 @@ TEMPLATES = (
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": (os.path.join(APPS_DIR, "templates"),),
-        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -167,6 +168,14 @@ TEMPLATES = (
                 "apps.core.context_processors.core_context",
                 "apps.currency.context_processors.currency_context",
                 "apps.room.context_processors.room_context",
+            ],
+            "loaders": with_components_preprocessor(
+                "django.template.loaders.filesystem.Loader",
+                "django.template.loaders.app_directories.Loader",
+                "django_components.template_loader.Loader",
+            ),
+            "builtins": [
+                "django_components.templatetags.component_tags",
             ],
         },
     },
@@ -234,7 +243,12 @@ STATIC_URL = "/static/"
 STATICFILES_FOLDER = "static" if DEBUG else "staticfiles"
 STATIC_ROOT = os.path.join(BASE_DIR, STATICFILES_FOLDER)
 
-STATICFILES_DIRS = (os.path.join(APPS_DIR, "static"),)
+COMPONENT_STATICFILES_DIRS = ()
+for directory in APPS_DIR.glob("*"):
+    if any(directory.glob("components")):
+        COMPONENT_STATICFILES_DIRS += (os.path.join(directory, "components"),)
+
+STATICFILES_DIRS = (os.path.join(APPS_DIR, "static"), *COMPONENT_STATICFILES_DIRS)
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",

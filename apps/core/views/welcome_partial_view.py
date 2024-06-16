@@ -14,20 +14,10 @@ class WelcomePartialView(generic.TemplateView):
             return HttpResponseRedirect(redirect_to=reverse(viewname="account:login"))
         return super().get(request, *args, **kwargs)
 
-    def _get_news_base_qs(self):
-        if self.request.user.is_authenticated:
-            return News.objects.filter(
-                room_id__in=self.request.user.room_set.values_list("id", flat=True)
-            ).prefetch_related("comments")
-
-        return News.objects.none()
-
     @context
     @property
     def news(self):
-        return self._get_news_base_qs().exclude(highlighted=True)
+        if self.request.user.is_authenticated:
+            return News.objects.filter(room_id__in=self.request.user.room_set.values_list("id", flat=True))
 
-    @context
-    @property
-    def highlighted_news(self):
-        return self._get_news_base_qs().filter(highlighted=True).first()
+        return News.objects.none()

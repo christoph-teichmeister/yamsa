@@ -3,9 +3,10 @@ from django.db import models
 from django.db.models.aggregates import Sum
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
+from apps.core.models.mixins.emit_model_event_on_save import EmitModelEventOnSaveMixin
 
 
-class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
+class ParentTransaction(EmitModelEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     description = models.TextField(max_length=50)
     further_notes = models.TextField(max_length=5000, blank=True, null=True)
     paid_by = models.ForeignKey("account.User", related_name="made_parent_transactions", on_delete=models.CASCADE)
@@ -27,8 +28,24 @@ class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
     def value(self):
         return self.child_transactions.aggregate(Sum("value"))["value__sum"]
 
+    def expand_model_event_context(self) -> dict:
+        return {
+            "created": {
+                "parent_transaction": self,
+                "room": self.room,
+            },
+            "updated": {
+                "parent_transaction": self,
+                "room": self.room,
+            },
+            "deleted": {
+                "parent_transaction": self,
+                "room": self.room,
+            },
+        }
 
-class ChildTransaction(FullCleanOnSaveMixin, CommonInfo):
+
+class ChildTransaction(EmitModelEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     parent_transaction = models.ForeignKey("ParentTransaction", on_delete=models.CASCADE)
 
     paid_for = models.ForeignKey("account.User", related_name="owes_child_transactions", on_delete=models.CASCADE)
