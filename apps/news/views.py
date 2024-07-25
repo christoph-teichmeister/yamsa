@@ -20,7 +20,7 @@ class NewsListHTMXView(generic.ListView):
     template_name = "htmx/news_list.html"
 
     def get_queryset(self):
-        return News.objects.visible_for(user=self.request.user)
+        return News.objects.visible_for(user=self.request.user).select_related("room")
 
     def get_context_data(self, *, object_list=None, **kwargs):
         ctx = super().get_context_data(object_list=object_list, **kwargs)
