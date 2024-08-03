@@ -2,18 +2,17 @@
 
 {% for news in news_list %}
     <tr>
-        {% for key in table_config.keys %}
-            <td>
-                {{ news|getattribute:key }}
-            </td>
-        {% endfor %}
+        <td>
+            <NewsCard news=news></NewsCard>
+        </td>
     </tr>
 {% endfor %}
+
 {% if page_obj.has_next %}
     <tr hx-get="{{ view_url }}?page={{ page_obj.next_page_number }}"
         hx-indicator="#body-loading-spinner"
         hx-trigger="revealed"
-            {#        hx-trigger="click"#}
+            {# hx-trigger="click" #}
         hx-swap="outerHTML">
         <td></td>
     </tr>
