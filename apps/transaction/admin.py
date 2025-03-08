@@ -27,7 +27,7 @@ class ChildTransactionInline(admin.TabularInline):
 class ParentTransactionAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     list_display = ("__str__", "shortened_description", "room", "paid_by")
     list_filter = ("room__name",)
-    fieldsets = ((None, {"fields": (("room", "currency", "paid_by"), "description")}),)
+    fieldsets = ((None, {"fields": (("room", "currency", "paid_by", "paid_at"), "description")}),)
     inlines = (ChildTransactionInline,)
 
     @staticmethod
