@@ -33,7 +33,7 @@ class RegisterUserView(generic.CreateView):
         # Immediately log the created user in
         self.request.user = self.object
         user = authenticate(request=self.request, email=self.object.email, password=self.object.password)
-        login(request=self.request, user=user)
+        login(request=self.request, user=user, backend="django.contrib.auth.backends.ModelBackend")
 
         # Send PostRegisterEmail
         handle_message(SendPostRegisterEmail(context_data={"user": self.request.user}))
