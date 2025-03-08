@@ -95,7 +95,7 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertIn(self.superuser.name, stringed_content)
         self.assertIn(self.superuser.email, stringed_content)
 
-        self.assertIn('id="superuser-admin-link"', stringed_content)
+        self.assertIn('id="superuser-admin-link"', stringed_content, f"{stringed_content=}")
 
     def test_get_as_superuser_other_profile(self):
         self.assertFalse(
