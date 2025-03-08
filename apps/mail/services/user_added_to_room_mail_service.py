@@ -24,8 +24,9 @@ class UserAddedToRoomEmailService(BaseYamsaEmailService):
         )
 
     def get_email_extra_context(self):
+        cta_btn_link = f"{settings.PROJECT_BASE_URL}{reverse('room:detail', kwargs={'room_slug': self.new_room.slug})}"
         return EmailExtraContext(
             show_cta=True,
-            cta_btn_link=f"{settings.PROJECT_BASE_URL}{reverse('room:detail', kwargs={'room_slug': self.new_room.slug})}",
+            cta_btn_link=cta_btn_link,
             cta_btn_text="See the room",
         )

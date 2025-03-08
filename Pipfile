@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-ambient-toolbox = "==11.*"                                  # https://ambient-toolbox.readthedocs.io/en/latest/features/changelog.html
-django = "==5.*"                                            # https://docs.djangoproject.com/en/5.0/releases/
+ambient-toolbox = "==12.*"                                  # https://ambient-toolbox.readthedocs.io/en/latest/features/changelog.html
+django = "==5.*"                                            # https://docs.djangoproject.com/en/dev/releases/
 django-browser-reload = "==1.*"                             # https://github.com/adamchainz/django-browser-reload/blob/main/CHANGELOG.rst
 django-cloudinary-storage = "==0.*"                         # https://github.com/klis87/django-cloudinary-storage/releases
 django-context-decorator = "==1.*"                          # https://github.com/rixx/django-context-decorator/tags
