@@ -44,7 +44,7 @@ env = environ.Env(
     # Email ENV
     DJANGO_EMAIL_DEFAULT_FROM_EMAIL=(str, ""),
     DJANGO_EMAIL_BACKEND=(str, "django.core.mail.backends.smtp.EmailBackend"),
-    DJANGO_EMAIL_HOST=(str, "yamsa-mailhog"),
+    DJANGO_EMAIL_HOST=(str, "yamsa_mailhog"),
     DJANGO_EMAIL_HOST_PASSWORD=(str, ""),
     DJANGO_EMAIL_HOST_USER=(str, ""),
     DJANGO_EMAIL_PORT=(int, 1025),
