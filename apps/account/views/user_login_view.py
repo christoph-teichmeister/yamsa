@@ -16,7 +16,7 @@ class LogInUserView(generic.FormView):
         return reverse(viewname="core:welcome")
 
     def form_valid(self, form):
-        possible_user = authenticate(email=form.data["email"], password=form.data["password"])
+        possible_user = authenticate(request=self.request, email=form.data["email"], password=form.data["password"])
 
         if possible_user is not None:
             login(request=self.request, user=possible_user)
