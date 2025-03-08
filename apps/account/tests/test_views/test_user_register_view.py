@@ -28,7 +28,7 @@ class RegisterUserViewTestCase(BaseTestSetUp):
 
         self.client.logout()
         response = self.client.get(
-            f'{reverse("account:register")}?with_email={email_from_invitation_email}&for_guest={self.guest_user.id}'
+            f"{reverse('account:register')}?with_email={email_from_invitation_email}&for_guest={self.guest_user.id}"
         )
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
 
@@ -110,6 +110,6 @@ class RegisterUserViewTestCase(BaseTestSetUp):
 
         stringed_content = str(response.content)
 
-        self.assertIn('id="emailError"', stringed_content)
-        self.assertIn('id="passwordError"', stringed_content)
-        self.assertIn('id="nameError"', stringed_content)
+        self.assertIn("id=emailError", stringed_content)
+        self.assertIn("id=passwordError", stringed_content)
+        self.assertIn("id=nameError", stringed_content)

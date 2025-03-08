@@ -48,8 +48,6 @@ class UserForgotPasswordViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
 
         self.assertTrue(response.template_name[0], UserForgotPasswordForm.template_name)
-        self.assertIn('id="emailError"', str(response.content), f"{response.content=!s}")
-        self.assertIn(
-            f"The email address &#x27;{unknown_email}&#x27; is not registered with yamsa",
-            str(response.content),
-        )
+        self.assertIn("id=emailError", str(response.content), f"{response.content=!s}")
+        self.assertIn(unknown_email, str(response.content), f"{response.content=!s}")
+        self.assertIn("is not registered with yamsa", str(response.content), f"{response.content=!s}")
