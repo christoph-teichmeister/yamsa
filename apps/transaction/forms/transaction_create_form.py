@@ -23,6 +23,7 @@ class TransactionCreateForm(forms.ModelForm):
             "further_notes",
             "currency",
             "paid_by",
+            "paid_at",
             "room",
             "paid_for",
             "room_slug",
@@ -39,6 +40,8 @@ class TransactionCreateForm(forms.ModelForm):
             new_data["paid_for"] = self.base_fields["paid_for"].choices.queryset.values_list("id", flat=True)[0]
 
             super().__init__(*args, **kwargs, data=new_data)
+
+
 
     def save(self, commit=True):
         instance: ParentTransaction = super().save(commit)

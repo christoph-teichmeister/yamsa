@@ -25,8 +25,8 @@ class TransactionEditForm(forms.ModelForm):
             "description",
             "further_notes",
             "paid_by",
+            "paid_at",
             "currency",
-            "created_at",
             # ChildTransaction fields
             "paid_for",
             "value",
