@@ -17,9 +17,10 @@ class UserDetailView(mixins.LoginRequiredMixin, generic.DetailView):
         )
         request_user_checks_their_own_profile = request.user.id == kwargs["pk"]
 
-        if not (
-            request.user.is_superuser or request_user_shares_room_with_profile_user
-        ) and not request_user_checks_their_own_profile:
+        if (
+            not (request.user.is_superuser or request_user_shares_room_with_profile_user)
+            and not request_user_checks_their_own_profile
+        ):
             # A superuser may see all profiles. If request_user is no superuser, then they may only see their own
             # profile or profiles of users they share a room-connection with
             return self.handle_no_permission()

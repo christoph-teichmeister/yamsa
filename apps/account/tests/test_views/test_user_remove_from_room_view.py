@@ -35,7 +35,8 @@ class UserRemoveFromRoomViewTestCase(BaseTestSetUp):
             response.headers["HX-Trigger-After-Settle"],
             '{"triggerToast": {"message": "\\"'
             + f"{self.guest_user.name}"
-            + '\\" can not be removed from this room, because they still have either transactions or open debts.", "type": "text-bg-danger bg-gradient"}}',
+            + '\\" can not be removed from this room, because they still have either transactions or open debts.", '
+            '"type": "text-bg-danger bg-gradient"}}',
         )
 
     def test_post_user_can_be_removed_from_room(self):

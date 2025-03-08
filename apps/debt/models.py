@@ -24,4 +24,7 @@ class Debt(FullCleanOnSaveMixin, models.Model):
         verbose_name_plural = "Debts"
 
     def __str__(self):
-        return f"{'Settled: ' if self.settled else ''}{self.debitor.name} owes {self.value}{self.currency.sign} to {self.creditor.name}"
+        return (
+            f"{'Settled: ' if self.settled else ''}{self.debitor.name} "
+            f"owes {self.value}{self.currency.sign} to {self.creditor.name}"
+        )
