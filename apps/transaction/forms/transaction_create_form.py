@@ -41,8 +41,6 @@ class TransactionCreateForm(forms.ModelForm):
 
             super().__init__(*args, **kwargs, data=new_data)
 
-
-
     def save(self, commit=True):
         instance: ParentTransaction = super().save(commit)
 
