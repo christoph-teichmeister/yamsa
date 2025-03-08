@@ -112,7 +112,7 @@ if "test" in sys.argv or "test_coverage" in sys.argv:
 AUTHENTICATION_BACKENDS = (
     # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
     "axes.backends.AxesBackend",
-    "ambient_toolbox.static_role_permissions.auth_backend.StaticRolePermissionBackend",
+    "django.contrib.auth.backends.ModelBackend",
 )
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
@@ -552,7 +552,7 @@ if IS_TESTING:
     # We want templates to show useful errors even when DEBUG is set to False:
     TEMPLATES[0]["OPTIONS"]["debug"] = True
 
-    MEDIA_URL = "http://media.testserver"
+    MEDIA_URL = "http://media.testserver/"
 
     # Enable whitenoise autscanning
     WHITENOISE_AUTOREFRESH = True
