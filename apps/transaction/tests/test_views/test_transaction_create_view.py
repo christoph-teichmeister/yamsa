@@ -1,7 +1,9 @@
 import http
+from datetime import datetime, UTC
 from decimal import Decimal
 
 from django.urls import reverse
+from freezegun import freeze_time
 from model_bakery import baker
 
 from apps.core.tests.setup import BaseTestSetUp
@@ -10,6 +12,7 @@ from apps.transaction.views import TransactionListView
 
 
 class TransactionCreateViewTestCase(BaseTestSetUp):
+    @freeze_time("2020-04-04 4:20:00")
     def test_post_regular(self):
         self.assertTrue(
             self.room.users.count() > 1, "This test does not make sense, if there is only one user in the room"
@@ -21,6 +24,7 @@ class TransactionCreateViewTestCase(BaseTestSetUp):
             data={
                 "description": "My description",
                 "currency": baker.make_recipe("apps.currency.tests.currency").id,
+                "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
                 "paid_by": self.user.id,
                 "room": self.room.id,
                 "paid_for": "0",
