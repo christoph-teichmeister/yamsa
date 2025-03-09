@@ -617,7 +617,7 @@ PWA_SERVICE_WORKER_DEBUG = DEBUG
 
 # Test structure validator whitelist
 # https://ambient-toolbox.readthedocs.io/en/latest/features/tests.html#test-structure-validator
-TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = ["factories", "conftest"]
+TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = ["baker_recipes", "setup"]
 
 # WEBPUSH
 # ------------------------------------------------------------------------------
