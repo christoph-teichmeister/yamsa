@@ -24,7 +24,10 @@ class Command(BaseCommand):
     @staticmethod
     def _create_users():
         # Hashed password "Admin123$"
-        default_password = "pbkdf2_sha256$390000$2YQxNcXJRO0Y0R4oYp8COI$M059FCLHU+olmskmSxvBfOPJjPkbJ7NJQcfowC9lA10="
+        default_password = (
+            "argon2$argon2id$v=19$m=102400,t=2,p=8$ZE1LcE9TYmpDZTNmR1I3aVdHc"
+            "jc4MQ$4JN0SLWYv/lI9oPPDY06UouiWdOpgR8BI65O+SeXsuE"
+        )
 
         superuser = User.objects.create(
             name="yamsa-admin",

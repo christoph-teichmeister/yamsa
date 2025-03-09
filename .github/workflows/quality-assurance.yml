@@ -1,0 +1,67 @@
+name: Quality Assurance CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  verify-pre-commit-packages-are-up-to-date:
+    runs-on: ubuntu-latest
+    continue-on-error: true  # Equivalent to allow_failure
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y git
+
+      - name: Install pre-commit-update
+        run: pip install pre-commit-update
+
+      - name: Run pre-commit-update
+        run: pre-commit-update -d -v
+
+  check-migration-status:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pipenv && pipenv install --system --deploy
+
+      - name: Check Migration Status
+        env:
+          DJANGO_DEBUG: 'False'
+        run: python manage.py makemigrations --check --dry-run
+
+  validate-test-structure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pipenv && pipenv install --system --deploy
+
+      - name: Validate test structure
+        env:
+          DJANGO_DEBUG: 'False'
+        run: python manage.py validate_test_structure

@@ -10,99 +10,109 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import datetime
+import logging
 import os
+import socket
 import sys
 from pathlib import Path
 
 import environ
-import sentry_sdk
 from django_components_preprocessor import with_components_preprocessor
-
-env = environ.Env(
-    SECRET_KEY=(str, ""),
-    DEBUG=(bool, False),
-    MAINTENANCE=(bool, False),
-    PROJECT_BASE_URL=(str, ""),
-    DJANGO_ADMIN_SUB_URL=(str, ""),
-    # Webpush ENV
-    VAPID_PUBLIC_KEY=(str, ""),
-    VAPID_PRIVATE_KEY=(str, ""),
-    VAPID_ADMIN_EMAIL=(str, ""),
-    # Sentry ENV
-    SENTRY_ENVIRONMENT=(str, "LOCAL"),
-    SENTRY_DSN=(str, ""),
-    # Database ENV
-    DB_HOST=(str, ""),
-    DB_NAME=(str, ""),
-    DB_PASSWORD=(str, ""),
-    DB_PORT=(str, ""),
-    DB_USER=(str, ""),
-    # Email ENV
-    EMAIL_HOST=(str, ""),
-    EMAIL_HOST_USER=(str, ""),
-    EMAIL_HOST_PASSWORD=(str, ""),
-    # Cloudinary ENV
-    CLOUDINARY_CLOUD_NAME=(str, ""),
-    CLOUDINARY_API_KEY=(str, ""),
-    CLOUDINARY_API_SECRET=(str, ""),
-)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 CONFIG_DIR = Path(__file__).resolve().parent
 APPS_DIR = CONFIG_DIR.parent
 BASE_DIR = APPS_DIR.parent
 
-PROJECT_BASE_URL = env("PROJECT_BASE_URL")
-IS_LOCALHOST = "localhost" in PROJECT_BASE_URL
-DJANGO_ADMIN_SUB_URL = env("DJANGO_ADMIN_SUB_URL")
-LOGIN_URL = "/account/login/"
+env = environ.Env(
+    DJANGO_ADMIN_URL=(str, "admin/"),
+    DJANGO_ALLOWED_HOSTS=(list, ["127.0.0.1", "localhost"]),
+    DJANGO_BACKEND_URL=(str, "http://yamsa:8000"),
+    DJANGO_CACHE_URL=(str, "locmemcache://"),
+    DJANGO_DATABASE_URL=(str, "sqlite:///sqlite.db"),
+    DJANGO_DEBUG=(bool, False),
+    DJANGO_DEBUG_TOOLBAR_USE_DOCKER=(bool, True),
+    DJANGO_FRONTEND_URL=(str, "http://yamsa:8000"),
+    DJANGO_SECRET_KEY=(str, ""),
+    DJANGO_SECURE_HSTS_SECONDS=(int, 0),
+    DJANGO_SESSION_COOKIE_SECURE=(bool, True),
+    DJANGO_USE_DEBUG_TOOLBAR=(bool, False),
+    MAINTENANCE=(bool, False),
+    # Cloudinary ENV
+    CLOUDINARY_CLOUD_NAME=(str, ""),
+    CLOUDINARY_API_KEY=(str, ""),
+    CLOUDINARY_API_SECRET=(str, ""),
+    # Email ENV
+    DJANGO_EMAIL_DEFAULT_FROM_EMAIL=(str, ""),
+    DJANGO_EMAIL_BACKEND=(str, "django.core.mail.backends.smtp.EmailBackend"),
+    DJANGO_EMAIL_HOST=(str, "yamsa_mailhog"),
+    DJANGO_EMAIL_HOST_PASSWORD=(str, ""),
+    DJANGO_EMAIL_HOST_USER=(str, ""),
+    DJANGO_EMAIL_PORT=(int, 1025),
+    DJANGO_EMAIL_URL=(environ.Env.email_url_config, "consolemail://"),
+    DJANGO_EMAIL_USE_TLS=(bool, False),
+    DJANGO_EMAIL_USE_SSL=(bool, False),
+    # Sentry ENV
+    SENTRY_DSN=(str, ""),
+    SENTRY_ENVIRONMENT=(str, "local"),
+    SENTRY_RELEASE=(str, "<sha>"),
+    SENTRY_TRACES_SAMPLE_RATE=(float, 0.1),
+    SENTRY_LOG_LEVEL=(int, logging.INFO),
+    # Webpush ENV
+    VAPID_PUBLIC_KEY=(str, ""),
+    VAPID_PRIVATE_KEY=(str, ""),
+    VAPID_ADMIN_EMAIL=(str, ""),
+)
 
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(CONFIG_DIR, ".env"))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = env("DJANGO_DEBUG")
 
-MAINTENANCE = env("MAINTENANCE")
+# Local time zone. Choices are
+# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+# though not all of them may be available with every OS.
+# In Windows, this must be set to your system time zone.
+TIME_ZONE = "Europe/Berlin"
+# https://docs.djangoproject.com/en/dev/ref/settings/#language-code
+LANGUAGE_CODE = "en"
+# https://docs.djangoproject.com/en/dev/ref/settings/#languages
+# from django.utils.translation import gettext_lazy as _
+LANGUAGES = (("en", "English"),)
+# https://docs.djangoproject.com/en/dev/ref/settings/#site-id
+SITE_ID = 1
+# https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
+USE_I18N = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
+USE_TZ = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
+LOCALE_PATHS = (f"{APPS_DIR}/locale",)
+# https://docs.djangoproject.com/en/dev/topics/i18n/formatting/#creating-custom-format-files
+# FORMAT_MODULE_PATH = [
+#     "apps.core.formats",
+# ]
 
-# E-Mail Settings
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = env("EMAIL_HOST")
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_PORT = 587
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+# DATABASES
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#databases
+DATABASES = {"default": env.db("DJANGO_DATABASE_URL")}
 
-if DEBUG:
-    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-    EMAIL_FILE_PATH = f"{BASE_DIR}/tmp/emails"
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# URLS
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#root-urlconf
+ROOT_URLCONF = "apps.config.urls"
+# https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
+# WSGI_APPLICATION = "config.wsgi.application"
+WSGI_APPLICATION = "apps.config.wsgi.application"
 
-IS_TESTING = False
-if "test" in sys.argv or "test_coverage" in sys.argv:
-    IS_TESTING = True
-
-if IS_TESTING:
-    base = environ.Path(__file__) - 1
-    environ.Env.read_env(env_file=base("unittest.env"))
-
-AUTH_USER_MODEL = "account.User"
-
-ALLOWED_HOSTS = ("*",)
-
-RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS += (RENDER_EXTERNAL_HOSTNAME,)
-
-# Application definition
-
+# APPS
+# ------------------------------------------------------------------------------
 DJANGO_APPS = (
     "django.contrib.admin",
     "django.contrib.auth",
@@ -114,12 +124,13 @@ DJANGO_APPS = (
 
 THIRD_PARTY_APPS = (
     "ambient_toolbox",
+    "axes",
     "cloudinary",
     "cloudinary_storage",
-    "django_browser_reload",
     "django_components",
     "django_extensions",
     "django_pony_express",
+    "django_minify_html",
 )
 
 LOCAL_APPS = (
@@ -134,10 +145,52 @@ LOCAL_APPS = (
     "apps.webpush",
 )
 
+# https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
+
+# AUTHENTICATION
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
+AUTHENTICATION_BACKENDS = (
+    # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
+    "axes.backends.AxesBackend",
+    "django.contrib.auth.backends.ModelBackend",
+)
+
+# https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
+AUTH_USER_MODEL = "account.User"
+
+# https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
+LOGIN_REDIRECT_URL = "account:redirect"
+# https://docs.djangoproject.com/en/dev/ref/settings/#login-url
+LOGIN_URL = "account:login"
+
+# PASSWORDS
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#password-hashers
+PASSWORD_HASHERS = (
+    # https://docs.djangoproject.com/en/dev/topics/auth/passwords/#using-argon2-with-django
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+)
+
+# https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
+AUTH_PASSWORD_VALIDATORS = (
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+)
+
+# MIDDLEWARE
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = (
-    "kolo.middleware.KoloMiddleware",
+    "django.middleware.gzip.GZipMiddleware",
+    "django_minify_html.middleware.MinifyHtmlMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -147,13 +200,72 @@ MIDDLEWARE = (
     "ambient_toolbox.middleware.current_user.CurrentUserMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
     "apps.room.middleware.RoomToRequestMiddleware",
     "apps.core.middleware.maintenance_middleware.MaintenanceMiddleware",
+    # AxesMiddleware should be the last middleware in the MIDDLEWARE list.
+    "axes.middleware.AxesMiddleware",
 )
 
-ROOT_URLCONF = "apps.config.urls"
 
+# STORAGES
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        # Turn on WhiteNoise storage backend that takes care of compressing static files
+        # and creating unique names for each version, so they can safely be cached forever.
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# STATIC (CSS, JavaScript, Images)
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/howto/static-files/
+
+# This setting tells Django at which URL static files are going to be served to the user.
+# Here, they will be accessible at your-domain.onrender.com/static/...
+# https://docs.djangoproject.com/en/dev/ref/settings/#static-url
+STATIC_URL = "/static/"
+
+# Tell Django to copy statics to the `staticfiles` directory in your application directory on Render.
+STATICFILES_FOLDER = "static" if DEBUG else "staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, STATICFILES_FOLDER)
+
+# COMPONENT_STATICFILES_DIRS = ()
+# for directory in APPS_DIR.glob("*"):
+#     if any(directory.glob("components")):
+#         COMPONENT_STATICFILES_DIRS += (os.path.join(directory, "components"),)
+#
+# STATICFILES_DIRS = (os.path.join(APPS_DIR, "static"), *COMPONENT_STATICFILES_DIRS)
+
+# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
+STATICFILES_DIRS = (os.path.join(APPS_DIR, "static"),)
+STATICFILES_FINDERS = (
+    # Default finders
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+)
+
+# MEDIA
+# ------------------------------------------------------------------------------
+MEDIAFILES_FOLDER = "media" if DEBUG else "mediafiles"
+# https://docs.djangoproject.com/en/dev/ref/settings/#media-root
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIAFILES_FOLDER)
+# https://docs.djangoproject.com/en/dev/ref/settings/#media-url
+MEDIA_URL = "/media/"
+
+if env("CLOUDINARY_API_KEY"):
+    STORAGES["default"]["BACKEND"] = "cloudinary_storage.storage.MediaCloudinaryStorage"
+    CLOUDINARY_STORAGE = {
+        "CLOUD_NAME": env("CLOUDINARY_CLOUD_NAME"),
+        "API_KEY": env("CLOUDINARY_API_KEY"),
+        "API_SECRET": env("CLOUDINARY_API_SECRET"),
+    }
+
+# TEMPLATES
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#templates
 TEMPLATES = (
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -163,6 +275,10 @@ TEMPLATES = (
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "apps.account.context_processors.user_context",
                 "apps.core.context_processors.core_context",
@@ -181,108 +297,254 @@ TEMPLATES = (
     },
 )
 
-WSGI_APPLICATION = "apps.config.wsgi.application"
+# https://docs.djangoproject.com/en/dev/ref/settings/#form-renderer
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+# ADMIN
+# ------------------------------------------------------------------------------
+# Django Admin URL.
+ADMIN_URL = env("DJANGO_ADMIN_URL")
+# https://docs.djangoproject.com/en/dev/ref/settings/#admins
+ADMINS = (("christoph-teichmeister", "christoph.teichmeister@gmail.com"),)
+# https://docs.djangoproject.com/en/dev/ref/settings/#managers
+MANAGERS = ADMINS
+# https://cookiecutter-django.readthedocs.io/en/latest/settings.html#other-environment-settings
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "HOST": env("DB_HOST"),
-        "NAME": env("DB_NAME"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "PORT": env("DB_PORT"),
-        "USER": env("DB_USER"),
-        "TEST": {
-            "NAME": f'{env("DB_NAME")}_test',
+# ALLOWED_HOSTS
+# ------------------------------------------------------------------------------
+ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS")
+
+# adds the container's internal IP to the allowed hosts to enable healthchecks w/o Host-header:
+ALLOWED_HOSTS.append(socket.gethostbyname(socket.gethostname()))
+
+# CACHES
+# ------------------------------------------------------------------------------
+CACHES = {"default": env.cache("DJANGO_CACHE_URL")}
+
+# SECURITY
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
+SESSION_COOKIE_HTTPONLY = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
+CSRF_COOKIE_HTTPONLY = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
+X_FRAME_OPTIONS = "DENY"
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = env("DJANGO_SECRET_KEY")
+# Use X-Forwarded-Proto Header to determine SSL status (useful for API docs)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = False
+CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE = env("DJANGO_SESSION_COOKIE_SECURE")
+SECURE_BROWSER_XSS_FILTER = SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# https://docs.djangoproject.com/en/5.1/ref/settings/#silenced-system-checks
+SILENCED_SYSTEM_CHECKS = ()
+
+# https://docs.djangoproject.com/en/5.1/ref/settings/#secure-hsts-seconds
+SECURE_HSTS_SECONDS = env("DJANGO_SECURE_HSTS_SECONDS")
+if SECURE_HSTS_SECONDS > 0:
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+# Set URLs and URL-Protocol for CORS and CSRF settings
+FRONTEND_URL = env("DJANGO_FRONTEND_URL")
+BACKEND_URL = env("DJANGO_BACKEND_URL")
+URL_PROTOCOL = "https://" if SESSION_COOKIE_SECURE else "http://"
+
+# LOGGING
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#logging
+# See https://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+DJANGO_LOG_LEVEL = logging.INFO if DEBUG else logging.ERROR
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose-3": {
+            "format": "%(levelname)s | %(asctime)s | pid: %(process)d | thread: %(thread)d | %(module)s > %(message)s",
         },
-    }
+        "verbose-2": {
+            "format": "%(levelname)s | %(asctime)s | %(module)s > %(message)s",
+        },
+        "simple": {
+            "format": "%(levelname)s | %(asctime)s | %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": logging.DEBUG,
+            "class": "logging.StreamHandler",
+            "formatter": "verbose-2",
+        },
+    },
+    "root": {
+        "level": logging.INFO,
+        "handlers": ("console",),
+    },
+    "loggers": {
+        "django": {
+            "handlers": ("console",),
+            "level": DJANGO_LOG_LEVEL,
+            "propagate": True,
+        },
+        "django.db.backends": {
+            "level": logging.WARNING,
+            "handlers": ("console",),
+            "propagate": False,
+        },
+        "django.utils.autoreload": {
+            "level": DJANGO_LOG_LEVEL,
+            "handlers": ("console",),
+            "propagate": False,
+        },
+        "django.server": {
+            "level": logging.WARNING,
+            "handlers": ("console",),
+            "propagate": False,
+        },
+        "django.security.DisallowedHost": {
+            "level": logging.WARNING,
+            "handlers": ("console",),
+            "propagate": False,
+        },
+        "django.security.csrf": {
+            "handlers": ("console",),
+            "level": logging.WARNING,
+        },
+        "django.security.cors": {
+            "handlers": ("console",),
+            "level": logging.WARNING,
+        },
+        "axes": {
+            "handlers": ("console",),
+            "level": logging.WARNING,
+        },
+        "django_pony_express": {
+            "handlers": ("console",),
+            "level": logging.INFO,
+            "propagate": True,
+        },
+        "fontTools": {
+            "handlers": ("console",),
+            "level": logging.WARNING,
+        },
+        "fontTools.subset": {
+            "handlers": ("console",),
+            "level": logging.WARNING,
+        },
+        "fontTools.ttLib.ttFont": {
+            "handlers": ("console",),
+            "level": logging.WARNING,
+        },
+        # Errors logged by the SDK itself
+        "sentry_sdk": {
+            "level": logging.WARNING,
+            "handlers": ("console",),
+            "propagate": False,
+        },
+        "kolo": {
+            "level": logging.WARNING,
+            "handlers": ("console",),
+        },
+    },
 }
 
-if IS_TESTING:
-    DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
+# SENTRY
+# ------------------------------------------------------------------------------
+if os.environ.get("DJANGO_SENTRY_DSN"):
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.logging import LoggingIntegration
 
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
+    sentry_logging = LoggingIntegration(
+        level=logging.INFO,  # Capture info and above as breadcrumbs
+        event_level=logging.ERROR,  # Send errors as events
+    )
 
-AUTH_PASSWORD_VALIDATORS = (
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-)
+    sentry_sdk.init(
+        dsn=env("DJANGO_SENTRY_DSN"),
+        integrations=(
+            sentry_logging,
+            DjangoIntegration(),
+        ),
+        max_breadcrumbs=50,
+        debug=False,
+        environment=env("DJANGO_SENTRY_ENVIRONMENT"),
+        server_name=BACKEND_URL,
+        send_default_pii=True,
+        traces_sample_rate=env("DJANGO_SENTRY_TRACES_SAMPLE_RATE"),
+    )
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
+# SESSION
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#sessions
 
-LANGUAGE_CODE = "en-us"
+# Set the session cookie age to 48 hours (172800 seconds)
+SESSION_COOKIE_AGE = 60 * 60 * 48
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
-TIME_ZONE = "CET"
+# https://docs.djangoproject.com/en/dev/ref/settings/#std-setting-SECURE_REFERRER_POLICY
+SECURE_REFERRER_POLICY = "same-origin"
 
-USE_I18N = True
+# DJANGO-CORS-HEADERS (Cross-Origin Resource Sharing)
+# ------------------------------------------------------------------------------
 
-USE_TZ = True
+# https://github.com/adamchainz/django-cors-headers?tab=readme-ov-file#cors_allow_credentials-bool
+CORS_ALLOW_CREDENTIALS = True
+# https://github.com/adamchainz/django-cors-headers?tab=readme-ov-file#cors_urls_regex-str--patternstr
+CORS_URLS_REGEX = "/api/.*"
+# https://github.com/adamchainz/django-cors-headers?tab=readme-ov-file#cors_allowed_origins-sequencestr
+CORS_ALLOWED_ORIGINS = (FRONTEND_URL,)
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
+# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-trusted-origins
+CSRF_TRUSTED_ORIGINS = (FRONTEND_URL, BACKEND_URL)
 
-# This setting tells Django at which URL static files are going to be served to the user.
-# Here, they will be accessible at your-domain.onrender.com/static/...
-STATIC_URL = "/static/"
 
-# Tell Django to copy statics to the `staticfiles` directory in your application directory on Render.
-STATICFILES_FOLDER = "static" if DEBUG else "staticfiles"
-STATIC_ROOT = os.path.join(BASE_DIR, STATICFILES_FOLDER)
+# AXES
+# ------------------------------------------------------------------------------
+def axes_cooloff_time(request):
+    return datetime.timedelta(0, LOGIN_TIMEDELTA)
 
-COMPONENT_STATICFILES_DIRS = ()
-for directory in APPS_DIR.glob("*"):
-    if any(directory.glob("components")):
-        COMPONENT_STATICFILES_DIRS += (os.path.join(directory, "components"),)
 
-STATICFILES_DIRS = (os.path.join(APPS_DIR, "static"), *COMPONENT_STATICFILES_DIRS)
-STATICFILES_FINDERS = (
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-)
+LOGIN_TIMEDELTA = 15 * 60
+LOGIN_COUNT = 3
+AXES_COOLOFF_TIME = axes_cooloff_time
+AXES_LOGIN_FAILURE_LIMIT = LOGIN_COUNT
+AXES_USERNAME_FORM_FIELD = "username"  # TODO CT: "email" or "username"?
+AXES_CLEANUP_DAYS = 30
+# Block by Username only (i.e.: Same user different IP is still blocked, but different user same IP is not)
+AXES_LOCKOUT_PARAMETERS = ["username"]  # TODO CT: "email" or "username"?
+# Disable logging the IP-Address of failed login attempts by returning None for attempts to get the IP
+# Ignore assigning a lambda function to a variable for brevity
+AXES_CLIENT_IP_CALLABLE = lambda x: None  # noqa: E731
+# Mask user-sensitive parameters in logging stream
+AXES_SENSITIVE_PARAMETERS = ["username", "email", "ip_address"]
 
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        # Turn on WhiteNoise storage backend that takes care of compressing static files
-        # and creating unique names for each version, so they can safely be cached forever.
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
 
-# media
-MEDIA_URL = "/media/"
-MEDIAFILES_FOLDER = "media" if DEBUG else "mediafiles"
-MEDIA_ROOT = os.path.join(BASE_DIR, MEDIAFILES_FOLDER)
+# EMAIL
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
+vars().update(env.email_url("DJANGO_EMAIL_URL"))
+EMAIL_BACKEND = env("DJANGO_EMAIL_BACKEND")
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
+EMAIL_TIMEOUT = 5
 
-if not DEBUG:
-    STORAGES["default"]["BACKEND"] = "cloudinary_storage.storage.MediaCloudinaryStorage"
-    CLOUDINARY_STORAGE = {
-        "CLOUD_NAME": env("CLOUDINARY_CLOUD_NAME"),
-        "API_KEY": env("CLOUDINARY_API_KEY"),
-        "API_SECRET": env("CLOUDINARY_API_SECRET"),
-    }
+EMAIL_HOST = env("DJANGO_EMAIL_HOST")
+EMAIL_PORT = env("DJANGO_EMAIL_PORT")
+EMAIL_USE_TLS = env("DJANGO_EMAIL_USE_TLS")
+EMAIL_USE_SSL = env("DJANGO_EMAIL_USE_SSL")
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD")
 
-# PWA-related Settings
+EMAIL_DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL = env("DJANGO_EMAIL_DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)
+EMAIL_DEFAULT_REPLY_TO_ADDRESS = env("DJANGO_EMAIL_DEFAULT_REPLY_TO_ADDRESS", default=EMAIL_DEFAULT_FROM_EMAIL)
+
+# PWA
+# ------------------------------------------------------------------------------
 MANIFEST = {
     "background_color": "#2d2a2e",
     "categories": ["finance", "lifestyle", "productivity", "shopping", "utilities"],
@@ -328,9 +590,17 @@ MANIFEST = {
     "start_url": "/",
     "theme_color": "#2d2a2e",
 }
-
 PWA_SERVICE_WORKER_DEBUG = DEBUG
 
+# AMBIENT TOOLBOX
+# ------------------------------------------------------------------------------
+
+# Test structure validator whitelist
+# https://ambient-toolbox.readthedocs.io/en/latest/features/tests.html#test-structure-validator
+TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = ["baker_recipes", "setup"]
+
+# WEBPUSH
+# ------------------------------------------------------------------------------
 WEBPUSH_SETTINGS = {
     "VAPID_PUBLIC_KEY": env("VAPID_PUBLIC_KEY"),
     "VAPID_PRIVATE_KEY": env("VAPID_PRIVATE_KEY"),
@@ -338,28 +608,77 @@ WEBPUSH_SETTINGS = {
 }
 WEBPUSH_NOTIFICATION_CLASS = "apps.webpush.dataclasses.Notification"
 
-if env("SENTRY_ENVIRONMENT") != "LOCAL":
-    sentry_sdk.init(
-        dsn=env("SENTRY_DSN"),
-        # Set traces_sample_rate to 1.0 to capture 100% of transactions for performance monitoring.
-        traces_sample_rate=0.1,
-        # Set profiles_sample_rate to 1.0 to profile 100% of sampled transactions.
-        # We recommend adjusting this value in production.
-        profiles_sample_rate=0.1,
-        environment=env("SENTRY_ENVIRONMENT"),
-        integrations=[
-            # DjangoIntegration(
-            #     transaction_style="url",
-            # ),
-            # CeleryIntegration(),
-        ],
-    )
+MAINTENANCE = env("MAINTENANCE")
 
-if IS_TESTING:
-    # DEBUG = False
-    # EMAIL_URL = "memorymail://"
-    # CACHE_BACKEND = "local"
-    # EMAIL_BACKEND = "memorymail://"
-    # PYTHONUNBUFFERED = 0
+# TESTING
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/5.1/ref/settings/#test-non-serialized-apps
+# Exclude main app from database serialization, speeds up tests, but removes ability to simulate rollbacks in tests
+TEST_NON_SERIALIZED_APPS = ("apps",)
+
+if "test" in sys.argv or "test_coverage" in sys.argv:
+    base = environ.Path(__file__) - 1
+    environ.Env.read_env(env_file=base("unittest.env"))
+
+    DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
     TEST_RUN = True
     WEBPUSH_NOTIFICATION_CLASS = "apps.webpush.dataclasses.TestNotification"
+
+    # following settings will speed up the test runner:
+
+    # Use a fast, insecure password hasher
+    PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
+
+    # Use in-memory cache and mail backend
+    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+    STORAGES["default"] = {
+        "BACKEND": "django.core.files.storage.InMemoryStorage",
+    }
+
+    # We want templates to show useful errors even when DEBUG is set to False:
+    TEMPLATES[0]["OPTIONS"]["debug"] = True
+
+    MEDIA_URL = "http://media.testserver/"
+
+    # Enable whitenoise autscanning
+    WHITENOISE_AUTOREFRESH = True
+
+# DEBUG
+# ------------------------------------------------------------------------------
+if DEBUG:
+    INSTALLED_APPS += ("django_browser_reload",)
+
+    MIDDLEWARE = (
+        "kolo.middleware.KoloMiddleware",
+        *MIDDLEWARE,
+        "django_browser_reload.middleware.BrowserReloadMiddleware",
+    )
+
+    # WhiteNoise
+    # ------------------------------------------------------------------------------
+    # http://whitenoise.evans.io/en/latest/django.html#using-whitenoise-in-development
+    INSTALLED_APPS = ("whitenoise.runserver_nostatic", *INSTALLED_APPS)
+
+    if env("DJANGO_USE_DEBUG_TOOLBAR"):
+        # django-debug-toolbar
+        # ------------------------------------------------------------------------------
+        # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#prerequisites
+        INSTALLED_APPS += ("debug_toolbar",)
+        # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#middleware
+        MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
+        # https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
+        DEBUG_TOOLBAR_CONFIG = {
+            "DISABLE_PANELS": [
+                "debug_toolbar.panels.redirects.RedirectsPanel",
+                "debug_toolbar.panels.profiling.ProfilingPanel",
+            ],
+            "SHOW_TEMPLATE_CONTEXT": True,
+        }
+        # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
+        INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
+        if env("DJANGO_DEBUG_TOOLBAR_USE_DOCKER"):
+            hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+            INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/

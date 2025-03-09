@@ -4,21 +4,21 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-ambient-toolbox = "==11.*"                                  # https://ambient-toolbox.readthedocs.io/en/latest/features/changelog.html
-django = "==5.*"                                            # https://docs.djangoproject.com/en/5.0/releases/
-django-browser-reload = "==1.*"                             # https://github.com/adamchainz/django-browser-reload/blob/main/CHANGELOG.rst
+ambient-toolbox = "==12.*"                                  # https://ambient-toolbox.readthedocs.io/en/latest/features/changelog.html
+django =  { extras = ["argon2"], version = "==5.*" }        # https://docs.djangoproject.com/en/dev/releases/
+django-axes = "==7.*"                                       # https://github.com/jazzband/django-axes/blob/master/CHANGES.rst
 django-cloudinary-storage = "==0.*"                         # https://github.com/klis87/django-cloudinary-storage/releases
 django-components = "==0.*"                                 # https://github.com/EmilStenstrom/django-components/?tab=readme-ov-file#release-notes
 django-components-preprocessor = "==0.*"                    # https://pypi.org/project/django-components-preprocessor/#history
 django-context-decorator = "==1.*"                          # https://github.com/rixx/django-context-decorator/tags
 django-environ = "==0.*"                                    # https://django-environ.readthedocs.io/en/latest/changelog.html
 django-extensions = "==3.*"                                 # https://github.com/django-extensions/django-extensions/blob/main/CHANGELOG.md
+django-htmx = "==1.*"                                       # https://django-htmx.readthedocs.io/en/latest/changelog.html
+django-minify-html = "==1.*"                                # https://github.com/adamchainz/django-minify-html/blob/main/CHANGELOG.rst
 django-pony-express = "==2.*"                               # https://django-pony-express.readthedocs.io/en/latest/features/changelog.html
-freezegun = "==1.*"                                         # https://github.com/spulec/freezegun/blob/master/CHANGELOG
-gunicorn = "==22.*"                                         # https://docs.gunicorn.org/en/stable/news.html
-kolo = "==2.*"                                              # https://docs.kolo.app/en/latest/python-changelog.html
+gunicorn = "==23.*"                                         # https://docs.gunicorn.org/en/stable/news.html
 model-bakery = "==1.*"                                      # https://github.com/model-bakers/model_bakery/releases
-pillow = "==10.*"                                           # https://github.com/python-pillow/Pillow/blob/main/CHANGES.rst
+pillow = "==11.*"                                           # https://github.com/python-pillow/Pillow/blob/main/CHANGES.rst
 psycopg2-binary = "==2.*"                                   # https://github.com/psycopg/psycopg2/tags
 pywebpush = "==2.*"                                         # https://github.com/web-push-libs/pywebpush/releases
 sentry-sdk = {extras = ["django"], version = "==2.*"}       # https://github.com/getsentry/sentry-python/blob/master/CHANGELOG.md
@@ -26,9 +26,14 @@ whitenoise = "==6.*"                                        # https://whitenoise
 
 [dev-packages]
 coverage = "*"                                              # https://github.com/nedbat/coveragepy/releases
+django-browser-reload = "*"                                 # https://github.com/adamchainz/django-browser-reload/blob/main/CHANGELOG.rst
+django-debug-toolbar = "*"                                  # https://django-debug-toolbar.readthedocs.io/en/latest/changes.html
 django-upgrade = "*"                                        # https://github.com/adamchainz/django-upgrade/blob/main/CHANGELOG.rst
 djlint = "*"                                                # https://github.com/djlint/djLint/releases
+freezegun = "*"                                             # https://github.com/spulec/freezegun/blob/master/CHANGELOG
+kolo = "*"                                                  # https://docs.kolo.app/en/latest/python-changelog.html
 ruff = "*"                                                  # https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md
 
 [requires]
-python_version = "3.11.9"  # Fixed version from onrender.com (If you change this, also change it in the Dockerfile!)
+# https://docs.render.com/python-version
+python_version = "3.11.11"  # Fixed version from onrender.com (If you change this, also change it in the Dockerfile!)

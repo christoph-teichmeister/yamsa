@@ -17,10 +17,10 @@ class UserChangePasswordView(mixins.LoginRequiredMixin, generic.UpdateView):
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
-        form_kwargs.update({"instance": self.request.user})
+        form_kwargs.update({"instance": self.request.user, "request": self.request})
         return form_kwargs
 
     def form_valid(self, form):
         super_form_valid = super().form_valid(form)
-        login(request=self.request, user=form.instance)
+        login(request=self.request, user=form.instance, backend="django.contrib.auth.backends.ModelBackend")
         return super_form_valid

@@ -19,7 +19,7 @@ class GuestSendInvitationEmailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
 
         self.assertTrue(response.template_name[0], GuestSendInvitationEmailView.template_name)
-        self.assertIn(f'Invite { self.guest_user.name } to "{ self.room.name }"', str(response.content))
+        self.assertIn(f'Invite {self.guest_user.name} to "{self.room.name}"', str(response.content))
 
         self.assertEqual(response.context_data["active_tab"], "people")
 

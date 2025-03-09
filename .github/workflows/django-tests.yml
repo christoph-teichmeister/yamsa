@@ -34,7 +34,7 @@ jobs:
           coverage run manage.py test apps -v3
           coverage xml -o ./test-reports/python-coverage.xml
         env:
-          SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
+          DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
 
       - name: Upload python-coverage.xml
         uses: actions/upload-artifact@master

@@ -27,7 +27,7 @@ child_transaction = Recipe(
 
 
 def create_parent_transaction_with_optimisation(
-    room, paid_by, paid_for_tuple, parent_transaction_kwargs={}, child_transaction_kwargs={}
+    room, paid_by, paid_for_tuple, parent_transaction_kwargs=dict, child_transaction_kwargs=dict
 ):
     created_parent_transaction = baker.make_recipe(
         "apps.transaction.tests.parent_transaction", room=room, paid_by=paid_by, **parent_transaction_kwargs

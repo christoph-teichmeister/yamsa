@@ -4,7 +4,8 @@ from model_bakery.recipe import Recipe
 from apps.account.models import User
 
 default_password = "Admin123$"
-default_password_hashed = "pbkdf2_sha256$390000$spnzZngacBx7WjSs7WGucD$vSfEn1OcGbBHjNdvDbn/HyhHQb9PtZuwilh4+abKOE8="
+# Tests use django.contrib.auth.hashers.MD5PasswordHasher
+default_password_hashed = "md5$JBOrgPJ8jG4q6wYGkVhIxp$327dd1d9a3cc74ff43fae52623871315"
 
 base_user_data = {
     "is_superuser": False,

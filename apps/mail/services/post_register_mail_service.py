@@ -36,6 +36,6 @@ class PostRegisterEmailService(BaseYamsaEmailService):
 
         return EmailExtraContext(
             show_cta=True,
-            cta_btn_link=f"{settings.PROJECT_BASE_URL}{cta_btn_link}",
+            cta_btn_link=f"{settings.BACKEND_URL}{cta_btn_link}",
             cta_btn_text=cta_btn_text,
         )

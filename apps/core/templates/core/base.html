@@ -7,7 +7,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>
-        {% if core.IS_LOCALHOST %}⚒️{% endif %}
+        {% if core.DEBUG %}⚒️{% endif %}
         {% block title %}yamsa{% endblock %}
     </title>
     <link rel="icon" href="{% static 'images/favicon.ico' %}">
@@ -18,7 +18,7 @@
     <meta name="htmx-config" content='{"includeIndicatorStyles": false}'>
 </head>
 <body hx-ext="idiomorph" id="body">
-{% if core.IS_LOCALHOST %}
+{% if core.DEBUG %}
     <div class="w-100 d-flex align-items-center justify-content-center"
          style="opacity: 20%;
                         z-index:3000;

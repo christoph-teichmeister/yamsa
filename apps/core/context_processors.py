@@ -5,8 +5,8 @@ def core_context(request):
     return {
         "core": {
             # Calculated info
-            "IS_LOCALHOST": settings.IS_LOCALHOST,
-            "PROJECT_BASE_URL": settings.PROJECT_BASE_URL,
-            "DJANGO_ADMIN_SUB_URL": settings.DJANGO_ADMIN_SUB_URL,
+            "DEBUG": settings.DEBUG,
+            "BACKEND_URL": settings.BACKEND_URL,
+            "ADMIN_URL": settings.ADMIN_URL,
         },
     }
