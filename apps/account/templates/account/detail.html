@@ -19,7 +19,7 @@
         {% if request.user.is_superuser and user.is_superuser %}
             <div id="superuser-admin-link" class="row float-end me-2">
                 <div class="col">
-                    <a href="{{ core.PROJECT_BASE_URL }}/{{ core.DJANGO_ADMIN_SUB_URL }}/login"
+                    <a href="{{ core.BACKEND_URL }}/{{ core.ADMIN_URL }}/login"
                        target="_blank">
                         <i class="bi bi-terminal"></i>
                     </a>
