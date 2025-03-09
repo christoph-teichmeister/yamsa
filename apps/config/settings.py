@@ -297,39 +297,6 @@ ADMINS = (("christoph-teichmeister", "christoph.teichmeister@gmail.com"),)
 MANAGERS = ADMINS
 # https://cookiecutter-django.readthedocs.io/en/latest/settings.html#other-environment-settings
 
-# TESTING
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/5.1/ref/settings/#test-non-serialized-apps
-# Exclude main app from database serialization, speeds up tests, but removes ability to simulate rollbacks in tests
-TEST_NON_SERIALIZED_APPS = ("apps",)
-
-if "test" in sys.argv or "test_coverage" in sys.argv:
-    base = environ.Path(__file__) - 1
-    environ.Env.read_env(env_file=base("unittest.env"))
-
-    DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
-    TEST_RUN = True
-    WEBPUSH_NOTIFICATION_CLASS = "apps.webpush.dataclasses.TestNotification"
-
-    # following settings will speed up the test runner:
-
-    # Use a fast, insecure password hasher
-    PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
-
-    # Use in-memory cache and mail backend
-    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-    STORAGES["default"] = {
-        "BACKEND": "django.core.files.storage.InMemoryStorage",
-    }
-
-    # We want templates to show useful errors even when DEBUG is set to False:
-    TEMPLATES[0]["OPTIONS"]["debug"] = True
-
-    MEDIA_URL = "http://media.testserver/"
-
-    # Enable whitenoise autscanning
-    WHITENOISE_AUTOREFRESH = True
-
 # ALLOWED_HOSTS
 # ------------------------------------------------------------------------------
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS")
@@ -630,6 +597,41 @@ WEBPUSH_NOTIFICATION_CLASS = "apps.webpush.dataclasses.Notification"
 
 MAINTENANCE = env("MAINTENANCE")
 
+# TESTING
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/5.1/ref/settings/#test-non-serialized-apps
+# Exclude main app from database serialization, speeds up tests, but removes ability to simulate rollbacks in tests
+TEST_NON_SERIALIZED_APPS = ("apps",)
+
+if "test" in sys.argv or "test_coverage" in sys.argv:
+    base = environ.Path(__file__) - 1
+    environ.Env.read_env(env_file=base("unittest.env"))
+
+    DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
+    TEST_RUN = True
+    WEBPUSH_NOTIFICATION_CLASS = "apps.webpush.dataclasses.TestNotification"
+
+    # following settings will speed up the test runner:
+
+    # Use a fast, insecure password hasher
+    PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
+
+    # Use in-memory cache and mail backend
+    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+    STORAGES["default"] = {
+        "BACKEND": "django.core.files.storage.InMemoryStorage",
+    }
+
+    # We want templates to show useful errors even when DEBUG is set to False:
+    TEMPLATES[0]["OPTIONS"]["debug"] = True
+
+    MEDIA_URL = "http://media.testserver/"
+
+    # Enable whitenoise autscanning
+    WHITENOISE_AUTOREFRESH = True
+
+# DEBUG
+# ------------------------------------------------------------------------------
 if DEBUG:
     INSTALLED_APPS += ("django_browser_reload",)
 
