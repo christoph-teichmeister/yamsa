@@ -170,7 +170,6 @@ MIDDLEWARE = (
     "ambient_toolbox.middleware.current_user.CurrentUserMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
     "apps.room.middleware.RoomToRequestMiddleware",
     "apps.core.middleware.maintenance_middleware.MaintenanceMiddleware",
     # AxesMiddleware should be the last middleware in the MIDDLEWARE list.
