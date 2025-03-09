@@ -1,10 +1,10 @@
 <li id="news-{{ news.id }}"
-    class="list-group-item {% if not news.highlighted %}pb-2 pt-4{% endif %}">
+    class="list-group-item {% if not news.globally_visible_news %}pb-2 pt-4{% else %}pb-4{% endif %}">
     <div class="row"
-         {% if not news.highlighted %} hx-trigger="click" hx-target="#news-{{ news.id }}" hx-swap="outerHTML" hx-indicator="#body-loading-spinner" {% if opened %} hx-get="{% url 'news:htmx-closed-news' pk=news.id %}" {% else %} hx-get="{% url 'news:htmx-opened-news' pk=news.id %}" {% endif %}
+         {% if not news.globally_visible %}hx-trigger="click" hx-target="#news-{{ news.id }}" hx-swap="outerHTML" hx-indicator="#body-loading-spinner" {% if opened %} hx-get="{% url 'news:htmx-closed-news' pk=news.id %}" {% else %} hx-get="{% url 'news:htmx-opened-news' pk=news.id %}" {% endif %}
          {% endif %}>
         <div class="col-1">
-            {% if news.highlighted %}
+            {% if news.globally_visible %}
                 ✨
             {% else %}
                 {% if opened %}
@@ -16,11 +16,13 @@
             {% endif %}
         </div>
         <div class="col-11">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1 {% if news.highlighted %}text-primary-emphasis{% endif %}">{{ news.title }}</h5>
-                <small style="font-style: italic">{{ news.created_at|date:'G:i // d.m.Y' }}</small>
-            </div>
-            <p class="my-2">{{ news.message }}</p>
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1 {% if news.globally_visible %}text-primary-emphasis{% endif %}">{{ news.title }}</h5>
+                    {% if not news.globally_visible %}
+                        <small style="font-style: italic">{{ news.created_at|date:'G:i // d.m.Y' }}</small>
+                    {% endif %}
+                </div>
+            <p class="my-2 text-muted">{{ news.message }}</p>
         </div>
     </div>
     <div class="row">
@@ -85,3 +87,6 @@
         </div>
     </div>
 </li>
+{% if news.globally_visible %}
+    <li class="list-group-item p-0"></li>
+{% endif %}
