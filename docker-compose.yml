@@ -13,14 +13,20 @@ services:
     restart: "always"
 
   backend:
-    container_name: yamsa_backend
     depends_on:
       - database
       - mailhog
-    volumes:
-      - .:/yamsa
     build:
       context: .
+      args:
+        ADDITIONAL_PIPENV_INSTALL_ARGS: "--dev"
+    container_name: yamsa_backend
+    command: bash ./scripts/run_backend_local.sh
+    volumes:
+      - .:/src
+      - ./apps/static/webpack_bundles:/src/apps/static/webpack_bundles
+      - /src/node_modules
+      - ./apps/static:/src/apps/static
     ports:
       - "8000:8000"
     restart: "no"

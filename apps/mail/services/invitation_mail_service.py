@@ -25,6 +25,6 @@ class InvitationEmailService(BaseYamsaEmailService):
     def get_email_extra_context(self):
         return EmailExtraContext(
             show_cta=True,
-            cta_btn_link=f"{settings.PROJECT_BASE_URL}{reverse(viewname='account:register')}?with_email={self.recipient_email_list[0]}&for_guest={self.recipient.id}",
+            cta_btn_link=f"{settings.BACKEND_URL}{reverse(viewname='account:register')}?with_email={self.recipient_email_list[0]}&for_guest={self.recipient.id}",
             cta_btn_text="Register here",
         )

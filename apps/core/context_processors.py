@@ -6,7 +6,7 @@ def core_context(request):
         "core": {
             # Calculated info
             "DEBUG": settings.DEBUG,
-            "PROJECT_BASE_URL": settings.PROJECT_BASE_URL,
-            "DJANGO_ADMIN_SUB_URL": settings.DJANGO_ADMIN_SUB_URL,
+            "BACKEND_URL": settings.BACKEND_URL,
+            "ADMIN_URL": settings.ADMIN_URL,
         },
     }

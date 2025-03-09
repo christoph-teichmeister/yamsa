@@ -34,4 +34,4 @@ ruff = "*"                                                  # https://github.com
 
 [requires]
 # https://docs.render.com/python-version
-python_version = "3.11.9"  # Fixed version from onrender.com (If you change this, also change it in the Dockerfile!)
+python_version = "3.11.11"  # Fixed version from onrender.com (If you change this, also change it in the Dockerfile!)
