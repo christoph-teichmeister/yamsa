@@ -40,7 +40,7 @@ class FormHtmxResponseMixin:
                 {"triggerToast": {"message": self.get_toast_success_message(), "type": "text-bg-success bg-gradient"}}
             )
 
-        if hx_trigger is not {}:
+        if hx_trigger != {}:
             response["HX-Trigger-After-Settle"] = json.dumps(hx_trigger)
 
         # Return augmented response

@@ -16,5 +16,5 @@ class TransactionListView(TransactionBaseContext, generic.ListView):
             .select_related("paid_by", "currency")
             .prefetch_related("child_transactions")
             .annotate(total_child_value=Sum("child_transactions__value"))
-            .order_by("-created_at")
+            .order_by("-paid_at")
         )

@@ -23,6 +23,7 @@ class TransactionCreateForm(forms.ModelForm):
             "further_notes",
             "currency",
             "paid_by",
+            "paid_at",
             "room",
             "paid_for",
             "room_slug",

@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from django.test import RequestFactory
 
 from apps.account.forms import RegisterForm
 from apps.core.tests.setup import BaseTestSetUp
@@ -6,6 +7,11 @@ from apps.core.tests.setup import BaseTestSetUp
 
 class RegisterFormTestCase(BaseTestSetUp):
     form = RegisterForm
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.request = RequestFactory().get("/")
 
     def test_register_new_user(self):
         new_data = {"name": "new_name", "email": "new_user_email@local.local", "password": "my_password"}
@@ -23,7 +29,7 @@ class RegisterFormTestCase(BaseTestSetUp):
         self.assertFalse(new_user.is_superuser)
         self.assertFalse(new_user.is_staff)
 
-        user = authenticate(email=new_data["email"], password=new_data["password"])
+        user = authenticate(request=self.request, email=new_data["email"], password=new_data["password"])
         self.assertEqual(new_user, user)
 
     def test_guest_registering_turns_into_non_guest_user(self):
@@ -53,7 +59,7 @@ class RegisterFormTestCase(BaseTestSetUp):
         self.assertFalse(self.guest_user.is_superuser)
         self.assertFalse(self.guest_user.is_staff)
 
-        user = authenticate(email=new_data["email"], password=new_data["password"])
+        user = authenticate(request=self.request, email=new_data["email"], password=new_data["password"])
         self.assertEqual(self.guest_user, user)
 
     def test_duplicate_email_raises_error(self):

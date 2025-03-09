@@ -19,6 +19,6 @@ class AuthenticateGuestUserView(generic.View):
         if not request.user.is_authenticated:
             user_id = self.request.POST.get("user_id")
             guest_user = User.objects.get(id=user_id)
-            login(request=request, user=guest_user)
+            login(request=request, user=guest_user, backend="django.contrib.auth.backends.ModelBackend")
 
         return redirect_response
