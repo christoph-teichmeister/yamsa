@@ -479,11 +479,11 @@
         },
         "django-pony-express": {
             "hashes": [
-                "sha256:209b15c68ee5df49bae95a5caaf01b9f811c963d88bda06e7e34d907b3911a8b",
-                "sha256:7f3e46193fa43948bd640add8305f467d2747f7ec6c1d6bd922fe5278ad1c004"
+                "sha256:c873f144ef994779a737132c288d2b9ff613cf6069b2a591e798707dfef3920d",
+                "sha256:ccb6d062d502ea448261fe2f09df4eea1fa7e952cbf6d82b4068ca88a918a198"
             ],
             "index": "pypi",
-            "version": "==2.5.0"
+            "version": "==2.6.0"
         },
         "frozenlist": {
             "hashes": [
