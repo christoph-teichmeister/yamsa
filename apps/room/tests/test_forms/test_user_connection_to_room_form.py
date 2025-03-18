@@ -1,3 +1,6 @@
+from unittest import mock
+
+from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 from model_bakery import baker
 
 from apps.core.tests.setup import BaseTestSetUp
@@ -17,7 +20,9 @@ class GuestSendInvitationEmailFormTestCase(BaseTestSetUp):
         form = self.form_class(data=data)
         self.assertTrue(form.is_valid())
 
-        created_userconnectiontoroom = form.save()
+        with mock.patch.object(CurrentRequestMiddleware, "get_current_user", return_value=self.user):
+            created_userconnectiontoroom = form.save()
+
         self.assertIsNotNone(created_userconnectiontoroom)
 
         new_room.refresh_from_db()
