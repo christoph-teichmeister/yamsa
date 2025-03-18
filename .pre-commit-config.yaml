@@ -1,7 +1,7 @@
 repos:
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     # https://github.com/astral-sh/ruff-pre-commit/releases
-    rev: v0.9.10
+    rev: v0.11.0
     hooks:
       # Run the formatter.
       - id: ruff-format
@@ -31,7 +31,7 @@ repos:
       - id: django-upgrade
         args: [ --target-version, "5.2", --all-files ]
         language_version: python3.11
-        stages: [ push ]
+        stages: [ pre-push ]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     # https://github.com/pre-commit/pre-commit-hooks/releases
@@ -43,4 +43,4 @@ repos:
             "--pattern",
             '^^(?!(?:dependabot-.*)|(?:feature|hotfix|bugfix|refactor|merge|maintenance)/[\w\d\-_#]+).*$',
           ]
-        stages: [ commit ]
+        stages: [ pre-commit ]
