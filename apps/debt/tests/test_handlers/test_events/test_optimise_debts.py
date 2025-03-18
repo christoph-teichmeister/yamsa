@@ -753,13 +753,13 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
             **currency_1_kwargs,
             paid_by=oliver,
             paid_for_tuple=(oliver, chris, carina, rici),
-            child_transaction_kwargs={"value": Decimal(18.75)},
+            child_transaction_kwargs={"value": Decimal("18.75")},
         )
         create_parent_transaction_with_optimisation(
             **currency_1_kwargs,
             paid_by=oliver,
             paid_for_tuple=(chris,),
-            child_transaction_kwargs={"value": Decimal(8.50)},
+            child_transaction_kwargs={"value": Decimal("8.50")},
         )
         create_parent_transaction_with_optimisation(
             **currency_1_kwargs,
@@ -789,25 +789,25 @@ class CalculateOptimisedDebtsTestCase(BaseTestSetUp):
             **currency_1_kwargs,
             paid_by=oliver,
             paid_for_tuple=(oliver, rici, carina, chris),
-            child_transaction_kwargs={"value": Decimal(2.75)},
+            child_transaction_kwargs={"value": Decimal("2.75")},
         )
         create_parent_transaction_with_optimisation(
             **currency_1_kwargs,
             paid_by=oliver,
             paid_for_tuple=(oliver, rici, carina, chris),
-            child_transaction_kwargs={"value": Decimal(7.50)},
+            child_transaction_kwargs={"value": Decimal("7.50")},
         )
         create_parent_transaction_with_optimisation(
             **currency_1_kwargs,
             paid_by=chris,
             paid_for_tuple=(oliver, rici, carina, chris),
-            child_transaction_kwargs={"value": Decimal(12.50)},
+            child_transaction_kwargs={"value": Decimal("12.50")},
         )
         create_parent_transaction_with_optimisation(
             **currency_1_kwargs,
             paid_by=carina,
             paid_for_tuple=(oliver, rici, carina, chris),
-            child_transaction_kwargs={"value": Decimal(12.50)},
+            child_transaction_kwargs={"value": Decimal("12.50")},
         )
         create_parent_transaction_with_optimisation(
             **currency_1_kwargs,

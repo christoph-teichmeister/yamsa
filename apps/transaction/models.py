@@ -1,6 +1,7 @@
 from ambient_toolbox.models import CommonInfo
 from django.db import models
 from django.db.models.aggregates import Sum
+from django.utils.timezone import now
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
 from apps.core.models.mixins.emit_model_event_on_save import EmitModelEventOnSaveMixin
@@ -9,7 +10,9 @@ from apps.core.models.mixins.emit_model_event_on_save import EmitModelEventOnSav
 class ParentTransaction(EmitModelEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     description = models.TextField(max_length=50)
     further_notes = models.TextField(max_length=5000, blank=True, null=True)
+
     paid_by = models.ForeignKey("account.User", related_name="made_parent_transactions", on_delete=models.CASCADE)
+    paid_at = models.DateTimeField("Paid at", default=now, db_index=True)
 
     room = models.ForeignKey("room.Room", on_delete=models.CASCADE, related_name="parent_transactions")
 

@@ -69,6 +69,16 @@
                     </select>
                 </div>
                 <div class="mb-3 form-group">
+                    <label for="paid_at_input">Paid at</label>
+                    <input id="paid_at_input"
+                           name="paid_at"
+                           class="form-control"
+                           type="datetime-local"
+                           value="{% now "Y-m-d\TH:i" %}"
+                           min="2018-04-04T00:00"
+                           max="2099-12-31T00:00"/>
+                </div>
+                <div class="mb-3 form-group">
                     <label for="description">Description</label>
                     <textarea id="description"
                               name="description"

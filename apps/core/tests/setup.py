@@ -1,4 +1,4 @@
-from django.test import Client, TestCase, override_settings
+from django.test import Client, RequestFactory, TestCase, override_settings
 from model_bakery import baker
 
 from apps.account.models import User
@@ -23,7 +23,10 @@ class BaseTestSetUp(TestCase):
     @classmethod
     def reauthenticate_user(cls, user: User) -> Client:
         cls.client = Client()
-        login = cls.client.login(email=user.email, password=default_password)
-        cls.assertTrue(cls(), login)
+        # Create a request object for django-axes
+        request = RequestFactory().get("/")
+
+        login = cls.client.login(request=request, email=user.email, password=default_password)
+        cls.assertTrue(cls(), login, f"{login=}")
 
         return cls.client

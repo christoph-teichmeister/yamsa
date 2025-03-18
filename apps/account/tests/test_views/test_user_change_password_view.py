@@ -1,6 +1,7 @@
 import http
 
 from django.contrib.auth import authenticate
+from django.test import RequestFactory
 from django.urls import reverse
 
 from apps.account.tests.baker_recipes import default_password
@@ -40,4 +41,6 @@ class UserChangePasswordViewTestCase(BaseTestSetUp):
         self.assertInHTML("Your data:", str(response.content).replace("\\n", ""))
 
         # Assert, that the password-change worked
-        self.assertEqual(self.user, authenticate(email=self.user.email, password=new_password))
+        self.assertEqual(
+            self.user, authenticate(request=RequestFactory().get("/"), email=self.user.email, password=new_password)
+        )

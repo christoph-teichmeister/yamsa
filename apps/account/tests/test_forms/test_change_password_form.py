@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from django.test import RequestFactory
 
 from apps.account.forms.change_password_form import ChangePasswordForm
 from apps.account.tests.baker_recipes import default_password
@@ -8,10 +9,16 @@ from apps.core.tests.setup import BaseTestSetUp
 class ChangePasswordFormTestCase(BaseTestSetUp):
     form = ChangePasswordForm
 
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.request = RequestFactory().get("/")
+
     def test_regular(self):
         new_password = "new_password"
 
         form = self.form(
+            request=self.request,
             instance=self.user,
             data={
                 "id": self.user.id,
@@ -25,11 +32,12 @@ class ChangePasswordFormTestCase(BaseTestSetUp):
         form.save()
         self.user.refresh_from_db()
 
-        user = authenticate(email=self.user.email, password=new_password)
+        user = authenticate(request=self.request, email=self.user.email, password=new_password)
         self.assertEqual(user, self.user)
 
     def test_password_incorrect(self):
         form = self.form(
+            request=self.request,
             instance=self.user,
             data={
                 "id": self.user.id,
@@ -43,6 +51,7 @@ class ChangePasswordFormTestCase(BaseTestSetUp):
 
     def test_new_passwords_do_not_match(self):
         form = self.form(
+            request=self.request,
             instance=self.user,
             data={
                 "id": self.user.id,
