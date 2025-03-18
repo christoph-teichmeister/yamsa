@@ -2,7 +2,19 @@ from apps.core.event_loop.registry import message_registry
 from apps.core.event_loop.runner import handle_message
 
 
-class EmitModelCreatedEventOnSaveMixin:
+class EmitModelEventOnSaveMixin:
+    """
+    Inheriting from this Mixin leads to every model emitting a <ModelKlassName><Operation> message.
+
+    If a model is created, a <ModelKlassName>Created will be emitted, updated a <ModelKlassName>Updated will be
+    emitted and so on.
+
+    To listen to these events, create handlers which listen for <ModelKlassName><Operation> Messages like so:
+
+    @message_registry.register_event(event=<ModelKlassName><Operation>)
+    def my_message_handler(context: <ModelKlassName><Operation>).Context):
+    """
+
     class ModelEvents:
         class Created:
             label = "Created"

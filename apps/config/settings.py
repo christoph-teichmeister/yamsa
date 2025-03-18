@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 import environ
+from django_components_preprocessor import with_components_preprocessor
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 CONFIG_DIR = Path(__file__).resolve().parent
@@ -126,6 +127,7 @@ THIRD_PARTY_APPS = (
     "axes",
     "cloudinary",
     "cloudinary_storage",
+    "django_components",
     "django_extensions",
     "django_pony_express",
     "django_minify_html",
@@ -230,6 +232,13 @@ STATIC_URL = "/static/"
 STATICFILES_FOLDER = "static" if DEBUG else "staticfiles"
 STATIC_ROOT = os.path.join(BASE_DIR, STATICFILES_FOLDER)
 
+# COMPONENT_STATICFILES_DIRS = ()
+# for directory in APPS_DIR.glob("*"):
+#     if any(directory.glob("components")):
+#         COMPONENT_STATICFILES_DIRS += (os.path.join(directory, "components"),)
+#
+# STATICFILES_DIRS = (os.path.join(APPS_DIR, "static"), *COMPONENT_STATICFILES_DIRS)
+
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = (os.path.join(APPS_DIR, "static"),)
 STATICFILES_FINDERS = (
@@ -259,14 +268,10 @@ if env("CLOUDINARY_API_KEY"):
 # https://docs.djangoproject.com/en/dev/ref/settings/#templates
 TEMPLATES = (
     {
-        # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TEMPLATES-BACKEND
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        # https://docs.djangoproject.com/en/dev/ref/settings/#dirs
         "DIRS": (os.path.join(APPS_DIR, "templates"),),
-        "APP_DIRS": True,
         "OPTIONS": {
-            # https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
-            "context_processors": (
+            "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
@@ -279,7 +284,15 @@ TEMPLATES = (
                 "apps.core.context_processors.core_context",
                 "apps.currency.context_processors.currency_context",
                 "apps.room.context_processors.room_context",
+            ],
+            "loaders": with_components_preprocessor(
+                "django.template.loaders.filesystem.Loader",
+                "django.template.loaders.app_directories.Loader",
+                "django_components.template_loader.Loader",
             ),
+            "builtins": [
+                "django_components.templatetags.component_tags",
+            ],
         },
     },
 )

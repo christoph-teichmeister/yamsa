@@ -1,0 +1,22 @@
+<li id="news-{{ news.id }}"
+    class="list-group-item pb-2 pt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="row d-flex w-100 justify-content-between">
+                <div class="col">
+                    <h5 class="mb-1">
+                        {% slot "title" %}{{ news.title }}{% endslot %}
+                    </h5>
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                    <small class="fst-italic">
+                        {% slot "title_top_left" %}top left{% endslot %}
+                    </small>
+                </div>
+            </div>
+            <p class="my-2 fs-6 text-muted">
+                {% slot "body" %}body{% endslot %}
+            </p>
+        </div>
+    </div>
+</li>
