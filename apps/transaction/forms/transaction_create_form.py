@@ -1,4 +1,3 @@
-import copy
 from decimal import Decimal
 
 from django import forms
@@ -14,8 +13,6 @@ class TransactionCreateForm(forms.ModelForm):
     room_slug = forms.CharField()
     value = forms.DecimalField()
 
-    _paid_for_everyone = False
-
     class Meta:
         model = ParentTransaction
         fields = (
@@ -30,22 +27,8 @@ class TransactionCreateForm(forms.ModelForm):
             "value",
         )
 
-    def __init__(self, *args, **kwargs):
-        self._paid_for_everyone = kwargs.get("data", {"paid_for": None})["paid_for"] == "0"
-        if not self._paid_for_everyone:
-            super().__init__(*args, **kwargs)
-        else:
-            new_data = copy.deepcopy(kwargs.get("data"))
-            kwargs.pop("data")
-            new_data["paid_for"] = self.base_fields["paid_for"].choices.queryset.values_list("id", flat=True)[0]
-
-            super().__init__(*args, **kwargs, data=new_data)
-
     def save(self, commit=True):
         instance: ParentTransaction = super().save(commit)
-
-        if self._paid_for_everyone:
-            self.cleaned_data["paid_for"] = instance.room.users.all()
 
         value_per_debtor = round(
             Decimal(self.cleaned_data["value"] / self.cleaned_data["paid_for"].count()),
