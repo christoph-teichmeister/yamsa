@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import BooleanField, Exists, ExpressionWrapper, OuterRef
+from django.db.models import BooleanField, Exists, ExpressionWrapper, Max, OuterRef
 
 
 class RoomQuerySet(models.QuerySet):
@@ -21,3 +21,6 @@ class RoomQuerySet(models.QuerySet):
                 output_field=BooleanField(),
             ),
         )
+
+    def annotate_last_transaction_lastmodified_at_date(self):
+        return self.annotate(last_transaction_created_at_date=Max("parent_transactions__lastmodified_at"))

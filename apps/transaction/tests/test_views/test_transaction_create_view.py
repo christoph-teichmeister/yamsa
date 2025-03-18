@@ -27,7 +27,7 @@ class TransactionCreateViewTestCase(BaseTestSetUp):
                 "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
                 "paid_by": self.user.id,
                 "room": self.room.id,
-                "paid_for": "0",
+                "paid_for": [str(user.id) for user in self.room.users.all()],
                 "room_slug": self.room.slug,
                 "value": 10,
             },

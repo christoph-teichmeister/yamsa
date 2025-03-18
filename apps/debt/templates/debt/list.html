@@ -5,12 +5,8 @@
     <div class="row gx-0 align-items-center mt-3">
         <div class="col">
             <h5>Optimised Debts</h5>
-            {% if debts %}
-                <small>
-                    If you have paid off your debt to someone, click on the white piggy-bank-icon
-                    (<i class="bi bi-piggy-bank"></i>) next to the debt to mark it as settled.
-                </small>
-                <ul class="list-group mt-3">
+            {% if has_transactions %}
+                <ul class="list-group my-3">
                     <li class="list-group-item"
                         hx-trigger="click"
                         hx-get="{% room_url 'debt:money-spent-on-room' %}"
@@ -30,8 +26,14 @@
                         </div>
                     </li>
                 </ul>
+            {% endif %}
+            {% if debts %}
+                <small>
+                    If you have paid off your debt to someone, click on the white piggy-bank-icon
+                    (<i class="bi bi-piggy-bank"></i>) next to the debt to mark it as settled.
+                </small>
             {% else %}
-                <div class="container text-center p-4">- No debts yet -</div>
+                <div class="container text-center p-4">- No debts -</div>
             {% endif %}
         </div>
     </div>
@@ -40,7 +42,7 @@
             <li class="list-group-item">
                 <div class="row align-items-center">
                     <div class="col-9">
-                        {% if debt.settled %}<span style="text-decoration: line-through;">{% endif %}
+                        {% if debt.settled %}<span class="text-decoration-line-through">{% endif %}
                             {% autoescape off %}
                                 {% parse_user_text debt.debitor.name True %}
                             {% endautoescape %}
@@ -62,4 +64,4 @@
             </li>
         {% endfor %}
     </ul>
-{% endblock %}
+{% endblock tab_content %}
