@@ -22,14 +22,15 @@ from django.urls import include, path
 urlpatterns = [
     path("", include("apps.core.urls")),
     # Django Admin, use {% url 'admin:index' %}
-    path(settings.ADMIN_URL, admin.site.urls),
+    path(f"{settings.ADMIN_URL}/", admin.site.urls),
     path("account/", include("apps.account.urls")),
     path("debt/", include("apps.debt.urls")),
     path("news/", include("apps.news.urls")),
     path("room/", include("apps.room.urls")),
     path("transaction/", include("apps.transaction.urls")),
     path("webpush/", include("apps.webpush.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+]
 
 if "django_browser_reload" in settings.INSTALLED_APPS:
     urlpatterns.append(

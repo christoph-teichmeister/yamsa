@@ -25,7 +25,7 @@ APPS_DIR = CONFIG_DIR.parent
 BASE_DIR = APPS_DIR.parent
 
 env = environ.Env(
-    DJANGO_ADMIN_URL=(str, "admin/"),
+    DJANGO_ADMIN_URL=(str, "admin"),
     DJANGO_ALLOWED_HOSTS=(list, ["127.0.0.1", "localhost"]),
     DJANGO_BACKEND_URL=(str, "http://yamsa:8000"),
     DJANGO_CACHE_URL=(str, "locmemcache://"),
