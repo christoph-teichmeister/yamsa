@@ -5,7 +5,7 @@
     {% if debt.debitor.name == request.user.name %}
         {% if debt.creditor.paypal_me_username %}
             <a class="text-reset"
-               href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/{{ debt.value }}{{ debt.currency.code }}"
+               href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value }}{{ debt.currency.code }}"
                target="_blank"><i class="bi bi-paypal"></i></a>
             &nbsp&nbsp&nbsp
         {% endif %}
@@ -16,10 +16,12 @@
            hx-swap="morph:innerHTML"
            hx-push-url="true"></i>
     {% else %}
+        {# djlint:off H021 #}
         <i class="bi bi-piggy-bank cursor-pointer"
            style="opacity: 25%"
            data-bs-toggle="tooltip"
            data-bs-placement="top"
            data-bs-title="This transaction is not yours to settle!"></i>
+        {# djlint:on #}
     {% endif %}
 {% endif %}
