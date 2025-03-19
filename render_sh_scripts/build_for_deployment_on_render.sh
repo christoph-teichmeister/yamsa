@@ -21,4 +21,4 @@ echo "" && echo "python manage.py deleteorphanedmedia --noinput"
 python manage.py deleteorphanedmedia --noinput
 
 echo "" && echo "bash scripts/clear_sessions.sh"
-python ../scripts/clear_sessions.sh
+python ./scripts/clear_sessions.sh
