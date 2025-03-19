@@ -1,6 +1,6 @@
 #!/bin/bash
-echo Clear django sessions
+echo "clear django sessions"
 ./manage.py clearsessions
 
-echo Clear axes logs
+echo "clear axes logs"
 ./manage.py axes_reset_logs
