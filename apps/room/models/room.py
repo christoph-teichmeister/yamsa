@@ -53,6 +53,10 @@ class Room(FullCleanOnSaveMixin, CommonInfo):
     def has_guests(self):
         return self.room_users.filter(is_guest=True).exists()
 
+    @cached_property
+    def capitalised_initials(self):
+        return self.name[:2].upper()
+
     @property
     def can_be_closed(self):
         return not self.debts.filter(settled=False).exists()
