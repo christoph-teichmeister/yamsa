@@ -54,7 +54,7 @@ class Room(FullCleanOnSaveMixin, CommonInfo):
         return self.room_users.filter(is_guest=True).exists()
 
     @cached_property
-    def display_initials(self):
+    def capitalised_initials(self):
         return self.name[:2].upper()
 
     @property

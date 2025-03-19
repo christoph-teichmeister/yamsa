@@ -15,7 +15,7 @@ def create_news_on_user_connection_to_room_created(context: UserConnectionToRoom
     )
 
     News.objects.create(
-        title=f"✨ {user_connection_to_room.room.display_initials}: User added",
+        title=f"✨ {user_connection_to_room.room.capitalised_initials}: User added",
         message=message,
         room_id=user_connection_to_room.room_id,
     )

@@ -13,7 +13,7 @@ def create_news_on_transaction_create(context: ParentTransactionCreated.Context)
     )
 
     News.objects.create(
-        title=f"💸 {parent_transaction.room.display_initials}: Transaction created",
+        title=f"💸 {parent_transaction.room.capitalised_initials}: Transaction created",
         message=message,
         room_id=parent_transaction.room_id,
     )
