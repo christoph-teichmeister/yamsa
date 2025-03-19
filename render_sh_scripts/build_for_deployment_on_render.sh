@@ -19,6 +19,3 @@ python manage.py migrate
 echo "" && echo "python manage.py deleteorphanedmedia --noinput"
 # https://pypi.org/project/django-cloudinary-storage/#deleteorphanedmedia
 python manage.py deleteorphanedmedia --noinput
-
-echo "" && echo "bash scripts/clear_sessions.sh"
-python ./scripts/clear_sessions.sh
