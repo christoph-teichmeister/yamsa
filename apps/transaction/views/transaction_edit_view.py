@@ -18,14 +18,13 @@ class TransactionEditView(TransactionBaseContext, generic.UpdateView):
         form_kwargs = super().get_form_kwargs()
 
         if self.request.method == "POST":
-            # Only edit the value, when a form is posted
+            # Only allow editing the form values, when a form is posted
             form_kwargs["data"]._mutable = True
-            # "Spread" the form-inputs for value and child_transaction_id
-            form_kwargs["data"]["value"] = {**form_kwargs["data"]}["value"]
-            form_kwargs["data"]["child_transaction_id"] = {**form_kwargs["data"]}.get("child_transaction_id")
-            form_kwargs["data"]["paid_for"] = {**form_kwargs["data"]}.get("paid_for")
 
-            form_kwargs["data"]["request_user"] = self.request.user
+            # Clean up the mapping of multi-value fields
+            multi_value_fields = ("value", "child_transaction_id", "paid_for")
+            for field in multi_value_fields:
+                form_kwargs["data"][field] = form_kwargs["data"].getlist(field)
 
         return form_kwargs
 
