@@ -37,6 +37,11 @@ urlpatterns = [
                 views.ChildTransactionDeleteView.as_view(),
                 name="child-transaction-delete",
             ),
+            path(
+                "parent-transaction/delete/<int:pk>",
+                views.ParentTransactionDeleteView.as_view(),
+                name="parent-transaction-delete",
+            ),
         ]
     ),
 ]

@@ -77,13 +77,13 @@ def send_notification_on_transaction_update(context: ParentTransactionUpdated.Co
 
 
 @message_registry.register_event(event=ParentTransactionDeleted)
-def send_notification_on_child_transaction_deleted(context: ParentTransactionUpdated.Context):
+def send_notification_on_child_transaction_deleted(context: ParentTransactionDeleted.Context):
     parent_transaction = context.parent_transaction
 
     notification = Notification(
         payload=Notification.Payload(
             head="Transaction deleted",
-            body=f"{parent_transaction.lastmodified_by.name} just deleted a transaction "
+            body=f"{context.user_who_deleted.name} just deleted a transaction "
             f'("{parent_transaction.description}")\n'
             f"Have a look!",
             click_url=reverse(

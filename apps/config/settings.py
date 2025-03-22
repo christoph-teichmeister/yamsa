@@ -195,7 +195,7 @@ MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "ambient_toolbox.middleware.current_user.CurrentUserMiddleware",
+    "ambient_toolbox.middleware.current_request.CurrentRequestMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "apps.room.middleware.RoomToRequestMiddleware",
