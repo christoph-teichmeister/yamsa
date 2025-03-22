@@ -24,7 +24,7 @@ class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
         verbose_name_plural = "Parent Transactions"
 
     def __str__(self):
-        return f"{self.id}: {self.paid_by.name} paid {self.value}{self.currency.sign}"
+        return f"{self.id}: {self.description}"
 
     @property
     def value(self):
