@@ -1,3 +1,4 @@
+from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
 from django.db import transaction
@@ -54,7 +55,7 @@ class TransactionEditForm(forms.ModelForm):
 
     def _save_child_transactions(self, instance: ParentTransaction):
         # Get the user making the request
-        request_user = self.data.get("request_user")
+        request_user = CurrentRequestMiddleware.get_current_user()
 
         # Initialize an empty list to keep track of updated ChildTransaction instances
         updated_child_transactions = []
