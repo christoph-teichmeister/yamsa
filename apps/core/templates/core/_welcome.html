@@ -7,8 +7,10 @@
             </ul>
         {% endif %}
         {% if news %}
-            <hr style="margin-bottom: 0">
             <ul class="list-group list-group-flush">
+                {% if highlighted_news %}
+                  <li id="first-break" class="list-group-item p-0"></li>
+                {% endif %}
                 {% for news_object in news %}
                     {% include "shared_partials/news_card.html" with news=news_object %}
                 {% endfor %}
