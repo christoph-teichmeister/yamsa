@@ -1,1 +1,1 @@
-from apps.core.models.mixins.full_clean_on_save import FullCleanOnSaveMixin  # noqa: F401
+from apps.core.models.mixins.full_clean_on_save import FullCleanOnSaveMixin

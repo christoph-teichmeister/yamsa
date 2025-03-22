@@ -143,3 +143,13 @@ unfixable = []
 
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = [
+  # Allows "imported but unused" in init files
+  "F401",
+]
+"**/apps.py" = [
+  # Allows "imported but unused" in init files
+  "F401",
+]
