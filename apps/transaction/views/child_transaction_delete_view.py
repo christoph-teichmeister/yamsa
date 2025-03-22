@@ -35,6 +35,7 @@ class ChildTransactionDeleteView(TransactionBaseContext, generic.DeleteView):
                     context_data={
                         "parent_transaction": parent_transaction,
                         "room": self.object.parent_transaction.room,
+                        "user_who_deleted": self.request.user,
                     }
                 )
             )
