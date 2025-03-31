@@ -1355,12 +1355,12 @@
         },
         "django-upgrade": {
             "hashes": [
-                "sha256:9ec0f2a6d3384857154bf2dca14b2a94e063fcc690e395357df50e80ab8c6628",
-                "sha256:e4512611b56f3293fa8cc74f5c9d847b8f8eb2bef5afedf6efb5e7e292045928"
+                "sha256:198572f31130cd80b4f30c568aa331351176cccf1455741e45ebca272812271d",
+                "sha256:d761d517f87338291ac73890e15b09775532c5cea8cf794f56ad159da9d63d9b"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==1.23.1"
+            "version": "==1.24.0"
         },
         "djlint": {
             "hashes": [
