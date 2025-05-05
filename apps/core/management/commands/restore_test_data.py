@@ -74,6 +74,8 @@ class Command(BaseCommand):
         Currency.objects.create(name="Euro", sign="€", code="EUR")
         Currency.objects.create(name="Pound Sterling", sign="£", code="GBP")
 
+        print("Euro and Pound Sterling created")
+
     @staticmethod
     def _create_rooms():
         all_users_id_list = User.objects.values_list("id", flat=True)
@@ -89,7 +91,7 @@ class Command(BaseCommand):
 
             for user_id in all_users_id_list:
                 if user_id % i == 0:
-                    UserConnectionToRoom.objects.create(user_id=user_id, room=room)
+                    UserConnectionToRoom.objects.create(user_id=user_id, room=room, created_by_id=room.created_by_id)
 
             print(f'Room ID: {room.id}, Name: "{room.name}" created')
 
