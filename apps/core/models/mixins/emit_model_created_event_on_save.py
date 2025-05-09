@@ -3,6 +3,19 @@ from apps.core.event_loop.runner import handle_message
 
 
 class EmitModelCreatedEventOnSaveMixin:
+    """
+    Mixin to emit model-related events on save and delete operations.
+
+    Will look for evenmessage-events in the form of <classname><operation>,
+    so when a class Room is created, the emitted event would be RoomCreated
+
+    This class facilitates the generation and handling of events for models upon
+    creation, modification, and deletion. It relies on specific event handler
+    classes that need to be registered and matched to the model's operations.
+    The mixin attaches event handler classes dynamically and provides mechanisms
+    to send messages with event-specific context.
+    """
+
     class ModelEvents:
         class Created:
             label = "Created"
