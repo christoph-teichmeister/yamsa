@@ -5,16 +5,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('room', '0007_userconnectiontoroom_created_at_and_more'),
+        ("room", "0007_userconnectiontoroom_created_at_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='room',
-            name='users',
-            field=models.ManyToManyField(through='room.UserConnectionToRoom', through_fields=('room', 'user'), to=settings.AUTH_USER_MODEL),
+            model_name="room",
+            name="users",
+            field=models.ManyToManyField(
+                through="room.UserConnectionToRoom", through_fields=("room", "user"), to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]
