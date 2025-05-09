@@ -5,10 +5,11 @@ from ambient_toolbox.models import CommonInfo
 from django.db import models
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
+from apps.core.models.mixins.emit_model_created_event_on_save import EmitModelCreatedEventOnSaveMixin
 from apps.room.managers import RoomManager
 
 
-class Room(FullCleanOnSaveMixin, CommonInfo):
+class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     class StatusChoices(models.IntegerChoices):
         OPEN = 1, "Open"
         CLOSED = 2, "Closed"
