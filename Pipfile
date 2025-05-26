@@ -6,11 +6,11 @@ name = "pypi"
 [packages]
 ambient-toolbox = "==12.*"                                  # https://ambient-toolbox.readthedocs.io/en/latest/features/changelog.html
 django =  { extras = ["argon2"], version = "==5.*" }        # https://docs.djangoproject.com/en/dev/releases/
-django-axes = "==7.*"                                       # https://github.com/jazzband/django-axes/blob/master/CHANGES.rst
+django-axes = "==8.*"                                       # https://github.com/jazzband/django-axes/blob/master/CHANGES.rst
 django-cloudinary-storage = "==0.*"                         # https://github.com/klis87/django-cloudinary-storage/releases
 django-context-decorator = "==1.*"                          # https://github.com/rixx/django-context-decorator/tags
 django-environ = "==0.*"                                    # https://django-environ.readthedocs.io/en/latest/changelog.html
-django-extensions = "==3.*"                                 # https://github.com/django-extensions/django-extensions/blob/main/CHANGELOG.md
+django-extensions = "==4.*"                                 # https://github.com/django-extensions/django-extensions/blob/main/CHANGELOG.md
 django-htmx = "==1.*"                                       # https://django-htmx.readthedocs.io/en/latest/changelog.html
 django-minify-html = "==1.*"                                # https://github.com/adamchainz/django-minify-html/blob/main/CHANGELOG.rst
 # Fixed version constraint for django-minify-html dependency (TODO CT: Upgrade, once django-minify-html has upgraded, or try again sometime)
