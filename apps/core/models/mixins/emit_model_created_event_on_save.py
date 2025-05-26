@@ -38,7 +38,7 @@ class EmitModelCreatedEventOnSaveMixin:
         for model_event in self.ModelEvents().get_model_events_as_tuple():
             event_handler_class_list = list(
                 filter(
-                    lambda klass: f"{self._meta.object_name}{model_event.label}" in str(klass),
+                    lambda klass: f".{self._meta.object_name}{model_event.label}" in str(klass),
                     message_registry.event_dict,
                 )
             )
