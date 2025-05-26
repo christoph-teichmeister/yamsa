@@ -12,7 +12,7 @@ from apps.room.models import Room, UserConnectionToRoom
 class Command(BaseCommand):
     """Command for restoring test data for the system"""
 
-    help = "Creates e2e data"
+    help = "Creates some test data"
 
     def handle(self, *args, **options):
         call_command("flush", "--noinput")
