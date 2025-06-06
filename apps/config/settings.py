@@ -440,7 +440,7 @@ LOGGING = {
 
 # SENTRY
 # ------------------------------------------------------------------------------
-if os.environ.get("DJANGO_SENTRY_DSN"):
+if os.environ.get("SENTRY_DSN"):
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
     from sentry_sdk.integrations.logging import LoggingIntegration
@@ -451,17 +451,17 @@ if os.environ.get("DJANGO_SENTRY_DSN"):
     )
 
     sentry_sdk.init(
-        dsn=env("DJANGO_SENTRY_DSN"),
+        dsn=env("SENTRY_DSN"),
         integrations=(
             sentry_logging,
             DjangoIntegration(),
         ),
         max_breadcrumbs=50,
         debug=False,
-        environment=env("DJANGO_SENTRY_ENVIRONMENT"),
+        environment=env("SENTRY_ENVIRONMENT"),
         server_name=BACKEND_URL,
         send_default_pii=True,
-        traces_sample_rate=env("DJANGO_SENTRY_TRACES_SAMPLE_RATE"),
+        traces_sample_rate=env("SENTRY_TRACES_SAMPLE_RATE"),
     )
 
 # SESSION
