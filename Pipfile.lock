@@ -668,12 +668,12 @@
         },
         "model-bakery": {
             "hashes": [
-                "sha256:30ad372604f326a1ba9f949bad9d0f85e6a510db4ef6a0b07be2d6bd7485008b",
-                "sha256:a0c97e8a27329ecad78136f9d8f573ae392e4282326ea5c5f6daed1173013c4e"
+                "sha256:107b3efb8889baac83cae0e2d81465903b69a70eeb99ecfd0929d959a653ab90",
+                "sha256:796e0b7fa6bf2acc09feaadce40c6bcc13e5b55c5bdff9f76e87ceb64f736070"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==1.20.4"
+            "version": "==1.20.5"
         },
         "multidict": {
             "hashes": [
