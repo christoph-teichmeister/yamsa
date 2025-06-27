@@ -187,10 +187,11 @@ AUTH_PASSWORD_VALIDATORS = (
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = (
-    "django.middleware.gzip.GZipMiddleware",
-    "django_minify_html.middleware.MinifyHtmlMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    # Minify HTML before GZipping for a clearer processing flow
+    "django.middleware.gzip.GZipMiddleware",
+    "django_minify_html.middleware.MinifyHtmlMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -262,7 +263,10 @@ TEMPLATES = (
         # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TEMPLATES-BACKEND
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         # https://docs.djangoproject.com/en/dev/ref/settings/#dirs
-        "DIRS": (os.path.join(APPS_DIR, "templates"),),
+        "DIRS": (
+            f"{APPS_DIR}/templates",
+            f"{BASE_DIR}/templates",
+        ),
         "APP_DIRS": True,
         "OPTIONS": {
             # https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
@@ -285,7 +289,7 @@ TEMPLATES = (
 )
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#form-renderer
-FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
+FORM_RENDERER = "django.forms.renderers.DjangoTemplates"
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -828,9 +832,6 @@ if "test" in sys.argv or "test_coverage" in sys.argv:
     STORAGES["default"] = {
         "BACKEND": "django.core.files.storage.InMemoryStorage",
     }
-
-    # We want templates to show useful errors even when DEBUG is set to False:
-    TEMPLATES[0]["OPTIONS"]["debug"] = True
 
     MEDIA_URL = "http://media.testserver/"
 
