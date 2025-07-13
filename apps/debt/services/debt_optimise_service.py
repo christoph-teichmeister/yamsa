@@ -50,7 +50,7 @@ class DebtOptimiseService:
                 ).aggregate(total_credited_settled=Sum("value"))["total_credited_settled"] or Decimal(0)
                 balances[user.id] -= total_where_they_credited_something
 
-            # Initialize lists for debtors and creditors, ignoring those with a balance of 0
+            # Initialise lists for debtors and creditors, ignoring those with a balance of 0
             debtors = []
             creditors = []
 
