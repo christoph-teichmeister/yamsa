@@ -17,7 +17,15 @@ class UserConnectionToRoomAdmin(admin.ModelAdmin):
     )
 
 
-class UserConnectionToRoomInline(admin.TabularInline):
+class UserConnectionToRoomInlineBase(admin.TabularInline):
     model = UserConnectionToRoom
-    fk_name = "user"
     extra = 0
+    readonly_fields = ("created_at", "created_by", "lastmodified_at", "lastmodified_by")
+
+
+class UserConnectionToRoomForUserAdminInline(UserConnectionToRoomInlineBase):
+    fk_name = "user"
+
+
+class UserConnectionToRoomForRoomAdminInline(UserConnectionToRoomInlineBase):
+    fk_name = "room"
