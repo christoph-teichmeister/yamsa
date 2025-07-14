@@ -56,6 +56,8 @@
                                 {% parse_user_text debt.creditor.name %}
                             {% endautoescape %}
                             {% if debt.settled %}</span>{% endif %}
+                      {% if debt.settled %}
+                        <small><i>&nbsp;(Settled at {{ debt.settled_at|date:"d.m.Y" }})</i></small>{% endif %}
                     </div>
                     <div class="col-3">
                         <div class="float-end">{% include "debt/partials/_settle_debt_piggy_icon.html" with debt=debt %}</div>

@@ -3,7 +3,7 @@ from django.contrib.admin import register
 
 from apps.account.models import User
 from apps.core.admin import YamsaCommonInfoAdminMixin
-from apps.room.admin import UserConnectionToRoomInline
+from apps.room.admin.user_connection_to_room_admin import UserConnectionToRoomForUserAdminInline
 from apps.transaction.admin import ParentTransactionPaidByInline
 
 
@@ -33,7 +33,7 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     )
     extra_fields_for_fieldset = ("last_login",)
     inlines = (
-        UserConnectionToRoomInline,
+        UserConnectionToRoomForUserAdminInline,
         ParentTransactionPaidByInline,
     )
 
