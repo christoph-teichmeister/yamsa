@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.contrib.admin import register
 
+from apps.core.admin import YamsaCommonInfoAdminMixin
 from apps.debt.models import Debt
 
 
 @register(Debt)
-class DebtAdmin(admin.ModelAdmin):
+class DebtAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     list_display = ("id", "__str__", "debitor", "creditor", "settled", "settled_at", "value")
     search_fields = ("debitor__name", "creditor__name", "room__name")
     list_filter = ("settled", "room__name")
