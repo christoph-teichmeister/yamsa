@@ -9,7 +9,7 @@ class YamsaCommonInfoAdminMixin(CommonInfoAdminMixin):
 
         fieldsets += (
             (
-                "Sonstige Informationen",
+                "Other Info",
                 {
                     "fields": (
                         *self.extra_fields_for_fieldset,
