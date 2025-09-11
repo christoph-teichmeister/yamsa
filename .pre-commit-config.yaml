@@ -26,7 +26,7 @@ repos:
 
   - repo: https://github.com/adamchainz/django-upgrade
     # https://django-upgrade.readthedocs.io/en/latest/changelog.html
-    rev: 1.25.0
+    rev: 1.28.0
     hooks:
       - id: django-upgrade
         args: [ --target-version, "6.0", --all-files ]
