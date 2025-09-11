@@ -1,10 +1,13 @@
 {% extends "core/base.html" %}
 {% load static %}
 {% load room_tags %}
-{% block title %}yamsa | {{ current_room.name }}{% endblock %}
+{% block title %}
+    yamsa | {{ current_room.name }}
+{% endblock title %}
 {% block content %}
     {% if request.user.is_authenticated %}
-        {% block tab_content %}{% endblock %}
+        {% block tab_content %}
+        {% endblock tab_content %}
     {% else %}
         {% include "room/partials/_detail_who_are_you.html" %}
     {% endif %}
@@ -46,4 +49,4 @@
     {#        }#}
     {#      });#}
     {#    </script>#}
-{% endblock %}
+{% endblock content %}

@@ -97,7 +97,7 @@
                                            step="0.01"
                                            max="99999999"
                                            required
-                                           value="{{ child_transaction.value }}"/>
+                                           value="{{ child_transaction.value }}" />
                                 </div>
                                 <div class="col-1 ps-1 me-3">{{ parent_transaction.currency.sign }}</div>
                             </div>
@@ -135,7 +135,7 @@
                                    step="0.01"
                                    max="99999999"
                                    required
-                                   value="{{ child_transaction.id }}"/>
+                                   value="{{ child_transaction.id }}" />
                         </div>
                     </div>
                 </li>
@@ -169,7 +169,7 @@
                    type="datetime-local"
                    value="{{ parent_transaction.paid_at|date:"Y-m-d" }}T{{ parent_transaction.paid_at|time:"H:i" }}"
                    min="2018-04-04T00:00"
-                   max="2099-12-31T00:00"/>
+                   max="2099-12-31T00:00" />
         </div>
         <div class="row mt-4 mx-2">
             <div class="col">
@@ -177,4 +177,4 @@
             </div>
         </div>
     </form>
-{% endblock %}
+{% endblock tab_content %}
