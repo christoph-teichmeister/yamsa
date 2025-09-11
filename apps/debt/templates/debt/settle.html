@@ -21,7 +21,12 @@
             <li class="list-group-item">
                 <div class="form-group" hidden>
                     <label for="debt_id">Debt ID</label>
-                    <input id="debt_id" type="number" name="debt_id" class="form-control" required value={{ debt.id }} />
+                    <input id="debt_id"
+                           type="number"
+                           name="debt_id"
+                           class="form-control"
+                           required
+                           value="{{ debt.id }}" />
                 </div>
                 <div class="form-group" hidden>
                     <label for="settled" class="form-label">Settled?</label>
@@ -53,4 +58,4 @@
         </div>
         <div class="modal-footer"></div>
     </form>
-{% endblock %}
+{% endblock tab_content %}

@@ -76,7 +76,12 @@
                 {% endfor %}
                 <div class="form-group" hidden>
                     <label for="status">Status</label>
-                    <input id="status" type="number" name="status" class="form-control" required value={{ current_room.status }} />
+                    <input id="status"
+                           type="number"
+                           name="status"
+                           class="form-control"
+                           required
+                           value="{{ current_room.status }}" />
                 </div>
             </li>
             <li class="list-group-item"></li>
@@ -141,4 +146,4 @@
             {% endfor %}
         </div>
     </form>
-{% endblock %}
+{% endblock tab_content %}

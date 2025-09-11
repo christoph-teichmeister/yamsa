@@ -28,7 +28,7 @@ whitenoise = "==6.*"                                        # https://whitenoise
 coverage = "*"                                              # https://github.com/nedbat/coveragepy/releases
 django-browser-reload = "*"                                 # https://github.com/adamchainz/django-browser-reload/blob/main/CHANGELOG.rst
 django-debug-toolbar = "*"                                  # https://django-debug-toolbar.readthedocs.io/en/latest/changes.html
-django-upgrade = "*"                                        # https://github.com/adamchainz/django-upgrade/blob/main/CHANGELOG.rst
+django-upgrade = "*"                                        # https://django-upgrade.readthedocs.io/en/latest/changelog.html
 djlint = "*"                                                # https://github.com/djlint/djLint/releases
 freezegun = "*"                                             # https://github.com/spulec/freezegun/blob/master/CHANGELOG
 kolo = "*"                                                  # https://docs.kolo.app/en/latest/python-changelog.html
