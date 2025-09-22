@@ -486,12 +486,12 @@
         },
         "django-htmx": {
             "hashes": [
-                "sha256:5a40d4b2a3a4d5a444b516ca7f9c9836dc512dc40634770687989e96999466e5",
-                "sha256:9418ac5a2c89c593b71d32dbef361dc4fdf0033dda0fbb63584fd3e67b165207"
+                "sha256:3a80ffaa6df5a07e833752cd8ada7cee0fa711787841ab17a805075b1aecacc7",
+                "sha256:88ecc2f8a3f13ad5a50e6b16be127f04fba369124cc40a09b21ce33babb04aa6"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==1.24.0"
+            "version": "==1.26.0"
         },
         "django-minify-html": {
             "hashes": [
