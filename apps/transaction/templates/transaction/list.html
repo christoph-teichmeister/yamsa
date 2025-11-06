@@ -2,49 +2,176 @@
 {% load static %}
 {% load room_tags %}
 {% block tab_content %}
-    <div class="row gx-0 align-items-center mt-3">
-        <div class="col-7">
-            <h5>Transactions made</h5>
-            {% if parent_transactions %}<small>Click on a transaction to see it in full detail.</small>{% endif %}
+    <div class="row g-4 mt-3">
+        <div class="col-12 col-lg-8">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+                <div>
+                    <h4 class="mb-1">Room transactions</h4>
+                    {% if parent_transactions %}
+                        <p class="text-muted small mb-0">Click a row to explore the full breakdown.</p>
+                    {% else %}
+                        <p class="text-muted small mb-0">Record your first expense to see the running history here.</p>
+                    {% endif %}
+                </div>
+                <div class="d-flex flex-wrap justify-content-md-end">
+                    <button type="button"
+                            class="btn btn-primary btn-sm {% if current_room.is_closed %}disabled{% endif %}"
+                            hx-get="{% room_url 'transaction:create' %}"
+                            hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true">Add transaction</button>
+                </div>
+            </div>
+
+            {% if current_room.is_closed %}
+                <div class="alert alert-warning small mb-3" role="alert">
+                    This room is closed, so transactions are read-only.
+                </div>
+            {% endif %}
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body pb-0">
+                    <label for="transaction-search" class="form-label text-muted small mb-1">Search</label>
+                    <input type="search"
+                           id="transaction-search"
+                           class="form-control form-control-sm mb-3"
+                           placeholder="Filter by payer or description"
+                           autocomplete="off"
+                           {% if not parent_transactions %}disabled{% endif %}>
+                </div>
+                <div class="table-responsive">
+                    {% if parent_transactions %}
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="text-muted text-uppercase small">
+                                <tr>
+                                    <th scope="col">Payer</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col" class="text-end">Amount</th>
+                                    <th scope="col" class="text-end">Paid on</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transaction-table-body">
+                                {% for parent_transaction in parent_transactions %}
+                                    <tr id="transaction-{{ parent_transaction.id }}"
+                                        class="cursor-pointer transaction-row"
+                                        role="button"
+                                        tabindex="0"
+                                        hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
+                                        hx-target="#body"
+                                        hx-indicator="#body-loading-spinner"
+                                        hx-swap="morph:innerHTML"
+                                        hx-push-url="true"
+                                        hx-trigger="click keyup[key=='Enter']"
+                                        data-search-text="{{ parent_transaction.paid_by.name|default_if_none:''|lower }} {{ parent_transaction.description|default_if_none:''|lower }}">
+                                        <td class="py-3">
+                                            <div class="fw-semibold">
+                                                {% autoescape off %}
+                                                    {% parse_user_text parent_transaction.paid_by.name True %}
+                                                {% endautoescape %}
+                                            </div>
+                                            <div class="text-muted small">Paid by</div>
+                                        </td>
+                                        <td class="py-3">
+                                            <div class="fw-semibold">{{ parent_transaction.description|default_if_none:'No description'|truncatechars:70 }}</div>
+                                            <div class="text-muted small">Tap to review the split details</div>
+                                        </td>
+                                        <td class="text-end py-3">
+                                            <div class="fw-semibold">{{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}</div>
+                                            <div class="text-muted small">Total</div>
+                                        </td>
+                                        <td class="text-end py-3">
+                                            <div class="fw-semibold">{{ parent_transaction.paid_at|date:'M j, Y' }}</div>
+                                            <div class="text-muted small">{{ parent_transaction.paid_at|timesince }} ago</div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="p-5 text-center text-muted" id="transaction-empty-state">
+                            <p class="fw-semibold mb-1">Nothing to show yet</p>
+                            <p class="small mb-0">Start by logging an expense to build your history.</p>
+                        </div>
+                    {% endif %}
+                </div>
+                {% if parent_transactions %}
+                    <div class="text-muted small text-center py-3" id="transaction-empty-state" hidden>
+                        No transactions match your search.
+                    </div>
+                {% endif %}
+            </div>
         </div>
-        <div class="col-5 d-flex justify-content-end">
-            <button type="button"
-                    class="btn btn-primary btn-sm me-2 mb-2 {% if current_room.is_closed %}disabled{% endif %}"
-                    hx-get="{% room_url 'transaction:create' %}"
-                    hx-target="#body"
-                    hx-indicator="#body-loading-spinner"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true">Add transaction</button>
+        <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <h6 class="text-uppercase text-muted small mb-3">Room snapshot</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted small">Status</span>
+                        <span class="badge {% if current_room.is_closed %}bg-secondary{% else %}bg-success{% endif %}">
+                            {% if current_room.is_closed %}Closed{% else %}Open{% endif %}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted small">Transactions logged</span>
+                        <span class="fw-semibold">{{ parent_transactions|length }}</span>
+                    </div>
+                    {% if parent_transactions %}
+                        {% with parent_transactions|first as latest_transaction %}
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted small">Last transaction</span>
+                                <span class="fw-semibold">{{ latest_transaction.paid_at|date:'M j, Y' }}</span>
+                            </div>
+                        {% endwith %}
+                    {% else %}
+                        <p class="text-muted small mb-0">Invite your roommates to start sharing expenses.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-uppercase text-muted small mb-3">Tips</h6>
+                    <ul class="list-unstyled mb-0 small text-muted">
+                        <li>Use the search bar to quickly jump to older purchases.</li>
+                        <li>Click any row to edit splits or view participants.</li>
+                        <li>Need to log something new? Hit "Add transaction".</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
-    {% if parent_transactions %}
-        <ul id="transaction:list"
-            class="list-group list-group-flush mb-3"
-            style="position:relative">
-            {% for parent_transaction in parent_transactions %}
-                <li id="transaction-{{ parent_transaction.id }}"
-                    class="list-group-item pb-4 pt-4 cursor-pointer"
-                    hx-trigger="click"
-                    hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
-                    hx-target="#body"
-                    hx-indicator="#body-loading-spinner"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">
-                            {% autoescape off %}
-                                {% parse_user_text parent_transaction.paid_by.name True %}
-                            {% endautoescape %}
-                            paid
-                            <strong>{{ parent_transaction.total_child_value }}{{ parent_transaction.currency.sign }}</strong>
-                        </h5>
-                        <small>{{ parent_transaction.paid_at|date:'d.m.Y' }}</small>
-                    </div>
-                    <small style="font-style: italic">"{{ parent_transaction.description|truncatechars:35 }}"</small>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <script type="text/javascript">
+        (function () {
+            var searchInput = document.getElementById('transaction-search');
+            var rows = document.querySelectorAll('#transaction-table-body .transaction-row');
+            var emptyState = document.getElementById('transaction-empty-state');
+
+            if (!searchInput || rows.length === 0) {
+                return;
+            }
+
+            searchInput.addEventListener('input', function (event) {
+                var query = event.target.value.trim().toLowerCase();
+                var matches = 0;
+
+                Array.prototype.forEach.call(rows, function (row) {
+                    var text = row.getAttribute('data-search-text');
+                    var isMatch = !query || (text && text.indexOf(query) !== -1);
+
+                    row.classList.toggle('d-none', !isMatch);
+
+                    if (isMatch) {
+                        matches += 1;
+                    }
+                });
+
+                if (emptyState) {
+                    emptyState.hidden = matches !== 0;
+                }
+            });
+        })();
+    </script>
     <!-- Observer to scroll to correct element when anchor tags are in url -->
     <script type="text/javascript">
       // Callback function to execute when mutations are observed
@@ -76,6 +203,10 @@
         var observer = new MutationObserver(callback);
 
       // Start observing the target node for configured mutations
-        observer.observe(document.getElementById("body"), {childList: true});
+        var targetNode = document.getElementById("body");
+
+        if (targetNode) {
+            observer.observe(targetNode, {childList: true});
+        }
     </script>
 {% endblock tab_content %}
