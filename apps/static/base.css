@@ -1,15 +1,19 @@
 [data-bs-theme=light] {
-    --bs-body-bg: #ffffff;
-    --bs-body-color: #2f2f2f;
-    --bs-primary-text-emphasis: #2c5b93;
-    --bs-heading-color: #2f2f2f;
+    --bs-body-bg: #f6f8fb;
+    --bs-body-color: #1f232a;
+    --bs-heading-color: #141820;
+    --bs-primary: #6ea8fe;
+    --bs-primary-text-emphasis: #2f5e97;
+    --bs-link-color: #3d79db;
+    --bs-border-color: #d6dce8;
 
-    --offcanvas-and-nav-bg: #f5f5f5;
-    --offcanvas-and-nav-text-muted: #606060;
-    --nav-active-color: #2c5b93;
-    --list-group-border-color: #2f2f2f;
+    --offcanvas-and-nav-bg: #eff4fb;
+    --offcanvas-and-nav-color: #1f232a;
+    --offcanvas-and-nav-text-muted: #7c879b;
+    --nav-active-color: #3d79db;
+    --list-group-border-color: #c9d2e3;
 
-    --yamsa-room-circle-color: #2f2f2f;
+    --yamsa-room-circle-color: #4d5669;
 
     .navbar-nav {
         .p-e-color {
@@ -22,22 +26,38 @@
     }
 
     .btn-primary {
-        --bs-btn-bg: #2c5b93;
-        --bs-btn-border-color: #2c5b93;
-        --bs-btn-hover-bg: #336bad;
-        --bs-btn-hover-border-color: #336bad;
+        --bs-btn-bg: #6ea8fe;
+        --bs-btn-border-color: #6ea8fe;
+        --bs-btn-hover-bg: #5797fb;
+        --bs-btn-hover-border-color: #5797fb;
+        --bs-btn-color: #0b1b33;
     }
 }
 
 [data-bs-theme=dark] {
     --bs-body-bg: #2d2a2e;
-    --bs-body-color: white;
-    --bs-primary-text-emphasis: #6ea8fe;
+    --bs-body-color: #f4f6fb;
+    --bs-heading-color: #fdfdff;
+    --bs-primary: #6ea8fe;
+    --bs-primary-text-emphasis: #9ec0ff;
+    --bs-link-color: #9ec0ff;
+    --bs-border-color: #4c4a4f;
 
-    --offcanvas-and-nav-bg: #1e1b1e;
-    --list-group-border-color: white;
+    --offcanvas-and-nav-bg: #201e21;
+    --offcanvas-and-nav-color: #f4f6fb;
+    --offcanvas-and-nav-text-muted: #a7a3b1;
+    --nav-active-color: #6ea8fe;
+    --list-group-border-color: #4c4a4f;
 
-    --yamsa-room-circle-color: white;
+    --yamsa-room-circle-color: #f4f6fb;
+
+    .btn-primary {
+        --bs-btn-bg: #6ea8fe;
+        --bs-btn-border-color: #6ea8fe;
+        --bs-btn-hover-bg: #8ebcfe;
+        --bs-btn-hover-border-color: #8ebcfe;
+        --bs-btn-color: #0b1b33;
+    }
 }
 
 :root {
