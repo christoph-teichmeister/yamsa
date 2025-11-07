@@ -40,3 +40,18 @@
 .room-circle.selected:not(.closed) {
     border-color: var(--bs-primary-text-emphasis);
 }
+
+.debug-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3.2em;
+    background-color: rgba(139, 0, 0, 0.8);
+    color: #fff;
+    z-index: 4000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}

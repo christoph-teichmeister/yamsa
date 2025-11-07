@@ -4,8 +4,7 @@
          id="offcanvasContainer">
         <div class="row w-100 d-flex justify-content-between">
             <div class="col-1 px-0 d-flex align-items-center">
-                <button class="navbar-toggler p-0 text-primary-emphasis"
-                        style="border: 0"
+                <button class="navbar-toggler p-0 text-primary-emphasis border-0"
                         type="button"
                         data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasNavbar"
@@ -17,7 +16,7 @@
             {% if current_room %}
                 <div class="col-10 p-0 text-center">
                     <h6 class="mb-0">{{ current_room.name }}</h6>
-                    <span class="text-muted" style="font-size: 0.7em">{{ current_room.description|truncatechars:50 }}</span>
+                    <span class="text-muted small">{{ current_room.description|truncatechars:50 }}</span>
                 </div>
             {% else %}
                 <div class="col-11 d-flex align-items-center justify-content-end">
@@ -29,7 +28,8 @@
                     {% if current_room.is_open and current_room.has_guests %}
                         {# TODO CT: Show btn independent of has_guests and let guests instead "register as guests" upon viewing "Who are you" screen #}
                         <button class="btn btn-light btn-sm"
-                                onclick="copyShareURL()"
+                                data-copy-share-url="true"
+                                data-share-url="{{ request.build_absolute_uri }}"
                                 data-bs-toggle="tooltip"
                                 data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
                                 hx-get="{% url 'room:htmx-checked-clipboard' %}"
@@ -51,6 +51,7 @@
         </div>
         <div class="offcanvas offcanvas-start"
              data-bs-backdrop="true"
+             data-bs-scroll="true"
              aria-labelledby="offcanvasNavbarLabel"
              tabindex="-1"
              id="offcanvasNavbar">
@@ -65,24 +66,20 @@
             <div class="offcanvas-body">
                 <div class="row justify-content-center">
                     <div class="col-2 p-0 me-1">
-                        <button type="button"
-                                class="btn btn-primary btn-sm"
-                                data-bs-theme-value="light"
-                                onclick="handleThemeClick('light')">
+                        <button type="button" class="btn btn-primary btn-sm" data-theme-value="light">
                             <i class="bi bi-sun-fill d-flex align-items-center justify-content-center"></i>
                         </button>
                     </div>
                     <div class="col-2 p-0 ms-1">
                         <button type="button"
                                 class="btn btn-primary btn-sm d-flex align-items-center"
-                                data-bs-theme-value="dark"
-                                onclick="handleThemeClick('dark')">
+                                data-theme-value="dark">
                             <i class="bi bi-moon-fill d-flex align-items-center justify-content-center"></i>
                         </button>
                     </div>
                 </div>
                 <div class="row py-3 {% if "/account/detail/" in request.path %}p-e-color{% endif %}">
-                    <div class="col text-center cursor-pointer"
+                    <div class="col cursor-pointer d-flex flex-column align-items-center text-center gap-1"
                         data-bs-dismiss="offcanvas"
                         data-bs-target="#offcanvasNavbar"
                         hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
@@ -97,17 +94,17 @@
                         hx-swap="morph:innerHTML"
                         hx-push-url="true"
                         >
-                        <i class="bi bi-person-circle" style="font-size: 3em;"></i>
-                        <a class="nav-link">
+                        <i class="bi bi-person-circle display-5"></i>
+                        <span class="nav-link p-0">
                             {% if request.user.is_anonymous %}
                                 Profile
                             {% else %}
                                 {{ request.user.name }}
                             {% endif %}
-                        </a>
+                        </span>
                     </div>
                 </div>
-                <div class="row py-1 cursor-pointer d-flex justify-content-center align-items-center {% if request.path == "/welcome/" %}p-e-color{% endif %}"
+                <div class="row py-1 cursor-pointer d-flex align-items-center {% if request.path == "/welcome/" %}p-e-color{% endif %}"
                     data-bs-dismiss="offcanvas"
                     data-bs-target="#offcanvasNavbar"
                     hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
@@ -117,10 +114,12 @@
                     hx-swap="morph:innerHTML"
                     hx-push-url="true"
                     >
-                    <div class="col-4 text-center room-circle {% if request.path == "/welcome/" %}selected{% endif %}">
+                    <div class="col-4 text-center room-circle mx-auto {% if request.path == "/welcome/" %}selected{% endif %}">
                         <i class="bi bi-house"></i>
                     </div>
-                    <div class="col-8">Home</div>
+                    <div class="col-8 d-flex align-items-center">
+                        <span class="fw-semibold">Home</span>
+                    </div>
                 </div>
                 {% include "_side_menu_room_list.html" %}
                 {% include "side_menu_components/room_list_title.html" %}
@@ -140,76 +139,3 @@
         </div>
     </div>
 </nav>
-{% if current_room %}
-    <!-- Clipboard Copy -->
-    <script type="text/javascript">
-        var copyShareURL = () => {
-            const url = document.URL
-            navigator.clipboard.writeText(url).then(() => {
-          // clipboard successfully set
-                console.log(`${url} successfully copied to clipboard`)
-            }, () => {
-          // clipboard write failed
-                console.error("Something went wrong here")
-            });
-        }
-    </script>
-{% endif %}
-<!-- Remove excess offcanvas backdrops -->
-<script type="text/javascript">
-    var myOffcanvas = document.getElementById('offcanvasNavbar');
-
-    function removeExcessBackdrops() {
-        let fade = document.getElementsByClassName('offcanvas-backdrop fade show')
-        for (let i = 0; i < fade.length; i++) {
-            while (fade.length > 1) {
-                fade[i].remove()
-            }
-        }
-    }
-
-    myOffcanvas.addEventListener('show.bs.offcanvas', event => removeExcessBackdrops());
-    myOffcanvas.addEventListener('hide.bs.offcanvas', event => removeExcessBackdrops());
-
-</script>
-<!-- Theme Switcher -->
-<script type="text/javascript">
-    function getStoredTheme() {
-        return localStorage.getItem('theme')
-    }
-
-    function setStoredTheme(theme) {
-        localStorage.setItem('theme', theme)
-    }
-
-    function getPreferredTheme() {
-        const storedTheme = getStoredTheme()
-        if (storedTheme) {
-            return storedTheme
-        }
-
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    }
-
-    function setTheme(theme) {
-        if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.setAttribute('data-bs-theme', 'dark')
-        } else {
-            document.documentElement.setAttribute('data-bs-theme', theme)
-        }
-    }
-
-    setTheme(getPreferredTheme())
-
-    function handleThemeClick(theme) {
-        setStoredTheme(theme)
-        setTheme(theme)
-    }
-
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-        const storedTheme = getStoredTheme()
-        if (storedTheme !== 'light' && storedTheme !== 'dark') {
-            setTheme(getPreferredTheme())
-        }
-    })
-</script>
