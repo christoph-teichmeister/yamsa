@@ -2,9 +2,149 @@
 {% load static %}
 {% load room_tags %}
 {% block tab_content %}
+    <style>
+        .transaction-label {
+            display: inline-block;
+            font-size: 0.65rem;
+            letter-spacing: 0.08em;
+            color: var(--bs-secondary-color, #6c757d);
+        }
+
+        .transaction-meta {
+            font-size: 0.68rem;
+            color: var(--bs-secondary-color, #6c757d);
+        }
+
+        .transaction-row {
+            --transaction-row-x: 0rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .transaction-row.px-0 {
+            --transaction-row-x: 0;
+        }
+
+        .transaction-row.px-1 {
+            --transaction-row-x: 0.25rem;
+        }
+
+        .transaction-row.px-2 {
+            --transaction-row-x: 0.5rem;
+        }
+
+        .transaction-row.px-3 {
+            --transaction-row-x: 1rem;
+        }
+
+        .transaction-row.px-4 {
+            --transaction-row-x: 1.5rem;
+        }
+
+        .transaction-row.px-5 {
+            --transaction-row-x: 3rem;
+        }
+
+        .transaction-table tbody tr {
+            border-bottom: 1px solid rgba(var(--bs-body-color-rgb, 248, 249, 250), 0.08);
+        }
+
+        .transaction-table tbody tr:first-child {
+            border-top: 1px solid rgba(var(--bs-body-color-rgb, 248, 249, 250), 0.25);
+        }
+
+        .transaction-table tbody tr:last-child {
+            border-bottom: 1px solid rgba(var(--bs-body-color-rgb, 248, 249, 250), 0.25);
+        }
+
+        .transaction-table tbody tr td {
+            padding: 0.85rem var(--transaction-row-x, 0rem) !important;
+            text-align: left !important;
+            vertical-align: top !important;
+        }
+
+        .transaction-grid {
+            --bs-gutter-x: 0.85rem;
+            --bs-gutter-y: 0.85rem;
+        }
+
+        .btn-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .btn-icon svg {
+            width: 1.1rem;
+            height: 1.1rem;
+        }
+
+        @media (max-width: 359.98px) {
+            .transaction-grid > * {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .transaction-row {
+                --transaction-row-x: 0.75rem;
+            }
+
+            .transaction-label {
+                display: none;
+            }
+
+            .transaction-table tbody tr {
+                border-bottom: none;
+            }
+
+            .transaction-table tbody tr td {
+                padding: 1rem var(--transaction-row-x, 0.75rem) !important;
+            }
+
+            .transaction-table tbody tr td + td {
+                border-top: none;
+                padding-top: 1rem !important;
+            }
+
+        }
+        
+        .transaction-row::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: rgba(255, 255, 255, 0.12);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .transaction-row.transaction-highlight::after {
+            animation: transactionBlink 1.2s ease-in-out 2;
+        }
+
+        @keyframes transactionBlink {
+            0% {
+                opacity: 0;
+            }
+            25% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.55;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
     <div class="row g-4 mt-3">
         <div class="col-12 col-lg-8">
-            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+            <div class="d-flex flex-row flex-md-row align-items-md-start gap-3 mb-3">
                 <div>
                     <h4 class="mb-1">Room transactions</h4>
                     {% if parent_transactions %}
@@ -13,23 +153,23 @@
                         <p class="text-muted small mb-0">Record your first expense to see the running history here.</p>
                     {% endif %}
                 </div>
-                <div class="d-flex flex-wrap justify-content-md-end">
+                <div class="d-flex align-items-center justify-content-center flex-grow-1">
                     <button type="button"
-                            class="btn btn-primary btn-sm {% if current_room.is_closed %}disabled{% endif %}"
+                            class="btn btn-primary btn-icon {% if current_room.is_closed %}disabled{% endif %}"
+                            aria-label="Add transaction"
+                            title="Add transaction"
                             hx-get="{% room_url 'transaction:create' %}"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"
-                            hx-push-url="true">Add transaction</button>
+                            hx-push-url="true">
+                        <i class="bi bi-plus-lg d-flex align-items-center justify-content-center"></i>
+                    </button>
                 </div>
             </div>
-
             {% if current_room.is_closed %}
-                <div class="alert alert-warning small mb-3" role="alert">
-                    This room is closed, so transactions are read-only.
-                </div>
+                <div class="alert alert-warning small mb-3" role="alert">This room is closed, so transactions are read-only.</div>
             {% endif %}
-
             <div class="card border-0 shadow-sm">
                 <div class="card-body pb-0">
                     <label for="transaction-search" class="form-label text-muted small mb-1">Search</label>
@@ -42,19 +182,17 @@
                 </div>
                 <div class="table-responsive">
                     {% if parent_transactions %}
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="text-muted text-uppercase small">
+                        <table class="table table-hover align-middle mb-0 transaction-table">
+                            <thead class="text-muted text-uppercase small d-none d-md-table-header-group">
                                 <tr>
-                                    <th scope="col">Payer</th>
-                                    <th scope="col">Description</th>
-                                    <th scope="col" class="text-end">Amount</th>
-                                    <th scope="col" class="text-end">Paid on</th>
+                                    <th scope="col">Details</th>
+                                    <th scope="col" class="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="transaction-table-body">
                                 {% for parent_transaction in parent_transactions %}
                                     <tr id="transaction-{{ parent_transaction.id }}"
-                                        class="cursor-pointer transaction-row"
+                                        class="cursor-pointer transaction-row px-1"
                                         role="button"
                                         tabindex="0"
                                         hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
@@ -65,24 +203,47 @@
                                         hx-trigger="click keyup[key=='Enter']"
                                         data-search-text="{{ parent_transaction.paid_by.name|default_if_none:''|lower }} {{ parent_transaction.description|default_if_none:''|lower }}">
                                         <td class="py-3">
-                                            <div class="fw-semibold">
-                                                {% autoescape off %}
-                                                    {% parse_user_text parent_transaction.paid_by.name True %}
-                                                {% endautoescape %}
+                                            <div class="d-flex flex-column gap-3">
+                                                <div class="transaction-grid row row-cols-2 g-3">
+                                                    <div class="col">
+                                                        <div class="transaction-label text-muted text-uppercase small mb-1">Amount</div>
+                                                        <div class="fw-semibold">{{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}</div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="transaction-label text-muted text-uppercase small mb-1">Description</div>
+                                                        <div class="fw-semibold">{{ parent_transaction.description|default_if_none:'No description'|truncatechars:70 }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="transaction-grid row row-cols-2 g-3">
+                                                    <div class="col">
+                                                        <div class="transaction-label text-muted text-uppercase small mb-1">Paid on</div>
+                                                        <div class="fw-semibold">{{ parent_transaction.paid_at|date:'M j, Y' }}</div>
+                                                        <div class="transaction-meta mt-1">{{ parent_transaction.paid_at|timesince }} ago</div>
+                                                    </div>
+                                                    <div class="col text-md-end">
+                                                        <div class="transaction-label text-muted text-uppercase small mb-1">Payer</div>
+                                                        <div class="fw-semibold">
+                                                            {% autoescape off %}
+                                                                {% parse_user_text parent_transaction.paid_by.name True %}
+                                                            {% endautoescape %}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="text-muted small">Paid by</div>
                                         </td>
-                                        <td class="py-3">
-                                            <div class="fw-semibold">{{ parent_transaction.description|default_if_none:'No description'|truncatechars:70 }}</div>
-                                            <div class="text-muted small">Tap to review the split details</div>
-                                        </td>
-                                        <td class="text-end py-3">
-                                            <div class="fw-semibold">{{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}</div>
-                                            <div class="text-muted small">Total</div>
-                                        </td>
-                                        <td class="text-end py-3">
-                                            <div class="fw-semibold">{{ parent_transaction.paid_at|date:'M j, Y' }}</div>
-                                            <div class="text-muted small">{{ parent_transaction.paid_at|timesince }} ago</div>
+                                        <td class="py-3 align-middle text-start text-md-end">
+                                            <button type="button"
+                                                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center w-100 w-md-auto"
+                                                    aria-label="View split details"
+                                                    title="View split details"
+                                                    hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
+                                                    hx-target="#body"
+                                                    hx-indicator="#body-loading-spinner"
+                                                    hx-swap="morph:innerHTML"
+                                                    hx-push-url="true"
+                                                    hx-trigger="click consume">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -96,9 +257,9 @@
                     {% endif %}
                 </div>
                 {% if parent_transactions %}
-                    <div class="text-muted small text-center py-3" id="transaction-empty-state" hidden>
-                        No transactions match your search.
-                    </div>
+                    <div class="text-muted small text-center py-3"
+                         id="transaction-empty-state"
+                         hidden>No transactions match your search.</div>
                 {% endif %}
             </div>
         </div>
@@ -109,7 +270,11 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-muted small">Status</span>
                         <span class="badge {% if current_room.is_closed %}bg-secondary{% else %}bg-success{% endif %}">
-                            {% if current_room.is_closed %}Closed{% else %}Open{% endif %}
+                            {% if current_room.is_closed %}
+                                Closed
+                            {% else %}
+                                Open
+                            {% endif %}
                         </span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -128,14 +293,13 @@
                     {% endif %}
                 </div>
             </div>
-
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-uppercase text-muted small mb-3">Tips</h6>
                     <ul class="list-unstyled mb-0 small text-muted">
-                        <li>Use the search bar to quickly jump to older purchases.</li>
-                        <li>Click any row to edit splits or view participants.</li>
-                        <li>Need to log something new? Hit "Add transaction".</li>
+                        <li>Use the search field to filter by payer or description.</li>
+                        <li>Tap a row or the eye icon to review the split details.</li>
+                        <li>The floating "+" button lets you capture a new transaction.</li>
                     </ul>
                 </div>
             </div>
@@ -174,29 +338,52 @@
     </script>
     <!-- Observer to scroll to correct element when anchor tags are in url -->
     <script type="text/javascript">
+      function highlightTransactionRow(target) {
+            if (!target) {
+                return;
+            }
+
+            target.classList.remove('transaction-highlight');
+            // force reflow
+            void target.offsetWidth;
+            target.classList.add('transaction-highlight');
+
+            window.setTimeout(function () {
+                target.classList.remove('transaction-highlight');
+            }, 3200);
+        }
+
+      function focusTransactionFromHash() {
+            if (!window.location.href.includes("list#transaction")) {
+                return;
+            }
+
+            var hash = window.location.hash;
+
+            if (hash === '' || hash === '#' || hash === undefined) {
+                return;
+            }
+
+            var target = document.querySelector(hash);
+            var headerHeight = 101;
+
+            target = target ? target : document.querySelector('[name=' + hash.slice(1) + ']');
+
+            if (target) {
+                var offset = target.getBoundingClientRect().top + window.scrollY - headerHeight;
+
+                window.scrollTo({
+                    top: offset,
+                    behavior: 'smooth'
+                });
+
+                highlightTransactionRow(target);
+            }
+        }
+
       // Callback function to execute when mutations are observed
         var callback = (mutationList, observer) => {
-            if (window.location.href.includes("list#transaction")) {
-                var hash = window.location.hash;
-
-                if (hash === '' || hash === '#' || hash === undefined) {
-                    return false;
-                }
-
-                var target = document.querySelector(hash);
-                var headerHeight = 101;
-
-                target = target ? target : document.querySelector('[name=' + hash.slice(1) + ']');
-
-                if (target) {
-                    var offset = target.getBoundingClientRect().top + window.scrollY - headerHeight;
-
-                    window.scrollTo({
-                        top: offset,
-                        behavior: 'smooth'
-                    });
-                }
-            }
+            focusTransactionFromHash();
         }
 
       // Create an observer instance linked to the callback function
@@ -208,5 +395,7 @@
         if (targetNode) {
             observer.observe(targetNode, {childList: true});
         }
+
+        document.addEventListener('DOMContentLoaded', focusTransactionFromHash);
     </script>
 {% endblock tab_content %}
