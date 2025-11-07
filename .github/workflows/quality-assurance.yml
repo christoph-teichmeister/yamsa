@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.11'
           cache: pipenv
 
       - name: Install pipenv
@@ -45,7 +45,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.11'
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y git
@@ -65,7 +65,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.11'
 
       - name: Install pipenv
         run: python -m pip install --upgrade pip pipenv
@@ -87,7 +87,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.11'
 
       - name: Install pipenv
         run: python -m pip install --upgrade pip pipenv
