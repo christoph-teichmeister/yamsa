@@ -35,9 +35,9 @@ class TransactionCreateViewTestCase(BaseTestSetUp):
         )
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
 
-        # Assert, that we've been redirected to the transaction list view
-        self.assertTrue(response.template_name[0], TransactionListView.template_name)
-        self.assertIn("Transactions made", str(response.content))
+        # Assert that we've been redirected to the transaction list view
+        self.assertEqual(response.template_name[0], TransactionListView.template_name)
+        self.assertIn("Room transactions", str(response.content))
 
         self.assertEqual(response.context_data["active_tab"], "transaction")
 
