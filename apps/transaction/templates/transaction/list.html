@@ -72,9 +72,6 @@
             width: 2rem;
             height: 2rem;
             border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
             padding: 0;
         }
 
@@ -155,7 +152,7 @@
                 </div>
                 <div class="d-flex align-items-center justify-content-center flex-grow-1">
                     <button type="button"
-                            class="btn btn-primary btn-icon {% if current_room.is_closed %}disabled{% endif %}"
+                            class="btn btn-primary btn-icon d-inline-flex align-items-center justify-content-center {% if current_room.is_closed %}disabled{% endif %}"
                             aria-label="Add transaction"
                             title="Add transaction"
                             hx-get="{% room_url 'transaction:create' %}"
@@ -235,13 +232,7 @@
                                             <button type="button"
                                                     class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center w-100 w-md-auto"
                                                     aria-label="View split details"
-                                                    title="View split details"
-                                                    hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
-                                                    hx-target="#body"
-                                                    hx-indicator="#body-loading-spinner"
-                                                    hx-swap="morph:innerHTML"
-                                                    hx-push-url="true"
-                                                    hx-trigger="click consume">
+                                                    title="View split details">
                                                 <i class="bi bi-eye"></i>
                                             </button>
                                         </td>
@@ -250,7 +241,7 @@
                             </tbody>
                         </table>
                     {% else %}
-                        <div class="p-5 text-center text-muted" id="transaction-empty-state">
+                        <div class="p-5 text-center text-muted" id="transaction-empty-placeholder">
                             <p class="fw-semibold mb-1">Nothing to show yet</p>
                             <p class="small mb-0">Start by logging an expense to build your history.</p>
                         </div>
@@ -258,7 +249,7 @@
                 </div>
                 {% if parent_transactions %}
                     <div class="text-muted small text-center py-3"
-                         id="transaction-empty-state"
+                         id="transaction-search-empty"
                          hidden>No transactions match your search.</div>
                 {% endif %}
             </div>
@@ -308,20 +299,26 @@
     <script type="text/javascript">
         (function () {
             var searchInput = document.getElementById('transaction-search');
-            var rows = document.querySelectorAll('#transaction-table-body .transaction-row');
-            var emptyState = document.getElementById('transaction-empty-state');
+            var tableBody = document.getElementById('transaction-table-body');
+            var searchEmptyState = document.getElementById('transaction-search-empty');
 
-            if (!searchInput || rows.length === 0) {
+            if (!searchInput || !tableBody) {
                 return;
             }
 
-            searchInput.addEventListener('input', function (event) {
-                var query = event.target.value.trim().toLowerCase();
-                var matches = 0;
+            function toggleEmptyState(matches) {
+                if (searchEmptyState) {
+                    searchEmptyState.hidden = matches !== 0;
+                }
+            }
 
-                Array.prototype.forEach.call(rows, function (row) {
-                    var text = row.getAttribute('data-search-text');
-                    var isMatch = !query || (text && text.indexOf(query) !== -1);
+            function filterRows(query) {
+                var matches = 0;
+                var rows = tableBody.querySelectorAll('.transaction-row');
+
+                rows.forEach(function (row) {
+                    var text = row.getAttribute('data-search-text') || '';
+                    var isMatch = !query || text.indexOf(query) !== -1;
 
                     row.classList.toggle('d-none', !isMatch);
 
@@ -330,15 +327,20 @@
                     }
                 });
 
-                if (emptyState) {
-                    emptyState.hidden = matches !== 0;
-                }
+                toggleEmptyState(matches);
+            }
+
+            searchInput.addEventListener('input', function (event) {
+                var query = event.target.value.trim().toLowerCase();
+                filterRows(query);
             });
+
+            filterRows(searchInput.value.trim().toLowerCase());
         })();
     </script>
     <!-- Observer to scroll to correct element when anchor tags are in url -->
     <script type="text/javascript">
-      function highlightTransactionRow(target) {
+        function highlightTransactionRow(target) {
             if (!target) {
                 return;
             }
@@ -350,30 +352,31 @@
 
             window.setTimeout(function () {
                 target.classList.remove('transaction-highlight');
-            }, 3200);
+            }, 2400);
         }
 
-      function focusTransactionFromHash() {
-            if (!window.location.href.includes("list#transaction")) {
-                return;
-            }
+        function getScrollOffset() {
+            var fixedHeader = document.querySelector('nav.navbar.fixed-top');
+            var headerHeight = fixedHeader ? fixedHeader.offsetHeight : 0;
+            var safetyGap = 16;
 
+            return headerHeight + safetyGap;
+        }
+
+        function focusTransactionFromHash() {
             var hash = window.location.hash;
 
-            if (hash === '' || hash === '#' || hash === undefined) {
+            if (!hash || hash === '#') {
                 return;
             }
 
-            var target = document.querySelector(hash);
-            var headerHeight = 101;
-
-            target = target ? target : document.querySelector('[name=' + hash.slice(1) + ']');
+            var target = document.querySelector(hash) || document.querySelector('[name="' + hash.slice(1) + '"]');
 
             if (target) {
-                var offset = target.getBoundingClientRect().top + window.scrollY - headerHeight;
+                var offset = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
 
                 window.scrollTo({
-                    top: offset,
+                    top: Math.max(offset, 0),
                     behavior: 'smooth'
                 });
 
@@ -381,21 +384,20 @@
             }
         }
 
-      // Callback function to execute when mutations are observed
-        var callback = (mutationList, observer) => {
-            focusTransactionFromHash();
+        function triggerTransactionFocus() {
+            window.requestAnimationFrame(focusTransactionFromHash);
         }
 
-      // Create an observer instance linked to the callback function
-        var observer = new MutationObserver(callback);
-
-      // Start observing the target node for configured mutations
-        var targetNode = document.getElementById("body");
-
-        if (targetNode) {
-            observer.observe(targetNode, {childList: true});
+        if (!window.__transactionFocusEventsBound) {
+            document.addEventListener('htmx:afterSwap', triggerTransactionFocus);
+            document.addEventListener('htmx:historyRestore', triggerTransactionFocus);
+            window.__transactionFocusEventsBound = true;
         }
 
-        document.addEventListener('DOMContentLoaded', focusTransactionFromHash);
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', triggerTransactionFocus);
+        } else {
+            triggerTransactionFocus();
+        }
     </script>
 {% endblock tab_content %}
