@@ -13,11 +13,13 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import datetime
 import logging
 import os
+import re
 import socket
 import sys
 from pathlib import Path
 
 import environ
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 CONFIG_DIR = Path(__file__).resolve().parent
@@ -536,6 +538,28 @@ EMAIL_DEFAULT_REPLY_TO_ADDRESS = env("DJANGO_EMAIL_DEFAULT_REPLY_TO_ADDRESS", de
 
 # PWA
 # ------------------------------------------------------------------------------
+
+
+def _pwa_static(path: str) -> str:
+    return f"{STATIC_URL}{path.lstrip('/')}"
+
+
+PWA_CACHE_VERSION = re.sub(r"[^0-9A-Za-z_-]", "-", env("SENTRY_RELEASE"))
+PWA_OFFLINE_URL = reverse_lazy("core:offline")
+PWA_SERVICE_WORKER = {
+    "cache_name": f"yamsa-static-cache-{PWA_CACHE_VERSION}",
+    "cache_prefix": "yamsa-static-cache",
+    "offline_url": PWA_OFFLINE_URL,
+    "precache_urls": [
+        PWA_OFFLINE_URL,
+        _pwa_static("js/navigation.js"),
+        _pwa_static("base.css"),
+        _pwa_static("customClasses.css"),
+        _pwa_static("htmxIndicatorRequest.css"),
+    ],
+    "static_url_prefix": STATIC_URL,
+}
+
 MANIFEST = {
     "background_color": "#2d2a2e",
     "categories": ["finance", "lifestyle", "productivity", "shopping", "utilities"],
