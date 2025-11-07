@@ -873,7 +873,7 @@ if DEBUG:
         INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
         if env("DJANGO_DEBUG_TOOLBAR_USE_DOCKER"):
             hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
-            INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
+            INTERNAL_IPS += [".".join([*ip.split(".")[:-1], "1"]) for ip in ips]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
