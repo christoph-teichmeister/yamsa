@@ -2,46 +2,48 @@
 {% load static %}
 {% load room_tags %}
 {% block tab_content %}
-    <div class="row gx-0 py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
-        <div class="col">
-            <h5 class="m-0">Room</h5>
+    <div class="container-fluid px-0 px-md-2 mt-3">
+        <div class="row gx-0 pb-1 d-flex w-100 justify-content-between align-items-center">
+            <div class="col">
+                <h5 class="m-0">Room</h5>
+            </div>
+            <div class="col p-0">
+                <button class="btn btn-primary btn-sm float-end px-3"
+                        hx-get="{% room_url 'room:edit' %}"
+                        hx-target="#body"
+                        hx-indicator="#body-loading-spinner"
+                        hx-swap="morph:innerHTML"
+                        hx-push-url="true">Edit</button>
+            </div>
         </div>
-        <div class="col p-0">
-            <button class="btn btn-primary btn-sm float-end px-3"
-                    hx-get="{% room_url 'room:edit' %}"
-                    hx-target="#body"
-                    hx-indicator="#body-loading-spinner"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true">Edit</button>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"></li>
+            <li class="list-group-item py-4 px-2">
+                <div class="d-flex py-1 justify-content-between align-items-center">
+                    Name:
+                    <span class="w-50">{{ room.name }}</span>
+                </div>
+                <br />
+                <div class="d-flex py-1 justify-content-between align-items-center">
+                    Description:
+                    <span class="w-50">{{ room.description }}</span>
+                </div>
+                <br />
+                <div class="d-flex py-1 justify-content-between align-items-center">
+                    Preferred Currency:
+                    <span class="w-50">{{ room.preferred_currency }}</span>
+                </div>
+            </li>
+            <li class="list-group-item"></li>
+        </ul>
+        <div class="row gx-0 my-4">
+            <p class="text-center text-muted">
+                {% if current_room.is_open %}
+                    Room is open
+                {% elif current_room.is_closed %}
+                    Room is closed
+                {% endif %}
+            </p>
         </div>
-    </div>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item"></li>
-        <li class="list-group-item py-4 px-2">
-            <div class="d-flex py-1 justify-content-between align-items-center">
-                Name:
-                <span class="w-50">{{ room.name }}</span>
-            </div>
-            <br />
-            <div class="d-flex py-1 justify-content-between align-items-center">
-                Description:
-                <span class="w-50">{{ room.description }}</span>
-            </div>
-            <br />
-            <div class="d-flex py-1 justify-content-between align-items-center">
-                Preferred Currency:
-                <span class="w-50">{{ room.preferred_currency }}</span>
-            </div>
-        </li>
-        <li class="list-group-item"></li>
-    </ul>
-    <div class="row gx-0 my-4">
-        <p class="text-center text-muted">
-            {% if current_room.is_open %}
-                Room is open
-            {% elif current_room.is_closed %}
-                Room is closed
-            {% endif %}
-        </p>
     </div>
 {% endblock tab_content %}
