@@ -4,6 +4,7 @@
 The project is a Django monolith rooted at `manage.py`. Domain-specific logic lives inside `apps/`, e.g. `apps/transaction`, `apps/room`, and `apps/account`; each app contains its own `models`, `views`, `templates`, and `tests`. Shared templates and assets belong in `apps/templates` and `static/`, while compiled artefacts land in `staticfiles/`. Developer tooling scripts sit in `scripts/` and container assets in `Dockerfile`, `docker-compose.yml`, and `entrypoint.sh`. Documentation, including AI prompt history, lives in `docs/`.
 
 ## Build, Test, and Development Commands
+- All Django/manage.py invocations must run inside the `yamsa_backend` Docker container (e.g. `docker exec yamsa_backend python manage.py <cmd>`) because the host environment lacks the necessary dependencies. Agents should feel free to execute any needed commands inside the containers without repeatedly asking for confirmation.
 - `pipenv install --dev` - install Python 3.12 dependencies including tooling.
 - `pipenv run python manage.py migrate` - apply schema changes before running the app.
 - `pipenv run python manage.py runserver 0.0.0.0:8000` - local dev server with HTMX/Bootstrap UI.
