@@ -4,13 +4,13 @@
 The project is a Django monolith rooted at `manage.py`. Domain-specific logic lives inside `apps/`, e.g. `apps/transaction`, `apps/room`, and `apps/account`; each app contains its own `models`, `views`, `templates`, and `tests`. Shared templates and assets belong in `apps/templates` and `static/`, while compiled artefacts land in `staticfiles/`. Developer tooling scripts sit in `scripts/` and container assets in `Dockerfile`, `docker-compose.yml`, and `entrypoint.sh`. Documentation, including AI prompt history, lives in `docs/`.
 
 ## Build, Test, and Development Commands
-- `pipenv install --dev` — install Python 3.12 dependencies including tooling.
-- `pipenv run python manage.py migrate` — apply schema changes before running the app.
-- `pipenv run python manage.py runserver 0.0.0.0:8000` — local dev server with HTMX/Bootstrap UI.
-- `pipenv run python manage.py test` — execute Django test suite under the default settings module.
-- `docker exec yamsa_backend python manage.py test apps` — run the full suite inside the backend container (host Pipenv Python lacks `_sqlite3`, so containerized Python 3.11 is required for reliable test runs).
-- `pipenv run coverage run manage.py test && pipenv run coverage report` — generate coverage (config in `pyproject.toml`).
-- `docker-compose up --build` — parity environment that mirrors the production container image.
+- `pipenv install --dev` - install Python 3.12 dependencies including tooling.
+- `pipenv run python manage.py migrate` - apply schema changes before running the app.
+- `pipenv run python manage.py runserver 0.0.0.0:8000` - local dev server with HTMX/Bootstrap UI.
+- `pipenv run python manage.py test` - execute Django test suite under the default settings module.
+- `docker exec yamsa_backend python manage.py test apps` - run the full suite inside the backend container (host Pipenv Python lacks `_sqlite3`, so containerized Python 3.11 is required for reliable test runs).
+- `pipenv run coverage run manage.py test && pipenv run coverage report` - generate coverage (config in `pyproject.toml`).
+- `docker-compose up --build` - parity environment that mirrors the production container image.
 
 ## Coding Style & Naming Conventions
 Follow Python’s 4-space indentation and keep modules typed where practical. Use `snake_case` for functions, `PascalCase` for classes, and `SCREAMING_SNAKE_CASE` for settings. Run `pipenv run ruff check --fix .` before committing; it handles import order, linting, and selected auto-fixes. Templates must pass `pipenv run djlint apps --reformat`; lean on Bootstrap 5 utility classes (`d-flex`, `px-2`, `gap-2`, etc.) and HTMX attributes instead of custom CSS whenever possible. Keep static JS modular inside `static/js/` and co-locate SCSS/CSS with the component it styles.
