@@ -1,94 +1,120 @@
 {% extends "core/base.html" %}
 {% load static %}
 {% block content %}
-    <div class="row gx-0 px-3 d-flex align-content-center justify-content-center">
-        <form>
-            {% csrf_token %}
-            <div class="row py-1 d-flex justify-content-between align-items-center">
-                <div class="col">
-                    <h5 class="m-0">Your data:</h5>
-                </div>
-                <div class="col p-0">
-                    <button class="btn btn-primary btn-sm float-end px-3"
-                            type="submit"
-                            hx-post="{% url 'account:update' pk=user.id %}"
-                            hx-target="#body"
-                            hx-indicator="#body-loading-spinner"
-                            hx-swap="morph:innerHTML"
-                            hx-push-url="true">Save</button>
-                </div>
-            </div>
-            <div class="row">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"></li>
-                    <li class="list-group-item py-4 px-2">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">{{ form.fields.name.label }}</label>
-                            <input type="text"
-                                   class="form-control"
-                                   id="name"
-                                   name="name"
-                                   autocomplete="name"
-                                   required
-                                   value="{{ user.name }}">
-                            {% for error_message in form.errors.email.data %}
-                                <small class="error" id="nameError">{{ error_message.message }}</small>
-                            {% endfor %}
+    <section class="container px-2 px-md-4 px-lg-5 account-edit">
+        <div class="row justify-content-center gy-4">
+            <div class="col-12 col-xl-9">
+                <form method="post"
+                      class="card border-0 shadow-sm rounded-4"
+                      hx-post="{% url 'account:update' pk=user.id %}"
+                      hx-target="#body"
+                      hx-indicator="#body-loading-spinner"
+                      hx-swap="morph:innerHTML"
+                      hx-push-url="true">
+                    {% csrf_token %}
+                    <div class="card-body p-4 p-md-5">
+                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4">
+                            <div>
+                                <p class="text-uppercase small fw-semibold text-muted mb-1">Edit profile</p>
+                                <h1 class="h4 fw-semibold mb-0">Keep your details up to date</h1>
+                            </div>
+                            <div class="ms-md-auto d-flex flex-wrap gap-2">
+                                <button type="button"
+                                        class="btn btn-outline-secondary"
+                                        hx-get="{% url 'account:detail' pk=user.id %}"
+                                        hx-target="#body"
+                                        hx-indicator="#body-loading-spinner"
+                                        hx-swap="morph:innerHTML"
+                                        hx-push-url="true">Cancel</button>
+                                <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
+                                    <i class="bi bi-check2-circle"></i>
+                                    Save changes
+                                </button>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">{{ form.fields.email.label }}</label>
-                            <input type="email"
-                                   class="form-control"
-                                   id="email"
-                                   name="email"
-                                   autocomplete="email"
-                                   required
-                                   value="{{ user.email }}">
-                            {% for error_message in form.errors.email.data %}
-                                <small class="error" id="emailError">{{ error_message.message }}</small>
-                            {% endfor %}
-                        </div>
-                        <div class="mb-3">
-                            <label for="paypal_me_username" class="form-label">{{ form.fields.paypal_me_username.label }}</label>
-                            <div class="input-group">
-                                <span class="input-group-text">@</span>
+                        <div class="row g-4">
+                            <div class="col-12 col-md-6">
+                                <label for="name" class="form-label fw-semibold">{{ form.fields.name.label }}</label>
                                 <input type="text"
                                        class="form-control"
-                                       id="paypal_me_username"
-                                       name="paypal_me_username"
-                                       value="{% if user.paypal_me_username %}{{ user.paypal_me_username }}{% endif %}"
-                                       placeholder="-">
+                                       id="name"
+                                       name="name"
+                                       autocomplete="name"
+                                       required
+                                       value="{{ form.name.value|default:user.name }}">
+                                {% for error_message in form.errors.name.data %}
+                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                {% endfor %}
                             </div>
-                            {% for error_message in form.errors.paypal_me_username.data %}
-                                <small class="error" id="paypal_me_usernameError">{{ error_message.message }}</small>
-                            {% endfor %}
+                            <div class="col-12 col-md-6">
+                                <label for="email" class="form-label fw-semibold">{{ form.fields.email.label }}</label>
+                                <input type="email"
+                                       class="form-control"
+                                       id="email"
+                                       name="email"
+                                       autocomplete="email"
+                                       required
+                                       value="{{ form.email.value|default:user.email }}">
+                                {% for error_message in form.errors.email.data %}
+                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                {% endfor %}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="paypal_me_username" class="form-label fw-semibold">{{ form.fields.paypal_me_username.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">@</span>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="paypal_me_username"
+                                           name="paypal_me_username"
+                                           value="{{ form.paypal_me_username.value|default:user.paypal_me_username }}"
+                                           placeholder="-">
+                                </div>
+                                {% for error_message in form.errors.paypal_me_username.data %}
+                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                {% endfor %}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-semibold d-block">Notifications</label>
+                                <div class="form-check form-switch">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           id="wants_to_receive_webpush_notifications"
+                                           name="wants_to_receive_webpush_notifications"
+                                           {% if form.wants_to_receive_webpush_notifications.value|default:user.wants_to_receive_webpush_notifications %}checked{% endif %}>
+                                    <label for="wants_to_receive_webpush_notifications" class="form-check-label">
+                                        {{ form.fields.wants_to_receive_webpush_notifications.label }}
+                                    </label>
+                                </div>
+                                <p class="text-muted small mb-0">We’ll only ping you for room activity you care about.</p>
+                                {% for error_message in form.errors.wants_to_receive_webpush_notifications.data %}
+                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                {% endfor %}
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <input type="checkbox"
-                                   class="form-check-input me-1"
-                                   id="wants_to_receive_webpush_notifications"
-                                   name="wants_to_receive_webpush_notifications"
-                                   {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}>
-                            <label for="wants_to_receive_webpush_notifications" class="form-check-label">
-                                {{ form.fields.wants_to_receive_webpush_notifications.label }}
-                            </label>
-                            {% for error_message in form.errors.wants_to_receive_webpush_notifications.data %}
-                                <small class="error" id="wants_to_receive_webpush_notificationsError">{{ error_message.message }}</small>
-                            {% endfor %}
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 col-xl-9">
+                <div class="card border-0 rounded-4 shadow-sm">
+                    <div class="card-body p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
+                        <div>
+                            <p class="text-uppercase small text-muted mb-1">Security</p>
+                            <h2 class="h5 fw-semibold mb-2">Need a new password?</h2>
+                            <p class="text-muted mb-0">Set a fresh password any time. We’ll keep you logged in while you update it.</p>
                         </div>
-                    </li>
-                    <li class="list-group-item"></li>
-                </ul>
-                <div class="row d-flex justify-content-end me-2">
-                    <button type="button"
-                            class="btn btn-primary w-50"
-                            hx-get="{% url "account:change-password" pk=user.id %}"
-                            hx-target="#body"
-                            hx-indicator="#body-loading-spinner"
-                            hx-swap="morph:innerHTML"
-                            hx-push-url="true">Change password</button>
+                        <div class="ms-md-auto">
+                            <button type="button"
+                                    class="btn btn-outline-primary"
+                                    hx-get="{% url 'account:change-password' pk=user.id %}"
+                                    hx-target="#body"
+                                    hx-indicator="#body-loading-spinner"
+                                    hx-swap="morph:innerHTML"
+                                    hx-push-url="true">Change password</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
+    </section>
 {% endblock content %}

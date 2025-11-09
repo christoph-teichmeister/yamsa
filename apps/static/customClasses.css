@@ -41,6 +41,11 @@
     border-color: var(--bs-primary-text-emphasis);
 }
 
+.account-avatar-circle {
+    width: 4.5rem;
+    height: 4.5rem;
+}
+
 .debug-banner {
     position: fixed;
     top: 0;
