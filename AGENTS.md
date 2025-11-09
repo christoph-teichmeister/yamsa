@@ -16,6 +16,14 @@ The project is a Django monolith rooted at `manage.py`. Domain-specific logic li
 ## Coding Style & Naming Conventions
 Follow Python’s 4-space indentation and keep modules typed where practical. Use `snake_case` for functions, `PascalCase` for classes, and `SCREAMING_SNAKE_CASE` for settings. Run `pipenv run ruff check --fix .` before committing; it handles import order, linting, and selected auto-fixes. Templates must pass `pipenv run djlint apps --reformat`; lean on Bootstrap 5 utility classes (`d-flex`, `px-2`, `gap-2`, etc.) and HTMX attributes instead of custom CSS whenever possible. Keep static JS modular inside `static/js/` and co-locate SCSS/CSS with the component it styles. **Edit canonical static assets under `apps/static/…` (e.g., `apps/static/js/navigation.js`) and let hashed copies in `static/`/`staticfiles/` be generated artifacts.**
 
+## Design System & UI Concepts
+- Bootstrap 5 provides the base; lean on utility classes, cards, badges, and offcanvas components before reaching for custom CSS.
+- Layouts should feel airy: use `container` + responsive padding (`px-2 px-md-4 px-lg-5`), `rounded-4` cards, and `shadow-sm`/`shadow` for emphasis.
+- Primary CTAs are full-width or paired buttons with icons (`bi` set) and consistent spacing (`gap-2`). Avoid duplicate actions; prefer a single, well-labeled button per task.
+- Content blocks typically use stacked cards or responsive grids (`row g-4`) so desktop and mobile share the same markup.
+- Keep typography calm: headings use `fw-semibold`, supportive text uses `text-muted` small copy; badge colors convey status (e.g., `text-bg-dark` for elevated roles).
+- When using HTMX, ensure loaders target `#body`, and actions that mimic navigation also manage scroll restoration (see `apps/static/js/navigation.js`).
+
 ## Testing Guidelines
 Place tests beside their apps under `apps/*/tests/` using `test_<unit>.py` naming. Prefer Django’s `TestCase`/`TransactionTestCase` plus `pytest`-style assertions for clarity. Aim for coverage parity with existing badges (>85%); add regression tests when touching business-critical flows such as settlement math or transaction rendering. Use factories or fixtures over ad-hoc object creation to keep tests deterministic.
 
