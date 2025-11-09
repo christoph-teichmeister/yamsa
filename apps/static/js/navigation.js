@@ -124,10 +124,58 @@
     });
   };
 
+  const scrollDocumentToTop = () => {
+    if (typeof window.scrollTo === 'function') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      return;
+    }
+
+    if (document.documentElement) {
+      document.documentElement.scrollTop = 0;
+    }
+
+    if (document.body) {
+      document.body.scrollTop = 0;
+    }
+  };
+
+  const initRoomNavigationScrollReset = () => {
+    const isBodyTarget = (target) => {
+      if (!target) {
+        return false;
+      }
+
+      if (target === document.body) {
+        return true;
+      }
+
+      const targetId = typeof target.id === 'string' ? target.id.toLowerCase() : '';
+      return targetId === 'body';
+    };
+
+    const handleSwap = (event) => {
+      const detail = event ? event.detail : null;
+      const target = detail && detail.target ? detail.target : event.target;
+      if (!isBodyTarget(target)) {
+        return;
+      }
+
+      if (typeof window.requestAnimationFrame === 'function') {
+        window.requestAnimationFrame(scrollDocumentToTop);
+      } else {
+        scrollDocumentToTop();
+      }
+    };
+
+    document.addEventListener('htmx:afterSwap', handleSwap);
+    document.addEventListener('htmx:historyRestore', handleSwap);
+  };
+
   const init = () => {
     initThemeToggle();
     initShareButtons();
     initOffcanvasCleanup();
+    initRoomNavigationScrollReset();
   };
 
   if (document.readyState === 'loading') {
