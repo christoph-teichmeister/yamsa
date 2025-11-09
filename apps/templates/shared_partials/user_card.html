@@ -1,65 +1,69 @@
 {% load room_tags %}
-<div class="col col-xl-6 p-1">
-    <div class="card h-100 {% if not user.is_guest %}cursor-pointer{% endif %}"
-        style="max-width: 540px;min-height: 162px;"
-        {% if not user.is_guest %}
-            hx-trigger="click"
-            hx-get="{% url 'account:detail' pk=user.id %}"
-            hx-target="#body"
-            hx-indicator="#body-loading-spinner"
-            hx-swap="morph:innerHTML"
-            hx-push-url="true"
-            hx-sync="#remove-user-icon:abort" {# TODO CT: Still, sometimes the Toast on error is not displayed #}
-        {% endif %}
-        >
-        <div class="row g-0 h-100">
-            <div class="col-3 d-flex align-items-center justify-content-center"
-                 style="font-size: 4em">
-                <i class="bi bi-file-person"></i>
+<div class="col">
+    <article class="people-card {% if not user.is_guest %}people-card--interactive{% endif %}"
+             {% if not user.is_guest %} hx-trigger="click" hx-get="{% url 'account:detail' pk=user.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" hx-sync=".people-remove-action:abort" {% endif %}>
+        <div class="d-flex align-items-start gap-3">
+            <div class="people-avatar">
+                <i class="bi bi-person-badge"></i>
             </div>
-            <div class="col-8 d-flex align-items-center justify-content-center">
-                <div class="card-body">
-                    <p class="card-text">{{ user.name }}</p>
-                    <p class="card-text">
-                        <small class="text-body-secondary">
-                            {% if user.is_guest %}
-                                Is a guest
-                                <br />
-                                <span id="invitation-email-div">
-                                    {% if request.user.id != user.id %}
-                                        {% if user.invitation_email_can_be_sent %}
-                                            {% include "shared_partials/invitation_email_not_yet_sent.html" %}
-                                        {% else %}
-                                            {% include "shared_partials/invitation_email_sent.html" %}
-                                        {% endif %}
-                                    {% endif %}
-                                </span>
-                            {% else %}
-                                Is a registered user
-                            {% endif %}
-                        </small>
-                    </p>
-                    <p class="card-text">
-                        <small>
-                            {% if user.user_has_seen_this_room %}
-                                <i class="bi bi-check-circle"></i> Has seen this room!
-                            {% else %}
-                                <i class="bi bi-x-circle"></i> Has <strong>not</strong> seen this room
-                            {% endif %}
-                        </small>
-                    </p>
+            <div class="flex-grow-1">
+                <div class="d-flex justify-content-between gap-2">
+                    <div>
+                        <h5 class="mb-1">{{ user.name }}</h5>
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            <span class="people-pill {% if user.is_guest %}people-pill-guest{% endif %}">
+                                {% if user.is_guest %}
+                                    Guest
+                                {% else %}
+                                    Member
+                                {% endif %}
+                            </span>
+                            <span class="people-pill people-pill-muted">
+                                {% if user.user_has_seen_this_room %}
+                                    <i class="bi bi-check2"></i> Seen room
+                                {% else %}
+                                    <i class="bi bi-eye-slash"></i> Not seen yet
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <button class="people-remove-btn people-remove-action"
+                            type="button"
+                            title="Remove from room"
+                            onclick="event.stopPropagation();"
+                            hx-post="{% room_url 'account:remove-from-room' pk=user.id %}"
+                            hx-include="[name='csrfmiddlewaretoken']"
+                            hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
+                            hx-swap="innerHTML"
+                            hx-confirm="{% if user.id == request.user.id %}Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!{% else %}Are you sure you wish to remove this user from this room?{% endif %}">
+                        <i class="bi bi-x-octagon"></i>
+                    </button>
                 </div>
-            </div>
-            <div class="col-1 p-2 d-flex justify-content-end">
-                <i class="bi bi-x-octagon cursor-pointer z-3"
-                   id="remove-user-icon"
-                   hx-post="{% room_url 'account:remove-from-room' pk=user.id %}"
-                   hx-include="[name='csrfmiddlewaretoken']"
-                   hx-target="#body"
-                   hx-indicator="#body-loading-spinner"
-                   hx-swap="innerHTML"
-                   hx-confirm="{% if user.id == request.user.id %}Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!{% else %}Are you sure you wish to remove this user from this room?{% endif %}"></i>
+                <p class="people-meta mb-2">
+                    {% if user.is_guest %}
+                        Guest access with limited features
+                    {% else %}
+                        Registered roommate
+                    {% endif %}
+                </p>
+                {% if user.is_guest %}
+                    <div class="people-meta small" id="invitation-email-div">
+                        {% if request.user.id != user.id %}
+                            {% if user.invitation_email_can_be_sent %}
+                                {% include "shared_partials/invitation_email_not_yet_sent.html" %}
+                            {% else %}
+                                {% include "shared_partials/invitation_email_sent.html" %}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="people-meta small">
+                        <i class="bi bi-person-check"></i>
+                        Joined as a full member of this room.
+                    </div>
+                {% endif %}
             </div>
         </div>
-    </div>
+    </article>
 </div>

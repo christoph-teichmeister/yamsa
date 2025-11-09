@@ -19,10 +19,10 @@ class UserListForRoomViewTestCase(BaseTestSetUp):
             self.assertEqual(response.status_code, http.HTTPStatus.OK)
             self.assertTrue(response.template_name[0], UserListForRoomView.template_name)
 
-            stringed_content = str(response.content)
-            self.assertIn("People", stringed_content)
+            stringed_content = response.content.decode()
+            self.assertIn("Room roster", stringed_content)
 
             self.assertIn(self.user.name, stringed_content)
 
-            self.assertIn("Is a registered user", stringed_content)
-            self.assertIn("Has seen this room!", stringed_content)
+            self.assertIn("Registered roommate", stringed_content)
+            self.assertIn("Seen room", stringed_content)

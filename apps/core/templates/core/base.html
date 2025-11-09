@@ -6,6 +6,10 @@
         <meta charset="utf-8">
         <meta name="viewport"
               content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <meta name="description"
+              content="yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications.">
+        <meta name="keywords"
+              content="yamsa, shared expenses, roommate app, bill splitting, dashboards">
         <title>
             {% if core.DEBUG %}⚒️{% endif %}
             {% block title %}
@@ -21,13 +25,7 @@
     </head>
     <body hx-ext="idiomorph" id="body">
         {% if core.DEBUG %}
-            <div class="w-100 d-flex align-items-center justify-content-center"
-                 style="opacity: 20%;
-                        z-index:3000;
-                        height: 3.2em;
-                        position: fixed;
-                        top: 0;
-                        background-color: darkred">
+            <div class="debug-banner">
                 <h1 class="mb-0">💀 Deadzone 💀</h1>
             </div>
         {% endif %}
@@ -50,10 +48,10 @@
                     <div class="navbar-nav w-100 d-flex flex-row justify-content-around">
                         <div class="nav-link">
                             <a href='https://ko-fi.com/K3K01EDQN8' target='_blank'>
-                                <img height='36'
-                                     style='height:36px'
-                                     src='https://storage.ko-fi.com/cdn/kofi2.png?v=6'
-                                     alt='Buy Me a Coffee at ko-fi.com' />
+                                <img height="36"
+                                     width="141"
+                                     src="{% static 'images/ko-fi.png' %}"
+                                     alt="Buy Me a Coffee at ko-fi.com" />
                             </a>
                         </div>
                     </div>
@@ -74,6 +72,7 @@
                 defer></script>
         <!-- Idomorph for cool HTMX morph swapping -->
         <script src="https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js" defer></script>
+        <script src="{% static 'js/navigation.js' %}" defer></script>
         <!-- Activate various Bootstrap components -->
         <script type="text/javascript">
   {# TODO CT: I think all of this is really unnecessary #}

@@ -5,6 +5,7 @@ from apps.room.urls import build_room_specific_paths
 
 app_name = "account"
 urlpatterns = [
+    path("", views.AccountRootRedirectView.as_view(), name="index"),
     path("detail/<int:pk>", views.UserDetailView.as_view(), name="detail"),
     path("update/<int:pk>/", views.UserUpdateView.as_view(), name="update"),
     path("change-password/<int:pk>/", views.UserChangePasswordView.as_view(), name="change-password"),

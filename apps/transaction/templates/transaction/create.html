@@ -2,127 +2,184 @@
 {% load static %}
 {% load room_tags %}
 {% block tab_content %}
-    <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
-        <div class="col">
-            <h5 class="m-0">Add transaction for "{{ current_room.name }}"</h5>
+    <section class="container px-2 px-md-4 px-lg-5 py-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+            <div>
+                <p class="text-uppercase text-muted small fw-semibold mb-1">New transaction</p>
+                <h2 class="fs-4 fw-semibold mb-0">Add transaction for "{{ current_room.name }}"</h2>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <span class="badge text-bg-dark rounded-pill px-3 py-2">
+                    <i class="bi bi-people me-1"></i>{{ current_room.users|length }} members
+                </span>
+                <span class="badge bg-body-secondary rounded-pill px-3 py-2">
+                    <i class="bi bi-currency-exchange me-1"></i>{{ current_room.preferred_currency.sign }} preferred
+                </span>
+            </div>
         </div>
-    </div>
-    <form hx-post="{% room_url 'transaction:create' %}"
-          hx-target="#body"
-          hx-indicator="#body-loading-spinner"
-          hx-swap="morph:innerHTML"
-          hx-push-url="true">
-        {% csrf_token %}
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item"></li>
-            <li class="list-group-item py-4 px-2">
-                <div class="mb-3 form-group">
-                    <label for="paidBySelect">Who paid?</label>
-                    <select name="paid_by"
-                            class="form-control form-select"
-                            id="paidBySelect"
-                            required>
-                        <option value="{{ request.user.id }}">{{ request.user.name }}</option>
-                        {% for room_user in current_room.users %}
-                            {% if room_user.id != request.user.id %}<option value="{{ room_user.id }}">{{ room_user.name }}</option>{% endif %}
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="mb-3 form-group">
-                    <label for="value" class="form-label">Amount paid</label>
-                    <div class="input-group">
-                        <input id="value"
-                               name="value"
-                               type="number"
-                               class="form-control"
-                               min="0"
-                               step="0.01"
-                               max="99999999"
-                               required />
-                        <div class="col-3">
-                            <label class="visually-hidden" for="currencySelect">Currency</label>
-                            <select name="currency"
-                                    class="form-control form-select"
-                                    id="currencySelect"
-                                    required>
-                                <option value="{{ current_room.preferred_currency.id }}">{{ current_room.preferred_currency.sign }}</option>
-                                {% for currency in all_currencies %}
-                                    {% if currency != current_room.preferred_currency %}
-                                        <option value="{{ currency.id }}">{{ currency.sign }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select>
+        <div class="card border-0 rounded-4 shadow-sm">
+            <div class="card-body p-4 p-lg-5">
+                <form hx-post="{% room_url 'transaction:create' %}"
+                      hx-target="#body"
+                      hx-indicator="#body-loading-spinner"
+                      hx-swap="morph:innerHTML"
+                      hx-push-url="true"
+                      class="d-flex flex-column gap-5 fs-6">
+                    {% csrf_token %}
+                    <fieldset class="d-flex flex-column gap-4">
+                        <legend class="fw-semibold h6 text-muted mb-0">Required details</legend>
+                        <div class="row g-4">
+                            <div class="col-12 col-lg-8">
+                                <label for="description" class="form-label fw-semibold">What was this?</label>
+                                <input id="description"
+                                       name="description"
+                                       type="text"
+                                       class="form-control"
+                                       maxlength="50"
+                                       minlength="1"
+                                       list="descriptionSuggestions"
+                                       placeholder="e.g., Grocery run"
+                                       required />
+                                <div class="form-text">Maximum 50 characters.</div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <label for="value" class="form-label fw-semibold">Amount paid</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-body-secondary text-muted">{{ current_room.preferred_currency.sign }}</span>
+                                    <input id="value"
+                                           name="value"
+                                           type="number"
+                                           class="form-control"
+                                           min="0"
+                                           step="0.01"
+                                           max="99999999"
+                                           required
+                                           placeholder="0.00" />
+                                </div>
+                                <small class="text-muted">Total paid in the selected currency.</small>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-12 col-lg-6">
+                                <label for="paidBySelect" class="form-label fw-semibold">Who paid?</label>
+                                <select name="paid_by" class="form-select" id="paidBySelect" required>
+                                    <option value="{{ request.user.id }}">{{ request.user.name }}</option>
+                                    {% for room_user in current_room.users %}
+                                        {% if room_user.id != request.user.id %}<option value="{{ room_user.id }}">{{ room_user.name }}</option>{% endif %}
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">Person covering this expense.</small>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <label for="paidForSelect" class="form-label fw-semibold">Split between</label>
+                                <select name="paid_for"
+                                        multiple
+                                        class="form-select"
+                                        id="paidForSelect"
+                                        required>
+                                    {% for room_user in current_room.users %}
+                                        <option value="{{ room_user.id }}" selected>{{ room_user.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">Hold Cmd/Ctrl to adjust beneficiaries.</small>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div>
+                                <span class="badge text-bg-light text-dark me-2">Optional</span>
+                                <span class="fw-semibold">More details</span>
+                            </div>
+                            <button class="btn btn-link text-decoration-none px-0 d-flex align-items-center gap-2"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#optionalDetails"
+                                    aria-expanded="false"
+                                    aria-controls="optionalDetails">
+                                <span class="fw-semibold">Show fields</span>
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                        </div>
+                        <div class="collapse" id="optionalDetails">
+                            <div class="row g-4">
+                                <div class="col-12 col-lg-6">
+                                    <label for="paid_at_input" class="form-label fw-semibold">Paid at</label>
+                                    <input id="paid_at_input"
+                                           name="paid_at"
+                                           class="form-control"
+                                           type="datetime-local"
+                                           value="{% now "Y-m-d\TH:i" %}"
+                                           min="2018-04-04T00:00"
+                                           max="2099-12-31T00:00" />
+                                    <small class="text-muted">Use if the expense occurred earlier.</small>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <label for="currencySelect" class="form-label fw-semibold">Currency</label>
+                                    <select name="currency" class="form-select" id="currencySelect" required>
+                                        <option value="{{ current_room.preferred_currency.id }}">{{ current_room.preferred_currency.sign }}</option>
+                                        {% for currency in all_currencies %}
+                                            {% if currency != current_room.preferred_currency %}
+                                                <option value="{{ currency.id }}">{{ currency.sign }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                    <small class="text-muted">Defaults to the room preference.</small>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <label for="further_notes" class="form-label fw-semibold">Notes</label>
+                                <textarea id="further_notes"
+                                          name="further_notes"
+                                          class="form-control"
+                                          rows="3"
+                                          maxlength="5000"
+                                          minlength="1"
+                                          placeholder="Add split details, receipts, or reminders"></textarea>
+                                <div class="form-text">Up to 5000 characters.</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="mb-3 form-group">
-                    <label for="paidForSelect">Paid for</label>
-                    <select name="paid_for"
-                            multiple
-                            class="form-control form-select"
-                            id="paidForSelect"
-                            required>
-                        {% for room_user in current_room.users %}
-                            <option value="{{ room_user.id }}" selected>{{ room_user.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="mb-3 form-group">
-                    <label for="paid_at_input">Paid at</label>
-                    <input id="paid_at_input"
-                           name="paid_at"
-                           class="form-control"
-                           type="datetime-local"
-                           value="{% now "Y-m-d\TH:i" %}"
-                           min="2018-04-04T00:00"
-                           max="2099-12-31T00:00" />
-                </div>
-                <div class="mb-3 form-group">
-                    <label for="description">Description</label>
-                    <textarea id="description"
-                              name="description"
-                              class="form-control"
-                              rows="1"
-                              maxlength="50"
-                              minlength="1"
-                              placeholder=""
-                              required></textarea>
-                    <div id="descriptionHelpBlock" class="form-text">Maximum 50 characters.</div>
-                </div>
-                <div class="mb-3 form-group">
-                    <label for="further_notes">Notes</label>
-                    <textarea id="further_notes"
-                              name="further_notes"
-                              class="form-control"
-                              rows="3"
-                              maxlength="5000"
-                              minlength="1"
-                              placeholder="Add extra notes"></textarea>
-                    <div id="descriptionHelpBlock" class="form-text">Up to 5000 characters.</div>
-                </div>
-                <div class="form-group" hidden>
-                    <label for="room_slug" class="form-label">Room Slug</label>
-                    <input id="room_slug"
-                           name="room_slug"
-                           type="text"
-                           class="form-control"
-                           required
-                           value="{{ current_room.slug }}" />
-                </div>
-                <div class="form-group" hidden>
-                    <label for="room" class="form-label">Room</label>
-                    <input id="room"
-                           name="room"
-                           type="number"
-                           class="form-control"
-                           required
-                           value="{{ current_room.id }}" />
-                </div>
-            </li>
-            <li class="list-group-item"></li>
-        </ul>
-        <div class="row d-flex justify-content-end me-2">
-            <button type="submit" class="btn btn-primary w-50">Add transaction</button>
+                    <div class="d-flex flex-column flex-md-row gap-2 pt-2">
+                        <button type="submit"
+                                class="btn btn-primary d-flex align-items-center justify-content-center gap-2 w-100 w-md-auto">
+                            <i class="bi bi-plus-circle"></i>
+                            Add transaction
+                        </button>
+                        <a href="{% room_url 'room:dashboard' %}"
+                           class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 w-100 w-md-auto"
+                           hx-boost="true">
+                            <i class="bi bi-arrow-left"></i>
+                            Cancel
+                        </a>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label for="room_slug" class="form-label">Room Slug</label>
+                        <input id="room_slug"
+                               name="room_slug"
+                               type="text"
+                               class="form-control"
+                               required
+                               value="{{ current_room.slug }}" />
+                    </div>
+                    <div class="form-group" hidden>
+                        <label for="room" class="form-label">Room</label>
+                        <input id="room"
+                               name="room"
+                               type="number"
+                               class="form-control"
+                               required
+                               value="{{ current_room.id }}" />
+                    </div>
+                    <datalist id="descriptionSuggestions">
+                        <option value="Groceries"></option>
+                        <option value="Utilities"></option>
+                        <option value="Dinner"></option>
+                        <option value="Ride share"></option>
+                        <option value="House supplies"></option>
+                    </datalist>
+                </form>
+            </div>
         </div>
-    </form>
+    </section>
 {% endblock tab_content %}

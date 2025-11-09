@@ -1,149 +1,114 @@
-const offlineFile = "/offline/"
-const staticCacheName = "yamsa-cache-v" + new Date().getTime();
-const filesToCache = [
-  offlineFile,
-  '/static/images/favicons/favicon.ico',
-  '/static/images/favicons/windows11/SmallTile.scale-100.png',
-  '/static/images/favicons/windows11/SmallTile.scale-125.png',
-  '/static/images/favicons/windows11/SmallTile.scale-150.png',
-  '/static/images/favicons/windows11/SmallTile.scale-200.png',
-  '/static/images/favicons/windows11/SmallTile.scale-400.png',
-  '/static/images/favicons/windows11/Square150x150Logo.scale-100.png',
-  '/static/images/favicons/windows11/Square150x150Logo.scale-125.png',
-  '/static/images/favicons/windows11/Square150x150Logo.scale-150.png',
-  '/static/images/favicons/windows11/Square150x150Logo.scale-200.png',
-  '/static/images/favicons/windows11/Square150x150Logo.scale-400.png',
-  '/static/images/favicons/windows11/Wide310x150Logo.scale-100.png',
-  '/static/images/favicons/windows11/Wide310x150Logo.scale-125.png',
-  '/static/images/favicons/windows11/Wide310x150Logo.scale-150.png',
-  '/static/images/favicons/windows11/Wide310x150Logo.scale-200.png',
-  '/static/images/favicons/windows11/Wide310x150Logo.scale-400.png',
-  '/static/images/favicons/windows11/LargeTile.scale-100.png',
-  '/static/images/favicons/windows11/LargeTile.scale-125.png',
-  '/static/images/favicons/windows11/LargeTile.scale-150.png',
-  '/static/images/favicons/windows11/LargeTile.scale-200.png',
-  '/static/images/favicons/windows11/LargeTile.scale-400.png',
-  '/static/images/favicons/windows11/Square44x44Logo.scale-100.png',
-  '/static/images/favicons/windows11/Square44x44Logo.scale-125.png',
-  '/static/images/favicons/windows11/Square44x44Logo.scale-150.png',
-  '/static/images/favicons/windows11/Square44x44Logo.scale-200.png',
-  '/static/images/favicons/windows11/Square44x44Logo.scale-400.png',
-  '/static/images/favicons/windows11/StoreLogo.scale-100.png',
-  '/static/images/favicons/windows11/StoreLogo.scale-125.png',
-  '/static/images/favicons/windows11/StoreLogo.scale-150.png',
-  '/static/images/favicons/windows11/StoreLogo.scale-200.png',
-  '/static/images/favicons/windows11/StoreLogo.scale-400.png',
-  '/static/images/favicons/windows11/SplashScreen.scale-100.png',
-  '/static/images/favicons/windows11/SplashScreen.scale-125.png',
-  '/static/images/favicons/windows11/SplashScreen.scale-150.png',
-  '/static/images/favicons/windows11/SplashScreen.scale-200.png',
-  '/static/images/favicons/windows11/SplashScreen.scale-400.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-16.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-20.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-24.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-30.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-32.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-36.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-40.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-44.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-48.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-60.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-64.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-72.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-80.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-96.png',
-  '/static/images/favicons/windows11/Square44x44Logo.targetsize-256.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-16.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-20.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-24.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-30.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-32.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-36.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-40.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-44.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-48.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-60.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-64.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-72.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-80.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-96.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-unplated_targetsize-256.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-16.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-20.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-24.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-30.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-32.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-36.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-40.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-44.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-48.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-60.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-64.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-72.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-80.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-96.png',
-  '/static/images/favicons/windows11/Square44x44Logo.altform-lightunplated_targetsize-256.png',
-  '/static/images/favicons/android/android-launchericon-512-512.png',
-  '/static/images/favicons/android/android-launchericon-192-192.png',
-  '/static/images/favicons/android/android-launchericon-144-144.png',
-  '/static/images/favicons/android/android-launchericon-96-96.png',
-  '/static/images/favicons/android/android-launchericon-72-72.png',
-  '/static/images/favicons/android/android-launchericon-48-48.png',
-  '/static/images/favicons/ios/16.png',
-  '/static/images/favicons/ios/20.png',
-  '/static/images/favicons/ios/29.png',
-  '/static/images/favicons/ios/32.png',
-  '/static/images/favicons/ios/40.png',
-  '/static/images/favicons/ios/50.png',
-  '/static/images/favicons/ios/57.png',
-  '/static/images/favicons/ios/58.png',
-  '/static/images/favicons/ios/60.png',
-  '/static/images/favicons/ios/64.png',
-  '/static/images/favicons/ios/72.png',
-  '/static/images/favicons/ios/76.png',
-  '/static/images/favicons/ios/80.png',
-  '/static/images/favicons/ios/87.png',
-  '/static/images/favicons/ios/100.png',
-  '/static/images/favicons/ios/114.png',
-  '/static/images/favicons/ios/120.png',
-  '/static/images/favicons/ios/128.png',
-  '/static/images/favicons/ios/144.png',
-  '/static/images/favicons/ios/152.png',
-  '/static/images/favicons/ios/167.png',
-  '/static/images/favicons/ios/180.png',
-  '/static/images/favicons/ios/192.png',
-  '/static/images/favicons/ios/256.png',
-  '/static/images/favicons/ios/512.png',
-  '/static/images/favicons/ios/1024.png'
-// TODO CT: Add splash images here
-];
+const OFFLINE_URL = "{{ offline_url }}";
+const STATIC_CACHE_NAME = "{{ cache_name }}";
+const CACHE_PREFIX = "{{ cache_prefix }}";
+const STATIC_URL_PREFIX = "{{ static_url_prefix }}";
+const PRECACHE_URLS = JSON.parse('{{ precache_urls|escapejs }}');
+const SAME_ORIGIN = self.location.origin;
 
-// Cache on install
-self.addEventListener("install", event => {
-  this.skipWaiting();
-  event.waitUntil(caches.open(staticCacheName)
-    .then(cache => {
-      return cache.addAll(filesToCache);
-    }))
+const normalizeUrl = (url) => {
+  try {
+    return new URL(url, SAME_ORIGIN).href;
+  } catch (error) {
+    return url;
+  }
+};
+
+const PRECACHE_URL_SET = new Set(PRECACHE_URLS.map(normalizeUrl));
+
+const precacheResources = async () => {
+  const cache = await caches.open(STATIC_CACHE_NAME);
+  const results = await Promise.allSettled(
+    PRECACHE_URLS.map((url) => cache.add(url))
+  );
+
+  results.forEach((result, index) => {
+    if (result.status === "rejected") {
+      console.warn(`Service worker precache skipped for ${PRECACHE_URLS[index]}`, result.reason);
+    }
+  });
+};
+
+self.addEventListener("install", (event) => {
+  self.skipWaiting();
+  event.waitUntil(precacheResources());
 });
 
-// Clear cache on activate
-self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(cacheNames => {
-    return Promise.all(cacheNames
-      .filter(cacheName => (cacheName.startsWith("yamsa-cache-")))
-      .filter(cacheName => (cacheName !== staticCacheName))
-      .map(cacheName => caches.delete(cacheName)));
-  }));
+const purgeLegacyCaches = async () => {
+  const names = await caches.keys();
+  const deletions = names
+    .filter((name) => name.startsWith(CACHE_PREFIX) && name !== STATIC_CACHE_NAME)
+    .map((name) => caches.delete(name));
+  return Promise.all(deletions);
+};
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(purgeLegacyCaches());
 });
 
-// Serve from Cache
-self.addEventListener("fetch", event => {
-  event.respondWith(caches.match(event.request)
-    .then(response => {
-      return response || fetch(event.request);
-    })
-    .catch(() => caches.match(offlineFile)))
+const cacheFirst = async (request) => {
+  const cache = await caches.open(STATIC_CACHE_NAME);
+  const cachedResponse = await cache.match(request);
+
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
+  const networkResponse = await fetch(request);
+  if (networkResponse && networkResponse.ok) {
+    cache.put(request, networkResponse.clone());
+  }
+  return networkResponse;
+};
+
+const networkFirst = async (request) => {
+  const cache = await caches.open(STATIC_CACHE_NAME);
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.ok) {
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch (error) {
+    const cachedResponse = await cache.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+
+    if (request.mode === "navigate" || request.destination === "document") {
+      return cache.match(OFFLINE_URL);
+    }
+
+    throw error;
+  }
+};
+
+self.addEventListener("fetch", (event) => {
+  const {request} = event;
+
+  if (request.method !== "GET") {
+    return;
+  }
+
+  if (request.mode === "navigate" || request.destination === "document") {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  const normalisedRequestUrl = normalizeUrl(request.url);
+
+  if (
+    normalisedRequestUrl.startsWith(`${SAME_ORIGIN}${STATIC_URL_PREFIX}`) ||
+    PRECACHE_URL_SET.has(normalisedRequestUrl)
+  ) {
+    event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  event.respondWith(
+    fetch(request)
+      .then((response) => response)
+      .catch(() => caches.match(request).then((cached) => cached || Promise.reject()))
+  );
 });
 
 // Register event listener for the 'push' event.

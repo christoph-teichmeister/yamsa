@@ -1,94 +1,164 @@
 {% extends "core/base.html" %}
 {% load static %}
 {% block content %}
-    {% if user.is_guest %}
-        <div class="text-center">
-            <p>- You are a guest -</p>
-            <p>Thank you for using yamsa, {{ user.name }}!</p>
-            <small>Not you? <a href="{% url 'account:logout' %}">Click here!</a></small>
-            <div class="fixed-bottom z-0 mb-3">
-                <p>
-                    Maybe consider <a href="{% url 'account:register' %}">registering</a>? :)
-                </p>
-                <p>
-                    Already have an account? <a href="{% url 'account:login' %}">Login here!</a>
-                </p>
+    <section class="container px-2 px-md-4 px-lg-5 account-detail">
+        {% if user.is_guest %}
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-body text-center py-5 px-4 px-md-5">
+                            <div class="mb-4">
+                                <span class="badge bg-warning-subtle text-warning-emphasis text-uppercase fw-semibold">Guest Mode</span>
+                            </div>
+                            <h2 class="fw-semibold mb-2">Hi {{ user.name }} 👋</h2>
+                            <p class="text-muted mb-4">
+                                Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account.
+                            </p>
+                            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                                <a class="btn btn-primary px-4" href="{% url 'account:register' %}">Create a free account</a>
+                                <a class="btn btn-outline-secondary px-4"
+                                   href="{% url 'account:login' %}">I already have an account</a>
+                            </div>
+                            <p class="small text-muted mt-4 mb-0">
+                                Not you? <a href="{% url 'account:logout' %}" class="link-secondary">Log out instead</a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    {% else %}
-        {% if request.user.is_superuser and user.is_superuser %}
-            <div id="superuser-admin-link" class="row float-end me-2">
-                <div class="col">
-                    <a href="{{ core.BACKEND_URL }}/{{ core.ADMIN_URL }}/login"
+        {% else %}
+            {% if request.user.is_superuser and user.is_superuser %}
+                <div class="d-flex justify-content-end mb-3">
+                    <a id="superuser-admin-link"
+                       class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
+                       href="{{ core.BACKEND_URL }}/{{ core.ADMIN_URL }}/login"
                        target="_blank">
                         <i class="bi bi-terminal"></i>
+                        Admin
                     </a>
                 </div>
-            </div>
-            <br />
-            <br />
-            <br />
-        {% endif %}
-        <div class="row gx-0 d-flex align-content-center justify-content-center">
-            <div class="row py-1 d-flex justify-content-between align-items-center">
-                <div class="col">
-                    <h5 class="m-0">
-                        {% if request.user.id != user.id %}
-                            Their
-                        {% else %}
-                            Your
-                        {% endif %}
-                        data:
-                    </h5>
-                </div>
-                {% if request.user.id == user.id %}
-                    <div class="col p-0">
-                        <button class="btn btn-primary btn-sm float-end px-3"
-                                hx-get="{% url 'account:update' pk=user.id %}"
-                                hx-target="#body"
-                                hx-indicator="#body-loading-spinner"
-                                hx-swap="morph:innerHTML"
-                                hx-push-url="true">Edit</button>
+            {% endif %}
+            <div class="row justify-content-center gy-4">
+                <div class="col-12 col-xl-9">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="card-body p-4 p-md-5">
+                            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-4">
+                                {% with avatar_source=user.name|default:user.email %}
+                                    <div class="rounded-circle bg-primary-subtle text-primary-emphasis d-inline-flex align-items-center justify-content-center account-avatar-circle">
+                                        <span class="fs-3 fw-semibold">{{ avatar_source|slice:':1'|upper }}</span>
+                                    </div>
+                                {% endwith %}
+                                <div class="flex-grow-1">
+                                    <p class="text-uppercase small fw-semibold text-muted mb-1">
+                                        {% if request.user.id == user.id %}
+                                            Your account overview
+                                        {% else %}
+                                            Member profile
+                                        {% endif %}
+                                    </p>
+                                    <h1 class="h3 fw-semibold mb-2">{{ user.name }}</h1>
+                                    <p class="text-muted mb-3">{{ user.email }}</p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% if user.is_superuser %}<span class="badge text-bg-dark">Superuser</span>{% endif %}
+                                        {% if user.is_staff %}<span class="badge text-bg-info">Staff</span>{% endif %}
+                                        <span class="badge text-bg-secondary">
+                                            {% if user.paypal_me_username %}
+                                                PayPal linked
+                                            {% else %}
+                                                No PayPal link
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                                {% if request.user.id == user.id %}
+                                    <div class="ms-auto">
+                                        <button class="btn btn-primary d-flex align-items-center gap-2"
+                                                hx-get="{% url 'account:update' pk=user.id %}"
+                                                hx-target="#body"
+                                                hx-indicator="#body-loading-spinner"
+                                                hx-swap="morph:innerHTML"
+                                                hx-push-url="true">
+                                            <i class="bi bi-pencil"></i>
+                                            Edit profile
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                {% endif %}
+                </div>
+                <div class="col-12 col-xl-9">
+                    <div class="row g-4">
+                        <div class="col-12 col-md-6">
+                            <div class="border rounded-4 h-100 p-4 bg-body-secondary-subtle">
+                                <p class="text-uppercase small text-muted mb-1">Display name</p>
+                                <p class="fw-semibold mb-0">{{ user.name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="border rounded-4 h-100 p-4">
+                                <p class="text-uppercase small text-muted mb-1">Email address</p>
+                                <p class="fw-semibold text-break mb-0">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="border rounded-4 h-100 p-4">
+                                <p class="text-uppercase small text-muted mb-1">PayPal.me username</p>
+                                {% if user.paypal_me_username %}
+                                    <p class="fw-semibold mb-0">@{{ user.paypal_me_username }}</p>
+                                {% else %}
+                                    <p class="text-muted mb-0">No PayPal link yet</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if request.user == user %}
+                            <div class="col-12 col-md-6">
+                                <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
+                                    <div>
+                                        <p class="text-uppercase small text-muted mb-1">Push notifications</p>
+                                        <p class="fw-semibold mb-0">
+                                            {% if user.wants_to_receive_webpush_notifications %}
+                                                Enabled
+                                            {% else %}
+                                                Disabled
+                                            {% endif %}
+                                        </p>
+                                        <p class="text-muted small mb-0">Manage this toggle from the edit screen.</p>
+                                    </div>
+                                    <div class="form-check form-switch m-0">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               role="switch"
+                                               id="wants_to_receive_webpush_notifications"
+                                               {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}
+                                               disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if request.user == user %}
+                            <div class="col-12">
+                                <div class="border rounded-4 h-100 p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
+                                    <div>
+                                        <p class="text-uppercase small text-muted mb-1">Security</p>
+                                        <p class="fw-semibold mb-1">Change your password</p>
+                                        <p class="text-muted small mb-0">Choose a unique password to keep your rooms safe.</p>
+                                    </div>
+                                    <div class="ms-md-auto">
+                                        <button type="button"
+                                                class="btn btn-outline-primary"
+                                                hx-get="{% url 'account:change-password' pk=user.id %}"
+                                                hx-target="#body"
+                                                hx-indicator="#body-loading-spinner"
+                                                hx-swap="morph:innerHTML"
+                                                hx-push-url="true">Change password</button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <div class="row">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"></li>
-                    <li class="list-group-item py-4 px-2">
-                        <strong>Name:</strong>
-                        <span class="float-end">{{ user.name }}</span>
-                    </li>
-                    <li class="list-group-item py-4 px-2">
-                        <strong>Email:</strong>
-                        <span class="float-end text-break">{{ user.email }}</span>
-                    </li>
-                    <li class="list-group-item py-4 px-2">
-                        <strong>PayPal.me Username:</strong>
-                        <span class="float-end">
-                            {% if user.paypal_me_username %}
-                                @{{ user.paypal_me_username }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </span>
-                    </li>
-                    {% if request.user == user %}
-                        <li class="list-group-item py-4 px-2">
-                            <label for="wants_to_receive_webpush_notifications" class="form-check-label">
-                                <strong>Receive push notifications:</strong>
-                            </label>
-                            <input type="checkbox"
-                                   class="form-check-input ms-2"
-                                   id="wants_to_receive_webpush_notifications"
-                                   name="wants_to_receive_webpush_notifications"
-                                   {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}
-                                   disabled>
-                        </li>
-                    {% endif %}
-                    <li class="list-group-item"></li>
-                </ul>
-            </div>
-        </div>
-    {% endif %}
+        {% endif %}
+    </section>
 {% endblock content %}

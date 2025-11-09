@@ -40,17 +40,46 @@
     {% endif %}
   };
 
+  const ensureNotificationPermission = () => new Promise(resolve => {
+    if (!('Notification' in window)) {
+      resolve('denied');
+      return;
+    }
+
+    if (Notification.permission === 'granted' || Notification.permission === 'denied') {
+      resolve(Notification.permission);
+      return;
+    }
+
+    if (typeof Notification.requestPermission !== 'function') {
+      resolve(Notification.permission);
+      return;
+    }
+
+    let settled = false;
+    const finish = (value) => {
+      if (!settled) {
+        settled = true;
+        resolve(value || Notification.permission);
+      }
+    };
+
+    try {
+      const outcome = Notification.requestPermission((permission) => finish(permission));
+      if (outcome && typeof outcome.then === 'function') {
+        outcome.then(finish).catch(() => finish(Notification.permission));
+      }
+    } catch (error) {
+      finish(Notification.permission);
+    }
+  });
+
   // Validate, that the correct permissions have been given
   const setupIsValid = (registration) => {
 
     {% if PWA_SERVICE_WORKER_DEBUG %}
       console.log("Notification.permission", Notification.permission)
     {% endif %}
-
-    {# TODO CT: This results in a violation. I can only request Permission on a user gesture #}
-    if (Notification.permission !== "granted") {
-      Notification.requestPermission();
-    }
 
     // Check if notifications are supported
     if (!registration.showNotification) {
@@ -74,38 +103,47 @@
 
   // Handle the success of service worker registration
   const handleRegistrationSuccess = (registration) => {
-    if (!setupIsValid(registration))
-      return
+    ensureNotificationPermission().then(permission => {
+      if (permission !== 'granted') {
+        {% if PWA_SERVICE_WORKER_DEBUG %}
+          console.warn('Skipping push subscription because notification permission is', permission);
+        {% endif %}
+        return;
+      }
 
-    // Check for an active subscription
-    registration.pushManager.getSubscription()
-      .then(subscription => {
-        if (subscription) {
-          sendSubData(subscription);
-        } else {
-          // Get the VAPID public key and create subscription options
-          const key = "{{WEBPUSH_SETTINGS.VAPID_PUBLIC_KEY}}"
-          const options = {
-            userVisibleOnly: true,
-            ...(key && {applicationServerKey: urlB64ToUint8Array(key)})
-          };
+      if (!setupIsValid(registration))
+        return
 
-          // Subscribe and send subscription data
-          registration.pushManager.subscribe(options)
-            .then(sub => sendSubData(sub))
-            .catch(error => {
-              console.error('Error subscribing:', error)
-              if (error.toString().includes("AbortError: Registration failed - push service error")) {
-                window.alert(
-                  "There was an error registering you for Notifications. \n\n" +
-                  "If you are using Brave, navigate to \n'brave://settings/privacy'\n and enable " +
-                  "\n'Use Google services for push messaging'"
-                )
-              }
-            });
-        }
-      })
-      .catch(error => console.error('Error getting subscription:', error));
+      // Check for an active subscription
+      registration.pushManager.getSubscription()
+        .then(subscription => {
+          if (subscription) {
+            sendSubData(subscription);
+          } else {
+            // Get the VAPID public key and create subscription options
+            const key = "{{WEBPUSH_SETTINGS.VAPID_PUBLIC_KEY}}"
+            const options = {
+              userVisibleOnly: true,
+              ...(key && {applicationServerKey: urlB64ToUint8Array(key)})
+            };
+
+            // Subscribe and send subscription data
+            registration.pushManager.subscribe(options)
+              .then(sub => sendSubData(sub))
+              .catch(error => {
+                console.error('Error subscribing:', error)
+                if (error.toString().includes("AbortError: Registration failed - push service error")) {
+                  window.alert(
+                    "There was an error registering you for Notifications. \n\n" +
+                    "If you are using Brave, navigate to \n'brave://settings/privacy'\n and enable " +
+                    "\n'Use Google services for push messaging'"
+                  )
+                }
+              });
+          }
+        })
+        .catch(error => console.error('Error getting subscription:', error));
+    });
   };
 
   // Initialize the service worker
@@ -148,11 +186,13 @@
           handleRegistrationSuccess(registration)
         } else {
           registration.pushManager.getSubscription().then((subscription) => {
+            if (!subscription) {
+              return;
+            }
             subscription
               .unsubscribe()
               .then((successful) => {
                 // Successfully unsubscribed
-                Notification.permission = "denied"
 
                 {% if PWA_SERVICE_WORKER_DEBUG %}
                   console.log("unsubscribed")

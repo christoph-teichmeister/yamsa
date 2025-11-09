@@ -4,4 +4,4 @@ from apps.transaction.views.parent_transaction_delete_view import ParentTransact
 from apps.transaction.views.transaction_create_view import TransactionCreateView
 from apps.transaction.views.transaction_detail_view import TransactionDetailView
 from apps.transaction.views.transaction_edit_view import TransactionEditView
-from apps.transaction.views.transaction_list_view import TransactionListView
+from apps.transaction.views.transaction_list_view import TransactionFeedView, TransactionListView

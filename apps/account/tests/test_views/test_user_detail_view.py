@@ -17,8 +17,8 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content).replace("\\n", "")
-        self.assertInHTML("Your data:", stringed_content)
+        stringed_content = response.content.decode()
+        self.assertIn("Your account overview", stringed_content)
         self.assertIn(self.user.name, stringed_content)
         self.assertIn(self.user.email, stringed_content)
         self.assertIn(f"@{self.user.paypal_me_username}", stringed_content)
@@ -34,8 +34,8 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content).replace("\\n", "")
-        self.assertInHTML("Their data:", stringed_content)
+        stringed_content = response.content.decode()
+        self.assertIn("Member profile", stringed_content)
         self.assertIn(self.superuser.name, stringed_content)
         self.assertIn(self.superuser.email, stringed_content)
 
@@ -48,7 +48,7 @@ class UserDetailViewTestCase(BaseTestSetUp):
 
         self.assertEqual(response.status_code, http.HTTPStatus.FORBIDDEN)
 
-        stringed_content = str(response.content).replace("\n", "")
+        stringed_content = response.content.decode().replace("\n", "")
         self.assertIn("You are not allowed", stringed_content)
         self.assertIn("to see this page", stringed_content)
 
@@ -59,9 +59,9 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content)
-        self.assertIn("- You are a guest -", stringed_content)
-        self.assertIn(f"Thank you for using yamsa, {self.guest_user.name}!", stringed_content)
+        stringed_content = response.content.decode()
+        self.assertIn("Guest Mode", stringed_content)
+        self.assertIn(f"Hi {self.guest_user.name}", stringed_content)
 
         self.assertNotIn('id="superuser-admin-link"', stringed_content)
 
@@ -75,8 +75,8 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content).replace("\\n", "")
-        self.assertInHTML("Their data:", stringed_content)
+        stringed_content = response.content.decode()
+        self.assertIn("Member profile", stringed_content)
         self.assertIn(self.user.name, stringed_content)
         self.assertIn(self.user.email, stringed_content)
         self.assertIn(f"@{self.user.paypal_me_username}", stringed_content)
@@ -90,11 +90,10 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content).replace("\\n", "")
-        self.assertInHTML("Your data:", stringed_content)
+        stringed_content = response.content.decode()
+        self.assertIn("Your account overview", stringed_content)
         self.assertIn(self.superuser.name, stringed_content)
         self.assertIn(self.superuser.email, stringed_content)
-
         self.assertIn("id=superuser-admin-link", stringed_content, f"{stringed_content=}")
 
     def test_get_as_superuser_other_profile(self):
@@ -108,8 +107,8 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content).replace("\\n", "")
-        self.assertInHTML("Their data:", stringed_content)
+        stringed_content = response.content.decode()
+        self.assertIn("Member profile", stringed_content)
         self.assertIn(self.user.name, stringed_content)
         self.assertIn(self.user.email, stringed_content)
 

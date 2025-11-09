@@ -41,7 +41,9 @@ class GuestSendInvitationEmailViewTestCase(BaseTestSetUp):
             self.assertIsInstance(mocked_handle_message.call_args[0][0], SendInvitationEmail)
 
         self.assertTrue(response.template_name[0], UserListForRoomView.template_name)
-        self.assertIn("People", str(response.content))
+        response_content = response.content.decode()
+        self.assertIn("Room roster", response_content)
+        self.assertIn("Add guest", response_content)
 
         self.assertEqual(response.context_data["active_tab"], "people")
 

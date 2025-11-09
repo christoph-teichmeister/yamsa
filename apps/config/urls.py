@@ -1,9 +1,20 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.templatetags.static import static as staticfiles_url
 from django.urls import include, path
+from django.views.generic import RedirectView
+
+
+class FaviconRedirectView(RedirectView):
+    permanent = True
+
+    def get_redirect_url(self, *args, **kwargs):  # pragma: no cover - trivial wiring
+        return staticfiles_url("images/favicon.ico")
+
 
 urlpatterns = [
+    path("favicon.ico", FaviconRedirectView.as_view()),
     path("", include("apps.core.urls")),
     # Django Admin, use {% url 'admin:index' %}
     path(f"{settings.ADMIN_URL}/", admin.site.urls),

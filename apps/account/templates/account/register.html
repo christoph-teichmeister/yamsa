@@ -13,7 +13,12 @@
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="name" class="form-label">{{ form.fields.name.label }}</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+                    <input type="text"
+                           class="form-control"
+                           id="name"
+                           name="name"
+                           required
+                           autocomplete="name">
                     {% for error_message in form.errors.name.data %}
                         <small class="error" id="nameError">{{ error_message.message }}</small>
                     {% endfor %}
@@ -25,12 +30,13 @@
                            id="email"
                            name="email"
                            required
+                           autocomplete="email"
                            value="{% if form.initial.email %}{{ form.initial.email }}{% endif %}">
                     {% for error_message in form.errors.email.data %}
                         <small class="error" id="emailError">{{ error_message.message }}</small>
                     {% endfor %}
                 </div>
-                {% include "account/shared_partials/password_input_component.html" %}
+                {% include "account/shared_partials/password_input_component.html" with password_autocomplete="new-password" %}
                 <div class="form-group" hidden>
                     <label for="id" class="form-label">User ID</label>
                     <input id="id"

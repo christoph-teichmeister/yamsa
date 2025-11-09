@@ -18,6 +18,11 @@ urlpatterns = [
                 name="list",
             ),
             path(
+                "feed/",
+                views.TransactionFeedView.as_view(),
+                name="feed",
+            ),
+            path(
                 "detail/<int:pk>",
                 views.TransactionDetailView.as_view(),
                 name="detail",

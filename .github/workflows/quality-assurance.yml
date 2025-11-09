@@ -7,6 +7,34 @@ on:
     branches: [ "main" ]
 
 jobs:
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.11'
+          cache: pipenv
+
+      - name: Install pipenv
+        run: python -m pip install --upgrade pip pipenv
+
+      - name: Install dependencies
+        run: pipenv install --deploy --dev
+
+      - name: Run Ruff
+        run: pipenv run ruff check --output-format=github .
+
+      - name: Run Django system checks
+        env:
+          DJANGO_SECRET_KEY: 'ci-insecure-key'
+        run: pipenv run python manage.py check --deploy
+
+      - name: Run djlint
+        run: pipenv run djlint apps --check
+
   verify-pre-commit-packages-are-up-to-date:
     runs-on: ubuntu-latest
     continue-on-error: true  # Equivalent to allow_failure
@@ -17,7 +45,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.11'
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y git
@@ -37,15 +65,18 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.11'
+
+      - name: Install pipenv
+        run: python -m pip install --upgrade pip pipenv
 
       - name: Install dependencies
-        run: pip install pipenv && pipenv install --system --deploy
+        run: pipenv install --deploy --dev
 
       - name: Check Migration Status
         env:
           DJANGO_DEBUG: 'False'
-        run: python manage.py makemigrations --check --dry-run
+        run: pipenv run python manage.py makemigrations --check --dry-run
 
   validate-test-structure:
     runs-on: ubuntu-latest
@@ -56,12 +87,15 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.11'
+
+      - name: Install pipenv
+        run: python -m pip install --upgrade pip pipenv
 
       - name: Install dependencies
-        run: pip install pipenv && pipenv install --system --deploy
+        run: pipenv install --deploy --dev
 
       - name: Validate test structure
         env:
           DJANGO_DEBUG: 'False'
-        run: python manage.py validate_test_structure
+        run: pipenv run python manage.py validate_test_structure

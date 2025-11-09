@@ -1,18 +1,211 @@
 {% extends "core/base.html" %}
 {% block content %}
     {% if request.user.is_authenticated %}
-        {% if highlighted_news %}
-            <ul class="list-group list-group-flush">
-                {% include "shared_partials/news_card.html" with news=highlighted_news %}
-            </ul>
-        {% endif %}
-        {% if news %}
-            <ul class="list-group list-group-flush">
-                {% if highlighted_news %}<li id="first-break" class="list-group-item p-0"></li>{% endif %}
-                {% for news_object in news %}
-                    {% include "shared_partials/news_card.html" with news=news_object %}
-                {% endfor %}
-            </ul>
-        {% endif %}
+        <style>
+            .news-wrap {
+                max-width: 960px;
+                margin: 0 auto;
+                padding: 1rem 0 3rem;
+            }
+
+            .timeline-hero {
+                border-radius: 1.25rem;
+                padding: 1.75rem;
+                background: linear-gradient(135deg, rgba(13, 110, 253, 0.18), rgba(32, 201, 151, 0.22));
+                border: 1px solid rgba(var(--bs-primary-rgb, 13, 110, 253), 0.18);
+            }
+
+            .timeline-hero h2 {
+                font-weight: 700;
+            }
+
+            .timeline-hero p {
+                color: var(--bs-secondary-color, #6c757d);
+            }
+
+            .timeline-stream {
+                position: relative;
+                margin-top: 2rem;
+                padding-left: 2.5rem;
+                --timeline-line-color: rgba(255, 255, 255, 0.75);
+                --timeline-line-color-soft: rgba(255, 255, 255, 0.25);
+            }
+
+            .timeline-stream::before {
+                content: "";
+                position: absolute;
+                left: 1rem;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                background: linear-gradient(180deg, var(--timeline-line-color-soft), var(--timeline-line-color));
+            }
+
+            .timeline-event {
+                position: relative;
+                margin-bottom: 1.75rem;
+                padding-left: 1.25rem;
+            }
+
+            .timeline-event:last-child {
+                margin-bottom: 0;
+            }
+
+            .timeline-event::before {
+                content: "";
+                position: absolute;
+                left: -1.5rem;
+                top: 1.35rem;
+                width: 1.4rem;
+                height: 1px;
+                border-top: 1px solid var(--timeline-line-color, rgba(13, 110, 253, 0.35));
+                border-bottom: 2px solid transparent;
+                border-radius: 999px;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+            }
+
+            .timeline-card {
+                border-radius: 1rem;
+                border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.15);
+                padding: 1.25rem 1.4rem;
+                background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.04);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            }
+
+            .timeline-card-link {
+                text-decoration: none;
+                color: inherit;
+                display: block;
+            }
+
+            .timeline-card-interactive {
+                transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            }
+
+            .timeline-card-interactive:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+                border-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.35);
+            }
+
+            .timeline-card-link:focus-visible .timeline-card-interactive {
+                transform: translateY(-2px);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+                border-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.35);
+                outline: none;
+            }
+
+            .timeline-card-disabled {
+                opacity: 0.85;
+                border-style: dashed;
+            }
+
+            .timeline-event-highlight .timeline-card {
+                border: none;
+                background: linear-gradient(125deg, rgba(255, 255, 255, 0.08), rgba(255, 236, 22, 0.3));
+                box-shadow: 0 20px 45px rgba(255, 236, 22, 0.3);
+            }
+
+            .timeline-card-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                font-size: 0.8rem;
+                color: var(--bs-secondary-color, #6c757d);
+            }
+
+            .timeline-card-title {
+                margin-bottom: 0.2rem;
+            }
+
+            .timeline-card-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.3rem;
+                padding: 0.2rem 0.6rem;
+                border-radius: 999px;
+                background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.15);
+                color: var(--bs-primary, #0d6efd);
+                font-size: 0.7rem;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+
+            .timeline-event-highlight .timeline-card-pill {
+                background: rgba(255, 255, 255, 0.25);
+                color: #fff;
+            }
+
+            .timeline-card-body p {
+                margin-bottom: 0;
+                color: var(--bs-secondary-color, #6c757d);
+            }
+
+            .timeline-empty {
+                border: 1px dashed rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.25);
+                border-radius: 1rem;
+                padding: 2rem;
+                text-align: center;
+                margin-top: 2rem;
+            }
+
+            .timeline-empty p {
+                margin-bottom: 0.25rem;
+            }
+
+            .timeline-card-placeholder {
+                background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.05);
+                border: 1px dashed rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.25);
+            }
+
+            .news-loading-indicator {
+                display: none;
+                margin-top: 1.5rem;
+            }
+
+            .news-loading-indicator.htmx-request {
+                display: block;
+            }
+
+            .news-loading-indicator .placeholder {
+                background-color: rgba(255, 255, 255, 0.15);
+            }
+
+            .news-load-trigger {
+                min-height: 1px;
+            }
+
+            .news-feed-end {
+                color: var(--bs-secondary-color, #6c757d);
+            }
+        </style>
+        <div class="news-wrap">
+            <div class="timeline-hero">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+                    <div>
+                        <p class="text-uppercase small text-muted mb-1">Room activity timeline</p>
+                        <h2 class="mb-2">See transactions and changes at a glance</h2>
+                        <p class="mb-0">Every room update - expenses logged, settlements, highlights - lands here so you never miss a beat.</p>
+                    </div>
+                    <div class="text-md-end">
+                        <p class="mb-1 fw-semibold">Auto-updated feed</p>
+                        <p class="mb-0 small">Events appear in chronological order with the newest at the top.</p>
+                    </div>
+                </div>
+            </div>
+            {% if highlighted_news or news %}
+                <div class="timeline-stream" id="news-feed">
+                    {% if highlighted_news %}
+                        {% include "shared_partials/news_card.html" with news=highlighted_news %}
+                    {% endif %}
+                    {% include "shared_partials/news_batch.html" with news=news news_next_cursor=news_next_cursor news_initial_render=news_initial_render %}
+                </div>
+            {% else %}
+                <div class="timeline-empty">
+                    <p class="fw-semibold">No updates yet</p>
+                    <p class="text-muted mb-0">Once roommates start logging expenses or changes, they will appear here.</p>
+                </div>
+            {% endif %}
+        </div>
     {% endif %}
 {% endblock content %}

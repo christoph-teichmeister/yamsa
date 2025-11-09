@@ -2,179 +2,249 @@
 {% load static %}
 {% load room_tags %}
 {% block tab_content %}
-    <form hx-post="{% room_url 'transaction:edit' pk=parent_transaction.id %}"
-          hx-target="#body"
-          hx-indicator="#body-loading-spinner"
-          hx-swap="morph:innerHTML"
-          hx-push-url="true">
-        {% csrf_token %}
-        <div class="row mt-4 mx-2 justify-content-center">
-            <div class="row p-0">
-                <div class="col-11 input-group align-items-center justify-content-space-evenly mb-3 p-0">
-                    <div class="col-4">
-                        <label class="visually-hidden" for="paid_by_select">Paid by</label>
-                        <select name="paid_by"
-                                class="form-control form-select"
-                                id="paid_by_select"
-                                required>
-                            {% for user in form.fields.paid_by.queryset %}
-                                <option {% if user.id == form.initial.paid_by %}selected{% endif %}
-                                        value="{{ user.id }}">{{ user.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-5">
-                        <h5 class="mb-0 py-1 text-center">paid {{ parent_transaction.value }}</h5>
-                    </div>
-                    <div class="col">
-                        {#<div class="col-6">#}
-                        {#    Use the following, when we make the total value of a transaction editable#}
-                        {#    <label class="visually-hidden" for="total_value_input">Total value</label>#}
-                        {#    <input id="total_value_input"#}
-                        {#           name="total_value"#}
-                        {#           type="number"#}
-                        {#           class="form-control"#}
-                        {#           min="0"#}
-                        {#           step="0.01"#}
-                        {#           max="99999999"#}
-                        {#           required#}
-                        {#           value="{{ parent_transaction.value }}"#}
-                        {#    />#}
-                        {#</div>#}
-                        <label class="visually-hidden" for="currency_select">Currency</label>
-                        <select name="currency"
-                                class="form-control form-select"
-                                id="currency_select"
-                                required>
-                            {% for currency in form.fields.currency.queryset %}
-                                <option {% if currency.id == form.initial.currency %}selected{% endif %}
-                                        value="{{ currency.id }}">{{ currency.sign }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-1 ps-2">
-                        <i class="bi bi-trash"
-                           hx-trigger="click"
-                           hx-post="{% room_url 'transaction:parent-transaction-delete' pk=parent_transaction.id %}"
-                           hx-confirm="Are you sure you wish to delete this transaction?"
-                           hx-target="#body"
-                           hx-indicator="#body-loading-spinner"
-                           hx-swap="morph:innerHTML"
-                           hx-push-url="true"></i>
-                    </div>
-                </div>
+    <style>
+        .transaction-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--bs-secondary-color, #6c757d);
+        }
+
+        .transaction-amount-display {
+            font-size: clamp(1.5rem, 3vw, 2.25rem);
+            font-weight: 600;
+        }
+
+        .transaction-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.08);
+            color: var(--bs-primary, #0d6efd);
+            font-size: 0.8rem;
+        }
+
+        .split-row {
+            border-radius: 0.65rem;
+            border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.08);
+            padding: 1rem;
+        }
+
+        .split-row + .split-row {
+            margin-top: 0.75rem;
+        }
+
+        .split-row:hover {
+            border-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.35);
+            box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb, 13, 110, 253), 0.08);
+        }
+
+        .split-row .form-control,
+        .split-row .form-select {
+            min-height: 2.5rem;
+        }
+    </style>
+    <div class="container-fluid px-0 px-md-2 mt-3">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+            <button type="button"
+                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2"
+                    hx-trigger="click"
+                    hx-get="{% room_url 'transaction:list' %}#transaction-{{ parent_transaction.id }}"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true">
+                <i class="bi bi-arrow-left"></i>
+                Back to list
+            </button>
+            <div class="text-center flex-grow-1">
+                <p class="transaction-label mb-1">Editing expense</p>
+                <p class="mb-0">Adjust who paid and how it is split.</p>
             </div>
-            <div class="row ps-0 pe-4">
-                <div class="col-12 d-flex flex-column align-items-center justify-content-center p-0">
-                    <textarea class="form-control mb-0 py-1"
-                              aria-label="Description"
-                              id="description"
-                              name="description"
-                              rows="2"
-                              maxlength="50"
-                              minlength="1">{{ parent_transaction.description }}</textarea>
-                    <div class="col-12 text-start form-text">Maximum 50 characters.</div>
-                </div>
-            </div>
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-2"
+                    hx-trigger="click"
+                    hx-post="{% room_url 'transaction:parent-transaction-delete' pk=parent_transaction.id %}"
+                    hx-confirm="Are you sure you wish to delete this transaction?"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true">
+                <i class="bi bi-trash"></i>
+                Delete
+            </button>
         </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item p-4"></li>
-            {% for child_transaction in child_transaction_qs %}
-                <li class="list-group-item py-4 px-3">
-                    <div class="row d-flex align-items-center justify-content-start">
-                        <div class="col-1 ps-1 pe-0">
-                            <i class="bi bi-caret-right"></i>
-                        </div>
-                        <div class="col-4 px-1">
-                            <div class="row align-items-center justify-content-center">
-                                <div class="col-8 px-0">
-                                    <label class="visually-hidden" for="value_input">Total value</label>
-                                    <input id="value_input"
-                                           name="value"
-                                           type="number"
-                                           class="form-control w-75 float-end"
-                                           min="0.01"
-                                           step="0.01"
-                                           max="99999999"
-                                           required
-                                           value="{{ child_transaction.value }}" />
-                                </div>
-                                <div class="col-1 ps-1 me-3">{{ parent_transaction.currency.sign }}</div>
-                            </div>
-                        </div>
-                        <div class="col ps-1 pe-3 d-flex justify-content-center">for</div>
-                        <div class="col-4 px-1">
-                            <label class="visually-hidden" for="paid_for_select">Paid by</label>
-                            <select name="paid_for"
-                                    class="form-control form-select"
-                                    id="paid_for_select"
-                                    required>
-                                {% for user in current_room.users %}
-                                    <option {% if user == child_transaction.paid_for %}selected{% endif %}
+        <form class="needs-validation"
+              hx-post="{% room_url 'transaction:edit' pk=parent_transaction.id %}"
+              hx-target="#body"
+              hx-indicator="#body-loading-spinner"
+              hx-swap="morph:innerHTML"
+              hx-push-url="true">
+            {% csrf_token %}
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label transaction-label" for="paid_by_select">Paid by</label>
+                            <select name="paid_by" class="form-select" id="paid_by_select" required>
+                                {% for user in form.fields.paid_by.queryset %}
+                                    <option {% if user.id == form.initial.paid_by %}selected{% endif %}
                                             value="{{ user.id }}">{{ user.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-1 ps-1">
-                            <i class="bi bi-trash"
-                               hx-trigger="click"
-                               hx-post="{% room_url 'transaction:child-transaction-delete' pk=child_transaction.id %}"
-                               hx-confirm="Are you sure you wish to delete this transaction?"
-                               hx-target="#body"
-                               hx-indicator="#body-loading-spinner"
-                               hx-swap="morph:innerHTML"
-                               hx-push-url="true"></i>
+                        <div class="col-md-4">
+                            <p class="transaction-label mb-1">Amount</p>
+                            <p class="transaction-amount-display mb-0">{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</p>
+                            <p class="text-muted small mb-0">Total updates happen on the detail view.</p>
                         </div>
-                        <div class="form-group" hidden>
-                            <label class="visually-hidden" for="child_transaction_id_input">Child Transaction ID</label>
-                            <input id="child_transaction_id_input"
-                                   name="child_transaction_id"
-                                   type="number"
+                        <div class="col-md-4">
+                            <label class="form-label transaction-label" for="currency_select">Currency</label>
+                            <select name="currency" class="form-select" id="currency_select" required>
+                                {% for currency in form.fields.currency.queryset %}
+                                    <option {% if currency.id == form.initial.currency %}selected{% endif %}
+                                            value="{{ currency.id }}">{{ currency.sign }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label transaction-label" for="paid_at_input">Paid at</label>
+                            <input id="paid_at_input"
+                                   name="paid_at"
                                    class="form-control"
-                                   min="0"
-                                   step="0.01"
-                                   max="99999999"
-                                   required
-                                   value="{{ child_transaction.id }}" />
+                                   type="datetime-local"
+                                   value="{{ parent_transaction.paid_at|date:"Y-m-d" }}T{{ parent_transaction.paid_at|time:"H:i" }}"
+                                   min="2018-04-04T00:00"
+                                   max="2099-12-31T00:00" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label transaction-label" for="description">Description</label>
+                            <textarea class="form-control"
+                                      aria-label="Description"
+                                      id="description"
+                                      name="description"
+                                      rows="2"
+                                      maxlength="50"
+                                      minlength="1">{{ parent_transaction.description }}</textarea>
+                            <div class="form-text">Maximum 50 characters.</div>
                         </div>
                     </div>
-                </li>
-            {% endfor %}
-            <span id="add-child-transaction-container"></span>
-            <li class="list-group-item p-4"></li>
-            <li class="list-group-item p-2 d-flex justify-content-center"
-                hx-trigger="click"
-                hx-get="{% room_url 'transaction:child-transaction-create' %}"
-                hx-target="#add-child-transaction-container"
-                hx-swap="morph:outerHTML"
-                hx-push-url="false">
-                <i class="bi bi-plus-circle"></i>
-            </li>
-            <li class="list-group-item p-4"></li>
-        </ul>
-        <label class="visually-hidden" for="further_notes">Notes</label>
-        <textarea class="form-control mb-5"
-                  aria-label="Notes"
-                  id="further_notes"
-                  name="further_notes"
-                  rows="3"
-                  maxlength="500"
-                  minlength="1"
-                  placeholder="Add extra notes here">{{ parent_transaction.further_notes|default:"" }}</textarea>
-        <div class="text-center">
-            <label class="visually-hidden" for="paid_at_input">Transaction date</label>
-            <input id="paid_at_input"
-                   name="paid_at"
-                   class="form-control"
-                   type="datetime-local"
-                   value="{{ parent_transaction.paid_at|date:"Y-m-d" }}T{{ parent_transaction.paid_at|time:"H:i" }}"
-                   min="2018-04-04T00:00"
-                   max="2099-12-31T00:00" />
-        </div>
-        <div class="row mt-4 mx-2">
-            <div class="col">
-                <button type="submit" class="btn btn-primary float-end w-25">Save</button>
+                </div>
             </div>
-        </div>
-    </form>
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-transparent border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div>
+                        <p class="transaction-label mb-0">Split between</p>
+                        <p class="mb-0 text-muted small">Update each share or remove it entirely.</p>
+                    </div>
+                    <span class="transaction-chip">
+                        <i class="bi bi-people"></i>
+                        {{ child_transaction_qs|length }} people
+                    </span>
+                </div>
+                <div class="card-body pt-0">
+                    {% for child_transaction in child_transaction_qs %}
+                        <div class="split-row">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-md-5">
+                                    <label class="form-label transaction-label"
+                                           for="value_input_{{ forloop.counter }}">Amount</label>
+                                    <div class="input-group">
+                                        <input id="value_input_{{ forloop.counter }}"
+                                               name="value"
+                                               type="number"
+                                               class="form-control"
+                                               min="0.01"
+                                               step="0.01"
+                                               max="99999999"
+                                               required
+                                               value="{{ child_transaction.value }}" />
+                                        <span class="input-group-text">{{ parent_transaction.currency.sign }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label transaction-label"
+                                           for="paid_for_select_{{ forloop.counter }}">For</label>
+                                    <select name="paid_for"
+                                            class="form-select"
+                                            id="paid_for_select_{{ forloop.counter }}"
+                                            required>
+                                        {% for user in current_room.users %}
+                                            <option {% if user == child_transaction.paid_for %}selected{% endif %}
+                                                    value="{{ user.id }}">{{ user.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end justify-content-md-end">
+                                    <button type="button"
+                                            class="btn btn-outline-danger w-100"
+                                            hx-trigger="click"
+                                            hx-post="{% room_url 'transaction:child-transaction-delete' pk=child_transaction.id %}"
+                                            hx-confirm="Are you sure you wish to delete this transaction?"
+                                            hx-target="#body"
+                                            hx-indicator="#body-loading-spinner"
+                                            hx-swap="morph:innerHTML"
+                                            hx-push-url="true">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group" hidden>
+                                <label class="visually-hidden"
+                                       for="child_transaction_id_input_{{ forloop.counter }}">
+                                    Child Transaction ID
+                                </label>
+                                <input id="child_transaction_id_input_{{ forloop.counter }}"
+                                       name="child_transaction_id"
+                                       type="number"
+                                       class="form-control"
+                                       min="0"
+                                       step="0.01"
+                                       max="99999999"
+                                       required
+                                       value="{{ child_transaction.id }}" />
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small mb-0">No split entries yet.</p>
+                    {% endfor %}
+                    <span id="add-child-transaction-container"></span>
+                    <div class="text-center mt-3">
+                        <button type="button"
+                                class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-2"
+                                hx-trigger="click"
+                                hx-get="{% room_url 'transaction:child-transaction-create' %}"
+                                hx-target="#add-child-transaction-container"
+                                hx-swap="morph:outerHTML"
+                                hx-push-url="false">
+                            <i class="bi bi-plus-circle"></i>
+                            Add participant
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <label class="form-label transaction-label" for="further_notes">Notes</label>
+                    <textarea class="form-control"
+                              aria-label="Notes"
+                              id="further_notes"
+                              name="further_notes"
+                              rows="3"
+                              maxlength="500"
+                              minlength="1"
+                              placeholder="Add extra notes here">{{ parent_transaction.further_notes|default:"" }}</textarea>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit"
+                        class="btn btn-primary px-4 d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-check2-circle"></i>
+                    Save changes
+                </button>
+            </div>
+        </form>
+    </div>
 {% endblock tab_content %}

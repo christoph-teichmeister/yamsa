@@ -1,11 +1,12 @@
 {% load room_tags %}
-<nav class="navbar fixed-bottom z-0 pb-4">
+<nav class="navbar fixed-bottom z-4 pb-4">
     <div class="container-fluid">
         <div class="navbar-nav w-100 d-flex flex-row justify-content-around">
             {% for tab in dashboard_tabs %}
                 <a class="nav-link cursor-pointer {% if active_tab == tab.name %}active{% else %}p-e-color{% endif %}"
                    id="{{ tab.name }}-tab"
                    role="tab"
+                   aria-label="{{ tab.name }}"
                    aria-controls="{{ tab.name }}"
                    aria-selected="{% if active_tab == tab.name %}true{% else %}false{% endif %}"
                    {% if active_tab == tab.name %}aria-current="page"{% endif %}
@@ -15,7 +16,8 @@
                    hx-target="#body"
                    hx-swap="morph:innerHTML"
                    hx-push-url="true">
-                    <i class="{{ tab.icon_class }}"></i>
+                    <i class="{{ tab.icon_class }}" aria-hidden="true"></i>
+                    <span class="visually-hidden">{{ tab.name }}</span>
                 </a>
             {% endfor %}
         </div>

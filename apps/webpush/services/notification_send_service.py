@@ -1,8 +1,12 @@
+import logging
+
 from django.conf import settings
 from pywebpush import WebPushException, webpush
 
 from apps.account.models import User
 from apps.webpush.models import WebpushInformation
+
+logger = logging.getLogger(__name__)
 
 
 class NotificationSendService:
@@ -10,7 +14,9 @@ class NotificationSendService:
         # Get all the web_push_info of the user
         response_list = []
         for web_push_info in user.webpush_infos.all():
-            response_list.append(self._send_notification(web_push_info, payload, ttl))
+            response = self._send_notification(web_push_info, payload, ttl)
+            if response is not None:
+                response_list.append(response)
 
         return response_list
 
@@ -28,9 +34,25 @@ class NotificationSendService:
             )
         except WebPushException as e:
             # If the subscription has expired, delete it.
-            if e.response.status_code == 410:
+            if getattr(e, "response", None) and e.response.status_code == 410:
                 return web_push_info.delete()
-            raise e
+
+            logger.debug(
+                "webpush send failed for user %s (id=%s): %s",
+                web_push_info.user,
+                web_push_info.user_id,
+                e,
+                exc_info=True,
+            )
+            return None
+        except Exception:
+            logger.debug(
+                "Unexpected error while sending webpush for user %s (id=%s)",
+                web_push_info.user,
+                web_push_info.user_id,
+                exc_info=True,
+            )
+            return None
 
     @staticmethod
     def _get_vapid_data():

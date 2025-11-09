@@ -2,38 +2,9 @@
 {% load static %}
 {% load room_tags %}
 {% block tab_content %}
-    <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
-        <div class="col">
-            <h5 class="m-0">Add a guest for "{{ current_room.name }}"</h5>
-        </div>
-    </div>
-    <form hx-post="{% room_url 'account:guest-create' %}"
-          hx-target="#body"
-          hx-indicator="#body-loading-spinner"
-          hx-swap="morph:innerHTML"
-          hx-push-url="true">
-        {% csrf_token %}
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item"></li>
-            <li class="list-group-item py-4 px-2">
-                <div class="mb-3 form-group">
-                    <label for="name">Their name</label>
-                    <input id="name" name="name" type="text" class="form-control" required />
-                </div>
-                <div class="form-group" hidden>
-                    <label for="room_slug" class="form-label">Room Slug</label>
-                    <input id="room_slug"
-                           name="room_slug"
-                           type="text"
-                           class="form-control"
-                           required
-                           value="{{ current_room.slug }}" />
-                </div>
-            </li>
-            <li class="list-group-item"></li>
-        </ul>
-        <div class="row d-flex justify-content-end me-2">
-            <button type="submit" class="btn btn-primary w-50">Add guest</button>
-        </div>
-    </form>
+    {% url 'account:guest-create' current_room.slug as guest_create_action %}
+    {% url 'account:list' current_room.slug as roster_url %}
+    {% with guest_title="Invite a guest to "|add:current_room.name %}
+        {% include "shared_partials/member_form.html" with form=form field=form.name form_action=guest_create_action room_slug_value=current_room.slug hero_context="Guest access" hero_title=guest_title hero_subtitle="Perfect for roommates without accounts - give them lightweight access." hero_badge_label="Guest pass" hero_badge_icon="bi-person-plus" field_label="Guest name" field_placeholder="e.g. Alex from the kitchen" helper_text="Guests can later convert to full accounts without losing history." tip_text="We'll drop them right into this room." submit_label="Add guest" submit_icon="bi-check-circle" back_url=roster_url back_label="Back to people" submit_disabled=current_room.is_closed %}
+    {% endwith %}
 {% endblock tab_content %}
