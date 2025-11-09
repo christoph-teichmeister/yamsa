@@ -2,53 +2,142 @@
 {% load static %}
 {% load room_tags %}
 {% block tab_content %}
-    <div class="row mt-4 mx-2 justify-content-center">
-        <div class="col-1 d-flex align-items-center justify-content-end">
-            <i class="bi bi-arrow-left-circle fs-2 cursor-pointer"
-               hx-trigger="click"
-               hx-get="{% room_url 'transaction:list' %}#transaction-{{ parent_transaction.id }}"
-               hx-target="#body"
-               hx-indicator="#body-loading-spinner"
-               hx-swap="innerHTML"
-               hx-push-url="true"></i>
+    <style>
+        .transaction-detail-card {
+            border: none;
+            border-radius: 1rem;
+        }
+
+        .transaction-detail-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .transaction-detail-card .transaction-amount {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+        }
+
+        .transaction-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--bs-secondary-color, #6c757d);
+        }
+
+        .transaction-breakdown-item {
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .transaction-breakdown-item:hover {
+            background-color: rgba(var(--bs-body-color-rgb, 15, 15, 15), 0.03);
+        }
+
+        .transaction-breakdown-item.cursor-pointer:hover {
+            transform: translateX(4px);
+        }
+
+        .transaction-meta {
+            font-size: 0.8rem;
+            color: var(--bs-secondary-color, #6c757d);
+        }
+    </style>
+    <div class="container-fluid px-0 px-md-2 mt-3">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+            <button type="button"
+                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2"
+                    hx-trigger="click"
+                    hx-get="{% room_url 'transaction:list' %}#transaction-{{ parent_transaction.id }}"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true">
+                <i class="bi bi-arrow-left"></i>
+                Back to list
+            </button>
+            <div class="text-center flex-grow-1">
+                <p class="transaction-label mb-1">Expense</p>
+                <p class="mb-0">
+                    {% autoescape off %}
+                        {% parse_user_text parent_transaction.paid_by.name True %}
+                    {% endautoescape %}
+                    paid
+                    <strong>{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</strong>
+                </p>
+            </div>
+            <button type="button"
+                    class="btn btn-primary btn-sm d-inline-flex align-items-center gap-2 {% if current_room.is_closed %}disabled{% endif %}"
+                    title="Edit transaction"
+                    aria-disabled="{% if current_room.is_closed %}true{% else %}false{% endif %}"
+                    {% if current_room.is_open %} hx-trigger="click" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
+                <i class="bi bi-pencil-square"></i>
+                Edit expense
+            </button>
         </div>
-        <div class="col-9">
-            <div class="row">
-                <div class="col-12 d-flex align-items-center justify-content-center">
-                    <h5 class="mb-0 py-1 text-center">
-                        {% autoescape off %}
-                            {% parse_user_text parent_transaction.paid_by.name True %}
-                        {% endautoescape %}
-                        paid
-                        <strong>{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</strong>
-                    </h5>
+        {% if current_room.is_closed %}
+            <div class="alert alert-warning small mb-3" role="alert">This room is closed, so the breakdown is read-only.</div>
+        {% endif %}
+        <div class="card shadow-sm transaction-detail-card mb-3">
+            <div class="card-body">
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                    <div>
+                        <p class="transaction-label mb-1">Total amount</p>
+                        <p class="transaction-amount fw-semibold mb-2">{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</p>
+                        <p class="transaction-meta mb-0">
+                            Paid by
+                            {% autoescape off %}
+                                {% parse_user_text parent_transaction.paid_by.name True %}
+                            {% endautoescape %}
+                            on {{ parent_transaction.paid_at|date:'M d, Y' }}
+                        </p>
+                        <p class="transaction-meta mb-0">Recorded at {{ parent_transaction.paid_at|date:'G:i' }}</p>
+                    </div>
+                    <div class="text-md-end">
+                        {% if parent_transaction.description %}
+                            <p class="transaction-label mb-1">Description</p>
+                            <p class="fst-italic mb-0 text-break">"{{ parent_transaction.description }}"</p>
+                        {% else %}
+                            <p class="transaction-label mb-0">No description</p>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="col-12 d-flex align-items-center justify-content-center">
-                    <p class="text-body-secondary mb-0 py-1 text-center text-break fst-italic">"{{ parent_transaction.description }}"</p>
-                </div>
+                {% if parent_transaction.further_notes %}
+                    <hr class="my-4">
+                    <div>
+                        <p class="transaction-label mb-1">Notes</p>
+                        <p class="text-break fst-italic mb-0">"{{ parent_transaction.further_notes }}"</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
-        <div class="col-1 d-flex align-items-center justify-content-start">
-            <i class="bi bi-pencil-square fs-2 {% if current_room.is_closed %}text-muted{% else %}cursor-pointer{% endif %}"
-               {% if current_room.is_open %} hx-trigger="click" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}></i>
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between">
+                <div>
+                    <p class="transaction-label mb-0">Split between</p>
+                    <p class="mb-0 text-muted small">Tap a row to edit the breakdown.</p>
+                </div>
+                <span class="badge text-bg-light">{{ child_transactions|length }} people</span>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for child_transaction in child_transactions %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2 transaction-breakdown-item {% if current_room.is_open %}cursor-pointer{% endif %}"
+                        {% if current_room.is_open %} role="button" tabindex="0" hx-trigger="click keyup[key=='Enter']" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
+                        <div>
+                            <p class="fw-semibold mb-1">
+                                {% autoescape off %}
+                                    {% parse_user_text child_transaction.paid_for.name True %}
+                                {% endautoescape %}
+                            </p>
+                            <p class="transaction-meta mb-0">Owes {{ child_transaction.value }}{{ parent_transaction.currency.sign }}</p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge text-bg-primary-subtle text-primary-emphasis px-3 py-2">
+                                {{ child_transaction.value }}{{ parent_transaction.currency.sign }}
+                            </span>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted small">No split data available for this transaction yet.</li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item p-4"></li>
-        {% for child_transaction in child_transactions %}
-            <li class="list-group-item p-4 {% if current_room.is_open %}cursor-pointer{% endif %}"
-                {% if current_room.is_open %} hx-trigger="click" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
-                <i class="bi bi-caret-right"></i>
-                {{ child_transaction.value }}{{ parent_transaction.currency.sign }} for
-                {% autoescape off %}
-                    {% parse_user_text child_transaction.paid_for.name True %}
-                {% endautoescape %}
-            </li>
-        {% endfor %}
-        <li class="list-group-item p-4"></li>
-    </ul>
-    {% if parent_transaction.further_notes %}
-        <p class="text-body-secondary text-center text-break fst-italic">"{{ parent_transaction.further_notes }}"</p>
-    {% endif %}
-    <p class="text-body-secondary text-center">{{ parent_transaction.paid_at|date:'G:i // d.m.Y' }}</p>
 {% endblock tab_content %}

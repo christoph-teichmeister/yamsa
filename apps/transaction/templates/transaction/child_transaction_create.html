@@ -1,58 +1,48 @@
-<li class="list-group-item py-4 px-3">
-    <div class="row d-flex align-items-center justify-content-start">
-        <div class="col-1 ps-1 pe-0">
-            <i class="bi bi-caret-right"></i>
-        </div>
-        <div class="col-4 px-1">
-            <div class="row align-items-center justify-content-center">
-                <div class="col-8 px-0">
-                    <label class="visually-hidden" for="value_input">Total value</label>
-                    <input id="value_input"
-                           name="value"
-                           type="number"
-                           class="form-control w-75 float-end"
-                           min="0"
-                           step="0.01"
-                           max="99999999"
-                           required
-                           value="{{ form.fields.value }}" />
-                </div>
-                <div class="col-1 ps-1 me-3">{{ parent_transaction.currency.sign }}</div>
+<div class="split-row">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-5">
+            <label class="form-label transaction-label" for="value_input_new">Amount</label>
+            <div class="input-group">
+                <input id="value_input_new"
+                       name="value"
+                       type="number"
+                       class="form-control"
+                       min="0.01"
+                       step="0.01"
+                       max="99999999"
+                       required
+                       value="{{ form.fields.value }}" />
+                <span class="input-group-text">{{ parent_transaction.currency.sign }}</span>
             </div>
         </div>
-        <div class="col ps-1 pe-3 d-flex justify-content-center">for</div>
-        <div class="col-4 px-1">
-            <label class="visually-hidden" for="paid_for_select">Paid by</label>
-            <select name="paid_for"
-                    class="form-control form-select"
-                    id="paid_for_select"
-                    required>
-                {% for user in room_users %}
-                    <option {% if user == child_transaction.paid_for %}selected{% endif %}
-                            value="{{ user.id }}">{{ user.name }}</option>
-                {% endfor %}
+        <div class="col-md-5">
+            <label class="form-label transaction-label" for="paid_for_select_new">For</label>
+            <select name="paid_for" class="form-select" id="paid_for_select_new" required>
+                {% for user in room_users %}<option value="{{ user.id }}">{{ user.name }}</option>{% endfor %}
             </select>
         </div>
-        <div class="col-1 ps-1">
-            <i class="bi bi-trash"
-                hx-trigger="click"
-                {# hx-post="{% room_url 'transaction:child-transaction-delete' pk=child_transaction.id %}" #}
-                hx-confirm="Are you sure you wish to delete this transaction?"
-                hx-swap="none"
-            ></i>
-        </div>
-        <div class="form-group" hidden>
-            <label class="visually-hidden" for="child_transaction_id_input">Child Transaction ID</label>
-            <input id="child_transaction_id_input"
-                   name="child_transaction_id"
-                   type="number"
-                   class="form-control"
-                   min="0"
-                   step="0.01"
-                   max="99999999"
-                   required
-                   value="0" />
+        <div class="col-md-2 d-flex align-items-end justify-content-md-end">
+            <button type="button"
+                    class="btn btn-outline-danger w-100"
+                    hx-trigger="click"
+                    hx-confirm="Remove this participant?"
+                    hx-swap="none"
+                    onclick="this.closest('.split-row').remove();">
+                <i class="bi bi-trash"></i>
+            </button>
         </div>
     </div>
-</li>
+    <div class="form-group" hidden>
+        <label class="visually-hidden" for="child_transaction_id_input_new">Child Transaction ID</label>
+        <input id="child_transaction_id_input_new"
+               name="child_transaction_id"
+               type="number"
+               class="form-control"
+               min="0"
+               step="0.01"
+               max="99999999"
+               required
+               value="0" />
+    </div>
+</div>
 <span id="add-child-transaction-container"></span>
