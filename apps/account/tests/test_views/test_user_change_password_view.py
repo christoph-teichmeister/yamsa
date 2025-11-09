@@ -38,7 +38,8 @@ class UserChangePasswordViewTestCase(BaseTestSetUp):
 
         # Assert, that we've been redirected to the detail view
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
-        self.assertInHTML("Your data:", str(response.content).replace("\\n", ""))
+        stringed_content = response.content.decode()
+        self.assertIn("Your account overview", stringed_content)
 
         # Assert, that the password-change worked
         self.assertEqual(

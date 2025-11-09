@@ -14,10 +14,10 @@ class UserUpdateViewTestCase(BaseTestSetUp):
 
         self.assertTrue(response.template_name[0], UserUpdateView.template_name)
 
-        stringed_content = str(response.content)
+        stringed_content = response.content.decode()
 
-        self.assertIn("Your data", stringed_content)
-        self.assertIn("Change password", stringed_content)
+        self.assertIn("Keep your details up to date", stringed_content)
+        self.assertIn("Need a new password?", stringed_content)
 
     def test_post_regular(self):
         new_name = "new_name"
@@ -32,10 +32,10 @@ class UserUpdateViewTestCase(BaseTestSetUp):
 
         self.assertTrue(response.template_name[0], UserDetailView.template_name)
 
-        stringed_content = str(response.content).replace("\\n", "")
+        stringed_content = response.content.decode()
 
-        self.assertInHTML("Your data:", stringed_content)
-        self.assertIn("Edit", stringed_content)
+        self.assertIn("Your account overview", stringed_content)
+        self.assertIn("Edit profile", stringed_content)
 
         self.user.refresh_from_db()
         self.assertEqual(self.user.name, new_name)

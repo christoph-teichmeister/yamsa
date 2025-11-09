@@ -18,7 +18,8 @@ class GuestCreateViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
 
         self.assertTrue(response.template_name[0], GuestCreateView.template_name)
-        self.assertIn(f'Add a guest for "{self.room.name}"', str(response.content))
+        response_content = response.content.decode()
+        self.assertIn(f"Invite a guest to {self.room.name}", response_content)
 
         self.assertEqual(response.context_data["active_tab"], "people")
 
@@ -33,9 +34,11 @@ class GuestCreateViewTestCase(BaseTestSetUp):
         )
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
 
-        # Assert, that we've been redirected to the transaction list view
+        # Assert that we've been redirected to the roster view
         self.assertTrue(response.template_name[0], UserListForRoomView.template_name)
-        self.assertIn("People", str(response.content))
+        response_content = response.content.decode()
+        self.assertIn("Room roster", response_content)
+        self.assertIn("Add guest", response_content)
 
         self.assertEqual(response.context_data["active_tab"], "people")
 
