@@ -1,0 +1,94 @@
+{% load room_tags %}
+{% if parent_transactions %}
+    {% for parent_transaction in parent_transactions %}
+        <tr id="transaction-{{ parent_transaction.id }}"
+            class="cursor-pointer transaction-row px-1"
+            role="button"
+            tabindex="0"
+            hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
+            hx-target="#body"
+            hx-indicator="#body-loading-spinner"
+            hx-swap="morph:innerHTML"
+            hx-push-url="true"
+            hx-trigger="click keyup[key=='Enter']">
+            <td class="py-3">
+                <div class="d-flex flex-column gap-3">
+                    <div class="transaction-grid row row-cols-2 g-3">
+                        <div class="col">
+                            <div class="transaction-label text-muted text-uppercase small mb-1">Amount</div>
+                            <div class="fw-semibold">{{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}</div>
+                        </div>
+                        <div class="col">
+                            <div class="transaction-label text-muted text-uppercase small mb-1">Description</div>
+                            <div class="fw-semibold">{{ parent_transaction.description|default_if_none:'No description'|truncatechars:70 }}</div>
+                        </div>
+                    </div>
+                    <div class="transaction-grid row row-cols-2 g-3">
+                        <div class="col">
+                            <div class="transaction-label text-muted text-uppercase small mb-1">Paid on</div>
+                            <div class="fw-semibold">{{ parent_transaction.paid_at|date:'M j, Y' }}</div>
+                            <div class="transaction-meta mt-1">{{ parent_transaction.paid_at|timesince }} ago</div>
+                        </div>
+                        <div class="col text-md-end">
+                            <div class="transaction-label text-muted text-uppercase small mb-1">Payer</div>
+                            <div class="fw-semibold">
+                                {% autoescape off %}
+                                    {% parse_user_text parent_transaction.paid_by.name True %}
+                                {% endautoescape %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td class="py-3 align-middle text-start text-md-end">
+                <button type="button"
+                        class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center w-100 w-md-auto"
+                        aria-label="View split details"
+                        title="View split details">
+                    <i class="bi bi-eye"></i>
+                </button>
+            </td>
+        </tr>
+    {% endfor %}
+{% elif not transaction_initial_render %}
+    <tr>
+        <td colspan="2" class="py-4 text-center text-muted">
+            {% if transaction_search_query %}
+                No transactions match "{{ transaction_search_query }}".
+            {% else %}
+                No transactions to show yet.
+            {% endif %}
+        </td>
+    </tr>
+{% endif %}
+{% if transaction_next_cursor %}
+    <tr class="transaction-load-row"
+        hx-get="{% room_url 'transaction:feed' %}?cursor_id={{ transaction_next_cursor.id }}&cursor_paid_at={{ transaction_next_cursor.paid_at|date:'c'|urlencode }}{% if transaction_search_query %}&q={{ transaction_search_query|urlencode }}{% endif %}"
+        hx-trigger="revealed"
+        hx-swap="outerHTML"
+        hx-indicator="#transaction-loading-indicator">
+        <td colspan="2">
+            <div id="transaction-loading-indicator"
+                 class="transaction-loading-indicator htmx-indicator"
+                 aria-hidden="true">
+                {% for _ in "123" %}
+                    <div class="placeholder-row mb-3">
+                        <div class="placeholder-glow mb-2">
+                            <span class="placeholder col-4"></span>
+                        </div>
+                        <div class="placeholder-glow mb-2">
+                            <span class="placeholder col-8"></span>
+                        </div>
+                        <div class="placeholder-glow">
+                            <span class="placeholder col-6"></span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </td>
+    </tr>
+{% elif parent_transactions and not transaction_initial_render %}
+    <tr>
+        <td colspan="2" class="text-center text-muted small py-3">You're all caught up.</td>
+    </tr>
+{% endif %}
