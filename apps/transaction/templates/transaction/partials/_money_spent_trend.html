@@ -1,0 +1,296 @@
+{% load room_tags %}
+<div id="spending-trend">
+    <style>
+        .timeline-card {
+            border: none;
+            border-radius: 1rem;
+        }
+
+        .range-toggle {
+            display: inline-flex;
+            width: 100%;
+            border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.15);
+            border-radius: 999px;
+            overflow: hidden;
+            background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.03);
+        }
+
+        .range-toggle .range-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.4rem 0.9rem;
+            color: var(--bs-secondary-color, #6c757d);
+            transition: background-color 0.2s ease, color 0.2s ease;
+            flex: 1 1 0;
+            min-width: 0;
+        }
+
+        .range-toggle .range-btn.active {
+            background: var(--bs-primary, #0d6efd);
+            color: #fff;
+        }
+
+        .range-toggle .range-btn.range-btn-wide {
+            flex: 3 1 0;
+            letter-spacing: 0.04em;
+            font-size: 0.6rem;
+        }
+
+        .timeline-chart {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 5;
+        }
+
+        .trend-line-chart {
+            width: 100%;
+            min-height: 220px;
+        }
+
+        .trend-line-chart svg {
+            width: 100%;
+            height: auto;
+        }
+
+        .trend-line-path {
+            fill: none;
+            stroke: rgba(13, 110, 253, 0.9);
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .trend-line-area {
+            opacity: 0.35;
+        }
+
+        .trend-line-dot {
+            fill: #fff;
+            stroke: rgba(13, 110, 253, 0.9);
+            stroke-width: 1.25;
+        }
+
+        .timeline-empty {
+            border: 1px dashed rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.25);
+            border-radius: 0.85rem;
+            padding: 1.25rem;
+            text-align: center;
+        }
+    </style>
+    <div class="card timeline-card shadow-sm mt-4">
+        <div class="card-body">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                <div>
+                    <p class="text-muted small mb-1">Spending over time</p>
+                    <h5 class="mb-1">Expense build-up</h5>
+                    <p class="text-muted small mb-0">
+                        Showing {{ trend_period_label|lower }} ({{ trend_range_start|date:"d M" }} – {{ trend_range_end|date:"d M" }}).
+                    </p>
+                </div>
+                <div class="d-flex flex-column align-items-start align-items-lg-end gap-2">
+                    <div class="range-toggle" role="group" aria-label="Spending trend ranges">
+                        {% for option in period_options %}
+                            <button type="button"
+                                    class="range-btn {% if option.is_wide %}range-btn-wide{% endif %} {% if option.active %}active{% endif %}"
+                                    title="{{ option.label }}"
+                                    hx-get="{% room_url 'debt:money-spent-trend' %}?period={{ option.key }}"
+                                    hx-target="#spending-trend"
+                                    hx-swap="outerHTML"
+                                    hx-indicator="#spending-trend-indicator">{{ option.button_label }}</button>
+                        {% endfor %}
+                    </div>
+                    <div class="htmx-indicator d-flex align-items-center gap-2 text-muted small"
+                         id="spending-trend-indicator">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        Updating…
+                    </div>
+                </div>
+            </div>
+            {% if timeseries and timeseries_max_value %}
+                <div class="timeline-chart mt-4">
+                    <div id="trend-line-chart"
+                         class="trend-line-chart"
+                         data-currency="{{ trend_currency_sign }}"></div>
+                </div>
+                {{ trend_chart_points|json_script:"trend-chart-data" }}
+                <script>
+                    (function () {
+                        const container = document.getElementById("trend-line-chart");
+                        const dataNode = document.getElementById("trend-chart-data");
+                        if (!container || !dataNode) {
+                            return;
+                        }
+                        const dataset = JSON.parse(dataNode.textContent || "[]");
+                        const currency = container.dataset.currency || "";
+
+                        const renderChart = () => {
+                            if (!window.d3) {
+                                return;
+                            }
+                            if (!dataset.length) {
+                                container.innerHTML = "<p class='text-muted small mb-0'>Not enough data to render the chart yet.</p>";
+                                return;
+                            }
+                            const parseDate = d3.utcParse("%Y-%m-%d");
+                            const data = dataset
+                                .map(d => ({
+                                    ...d,
+                                    date: parseDate(d.date),
+                                }))
+                                .filter(d => d.date)
+                                .sort((a, b) => d3.ascending(a.date, b.date));
+
+                            if (!data.length) {
+                                container.innerHTML = "<p class='text-muted small mb-0'>Not enough data to render the chart yet.</p>";
+                                return;
+                            }
+
+                            const width = container.clientWidth || container.parentElement?.clientWidth || 640;
+                            const height = Math.max(180, Math.min(260, width * 0.45));
+                            const margin = { top: 10, right: 20, bottom: 70, left: 48 };
+                            const innerWidth = width - margin.left - margin.right;
+                            const innerHeight = height - margin.top - margin.bottom;
+
+                            container.innerHTML = "";
+
+                            const svg = d3
+                                .select(container)
+                                .append("svg")
+                                .attr("viewBox", `0 0 ${width} ${height}`)
+                                .attr("preserveAspectRatio", "xMidYMid meet");
+
+                            const defs = svg.append("defs");
+                            const gradientId = "trend-area-gradient";
+                            const gradient = defs
+                                .append("linearGradient")
+                                .attr("id", gradientId)
+                                .attr("x1", "0%")
+                                .attr("y1", "0%")
+                                .attr("x2", "0%")
+                                .attr("y2", "100%");
+                            gradient.append("stop").attr("offset", "0%").attr("stop-color", "rgba(13, 110, 253, 0.4)");
+                            gradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(13, 110, 253, 0)");
+
+                            const chart = svg
+                                .append("g")
+                                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                            if (data.length === 1) {
+                                const date = data[0].date;
+                                data.unshift({ ...data[0], date: d3.utcDay.offset(date, -1) });
+                                data.push({ ...data[data.length - 1], date: d3.utcDay.offset(date, 1) });
+                            }
+
+                            const x = d3
+                                .scaleUtc()
+                                .domain(d3.extent(data, d => d.date))
+                                .range([0, innerWidth]);
+
+                            const y = d3
+                                .scaleLinear()
+                                .domain([0, d3.max(data, d => d.value) || 0])
+                                .nice()
+                                .range([innerHeight, 0]);
+
+                            const xAxis = g => {
+                                g.attr("transform", `translate(0,${innerHeight})`)
+                                    .call(
+                                        d3
+                                            .axisBottom(x)
+                                            .ticks(Math.min(6, dataset.length))
+                                            .tickFormat(d3.utcFormat("%d %b"))
+                                    )
+                                    .call(g => g.select(".domain").attr("stroke", "rgba(0,0,0,0.2)"))
+                                    .call(g => g.selectAll(".tick line").attr("stroke", "rgba(0,0,0,0.15)"));
+                                g.selectAll("text")
+                                    .attr("text-anchor", "end")
+                                    .attr("transform", "rotate(-90)")
+                                    .attr("dx", "-0.8em")
+                                    .attr("dy", "-0.35em");
+                            };
+
+                            const numberFormatter = new Intl.NumberFormat("de-DE", {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 1,
+                            });
+
+                            const yAxis = g =>
+                                g
+                                    .call(
+                                        d3
+                                            .axisLeft(y)
+                                            .ticks(5)
+                                            .tickSize(-innerWidth)
+                                            .tickFormat(value => `${currency}${numberFormatter.format(value)}`)
+                                    )
+                                    .call(g => g.select(".domain").attr("stroke", "rgba(0,0,0,0.2)"))
+                                    .call(g => g.selectAll(".tick line").attr("stroke", "rgba(0,0,0,0.1)"));
+
+                            chart.append("g").call(xAxis);
+                            chart.append("g").call(yAxis);
+
+                            const area = d3
+                                .area()
+                                .x(d => x(d.date))
+                                .y0(innerHeight)
+                                .y1(d => y(d.value))
+                                .curve(d3.curveMonotoneX);
+
+                            const line = d3
+                                .line()
+                                .x(d => x(d.date))
+                                .y(d => y(d.value))
+                                .curve(d3.curveMonotoneX);
+
+                            chart.append("path").datum(data).attr("class", "trend-line-area").attr("fill", `url(#${gradientId})`).attr("d", area);
+
+                            chart.append("path").datum(data).attr("class", "trend-line-path").attr("d", line);
+
+                            chart
+                                .selectAll(".trend-line-dot")
+                                .data(data)
+                                .enter()
+                                .append("circle")
+                                .attr("class", "trend-line-dot")
+                                .attr("r", 3)
+                                .attr("cx", d => x(d.date))
+                                .attr("cy", d => y(d.value))
+                                .append("title")
+                                .text(d => `${currency}${d.value.toFixed(2)} – week of ${d.label}`);
+                        };
+
+                        const ensureD3 = () => {
+                            if (window.d3) {
+                                renderChart();
+                                return;
+                            }
+                            const existing = document.getElementById("d3-lib");
+                            if (existing) {
+                                existing.addEventListener("load", renderChart, { once: true });
+                            } else {
+                                const script = document.createElement("script");
+                                script.id = "d3-lib";
+                                script.src = "https://cdn.jsdelivr.net/npm/d3@7";
+                                script.onload = renderChart;
+                                document.head.appendChild(script);
+                            }
+                        };
+
+                        ensureD3();
+                    })();
+                </script>
+            {% else %}
+                <div class="timeline-empty mt-3">
+                    <p class="fw-semibold mb-1">No data available</p>
+                    <p class="text-muted small mb-0">Add a few expenses to unlock the timeline.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

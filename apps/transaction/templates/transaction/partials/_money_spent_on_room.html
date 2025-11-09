@@ -2,68 +2,201 @@
 {% load static %}
 {% load room_tags %}
 {% block tab_content %}
-    <div class="row mt-4 mx-2">
-        <div class="col-1">
-            <i class="bi bi-arrow-left-circle fs-2 cursor-pointer"
-               hx-trigger="click"
-               hx-get="{% room_url 'debt:list' %}"
-               hx-target="#body"
-               hx-indicator="#body-loading-spinner"
-               hx-swap="innerHTML"
-               hx-push-url="true"></i>
+    <style>
+        .overview-card {
+            border: none;
+            border-radius: 1rem;
+        }
+
+        .overview-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.08);
+            color: var(--bs-primary, #0d6efd);
+            font-size: 0.8rem;
+        }
+
+        .graph-row + .graph-row {
+            margin-top: 1rem;
+        }
+
+        .graph-label {
+            font-weight: 600;
+        }
+
+        .graph-value {
+            font-weight: 600;
+        }
+
+        .graph-bar {
+            position: relative;
+            height: 0.55rem;
+            border-radius: 999px;
+            background-color: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.12);
+            overflow: hidden;
+        }
+
+        .graph-bar::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(13, 110, 253, 0.9), rgba(111, 66, 193, 0.9));
+            width: var(--graph-width, 0%);
+        }
+
+        .graph-bar.graph-bar-secondary::after {
+            background: linear-gradient(90deg, rgba(25, 135, 84, 0.9), rgba(32, 201, 151, 0.9));
+        }
+
+        .empty-state {
+            border: 1px dashed rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.25);
+            border-radius: 0.85rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+    </style>
+    <div class="container-fluid px-0 px-md-2 mt-3">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <button type="button"
+                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2"
+                    hx-trigger="click"
+                    hx-get="{% room_url 'debt:list' %}"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true">
+                <i class="bi bi-arrow-left"></i>
+                Back to debts
+            </button>
+            <div class="text-center flex-grow-1">
+                <p class="text-muted small mb-0">Room spending overview</p>
+                <h4 class="mb-0">Who paid what</h4>
+            </div>
         </div>
-        <div class="col-10 d-flex align-items-center justify-content-center">
-            <h5>Overview</h5>
-        </div>
-    </div>
-    <div class="row mt-4 d-flex w-100 justify-content-between">
-        <h5 class="w-50">Money spent</h5>
-        <h5 class="w-50 d-flex justify-content-end">
+        <div class="row g-3 mt-4">
             {% for total_money_spent_entry in total_money_spent %}
-                {{ total_money_spent_entry.total_spent }} {{ total_money_spent_entry.currency_sign }}
-                {% if not forloop.last %}/{% endif %}
-            {% endfor %}
-        </h5>
-    </div>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item p-0"></li>
-        <li class="list-group-item p-4">
-            {% for money_spent in money_spent_per_person_qs %}
-                <div class="float-start">
-                    <i class="bi bi-caret-right"></i>
-                    {% autoescape off %}
-                        {% parse_user_text money_spent.paid_by_name True %}
-                    {% endautoescape %}
-                </div>
-                <div class="float-end">{{ money_spent.total_spent_per_person }} {{ money_spent.currency_sign }}</div>
-                {% if not forloop.last %}
-                    <br />
-                    <br />
-                {% endif %}
-            {% endfor %}
-        </li>
-        <li class="list-group-item"></li>
-    </ul>
-    <h5 class="mt-4">Money owed</h5>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item p-0"></li>
-        <li class="list-group-item p-4">
-            {% for money_owed in money_owed_per_person_qs %}
-                {% if money_owed.total_owed_per_person > 0 %}
-                    <div class="float-start">
-                        <i class="bi bi-caret-right"></i>
-                        {% autoescape off %}
-                            {% parse_user_text money_owed.paid_for__name True %}
-                        {% endautoescape %}
+                <div class="col-12 col-md-4">
+                    <div class="card overview-card shadow-sm">
+                        <div class="card-body">
+                            <p class="text-muted small mb-1">Total spent ({{ total_money_spent_entry.currency_sign }})</p>
+                            <p class="fs-3 fw-semibold mb-0">{{ total_money_spent_entry.total_spent }}</p>
+                        </div>
                     </div>
-                    <div class="float-end">{{ money_owed.total_owed_per_person }} {{ money_owed.currency_sign }}</div>
-                    {% if not forloop.last %}
-                        <br />
-                        <br />
-                    {% endif %}
-                {% endif %}
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="empty-state">
+                        <p class="fw-semibold mb-1">No spending yet</p>
+                        <p class="text-muted small mb-0">Add expenses to populate this dashboard.</p>
+                    </div>
+                </div>
             {% endfor %}
-        </li>
-        <li class="list-group-item p-4"></li>
-    </ul>
+        </div>
+        <div class="row g-4 mt-2">
+            <div class="col-12 col-lg-6">
+                <div class="card overview-card shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <p class="text-muted small mb-0">Money spent by members</p>
+                                <h5 class="mb-0">Who covered the bills</h5>
+                            </div>
+                            <span class="overview-chip">
+                                <i class="bi bi-graph-up"></i>
+                                <span class="text-center">
+                                    {% with total_entry=total_money_spent|first %}
+                                        {% if total_entry %}
+                                            {{ total_entry.total_spent }} {{ total_entry.currency_sign }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    {% endwith %}
+                                </span>
+                            </span>
+                        </div>
+                        {% if money_spent_per_person_qs %}
+                            {% with total_entry=total_money_spent|first %}
+                                {% for money_spent in money_spent_per_person_qs %}
+                                    <div class="graph-row">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <p class="graph-label mb-0">
+                                                {% autoescape off %}
+                                                    {% parse_user_text money_spent.paid_by_name True %}
+                                                {% endautoescape %}
+                                            </p>
+                                            <p class="graph-value mb-0">{{ money_spent.total_spent_per_person }} {{ money_spent.currency_sign }}</p>
+                                        </div>
+                                        <div class="graph-bar"
+                                             style="--graph-width:{% if total_entry %}{% widthratio money_spent.total_spent_per_person total_entry.total_spent 100 %}%{% else %}0%{% endif %}">
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endwith %}
+                        {% else %}
+                            <div class="empty-state mt-3">
+                                <p class="fw-semibold mb-1">No payments recorded yet</p>
+                                <p class="text-muted small mb-0">As soon as someone logs an expense, their share appears here.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="card overview-card shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <p class="text-muted small mb-0">Money still owed</p>
+                                <h5 class="mb-0">Who needs to settle up</h5>
+                            </div>
+                            <span class="overview-chip">
+                                <i class="bi bi-cash-coin"></i>
+                                <span class="text-center">Pending balances</span>
+                            </span>
+                        </div>
+                        {% with total_entry=total_money_spent|first %}
+                            {% for money_owed in money_owed_per_person_qs %}
+                                {% if money_owed.total_owed_per_person > 0 %}
+                                    <div class="graph-row">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <p class="graph-label mb-0">
+                                                {% autoescape off %}
+                                                    {% parse_user_text money_owed.paid_for__name True %}
+                                                {% endautoescape %}
+                                            </p>
+                                            <p class="graph-value mb-0">{{ money_owed.total_owed_per_person }} {{ money_owed.currency_sign }}</p>
+                                        </div>
+                                        <div class="graph-bar graph-bar-secondary"
+                                             style="--graph-width:{% if total_entry %}{% widthratio money_owed.total_owed_per_person total_entry.total_spent 100 %}%{% else %}0%{% endif %}">
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% empty %}
+                                <div class="empty-state mt-3">
+                                    <p class="fw-semibold mb-1">Nothing owed right now</p>
+                                    <p class="text-muted small mb-0">All participants are even for the tracked expenses.</p>
+                                </div>
+                            {% endfor %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4"
+             id="spending-timeline"
+             hx-get="{% room_url 'debt:money-spent-trend' %}"
+             hx-trigger="load delay:200ms, revealed once"
+             hx-target="#spending-timeline"
+             hx-swap="outerHTML">
+            <div class="card overview-card shadow-sm">
+                <div class="card-body text-center py-4">
+                    <div class="spinner-border text-primary mb-2" role="status"></div>
+                    <p class="text-muted small mb-0">Loading spending timeline…</p>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock tab_content %}
