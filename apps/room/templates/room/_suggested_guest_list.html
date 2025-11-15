@@ -1,0 +1,17 @@
+<div id="suggested-guests-list" class="row g-3">
+    {% with suggested_guest_context=suggested_guest_context|default:"create" %}
+        {% if suggested_guests %}
+            {% for guest in suggested_guests %}
+                <div class="col-12 col-md-6">
+                    {% include "room/_suggested_guest_card.html" with guest=guest suggested_guest_context=suggested_guest_context add_inline_form=add_inline_form|default:False add_inline_form_action_url=add_inline_form_action_url|default:"" add_inline_room_slug=add_inline_room_slug|default:"" %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <p class="mb-0 small text-muted">
+                    No frequent collaborators yet—create more rooms to surface suggestions.
+                </p>
+            </div>
+        {% endif %}
+    {% endwith %}
+</div>
