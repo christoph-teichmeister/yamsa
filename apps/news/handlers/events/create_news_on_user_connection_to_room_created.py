@@ -12,9 +12,8 @@ def create_news_on_user_connection_to_room_created(context: UserConnectionToRoom
     added_user_name = (
         "themselves" if user_connection_to_room.created_by_is_connection_user else user_connection_to_room.user.name
     )
-    message = (
-        f'{user_connection_to_room.created_by.name} added {added_user_name} to "{user_connection_to_room.room.name}"'
-    )
+    created_by_name = user_connection_to_room.created_by.name if user_connection_to_room.created_by else "System"
+    message = f'{created_by_name} added {added_user_name} to "{user_connection_to_room.room.name}"'
 
     deeplink = reverse("account:list", kwargs={"room_slug": user_connection_to_room.room.slug})
 
