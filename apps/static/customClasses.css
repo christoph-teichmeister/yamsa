@@ -9,7 +9,7 @@
 }
 
 .p-e-color {
-    color: var(--bs-primary-text-emphasis);
+    color: var(--bs-body-color);
 }
 
 .debt-list-debt-settled {

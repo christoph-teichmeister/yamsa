@@ -3,6 +3,7 @@
     --bs-body-color: #1f232a;
     --bs-heading-color: #141820;
     --bs-primary: #6ea8fe;
+    --bs-primary-rgb: 110, 168, 254;
     --bs-primary-text-emphasis: #2f5e97;
     --bs-link-color: #3d79db;
     --bs-border-color: #d6dce8;
@@ -39,6 +40,7 @@
     --bs-body-color: #f4f6fb;
     --bs-heading-color: #fdfdff;
     --bs-primary: #6ea8fe;
+    --bs-primary-rgb: 110, 168, 254;
     --bs-primary-text-emphasis: #9ec0ff;
     --bs-link-color: #9ec0ff;
     --bs-border-color: #4c4a4f;

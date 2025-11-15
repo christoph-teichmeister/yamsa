@@ -16,7 +16,9 @@
                     <div class="transaction-grid row row-cols-2 g-3">
                         <div class="col">
                             <div class="transaction-label text-muted text-uppercase small mb-1">Amount</div>
-                            <div class="fw-semibold">{{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}</div>
+                            <div class="transaction-amount fw-semibold text-primary fs-4 lh-sm">
+                                {{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}
+                            </div>
                         </div>
                         <div class="col">
                             <div class="transaction-label text-muted text-uppercase small mb-1">Description</div>
