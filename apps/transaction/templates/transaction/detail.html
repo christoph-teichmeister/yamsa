@@ -80,11 +80,11 @@
                 <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
                     <div>
                         <p class="transaction-label mb-1">Total amount</p>
-                        <div class="d-flex align-items-baseline gap-3">
-                            <span class="fs-2" title="{{ parent_transaction.category.name }}">{{ parent_transaction.category.emoji }}</span>
-                            <p class="transaction-amount fw-semibold mb-2">{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</p>
-                        </div>
-                        <p class="transaction-meta mb-2 text-muted small">{{ parent_transaction.category.name }}</p>
+                        <p class="transaction-amount fw-semibold mb-2">{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</p>
+                        <p class="transaction-meta mb-2 text-muted small">
+                            <span class="me-1">{{ parent_transaction.category.emoji }}</span>
+                            {{ parent_transaction.category.name }}
+                        </p>
                         <p class="transaction-meta mb-0">
                             Paid by
                             {% autoescape off %}
