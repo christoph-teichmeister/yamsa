@@ -131,6 +131,20 @@
                             <div class="form-text">Maximum 50 characters.</div>
                         </div>
                     </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label transaction-label" for="category_select">Category</label>
+                            <select name="category" class="form-select" id="category_select" required>
+                                {% for category in form.fields.category.queryset %}
+                                    <option value="{{ category.id }}"
+                                            {% if category.id == form.initial.category %}selected{% endif %}>
+                                        {{ category.emoji }} {{ category.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Use categories to group similar spend.</small>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="card shadow-sm border-0 mb-4">

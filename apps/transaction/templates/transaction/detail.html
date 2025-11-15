@@ -89,6 +89,14 @@
                             on {{ parent_transaction.paid_at|date:'M d, Y' }}
                         </p>
                         <p class="transaction-meta mb-0">Recorded at {{ parent_transaction.paid_at|date:'G:i' }}</p>
+                        <div class="d-flex flex-wrap gap-2 align-items-center mt-2">
+                            <span class="transaction-label mb-0 small">Category</span>
+                            <span class="badge rounded-pill px-3 py-1 border-0 align-items-center gap-2 d-inline-flex"
+                                  style="background-color: {{ parent_transaction.category.color|default:'#6c757d' }};
+                                         color: #fff">
+                                {{ parent_transaction.category.emoji }} {{ parent_transaction.category.name }}
+                            </span>
+                        </div>
                     </div>
                     <div class="text-md-end">
                         {% if parent_transaction.description %}

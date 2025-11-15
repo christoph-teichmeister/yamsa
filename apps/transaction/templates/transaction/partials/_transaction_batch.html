@@ -25,6 +25,14 @@
                             <div class="fw-semibold">{{ parent_transaction.description|default_if_none:'No description'|truncatechars:70 }}</div>
                         </div>
                     </div>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <span class="transaction-label small">Category</span>
+                        <span class="badge rounded-pill px-3 py-1 border-0 d-inline-flex align-items-center gap-2"
+                              style="background-color: {{ parent_transaction.category.color|default:'#6c757d' }};
+                                     color: #fff">
+                            {{ parent_transaction.category.emoji }} {{ parent_transaction.category.name }}
+                        </span>
+                    </div>
                     <div class="transaction-grid row row-cols-2 g-3">
                         <div class="col">
                             <div class="transaction-label text-muted text-uppercase small mb-1">Paid on</div>
