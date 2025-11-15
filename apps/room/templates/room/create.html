@@ -1,44 +1,68 @@
 {% extends "core/base.html" %}
 {% load static %}
 {% block content %}
-    <h1>Create Room</h1>
-    <div class="d-flex align-items-center account-login-register-container">
-        <form action="{% url 'room:create' %}" method="post" class="flex-grow-1">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="name" class="form-label">{{ form.fields.name.label }}</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-                {% for error_message in form.errors.name.data %}
-                    <small class="error" id="nameError">{{ error_message.message }}</small>
-                {% endfor %}
+    <div class="container-fluid py-4 px-2 px-md-4 px-lg-5">
+        <div class="row g-4">
+            <div class="col-12 col-lg-7">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h1 class="h3 fw-semibold mb-4">Create Room</h1>
+                        <form action="{% url 'room:create' %}" method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="name" class="form-label">{{ form.fields.name.label }}</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                                {% for error_message in form.errors.name.data %}
+                                    <small class="error" id="nameError">{{ error_message.message }}</small>
+                                {% endfor %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="preferred_currency">Preferred Currency</label>
+                                <select name="preferred_currency"
+                                        class="form-control form-select"
+                                        id="preferred_currency"
+                                        required>
+                                    {% for currency in all_currencies %}
+                                        <option {% if forloop.first %}selected{% endif %} value="{{ currency.id }}">{{ currency.sign }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">{{ form.fields.description.label }}</label>
+                                <textarea class="form-control"
+                                          id="description"
+                                          name="description"
+                                          required
+                                          rows="2"
+                                          maxlength="50"
+                                          minlength="1"></textarea>
+                                {% for error_message in form.errors.description.data %}
+                                    <small class="error" id="descriptionError">{{ error_message.message }}</small>
+                                {% endfor %}
+                            </div>
+                            <div id="suggested-guest-hidden-inputs" data-suggested-guest-inputs-target></div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Create</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="preferred_currency">Preferred Currency</label>
-                <select name="preferred_currency"
-                        class="form-control form-select"
-                        id="preferred_currency"
-                        required>
-                    {% for currency in all_currencies %}
-                        <option {% if forloop.first %}selected{% endif %} value="{{ currency.id }}">{{ currency.sign }}</option>
-                    {% endfor %}
-                </select>
+            <div class="col-12 col-lg-5">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body d-flex flex-column gap-3">
+                        <div>
+                            <p class="text-uppercase text-muted small mb-2">Suggested guests</p>
+                            <h2 class="h5 fw-semibold mb-1">Invite frequent collaborators</h2>
+                            <p class="small text-muted mb-0">
+                                Add past roommates with one tap. Mark your go-to teammates as friends to pin them to the top.
+                            </p>
+                        </div>
+                        {% include "room/_suggested_guest_list.html" %}
+                    </div>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="description" class="form-label">{{ form.fields.description.label }}</label>
-                <textarea class="form-control"
-                          id="description"
-                          name="description"
-                          required
-                          rows="2"
-                          maxlength="50"
-                          minlength="1"></textarea>
-                {% for error_message in form.errors.description.data %}
-                    <small class="error" id="descriptionError">{{ error_message.message }}</small>
-                {% endfor %}
-            </div>
-            <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary">Create</button>
-            </div>
-        </form>
+        </div>
     </div>
+    <script src="{% static 'js/suggested-guests.js' %}" defer></script>
 {% endblock content %}

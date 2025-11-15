@@ -4,7 +4,9 @@ from django.utils import timezone
 from django.views import generic
 
 from apps.room.forms import RoomCreateForm
+from apps.room.forms.user_connection_to_room_create_form import UserConnectionToRoomCreateForm
 from apps.room.models import Room, UserConnectionToRoom
+from apps.room.services.suggested_guest_service import SuggestedGuestService
 
 
 class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
@@ -15,6 +17,11 @@ class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
     def get_success_url(self):
         return reverse(viewname="room:detail", kwargs={"room_slug": self.object.slug})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["suggested_guests"] = SuggestedGuestService(user=self.request.user).get_suggested_guests()
+        return context
+
     def form_valid(self, form):
         created_room: Room = form.instance
 
@@ -24,5 +31,18 @@ class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
         ret = super().form_valid(form)
 
         UserConnectionToRoom.objects.create(user=self.request.user, room=created_room)
+        self._populate_suggested_guests(created_room)
 
         return ret
+
+    def _populate_suggested_guests(self, created_room: Room) -> None:
+        guest_emails = self.request.POST.getlist("suggested_guest_emails")
+        if not guest_emails:
+            return
+
+        for email in guest_emails:
+            data = {"email": email, "room_slug": created_room.slug}
+            form = UserConnectionToRoomCreateForm(data=data)
+
+            if form.is_valid():
+                form.save()

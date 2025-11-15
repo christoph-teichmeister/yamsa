@@ -1,1 +1,2 @@
 from apps.room.views.htmx_views.checked_clipboard_view import CheckedClipboardHTMXView
+from apps.room.views.htmx_views.suggested_guest_friend_toggle_view import SuggestedGuestFriendToggleHTMXView

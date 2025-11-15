@@ -17,6 +17,11 @@ urlpatterns = [
         views.CheckedClipboardHTMXView.as_view(),
         name="htmx-checked-clipboard",
     ),
+    path(
+        "htmx/suggested-guest-friend-toggle",
+        views.SuggestedGuestFriendToggleHTMXView.as_view(),
+        name="htmx-suggested-guest-friend-toggle",
+    ),
     build_room_specific_paths(
         [
             path("dashboard", views.RoomDashboardView.as_view(), name="dashboard"),

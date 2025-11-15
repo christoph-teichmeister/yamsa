@@ -46,7 +46,7 @@ class SuggestedGuestServiceTest(TestCase):
         self.assertTrue(suggestions[0].is_friend)
         self.assertEqual(suggestions[0].rooms_together, 2)
 
-        non_friend = [guest for guest in suggestions if not guest.is_friend][0]
+        non_friend = next(guest for guest in suggestions if not guest.is_friend)
         self.assertEqual(non_friend.user_id, self.recurring.id)
         self.assertEqual(non_friend.rooms_together, 1)
         self.assertFalse(any(guest.user_id == self.guest_user.id for guest in suggestions))

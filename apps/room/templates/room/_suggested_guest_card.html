@@ -25,11 +25,8 @@
                     </p>
                 </div>
             </div>
-            {% if guest.is_friend %}
-                <span class="badge text-bg-info align-self-start">Friend</span>
-            {% endif %}
+            {% if guest.is_friend %}<span class="badge text-bg-info align-self-start">Friend</span>{% endif %}
         </div>
-
         <div class="mt-auto d-flex flex-column gap-2">
             <form class="d-flex justify-content-end"
                   hx-post="{% url 'room:htmx-suggested-guest-friend-toggle' %}"
@@ -38,9 +35,15 @@
                   hx-indicator="#body-loading-spinner">
                 {% csrf_token %}
                 <input type="hidden" name="suggested_user_id" value="{{ guest.user_id }}">
-                <input type="hidden" name="suggested_guest_context" value="{{ suggested_guest_context|default:'create' }}">
-                <input type="hidden" name="suggested_guest_action_url" value="{{ add_inline_form_action_url|default:'' }}">
-                <input type="hidden" name="suggested_guest_room_slug" value="{{ add_inline_room_slug|default:'' }}">
+                <input type="hidden"
+                       name="suggested_guest_context"
+                       value="{{ suggested_guest_context|default:'create' }}">
+                <input type="hidden"
+                       name="suggested_guest_action_url"
+                       value="{{ add_inline_form_action_url|default:'' }}">
+                <input type="hidden"
+                       name="suggested_guest_room_slug"
+                       value="{{ add_inline_room_slug|default:'' }}">
                 <button type="submit"
                         class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
                     {% if guest.is_friend %}
