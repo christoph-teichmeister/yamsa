@@ -4,10 +4,11 @@ apps/config/.env
 /yamsa_db_test
 
 /.cache/
+/.issues/
 /.local/
+/media/
 /static/
 /staticfiles/
-/media/
 /tmp/
 
 apps/staticfiles
