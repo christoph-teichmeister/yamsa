@@ -1,6 +1,5 @@
 from django.db.models import DecimalField, Sum, Value
 from django.db.models.functions import Coalesce
-from django.utils import timezone
 from django.views import generic
 
 from apps.transaction.models import ParentTransaction
@@ -12,12 +11,9 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        now = timezone.localtime(timezone.now())
         breakdown_qs = (
             ParentTransaction.objects.filter(
                 room=self.request.room,
-                paid_at__year=now.year,
-                paid_at__month=now.month,
             )
             .values(
                 "category__slug",
@@ -62,7 +58,7 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
                 "category_breakdown": breakdown,
                 "category_breakdown_chart": chart_points,
                 "category_breakdown_currency": self.request.room.preferred_currency.sign,
-                "category_breakdown_period": now.strftime("%B %Y"),
+                "category_breakdown_period": "All recorded transactions",
             }
         )
         return context

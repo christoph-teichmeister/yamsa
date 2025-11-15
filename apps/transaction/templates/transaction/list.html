@@ -171,7 +171,7 @@
                         <p class="text-muted small mb-0">Record your first expense to see the running history here.</p>
                     {% endif %}
                 </div>
-                <div class="d-flex align-items-center justify-content-center flex-grow-1 gap-2">
+                <div class="d-flex align-items-center justify-content-end gap-2">
                     <button type="button"
                             class="btn btn-primary btn-icon d-inline-flex align-items-center justify-content-center {% if current_room.is_closed %}disabled{% endif %}"
                             aria-label="Add transaction"
@@ -183,18 +183,20 @@
                             hx-push-url="true">
                         <i class="bi bi-plus-lg d-flex align-items-center justify-content-center"></i>
                     </button>
-                    <button type="button"
-                            class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
-                            title="View category breakdown"
-                            hx-get="{% room_url 'transaction:category-breakdown' %}"
-                            hx-target="#body"
-                            hx-indicator="#body-loading-spinner"
-                            hx-swap="morph:innerHTML"
-                            hx-push-url="true">
-                        <i class="bi bi-pie-chart-fill"></i>
-                        Break down spend
-                    </button>
                 </div>
+            </div>
+            <div class="d-flex justify-content-end mb-3">
+                <button type="button"
+                        class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
+                        title="View category breakdown"
+                        hx-get="{% room_url 'transaction:category-breakdown' %}"
+                        hx-target="#body"
+                        hx-indicator="#body-loading-spinner"
+                        hx-swap="morph:innerHTML"
+                        hx-push-url="true">
+                    <i class="bi bi-pie-chart-fill"></i>
+                    Break down spend
+                </button>
             </div>
             {% if current_room.is_closed %}
                 <div class="alert alert-warning small mb-3" role="alert">This room is closed, so transactions are read-only.</div>
