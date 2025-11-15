@@ -16,22 +16,17 @@
                     <div class="transaction-grid row row-cols-2 g-3">
                         <div class="col">
                             <div class="transaction-label text-muted text-uppercase small mb-1">Amount</div>
-                            <div class="transaction-amount fw-semibold text-primary fs-4 lh-sm">
-                                {{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="fs-2" title="{{ parent_transaction.category.name }}">{{ parent_transaction.category.emoji }}</span>
+                                <div class="transaction-amount fw-semibold text-primary fs-4 lh-sm">
+                                    {{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}
+                                </div>
                             </div>
                         </div>
                         <div class="col">
                             <div class="transaction-label text-muted text-uppercase small mb-1">Description</div>
                             <div class="fw-semibold">{{ parent_transaction.description|default_if_none:'No description'|truncatechars:70 }}</div>
                         </div>
-                    </div>
-                    <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <span class="transaction-label small">Category</span>
-                        <span class="badge rounded-pill px-3 py-1 border-0 d-inline-flex align-items-center gap-2"
-                              style="background-color: {{ parent_transaction.category.color|default:'#6c757d' }};
-                                     color: #fff">
-                            {{ parent_transaction.category.emoji }} {{ parent_transaction.category.name }}
-                        </span>
                     </div>
                     <div class="transaction-grid row row-cols-2 g-3">
                         <div class="col">
