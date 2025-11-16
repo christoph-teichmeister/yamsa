@@ -202,43 +202,56 @@
         {% endif %}
     </section>
     <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                var statusForm = document.getElementById("status-action-form");
-                var forceCloseFlag = document.getElementById("force-close-flag");
-                var confirmButton = document.getElementById("forceCloseConfirm");
-                var forceCloseModal = document.getElementById("forceCloseModal");
-                var hasConfirmedForceClose = false;
+        (function () {
+            var statusForm = document.getElementById("status-action-form");
+            var forceCloseFlag = document.getElementById("force-close-flag");
+            var confirmButton = document.getElementById("forceCloseConfirm");
+            var forceCloseModal = document.getElementById("forceCloseModal");
+            var hasConfirmedForceClose = false;
 
-                if (!statusForm || !forceCloseFlag || !confirmButton || !forceCloseModal) {
-                    return;
-                }
+            var cleanupModalState = function () {
+                document.body.classList.remove("modal-open");
+                document.body.style.removeProperty("overflow");
+                document.body.style.removeProperty("padding-right");
+                document.querySelectorAll(".modal-backdrop").forEach(function (el) {
+                    el.remove();
+                });
+            };
 
-                confirmButton.addEventListener("click", function () {
-                    hasConfirmedForceClose = true;
-                    forceCloseFlag.value = "true";
+            if (!statusForm || !forceCloseFlag || !confirmButton || !forceCloseModal) {
+                return;
+            }
 
-                    if (window.bootstrap && window.bootstrap.Modal) {
-                        var modalInstance = window.bootstrap.Modal.getInstance(forceCloseModal);
-                        if (modalInstance) {
-                            modalInstance.hide();
-                        }
+            confirmButton.addEventListener("click", function () {
+                hasConfirmedForceClose = true;
+                forceCloseFlag.value = "true";
+                confirmButton.blur();
+
+                if (window.bootstrap && window.bootstrap.Modal) {
+                    var modalInstance = window.bootstrap.Modal.getInstance(forceCloseModal);
+                    if (modalInstance) {
+                        modalInstance.hide();
                     }
+                }
+            });
+
+            forceCloseModal.addEventListener("hidden.bs.modal", function () {
+                cleanupModalState();
+
+                if (hasConfirmedForceClose) {
+                    hasConfirmedForceClose = false;
 
                     if (typeof statusForm.requestSubmit === "function") {
                         statusForm.requestSubmit();
                     } else {
                         statusForm.submit();
                     }
-                });
 
-                forceCloseModal.addEventListener("hidden.bs.modal", function () {
-                    if (hasConfirmedForceClose) {
-                        hasConfirmedForceClose = false;
-                        return;
-                    }
+                    return;
+                }
 
-                    forceCloseFlag.value = "false";
-                });
+                forceCloseFlag.value = "false";
             });
+        })();
     </script>
 {% endblock tab_content %}
