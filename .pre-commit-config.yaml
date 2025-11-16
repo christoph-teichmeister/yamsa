@@ -1,7 +1,7 @@
 repos:
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     # https://github.com/astral-sh/ruff-pre-commit/releases
-    rev: v0.13.0
+    rev: v0.14.5
     hooks:
       # Run the formatter.
       - id: ruff-format
@@ -18,7 +18,7 @@ repos:
 
   - repo: https://github.com/compilerla/conventional-pre-commit
     # https://github.com/compilerla/conventional-pre-commit/releases
-    rev: v4.2.0
+    rev: v4.3.0
     hooks:
       - id: conventional-pre-commit
         stages: [ commit-msg ]
@@ -26,7 +26,7 @@ repos:
 
   - repo: https://github.com/adamchainz/django-upgrade
     # https://django-upgrade.readthedocs.io/en/latest/changelog.html
-    rev: 1.28.0
+    rev: 1.29.1
     hooks:
       - id: django-upgrade
         args: [ --target-version, "6.0", --all-files ]
