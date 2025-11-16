@@ -38,6 +38,7 @@ env = environ.Env(
     DJANGO_SECRET_KEY=(str, ""),
     DJANGO_SECURE_HSTS_SECONDS=(int, 0),
     DJANGO_SESSION_COOKIE_SECURE=(bool, True),
+    DJANGO_REMEMBER_ME_SESSION_AGE=(int, 60 * 60 * 24 * 30),  # 30 days
     DJANGO_USE_DEBUG_TOOLBAR=(bool, False),
     MAINTENANCE=(bool, False),
     # Cloudinary ENV
@@ -474,8 +475,9 @@ if os.environ.get("SENTRY_DSN"):
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#sessions
 
-# Set the session cookie age to 48 hours (172800 seconds)
+# Set the default session cookie age to 48 hours (172800 seconds)
 SESSION_COOKIE_AGE = 60 * 60 * 48
+DJANGO_REMEMBER_ME_SESSION_AGE = env("DJANGO_REMEMBER_ME_SESSION_AGE")
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
