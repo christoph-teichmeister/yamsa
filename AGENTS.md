@@ -68,3 +68,12 @@ especially mobile layouts). Request review only after CI passes locally to reduc
 Secrets belong in environment variables or `.env` files excluded from git; never hard-code keys for mail, web push, or
 third-party APIs. Use `config/settings/*` to separate local vs. production configs, and prefer feature flags/settings
 constants over inline literals when adding new toggles.
+
+## Pull Request Review Workflow
+
+When responding to a review you've left on a pull request, use the GitHub MCP APIs to enumerate the review comments and
+write them to a markdown file inside the top-level `.pull-requests` directory. Convert each comment into an actionable
+task description so it can later be fed back to you for implementation. After creating that file, perform the requested
+analysis or edits, then post replies to the original pull-request comments that explain what you did to address each
+comment—prefix every reply with `AI:`. Once the replies are posted and there is no further need for the intermediate
+notes, delete the markdown file from `.pull-requests`.
