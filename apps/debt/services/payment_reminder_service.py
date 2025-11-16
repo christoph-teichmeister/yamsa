@@ -11,7 +11,7 @@ from django.utils import timezone
 
 from apps.account.models import User
 from apps.currency.models import Currency
-from apps.debt.models import Debt, PaymentReminderLog
+from apps.debt.models import Debt, ReminderLog
 from apps.mail.services.payment_reminder_mail_service import PaymentReminderEmailService
 from apps.room.models import Room
 
@@ -71,15 +71,15 @@ class _PaymentReminderBuilder:
 
 
 class PaymentReminderService:
-    REMINDER_TYPE = PaymentReminderLog.REMINDER_TYPE_INACTIVE_DEBT
+    REMINDER_TYPE = ReminderLog.ReminderType.INACTIVE_DEBT
     HEARTBEAT_INTERVAL = timedelta(hours=24)
 
     def __init__(self, *, now: datetime | None = None):
         self.now = now or timezone.now()
-        self.threshold = self.now - timedelta(days=settings.PAYMENT_REMINDER_INACTIVITY_DAYS)
+        self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)
 
     def run(self) -> list[PaymentReminderCandidate]:
-        if not settings.PAYMENT_REMINDER_ENABLED:
+        if not settings.INACTIVITY_REMINDER_ENABLED:
             return []
 
         candidates = self._collect_candidates()
@@ -89,12 +89,12 @@ class PaymentReminderService:
                 recipient=candidate.user,
                 room_name=candidate.room.name,
                 amount_summary=candidate.amount_summary(),
-                inactivity_days=settings.PAYMENT_REMINDER_INACTIVITY_DAYS,
+                inactivity_days=settings.INACTIVITY_REMINDER_DAYS,
                 payment_link=self._build_payment_link(candidate.room),
             ).process()
             recipients.append(candidate.user.email)
 
-        PaymentReminderLog.objects.create(
+        ReminderLog.objects.create(
             reminder_type=self.REMINDER_TYPE,
             recipients=sorted(set(recipients)),
         )
@@ -107,10 +107,10 @@ class PaymentReminderService:
         return self.run()
 
     def should_run(self) -> bool:
-        if not settings.PAYMENT_REMINDER_ENABLED:
+        if not settings.INACTIVITY_REMINDER_ENABLED:
             return False
 
-        last_log = PaymentReminderLog.objects.filter(reminder_type=self.REMINDER_TYPE).order_by("-created_at").first()
+        last_log = ReminderLog.objects.filter(reminder_type=self.REMINDER_TYPE).order_by("-created_at").first()
 
         if not last_log:
             return True

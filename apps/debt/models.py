@@ -31,20 +31,21 @@ class Debt(FullCleanOnSaveMixin, CommonInfo, models.Model):
         )
 
 
-class PaymentReminderLog(CommonInfo):
-    REMINDER_TYPE_INACTIVE_DEBT = "inactive_debt"
-    REMINDER_TYPE_INACTIVE_ROOM = "inactive_room"
-    REMINDER_TYPE_CHOICES = (
-        (REMINDER_TYPE_INACTIVE_DEBT, "Inactive debt reminder"),
-        (REMINDER_TYPE_INACTIVE_ROOM, "Inactive room reminder"),
-    )
+class ReminderLog(CommonInfo):
+    class ReminderType(models.TextChoices):
+        INACTIVE_DEBT = "inactive_debt", "Inactive debt reminder"
+        INACTIVE_ROOM = "inactive_room", "Inactive room reminder"
 
-    reminder_type = models.CharField(max_length=50, choices=REMINDER_TYPE_CHOICES, default=REMINDER_TYPE_INACTIVE_DEBT)
+    reminder_type = models.CharField(
+        max_length=50,
+        choices=ReminderType.choices,
+        default=ReminderType.INACTIVE_DEBT,
+    )
     recipients = models.JSONField(default=list)
 
     class Meta:
-        verbose_name = "Payment reminder log"
-        verbose_name_plural = "Payment reminder logs"
+        verbose_name = "Reminder log"
+        verbose_name_plural = "Reminder logs"
 
     def __str__(self):
         return f"{self.reminder_type} @ {self.created_at.isoformat()}"

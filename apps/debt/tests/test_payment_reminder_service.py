@@ -8,7 +8,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from apps.core.tests.setup import BaseTestSetUp
-from apps.debt.models import Debt, PaymentReminderLog
+from apps.debt.models import Debt, ReminderLog
 from apps.debt.services.payment_reminder_service import PaymentReminderService
 from apps.transaction.models import Category, ParentTransaction
 
@@ -33,7 +33,7 @@ class PaymentReminderServiceTestCase(BaseTestSetUp):
             description="Old reminder trigger",
             category=self.category,
         )
-        timestamp = timezone.now() - timedelta(days=settings.PAYMENT_REMINDER_INACTIVITY_DAYS + 4)
+        timestamp = timezone.now() - timedelta(days=settings.INACTIVITY_REMINDER_DAYS + 4)
         ParentTransaction.objects.filter(pk=transaction.pk).update(lastmodified_at=timestamp)
 
     def _create_debt(self):
@@ -53,7 +53,7 @@ class PaymentReminderServiceTestCase(BaseTestSetUp):
 
         self.assertEqual(len(candidates), 1)
         self.assertTrue(mocked_process.called)
-        log = PaymentReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
+        log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
         self.assertEqual(log.recipients, [self.user.email])
 
     def test_opted_out_users_are_skipped(self):
@@ -67,7 +67,7 @@ class PaymentReminderServiceTestCase(BaseTestSetUp):
 
         self.assertEqual(len(candidates), 0)
         self.assertFalse(mocked_process.called)
-        log = PaymentReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
+        log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
         self.assertEqual(log.recipients, [])
 
     def test_guest_users_are_skipped(self):
@@ -86,7 +86,7 @@ class PaymentReminderServiceTestCase(BaseTestSetUp):
 
         self.assertEqual(len(candidates), 1)
         self.assertTrue(mocked_process.called)
-        log = PaymentReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
+        log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
         self.assertEqual(log.recipients, [self.user.email])
 
     def test_closed_rooms_are_skipped(self):
@@ -100,5 +100,5 @@ class PaymentReminderServiceTestCase(BaseTestSetUp):
 
         self.assertEqual(len(candidates), 0)
         self.assertFalse(mocked_process.called)
-        log = PaymentReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
+        log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
         self.assertEqual(log.recipients, [])

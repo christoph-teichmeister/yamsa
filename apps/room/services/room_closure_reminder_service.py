@@ -7,21 +7,21 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 
-from apps.debt.models import PaymentReminderLog
+from apps.debt.models import ReminderLog
 from apps.mail.services.room_closure_reminder_mail_service import RoomClosureReminderEmailService
 from apps.room.models import Room
 
 
 class RoomClosureReminderService:
-    REMINDER_TYPE = PaymentReminderLog.REMINDER_TYPE_INACTIVE_ROOM
+    REMINDER_TYPE = ReminderLog.ReminderType.INACTIVE_ROOM
     HEARTBEAT_INTERVAL = timedelta(hours=24)
 
     def __init__(self, *, now: datetime | None = None):
         self.now = now or timezone.now()
-        self.threshold = self.now - timedelta(days=settings.PAYMENT_REMINDER_INACTIVITY_DAYS)
+        self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)
 
     def run(self) -> list[Room]:
-        if not settings.PAYMENT_REMINDER_ENABLED:
+        if not settings.INACTIVITY_REMINDER_ENABLED:
             return []
 
         rooms = self._collect_rooms()
@@ -35,14 +35,14 @@ class RoomClosureReminderService:
             RoomClosureReminderEmailService(
                 recipient=creator,
                 room_name=room.name,
-                inactivity_days=settings.PAYMENT_REMINDER_INACTIVITY_DAYS,
+                inactivity_days=settings.INACTIVITY_REMINDER_DAYS,
                 room_link=self._build_room_link(room),
             ).process()
 
             recipients.append(creator.email)
             candidates.append(room)
 
-        PaymentReminderLog.objects.create(
+        ReminderLog.objects.create(
             reminder_type=self.REMINDER_TYPE,
             recipients=sorted(set(recipients)),
         )
@@ -55,11 +55,11 @@ class RoomClosureReminderService:
         return self.run()
 
     def should_run(self) -> bool:
-        if not settings.PAYMENT_REMINDER_ENABLED:
+        if not settings.INACTIVITY_REMINDER_ENABLED:
             return False
 
         last_log = (
-            PaymentReminderLog.objects.filter(reminder_type=self.REMINDER_TYPE)
+            ReminderLog.objects.filter(reminder_type=self.REMINDER_TYPE)
             .order_by("-created_at")
             .first()
         )
