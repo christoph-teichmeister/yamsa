@@ -47,8 +47,8 @@ class RoomClosureReminderServiceTestCase(BaseTestSetUp):
         self.assertEqual(log.recipients, [self.room.created_by.email])
 
     def test_opted_out_creator_is_skipped(self):
-        self.room.created_by.wants_to_receive_payment_reminders = False
-        self.room.created_by.save(update_fields=["wants_to_receive_payment_reminders"])
+        self.room.created_by.wants_to_receive_room_reminders = False
+        self.room.created_by.save(update_fields=["wants_to_receive_room_reminders"])
 
         with mock.patch(
             "apps.room.services.room_closure_reminder_service.RoomClosureReminderEmailService.process"
