@@ -6,6 +6,7 @@
 {% endblock title %}
 {% block content %}
     {% if request.user.is_authenticated %}
+        {% with payment_reminder_heartbeat as reminder_check %}{% endwith %}
         {% block tab_content %}
         {% endblock tab_content %}
     {% else %}

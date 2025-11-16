@@ -91,6 +91,25 @@
                                     <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-semibold d-block">Notification Center</label>
+                                <div class="form-check form-switch">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           id="wants_to_receive_payment_reminders"
+                                           name="wants_to_receive_payment_reminders"
+                                           {% if form.wants_to_receive_payment_reminders.value|default:user.wants_to_receive_payment_reminders %}checked{% endif %}>
+                                    <label for="wants_to_receive_payment_reminders" class="form-check-label">
+                                        {{ form.fields.wants_to_receive_payment_reminders.label }}
+                                    </label>
+                                </div>
+                                <p class="text-muted small mb-0">
+                                    We'll send gentle reminders when your room has been inactive but your balance is still open.
+                                </p>
+                                {% for error_message in form.errors.wants_to_receive_payment_reminders.data %}
+                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </form>

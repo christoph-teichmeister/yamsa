@@ -14,6 +14,11 @@ urlpatterns = [
     path("login/", views.LogInUserView.as_view(), name="login"),
     path("logout/", views.LogOutUserView.as_view(), name="logout"),
     path("forgot-password/", views.UserForgotPasswordView.as_view(), name="forgot-password"),
+    path(
+        "notifications/payment-reminder/unsubscribe/",
+        views.PaymentReminderUnsubscribeView.as_view(),
+        name="payment-reminder-unsubscribe",
+    ),
     build_room_specific_paths(
         [
             path("list", views.UserListForRoomView.as_view(), name="list"),

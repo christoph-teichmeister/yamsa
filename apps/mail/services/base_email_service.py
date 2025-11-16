@@ -28,7 +28,7 @@ class EmailUserTextContext:
 
 @dataclass
 class EmailExtraContext:
-    show_unsubscribe = False
+    show_unsubscribe: bool = False
     unsubscribe_link: str = ""
 
     show_cta: bool = False

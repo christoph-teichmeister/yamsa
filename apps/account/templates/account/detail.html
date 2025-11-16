@@ -135,6 +135,29 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-12 col-md-6">
+                                <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
+                                    <div>
+                                        <p class="text-uppercase small text-muted mb-1">Payment reminders</p>
+                                        <p class="fw-semibold mb-0">
+                                            {% if user.wants_to_receive_payment_reminders %}
+                                                Enabled
+                                            {% else %}
+                                                Disabled
+                                            {% endif %}
+                                        </p>
+                                        <p class="text-muted small mb-0">Toggle this in the notifications center or via the email footer.</p>
+                                    </div>
+                                    <div class="form-check form-switch m-0">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               role="switch"
+                                               id="wants_to_receive_payment_reminders"
+                                               {% if user.wants_to_receive_payment_reminders %}checked{% endif %}
+                                               disabled>
+                                    </div>
+                                </div>
+                            </div>
                         {% endif %}
                         {% if request.user == user %}
                             <div class="col-12">

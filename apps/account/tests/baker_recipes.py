@@ -11,6 +11,7 @@ base_user_data = {
     "is_superuser": False,
     "is_staff": False,
     "wants_to_receive_webpush_notifications": True,
+    "wants_to_receive_payment_reminders": True,
 }
 
 guest_user = Recipe(

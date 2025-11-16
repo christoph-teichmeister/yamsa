@@ -3,7 +3,7 @@ from django.contrib.admin import register
 from django.contrib.admin.filters import SimpleListFilter
 
 from apps.core.admin import YamsaCommonInfoAdminMixin
-from apps.debt.models import Debt
+from apps.debt.models import Debt, PaymentReminderLog
 from apps.room.models import Room
 
 
@@ -44,3 +44,28 @@ class DebtAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
             {"fields": ("room", ("debitor", "creditor"), ("value", "currency"), ("settled", "settled_at"))},
         ),
     )
+
+
+@register(PaymentReminderLog)
+class PaymentReminderLogAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
+    list_display = ("id", "__str__", "reminder_type", "recipients_summary", "created_at")
+    list_filter = ("reminder_type",)
+    search_fields = ("reminder_type",)
+    readonly_fields = ("created_at", "lastmodified_at")
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "reminder_type",
+                    "recipients",
+                )
+            },
+        ),
+    )
+
+    def recipients_summary(self, obj: PaymentReminderLog) -> str:
+        return f"{len(obj.recipients)} recipients"
+
+    recipients_summary.short_description = "Recipients"

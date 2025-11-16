@@ -2,6 +2,7 @@ from apps.account.views.account_root_redirect_view import AccountRootRedirectVie
 from apps.account.views.guest_authenticate_view import AuthenticateGuestUserView
 from apps.account.views.guest_create_view import GuestCreateView
 from apps.account.views.guest_send_invitation_email_view import GuestSendInvitationEmailView
+from apps.account.views.payment_reminder_unsubscribe_view import PaymentReminderUnsubscribeView
 from apps.account.views.user_change_password_view import UserChangePasswordView
 from apps.account.views.user_detail_view import UserDetailView
 from apps.account.views.user_forgot_password_view import UserForgotPasswordView

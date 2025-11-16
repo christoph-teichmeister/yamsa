@@ -6,9 +6,16 @@ from apps.account.models import User
 class EditUserForm(ModelForm):
     class Meta:
         model = User
-        fields = ("name", "email", "paypal_me_username", "wants_to_receive_webpush_notifications")
+        fields = (
+            "name",
+            "email",
+            "paypal_me_username",
+            "wants_to_receive_webpush_notifications",
+            "wants_to_receive_payment_reminders",
+        )
         labels = {
             "wants_to_receive_webpush_notifications": "Receive push notifications",
+            "wants_to_receive_payment_reminders": "Receive payment reminder emails",
         }
 
     def save(self, commit=True):
