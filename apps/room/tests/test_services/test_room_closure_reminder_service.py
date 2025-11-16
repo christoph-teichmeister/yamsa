@@ -44,7 +44,7 @@ class RoomClosureReminderServiceTestCase(BaseTestSetUp):
         self.assertTrue(mocked_process.called)
 
         log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
-        self.assertEqual(log.recipients, [self.user.email])
+        self.assertEqual(log.recipients, [self.room.created_by.email])
 
     def test_opted_out_creator_is_skipped(self):
         self.room.created_by.wants_to_receive_payment_reminders = False
