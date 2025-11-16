@@ -28,6 +28,11 @@ urlpatterns = [
                 name="detail",
             ),
             path(
+                "category-breakdown/",
+                views.TransactionCategoryBreakdownView.as_view(),
+                name="category-breakdown",
+            ),
+            path(
                 "edit/<int:pk>",
                 views.TransactionEditView.as_view(),
                 name="edit",

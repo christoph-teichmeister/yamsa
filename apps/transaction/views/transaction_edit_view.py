@@ -14,6 +14,9 @@ class TransactionEditView(TransactionBaseContext, generic.UpdateView):
     template_name = "transaction/edit.html"
     context_object_name = "parent_transaction"
 
+    def get_queryset(self):
+        return super().get_queryset().select_related("paid_by", "currency", "category")
+
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
 

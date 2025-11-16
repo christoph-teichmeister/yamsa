@@ -11,6 +11,9 @@ class TransactionDetailView(TransactionBaseContext, generic.DetailView):
     context_object_name = "parent_transaction"
     template_name = "transaction/detail.html"
 
+    def get_queryset(self):
+        return super().get_queryset().select_related("paid_by", "currency", "category")
+
     @context
     @cached_property
     def child_transactions(self):

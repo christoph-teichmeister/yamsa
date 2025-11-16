@@ -20,7 +20,7 @@ class TransactionFeedMixin(TransactionBaseContext):
     def get_base_queryset(self):
         return (
             ParentTransaction.objects.filter(room=self.request.room)
-            .select_related("paid_by", "currency")
+            .select_related("paid_by", "currency", "category")
             .prefetch_related("child_transactions")
             .annotate(total_child_value=Sum("child_transactions__value"))
             .order_by("-paid_at", "-id")

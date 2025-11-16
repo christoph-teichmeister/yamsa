@@ -7,12 +7,18 @@ from django.utils import timezone
 from apps.account.models import User
 from apps.core.event_loop.runner import handle_message
 from apps.transaction.messages.events.transaction import ParentTransactionUpdated
-from apps.transaction.models import ChildTransaction, ParentTransaction
+from apps.transaction.models import Category, ChildTransaction, ParentTransaction
 
 
 class TransactionEditForm(forms.ModelForm):
     # TODO CT: Uncomment if ever allowing to edit total_value of transaction
     # total_value = forms.DecimalField(decimal_places=2, max_digits=10)
+
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.order_by("order_index", "id"),
+        empty_label=None,
+        required=False,
+    )
 
     # ChildTransaction fields
     paid_for = SimpleArrayField(forms.IntegerField())
@@ -28,6 +34,7 @@ class TransactionEditForm(forms.ModelForm):
             "paid_by",
             "paid_at",
             "currency",
+            "category",
             # ChildTransaction fields
             "paid_for",
             "value",

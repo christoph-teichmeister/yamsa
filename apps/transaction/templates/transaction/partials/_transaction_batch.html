@@ -43,12 +43,16 @@
                 </div>
             </td>
             <td class="py-3 align-middle text-start text-md-end">
-                <button type="button"
-                        class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center w-100 w-md-auto"
-                        aria-label="View split details"
-                        title="View split details">
-                    <i class="bi bi-eye"></i>
-                </button>
+                <div class="d-flex flex-column align-items-center gap-2">
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center w-100 w-md-auto"
+                            aria-label="View split details"
+                            title="View split details">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <span class="text-muted small"
+                          title="{{ parent_transaction.category.name }}">{{ parent_transaction.category.emoji }}</span>
+                </div>
             </td>
         </tr>
     {% endfor %}
