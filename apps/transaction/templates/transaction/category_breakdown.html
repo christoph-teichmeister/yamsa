@@ -47,56 +47,75 @@
         </div>
         <div class="card border-0 rounded-4 shadow-sm">
             <div class="card-body">
-                <div class="row g-4">
-                    <div class="col-12 col-lg-7">
-                        <div id="transaction-category-breakdown-chart"
-                             class="d-flex align-items-center justify-content-center"></div>
-                        {{ category_breakdown_chart|json_script:"transaction-category-breakdown-data" }}
-                    </div>
-                    <div class="col-12 col-lg-5">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <p class="fw-semibold mb-0">Legend</p>
-                            <span class="text-muted small">{{ category_breakdown|length }} categories</span>
-                        </div>
-                        <div class="list-group list-group-flush">
-                            {% for category in category_breakdown %}
-                                <div class="list-group-item border-0 px-0 py-2 d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white category-swatch"
-                                              style="--category-color: {{ category.color|default:'#6c757d' }}">{{ category.emoji }}</span>
-                                        <div>
-                                            <p class="mb-0 fw-semibold">{{ category.name }}</p>
-                                            <p class="text-muted small mb-0">{{ category.slug|title }}</p>
-                                        </div>
+                {% if category_breakdown_by_currency %}
+                    {% for breakdown in category_breakdown_by_currency %}
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+                                    <div>
+                                        <p class="text-uppercase text-muted small mb-1">Currency breakdown</p>
+                                        <h3 class="fs-5 fw-semibold mb-1">
+                                            {{ breakdown.currency.name }}
+                                            <span class="text-muted small text-uppercase ms-2">{{ breakdown.currency.code }}</span>
+                                        </h3>
+                                        <p class="text-muted small mb-0">{{ breakdown.currency.sign }}</p>
                                     </div>
-                                    <span class="fw-semibold">{{ category.total_amount|floatformat:2 }}{{ category_breakdown_currency }}</span>
+                                    <span class="text-muted small">{{ breakdown.categories|length }} categories</span>
                                 </div>
-                            {% empty %}
-                                <div class="text-center text-muted small">No tracked expenses yet. Add a transaction to populate the breakdown.</div>
-                            {% endfor %}
+                            </div>
+                            <div class="col-12 col-lg-7">
+                                <div id="{{ breakdown.chart_container_id }}"
+                                     class="d-flex align-items-center justify-content-center"
+                                     data-transaction-category-chart
+                                     data-transaction-category-chart-dataset-id="{{ breakdown.chart_data_id }}"></div>
+                                {{ breakdown.chart_data|json_script:breakdown.chart_data_id }}
+                            </div>
+                            <div class="col-12 col-lg-5">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <p class="fw-semibold mb-0">Legend</p>
+                                    <span class="text-muted small">{{ breakdown.categories|length }} categories</span>
+                                </div>
+                                <div class="list-group list-group-flush">
+                                    {% for category in breakdown.categories %}
+                                        <div class="list-group-item border-0 px-0 py-2 d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white category-swatch"
+                                                      style="--category-color: {{ category.color|default:'#6c757d' }}">{{ category.emoji }}</span>
+                                                <div>
+                                                    <p class="mb-0 fw-semibold">{{ category.name }}</p>
+                                                    <p class="text-muted small mb-0">{{ category.slug|title }}</p>
+                                                </div>
+                                            </div>
+                                            <span class="fw-semibold">{{ category.total_amount|floatformat:2 }}{{ breakdown.currency.sign }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        {% if not forloop.last %}<hr class="my-4">{% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted small">No tracked expenses yet. Add a transaction to populate the breakdown.</div>
+                {% endif %}
             </div>
         </div>
     </section>
     <script>
         (function () {
-            const container = document.getElementById("transaction-category-breakdown-chart");
-            const dataNode = document.getElementById("transaction-category-breakdown-data");
-            if (!container || !dataNode) {
+            const chartContainers = Array.from(
+                document.querySelectorAll("[data-transaction-category-chart]")
+            );
+            if (!chartContainers.length) {
                 return;
             }
-            const dataset = JSON.parse(dataNode.textContent || "[]") || [];
-            const renderChart = () => {
-                if (!window.d3) {
-                    return;
-                }
+
+            const renderSingleChart = (container, dataset) => {
                 container.innerHTML = "";
                 if (!dataset.length) {
                     container.innerHTML = "<p class='text-muted small mb-0'>Add expenses to unlock the breakdown.</p>";
                     return;
                 }
+
                 const width = container.clientWidth || container.parentElement?.clientWidth || 360;
                 const height = Math.max(260, Math.min(360, width));
                 const radius = Math.min(width, height) / 2;
@@ -119,22 +138,36 @@
                     .append("title")
                     .text(d => `${d.data.label}: ${d.data.value.toFixed(2)}`);
             };
+
+            const renderAllCharts = () => {
+                if (!window.d3) {
+                    return;
+                }
+                chartContainers.forEach(container => {
+                    const datasetId = container.dataset.transactionCategoryChartDatasetId;
+                    const dataNode = datasetId ? document.getElementById(datasetId) : null;
+                    const dataset = dataNode ? JSON.parse(dataNode.textContent || "[]") : [];
+                    renderSingleChart(container, dataset);
+                });
+            };
+
             const ensureD3 = () => {
                 if (window.d3) {
-                    renderChart();
+                    renderAllCharts();
                     return;
                 }
                 const existing = document.getElementById("d3-lib");
                 if (existing) {
-                    existing.addEventListener("load", renderChart, { once: true });
+                    existing.addEventListener("load", renderAllCharts, { once: true });
                     return;
                 }
                 const script = document.createElement("script");
                 script.id = "d3-lib";
                 script.src = "https://cdn.jsdelivr.net/npm/d3@7";
-                script.onload = renderChart;
+                script.onload = renderAllCharts;
                 document.head.appendChild(script);
             };
+
             ensureD3();
         })();
     </script>
