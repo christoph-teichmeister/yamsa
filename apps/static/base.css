@@ -175,18 +175,16 @@ body {
     }
 }
 
-.offcanvas,
+.offcanvas {
+    z-index: 1200;
+}
+
 .offcanvas-backdrop {
     z-index: 1100;
 }
 
-body.offcanvas-open .navbar.fixed-bottom {
-    z-index: 0 !important;
-    pointer-events: none;
-}
-
-body.offcanvas-open .navbar.fixed-bottom .nav-link {
-    pointer-events: none;
+.navbar.fixed-top {
+    z-index: 1300;
 }
 
 .auth-page-shell {
