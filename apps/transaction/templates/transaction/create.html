@@ -103,7 +103,7 @@
                         </div>
                         <div class="collapse" id="optionalDetails">
                             <div class="row g-4">
-                                <div class="col-12 col-lg-6">
+                                <div class="col-12 col-lg-4">
                                     <label for="paid_at_input" class="form-label fw-semibold">Paid at</label>
                                     <input id="paid_at_input"
                                            name="paid_at"
@@ -114,7 +114,7 @@
                                            max="2099-12-31T00:00" />
                                     <small class="text-muted">Use if the expense occurred earlier.</small>
                                 </div>
-                                <div class="col-12 col-lg-6">
+                                <div class="col-12 col-lg-4">
                                     <label for="currencySelect" class="form-label fw-semibold">Currency</label>
                                     <select name="currency" class="form-select" id="currencySelect" required>
                                         <option value="{{ current_room.preferred_currency.id }}">{{ current_room.preferred_currency.sign }}</option>
@@ -125,6 +125,18 @@
                                         {% endfor %}
                                     </select>
                                     <small class="text-muted">Defaults to the room preference.</small>
+                                </div>
+                                <div class="col-12 col-lg-4">
+                                    <label for="categorySelect" class="form-label fw-semibold">Category</label>
+                                    <select name="category" class="form-select" id="categorySelect" required>
+                                        {% for category in form.fields.category.queryset %}
+                                            <option value="{{ category.id }}"
+                                                    {% if category.id == form.initial.category %}selected{% endif %}>
+                                                {{ category.emoji }} {{ category.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="text-muted">Tag this expense for dashboards and charts.</small>
                                 </div>
                             </div>
                             <div class="mt-4">

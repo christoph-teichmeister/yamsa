@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin import register
 
 from apps.core.admin import YamsaCommonInfoAdminMixin
-from apps.transaction.models import ChildTransaction, ParentTransaction
+from apps.transaction.models import Category, ChildTransaction, ParentTransaction
 
 
 class ParentTransactionPaidByInline(admin.TabularInline):
@@ -35,3 +35,20 @@ class ParentTransactionAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
         if len(obj.description) > 40:
             return f"{obj.description[:40]}..."
         return obj.description
+
+
+@register(Category)
+class CategoryAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
+    list_display = ("name", "slug", "emoji", "color", "order_index", "is_default")
+    ordering = ("order_index", "id")
+    list_filter = ("is_default",)
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        actions.pop("delete_selected", None)
+        return actions
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.is_default:
+            return False
+        return super().has_delete_permission(request, obj)

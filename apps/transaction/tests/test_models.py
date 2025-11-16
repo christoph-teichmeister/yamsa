@@ -1,0 +1,49 @@
+from django.test import TestCase
+from django.utils import timezone
+from model_bakery import baker
+
+from apps.transaction.models import Category, ParentTransaction
+
+
+class CategoryModelTests(TestCase):
+    def test_default_categories_seeded(self):
+        expected = [
+            {"slug": "accommodation", "name": "Accommodation", "color": "#6C5CE7"},
+            {"slug": "groceries", "name": "Groceries", "color": "#00B894"},
+            {"slug": "restaurants-and-bars", "name": "Restaurants & Bars", "color": "#FF6B6B"},
+            {"slug": "transport", "name": "Transport", "color": "#0D6EFD"},
+            {"slug": "activities", "name": "Activities", "color": "#FFB347"},
+            {"slug": "household", "name": "Household", "color": "#6C757D"},
+            {"slug": "shopping", "name": "Shopping", "color": "#D63384"},
+            {"slug": "health", "name": "Health", "color": "#0DCB84"},
+            {"slug": "celebrations", "name": "Celebrations", "color": "#F2C94C"},
+            {"slug": "misc", "name": "Miscellaneous", "color": "#ADB5BD"},
+        ]
+
+        categories = list(Category.objects.order_by("order_index"))
+        self.assertEqual(len(categories), len(expected))
+
+        for expected_category, actual in zip(expected, categories, strict=False):
+            self.assertEqual(actual.slug, expected_category["slug"])
+            self.assertEqual(actual.name, expected_category["name"])
+            self.assertEqual(actual.color, expected_category["color"])
+            self.assertTrue(actual.is_default)
+
+
+class ParentTransactionModelTests(TestCase):
+    def setUp(self):
+        self.user = baker.make_recipe("apps.account.tests.user")
+        self.room = baker.make_recipe("apps.room.tests.room")
+        self.room.users.add(self.user)
+        self.currency = baker.make_recipe("apps.currency.tests.currency")
+
+    def test_parent_transaction_defaults_to_misc_category(self):
+        transaction = ParentTransaction.objects.create(
+            description="Default category check",
+            paid_by=self.user,
+            paid_at=timezone.now(),
+            room=self.room,
+            currency=self.currency,
+        )
+
+        self.assertEqual(transaction.category.slug, "misc")
