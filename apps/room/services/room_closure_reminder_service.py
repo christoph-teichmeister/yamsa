@@ -58,11 +58,7 @@ class RoomClosureReminderService:
         if not settings.INACTIVITY_REMINDER_ENABLED:
             return False
 
-        last_log = (
-            ReminderLog.objects.filter(reminder_type=self.REMINDER_TYPE)
-            .order_by("-created_at")
-            .first()
-        )
+        last_log = ReminderLog.objects.filter(reminder_type=self.REMINDER_TYPE).order_by("-created_at").first()
 
         if not last_log:
             return True
