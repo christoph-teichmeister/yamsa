@@ -43,7 +43,7 @@
                     Track what is left to settle inside this room. Click the piggy-bank to mark a debt as paid.
                 </p>
             </div>
-            {% if debts %}<span class="badge text-bg-light align-self-center">{{ debts|length }} active</span>{% endif %}
+            {% if debts %}<span class="badge text-bg-light align-self-center">{{ active_debt_count }} pending</span>{% endif %}
         </div>
         {% if has_transactions %}
             <div class="action-card mt-4 d-flex align-items-center justify-content-between"

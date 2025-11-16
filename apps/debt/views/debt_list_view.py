@@ -16,6 +16,11 @@ class DebtListView(DebtBaseContext, generic.ListView):
     def has_transactions(self):
         return ParentTransaction.objects.filter(room_id=self.request.room.id).exists()
 
+    @context
+    @property
+    def active_debt_count(self):
+        return self.model.objects.filter(room_id=self.request.room.id, settled=False).count()
+
     def get_queryset(self):
         return self.model.objects.filter(room_id=self.request.room.id).order_by(
             "settled", "currency__sign", "debitor__name"

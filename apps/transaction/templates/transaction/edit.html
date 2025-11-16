@@ -96,9 +96,24 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <p class="transaction-label mb-1">Amount</p>
-                            <p class="transaction-amount-display mb-0">{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</p>
-                            <p class="text-muted small mb-0">Total updates happen on the detail view.</p>
+                            <label class="form-label transaction-label" for="total_value_input">Total</label>
+                            <div class="input-group">
+                                <span class="input-group-text">{{ parent_transaction.currency.sign }}</span>
+                                <input id="total_value_input"
+                                       name="total_value"
+                                       data-initial-total="{{ form.initial.total_value|default:parent_transaction.value|floatformat:2 }}"
+                                       class="form-control {% if form.total_value.errors %}is-invalid{% endif %}"
+                                       type="number"
+                                       step="0.01"
+                                       required
+                                       value="{{ form.initial.total_value|default:parent_transaction.value|floatformat:2 }}" />
+                            </div>
+                            {% if form.total_value.errors %}
+                                <div class="invalid-feedback d-block">{{ form.total_value.errors|join:" " }}</div>
+                            {% endif %}
+                            <p class="text-muted small mb-0">
+                                Current split: {{ parent_transaction.value }}{{ parent_transaction.currency.sign }}
+                            </p>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label transaction-label" for="currency_select">Currency</label>
@@ -159,6 +174,9 @@
                     </span>
                 </div>
                 <div class="card-body pt-0">
+                    <p id="split-lock-hint" class="text-muted small mb-2 d-none">
+                        ⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically.
+                    </p>
                     {% for child_transaction in child_transaction_qs %}
                         <div class="split-row">
                             <div class="row g-3 align-items-center">
@@ -261,4 +279,59 @@
             </div>
         </form>
     </div>
+    <script>
+        (function () {
+            const totalInput = document.getElementById("total_value_input");
+            if (!totalInput) {
+                return;
+            }
+
+            const initialTotal = totalInput.dataset.initialTotal || "0.00";
+            const childValueFields = Array.from(document.querySelectorAll(".split-row input[name='value']"));
+            const childPaidForFields = Array.from(document.querySelectorAll(".split-row select[name='paid_for']"));
+            const childRowButtons = Array.from(document.querySelectorAll(".split-row button"));
+
+            const lockHint = document.getElementById("split-lock-hint");
+
+            const setLockState = (locked) => {
+                childValueFields.forEach((input) => {
+                    input.readOnly = locked;
+                    input.setAttribute("aria-disabled", locked.toString());
+                    input.classList.toggle("opacity-75", locked);
+                    input.tabIndex = locked ? -1 : 0;
+                });
+                childPaidForFields.forEach((select) => {
+                    select.style.pointerEvents = locked ? "none" : "";
+                    select.setAttribute("aria-disabled", locked.toString());
+                    select.classList.toggle("opacity-75", locked);
+                    select.tabIndex = locked ? -1 : 0;
+                });
+                childRowButtons.forEach((button) => {
+                    button.disabled = locked;
+                    button.setAttribute("aria-disabled", locked.toString());
+                });
+
+                if (lockHint) {
+                    lockHint.classList.toggle("d-none", !locked);
+                }
+            };
+
+            const formatDecimal = (value) => {
+                const parsed = parseFloat(value);
+                if (Number.isNaN(parsed)) {
+                    return "0.00";
+                }
+                return parsed.toFixed(2);
+            };
+
+            const updateLockState = () => {
+                const currentValue = totalInput.value ? formatDecimal(totalInput.value) : "0.00";
+                const locked = currentValue !== formatDecimal(initialTotal);
+                setLockState(locked);
+            };
+
+            totalInput.addEventListener("input", updateLockState);
+            updateLockState();
+        })();
+    </script>
 {% endblock tab_content %}

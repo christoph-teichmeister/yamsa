@@ -1,4 +1,5 @@
 # apps/core/money.py
+from collections.abc import Sequence
 from decimal import ROUND_HALF_UP, Decimal
 
 
@@ -25,3 +26,15 @@ def split_amount_exact(total: Decimal, shares: int) -> list[Decimal]:
         i = (i + 1) % shares
 
     return result
+
+
+def split_total_across_paid_for(total: Decimal, paid_for_entries: Sequence) -> list[Decimal]:
+    """
+    Evenly distribute `total` across the provided `paid_for_entries`.
+    """
+    count = len(paid_for_entries)
+    if count <= 0:
+        error_msg = "paid_for_entries must include at least one participant"
+        raise ValueError(error_msg)
+
+    return split_amount_exact(total=total, shares=count)
