@@ -79,8 +79,8 @@ class PaymentReminderService:
     def __init__(self, *, now: datetime | None = None):
         """Set up a timestamp window that determines which rooms count as inactive."""
         self.now = now or timezone.now()
-        self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)
         # Rooms older than this threshold are eligible for payment nudges.
+        self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)
 
     def run(self) -> list[PaymentReminderCandidate]:
         """Send an email to every candidate that still owes a balance in an inactive room."""

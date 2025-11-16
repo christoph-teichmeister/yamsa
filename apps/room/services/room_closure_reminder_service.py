@@ -20,8 +20,8 @@ class RoomClosureReminderService:
 
     def __init__(self, *, now: datetime | None = None):
         self.now = now or timezone.now()
-        self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)
         # Any room with activity older than this threshold becomes a closure candidate.
+        self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)
 
     def run(self) -> list[Room]:
         """Tell room owners to revisit rooms that have stayed open without activity."""
