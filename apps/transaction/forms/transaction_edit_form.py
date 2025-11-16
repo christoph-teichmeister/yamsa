@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
@@ -8,11 +10,11 @@ from apps.account.models import User
 from apps.core.event_loop.runner import handle_message
 from apps.transaction.messages.events.transaction import ParentTransactionUpdated
 from apps.transaction.models import Category, ChildTransaction, ParentTransaction
+from apps.transaction.utils import split_total_across_paid_for
 
 
 class TransactionEditForm(forms.ModelForm):
-    # TODO CT: Uncomment if ever allowing to edit total_value of transaction
-    # total_value = forms.DecimalField(decimal_places=2, max_digits=10)
+    total_value = forms.DecimalField(decimal_places=2, max_digits=10)
 
     category = forms.ModelChoiceField(
         queryset=Category.objects.order_by("order_index", "id"),
@@ -47,6 +49,30 @@ class TransactionEditForm(forms.ModelForm):
 
         self.fields["paid_by"].queryset = room_users_qs
         self.fields["paid_for"].queryset = room_users_qs
+        self._initial_total_value = self._current_total_value()
+        self.fields["total_value"].initial = self._initial_total_value
+        self.initial["total_value"] = self._initial_total_value
+
+    def clean(self):
+        cleaned_data = super().clean()
+        total_value = cleaned_data.get("total_value")
+
+        if total_value is None:
+            return cleaned_data
+
+        values = cleaned_data.get("value") or []
+        paid_for_entries = cleaned_data.get("paid_for") or []
+        sum_values = sum(values, Decimal("0.00"))
+        total_changed = total_value != self._initial_total_value
+
+        if total_changed and paid_for_entries:
+            recalculated_values = split_total_across_paid_for(total_value, paid_for_entries)
+            cleaned_data["value"] = recalculated_values
+            cleaned_data["total_value"] = total_value
+        elif sum_values != total_value:
+            cleaned_data["total_value"] = sum_values
+
+        return cleaned_data
 
     def save(self, commit=True):
         # Call the super class's .save() and get the ParentTransaction instance
@@ -119,3 +145,9 @@ class TransactionEditForm(forms.ModelForm):
             ChildTransaction.objects.bulk_update(
                 objs=updated_child_transactions, fields=("paid_for", "value", "lastmodified_by", "lastmodified_at")
             )
+
+    def _current_total_value(self) -> Decimal:
+        raw_value = getattr(self.instance, "value", None)
+        if raw_value is None:
+            return Decimal("0.00")
+        return Decimal(raw_value)

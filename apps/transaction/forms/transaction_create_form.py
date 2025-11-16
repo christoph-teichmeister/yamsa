@@ -7,7 +7,7 @@ from apps.account.models import User
 from apps.core.event_loop.runner import handle_message
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
 from apps.transaction.models import Category, ChildTransaction, ParentTransaction
-from apps.transaction.utils import split_amount_exact
+from apps.transaction.utils import split_total_across_paid_for
 
 
 class TransactionCreateForm(forms.ModelForm):
@@ -40,8 +40,9 @@ class TransactionCreateForm(forms.ModelForm):
         instance: ParentTransaction = super().save(commit)
 
         total_value = Decimal(self.cleaned_data["value"])
-        shares = split_amount_exact(total=total_value, shares=self.cleaned_data["paid_for"].count())
-        for debtor, share in zip(self.cleaned_data["paid_for"], shares, strict=False):
+        paid_for_entries = list(self.cleaned_data["paid_for"])
+        shares = split_total_across_paid_for(total_value, paid_for_entries)
+        for debtor, share in zip(paid_for_entries, shares, strict=False):
             ChildTransaction.objects.create(parent_transaction=instance, paid_for=debtor, value=share)
 
         handle_message(ParentTransactionCreated(context_data={"parent_transaction": instance, "room": instance.room}))
