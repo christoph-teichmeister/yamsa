@@ -39,7 +39,6 @@ def seed_default_categories(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     initial = False
 
     dependencies = [

@@ -20,7 +20,6 @@ def backfill_parent_transactions(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("transaction", "0016_category"),
     ]
