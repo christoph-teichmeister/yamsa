@@ -1,55 +1,83 @@
 {% extends "core/base.html" %}
 {% load static %}
 {% block content %}
-    <h1 class="ps-3 mb-4">Login</h1>
-    <div class="row gx-0 d-flex justify-content-center">
-        <div class="col-8 col-sm-4 col-md-6 col-xl-4 p-0 d-flex">
-            <form hx-post="{% url "account:login" %}"
-                  hx-target="#body"
-                  hx-indicator="#body-loading-spinner"
-                  hx-swap="morph:innerHTML"
-                  hx-push-url="true"
-                  class="flex-grow-1">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="email" class="form-label">{{ form.fields.email.label }}</label>
-                    <input type="text"
-                           class="form-control"
-                           id="email"
-                           name="email"
-                           autocomplete="email"
-                           required>
-                    {% for error_message in form.errors.email.data %}
-                        <small class="error" id="emailError">{{ error_message.message }}</small>
-                    {% endfor %}
+    <div class="auth-page-shell">
+        <div class="container px-2 px-md-4 px-lg-5 my-0">
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-9">
+                    <div class="card auth-card shadow-sm overflow-hidden border-0">
+                        <div class="row g-0 align-items-stretch">
+                            <div class="col-md-5 auth-hero d-flex flex-column justify-content-between p-4 p-md-5">
+                                <div>
+                                    <p class="text-uppercase text-white-50 small mb-2">Welcome back</p>
+                                    <h2 class="h4 fw-semibold text-white mb-3">Keep your shared finances moving</h2>
+                                    <p class="text-white-50 mb-0">
+                                        Stay in the flow: avoid surprising logouts and finish your next journal in one session.
+                                    </p>
+                                </div>
+                                <div class="mt-4">
+                                    <a class="btn btn-light btn-sm fw-semibold hero-cta htmx-a w-100 text-center text-primary"
+                                       hx-get="{% url 'account:register' %}"
+                                       hx-target="#body"
+                                       hx-indicator="#body-loading-spinner"
+                                       hx-swap="morph:innerHTML"
+                                       hx-push-url="true">Create an account</a>
+                                </div>
+                            </div>
+                            <div class="col-md-7 bg-body">
+                                <form hx-post="{% url 'account:login' %}"
+                                      hx-target="#body"
+                                      hx-indicator="#body-loading-spinner"
+                                      hx-swap="morph:innerHTML"
+                                      hx-push-url="true"
+                                      class="auth-form p-4 p-md-5 d-flex flex-column justify-content-between">
+                                    {% csrf_token %}
+                                    <div>
+                                        <div class="mb-4">
+                                            <p class="text-muted small mb-1">Secure login</p>
+                                            <h1 class="h3 fw-semibold mb-0">Login</h1>
+                                        </div>
+                                        {% if errors and errors.auth_failed %}
+                                            <div class="alert alert-danger small mb-3" role="alert">{{ errors.auth_failed }}</div>
+                                        {% endif %}
+                                        <div class="mb-3">
+                                            <label class="form-label" for="{{ form.email.id_for_label }}">Email address</label>
+                                            {{ form.email }}
+                                            {% for error in form.email.errors %}<small class="text-danger d-block mt-1">{{ error }}</small>{% endfor %}
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+                                            {{ form.password }}
+                                            {% for error in form.password.errors %}<small class="text-danger d-block mt-1">{{ error }}</small>{% endfor %}
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                                            <div class="form-check">
+                                                {{ form.remember_me }}
+                                                <label class="form-check-label fw-semibold" for="rememberMe">Stay signed in for 30 days</label>
+                                            </div>
+                                            <small class="text-muted">
+                                                <a class="htmx-a text-decoration-none"
+                                                   hx-get="{% url 'account:forgot-password' %}"
+                                                   hx-target="#body"
+                                                   hx-indicator="#body-loading-spinner"
+                                                   hx-swap="morph:innerHTML"
+                                                   hx-push-url="true">Forgot password?</a>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="submit" class="btn btn-primary w-100 fw-semibold py-2">Log in</button>
+                                        <p class="mt-3 small text-muted">
+                                            By logging in you agree that your session may be kept open when "Stay signed in"
+                                            is enabled.
+                                        </p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                {% include "account/shared_partials/password_input_component.html" %}
-                <div class="mb-3 d-flex justify-content-end">
-                    <small class="cursor-pointer">
-                        <a class="htmx-a"
-                           hx-get="{% url 'account:forgot-password' %}"
-                           hx-target="#body"
-                           hx-indicator="#body-loading-spinner"
-                           hx-swap="morph:innerHTML"
-                           hx-push-url="true">Forgot password?</a>
-                    </small>
-                </div>
-                <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </div>
-                <div class="mt-5">
-                    <small class="error">{{ errors.auth_failed }}</small>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-    <small class="fixed-bottom z-0 ps-3 pb-3 cursor-pointer">
-        Don't have an account yet?
-        <a class="htmx-a"
-           hx-get="{% url 'account:register' %}"
-           hx-target="#body"
-           hx-indicator="#body-loading-spinner"
-           hx-swap="morph:innerHTML"
-           hx-push-url="true">Register here!</a>
-    </small>
 {% endblock content %}

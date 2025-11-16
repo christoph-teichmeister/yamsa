@@ -1,70 +1,89 @@
 {% extends "core/base.html" %}
 {% load static %}
 {% block content %}
-    <h1 class="ps-3 mb-4">Register</h1>
-    <div class="row gx-0 d-flex justify-content-center">
-        <div class="col-8 col-sm-4 col-md-6 col-xl-4 p-0 d-flex">
-            <form hx-post="{% url "account:register" %}"
-                  hx-target="#body"
-                  hx-indicator="#body-loading-spinner"
-                  hx-swap="morph:innerHTML"
-                  hx-push-url="true"
-                  class="flex-grow-1">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="name" class="form-label">{{ form.fields.name.label }}</label>
-                    <input type="text"
-                           class="form-control"
-                           id="name"
-                           name="name"
-                           required
-                           autocomplete="name">
-                    {% for error_message in form.errors.name.data %}
-                        <small class="error" id="nameError">{{ error_message.message }}</small>
-                    {% endfor %}
+    <div class="auth-page-shell">
+        <div class="container px-2 px-md-4 px-lg-5 my-0">
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-9">
+                    <div class="card auth-card shadow-sm overflow-hidden border-0">
+                        <div class="row g-0 align-items-stretch">
+                            <div class="col-md-5 auth-hero d-flex flex-column justify-content-between p-4 p-md-5">
+                                <div>
+                                    <p class="text-uppercase text-white-50 small mb-2">Join yamsa</p>
+                                    <h2 class="h4 fw-semibold text-white mb-3">Create shared clarity in your rooms</h2>
+                                    <p class="text-white-50 mb-0">Registering takes a minute and keeps every room, bill, and settlement in sync.</p>
+                                </div>
+                                <div class="mt-4">
+                                    <small class="text-white-50 d-block mb-2">Already have an account?</small>
+                                    <a class="btn btn-outline-light btn-sm fw-semibold hero-cta htmx-a w-100 text-center text-white"
+                                       hx-get="{% url 'account:login' %}"
+                                       hx-target="#body"
+                                       hx-indicator="#body-loading-spinner"
+                                       hx-swap="morph:innerHTML"
+                                       hx-push-url="true">Login here!</a>
+                                </div>
+                            </div>
+                            <div class="col-md-7 bg-body">
+                                <form hx-post="{% url 'account:register' %}"
+                                      hx-target="#body"
+                                      hx-indicator="#body-loading-spinner"
+                                      hx-swap="morph:innerHTML"
+                                      hx-push-url="true"
+                                      class="auth-form p-4 p-md-5 d-flex flex-column justify-content-between">
+                                    {% csrf_token %}
+                                    <div>
+                                        <div class="mb-4">
+                                            <p class="text-muted small mb-1">Start now</p>
+                                            <h1 class="h3 fw-semibold mb-0">Register</h1>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="name">Name</label>
+                                            <input id="name"
+                                                   name="name"
+                                                   type="text"
+                                                   class="form-control"
+                                                   required
+                                                   autocomplete="name">
+                                            {% for error_message in form.errors.name.data %}
+                                                <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="email">Email address</label>
+                                            <input id="email"
+                                                   name="email"
+                                                   type="email"
+                                                   class="form-control"
+                                                   required
+                                                   autocomplete="email"
+                                                   value="{% if form.initial.email %}{{ form.initial.email }}{% endif %}">
+                                            {% for error_message in form.errors.email.data %}
+                                                <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                            {% endfor %}
+                                        </div>
+                                        {% include "account/shared_partials/password_input_component.html" with password_autocomplete="new-password" %}
+                                        <div class="form-group" hidden>
+                                            <label for="id" class="form-label">User ID</label>
+                                            <input id="id"
+                                                   name="id"
+                                                   type="number"
+                                                   class="form-control"
+                                                   value="{% if form.initial.id %}{{ form.initial.id }}{% elif not request.user.is_anonymous %}{{ request.user.id }}{% endif %}" />
+                                        </div>
+                                        <div class="form-group" hidden>
+                                            <label for="is_guest" class="form-label">Is Guest</label>
+                                            <input id="is_guest" name="is_guest" type="checkbox" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="submit" class="btn btn-primary w-100 fw-semibold py-2">Register now</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">{{ form.fields.email.label }}</label>
-                    <input type="text"
-                           class="form-control"
-                           id="email"
-                           name="email"
-                           required
-                           autocomplete="email"
-                           value="{% if form.initial.email %}{{ form.initial.email }}{% endif %}">
-                    {% for error_message in form.errors.email.data %}
-                        <small class="error" id="emailError">{{ error_message.message }}</small>
-                    {% endfor %}
-                </div>
-                {% include "account/shared_partials/password_input_component.html" with password_autocomplete="new-password" %}
-                <div class="form-group" hidden>
-                    <label for="id" class="form-label">User ID</label>
-                    <input id="id"
-                           name="id"
-                           type="number"
-                           class="form-control"
-                           value="{% if form.initial.id %}{{ form.initial.id }}{% elif not request.user.is_anonymous %}{{ request.user.id }}{% endif %}" />
-                </div>
-                <div class="form-group" hidden>
-                    <label for="is_guest" class="form-label">Is Guest</label>
-                    <input id="is_guest" name="is_guest" type="checkbox" class="form-control" />
-                </div>
-                <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary">Register</button>
-                </div>
-                <div class="mt-5">
-                    <small class="error">{{ errors.auth_failed }}</small>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-    <small class="fixed-bottom z-0 ps-3 pb-3 cursor-pointer">
-        Already have an account?
-        <a class="htmx-a"
-           hx-get="{% url 'account:login' %}"
-           hx-target="#body"
-           hx-indicator="#body-loading-spinner"
-           hx-swap="morph:innerHTML"
-           hx-push-url="true">Login here!</a>
-    </small>
 {% endblock content %}

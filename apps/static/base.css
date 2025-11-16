@@ -125,3 +125,78 @@ body {
 .error {
     color: red;
 }
+
+/* Auth page helpers */
+.auth-card {
+    border-radius: 2rem;
+    overflow: hidden;
+    background: none;
+}
+
+.auth-hero {
+    background: linear-gradient(135deg, rgba(110, 168, 254, 0.95), rgba(20, 83, 191, 0.92));
+    min-height: 100%;
+    color: #fff;
+    gap: 0.5rem;
+}
+
+.hero-cta {
+    border-radius: 999px;
+    padding-inline: 1.4rem;
+    padding-block: 0.45rem;
+    border-width: 1.5px;
+    letter-spacing: 0.04em;
+}
+
+.auth-form .form-control {
+    border-radius: 0.75rem;
+    box-shadow: none;
+    border-width: 1.2px;
+}
+
+.auth-form .form-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.auth-form .form-check-label {
+    margin-left: 0.35rem;
+    font-weight: 600;
+}
+
+.auth-form small {
+    font-size: 0.8rem;
+}
+
+@media (max-width: 767px) {
+    .auth-card .auth-hero {
+        border-radius: 1.75rem 1.75rem 0 0;
+    }
+}
+
+.offcanvas {
+    z-index: 1200;
+}
+
+.offcanvas-backdrop {
+    z-index: 1100;
+}
+
+.navbar.fixed-top {
+    z-index: 1300;
+}
+
+.auth-page-shell {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+    min-height: calc(100vh - 4rem);
+}
+
+.auth-page-shell .container {
+    width: 100%;
+    max-width: 1100px;
+}

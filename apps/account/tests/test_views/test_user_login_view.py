@@ -1,5 +1,6 @@
 import http
 
+from django.conf import settings
 from django.urls import reverse
 
 from apps.account.tests.baker_recipes import default_password
@@ -19,9 +20,8 @@ class LogInUserViewTestCase(BaseTestSetUp):
         stringed_content = str(response.content)
         self.assertIn("Login", stringed_content)
         self.assertIn("Forgot password?", stringed_content)
-
-        self.assertIn("have an account yet?", stringed_content)
-        self.assertIn("Register here!", stringed_content)
+        self.assertIn("Create an account", stringed_content)
+        self.assertIn("Welcome back", stringed_content)
 
     def test_post_regular(self):
         self.client.logout()
@@ -37,13 +37,22 @@ class LogInUserViewTestCase(BaseTestSetUp):
         response = self.client.post(reverse("account:login"))
 
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
-        self.assertTrue(response.template_name[0], WelcomePartialView.template_name)
-
         stringed_content = str(response.content)
 
-        self.assertIn("passwordError", stringed_content)
-        self.assertIn("emailError", stringed_content)
         self.assertIn("This field is required", stringed_content)
+        self.assertGreaterEqual(stringed_content.count("This field is required"), 2)
+
+    def test_post_with_remember_me_extends_session(self):
+        self.client.logout()
+
+        response = self.client.post(
+            reverse("account:login"),
+            data={"email": self.user.email, "password": default_password, "remember_me": "on"},
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, http.HTTPStatus.OK)
+        self.assertEqual(settings.DJANGO_REMEMBER_ME_SESSION_AGE, self.client.session.get_expiry_age())
 
     def test_post_email_and_password_do_not_match(self):
         self.client.logout()

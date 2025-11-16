@@ -16,7 +16,7 @@ class UserForgotPasswordViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
 
         self.assertTrue(response.template_name[0], UserForgotPasswordView.template_name)
-        self.assertIn("Forgot Password", str(response.content))
+        self.assertIn("Forgot password", str(response.content))
 
     def test_post_regular(self):
         client = self.reauthenticate_user(self.user)
@@ -48,6 +48,6 @@ class UserForgotPasswordViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
 
         self.assertTrue(response.template_name[0], UserForgotPasswordForm.template_name)
-        self.assertIn("id=emailError", str(response.content), f"{response.content=!s}")
+        self.assertIn("text-danger d-block mt-1", str(response.content), f"{response.content=!s}")
         self.assertIn(unknown_email, str(response.content), f"{response.content=!s}")
         self.assertIn("is not registered with yamsa", str(response.content), f"{response.content=!s}")
