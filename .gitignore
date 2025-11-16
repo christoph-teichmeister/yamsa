@@ -6,6 +6,7 @@ apps/config/.env
 /.cache/
 /.issues/
 /.local/
+/.pull-requests/
 /media/
 /static/
 /staticfiles/
