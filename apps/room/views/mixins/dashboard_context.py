@@ -7,6 +7,8 @@ from apps.room.services.dashboard_tab_service import DashboardTabService
 
 
 class DashboardBaseContext:
+    """Provide dashboard tabs, active tab tracking, and heartbeat-driven reminder checks."""
+
     _active_tab: str = ""
 
     @context
@@ -22,7 +24,7 @@ class DashboardBaseContext:
 
     @context
     @cached_property
-    def payment_reminder_heartbeat(self):
+    def reminder_heartbeat(self):
         from apps.debt.services.payment_reminder_service import PaymentReminderService
         from apps.room.services.room_closure_reminder_service import RoomClosureReminderService
 

@@ -29,23 +29,3 @@ class Debt(FullCleanOnSaveMixin, CommonInfo, models.Model):
             f"{'Settled: ' if self.settled else ''}{self.debitor.name} "
             f"owes {self.value}{self.currency.sign} to {self.creditor.name}"
         )
-
-
-class ReminderLog(CommonInfo):
-    class ReminderType(models.TextChoices):
-        INACTIVE_DEBT = "inactive_debt", "Inactive debt reminder"
-        INACTIVE_ROOM = "inactive_room", "Inactive room reminder"
-
-    reminder_type = models.CharField(
-        max_length=50,
-        choices=ReminderType.choices,
-        default=ReminderType.INACTIVE_DEBT,
-    )
-    recipients = models.JSONField(default=list)
-
-    class Meta:
-        verbose_name = "Reminder log"
-        verbose_name_plural = "Reminder logs"
-
-    def __str__(self):
-        return f"{self.reminder_type} @ {self.created_at.isoformat()}"

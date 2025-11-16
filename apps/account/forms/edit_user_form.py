@@ -12,10 +12,12 @@ class EditUserForm(ModelForm):
             "paypal_me_username",
             "wants_to_receive_webpush_notifications",
             "wants_to_receive_payment_reminders",
+            "wants_to_receive_room_reminders",
         )
         labels = {
             "wants_to_receive_webpush_notifications": "Receive push notifications",
             "wants_to_receive_payment_reminders": "Receive payment reminder emails",
+            "wants_to_receive_room_reminders": "Receive room reminders",
         }
 
     def save(self, commit=True):

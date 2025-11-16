@@ -10,10 +10,10 @@ from apps.room.models import Room
 
 class RoomEditForm(forms.ModelForm):
     """
-    Form, which allows editing the name, description and preferred_currency of a room via the "normal" form in
-    room-detail page and allows editing the status via the "close room" "reopen room" buttons in the room-detail page.
+    Form that lets room admins update the core metadata and flip the room status via the dashboard controls.
     """
 
+    # Hidden flag driven by the modal to allow forcing a room closure when debts exist.
     force_close = forms.BooleanField(
         required=False,
         initial=False,
@@ -27,6 +27,7 @@ class RoomEditForm(forms.ModelForm):
         fields = ("name", "description", "preferred_currency", "status")
 
     def clean(self):
+        """Ensure status transitions respect open debts unless the force flag is set."""
         cleaned_data = super().clean()
         new_status = cleaned_data.get("status")
         old_status = self.instance.status
@@ -47,6 +48,7 @@ class RoomEditForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, commit=True):
+        """Apply force closes, broadcast the status event, and keep audit fields in sync."""
         new_status = self.cleaned_data.get("status")
         force_close = self.cleaned_data.get("force_close")
 
@@ -55,6 +57,7 @@ class RoomEditForm(forms.ModelForm):
                 today = timezone.localdate()
                 self.instance.debts.filter(settled=False).update(settled=True, settled_at=today)
 
+            # Notify listeners that the room status changed (open ↔ closed).
             handle_message(RoomStatusChanged(context_data={"room": self.instance}))
 
         # Set lastmodified fields

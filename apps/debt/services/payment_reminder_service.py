@@ -71,14 +71,20 @@ class _PaymentReminderBuilder:
 
 
 class PaymentReminderService:
+    """Collect overdue debts and notify affected users once per heartbeat window."""
+
     REMINDER_TYPE = ReminderLog.ReminderType.INACTIVE_DEBT
-    HEARTBEAT_INTERVAL = timedelta(hours=24)
+    HEARTBEAT_INTERVAL = timedelta(days=30)  # Approximate monthly cadence for reminders.
 
     def __init__(self, *, now: datetime | None = None):
+        """Set up a timestamp window that determines which rooms count as inactive."""
         self.now = now or timezone.now()
         self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)
+        # Rooms older than this threshold are eligible for payment nudges.
 
     def run(self) -> list[PaymentReminderCandidate]:
+        """Send an email to every candidate that still owes a balance in an inactive room."""
+
         if not settings.INACTIVITY_REMINDER_ENABLED:
             return []
 
@@ -94,6 +100,7 @@ class PaymentReminderService:
             ).process()
             recipients.append(candidate.user.email)
 
+        # Keep a log of every reminder wave along with the affected recipients.
         ReminderLog.objects.create(
             reminder_type=self.REMINDER_TYPE,
             recipients=sorted(set(recipients)),
@@ -102,11 +109,13 @@ class PaymentReminderService:
         return candidates
 
     def run_if_due(self) -> list[PaymentReminderCandidate]:
+        """Execute `run` only when the heartbeat window allows another reminder wave."""
         if not self.should_run():
             return []
         return self.run()
 
     def should_run(self) -> bool:
+        """Avoid sending reminders more often than the heartbeat interval."""
         if not settings.INACTIVITY_REMINDER_ENABLED:
             return False
 
@@ -118,6 +127,7 @@ class PaymentReminderService:
         return last_log.created_at + self.HEARTBEAT_INTERVAL <= self.now
 
     def _collect_candidates(self) -> list[PaymentReminderCandidate]:
+        """Gather users who are behind on payments in rooms that have gone quiet."""
         rooms = (
             Room.objects.annotate_last_transaction_lastmodified_at_date()
             .filter(status=Room.StatusChoices.OPEN)
@@ -139,6 +149,7 @@ class PaymentReminderService:
         return candidates
 
     def _builders_for_room(self, room: Room) -> list[_PaymentReminderBuilder]:
+        """Accumulate debt totals per user so each recipient receives a single email."""
         debts = Debt.objects.filter(room=room, settled=False).select_related("debitor", "currency")
         builders: dict[int, _PaymentReminderBuilder] = {}
         for debt in debts:
@@ -158,5 +169,6 @@ class PaymentReminderService:
 
     @staticmethod
     def _build_payment_link(room: Room) -> str:
+        """Generate a room-specific URL so recipients can settle debts right away."""
         backend = settings.BACKEND_URL.rstrip("/")
         return f"{backend}{reverse('debt:list', kwargs={'room_slug': room.slug})}"

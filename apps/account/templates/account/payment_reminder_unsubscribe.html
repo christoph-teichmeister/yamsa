@@ -23,9 +23,10 @@
                             {% if request.user.is_authenticated %}
                                 <a class="btn btn-outline-secondary px-4"
                                    href="{% url 'account:update' pk=request.user.id %}">Account settings</a>
+                            {% else %}
+                                <p class="small text-muted mt-4 mb-0">You can always re-enable reminders from your notification settings.</p>
                             {% endif %}
                         </div>
-                        <p class="small text-muted mt-4 mb-0">You can always re-enable reminders from your notification settings.</p>
                     </div>
                 </div>
             </div>

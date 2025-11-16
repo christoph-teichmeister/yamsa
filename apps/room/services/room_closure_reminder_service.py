@@ -13,14 +13,18 @@ from apps.room.models import Room
 
 
 class RoomClosureReminderService:
+    """Notify room creators when their open rooms have been quiet for too long."""
+
     REMINDER_TYPE = ReminderLog.ReminderType.INACTIVE_ROOM
-    HEARTBEAT_INTERVAL = timedelta(hours=24)
+    HEARTBEAT_INTERVAL = timedelta(days=30)  # Keep room nudges to roughly one-per-month bursts.
 
     def __init__(self, *, now: datetime | None = None):
         self.now = now or timezone.now()
         self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)
+        # Any room with activity older than this threshold becomes a closure candidate.
 
     def run(self) -> list[Room]:
+        """Tell room owners to revisit rooms that have stayed open without activity."""
         if not settings.INACTIVITY_REMINDER_ENABLED:
             return []
 
@@ -50,11 +54,13 @@ class RoomClosureReminderService:
         return candidates
 
     def run_if_due(self) -> list[Room]:
+        """Guard the execution behind the heartbeat to avoid spamming creators."""
         if not self.should_run():
             return []
         return self.run()
 
     def should_run(self) -> bool:
+        """Check whether enough time has passed since the last reminder wave."""
         if not settings.INACTIVITY_REMINDER_ENABLED:
             return False
 
@@ -66,6 +72,7 @@ class RoomClosureReminderService:
         return last_log.created_at + self.HEARTBEAT_INTERVAL <= self.now
 
     def _collect_rooms(self):
+        """Find open rooms that have been idle past the inactivity threshold."""
         return (
             Room.objects.annotate_last_transaction_lastmodified_at_date()
             .filter(status=Room.StatusChoices.OPEN)
@@ -79,13 +86,15 @@ class RoomClosureReminderService:
 
     @staticmethod
     def _should_notify_creator(creator):
+        """Skip guests or creators who opted out of room-related reminders."""
         if not creator:
             return False
         if creator.is_guest:
             return False
-        return creator.wants_to_receive_payment_reminders
+        return creator.wants_to_receive_room_reminders
 
     @staticmethod
     def _build_room_link(room: Room) -> str:
+        """Point creators back to the room detail to confirm closure if needed."""
         backend = settings.BACKEND_URL.rstrip("/")
         return f"{backend}{reverse('room:detail', kwargs={'room_slug': room.slug})}"
