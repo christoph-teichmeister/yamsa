@@ -75,7 +75,8 @@
                                 {% endfor %}
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold d-block">Notification Center</label>
+                                <label class="form-label fw-semibold d-block mb-0">Notification Center</label>
+                                <p class="text-muted small mt-0">Choose how you want to hear from us.</p>
                                 <div class="form-check form-switch">
                                     <input type="checkbox"
                                            class="form-check-input"
@@ -115,9 +116,6 @@
                                 {% for error_message in form.errors.wants_to_receive_room_reminders.data %}
                                     <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
                                 {% endfor %}
-                                <p class="text-muted small mb-0">
-                                    Choose how you want to hear from us: push notifications for room activity or reminder emails when room balances age.
-                                </p>
                             </div>
                         </div>
                     </div>

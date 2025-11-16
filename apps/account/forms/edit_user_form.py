@@ -17,7 +17,7 @@ class EditUserForm(ModelForm):
         labels = {
             "wants_to_receive_webpush_notifications": "Receive push notifications",
             "wants_to_receive_payment_reminders": "Receive payment reminder emails",
-            "wants_to_receive_room_reminders": "Receive room reminders",
+            "wants_to_receive_room_reminders": "Receive room reminder emails",
         }
 
     def save(self, commit=True):
