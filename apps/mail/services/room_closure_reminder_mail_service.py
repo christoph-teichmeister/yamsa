@@ -24,7 +24,8 @@ class RoomClosureReminderEmailService(BaseYamsaEmailService):
         return EmailUserTextContext(
             text_list=[
                 f"{self.room_name} has been quiet for {self.inactivity_days} days.",
-                "If everyone already settled up, please mark the debts as paid and close the room so it stops lingering.",
+                "If everyone already settled up, please mark the debts as paid and close the room "
+                "so it stops lingering.",
                 "If you still need the room, feel free to ignore this reminder and keep it open.",
             ]
         )
