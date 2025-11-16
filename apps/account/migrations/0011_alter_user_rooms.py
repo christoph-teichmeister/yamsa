@@ -4,16 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('account', '0010_user_profile_picture'),
-        ('room', '0008_alter_room_users'),
+        ("account", "0010_user_profile_picture"),
+        ("room", "0008_alter_room_users"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='rooms',
-            field=models.ManyToManyField(through='room.UserConnectionToRoom', through_fields=('user', 'room'), to='room.room'),
+            model_name="user",
+            name="rooms",
+            field=models.ManyToManyField(
+                through="room.UserConnectionToRoom", through_fields=("user", "room"), to="room.room"
+            ),
         ),
     ]

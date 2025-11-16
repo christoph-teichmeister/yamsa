@@ -12,6 +12,7 @@ class EditUserFormTestCase(BaseTestSetUp):
             "email": "new_email@local.local",
             "paypal_me_username": "new_paypal_me_username",
             "wants_to_receive_webpush_notifications": True,
+            "wants_to_receive_payment_reminders": False,
         }
 
         form = self.form(instance=self.user, data=new_data)
@@ -57,6 +58,7 @@ class EditUserFormTestCase(BaseTestSetUp):
             "name": self.user.name,
             "email": self.user.email,
             "wants_to_receive_webpush_notifications": False,
+            "wants_to_receive_payment_reminders": True,
         }
 
         form = self.form(instance=self.user, data=new_data)

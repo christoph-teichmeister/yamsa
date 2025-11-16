@@ -55,6 +55,8 @@ env = environ.Env(
     DJANGO_EMAIL_URL=(environ.Env.email_url_config, "consolemail://"),
     DJANGO_EMAIL_USE_TLS=(bool, False),
     DJANGO_EMAIL_USE_SSL=(bool, False),
+    DJANGO_INACTIVITY_REMINDER_ENABLED=(bool, True),
+    DJANGO_INACTIVITY_REMINDER_DAYS=(int, 30),
     # Sentry ENV
     SENTRY_DSN=(str, ""),
     SENTRY_ENVIRONMENT=(str, "local"),
@@ -343,6 +345,8 @@ if SECURE_HSTS_SECONDS > 0:
 # Set URLs and URL-Protocol for CORS and CSRF settings
 FRONTEND_URL = env("DJANGO_FRONTEND_URL")
 BACKEND_URL = env("DJANGO_BACKEND_URL")
+INACTIVITY_REMINDER_ENABLED = env("DJANGO_INACTIVITY_REMINDER_ENABLED")
+INACTIVITY_REMINDER_DAYS = env("DJANGO_INACTIVITY_REMINDER_DAYS")
 URL_PROTOCOL = "https://" if SESSION_COOKIE_SECURE else "http://"
 
 # LOGGING

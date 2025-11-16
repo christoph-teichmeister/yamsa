@@ -45,6 +45,8 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
     )
 
     wants_to_receive_webpush_notifications = models.BooleanField(default=False)
+    wants_to_receive_payment_reminders = models.BooleanField(default=True)
+    wants_to_receive_room_reminders = models.BooleanField(default=True)
 
     rooms = models.ManyToManyField("room.Room", through="room.UserConnectionToRoom", through_fields=("user", "room"))
 

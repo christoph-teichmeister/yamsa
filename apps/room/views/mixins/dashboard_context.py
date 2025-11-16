@@ -7,6 +7,8 @@ from apps.room.services.dashboard_tab_service import DashboardTabService
 
 
 class DashboardBaseContext:
+    """Provide dashboard tabs, active tab tracking, and heartbeat-driven reminder checks."""
+
     _active_tab: str = ""
 
     @context
@@ -19,3 +21,13 @@ class DashboardBaseContext:
     def dashboard_tabs(self) -> list[DashboardTab]:
         service = DashboardTabService(room=self.request.room)
         return service.get_tabs_as_list()
+
+    @context
+    @cached_property
+    def reminder_heartbeat(self):
+        from apps.debt.services.payment_reminder_service import PaymentReminderService
+        from apps.room.services.room_closure_reminder_service import RoomClosureReminderService
+
+        PaymentReminderService().run_if_due()
+        RoomClosureReminderService().run_if_due()
+        return ""

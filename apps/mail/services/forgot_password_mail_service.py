@@ -9,8 +9,8 @@ class ForgotPasswordEmailService(BaseYamsaEmailService):
 
     email_extra_context = EmailExtraContext(
         show_cta=True,
-        cta_btn_link=f"{settings.BACKEND_URL}{reverse(viewname='account:login')}",
-        cta_btn_text="Log in with new password",
+        cta_link=f"{settings.BACKEND_URL}{reverse(viewname='account:login')}",
+        cta_label="Log in with new password",
     )
 
     def get_email_user_text_context(self):
