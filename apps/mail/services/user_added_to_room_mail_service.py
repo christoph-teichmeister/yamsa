@@ -27,6 +27,6 @@ class UserAddedToRoomEmailService(BaseYamsaEmailService):
         cta_btn_link = f"{settings.BACKEND_URL}{reverse('room:detail', kwargs={'room_slug': self.new_room.slug})}"
         return EmailExtraContext(
             show_cta=True,
-            cta_btn_link=cta_btn_link,
-            cta_btn_text="See the room",
+            cta_link=cta_btn_link,
+            cta_label="See the room",
         )

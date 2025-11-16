@@ -13,6 +13,8 @@ class EmailBaseTextContext:
     # footer: str = "Your yamsa team"
     footer: str = ""
     sub_footer: str = "yamsa | Yet another money split app"
+    preheader_text: str = ""
+    footer_disclaimer: str = ""
 
 
 @dataclass
@@ -30,8 +32,8 @@ class EmailExtraContext:
     unsubscribe_link: str = ""
 
     show_cta: bool = False
-    cta_btn_link: str = ""
-    cta_btn_text: str = ""
+    cta_link: str = ""
+    cta_label: str = ""
 
 
 class BaseYamsaEmailService(BaseEmailService):
