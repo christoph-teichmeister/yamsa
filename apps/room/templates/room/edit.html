@@ -225,6 +225,7 @@
             confirmButton.addEventListener("click", function () {
                 hasConfirmedForceClose = true;
                 forceCloseFlag.value = "true";
+                confirmButton.blur();
 
                 if (window.bootstrap && window.bootstrap.Modal) {
                     var modalInstance = window.bootstrap.Modal.getInstance(forceCloseModal);
