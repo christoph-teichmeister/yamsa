@@ -99,12 +99,12 @@ body {
     --bs-offcanvas-bg: var(--offcanvas-and-nav-bg);
     --bs-offcanvas-color: var(--offcanvas-and-nav-color);
 
-    --bs-offcanvas-width: 50%;
+    --bs-offcanvas-width: 75%;
 }
 
 @media (min-width: 768px) {
     .offcanvas {
-        --bs-offcanvas-width: 18%;
+        --bs-offcanvas-width: 30%;
     }
 
     .container-fluid {

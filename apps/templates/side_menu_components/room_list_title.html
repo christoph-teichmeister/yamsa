@@ -1,10 +1,7 @@
-<div class="row mt-4 d-flex align-items-center">
-    {% if title %}
-        <div class="col-4 pe-0">
-            <small class="text-muted">{{ title }}</small>
-        </div>
-    {% endif %}
-    <div class="col ps-1">
-        <hr>
+{% if title %}
+    <div class="room-group-label text-uppercase small fw-semibold text-muted">{{ title }}</div>
+{% else %}
+    <div class="room-list-divider my-3">
+        <hr class="m-0">
     </div>
-</div>
+{% endif %}

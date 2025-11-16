@@ -63,69 +63,79 @@
                         data-bs-target="#offcanvasNavbar"
                         aria-label="Close"></button>
             </div>
-            <div class="offcanvas-body">
-                <div class="row justify-content-center">
-                    <div class="col-2 p-0 me-1">
-                        <button type="button" class="btn btn-primary btn-sm" data-theme-value="light">
-                            <i class="bi bi-sun-fill d-flex align-items-center justify-content-center"></i>
-                        </button>
-                    </div>
-                    <div class="col-2 p-0 ms-1">
-                        <button type="button"
-                                class="btn btn-primary btn-sm d-flex align-items-center"
-                                data-theme-value="dark">
-                            <i class="bi bi-moon-fill d-flex align-items-center justify-content-center"></i>
-                        </button>
-                    </div>
+            <div class="offcanvas-body d-flex flex-column gap-4 pt-3 pb-4">
+                <div class="d-flex justify-content-center gap-2">
+                    <button type="button"
+                            class="btn btn-sm btn-outline-primary px-3 rounded-3"
+                            data-theme-value="light">
+                        <i class="bi bi-sun-fill"></i>
+                    </button>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-primary px-3 rounded-3"
+                            data-theme-value="dark">
+                        <i class="bi bi-moon-fill"></i>
+                    </button>
                 </div>
-                <div class="row py-3 {% if "/account/detail/" in request.path %}p-e-color{% endif %}">
-                    <div class="col cursor-pointer d-flex flex-column align-items-center text-center gap-1"
-                        data-bs-dismiss="offcanvas"
-                        data-bs-target="#offcanvasNavbar"
-                        hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-                        hx-get="
-                        {% if request.user.is_authenticated %}
-                            {% url 'account:detail' pk=request.user.id %}
-                        {% else %}
-                            {% url 'account:login' %}
-                        {% endif %}"
-                        hx-target="#body"
-                        hx-indicator="#body-loading-spinner"
-                        hx-swap="morph:innerHTML"
-                        hx-push-url="true"
-                        >
-                        <i class="bi bi-person-circle display-5"></i>
-                        <span class="nav-link p-0">
+                <div class="card shadow-sm border-0 room-card text-center">
+                    <div class="card-body py-3">
+                        <div class="profile-avatar mb-2">
+                            <i class="bi bi-person-circle display-5 text-primary"></i>
+                        </div>
+                        <div class="fw-semibold">
                             {% if request.user.is_anonymous %}
                                 Profile
                             {% else %}
                                 {{ request.user.name }}
                             {% endif %}
-                        </span>
+                        </div>
+                        <div class="text-muted small">
+                            {% if request.user.is_anonymous %}
+                                Log in to access rooms
+                            {% else %}
+                                Manage rooms and transactions
+                            {% endif %}
+                        </div>
+                        <button type="button"
+                                class="btn btn-link p-0 mt-2"
+                                data-bs-dismiss="offcanvas"
+                                data-bs-target="#offcanvasNavbar"
+                                tabindex="-1"
+                                hx-trigger="click delay:300ms"
+                                hx-get=" {% if request.user.is_authenticated %} {% url 'account:detail' pk=request.user.id %} {% else %} {% url 'account:login' %} {% endif %}"
+                                hx-target="#body"
+                                hx-indicator="#body-loading-spinner"
+                                hx-swap="innerHTML"
+                                hx-push-url="true">
+                            {% if request.user.is_anonymous %}
+                                Sign in
+                            {% else %}
+                                View profile
+                            {% endif %}
+                        </button>
                     </div>
                 </div>
-                <div class="row py-1 cursor-pointer d-flex align-items-center {% if request.path == "/welcome/" %}p-e-color{% endif %}"
-                    data-bs-dismiss="offcanvas"
-                    data-bs-target="#offcanvasNavbar"
-                    hx-trigger="click delay:300ms" {# offcanvas takes 0.3s to close #}
-                    hx-get="{% url 'core:welcome' %}"
-                    hx-indicator="#body-loading-spinner"
-                    hx-target="#body"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true"
-                    >
-                    <div class="col-4 text-center room-circle mx-auto {% if request.path == "/welcome/" %}selected{% endif %}">
+                <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm {% if request.path == "/welcome/" %}active{% endif %}"
+                     data-bs-dismiss="offcanvas"
+                     data-bs-target="#offcanvasNavbar"
+                     hx-trigger="click delay:300ms"
+                     hx-get="{% url 'core:welcome' %}"
+                     hx-indicator="#body-loading-spinner"
+                     hx-target="#body"
+                     hx-swap="morph:innerHTML"
+                     hx-push-url="true">
+                    <div class="room-circle{% if request.path == "/welcome/" %} selected{% endif %}">
                         <i class="bi bi-house"></i>
                     </div>
-                    <div class="col-8 d-flex align-items-center">
-                        <span class="fw-semibold">Home</span>
+                    <div class="flex-grow-1 text-start">
+                        <div class="room-name fw-semibold mb-0">Home</div>
+                        <small class="room-description text-muted">Zur Startseite zurückkehren</small>
                     </div>
+                    <span class="badge bg-light text-dark room-status-badge">Start</span>
                 </div>
                 {% include "_side_menu_room_list.html" %}
-                {% include "side_menu_components/room_list_title.html" %}
-                <div class="row mt-3 py-1 d-flex justify-content-center">
+                <div class="mt-auto">
                     <button type="button"
-                            class="btn btn-primary w-50"
+                            class="btn btn-primary w-100"
                             hx-trigger="click"
                             hx-get="{% url 'account:logout' %}"
                             hx-target="#body"
@@ -133,8 +143,6 @@
                             hx-swap="morph:innerHTML"
                             hx-push-url="true">Log out</button>
                 </div>
-                <br />
-                <br />
             </div>
         </div>
     </div>
