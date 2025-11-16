@@ -10,7 +10,7 @@ from apps.mail.services.base_email_service import (
 
 
 class RoomClosureReminderEmailService(BaseYamsaEmailService):
-    FROM_EMAIL = settings.PAYMENT_REMINDER_SENDER_EMAIL
+    FROM_EMAIL = settings.EMAIL_DEFAULT_FROM_EMAIL
     subject = "Room status reminder"
 
     def __init__(self, recipient, *, room_name: str, inactivity_days: int, room_link: str):
