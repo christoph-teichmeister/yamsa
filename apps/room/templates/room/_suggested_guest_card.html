@@ -1,0 +1,86 @@
+<article class="card h-100 shadow-sm border-0 suggested-guest-card">
+    <div class="card-body d-flex flex-column gap-3">
+        <div class="d-flex justify-content-between align-items-start gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="suggested-guest-avatar rounded-circle d-flex align-items-center justify-content-center bg-secondary bg-opacity-10">
+                    {% if guest.profile_picture_url %}
+                        <img src="{{ guest.profile_picture_url }}"
+                             alt="{{ guest.name }}"
+                             class="rounded-circle"
+                             loading="lazy"
+                             width="48"
+                             height="48">
+                    {% else %}
+                        <span class="fw-semibold text-uppercase text-muted small">{{ guest.initials }}</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <h5 class="mb-1">{{ guest.name }}</h5>
+                    <p class="mb-0 small text-muted">
+                        {% if guest.rooms_together == 1 %}
+                            1 room together
+                        {% else %}
+                            {{ guest.rooms_together }} rooms together
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            {% if guest.is_friend %}<span class="badge text-bg-info align-self-start">Friend</span>{% endif %}
+        </div>
+        <div class="mt-auto d-flex flex-column gap-2">
+            <form class="d-flex justify-content-end"
+                  hx-post="{% url 'room:htmx-suggested-guest-friend-toggle' %}"
+                  hx-target="#suggested-guests-list"
+                  hx-swap="innerHTML"
+                  hx-indicator="#body-loading-spinner">
+                {% csrf_token %}
+                <input type="hidden" name="suggested_user_id" value="{{ guest.user_id }}">
+                <input type="hidden"
+                       name="suggested_guest_context"
+                       value="{{ suggested_guest_context|default:'create' }}">
+                <input type="hidden"
+                       name="suggested_guest_action_url"
+                       value="{{ add_inline_form_action_url|default:'' }}">
+                <input type="hidden"
+                       name="suggested_guest_room_slug"
+                       value="{{ add_inline_room_slug|default:'' }}">
+                <button type="submit"
+                        class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                    {% if guest.is_friend %}
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Remove friend
+                    {% else %}
+                        <i class="bi bi-person-plus"></i>
+                        Mark friend
+                    {% endif %}
+                </button>
+            </form>
+            {% if add_inline_form %}
+                <form hx-post="{{ add_inline_form_action_url }}"
+                      hx-target="#body"
+                      hx-indicator="#body-loading-spinner"
+                      hx-swap="morph:innerHTML"
+                      hx-push-url="true">
+                    {% csrf_token %}
+                    <input type="hidden" name="email" value="{{ guest.email }}">
+                    <input type="hidden" name="room_slug" value="{{ add_inline_room_slug }}">
+                    <button type="submit" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Add friend
+                    </button>
+                </form>
+            {% else %}
+                <button type="button"
+                        class="btn btn-outline-primary btn-sm w-100"
+                        data-suggested-guest-add
+                        data-suggested-guest-email="{{ guest.email }}"
+                        data-add-label="Add"
+                        data-added-label="Added"
+                        aria-pressed="false">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Add
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</article>

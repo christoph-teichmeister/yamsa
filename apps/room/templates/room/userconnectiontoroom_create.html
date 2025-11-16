@@ -4,7 +4,27 @@
 {% block tab_content %}
     {% url 'room:userconnectiontoroom-create' current_room.slug as add_member_action %}
     {% url 'account:list' current_room.slug as roster_url %}
-    {% with add_title="Invite a teammate to "|add:current_room.name %}
-        {% include "shared_partials/member_form.html" with form=form field=form.email form_action=add_member_action room_slug_value=current_room.slug hero_context="Existing user" hero_title=add_title hero_subtitle="Send an invite to someone who already has a Yamsa account." hero_badge_label="Registered" hero_badge_icon="bi-at" field_label="Their email address" field_type="email" field_placeholder="name@example.com" field_autocomplete="email" helper_text="We’ll check if they’re already part of this room before adding." tip_text="They’ll see the room immediately after joining." submit_label="Add existing user" submit_icon="bi-send-check" back_url=roster_url back_label="Back to people" submit_disabled=current_room.is_closed %}
-    {% endwith %}
+    <div class="container-fluid py-4 px-2 px-md-4 px-lg-5">
+        <div class="row g-4">
+            <div class="col-12 col-lg-7">
+                {% with add_title="Invite a teammate to "|add:current_room.name %}
+                    {% include "shared_partials/member_form.html" with form=form field=form.email form_action=add_member_action room_slug_value=current_room.slug hero_context="Existing user" hero_title=add_title hero_subtitle="Send an invite to someone who already has a Yamsa account." hero_badge_label="Registered" hero_badge_icon="bi-at" field_label="Their email address" field_type="email" field_placeholder="name@example.com" field_autocomplete="email" helper_text="We’ll check if they’re already part of this room before adding." tip_text="They’ll see the room immediately after joining." submit_label="Add existing user" submit_icon="bi-send-check" back_url=roster_url back_label="Back to people" submit_disabled=current_room.is_closed %}
+                {% endwith %}
+            </div>
+            <div class="col-12 col-lg-5">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body d-flex flex-column gap-3">
+                        <div>
+                            <p class="text-uppercase text-muted small mb-2">Suggested guests</p>
+                            <h2 class="h5 fw-semibold mb-1">Pick a roommate from your friends</h2>
+                            <p class="small text-muted mb-0">
+                                Avoid typing emails by picking collaborators you already worked with. Mark as friend to pin.
+                            </p>
+                        </div>
+                        {% include "room/_suggested_guest_list.html" with suggested_guest_context="existing" add_inline_form=True add_inline_form_action_url=add_member_action add_inline_room_slug=current_room.slug %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock tab_content %}

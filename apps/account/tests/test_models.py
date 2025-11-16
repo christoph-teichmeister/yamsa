@@ -1,8 +1,11 @@
 from time import time
 
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from freezegun import freeze_time
 from model_bakery import baker
 
+from apps.account.models import UserFriendship
 from apps.core.tests.setup import BaseTestSetUp
 from apps.room.models import UserConnectionToRoom
 
@@ -88,3 +91,17 @@ class UserModelTestCase(BaseTestSetUp):
         self.user.refresh_from_db()
 
         self.assertNotEqual(password_hash_before, self.user.password)
+
+
+class UserFriendshipModelTestCase(BaseTestSetUp):
+    def test_cannot_friend_self(self):
+        friendship = UserFriendship(user=self.user, friend=self.user)
+
+        with self.assertRaises(ValidationError):
+            friendship.clean()
+
+    def test_unique_constraint_applies(self):
+        UserFriendship.objects.create(user=self.user, friend=self.guest_user)
+
+        with self.assertRaises(IntegrityError):
+            UserFriendship.objects.create(user=self.user, friend=self.guest_user)

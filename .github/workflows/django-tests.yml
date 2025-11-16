@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  test:
+  run-tests:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
@@ -48,7 +48,7 @@ jobs:
           path: test-reports/python-coverage.xml
 
   coverage:
-    needs: test
+    needs: run-tests
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
