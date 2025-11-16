@@ -22,5 +22,4 @@ class LogOutUserViewTestCase(BaseTestSetUp):
             self.assertIn("Login", stringed_content)
             self.assertIn("Forgot password?", stringed_content)
 
-            self.assertIn("have an account yet?", stringed_content)
-            self.assertIn("Register here!", stringed_content)
+            self.assertIn("Create an account", stringed_content)

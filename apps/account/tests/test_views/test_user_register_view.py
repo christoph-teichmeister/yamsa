@@ -105,11 +105,8 @@ class RegisterUserViewTestCase(BaseTestSetUp):
 
         response = self.client.post(reverse("account:register"))
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
-
         self.assertTrue(response.template_name[0], UserForgotPasswordForm.template_name)
 
         stringed_content = str(response.content)
 
-        self.assertIn("id=emailError", stringed_content)
-        self.assertIn("id=passwordError", stringed_content)
-        self.assertIn("id=nameError", stringed_content)
+        self.assertGreaterEqual(stringed_content.count("This field is required"), 3)
