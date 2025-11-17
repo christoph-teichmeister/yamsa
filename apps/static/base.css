@@ -200,3 +200,43 @@ body {
     width: 100%;
     max-width: 1100px;
 }
+
+.toast-container.yamsa-toast-container {
+    pointer-events: none;
+    max-height: calc(100% - 1rem);
+}
+
+.toast-yamsa-inner {
+    background: #eef0f3;
+    color: #1f232a;
+    border-top: 4px solid transparent;
+    pointer-events: auto;
+    border-radius: 0.9rem;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    min-height: 3.5rem;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+
+.toast-yamsa-inner.text-bg-primary {
+    background: linear-gradient(120deg, rgba(86, 116, 255, 0.15), rgba(205, 216, 255, 0.4));
+    border-top-color: #3d79db;
+    color: #071341;
+}
+
+.toast-yamsa-inner.text-bg-success {
+    background: linear-gradient(120deg, rgba(41, 128, 71, 0.15), rgba(201, 240, 217, 0.4));
+    border-top-color: #1b7a3c;
+    color: #0f2615;
+}
+
+.toast-yamsa-inner.text-bg-warning {
+    background: linear-gradient(120deg, rgba(255, 158, 0, 0.15), rgba(255, 223, 175, 0.4));
+    border-top-color: #b45309;
+    color: #442900;
+}
+
+.toast-yamsa-inner.text-bg-danger {
+    background: linear-gradient(120deg, rgba(217, 70, 50, 0.12), rgba(255, 195, 194, 0.4));
+    border-top-color: #991b1b;
+    color: #2a0606;
+}

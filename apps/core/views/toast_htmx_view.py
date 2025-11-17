@@ -1,7 +1,11 @@
+from __future__ import annotations
+
 import time
 
 from django.views import generic
 from django_context_decorator import context
+
+from apps.core.toast_constants import TOAST_TYPE_CLASSES
 
 
 class ToastHTMXView(generic.TemplateView):
@@ -24,11 +28,4 @@ class ToastHTMXView(generic.TemplateView):
     def toast_type(self):
         # TODO CT: Extract these to some constant
         toast_type = self.request.GET.get("toast_type", "info")
-
-        toast_type_dict = {
-            "info": "text-bg-primary bg-gradient",
-            "success": "text-bg-success bg-gradient",
-            "warning": "text-bg-warning bg-gradient",
-            "error": "text-bg-danger bg-gradient",
-        }
-        return toast_type_dict.get(toast_type)
+        return TOAST_TYPE_CLASSES.get(toast_type, TOAST_TYPE_CLASSES["info"])

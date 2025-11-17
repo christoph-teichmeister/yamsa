@@ -1,56 +1,65 @@
-<div class="toast-container position-fixed top-0 end-0 p-3 w-75">
-    <div class="toast float-end"
+<div class="toast-container yamsa-toast-container position-fixed bottom-0 start-50 translate-middle-x px-1 pb-5 mb-5 w-100"
+     style="z-index: 1400">
+    <div class="toast yamsa-toast w-100 border-0"
          id="toast-id"
          role="alert"
          aria-live="assertive"
          aria-atomic="true">
         <div id="toast-type-div"
-             class="d-flex align-items-center rounded-3 {{ toast_type }}">
-            <div class="toast-body w-100 d-flex justify-content-between">
-                <span id="toast-message-span"></span>
-                <button type="button"
-                        class="btn-close btn-close-white me-2 m-auto"
-                        data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-            </div>
+             class="toast-yamsa-inner d-flex align-items-center justify-content-between gap-3 rounded-4 shadow-sm px-4 py-3">
+            <span id="toast-message-span"
+                  class="flex-grow-1 fw-semibold fs-6 text-truncate"></span>
+            <button type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="toast"
+                    aria-label="Close"></button>
         </div>
     </div>
 </div>
 <!-- Toast handler -->
 <script type="module">
-    var toastElement = document.getElementById('toast-id')
-    var toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastElement)
+    const toastElement = document.getElementById('toast-id')
+    const toastTypeDiv = document.getElementById('toast-type-div')
+    const toastMessageSpan = document.getElementById('toast-message-span')
+    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastElement)
+
+    const baseToastClasses = 'toast-yamsa-inner d-flex align-items-center justify-content-between gap-3 rounded-4 shadow-sm px-4 py-3'
+    const defaultErrorToastClasses = "{{ toast_classes.error|escapejs }}"
+    let toastIsVisible = false
+
+    const applyToastClasses = (classString = "") => {
+        toastTypeDiv.className = baseToastClasses
+        classString.split(" ").forEach(typeString => {
+            if (typeString.trim()) {
+                toastTypeDiv.classList.add(typeString)
+            }
+        })
+    }
+
+    toastElement.addEventListener("shown.bs.toast", () => {
+        toastIsVisible = true
+    })
+
+    toastElement.addEventListener("hidden.bs.toast", () => {
+        toastIsVisible = false
+    })
 
     document.body.addEventListener("triggerToast", (evt) => {
-        // Return early, if toast is already shown
-        if (toastBootstrap.isShown()) return
+        if (toastIsVisible) {
+            return
+        }
 
-        // Add message to toast
-        document.getElementById('toast-message-span').innerText = evt.detail.message
+        toastMessageSpan.innerText = evt.detail.message
+        applyToastClasses(evt.detail.type)
 
-        console.debug("Toast Message:", evt.detail.message)
-
-        // Add class to toast
-        var splitTypes = evt.detail.type.split(" ")
-        splitTypes.map(typeString => document.getElementById('toast-type-div').classList.add(typeString))
-
-        console.debug("Toast Class splitTypes:", splitTypes)
-
-        // Get and show toast element
         toastBootstrap.show()
     })
 
     document.body.addEventListener("htmx:afterRequest", (evt) => {
         if (evt.detail.successful) return
 
-        // Add message to toast
-        document.getElementById('toast-message-span').innerText = "⚠️ Something went wrong 🥺"
-
-        // Add class to toast
-        document.getElementById('toast-type-div').classList.add("text-bg-danger")
-        document.getElementById('toast-type-div').classList.add("bg-gradient")
-
-        // Get and show toast element
+        toastMessageSpan.innerText = "⚠️ Something went wrong 🥺"
+        applyToastClasses(defaultErrorToastClasses)
         toastBootstrap.show()
     })
 </script>
