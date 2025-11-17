@@ -1,10 +1,13 @@
 version: 1
+
 project:
   name: yamsa
   root: .
   description: >
     Aligns CodeRabbit's automation with the linters and formatting hooks already
     defined in `.pre-commit-config.yaml` so AI reviews respect the same rules.
+
+
 
 ignore:
   paths:
@@ -30,7 +33,7 @@ ignore:
 rules:
   - id: ruff-format
     type: formatting
-    languages: [python]
+    languages: [ python ]
     command:
       - pipenv
       - run
@@ -44,7 +47,7 @@ rules:
 
   - id: ruff-lint
     type: lint
-    languages: [python]
+    languages: [ python ]
     command:
       - pipenv
       - run
@@ -59,7 +62,7 @@ rules:
 
   - id: djlint
     type: lint
-    languages: [django-templates]
+    languages: [ django-templates ]
     command:
       - pipenv
       - run
@@ -70,6 +73,8 @@ rules:
     description: >
       Keeps Django template checks in sync with the `djlint` hooks and ensures
       HTMX/Bootstrap snippets stay formatted according to the shared profile.
+
+
 
 notes:
   - >
