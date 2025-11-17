@@ -4,7 +4,18 @@
              {% if not user.is_guest %} hx-trigger="click" hx-get="{% url 'account:detail' pk=user.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" hx-sync=".people-remove-action:abort" {% endif %}>
         <div class="d-flex align-items-start gap-3">
             <div class="people-avatar">
-                <i class="bi bi-person-badge"></i>
+                {% with avatar_source=user.name|default:user.email %}
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}"
+                             alt="{{ user.name }}"
+                             class="w-100 h-100 object-fit-cover rounded-3"
+                             loading="lazy"
+                             width="48"
+                             height="48">
+                    {% else %}
+                        <span class="text-uppercase small fw-semibold">{{ avatar_source|slice:':1'|upper }}</span>
+                    {% endif %}
+                {% endwith %}
             </div>
             <div class="flex-grow-1">
                 <div class="d-flex justify-content-between gap-2">

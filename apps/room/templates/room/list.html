@@ -6,9 +6,7 @@
             {% for room in room_qs %}
                 <div class="col-12 col-lg-6 cursor-pointer">
                     <div class="p-1">
-                        <div class="card container d-flex justify-content-center"
-                             style="background-color: #181618;
-                                    height:8rem"
+                        <div class="card container d-flex justify-content-center room-list-card"
                              hx-trigger="click"
                              hx-get="{% room_url 'transaction:list' %}"
                              hx-target="#body"
@@ -31,7 +29,7 @@
                                 <div class="col p-0">
                                     <div class="card-body container d-flex align-items-center justify-content-center flex-wrap {% if room.status == ROOM_STATUS_CLOSED %}text-start{% else %}{% endif %}">
                                         {% if request.user.is_superuser and not room.user_is_in_room %}
-                                            <small style="font-style: italic">{{ room.created_by__name }}</small>
+                                            <small class="fst-italic">{{ room.created_by__name }}</small>
                                         {% endif %}
                                         <div class="row w-100">
                                             <div class="col">
@@ -56,8 +54,7 @@
             {% endfor %}
             <div class="col-12 col-lg-6 cursor-pointer">
                 <div class="p-1">
-                    <div class="card"
-                         style="background-color: rgb(24,22,24)"
+                    <div class="card room-list-card room-list-card-add"
                          hx-trigger="click"
                          hx-get="{% url 'room:create' %}"
                          hx-target="#body"
