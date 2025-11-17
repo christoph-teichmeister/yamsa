@@ -1,12 +1,23 @@
 import http
+import tempfile
+from io import BytesIO
 
+from django.core.files.base import ContentFile
+from django.test import override_settings
 from django.urls import reverse
+from PIL import Image
 
 from apps.account.views import UserDetailView
 from apps.core.tests.setup import BaseTestSetUp
 
 
 class UserDetailViewTestCase(BaseTestSetUp):
+    def _build_image_bytes(self, width=100, height=100):
+        buffer = BytesIO()
+        Image.new("RGB", (width, height), color=(255, 255, 255)).save(buffer, format="PNG")
+        buffer.seek(0)
+        return buffer.getvalue()
+
     def test_get_as_registered_user_own_profile(self):
         self.user.paypal_me_username = "paypal_username"
         self.user.save()
@@ -113,3 +124,24 @@ class UserDetailViewTestCase(BaseTestSetUp):
         self.assertIn(self.user.email, stringed_content)
 
         self.assertNotIn('id="superuser-admin-link"', stringed_content)
+
+    def test_profile_picture_shows_in_detail(self):
+        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
+            self.user.profile_picture.save(
+                "avatar.png",
+                ContentFile(self._build_image_bytes()),
+                save=True,
+            )
+
+            client = self.reauthenticate_user(self.user)
+            response = client.get(reverse("account:detail", args=(self.user.id,)))
+
+            self.assertEqual(response.status_code, http.HTTPStatus.OK)
+            content = response.content.decode()
+            profile_picture_url = self.user.profile_picture.url
+            has_src_with_quotes = f'src="{profile_picture_url}"' in content
+            has_src_without_quotes = f"src={profile_picture_url}" in content
+            self.assertTrue(
+                has_src_with_quotes or has_src_without_quotes,
+                msg=f"profile picture wasn't rendered with url {profile_picture_url}",
+            )

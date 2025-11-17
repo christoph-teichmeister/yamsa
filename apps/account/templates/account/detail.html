@@ -45,7 +45,16 @@
                             <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-4">
                                 {% with avatar_source=user.name|default:user.email %}
                                     <div class="rounded-circle bg-primary-subtle text-primary-emphasis d-inline-flex align-items-center justify-content-center account-avatar-circle">
-                                        <span class="fs-3 fw-semibold">{{ avatar_source|slice:':1'|upper }}</span>
+                                        {% if user.profile_picture %}
+                                            <img src="{{ user.profile_picture.url }}"
+                                                 alt="{{ user.name }}"
+                                                 class="account-avatar-img rounded-circle w-100 h-100"
+                                                 loading="lazy"
+                                                 width="72"
+                                                 height="72">
+                                        {% else %}
+                                            <span class="fs-3 fw-semibold">{{ avatar_source|slice:':1'|upper }}</span>
+                                        {% endif %}
                                     </div>
                                 {% endwith %}
                                 <div class="flex-grow-1">

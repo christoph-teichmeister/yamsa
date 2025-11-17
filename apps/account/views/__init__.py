@@ -9,6 +9,7 @@ from apps.account.views.user_forgot_password_view import UserForgotPasswordView
 from apps.account.views.user_list_for_room_view import UserListForRoomView
 from apps.account.views.user_login_view import LogInUserView
 from apps.account.views.user_logout_view import LogOutUserView
+from apps.account.views.user_profile_picture_delete_view import UserProfilePictureDeleteView
 from apps.account.views.user_register_view import RegisterUserView
 from apps.account.views.user_remove_from_room_view import UserRemoveFromRoomView
 from apps.account.views.user_update_view import UserUpdateView

@@ -115,6 +115,17 @@
     padding: 0;
 }
 
+.room-list-card {
+    background-color: #181618;
+    height: 8rem;
+    min-height: 8rem;
+    border-radius: 1.25rem;
+}
+
+.room-list-card-add {
+    background-color: rgb(24, 22, 24);
+}
+
 .profile-avatar {
     width: 64px;
     height: 64px;
@@ -126,9 +137,33 @@
     background: rgba(110, 168, 254, 0.15);
 }
 
+.profile-avatar--expanded {
+    min-width: 4.25rem;
+    min-height: 4.25rem;
+}
+
+.profile-avatar img,
+.profile-avatar .profile-picture-preview-img,
+.account-avatar-img,
+.people-avatar img {
+    object-fit: cover;
+}
+
+.profile-picture-preview-placeholder,
+.people-avatar span,
+.account-avatar-circle .fs-3 {
+    letter-spacing: 0.08em;
+}
+
 .account-avatar-circle {
     width: 4.5rem;
     height: 4.5rem;
+}
+
+.account-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
 }
 
 .debug-banner {
@@ -143,5 +178,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
+}
+
+.loading-indicator-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1050;
     pointer-events: none;
 }

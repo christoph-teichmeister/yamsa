@@ -78,9 +78,19 @@
                 </div>
                 <div class="card shadow-sm border-0 room-card text-center">
                     <div class="card-body py-3">
-                        <div class="profile-avatar mb-2">
-                            <i class="bi bi-person-circle display-5 text-primary"></i>
-                        </div>
+                        {% with sidebar_avatar_source=request.user.name|default:request.user.email %}
+                            <div class="profile-avatar mb-2">
+                                {% if request.user.profile_picture %}
+                                    <img src="{{ request.user.profile_picture.url }}"
+                                         alt="{{ request.user.name }}"
+                                         class="rounded-4 w-100 h-100 object-fit-cover"
+                                         width="64"
+                                         height="64">
+                                {% else %}
+                                    <span class="fs-3 fw-semibold text-primary-emphasis">{{ sidebar_avatar_source|slice:':1'|upper }}</span>
+                                {% endif %}
+                            </div>
+                        {% endwith %}
                         <div class="fw-semibold">
                             {% if request.user.is_anonymous %}
                                 Profile
