@@ -5,6 +5,7 @@
         <div class="row justify-content-center gy-4">
             <div class="col-12 col-xl-9">
                 <form method="post"
+                      enctype="multipart/form-data"
                       class="card border-0 shadow-sm rounded-4"
                       hx-post="{% url 'account:update' pk=user.id %}"
                       hx-target="#body"
@@ -33,6 +34,51 @@
                             </div>
                         </div>
                         <div class="row g-4">
+                            <div class="col-12">
+                                <div class="border rounded-4 p-4 d-flex flex-column flex-md-row align-items-center gap-4">
+                                    <div class="profile-avatar profile-avatar--expanded position-relative overflow-hidden d-inline-flex align-items-center justify-content-center">
+                                        <img id="profile-picture-preview-img"
+                                             class="profile-picture-preview-img w-100 h-100 object-fit-cover rounded-4 {% if not user.profile_picture %}d-none{% endif %}"
+                                             alt="Profile picture preview"
+                                             loading="lazy"
+                                             width="68"
+                                             height="68"
+                                             {% if user.profile_picture %}src="{{ user.profile_picture.url }}"{% endif %}>
+                                        <span id="profile-picture-preview-placeholder"
+                                              class="profile-picture-preview-initial fs-3 fw-semibold text-primary-emphasis {% if user.profile_picture %}d-none{% endif %}">
+                                            {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
+                                        </span>
+                                    </div>
+                                    <div class="flex-grow-1 d-flex flex-column gap-2">
+                                        <div class="d-flex flex-column gap-1">
+                                            <label for="profile_picture" class="form-label fw-semibold">Profile photo</label>
+                                            <input type="file"
+                                                   id="profile_picture"
+                                                   name="profile_picture"
+                                                   accept="image/*"
+                                                   class="form-control form-control-sm">
+                                            {% for error_message in form.errors.profile_picture.data %}
+                                                <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                            <small class="text-muted small mb-0">PNG / JPEG up to 3 MB and 2048×2048 px.</small>
+                                            <button type="button"
+                                                    class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                                                    hx-post="{% url 'account:profile-picture-delete' %}"
+                                                    hx-target="#body"
+                                                    hx-indicator="#body-loading-spinner"
+                                                    hx-swap="morph:innerHTML"
+                                                    hx-push-url="true"
+                                                    hx-confirm="Remove your profile picture?"
+                                                    {% if not user.profile_picture %}disabled{% endif %}>
+                                                <i class="bi bi-trash"></i>
+                                                Remove photo
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-12 col-md-6">
                                 <label for="name" class="form-label fw-semibold">{{ form.fields.name.label }}</label>
                                 <input type="text"
@@ -142,5 +188,44 @@
                 </div>
             </div>
         </div>
+        <script>
+            (function () {
+                const fileInput = document.getElementById("profile_picture");
+                const previewImage = document.getElementById("profile-picture-preview-img");
+                const placeholder = document.getElementById("profile-picture-preview-placeholder");
+
+                if (!fileInput || !previewImage) {
+                    return;
+                }
+
+                fileInput.addEventListener("change", () => {
+                    const file = fileInput.files && fileInput.files[0];
+                    if (!file) {
+                        previewImage.classList.add("d-none");
+                        previewImage.removeAttribute("src");
+                        if (placeholder) {
+                            placeholder.classList.remove("d-none");
+                        }
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const newDataUrl = event.target?.result;
+                        if (!newDataUrl) {
+                            return;
+                        }
+
+                        previewImage.src = newDataUrl;
+                        previewImage.classList.remove("d-none");
+                        if (placeholder) {
+                            placeholder.classList.add("d-none");
+                        }
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+            })();
+        </script>
     </section>
 {% endblock content %}
