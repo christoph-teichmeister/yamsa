@@ -54,7 +54,6 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context["current_datetime"] = timezone.now().strftime("%Y-%m-%dT%H:%M")
         context["current_datetime"] = timezone.now().strftime("%Y-%m-%dT%H:%M")
         context["selected_paid_for"] = self._build_selected_paid_for()
 
