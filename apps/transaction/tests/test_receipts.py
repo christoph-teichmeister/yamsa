@@ -1,4 +1,3 @@
-import os
 import shutil
 import tempfile
 from datetime import UTC, datetime
@@ -45,10 +44,11 @@ class TransactionReceiptTest(BaseTestSetUp):
             content_type="application/pdf",
         )
 
+        payload = {**self._transaction_payload(currency.id), "receipts": receipt_file}
+
         response = client.post(
             reverse("transaction:create", kwargs={"room_slug": self.room.slug}),
-            data={**self._transaction_payload(currency.id)},
-            files={"receipts": receipt_file},
+            data=payload,
             follow=True,
         )
 
@@ -56,7 +56,7 @@ class TransactionReceiptTest(BaseTestSetUp):
         receipt = Receipt.objects.get(parent_transaction__room=self.room)
         self.assertEqual(receipt.original_name, "receipt.pdf")
         self.assertEqual(receipt.uploaded_by, self.user)
-        self.assertTrue(os.path.exists(receipt.file.path))
+        self.assertTrue(receipt.file.storage.exists(receipt.file.name))
 
         detail_url = reverse(
             "transaction:detail", kwargs={"room_slug": self.room.slug, "pk": receipt.parent_transaction.pk}
@@ -74,10 +74,11 @@ class TransactionReceiptTest(BaseTestSetUp):
             content_type="text/plain",
         )
 
+        payload = {**self._transaction_payload(currency.id), "receipts": invalid_file}
+
         response = client.post(
             reverse("transaction:create", kwargs={"room_slug": self.room.slug}),
-            data={**self._transaction_payload(currency.id)},
-            files={"receipts": invalid_file},
+            data=payload,
         )
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
