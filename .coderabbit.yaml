@@ -1,81 +1,7 @@
-version: 1
-
 language: en-US
 tone_instructions: >
   Keep feedback concise, prioritize regressions or user-impacting issues,
   and call out missing tests or migrations when they matter.
-
-project:
-  name: yamsa
-  root: .
-  description: >
-    Aligns CodeRabbit's automation with the linters and formatting hooks already
-    defined in `.pre-commit-config.yaml` so AI reviews respect the same rules.
-
-ignore:
-  paths:
-    - .git
-    - node_modules
-    - staticfiles
-    - media
-    - tmp
-    - docs
-    - build
-    - dist
-    - .venv
-    - venv
-    - .ruff_cache
-    - .mypy_cache
-  globs:
-    - "**/__pycache__/**"
-    - "**/migrations/**"
-    - "**/static/**/dist/**"
-    - "**/static/**/hashed/**"
-    - "**/coverage_html_report/**"
-
-rules:
-  - id: ruff-format
-    type: formatting
-    languages: [ python ]
-    command:
-      - pipenv
-      - run
-      - ruff
-      - format
-      - .
-    description: >
-      Mirrors the `ruff-format` pre-commit hook so CodeRabbit suggestions leave
-      code formatted according to the 120-column, Python 3.12 target in
-      `pyproject.toml`.
-
-  - id: ruff-lint
-    type: lint
-    languages: [ python ]
-    command:
-      - pipenv
-      - run
-      - ruff
-      - check
-      - .
-      - --fix
-      - --exit-non-zero-on-fix
-    description: >
-      Reuses the same arguments as the `ruff` hook (`--fix`, `--exit-non-zero-on-fix`)
-      so CodeRabbit reports the identical diagnostics and autofix expectations.
-
-  - id: djlint
-    type: lint
-    languages: [ django-templates ]
-    command:
-      - pipenv
-      - run
-      - djlint
-      - apps
-      - --profile
-      - django
-    description: >
-      Keeps Django template checks in sync with the `djlint` hooks and ensures
-      HTMX/Bootstrap snippets stay formatted according to the shared profile.
 
 reviews:
   profile: assertive
@@ -126,17 +52,3 @@ reviews:
     github-checks:
       enabled: true
       timeout_ms: 120000
-
-notes:
-  - >
-    `pre-commit` also enforces Conventional Commit messages and prevents commits
-    directly to protected branches via `conventional-pre-commit` and
-    `no-commit-to-branch`. Keep those policies in mind when accepting fixes.
-  - >
-    `django-upgrade --target-version 6.0 --all-files` runs at `pre-push`, so
-    CodeRabbit should avoid recommending patterns that would regress that
-    modernization path.
-  - >
-    `reviews` now mirrors our CI tooling (ruff + GitHub Checks), enforces the
-    same title/description conventions, and carries path-level instructions for
-    core business domains so the AI review stays focused where it matters most.
