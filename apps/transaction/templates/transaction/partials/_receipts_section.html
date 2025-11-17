@@ -1,0 +1,104 @@
+{% load room_tags %}
+<div id="transaction-receipts-section">
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between">
+            <div>
+                <p class="transaction-label mb-1">Receipts</p>
+                <p class="mb-0 text-muted small">Stored documents are linked to this transaction.</p>
+            </div>
+            <span class="badge text-bg-light">{{ receipts|length }}</span>
+        </div>
+        <div class="card-body">
+            {% if receipts %}
+                <div class="row row-cols-2 g-3 mb-3">
+                    {% for receipt in receipts %}
+                        <div class="col">
+                            <article class="card h-100 rounded-4 border-0 shadow-sm overflow-hidden position-relative">
+                                {% if receipt.uploaded_by_id == request.user.id %}
+                                    <form hx-post="{% room_url 'transaction:receipt-delete' pk=receipt.id %}"
+                                          hx-target="#transaction-receipts-section"
+                                          hx-swap="outerHTML"
+                                          hx-indicator="#body-loading-spinner"
+                                          hx-confirm="Permanently delete this receipt?"
+                                          class="position-absolute top-0 end-0 m-1"
+                                          style="z-index: 2">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                                class="btn btn-sm btn-danger shadow-sm rounded-circle d-flex align-items-center justify-content-center p-2"
+                                                style="width:30px;
+                                                       height:30px;
+                                                       min-width:30px"
+                                                aria-label="Delete receipt"
+                                                title="Delete receipt">
+                                            <i class="bi bi-trash fs-6" style="height: 20px"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                                <a class="d-flex flex-column h-100 text-decoration-none text-body"
+                                   href="{{ receipt.file.url }}"
+                                   target="_blank"
+                                   rel="noreferrer noopener"
+                                   download="{{ receipt.original_name }}">
+                                    {% if receipt.content_type|slice:":5" == "image" %}
+                                        <div class="ratio ratio-4x3 bg-body-tertiary">
+                                            <img class="w-100 h-100"
+                                                 src="{{ receipt.file.url }}"
+                                                 alt="{{ receipt.original_name }}"
+                                                 style="object-fit:cover" />
+                                        </div>
+                                    {% else %}
+                                        <div class="ratio ratio-4x3 bg-body-tertiary overflow-hidden">
+                                            <object class="w-100 h-100 border-0"
+                                                    data="{{ receipt.file.url }}#view=FitH&toolbar=0&navpanes=0"
+                                                    type="{{ receipt.content_type }}"
+                                                    aria-label="PDF receipt preview">
+                                                <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+                                                    <i class="bi bi-file-earmark-pdf fs-1 text-muted" aria-hidden="true"></i>
+                                                </div>
+                                            </object>
+                                        </div>
+                                    {% endif %}
+                                    <div class="card-body d-flex flex-column gap-1 p-3">
+                                        <p class="fw-semibold mb-1 text-break">{{ receipt.original_name }}</p>
+                                        <p class="text-muted small mb-1">Uploaded by {{ receipt.uploaded_by.name }}</p>
+                                        <p class="text-muted small mb-0">{{ receipt.size|filesizeformat }}</p>
+                                    </div>
+                                </a>
+                            </article>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted small mb-3">No receipts have been attached to this transaction yet.</p>
+            {% endif %}
+            {% if current_room.is_closed %}
+                <div class="alert alert-warning small" role="alert">Receipts cannot be uploaded after the room has been closed.</div>
+            {% else %}
+                {% with receipt_field=receipt_upload_form.receipt %}
+                    {% with receipt_input_id=receipt_field.id_for_label %}
+                        <form hx-post="{% room_url 'transaction:receipt-upload' pk=parent_transaction.id %}"
+                              hx-target="#transaction-receipts-section"
+                              hx-swap="outerHTML"
+                              hx-indicator="#body-loading-spinner"
+                              hx-trigger="change from:#{{ receipt_input_id }}"
+                              enctype="multipart/form-data"
+                              class="d-flex flex-column flex-sm-row gap-2 align-items-center mt-3">
+                            {% csrf_token %}
+                            {{ receipt_field }}
+                            <label class="btn btn-outline-primary d-flex align-items-center gap-2"
+                                   for="{{ receipt_input_id }}">
+                                <i class="bi bi-file-earmark-arrow-up"></i>
+                                Upload receipt
+                            </label>
+                            {% if receipt_field.errors %}<div class="invalid-feedback d-block small">{{ receipt_field.errors.0 }}</div>{% endif %}
+                            {% if receipt_upload_form.non_field_errors %}
+                                <div class="invalid-feedback d-block small">{{ receipt_upload_form.non_field_errors.0 }}</div>
+                            {% endif %}
+                            <small class="text-muted small mb-0">PDF or PNG/JPEG/WebP/GIF (max 5 MB).</small>
+                        </form>
+                    {% endwith %}
+                {% endwith %}
+            {% endif %}
+        </div>
+    </div>
+</div>
