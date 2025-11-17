@@ -1,3 +1,4 @@
+from django import forms
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
@@ -35,6 +36,13 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
         ret = super().form_invalid(form)
         return ret
 
+    def form_valid(self, form):
+        try:
+            return super().form_valid(form)
+        except forms.ValidationError as exc:
+            form.add_error("receipts", exc)
+            return self.form_invalid(form)
+
     def _get_toast_error_message(self, form):
         non_field_errors = form.non_field_errors()
         if non_field_errors:
@@ -47,7 +55,7 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # context["current_datetime"] = timezone.now().strftime("%Y-%m-%dT%H:%M")
-        context["current_datetime"] = timezone.now().strftime(r"Y-m-d\TH:i")
+        context["current_datetime"] = timezone.now().strftime("%Y-%m-%dT%H:%M")
         context["selected_paid_for"] = self._build_selected_paid_for()
 
         form = context.get("form")

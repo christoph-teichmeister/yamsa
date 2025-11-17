@@ -2,7 +2,11 @@ import mimetypes
 
 from django import forms
 
-from apps.transaction.forms.transaction_create_form import MAX_RECEIPT_SIZE, RECEIPT_ACCEPTED_CONTENT_TYPES
+from apps.transaction.forms.transaction_create_form import (
+    MAX_RECEIPT_SIZE,
+    RECEIPT_ACCEPTED_CONTENT_TYPES,
+    RECEIPT_AUTH_REQUIRED_MESSAGE,
+)
 from apps.transaction.models import Receipt
 
 
@@ -47,8 +51,7 @@ class TransactionReceiptUploadForm(forms.Form):
     def save(self, parent_transaction):
         uploader = getattr(self._request, "user", None)
         if not uploader or not uploader.is_authenticated:
-            msg = "Authentication is required to upload receipts."
-            raise forms.ValidationError(msg, code="authentication_required")
+            raise forms.ValidationError(RECEIPT_AUTH_REQUIRED_MESSAGE, code="authentication_required")
 
         receipt_file = self.cleaned_data["receipt"]
         return Receipt.objects.create(

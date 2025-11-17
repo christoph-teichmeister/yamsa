@@ -18,6 +18,7 @@ RECEIPT_ACCEPTED_CONTENT_TYPES = (
     "image/webp",
 )
 MAX_RECEIPT_SIZE = 5 * 1024 * 1024  # 5 MB
+RECEIPT_AUTH_REQUIRED_MESSAGE = "Authenticated user is required to upload receipts."
 
 
 class TransactionCreateForm(forms.ModelForm):
@@ -109,8 +110,7 @@ class TransactionCreateForm(forms.ModelForm):
 
         uploader = getattr(self._request, "user", None)
         if not uploader or not uploader.is_authenticated:
-            msg = "Authenticated user is required to upload receipts."
-            raise ValueError(msg)
+            raise forms.ValidationError(RECEIPT_AUTH_REQUIRED_MESSAGE, code="authentication_required")
 
         for uploaded_file in receipt_files:
             Receipt.objects.create(
