@@ -37,16 +37,6 @@
                             </ul>
                         </div>
                     {% endif %}
-                    {% if form_error_toast_message %}
-                        <script type="module">
-                            document.body.dispatchEvent(new CustomEvent("triggerToast", {
-                                detail: {
-                                    message: "{{ form_error_toast_message|escapejs }}",
-                                    type: "{{ toast_classes.error|escapejs }}"
-                                }
-                            }))
-                        </script>
-                    {% endif %}
                     <fieldset class="d-flex flex-column gap-4">
                         <legend class="fw-semibold h6 text-muted mb-0">Required details</legend>
                         <div class="row g-4">

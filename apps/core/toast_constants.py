@@ -5,10 +5,10 @@ from types import MappingProxyType
 
 TOAST_TYPE_CLASSES: Mapping[str, str] = MappingProxyType(
     {
-        "info": "text-bg-primary bg-gradient",
-        "success": "text-bg-success bg-gradient",
-        "warning": "text-bg-warning bg-gradient",
-        "error": "text-bg-danger bg-gradient",
+        "info": "toast-primary",
+        "success": "toast-success",
+        "warning": "toast-warning",
+        "error": "toast-danger",
     }
 )
 

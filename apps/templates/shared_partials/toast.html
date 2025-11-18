@@ -1,12 +1,12 @@
 <div class="toast-container yamsa-toast-container position-fixed bottom-0 start-50 translate-middle-x px-1 pb-5 mb-5 w-100"
      style="z-index: 1400">
-    <div class="toast yamsa-toast w-100 border-0"
+    <div class="toast yamsa-toast border-0 w-100"
          id="toast-id"
          role="alert"
          aria-live="assertive"
          aria-atomic="true">
         <div id="toast-type-div"
-             class="toast-yamsa-inner d-flex align-items-center justify-content-between gap-3 rounded-4 shadow-sm px-4 py-3">
+             class="toast-yamsa-inner w-90 d-flex align-items-center justify-content-between gap-3 rounded-2 shadow-sm px-4 py-3">
             <span id="toast-message-span"
                   class="flex-grow-1 fw-semibold fs-6 text-truncate"></span>
             <button type="button"
@@ -16,24 +16,95 @@
         </div>
     </div>
 </div>
+{% if queued_toasts %}
+    {{ queued_toasts|json_script:"queued-toasts-data" }}
+{% else %}
+    <script id="queued-toasts-data" type="application/json">[]</script>
+{% endif %}
 <!-- Toast handler -->
 <script type="module">
-    const toastElement = document.getElementById('toast-id')
-    const toastTypeDiv = document.getElementById('toast-type-div')
-    const toastMessageSpan = document.getElementById('toast-message-span')
+    const toastElement = document.getElementById("toast-id")
+    const toastTypeDiv = document.getElementById("toast-type-div")
+    const toastMessageSpan = document.getElementById("toast-message-span")
     const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastElement)
 
-    const baseToastClasses = 'toast-yamsa-inner d-flex align-items-center justify-content-between gap-3 rounded-4 shadow-sm px-4 py-3'
+    const baseToastClasses =
+        "toast-yamsa-inner d-flex align-items-center justify-content-between gap-3 rounded-4 shadow-sm px-4 py-3"
     const defaultErrorToastClasses = "{{ toast_classes.error|escapejs }}"
+
     let toastIsVisible = false
+    const toastQueue = []
 
     const applyToastClasses = (classString = "") => {
         toastTypeDiv.className = baseToastClasses
-        classString.split(" ").forEach(typeString => {
+        classString.split(" ").forEach((typeString) => {
             if (typeString.trim()) {
                 toastTypeDiv.classList.add(typeString)
             }
         })
+    }
+
+    const enqueueToast = (toastDetail) => {
+
+        if (!toastDetail || !toastDetail.message) {
+            return
+        }
+
+        toastQueue.push(toastDetail)
+    }
+
+    const showNextToast = () => {
+        if (toastIsVisible || toastQueue.length === 0) {
+            return
+        }
+
+        const toastDetail = toastQueue.shift()
+        toastMessageSpan.innerText = toastDetail.message
+        applyToastClasses(toastDetail.type)
+        toastBootstrap.show()
+    }
+
+    const normalizeToastPayloads = (payload) => {
+        if (!payload) {
+            return []
+        }
+
+        if (Array.isArray(payload)) {
+            return payload.reduce((acc, entry) => {
+                acc.push(...normalizeToastPayloads(entry))
+                return acc
+            }, [])
+        }
+
+        if (typeof payload === "object") {
+            if ("value" in payload && payload.value !== undefined) {
+                return normalizeToastPayloads(payload.value)
+            }
+            if (payload.triggerToast) {
+                return normalizeToastPayloads(payload.triggerToast)
+            }
+            if (payload.message) {
+                return [payload]
+            }
+        }
+
+        return []
+    }
+
+    const dispatchQueuedToasts = () => {
+        const queuedToastsElement = document.getElementById("queued-toasts-data")
+        if (!queuedToastsElement) {
+            return
+        }
+
+        try {
+            const initialToasts = JSON.parse(queuedToastsElement.textContent || "[]")
+            if (Array.isArray(initialToasts)) {
+                initialToasts.forEach(enqueueToast)
+            }
+        } catch {
+            // swallow parsing errors
+        }
     }
 
     toastElement.addEventListener("shown.bs.toast", () => {
@@ -42,24 +113,26 @@
 
     toastElement.addEventListener("hidden.bs.toast", () => {
         toastIsVisible = false
+        showNextToast()
     })
 
     document.body.addEventListener("triggerToast", (evt) => {
-        if (toastIsVisible) {
-            return
-        }
-
-        toastMessageSpan.innerText = evt.detail.message
-        applyToastClasses(evt.detail.type)
-
-        toastBootstrap.show()
+        const payloads = normalizeToastPayloads(evt.detail)
+        payloads.forEach(enqueueToast)
+        showNextToast()
     })
 
     document.body.addEventListener("htmx:afterRequest", (evt) => {
-        if (evt.detail.successful) return
-
-        toastMessageSpan.innerText = "⚠️ Something went wrong 🥺"
-        applyToastClasses(defaultErrorToastClasses)
-        toastBootstrap.show()
+        if (evt.detail?.successful) {
+            return
+        }
+        enqueueToast({
+            message: "⚠️ Something went wrong 🥺",
+            type: defaultErrorToastClasses,
+        })
+        showNextToast()
     })
+
+    dispatchQueuedToasts()
+    showNextToast()
 </script>

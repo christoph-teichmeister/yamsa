@@ -4,15 +4,6 @@ tone_instructions: >
   Keep feedback concise, prioritize regressions or user-impacting issues,
   and call out missing tests or migrations when they matter.
 
-trigger:
-  pull_request: true
-  push: false
-  issue_comment: false
-  rebase: false
-
-limits:
-  max_reviews_per_pr: 1
-
 reviews:
   profile: assertive
   request_changes_workflow: true

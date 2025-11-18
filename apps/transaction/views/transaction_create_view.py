@@ -33,9 +33,10 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
         return kwargs
 
     def form_invalid(self, form):
-        self._form_error_toast_message = self._get_toast_error_message(form)
-        ret = super().form_invalid(form)
-        return ret
+        toast_message = self._get_toast_error_message(form)
+        if toast_message:
+            self.request.toast_queue.error(toast_message)
+        return super().form_invalid(form)
 
     def form_valid(self, form):
         try:
@@ -91,7 +92,6 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
         context["selected_paid_by"] = self._build_selected_paid_by(form)
         context["selected_currency"] = self._build_selected_currency(form)
         context["selected_category"] = self._build_selected_category(form)
-        context["form_error_toast_message"] = getattr(self, "_form_error_toast_message", None)
 
         return context
 
