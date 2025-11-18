@@ -188,3 +188,17 @@
     z-index: 1050;
     pointer-events: none;
 }
+
+.receipt-delete-button {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+}
+
+.receipt-delete-icon {
+    height: 20px;
+}
+
+.receipt-preview-img {
+    object-fit: cover;
+}

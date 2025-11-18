@@ -20,17 +20,13 @@
                                           hx-swap="outerHTML"
                                           hx-indicator="#body-loading-spinner"
                                           hx-confirm="Permanently delete this receipt?"
-                                          class="position-absolute top-0 end-0 m-1"
-                                          style="z-index: 2">
+                                          class="position-absolute top-0 end-0 m-1 z-2">
                                         {% csrf_token %}
                                         <button type="submit"
-                                                class="btn btn-sm btn-danger shadow-sm rounded-circle d-flex align-items-center justify-content-center p-2"
-                                                style="width:30px;
-                                                       height:30px;
-                                                       min-width:30px"
+                                                class="btn btn-sm btn-danger shadow-sm rounded-circle d-flex align-items-center justify-content-center p-2 receipt-delete-button"
                                                 aria-label="Delete receipt"
                                                 title="Delete receipt">
-                                            <i class="bi bi-trash fs-6" style="height: 20px"></i>
+                                            <i class="bi bi-trash fs-6 receipt-delete-icon"></i>
                                         </button>
                                     </form>
                                 {% endif %}
@@ -41,10 +37,11 @@
                                    download="{{ receipt.original_name }}">
                                     {% if receipt.content_type|slice:":5" == "image" %}
                                         <div class="ratio ratio-4x3 bg-body-tertiary">
-                                            <img class="w-100 h-100"
+                                            <img class="w-100 h-100 receipt-preview-img"
                                                  src="{{ receipt.file.url }}"
                                                  alt="{{ receipt.original_name }}"
-                                                 style="object-fit:cover" />
+                                                 width="400"
+                                                 height="300" />
                                         </div>
                                     {% else %}
                                         <div class="ratio ratio-4x3 bg-body-tertiary overflow-hidden">
