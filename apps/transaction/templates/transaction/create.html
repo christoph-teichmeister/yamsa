@@ -1,6 +1,6 @@
 {% extends "room/dashboard.html" %}
-{% load static %}
-{% load room_tags %}
+{% load static room_tags %}
+{% now "Y-m-d\TH:i" as current_datetime %}
 {% block tab_content %}
     <section class="container px-2 px-md-4 px-lg-5 py-4">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
@@ -24,63 +24,114 @@
                       hx-indicator="#body-loading-spinner"
                       hx-swap="morph:innerHTML"
                       hx-push-url="true"
+                      enctype="multipart/form-data"
                       class="d-flex flex-column gap-5 fs-6">
                     {% csrf_token %}
+                    {% if form.errors %}
+                        <div class="alert alert-danger rounded-4 shadow-sm border-0 px-4 py-3">
+                            <p class="fw-semibold mb-2">Unable to add transaction</p>
+                            <ul class="mb-0 small">
+                                {% for field_errors in form.errors.values %}
+                                    {% for error in field_errors %}<li>{{ error }}</li>{% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    {% if form_error_toast_message %}
+                        <script type="module">
+                            document.body.dispatchEvent(new CustomEvent("triggerToast", {
+                                detail: {
+                                    message: "{{ form_error_toast_message|escapejs }}",
+                                    type: "{{ toast_classes.error|escapejs }}"
+                                }
+                            }))
+                        </script>
+                    {% endif %}
                     <fieldset class="d-flex flex-column gap-4">
                         <legend class="fw-semibold h6 text-muted mb-0">Required details</legend>
                         <div class="row g-4">
                             <div class="col-12 col-lg-8">
                                 <label for="description" class="form-label fw-semibold">What was this?</label>
-                                <input id="description"
-                                       name="description"
-                                       type="text"
-                                       class="form-control"
-                                       maxlength="50"
-                                       minlength="1"
-                                       list="descriptionSuggestions"
-                                       placeholder="e.g., Grocery run"
-                                       required />
+                                {% with description_field=form.description %}
+                                    <input id="description"
+                                           name="description"
+                                           type="text"
+                                           class="form-control{% if description_field.errors %} is-invalid{% endif %}"
+                                           maxlength="50"
+                                           minlength="1"
+                                           list="descriptionSuggestions"
+                                           placeholder="e.g., Grocery run"
+                                           value="{{ description_field.value|default:'' }}"
+                                           required />
+                                    {% if description_field.errors %}
+                                        <div class="invalid-feedback d-block">{{ description_field.errors.0 }}</div>
+                                    {% endif %}
+                                {% endwith %}
                                 <div class="form-text">Maximum 50 characters.</div>
                             </div>
                             <div class="col-12 col-lg-4">
                                 <label for="value" class="form-label fw-semibold">Amount paid</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-body-secondary text-muted">{{ current_room.preferred_currency.sign }}</span>
-                                    <input id="value"
-                                           name="value"
-                                           type="number"
-                                           class="form-control"
-                                           min="0"
-                                           step="0.01"
-                                           max="99999999"
-                                           required
-                                           placeholder="0.00" />
-                                </div>
+                                {% with value_field=form.value %}
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-body-secondary text-muted">{{ current_room.preferred_currency.sign }}</span>
+                                        <input id="value"
+                                               name="value"
+                                               type="number"
+                                               class="form-control{% if value_field.errors %} is-invalid{% endif %}"
+                                               min="0"
+                                               step="0.01"
+                                               max="99999999"
+                                               required
+                                               placeholder="0.00"
+                                               value="{{ value_field.value|default:'' }}" />
+                                    </div>
+                                    {% if value_field.errors %}<div class="invalid-feedback d-block">{{ value_field.errors.0 }}</div>{% endif %}
+                                {% endwith %}
                                 <small class="text-muted">Total paid in the selected currency.</small>
                             </div>
                         </div>
                         <div class="row g-4">
                             <div class="col-12 col-lg-6">
                                 <label for="paidBySelect" class="form-label fw-semibold">Who paid?</label>
-                                <select name="paid_by" class="form-select" id="paidBySelect" required>
-                                    <option value="{{ request.user.id }}">{{ request.user.name }}</option>
-                                    {% for room_user in current_room.users %}
-                                        {% if room_user.id != request.user.id %}<option value="{{ room_user.id }}">{{ room_user.name }}</option>{% endif %}
-                                    {% endfor %}
-                                </select>
+                                {% with paid_by_field=form.paid_by %}
+                                    <select name="paid_by"
+                                            class="form-select{% if paid_by_field.errors %} is-invalid{% endif %}"
+                                            id="paidBySelect"
+                                            required>
+                                        <option value="{{ request.user.id }}"
+                                                {% if selected_paid_by == request.user.id|stringformat:"s" %}selected{% endif %}>
+                                            {{ request.user.name }}
+                                        </option>
+                                        {% for room_user in current_room.users %}
+                                            {% if room_user.id != request.user.id %}
+                                                <option value="{{ room_user.id }}"
+                                                        {% if selected_paid_by == room_user.id|stringformat:"s" %}selected{% endif %}>
+                                                    {{ room_user.name }}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                    {% if paid_by_field.errors %}<div class="invalid-feedback d-block">{{ paid_by_field.errors.0 }}</div>{% endif %}
+                                {% endwith %}
                                 <small class="text-muted">Person covering this expense.</small>
                             </div>
                             <div class="col-12 col-lg-6">
                                 <label for="paidForSelect" class="form-label fw-semibold">Split between</label>
-                                <select name="paid_for"
-                                        multiple
-                                        class="form-select"
-                                        id="paidForSelect"
-                                        required>
-                                    {% for room_user in current_room.users %}
-                                        <option value="{{ room_user.id }}" selected>{{ room_user.name }}</option>
-                                    {% endfor %}
-                                </select>
+                                {% with paid_for_field=form.paid_for %}
+                                    <select name="paid_for"
+                                            multiple
+                                            class="form-select{% if paid_for_field.errors %} is-invalid{% endif %}"
+                                            id="paidForSelect"
+                                            required>
+                                        {% for room_user in current_room.users %}
+                                            <option value="{{ room_user.id }}"
+                                                    {% if room_user.id|stringformat:"s" in selected_paid_for %}selected{% endif %}>
+                                                {{ room_user.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if paid_for_field.errors %}<div class="invalid-feedback d-block">{{ paid_for_field.errors.0 }}</div>{% endif %}
+                                {% endwith %}
                                 <small class="text-muted">Hold Cmd/Ctrl to adjust beneficiaries.</small>
                             </div>
                         </div>
@@ -105,50 +156,91 @@
                             <div class="row g-4">
                                 <div class="col-12 col-lg-4">
                                     <label for="paid_at_input" class="form-label fw-semibold">Paid at</label>
-                                    <input id="paid_at_input"
-                                           name="paid_at"
-                                           class="form-control"
-                                           type="datetime-local"
-                                           value="{% now "Y-m-d\TH:i" %}"
-                                           min="2018-04-04T00:00"
-                                           max="2099-12-31T00:00" />
+                                    {% with paid_at_field=form.paid_at %}
+                                        {% with paid_at_value=paid_at_field.value %}
+                                            <input id="paid_at_input"
+                                                   name="paid_at"
+                                                   class="form-control{% if paid_at_field.errors %} is-invalid{% endif %}"
+                                                   type="datetime-local"
+                                                   value="{% if paid_at_value %}{{ paid_at_value|date:'Y-m-d\\TH:i' }}{% else %}{{ current_datetime }}{% endif %}"
+                                                   min="2018-04-04T00:00"
+                                                   max="2099-12-31T00:00" />
+                                        {% endwith %}
+                                        {% if paid_at_field.errors %}<div class="invalid-feedback d-block">{{ paid_at_field.errors.0 }}</div>{% endif %}
+                                    {% endwith %}
                                     <small class="text-muted">Use if the expense occurred earlier.</small>
                                 </div>
                                 <div class="col-12 col-lg-4">
                                     <label for="currencySelect" class="form-label fw-semibold">Currency</label>
-                                    <select name="currency" class="form-select" id="currencySelect" required>
-                                        <option value="{{ current_room.preferred_currency.id }}">{{ current_room.preferred_currency.sign }}</option>
-                                        {% for currency in all_currencies %}
-                                            {% if currency != current_room.preferred_currency %}
-                                                <option value="{{ currency.id }}">{{ currency.sign }}</option>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </select>
+                                    {% with currency_field=form.currency %}
+                                        <select name="currency"
+                                                class="form-select{% if currency_field.errors %} is-invalid{% endif %}"
+                                                id="currencySelect"
+                                                required>
+                                            <option value="{{ current_room.preferred_currency.id }}"
+                                                    {% if current_room.preferred_currency.id|stringformat:"s" == selected_currency %}selected{% endif %}>
+                                                {{ current_room.preferred_currency.sign }}
+                                            </option>
+                                            {% for currency in all_currencies %}
+                                                {% if currency != current_room.preferred_currency %}
+                                                    <option value="{{ currency.id }}"
+                                                            {% if currency.id|stringformat:"s" == selected_currency %}selected{% endif %}>
+                                                        {{ currency.sign }}
+                                                    </option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                        {% if currency_field.errors %}<div class="invalid-feedback d-block">{{ currency_field.errors.0 }}</div>{% endif %}
+                                    {% endwith %}
                                     <small class="text-muted">Defaults to the room preference.</small>
                                 </div>
                                 <div class="col-12 col-lg-4">
                                     <label for="categorySelect" class="form-label fw-semibold">Category</label>
-                                    <select name="category" class="form-select" id="categorySelect" required>
-                                        {% for category in form.fields.category.queryset %}
-                                            <option value="{{ category.id }}"
-                                                    {% if category.id == form.initial.category %}selected{% endif %}>
-                                                {{ category.emoji }} {{ category.name }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
+                                    {% with category_field=form.category %}
+                                        <select name="category"
+                                                class="form-select{% if category_field.errors %} is-invalid{% endif %}"
+                                                id="categorySelect"
+                                                required>
+                                            {% for category in form.fields.category.queryset %}
+                                                <option value="{{ category.id }}"
+                                                        {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
+                                                    {{ category.emoji }} {{ category.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        {% if category_field.errors %}<div class="invalid-feedback d-block">{{ category_field.errors.0 }}</div>{% endif %}
+                                    {% endwith %}
                                     <small class="text-muted">Tag this expense for dashboards and charts.</small>
                                 </div>
                             </div>
                             <div class="mt-4">
                                 <label for="further_notes" class="form-label fw-semibold">Notes</label>
-                                <textarea id="further_notes"
-                                          name="further_notes"
-                                          class="form-control"
-                                          rows="3"
-                                          maxlength="5000"
-                                          minlength="1"
-                                          placeholder="Add split details, receipts, or reminders"></textarea>
+                                {% with notes_field=form.further_notes %}
+                                    <textarea id="further_notes"
+                                              name="further_notes"
+                                              class="form-control{% if notes_field.errors %} is-invalid{% endif %}"
+                                              rows="3"
+                                              maxlength="5000"
+                                              minlength="1"
+                                              placeholder="Add split details, receipts, or reminders">{{ notes_field.value|default:'' }}</textarea>
+                                    {% if notes_field.errors %}<div class="invalid-feedback d-block">{{ notes_field.errors.0 }}</div>{% endif %}
+                                {% endwith %}
                                 <div class="form-text">Up to 5000 characters.</div>
+                            </div>
+                            <div class="mt-3">
+                                <label for="receipts" class="form-label fw-semibold">Receipts</label>
+                                {% with receipts_field=form.receipts %}
+                                    <input id="receipts"
+                                           name="receipts"
+                                           type="file"
+                                           class="form-control{% if receipts_field.errors %} is-invalid{% endif %}"
+                                           multiple
+                                           accept="image/png,image/jpeg,image/webp,image/gif,application/pdf" />
+                                    {% if receipts_field.errors %}
+                                        <div class="invalid-feedback d-block">{{ receipts_field.errors.0 }}</div>
+                                    {% endif %}
+                                {% endwith %}
+                                <div class="form-text">Upload receipts as PDF or image (max 5 MB each).</div>
                             </div>
                         </div>
                     </div>

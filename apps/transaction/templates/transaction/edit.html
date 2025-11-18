@@ -163,6 +163,32 @@
                 </div>
             </div>
             <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3">
+                        <div>
+                            <p class="transaction-label mb-1">Receipts</p>
+                            <p class="mb-0 text-muted small">Receipts stay on the detail page, so upload PDFs there instead of here.</p>
+                        </div>
+                        <div class="text-md-end">
+                            <p class="text-muted small mb-2">
+                                You can continue editing this transaction; switch to the detail view if you need to manage uploads.
+                            </p>
+                            <button type="button"
+                                    class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-2"
+                                    hx-trigger="click"
+                                    hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
+                                    hx-target="#body"
+                                    hx-indicator="#body-loading-spinner"
+                                    hx-swap="morph:innerHTML"
+                                    hx-push-url="true">
+                                <i class="bi bi-file-earmark-text"></i>
+                                Open detail view
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-transparent border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div>
                         <p class="transaction-label mb-0">Split between</p>

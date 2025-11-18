@@ -28,6 +28,16 @@ urlpatterns = [
                 name="detail",
             ),
             path(
+                "receipt/upload/<int:transaction_pk>",
+                views.TransactionReceiptUploadView.as_view(),
+                name="receipt-upload",
+            ),
+            path(
+                "receipt/delete/<int:receipt_pk>",
+                views.TransactionReceiptDeleteView.as_view(),
+                name="receipt-delete",
+            ),
+            path(
                 "category-breakdown/",
                 views.TransactionCategoryBreakdownView.as_view(),
                 name="category-breakdown",

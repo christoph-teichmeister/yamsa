@@ -6,3 +6,5 @@ from apps.transaction.views.transaction_create_view import TransactionCreateView
 from apps.transaction.views.transaction_detail_view import TransactionDetailView
 from apps.transaction.views.transaction_edit_view import TransactionEditView
 from apps.transaction.views.transaction_list_view import TransactionFeedView, TransactionListView
+from apps.transaction.views.transaction_receipt_delete_view import TransactionReceiptDeleteView
+from apps.transaction.views.transaction_receipt_upload_view import TransactionReceiptUploadView

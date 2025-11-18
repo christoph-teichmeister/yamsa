@@ -1,0 +1,65 @@
+language: en-US
+
+tone_instructions: >
+  Keep feedback concise, prioritize regressions or user-impacting issues,
+  and call out missing tests or migrations when they matter.
+
+trigger:
+  pull_request: true
+  push: false
+  issue_comment: false
+  rebase: false
+
+limits:
+  max_reviews_per_pr: 1
+
+reviews:
+  profile: assertive
+  request_changes_workflow: true
+  high_level_summary: true
+  high_level_summary_instructions: >
+    Highlight the business impact, describe required follow-up (tests, migrations,
+    etc.), and keep bullet points actionable.
+  collapse_walkthrough: true
+  auto_review:
+    enabled: true
+    auto_incremental_review: false
+    drafts: false
+    ignore_title_keywords:
+      - WIP
+      - DRAFT
+    labels:
+      - "!wip"
+  path_filters:
+    - apps/**
+    - "!static/**"
+    - "!staticfiles/**"
+    - "!media/**"
+    - "!docs/**"
+    - "!tmp/**"
+    - "!node_modules/**"
+  path_instructions:
+    - path: apps/transaction/**
+      instructions: >
+        Focus on settlement math, rounding, and atomicity because discrepancies
+        here can cause user-facing balance issues.
+    - path: apps/room/**
+      instructions: >
+        Check that room lifecycle logic and capacity rules follow the business
+        constraints described in the product docs.
+  pre_merge_checks:
+    title:
+      mode: warning
+      requirements: >
+        Follow conventional commits (type[scope]: description), keep titles ~60
+        characters, and clearly state the change.
+    description:
+      mode: warning
+    issue_assessment:
+      mode: warning
+  tools:
+    ruff:
+      enabled: true
+    github-checks:
+      enabled: true
+      timeout_ms: 120000

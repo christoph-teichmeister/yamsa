@@ -7,6 +7,7 @@ from apps.account.messages.commands.remove_user_from_room import RemoveUserFromR
 from apps.account.models import User
 from apps.account.views import UserListForRoomView
 from apps.core.event_loop.runner import handle_message
+from apps.core.toast_constants import ERROR_TOAST_CLASS
 
 
 class UserRemoveFromRoomView(UserListForRoomView):
@@ -36,7 +37,7 @@ class UserRemoveFromRoomView(UserListForRoomView):
                     "triggerToast": {
                         "message": f'"{user_to_be_removed.name}" can not be removed from this room, because they still '
                         f"have either transactions or open debts.",
-                        "type": "text-bg-danger bg-gradient",
+                        "type": ERROR_TOAST_CLASS,
                     }
                 }
             )

@@ -1,4 +1,5 @@
 import http
+import json
 from unittest import mock
 
 from django.urls import reverse
@@ -7,6 +8,7 @@ from apps.account.messages.commands.remove_user_from_room import RemoveUserFromR
 from apps.account.models import User
 from apps.account.views import UserListForRoomView
 from apps.core.tests.setup import BaseTestSetUp
+from apps.core.toast_constants import ERROR_TOAST_CLASS
 from apps.room.views import RoomListView
 
 
@@ -31,13 +33,13 @@ class UserRemoveFromRoomViewTestCase(BaseTestSetUp):
             mocked_handle_message.assert_not_called()
 
         self.assertTrue(response.template_name[0], UserListForRoomView.template_name)
+        payload = json.loads(response.headers["HX-Trigger-After-Settle"])
         self.assertEqual(
-            response.headers["HX-Trigger-After-Settle"],
-            '{"triggerToast": {"message": "\\"'
-            + f"{self.guest_user.name}"
-            + '\\" can not be removed from this room, because they still have either transactions or open debts.", '
-            '"type": "text-bg-danger bg-gradient"}}',
+            payload["triggerToast"]["message"],
+            f'"{self.guest_user.name}" can not be removed from this room, '
+            f"because they still have either transactions or open debts.",
         )
+        self.assertEqual(payload["triggerToast"]["type"], ERROR_TOAST_CLASS)
 
     def test_post_user_can_be_removed_from_room(self):
         self.room.users.add(self.guest_user)

@@ -5,6 +5,9 @@ from typing import Any
 from django.http import HttpResponse
 from django.urls import reverse
 
+from apps.core.toast_constants import ERROR_TOAST_CLASS as TOAST_ERROR_CLASS
+from apps.core.toast_constants import SUCCESS_TOAST_CLASS as TOAST_SUCCESS_CLASS
+
 
 class FormHtmxResponseMixin:
     """
@@ -18,8 +21,8 @@ class FormHtmxResponseMixin:
     # TODO CT: This is not used anywhere?
 
     # Class constants for styling
-    SUCCESS_TOAST_CLASS = "text-bg-success bg-gradient"
-    ERROR_TOAST_CLASS = "text-bg-danger bg-gradient"
+    SUCCESS_TOAST_CLASS = TOAST_SUCCESS_CLASS
+    ERROR_TOAST_CLASS = TOAST_ERROR_CLASS
 
     # Configuration attributes
     hx_trigger: str | dict[str, Any] = {}
