@@ -6,6 +6,13 @@ This is a collection of prompts to be used and extended when working on this pro
 
 ## General > AI Assistant
 
+### Parse from github issue
+
+Fetch issue #<number> from christoph-teichmeister/yamsa, write its metadata/body into .github-issues/<number>.md (
+include summary, status, labels, description, checklist), then append a Technical Tasks section listing actionable steps
+to implement it as code changes/tests. Capture the issue content from GitHub via MCP before writing the file. Finally,
+implement the technical tasks.
+
 ### Commit it all
 
 Schau dir jetzt bitte all deine Changes an, die du gemacht hast. Fasse sie in logische Grüppchen zusammen und committe
