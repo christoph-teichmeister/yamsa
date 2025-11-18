@@ -1,5 +1,3 @@
-import json
-
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -7,7 +5,6 @@ from apps.account.messages.commands.remove_user_from_room import RemoveUserFromR
 from apps.account.models import User
 from apps.account.views import UserListForRoomView
 from apps.core.event_loop.runner import handle_message
-from apps.core.toast_constants import ERROR_TOAST_CLASS
 
 
 class UserRemoveFromRoomView(UserListForRoomView):
@@ -32,14 +29,9 @@ class UserRemoveFromRoomView(UserListForRoomView):
                 response = HttpResponseRedirect(redirect_to=reverse(viewname="core:welcome"))
 
         else:
-            response["HX-Trigger-After-Settle"] = json.dumps(
-                {
-                    "triggerToast": {
-                        "message": f'"{user_to_be_removed.name}" can not be removed from this room, because they still '
-                        f"have either transactions or open debts.",
-                        "type": ERROR_TOAST_CLASS,
-                    }
-                }
+            request.toast_queue.error(
+                f'"{user_to_be_removed.name}" can not be removed from this room, because they still '
+                f"have either transactions or open debts."
             )
 
         return response
