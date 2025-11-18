@@ -9,13 +9,15 @@ from apps.transaction.forms.transaction_create_form import (
 )
 from apps.transaction.models import Receipt
 
+ACCEPTED_RECEIPT_TYPES = ",".join(RECEIPT_ACCEPTED_CONTENT_TYPES)
+
 
 class TransactionReceiptUploadForm(forms.Form):
     receipt = forms.FileField(
         widget=forms.ClearableFileInput(
             attrs={
                 "class": "d-none",
-                "accept": "application/pdf,image/png,image/jpeg,image/webp,image/gif",
+                "accept": ACCEPTED_RECEIPT_TYPES,
             }
         ),
         required=True,
@@ -46,14 +48,15 @@ class TransactionReceiptUploadForm(forms.Form):
             msg = "Each receipt must be 5 MB or smaller."
             raise forms.ValidationError(msg, code="file_too_large")
 
-        return uploaded_file
-
-    def save(self, parent_transaction):
         uploader = getattr(self._request, "user", None)
         if not uploader or not uploader.is_authenticated:
             raise forms.ValidationError(RECEIPT_AUTH_REQUIRED_MESSAGE, code="authentication_required")
 
+        return uploaded_file
+
+    def save(self, parent_transaction):
         receipt_file = self.cleaned_data["receipt"]
+        uploader = getattr(self._request, "user", None)
         return Receipt.objects.create(
             parent_transaction=parent_transaction,
             file=receipt_file,

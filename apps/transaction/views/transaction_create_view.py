@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import NON_FIELD_ERRORS
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
@@ -40,8 +41,36 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
         try:
             return super().form_valid(form)
         except forms.ValidationError as exc:
-            form.add_error("receipts", exc)
-            return self.form_invalid(form)
+            if self._attach_validation_error(form, exc):
+                return self.form_invalid(form)
+            raise
+
+    def _attach_validation_error(self, form, exc):
+        error_dict = getattr(exc, "error_dict", None)
+        if error_dict:
+            for field_name, errors in error_dict.items():
+                target_field = None if field_name == NON_FIELD_ERRORS else field_name
+                for error in errors:
+                    form.add_error(target_field, error)
+            return True
+
+        error_list = getattr(exc, "error_list", None)
+        if error_list:
+            receipt_errors = []
+            for error in error_list:
+                message = str(error).lower()
+                if "receipt" in message:
+                    receipt_errors.append(error)
+            if receipt_errors:
+                for error in receipt_errors:
+                    form.add_error("receipts", error)
+                return True
+
+            for error in error_list:
+                form.add_error(None, error)
+            return True
+
+        return False
 
     def _get_toast_error_message(self, form):
         non_field_errors = form.non_field_errors()

@@ -92,6 +92,14 @@ class TransactionCreateForm(forms.ModelForm):
         if errors:
             raise forms.ValidationError(errors)
 
+        if cleaned_files:
+            uploader = getattr(self._request, "user", None)
+            if not uploader or not uploader.is_authenticated:
+                raise forms.ValidationError(
+                    RECEIPT_AUTH_REQUIRED_MESSAGE,
+                    code="authentication_required",
+                )
+
         return cleaned_files
 
     @transaction.atomic
@@ -115,10 +123,6 @@ class TransactionCreateForm(forms.ModelForm):
         if not receipt_files:
             return
 
-        uploader = getattr(self._request, "user", None)
-        if not uploader or not uploader.is_authenticated:
-            raise forms.ValidationError(RECEIPT_AUTH_REQUIRED_MESSAGE, code="authentication_required")
-
         for uploaded_file in receipt_files:
             Receipt.objects.create(
                 parent_transaction=parent_transaction,
@@ -126,5 +130,5 @@ class TransactionCreateForm(forms.ModelForm):
                 original_name=uploaded_file.name,
                 content_type=uploaded_file.content_type,
                 size=uploaded_file.size,
-                uploaded_by=uploader,
+                uploaded_by=getattr(self._request, "user", None),
             )
