@@ -6,7 +6,7 @@ apps/config/.env
 /.cache/
 /.issues/
 /.local/
-/.pull-requests/
+/.github-pull-requests/
 /media/
 /static/
 /staticfiles/
