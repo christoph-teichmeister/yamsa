@@ -31,7 +31,7 @@ class TransactionCreateForm(forms.ModelForm):
         required=False,
     )
     receipts = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={"multiple": True}),
+        widget=forms.ClearableFileInput(),
         required=False,
         help_text="Upload PNG/JPEG/WebP/GIF images or PDFs (max 5 MB each).",
     )
