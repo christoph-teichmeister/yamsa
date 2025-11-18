@@ -206,6 +206,7 @@ MIDDLEWARE = (
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "apps.room.middleware.RoomToRequestMiddleware",
     "apps.core.middleware.maintenance_middleware.MaintenanceMiddleware",
+    "apps.core.middleware.toast_middleware.ToastMiddleware",
     # AxesMiddleware should be the last middleware in the MIDDLEWARE list.
     "axes.middleware.AxesMiddleware",
 )
