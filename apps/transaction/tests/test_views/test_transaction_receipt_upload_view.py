@@ -68,8 +68,10 @@ class TransactionReceiptUploadViewTest(TransactionReceiptViewBaseTest):
         self.assertIn("HX-Trigger", response.headers)
         self.assertIn("HX-Trigger-After-Settle", response.headers)
         trigger_payload = json.loads(response.headers["HX-Trigger"])
-        self.assertEqual(trigger_payload["triggerToast"]["message"], "Receipt uploaded successfully.")
-        self.assertEqual(trigger_payload["triggerToast"]["type"], SUCCESS_TOAST_CLASS)
+        toasts = trigger_payload["triggerToast"]
+        self.assertIsInstance(toasts, list)
+        self.assertEqual(toasts[0]["message"], "Receipt uploaded successfully.")
+        self.assertEqual(toasts[0]["type"], SUCCESS_TOAST_CLASS)
         receipt.file.delete(save=False)
 
     def test_receipt_upload_rejects_invalid_file(self):
@@ -127,7 +129,10 @@ class TransactionReceiptDeleteViewTest(TransactionReceiptViewBaseTest):
         self.assertNotContains(response, receipt.original_name)
         self.assertIn("HX-Trigger", response.headers)
         trigger_payload = json.loads(response.headers["HX-Trigger"])
-        self.assertEqual(trigger_payload["triggerToast"]["message"], "Receipt deleted.")
+        toasts = trigger_payload["triggerToast"]
+        self.assertIsInstance(toasts, list)
+        self.assertEqual(toasts[0]["message"], "Receipt deleted.")
+        self.assertEqual(toasts[0]["type"], SUCCESS_TOAST_CLASS)
 
     def test_receipt_delete_forbidden_for_other_user(self):
         client = self.reauthenticate_user(self.user)

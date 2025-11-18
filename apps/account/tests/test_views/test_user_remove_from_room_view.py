@@ -34,12 +34,14 @@ class UserRemoveFromRoomViewTestCase(BaseTestSetUp):
 
         self.assertTrue(response.template_name[0], UserListForRoomView.template_name)
         payload = json.loads(response.headers["HX-Trigger-After-Settle"])
+        toasts = payload["triggerToast"]
+        self.assertIsInstance(toasts, list)
         self.assertEqual(
-            payload["triggerToast"]["message"],
+            toasts[0]["message"],
             f'"{self.guest_user.name}" can not be removed from this room, '
             f"because they still have either transactions or open debts.",
         )
-        self.assertEqual(payload["triggerToast"]["type"], ERROR_TOAST_CLASS)
+        self.assertEqual(toasts[0]["type"], ERROR_TOAST_CLASS)
 
     def test_post_user_can_be_removed_from_room(self):
         self.room.users.add(self.guest_user)
