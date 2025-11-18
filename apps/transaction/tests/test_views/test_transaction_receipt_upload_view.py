@@ -53,7 +53,10 @@ class TransactionReceiptUploadViewTest(TransactionReceiptViewBaseTest):
         )
 
         response = client.post(
-            reverse("transaction:receipt-upload", kwargs={"room_slug": self.room.slug, "transaction_pk": parent_transaction.id}),
+            reverse(
+                "transaction:receipt-upload",
+                kwargs={"room_slug": self.room.slug, "transaction_pk": parent_transaction.id},
+            ),
             data={"receipt": receipt_file},
         )
 
@@ -79,7 +82,10 @@ class TransactionReceiptUploadViewTest(TransactionReceiptViewBaseTest):
         )
 
         response = client.post(
-            reverse("transaction:receipt-upload", kwargs={"room_slug": self.room.slug, "transaction_pk": parent_transaction.id}),
+            reverse(
+                "transaction:receipt-upload",
+                kwargs={"room_slug": self.room.slug, "transaction_pk": parent_transaction.id},
+            ),
             data={"receipt": invalid_file},
         )
 

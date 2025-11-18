@@ -4,8 +4,8 @@ import uuid
 from ambient_toolbox.models import CommonInfo
 from django.db import models
 from django.db.models.aggregates import Sum
-from django.utils.timezone import now
 from django.utils.text import slugify
+from django.utils.timezone import now
 
 from apps.account.models import User
 from apps.core.models.mixins import FullCleanOnSaveMixin

@@ -80,7 +80,9 @@ class TransactionCreateForm(forms.ModelForm):
                 )
 
             if uploaded_file.size > MAX_RECEIPT_SIZE:
-                file_errors.append(forms.ValidationError("Each receipt must be 5 MB or smaller.", code="file_too_large"))
+                file_errors.append(
+                    forms.ValidationError("Each receipt must be 5 MB or smaller.", code="file_too_large")
+                )
 
             if file_errors:
                 errors.extend(file_errors)
