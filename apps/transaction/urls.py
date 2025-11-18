@@ -28,12 +28,12 @@ urlpatterns = [
                 name="detail",
             ),
             path(
-                "receipt/upload/<int:pk>",
+                "receipt/upload/<int:transaction_pk>",
                 views.TransactionReceiptUploadView.as_view(),
                 name="receipt-upload",
             ),
             path(
-                "receipt/delete/<int:pk>",
+                "receipt/delete/<int:receipt_pk>",
                 views.TransactionReceiptDeleteView.as_view(),
                 name="receipt-delete",
             ),

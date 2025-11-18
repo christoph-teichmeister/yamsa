@@ -13,11 +13,11 @@ from apps.transaction.models import Receipt
 class TransactionReceiptUploadForm(forms.Form):
     receipt = forms.FileField(
         widget=forms.ClearableFileInput(
-            attrs={
-                "class": "d-none",
-                "accept": ".pdf,image/png,image/jpeg,image/webp,image/gif",
-            }
-        ),
+                attrs={
+                    "class": "d-none",
+                    "accept": "application/pdf,image/png,image/jpeg,image/webp,image/gif",
+                }
+            ),
         required=True,
         help_text="Upload a PDF or image (max 5 MB).",
     )

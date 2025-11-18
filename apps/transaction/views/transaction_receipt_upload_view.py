@@ -15,13 +15,13 @@ from apps.transaction.views.mixins.transaction_base_context import TransactionBa
 class TransactionReceiptUploadView(TransactionBaseContext, generic.TemplateView):
     template_name = "transaction/partials/_receipts_section.html"
 
-    def post(self, request, room_slug, pk):
+    def post(self, request, room_slug, transaction_pk):
         if request.room.status == Room.StatusChoices.CLOSED:
             return HttpResponseForbidden("Cannot upload receipts to a closed room.")
 
         parent_transaction = get_object_or_404(
             ParentTransaction.objects.select_related("paid_by", "currency", "category"),
-            pk=pk,
+            pk=transaction_pk,
             room=request.room,
         )
 

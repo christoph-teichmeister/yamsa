@@ -5,6 +5,7 @@ from ambient_toolbox.models import CommonInfo
 from django.db import models
 from django.db.models.aggregates import Sum
 from django.utils.timezone import now
+from django.utils.text import slugify
 
 from apps.account.models import User
 from apps.core.models.mixins import FullCleanOnSaveMixin
@@ -98,7 +99,7 @@ def receipt_upload_path(instance, filename):
     room_id = instance.parent_transaction.room_id
 
     base_name, extension = os.path.splitext(os.path.basename(filename))
-    safe_name = base_name or "file"
+    safe_name = slugify(base_name) or "file"
     extension = extension.lstrip(".")
     unique_id = uuid.uuid4().hex
     final_name = f"{unique_id}.{safe_name}.{extension}" if extension else f"{unique_id}.{safe_name}"

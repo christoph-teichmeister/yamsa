@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from types import MappingProxyType
 
-TOAST_TYPE_CLASSES: Mapping[str, str] = {
+TOAST_TYPE_CLASSES: Mapping[str, str] = MappingProxyType({
     "info": "text-bg-primary bg-gradient",
     "success": "text-bg-success bg-gradient",
     "warning": "text-bg-warning bg-gradient",
     "error": "text-bg-danger bg-gradient",
-}
+})
 
 INFO_TOAST_CLASS = TOAST_TYPE_CLASSES["info"]
 SUCCESS_TOAST_CLASS = TOAST_TYPE_CLASSES["success"]

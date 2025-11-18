@@ -31,7 +31,7 @@ class TransactionCreateForm(forms.ModelForm):
         required=False,
     )
     receipts = forms.FileField(
-        widget=forms.ClearableFileInput(),
+        widget=forms.ClearableFileInput(attrs={"multiple": True}),
         required=False,
         help_text="Upload PNG/JPEG/WebP/GIF images or PDFs (max 5 MB each).",
     )
@@ -69,8 +69,10 @@ class TransactionCreateForm(forms.ModelForm):
                 content_type = "application/octet-stream"
             uploaded_file.content_type = content_type
 
+            file_errors = []
+
             if content_type not in RECEIPT_ACCEPTED_CONTENT_TYPES:
-                errors.append(
+                file_errors.append(
                     forms.ValidationError(
                         "Receipts must be PDF or an image (PNG, JPEG, WebP, GIF).",
                         code="invalid_content_type",
@@ -78,9 +80,12 @@ class TransactionCreateForm(forms.ModelForm):
                 )
 
             if uploaded_file.size > MAX_RECEIPT_SIZE:
-                errors.append(forms.ValidationError("Each receipt must be 5 MB or smaller.", code="file_too_large"))
+                file_errors.append(forms.ValidationError("Each receipt must be 5 MB or smaller.", code="file_too_large"))
 
-            cleaned_files.append(uploaded_file)
+            if file_errors:
+                errors.extend(file_errors)
+            else:
+                cleaned_files.append(uploaded_file)
 
         if errors:
             raise forms.ValidationError(errors)

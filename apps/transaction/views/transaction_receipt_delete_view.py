@@ -13,10 +13,10 @@ from apps.transaction.views.mixins.transaction_base_context import TransactionBa
 class TransactionReceiptDeleteView(TransactionBaseContext, generic.TemplateView):
     template_name = "transaction/partials/_receipts_section.html"
 
-    def post(self, request, room_slug, pk):
+    def post(self, request, room_slug, receipt_pk):
         receipt = get_object_or_404(
             Receipt.objects.select_related("uploaded_by", "parent_transaction__room"),
-            pk=pk,
+            pk=receipt_pk,
             parent_transaction__room=request.room,
         )
 

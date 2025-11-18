@@ -28,7 +28,7 @@ class TransactionDetailView(TransactionBaseContext, generic.DetailView):
     @context
     @cached_property
     def receipts(self):
-        return self.object.receipts.select_related("uploaded_by").all()
+        return self.object.receipts.all()
 
     @context
     def receipt_upload_form(self):
