@@ -1,7 +1,17 @@
 language: en-US
+
 tone_instructions: >
   Keep feedback concise, prioritize regressions or user-impacting issues,
   and call out missing tests or migrations when they matter.
+
+trigger:
+  pull_request: true
+  push: false
+  issue_comment: false
+  rebase: false
+
+limits:
+  max_reviews_per_pr: 1
 
 reviews:
   profile: assertive
@@ -13,6 +23,7 @@ reviews:
   collapse_walkthrough: true
   auto_review:
     enabled: true
+    auto_incremental_review: false
     drafts: false
     ignore_title_keywords:
       - WIP
