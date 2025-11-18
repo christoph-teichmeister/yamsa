@@ -135,7 +135,7 @@ class TransactionReceiptDeleteViewTest(TransactionReceiptViewBaseTest):
         receipt = self._create_receipt(parent_transaction, self.guest_user)
 
         response = client.post(
-            reverse("transaction:receipt-delete", kwargs={"room_slug": self.room.slug, "pk": receipt.id})
+            reverse("transaction:receipt-delete", kwargs={"room_slug": self.room.slug, "receipt_pk": receipt.id})
         )
 
         self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
