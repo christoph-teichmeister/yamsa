@@ -53,7 +53,7 @@ class TransactionReceiptUploadViewTest(TransactionReceiptViewBaseTest):
         )
 
         response = client.post(
-            reverse("transaction:receipt-upload", kwargs={"room_slug": self.room.slug, "pk": parent_transaction.id}),
+            reverse("transaction:receipt-upload", kwargs={"room_slug": self.room.slug, "transaction_pk": parent_transaction.id}),
             data={"receipt": receipt_file},
         )
 
@@ -79,7 +79,7 @@ class TransactionReceiptUploadViewTest(TransactionReceiptViewBaseTest):
         )
 
         response = client.post(
-            reverse("transaction:receipt-upload", kwargs={"room_slug": self.room.slug, "pk": parent_transaction.id}),
+            reverse("transaction:receipt-upload", kwargs={"room_slug": self.room.slug, "transaction_pk": parent_transaction.id}),
             data={"receipt": invalid_file},
         )
 
@@ -113,7 +113,7 @@ class TransactionReceiptDeleteViewTest(TransactionReceiptViewBaseTest):
         receipt = self._create_receipt(parent_transaction, self.user)
 
         response = client.post(
-            reverse("transaction:receipt-delete", kwargs={"room_slug": self.room.slug, "pk": receipt.id})
+            reverse("transaction:receipt-delete", kwargs={"room_slug": self.room.slug, "receipt_pk": receipt.id})
         )
 
         self.assertEqual(response.status_code, HTTPStatus.OK)

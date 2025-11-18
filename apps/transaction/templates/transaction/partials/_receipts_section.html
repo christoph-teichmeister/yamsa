@@ -15,7 +15,7 @@
                         <div class="col">
                             <article class="card h-100 rounded-4 border-0 shadow-sm overflow-hidden position-relative">
                                 {% if receipt.uploaded_by_id == request.user.id %}
-                                    <form hx-post="{% room_url 'transaction:receipt-delete' pk=receipt.id %}"
+                                    <form hx-post="{% room_url 'transaction:receipt-delete' receipt_pk=receipt.id %}"
                                           hx-target="#transaction-receipts-section"
                                           hx-swap="outerHTML"
                                           hx-indicator="#body-loading-spinner"
@@ -76,7 +76,7 @@
             {% else %}
                 {% with receipt_field=receipt_upload_form.receipt %}
                     {% with receipt_input_id=receipt_field.id_for_label %}
-                        <form hx-post="{% room_url 'transaction:receipt-upload' pk=parent_transaction.id %}"
+                        <form hx-post="{% room_url 'transaction:receipt-upload' transaction_pk=parent_transaction.id %}"
                               hx-target="#transaction-receipts-section"
                               hx-swap="outerHTML"
                               hx-indicator="#body-loading-spinner"
