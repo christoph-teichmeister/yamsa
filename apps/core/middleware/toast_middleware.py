@@ -28,10 +28,7 @@ class ToastMiddleware:
         return response
 
     def _inject_context(self, response: HttpResponse, queued_toasts: list[dict[str, str]]) -> None:
-        if not hasattr(response, "context_data"):
-            return
-
-        context_data = getattr(response, "context_data") or {}
+        context_data = getattr(response, "context_data", {}) or {}
         context = dict(context_data)
         queued = context.get("queued_toasts")
         if queued:

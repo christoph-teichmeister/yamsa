@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
 
 from apps.core.toast_constants import (
     ERROR_TOAST_CLASS,
