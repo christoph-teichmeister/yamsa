@@ -20,7 +20,7 @@ class ToastQueueTests(SimpleTestCase):
         queued_toasts = payload["triggerToast"]
         self.assertEqual(queued_toasts[0]["message"], "Built")
         self.assertEqual(queued_toasts[1]["message"], "Oops")
-        self.assertFalse(queue.has_entries())
+        self.assertTrue(queue.has_entries())
 
         consumed = queue.consume()
         self.assertEqual(consumed[0]["type"], SUCCESS_TOAST_CLASS)

@@ -23,6 +23,7 @@ class BaseTestSetUp(TestCase):
     @classmethod
     def reauthenticate_user(cls, user: User) -> Client:
         cls.client = Client()
+        cls.client.defaults["HTTP_HX_REQUEST"] = "true"
         # Create a request object for django-axes
         request = RequestFactory().get("/")
 
