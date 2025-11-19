@@ -99,3 +99,67 @@ jobs:
         env:
           DJANGO_DEBUG: 'False'
         run: uv run python manage.py validate_test_structure
+
+  check-translation-file-integrity:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pipenv && pipenv install --system --deploy
+
+      - name: Install gettext
+        run: sudo apt-get install -y gettext  # Install gettext tools
+
+      - name: Check for fuzzy translations
+        run: grep -q "#, fuzzy" ./apps/locale/de/LC_MESSAGES/django.po && exit 1 || echo "No fuzzy translations found."
+
+      - name: Check for left-over translations
+        run: grep -q "#~" ./apps/locale/de/LC_MESSAGES/django.po && exit 1 || echo "No left-over translations found."
+
+      - name: Create temp copy of locale folder
+        run: cp -r apps/locale apps/temp_locale
+
+      - name: Run 'makemessages' and check for new translations
+        env:
+          DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
+          DJANGO_DEBUG: 'False'
+        run: python manage.py create_translation_file --lang de
+
+      - name: Check for differences in translation file
+        run: git diff --no-index --ignore-matching-lines=POT-Creation-Date --ignore-matching-lines=# --exit-code apps/locale/ apps/temp_locale/
+
+      - name: Delete temp folder
+        run: rm -r apps/temp_locale/
+
+      - name: Check if all translation strings are translated
+        run: msgattrib --untranslated ./apps/locale/de/LC_MESSAGES/django.po | exit `wc -c`
+
+  test-compilemessages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pipenv && pipenv install --system --deploy
+
+      - name: Install gettext
+        run: sudo apt-get install -y gettext  # Install gettext tools
+
+      - name: Run compilemessages
+        env:
+          DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
+          DJANGO_DEBUG: 'False'
+        run: python manage.py compilemessages
