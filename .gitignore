@@ -17,3 +17,7 @@ yamsa_db_test
 
 apps/staticfiles
 staticfiles
+
+# Translations
+*.mo
+*.pot
