@@ -10,19 +10,15 @@ and `entrypoint.sh`. Documentation, including AI prompt history, lives in `docs/
 
 ## Build, Test, and Development Commands
 
-- All Django/manage.py invocations must run inside the `yamsa_backend` Docker container (e.g.
-  `docker exec yamsa_backend python manage.py <cmd>`) because the host environment lacks the necessary dependencies.
-  Agents should feel free to execute any needed commands inside the containers without repeatedly asking for
-  confirmation.
+- All Django/manage.py invocations must run inside the local `uv shell` (e.g. start it via `uv shell` and then run
+  `python manage.py <cmd>`) so you benefit from the pinned Python 3.12 environment. Agents are always allowed to open the
+  uv shell and run commands there without asking for extra permission; no Docker-based workflows are required.
 - `uv sync --all-extras --no-install-project` - install Python 3.12 dependencies including tooling.
 - `uv run python manage.py migrate` - apply schema changes before running the app.
 - `uv run python manage.py runserver 0.0.0.0:8000` - local dev server with HTMX/Bootstrap UI.
 - `uv run python manage.py test` - execute Django test suite under the default settings module.
-- `docker exec yamsa_backend python manage.py test apps` - run the full suite inside the backend container (host Pipenv
-  Python lacks `_sqlite3`, so containerized Python 3.11 is required for reliable test runs).
 - `uv run coverage run manage.py test && uv run coverage report` - generate coverage (config in
   `pyproject.toml`).
-- `docker-compose up --build` - parity environment that mirrors the production container image.
 
 ## Coding Style & Naming Conventions
 
