@@ -27,11 +27,6 @@ CONFIG_DIR = Path(__file__).resolve().parent
 APPS_DIR = CONFIG_DIR.parent
 BASE_DIR = APPS_DIR.parent
 
-# Directories skipped by validators such as `validate_test_structure`.
-TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST = [
-    ".venv",
-]
-
 env = environ.Env(
     DJANGO_ADMIN_URL=(str, "admin"),
     DJANGO_ALLOWED_HOSTS=(list, ["127.0.0.1", "localhost"]),
@@ -836,6 +831,11 @@ PWA_SERVICE_WORKER_DEBUG = DEBUG
 # Test structure validator whitelist
 # https://ambient-toolbox.readthedocs.io/en/latest/features/tests.html#test-structure-validator
 TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = ["baker_recipes", "setup"]
+
+# Directories skipped by validators such as `validate_test_structure`.
+TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST = [
+    ".venv",
+]
 
 # WEBPUSH
 # ------------------------------------------------------------------------------
