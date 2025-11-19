@@ -44,6 +44,9 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["apps*", "render_sh_scripts*"]
+
 [tool.coverage.run]
 branch = true
 # do not test these things
