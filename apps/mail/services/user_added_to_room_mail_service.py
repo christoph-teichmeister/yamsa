@@ -19,8 +19,7 @@ class UserAddedToRoomEmailService(BaseYamsaEmailService):
     def get_email_user_text_context(self):
         return EmailUserTextContext(
             text_list=[
-                _("You have been invited to %(room_name)s to join your friends")
-                % {"room_name": self.new_room.name}
+                _("You have been invited to %(room_name)s to join your friends") % {"room_name": self.new_room.name}
                 + " 🥳",
                 _("Click the button below to view the room!"),
             ]

@@ -1,16 +1,16 @@
 {% load static %}
 {% load pwa_tags %}
 {% load i18n %}
+{% trans "yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications." as yamsa_meta_description %}
+{% trans "yamsa, shared expenses, roommate app, bill splitting, dashboards" as yamsa_meta_keywords %}
 <!DOCTYPE html>
 <html lang="{{ request.LANGUAGE_CODE|default:'en' }}" data-bs-theme="dark">
     <head>
         <meta charset="utf-8">
         <meta name="viewport"
               content="width=device-width, initial-scale=1, viewport-fit=cover">
-        <meta name="description"
-              content="{% trans 'yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications.' %}">
-        <meta name="keywords"
-              content="{% trans 'yamsa, shared expenses, roommate app, bill splitting, dashboards' %}">
+        <meta name="description" content="{{ yamsa_meta_description }}">
+        <meta name="keywords" content="{{ yamsa_meta_keywords }}">
         <title>
             {% if core.DEBUG %}⚒️{% endif %}
             {% block title %}

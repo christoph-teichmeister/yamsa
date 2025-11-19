@@ -1,10 +1,11 @@
 <article id="news-{{ news.id }}"
          class="timeline-event {% if news.highlighted %}timeline-event-highlight{% endif %}">
-{% load i18n %}
-{% if news.deeplink %}
+    {% load i18n %}
+    {% trans "Open related update" as news_open_label %}
+    {% if news.deeplink %}
         <a href="{{ news.deeplink }}"
            class="timeline-card-link"
-           aria-label="{% trans 'Open related update' %}">
+           aria-label="{{ news_open_label }}">
             <div class="timeline-card timeline-card-interactive">
                 <div class="timeline-card-meta mb-2">
                     <span class="timeline-card-pill">
@@ -25,14 +26,14 @@
         </a>
     {% else %}
         <div class="timeline-card timeline-card-disabled">
-                <div class="timeline-card-meta mb-2">
-                    <span class="timeline-card-pill">
-                        {% if news.highlighted %}
-                            ✨
-                        {% else %}
-                            {% trans "Update" %}
-                        {% endif %}
-                    </span>
+            <div class="timeline-card-meta mb-2">
+                <span class="timeline-card-pill">
+                    {% if news.highlighted %}
+                        ✨
+                    {% else %}
+                        {% trans "Update" %}
+                    {% endif %}
+                </span>
                 <span>{{ news.created_at|date:"d.m.Y • H:i" }}</span>
                 <span>{{ news.created_at|timesince }} ago</span>
             </div>

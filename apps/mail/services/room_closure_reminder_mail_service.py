@@ -21,9 +21,7 @@ class RoomClosureReminderEmailService(BaseYamsaEmailService):
         self.room_name = room_name
         self.inactivity_days = inactivity_days
         self.room_link = room_link
-        self.subject = (
-            _("%(room_name)s | Room still open?") % {"room_name": self.room_name}
-        ) + " 🌱"
+        self.subject = (_("%(room_name)s | Room still open?") % {"room_name": self.room_name}) + " 🌱"
         super().__init__(recipient=recipient)
 
     def get_email_user_text_context(self):
@@ -36,12 +34,11 @@ class RoomClosureReminderEmailService(BaseYamsaEmailService):
                 }
                 + " 🌙",
                 _(
-                    "If everyone already settled up, please mark the debts as paid and close the room so it stops lingering."
+                    "If everyone already settled up, please mark the debts as paid "
+                    "and close the room so it stops lingering."
                 )
                 + " ✨",
-                _(
-                    "If you still need the room, feel free to ignore this reminder and keep it open."
-                ),
+                _("If you still need the room, feel free to ignore this reminder and keep it open."),
             ]
         )
 

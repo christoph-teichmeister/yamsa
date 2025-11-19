@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
 from django.conf import settings
-from django_pony_express.services.base import BaseEmailService
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
+from django_pony_express.services.base import BaseEmailService
 
 from apps.account.models import User
 

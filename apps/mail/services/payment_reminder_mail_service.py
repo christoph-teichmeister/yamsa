@@ -22,27 +22,22 @@ class PaymentReminderEmailService(BaseYamsaEmailService):
         self.amount_summary = amount_summary
         self.inactivity_days = inactivity_days
         self.payment_link = payment_link
-        self.subject = (
-            _("%(room_name)s | Payment reminder") % {"room_name": self.room_name}
-        ) + " ⚡"
+        self.subject = (_("%(room_name)s | Payment reminder") % {"room_name": self.room_name}) + " ⚡"
         super().__init__(recipient=recipient)
 
     def get_email_user_text_context(self):
         return EmailUserTextContext(
             text_list=[
-                _(
-                    "Hey there! It has been %(inactivity_days)d days since any activity in %(room_name)s."
-                )
+                _("Hey there! It has been %(inactivity_days)d days since any activity in %(room_name)s.")
                 % {
                     "inactivity_days": self.inactivity_days,
                     "room_name": self.room_name,
                 },
-                _("You currently owe %(amount_summary)s.") % {
+                _("You currently owe %(amount_summary)s.")
+                % {
                     "amount_summary": self.amount_summary,
                 },
-                _(
-                    "Please follow the link below to review and settle the outstanding balance before it grows stale."
-                )
+                _("Please follow the link below to review and settle the outstanding balance before it grows stale.")
                 + " 🕰️",
             ]
         )

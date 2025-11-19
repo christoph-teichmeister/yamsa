@@ -101,19 +101,18 @@
     }
 </style>
 <div class="member-form-wrap">
-        {% if back_url %}
-            <button type="button"
-                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1"
-                    hx-get="{{ back_url }}"
-                    hx-target="#body"
-                    hx-indicator="#body-loading-spinner"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true">
-                <i class="bi bi-arrow-left"></i>
-                {{ back_label|default:_("Back") }}
-            </button>
-        {% endif %}
-    </div>
+    {% if back_url %}
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1"
+                hx-get="{{ back_url }}"
+                hx-target="#body"
+                hx-indicator="#body-loading-spinner"
+                hx-swap="morph:innerHTML"
+                hx-push-url="true">
+            <i class="bi bi-arrow-left"></i>
+            {{ back_label|default:_("Back") }}
+        </button>
+    {% endif %}
     <div class="member-hero-card mb-4">
         <div class="d-flex justify-content-between flex-wrap gap-3">
             <div>
@@ -169,7 +168,9 @@
             </button>
         </div>
         {% if submit_disabled %}
-            <div class="member-helper text-danger fw-semibold mt-2">{% trans "This room is closed, so new members cannot be added." %}</div>
+            <div class="member-helper text-danger fw-semibold mt-2">
+                {% trans "This room is closed, so new members cannot be added." %}
+            </div>
         {% endif %}
     </form>
 </div>

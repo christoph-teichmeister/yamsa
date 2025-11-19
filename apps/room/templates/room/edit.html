@@ -2,13 +2,16 @@
 {% load static %}
 {% load room_tags %}
 {% load i18n %}
+{% trans "Back to room" as edit_back_label %}
+{% trans "Save room details" as edit_save_label %}
+{% trans "Close" as edit_close_label %}
 {% block tab_content %}
     <section class="container-fluid px-2 px-md-4 px-lg-5 py-4">
         <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
-                <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-3">
                 <i class="bi bi-arrow-left-circle fs-2 cursor-pointer text-primary"
                    role="button"
-                   aria-label="{% trans 'Back to room' %}"
+                   aria-label="{{ edit_back_label }}"
                    hx-trigger="click"
                    hx-get="{% room_url 'room:detail' %}"
                    hx-target="#body"
@@ -17,14 +20,18 @@
                    hx-push-url="true"></i>
                 <div>
                     <p class="text-muted small mb-1">{% trans "Room settings" %}</p>
-                    <h3 class="fw-semibold mb-0">{% blocktrans trimmed %}Edit "{{ current_room.name }}"{% endblocktrans %}</h3>
+                    <h3 class="fw-semibold mb-0">
+                        {% blocktrans trimmed %}
+                            Edit "{{ current_room.name }}"
+                        {% endblocktrans %}
+                    </h3>
                 </div>
             </div>
             {% if current_room.is_open %}
                 <button type="submit"
                         form="room-details-form"
                         class="btn btn-primary btn-sm px-4 py-2 d-inline-flex align-items-center gap-1"
-                        aria-label="{% trans 'Save room details' %}">
+                        aria-label="{{ edit_save_label }}">
                     <i class="bi bi-save"></i>
                     {% trans "Save" %}
                 </button>
@@ -37,7 +44,9 @@
                         <div class="d-flex flex-column gap-1 mb-3">
                             <p class="text-muted small mb-0">{% trans "Basics" %}</p>
                             <h5 class="fw-semibold mb-0">{% trans "Name, description & currency" %}</h5>
-                            {% if form.errors %}<small class="text-danger">{% trans "Please fix the highlighted errors in the form." %}</small>{% endif %}
+                            {% if form.errors %}
+                                <small class="text-danger">{% trans "Please fix the highlighted errors in the form." %}</small>
+                            {% endif %}
                         </div>
                         <form id="room-details-form"
                               class="row g-3"
@@ -179,7 +188,7 @@
                             <button type="button"
                                     class="btn-close"
                                     data-bs-dismiss="modal"
-                                    aria-label="{% trans 'Close' %}"></button>
+                                    aria-label="{{ edit_close_label }}"></button>
                         </div>
                         <div class="modal-body">
                             <p class="mb-2">
