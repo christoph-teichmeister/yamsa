@@ -1,5 +1,6 @@
 {% load room_tags %}
 {% load i18n %}
+{% trans "Remove from room" as remove_from_room_label %}
 <div class="col">
     <article class="people-card {% if not user.is_guest %}people-card--interactive{% endif %}"
              {% if not user.is_guest %} hx-trigger="click" hx-get="{% url 'account:detail' pk=user.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" hx-sync=".people-remove-action:abort" {% endif %}>
@@ -7,7 +8,8 @@
             <div class="people-avatar">
                 {% with avatar_source=user.name|default:user.email %}
                     {% if user.profile_picture %}
-                        <img src="{{ user.profile_picture.url }}"
+                        <img src="{{ user.profile_picture_url }}"
+                             onerror="this.onerror=null;this.src='{{ user.profile_picture_fallback_url }}';"
                              alt="{{ user.name }}"
                              class="w-100 h-100 object-fit-cover rounded-3"
                              loading="lazy"
@@ -39,16 +41,21 @@
                             </span>
                         </div>
                     </div>
+                    {% if user.id == request.user.id %}
+                        {% trans "Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!" as remove_confirm_message %}
+                    {% else %}
+                        {% trans "Are you sure you wish to remove this user from this room?" as remove_confirm_message %}
+                    {% endif %}
                     <button class="people-remove-btn people-remove-action"
                             type="button"
-                            title="{% trans 'Remove from room' %}"
+                            title="{{ remove_from_room_label }}"
                             onclick="event.stopPropagation();"
                             hx-post="{% room_url 'account:remove-from-room' pk=user.id %}"
                             hx-include="[name='csrfmiddlewaretoken']"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
                             hx-swap="innerHTML"
-                            hx-confirm="{% if user.id == request.user.id %}{% trans 'Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!' %}{% else %}{% trans 'Are you sure you wish to remove this user from this room?' %}{% endif %}">
+                            hx-confirm="{{ remove_confirm_message }}">
                         <i class="bi bi-x-octagon"></i>
                     </button>
                 </div>

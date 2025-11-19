@@ -5,14 +5,13 @@ from time import time
 
 from ambient_toolbox.mixins.validation import CleanOnSaveMixin
 from ambient_toolbox.models import CommonInfo
+from django.conf import settings
 from django.contrib.auth import hashers
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
-
-from django.conf import settings
 
 from apps.account.managers import UserManager
 from apps.core.utils import determine_upload_to
@@ -33,6 +32,33 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ("name",)
 
     UPLOAD_FOLDER_NAME = "profile_picture"
+    PROFILE_PICTURE_FALLBACK_PATH = "img/profile-default.svg"
+
+    def _build_fallback_profile_picture_url(self) -> str:
+        static_url = settings.STATIC_URL
+        if not static_url.endswith("/"):
+            static_url = f"{static_url}/"
+        return f"{static_url}{self.PROFILE_PICTURE_FALLBACK_PATH.lstrip('/')}"
+
+    @property
+    def profile_picture_fallback_url(self) -> str:
+        return self._build_fallback_profile_picture_url()
+
+    @property
+    def profile_picture_url(self) -> str:
+        fallback_url = self._build_fallback_profile_picture_url()
+        picture = self.profile_picture
+
+        if not picture or not getattr(picture, "name", None):
+            return fallback_url
+
+        try:
+            if not picture.storage.exists(picture.name):
+                return fallback_url
+
+            return picture.url
+        except Exception:
+            return fallback_url
 
     name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)

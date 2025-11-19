@@ -1,5 +1,4 @@
 {% extends "core/base.html" %}
-{% load static %}
 {% load i18n %}
 {% block content %}
     <section class="container px-2 px-md-4 px-lg-5 account-edit">
@@ -44,7 +43,8 @@
                                              loading="lazy"
                                              width="68"
                                              height="68"
-                                             {% if user.profile_picture %}src="{{ user.profile_picture.url }}"{% endif %}>
+                                             {% if user.profile_picture %}src="{{ user.profile_picture_url }}"{% endif %}
+                                             {% if user.profile_picture %}onerror="this.onerror=null;this.src='{{ user.profile_picture_fallback_url }}';"{% endif %}>
                                         <span id="profile-picture-preview-placeholder"
                                               class="profile-picture-preview-initial fs-3 fw-semibold text-primary-emphasis {% if user.profile_picture %}d-none{% endif %}">
                                             {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
@@ -125,7 +125,10 @@
                                 <label for="id_language" class="form-label fw-semibold">{{ form.fields.language.label }}</label>
                                 <select name="language" id="id_language" class="form-select">
                                     {% for choice_value, choice_label in form.fields.language.choices %}
-                                        <option value="{{ choice_value }}" {% if form.language.value == choice_value %}selected{% endif %}>{{ choice_label }}</option>
+                                        <option value="{{ choice_value }}"
+                                                {% if form.language.value == choice_value %}selected{% endif %}>
+                                            {{ choice_label }}
+                                        </option>
                                     {% endfor %}
                                 </select>
                                 {% for error_message in form.errors.language.data %}

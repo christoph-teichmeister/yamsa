@@ -1,5 +1,4 @@
 {% extends "core/base.html" %}
-{% load static %}
 {% load i18n %}
 {% block content %}
     <section class="container px-2 px-md-4 px-lg-5 account-detail">
@@ -8,9 +7,9 @@
                 <div class="col-12 col-lg-8">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body text-center py-5 px-4 px-md-5">
-                    <div class="mb-4">
-                        <span class="badge bg-warning-subtle text-warning-emphasis text-uppercase fw-semibold">{% trans "Guest Mode" %}</span>
-                    </div>
+                            <div class="mb-4">
+                                <span class="badge bg-warning-subtle text-warning-emphasis text-uppercase fw-semibold">{% trans "Guest Mode" %}</span>
+                            </div>
                             <h2 class="fw-semibold mb-2">
                                 {% blocktrans trimmed %}Hi {{ user.name }}{% endblocktrans %} 👋
                             </h2>
@@ -48,8 +47,9 @@
                             <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-4">
                                 {% with avatar_source=user.name|default:user.email %}
                                     <div class="rounded-circle bg-primary-subtle text-primary-emphasis d-inline-flex align-items-center justify-content-center account-avatar-circle">
-                                        {% if user.profile_picture %}
-                                            <img src="{{ user.profile_picture.url }}"
+                                {% if user.profile_picture %}
+                                            <img src="{{ user.profile_picture_url }}"
+                                                 onerror="this.onerror=null;this.src='{{ user.profile_picture_fallback_url }}';"
                                                  alt="{{ user.name }}"
                                                  class="account-avatar-img rounded-circle w-100 h-100"
                                                  loading="lazy"
@@ -61,19 +61,19 @@
                                     </div>
                                 {% endwith %}
                                 <div class="flex-grow-1">
-                                        <p class="text-uppercase small fw-semibold text-muted mb-1">
-                                            {% if request.user.id == user.id %}
-                                                {% trans "Your account overview" %}
-                                            {% else %}
-                                                {% trans "Member profile" %}
-                                            {% endif %}
-                                        </p>
+                                    <p class="text-uppercase small fw-semibold text-muted mb-1">
+                                        {% if request.user.id == user.id %}
+                                            {% trans "Your account overview" %}
+                                        {% else %}
+                                            {% trans "Member profile" %}
+                                        {% endif %}
+                                    </p>
                                     <h1 class="h3 fw-semibold mb-2">{{ user.name }}</h1>
                                     <p class="text-muted mb-3">{{ user.email }}</p>
-                                        <p class="text-muted small mb-3">
-                                            {% trans "Preferred language" %}:
-                                            {{ user.get_language_display|default:_("Not set") }}
-                                        </p>
+                                    <p class="text-muted small mb-3">
+                                        {% trans "Preferred language" %}:
+                                        {{ user.get_language_display|default:_("Not set") }}
+                                    </p>
                                     <div class="d-flex flex-wrap gap-2">
                                         {% if user.is_superuser %}
                                             <span class="badge text-bg-dark">{% trans "Superuser" %}</span>
@@ -109,27 +109,27 @@
                 </div>
                 <div class="col-12 col-xl-9">
                     <div class="row g-4">
-                            <div class="col-12 col-md-6">
-                                <div class="border rounded-4 h-100 p-4 bg-body-secondary-subtle">
-                                    <p class="text-uppercase small text-muted mb-1">{% trans "Display name" %}</p>
-                                    <p class="fw-semibold mb-0">{{ user.name }}</p>
-                                </div>
-                            </div>
                         <div class="col-12 col-md-6">
-                                <div class="border rounded-4 h-100 p-4">
-                                    <p class="text-uppercase small text-muted mb-1">{% trans "Email address" %}</p>
-                                    <p class="fw-semibold text-break mb-0">{{ user.email }}</p>
-                                </div>
+                            <div class="border rounded-4 h-100 p-4 bg-body-secondary-subtle">
+                                <p class="text-uppercase small text-muted mb-1">{% trans "Display name" %}</p>
+                                <p class="fw-semibold mb-0">{{ user.name }}</p>
                             </div>
-                            <div class="col-12 col-md-6">
-                                <div class="border rounded-4 h-100 p-4">
-                                    <p class="text-uppercase small text-muted mb-1">{% trans "PayPal.me username" %}</p>
-                                    {% if user.paypal_me_username %}
-                                        <p class="fw-semibold mb-0">@{{ user.paypal_me_username }}</p>
-                                    {% else %}
-                                        <p class="text-muted mb-0">{% trans "No PayPal link yet" %}</p>
-                                    {% endif %}
-                                </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="border rounded-4 h-100 p-4">
+                                <p class="text-uppercase small text-muted mb-1">{% trans "Email address" %}</p>
+                                <p class="fw-semibold text-break mb-0">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="border rounded-4 h-100 p-4">
+                                <p class="text-uppercase small text-muted mb-1">{% trans "PayPal.me username" %}</p>
+                                {% if user.paypal_me_username %}
+                                    <p class="fw-semibold mb-0">@{{ user.paypal_me_username }}</p>
+                                {% else %}
+                                    <p class="text-muted mb-0">{% trans "No PayPal link yet" %}</p>
+                                {% endif %}
+                            </div>
                         </div>
                         {% if request.user == user %}
                             <div class="col-12 col-md-6">
