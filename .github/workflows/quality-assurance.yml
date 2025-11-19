@@ -109,10 +109,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.11'
 
-      - name: Install dependencies
-        run: pip install pipenv && pipenv install --system --deploy
+      - name: Install uv runtime tooling
+        run: python -m pip install --upgrade pip uv
+
+      - name: Sync dependencies
+        run: uv sync --all-extras --no-install-project
 
       - name: Install gettext
         run: sudo apt-get install -y gettext  # Install gettext tools
@@ -130,7 +133,7 @@ jobs:
         env:
           DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
           DJANGO_DEBUG: 'False'
-        run: python manage.py create_translation_file --lang de
+        run: uv run python manage.py create_translation_file --lang de
 
       - name: Check for differences in translation file
         run: git diff --no-index --ignore-matching-lines=POT-Creation-Date --ignore-matching-lines=# --exit-code apps/locale/ apps/temp_locale/
@@ -150,10 +153,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.11'
 
-      - name: Install dependencies
-        run: pip install pipenv && pipenv install --system --deploy
+      - name: Install uv runtime tooling
+        run: python -m pip install --upgrade pip uv
+
+      - name: Sync dependencies
+        run: uv sync --all-extras --no-install-project
 
       - name: Install gettext
         run: sudo apt-get install -y gettext  # Install gettext tools
@@ -162,4 +168,4 @@ jobs:
         env:
           DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
           DJANGO_DEBUG: 'False'
-        run: python manage.py compilemessages
+        run: uv run python manage.py compilemessages
