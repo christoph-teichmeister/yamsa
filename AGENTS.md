@@ -14,21 +14,21 @@ and `entrypoint.sh`. Documentation, including AI prompt history, lives in `docs/
   `docker exec yamsa_backend python manage.py <cmd>`) because the host environment lacks the necessary dependencies.
   Agents should feel free to execute any needed commands inside the containers without repeatedly asking for
   confirmation.
-- `pipenv install --dev` - install Python 3.12 dependencies including tooling.
-- `pipenv run python manage.py migrate` - apply schema changes before running the app.
-- `pipenv run python manage.py runserver 0.0.0.0:8000` - local dev server with HTMX/Bootstrap UI.
-- `pipenv run python manage.py test` - execute Django test suite under the default settings module.
+- `uv sync --all-extras --no-install-project` - install Python 3.12 dependencies including tooling.
+- `uv run python manage.py migrate` - apply schema changes before running the app.
+- `uv run python manage.py runserver 0.0.0.0:8000` - local dev server with HTMX/Bootstrap UI.
+- `uv run python manage.py test` - execute Django test suite under the default settings module.
 - `docker exec yamsa_backend python manage.py test apps` - run the full suite inside the backend container (host Pipenv
   Python lacks `_sqlite3`, so containerized Python 3.11 is required for reliable test runs).
-- `pipenv run coverage run manage.py test && pipenv run coverage report` - generate coverage (config in
+- `uv run coverage run manage.py test && uv run coverage report` - generate coverage (config in
   `pyproject.toml`).
 - `docker-compose up --build` - parity environment that mirrors the production container image.
 
 ## Coding Style & Naming Conventions
 
 Follow Python’s 4-space indentation and keep modules typed where practical. Use `snake_case` for functions, `PascalCase`
-for classes, and `SCREAMING_SNAKE_CASE` for settings. Run `pipenv run ruff check --fix .` before committing; it handles
-import order, linting, and selected auto-fixes. Templates must pass `pipenv run djlint apps --reformat`; lean on
+for classes, and `SCREAMING_SNAKE_CASE` for settings. Run `uv run ruff check --fix .` before committing; it handles
+import order, linting, and selected auto-fixes. Templates must pass `uv run djlint apps --reformat`; lean on
 Bootstrap 5 utility classes (`d-flex`, `px-2`, `gap-2`, etc.) and HTMX attributes instead of custom CSS whenever
 possible. Keep static JS modular inside `static/js/` and co-locate SCSS/CSS with the component it styles. **Edit
 canonical static assets under `apps/static/…` (e.g., `apps/static/js/navigation.js`) and let hashed copies
