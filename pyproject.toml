@@ -3,7 +3,7 @@ name = "yamsa"
 version = "0.1.0"
 description = "Yet another money split app"
 readme = "README.md"
-requires-python = ">=3.11,<3.12"
+requires-python = ">=3.13,<3.14"
 dependencies = [
     "ambient-toolbox==12.*",
     "django[argon2]==5.*",
@@ -129,8 +129,8 @@ line-length = 120
 
 fix = true
 
-# Assume Python 3.11.
-target-version = "py311"  # Fixed version from onrender.com (If you change this, also change it in the Dockerfile!)
+# Assume Python 3.13.
+target-version = "py313"  # Fixed version from onrender.com (If you change this, also change it in the Dockerfile!)
 
 [tool.ruff.lint]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
