@@ -1,4 +1,5 @@
 {% load room_tags %}
+{% load i18n %}
 <nav class="navbar fixed-top pt-4">
     <div class="container-fluid pt-4 justify-content-center"
          id="offcanvasContainer">
@@ -9,7 +10,7 @@
                         data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasNavbar"
                         aria-controls="offcanvasNavbar"
-                        aria-label="Toggle navigation">
+                        aria-label="{% trans 'Toggle navigation' %}">
                     <i class="bi bi-list"></i>
                 </button>
             </div>
@@ -31,7 +32,7 @@
                                 data-copy-share-url="true"
                                 data-share-url="{{ request.build_absolute_uri }}"
                                 data-bs-toggle="tooltip"
-                                data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
+                                data-bs-title="{% trans 'Copy the rooms URL to your clipboard to send it to your friends' %}"
                                 hx-get="{% url 'room:htmx-checked-clipboard' %}"
                                 hx-swap="morph:innerHTML">
                             {% include "shared_partials/clipboard_icon_unchecked.html" %}
@@ -56,7 +57,7 @@
              tabindex="-1"
              id="offcanvasNavbar">
             <div class="offcanvas-header mt-4 pt-4">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">{% trans "Menu" %}</h5>
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="offcanvas"
@@ -76,6 +77,29 @@
                         <i class="bi bi-moon-fill"></i>
                     </button>
                 </div>
+                <div class="d-flex flex-column gap-2">
+                    <p class="text-uppercase small text-muted mb-1">{% trans "Language" %}</p>
+                    <form method="post"
+                          hx-post="{% url 'set_language' %}"
+                          hx-target="#body"
+                          hx-indicator="#body-loading-spinner"
+                          hx-swap="morph:innerHTML"
+                          hx-push-url="true">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path|default:'/' }}">
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for code, name in core.LANGUAGES %}
+                                <button type="submit"
+                                        name="language"
+                                        value="{{ code }}"
+                                        class="btn btn-sm flex-grow-1 text-center {% if request.LANGUAGE_CODE == code %}btn-primary{% else %}btn-outline-primary{% endif %}"
+                                        aria-pressed="{% if request.LANGUAGE_CODE == code %}true{% else %}false{% endif %}">
+                                    {{ name }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    </form>
+                </div>
                 <div class="card shadow-sm border-0 room-card text-center">
                     <div class="card-body py-3">
                         {% with sidebar_avatar_source=request.user.name|default:request.user.email %}
@@ -93,16 +117,16 @@
                         {% endwith %}
                         <div class="fw-semibold">
                             {% if request.user.is_anonymous %}
-                                Profile
+                                {% trans "Profile" %}
                             {% else %}
                                 {{ request.user.name }}
                             {% endif %}
                         </div>
                         <div class="text-muted small">
                             {% if request.user.is_anonymous %}
-                                Log in to access rooms
+                                {% trans "Log in to access rooms" %}
                             {% else %}
-                                Manage rooms and transactions
+                                {% trans "Manage rooms and transactions" %}
                             {% endif %}
                         </div>
                         <button type="button"
@@ -117,9 +141,9 @@
                                 hx-swap="innerHTML"
                                 hx-push-url="true">
                             {% if request.user.is_anonymous %}
-                                Sign in
+                                {% trans "Sign in" %}
                             {% else %}
-                                View profile
+                                {% trans "View profile" %}
                             {% endif %}
                         </button>
                     </div>
@@ -137,22 +161,22 @@
                         <i class="bi bi-house"></i>
                     </div>
                     <div class="flex-grow-1 text-start">
-                        <div class="room-name fw-semibold mb-0">Home</div>
-                        <small class="room-description text-muted">Back to home</small>
+                        <div class="room-name fw-semibold mb-0">{% trans "Home" %}</div>
+                        <small class="room-description text-muted">{% trans "Back to home" %}</small>
                     </div>
-                    <span class="badge bg-light text-dark room-status-badge">Start</span>
+                    <span class="badge bg-light text-dark room-status-badge">{% trans "Start" %}</span>
                 </div>
                 {% include "_side_menu_room_list.html" %}
-                <div class="mt-auto">
-                    <button type="button"
-                            class="btn btn-primary w-100"
-                            hx-trigger="click"
-                            hx-get="{% url 'account:logout' %}"
-                            hx-target="#body"
-                            hx-indicator="#body-loading-spinner"
-                            hx-swap="morph:innerHTML"
-                            hx-push-url="true">Log out</button>
-                </div>
+                    <div class="mt-auto">
+                        <button type="button"
+                                class="btn btn-primary w-100"
+                                hx-trigger="click"
+                                hx-get="{% url 'account:logout' %}"
+                                hx-target="#body"
+                                hx-indicator="#body-loading-spinner"
+                                hx-swap="morph:innerHTML"
+                                hx-push-url="true">{% trans "Log out" %}</button>
+                    </div>
             </div>
         </div>
     </div>

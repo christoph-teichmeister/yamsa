@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 
+from django.conf import settings
 from django_pony_express.services.base import BaseEmailService
+from django.utils import translation
+from django.utils.translation import gettext_lazy as _
 
 from apps.account.models import User
 
@@ -12,14 +15,14 @@ class EmailBaseTextContext:
     header: str = "yamsa"
     # footer: str = "Your yamsa team"
     footer: str = ""
-    sub_footer: str = "yamsa | Yet another money split app"
+    sub_footer: str = _("yamsa | Yet another money split app")
     preheader_text: str = ""
     footer_disclaimer: str = ""
 
 
 @dataclass
 class EmailUserTextContext:
-    greeting_prefix: str = "Hey"
+    greeting_prefix: str = _("Hey")
     greeting_suffix: str = "👋"
 
     user: User = None
@@ -59,15 +62,29 @@ class BaseYamsaEmailService(BaseEmailService):
         return self.email_base_text_context.SUBJECT_PREFIX + self.subject
 
     def get_context_data(self) -> dict:
-        return {
-            "context": {
-                "subject": self.get_subject(),
-                "greeting": self.get_greeting(),
-                **self.get_email_base_text_context().__dict__,
-                **self.get_email_user_text_context().__dict__,
-                **self.get_email_extra_context().__dict__,
+        language_code = self.get_language_code()
+        with translation.override(language_code):
+            context_payload = {
+                "context": {
+                    "subject": self.get_subject(),
+                    "greeting": self.get_greeting(),
+                    **self.get_email_base_text_context().__dict__,
+                    **self.get_email_user_text_context().__dict__,
+                    **self.get_email_extra_context().__dict__,
+                }
             }
-        }
+
+        context_payload["language_code"] = language_code
+        return context_payload
+
+    def get_language_code(self) -> str:
+        language_value = None
+        if self.recipient is not None:
+            language_value = self.recipient.language
+        valid_languages = dict(settings.LANGUAGES)
+        if language_value in valid_languages:
+            return language_value
+        return settings.LANGUAGE_CODE
 
     def get_greeting(self):
         context = self.email_user_text_context

@@ -1,4 +1,5 @@
 {% load room_tags %}
+{% load i18n %}
 <div class="col">
     <article class="people-card {% if not user.is_guest %}people-card--interactive{% endif %}"
              {% if not user.is_guest %} hx-trigger="click" hx-get="{% url 'account:detail' pk=user.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" hx-sync=".people-remove-action:abort" {% endif %}>
@@ -21,41 +22,41 @@
                 <div class="d-flex justify-content-between gap-2">
                     <div>
                         <h5 class="mb-1">{{ user.name }}</h5>
-                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            <div class="d-flex flex-wrap gap-2 mb-2">
                             <span class="people-pill {% if user.is_guest %}people-pill-guest{% endif %}">
                                 {% if user.is_guest %}
-                                    Guest
+                                    {% trans "Guest" %}
                                 {% else %}
-                                    Member
+                                    {% trans "Member" %}
                                 {% endif %}
                             </span>
                             <span class="people-pill people-pill-muted">
                                 {% if user.user_has_seen_this_room %}
-                                    <i class="bi bi-check2"></i> Seen room
+                                    <i class="bi bi-check2"></i> {% trans "Seen room" %}
                                 {% else %}
-                                    <i class="bi bi-eye-slash"></i> Not seen yet
+                                    <i class="bi bi-eye-slash"></i> {% trans "Not seen yet" %}
                                 {% endif %}
                             </span>
                         </div>
                     </div>
                     <button class="people-remove-btn people-remove-action"
                             type="button"
-                            title="Remove from room"
+                            title="{% trans 'Remove from room' %}"
                             onclick="event.stopPropagation();"
                             hx-post="{% room_url 'account:remove-from-room' pk=user.id %}"
                             hx-include="[name='csrfmiddlewaretoken']"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
                             hx-swap="innerHTML"
-                            hx-confirm="{% if user.id == request.user.id %}Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!{% else %}Are you sure you wish to remove this user from this room?{% endif %}">
+                            hx-confirm="{% if user.id == request.user.id %}{% trans 'Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!' %}{% else %}{% trans 'Are you sure you wish to remove this user from this room?' %}{% endif %}">
                         <i class="bi bi-x-octagon"></i>
                     </button>
                 </div>
                 <p class="people-meta mb-2">
                     {% if user.is_guest %}
-                        Guest access with limited features
+                        {% trans "Guest access with limited features" %}
                     {% else %}
-                        Registered roommate
+                        {% trans "Registered roommate" %}
                     {% endif %}
                 </p>
                 {% if user.is_guest %}
@@ -71,7 +72,7 @@
                 {% else %}
                     <div class="people-meta small">
                         <i class="bi bi-person-check"></i>
-                        Joined as a full member of this room.
+                        {% trans "Joined as a full member of this room." %}
                     </div>
                 {% endif %}
             </div>

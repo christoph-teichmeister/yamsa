@@ -1,13 +1,14 @@
 {% extends "room/dashboard.html" %}
 {% load static %}
 {% load room_tags %}
+{% load i18n %}
 {% block tab_content %}
     <section class="container-fluid px-2 px-md-4 px-lg-5 py-4">
         <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
-            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-3">
                 <i class="bi bi-arrow-left-circle fs-2 cursor-pointer text-primary"
                    role="button"
-                   aria-label="Back to room"
+                   aria-label="{% trans 'Back to room' %}"
                    hx-trigger="click"
                    hx-get="{% room_url 'room:detail' %}"
                    hx-target="#body"
@@ -15,17 +16,17 @@
                    hx-swap="morph:innerHTML"
                    hx-push-url="true"></i>
                 <div>
-                    <p class="text-muted small mb-1">Room settings</p>
-                    <h3 class="fw-semibold mb-0">Edit “{{ current_room.name }}”</h3>
+                    <p class="text-muted small mb-1">{% trans "Room settings" %}</p>
+                    <h3 class="fw-semibold mb-0">{% blocktrans trimmed %}Edit "{{ current_room.name }}"{% endblocktrans %}</h3>
                 </div>
             </div>
             {% if current_room.is_open %}
                 <button type="submit"
                         form="room-details-form"
                         class="btn btn-primary btn-sm px-4 py-2 d-inline-flex align-items-center gap-1"
-                        aria-label="Save room details">
+                        aria-label="{% trans 'Save room details' %}">
                     <i class="bi bi-save"></i>
-                    Save
+                    {% trans "Save" %}
                 </button>
             {% endif %}
         </div>
@@ -34,9 +35,9 @@
                 <div class="card rounded-4 shadow-sm border-0 h-100">
                     <div class="card-body">
                         <div class="d-flex flex-column gap-1 mb-3">
-                            <p class="text-muted small mb-0">Basics</p>
-                            <h5 class="fw-semibold mb-0">Name, description &amp; currency</h5>
-                            {% if form.errors %}<small class="text-danger">Please fix the highlighted errors in the form.</small>{% endif %}
+                            <p class="text-muted small mb-0">{% trans "Basics" %}</p>
+                            <h5 class="fw-semibold mb-0">{% trans "Name, description & currency" %}</h5>
+                            {% if form.errors %}<small class="text-danger">{% trans "Please fix the highlighted errors in the form." %}</small>{% endif %}
                         </div>
                         <form id="room-details-form"
                               class="row g-3"
@@ -99,22 +100,22 @@
                 <div class="card rounded-4 shadow-sm border-0 h-100">
                     <div class="card-body d-flex flex-column justify-content-between h-100">
                         <div class="mb-3">
-                            <p class="text-muted small mb-1">Room status</p>
+                            <p class="text-muted small mb-1">{% trans "Room status" %}</p>
                             <h5 class="fw-semibold mb-2">{{ current_room.get_status_display }}</h5>
                             {% if current_room.is_open %}
                                 {% if current_room.can_be_closed %}
-                                    <p class="small text-muted mb-0">All debts are settled. You can close the room.</p>
+                                    <p class="small text-muted mb-0">{% trans "All debts are settled. You can close the room." %}</p>
                                 {% elif current_room.open_debt_count > 0 %}
                                     <p class="small text-warning mb-0">
-                                        {% if current_room.open_debt_count == 1 %}
-                                            There is still {{ current_room.open_debt_count }} open debt.
-                                        {% else %}
-                                            There are still {{ current_room.open_debt_count }} open debts.
-                                        {% endif %}
+                                        {% blocktrans count current_room.open_debt_count as debt_count %}
+                                            There is still {{ debt_count }} open debt.
+                                        {% plural %}
+                                            There are still {{ debt_count }} open debts.
+                                        {% endblocktrans %}
                                     </p>
                                 {% endif %}
                             {% else %}
-                                <p class="small text-muted mb-0">The room is closed and can be reopened.</p>
+                                <p class="small text-muted mb-0">{% trans "The room is closed and can be reopened." %}</p>
                             {% endif %}
                         </div>
                         <form id="status-action-form"
@@ -138,18 +139,18 @@
                                     {% if current_room.can_be_closed %}
                                         <button type="submit"
                                                 class="btn btn-danger btn-sm rounded-3"
-                                                {% if form.errors.status.data %}disabled{% endif %}>Close room</button>
+                                                {% if form.errors.status.data %}disabled{% endif %}>{% trans "Close room" %}</button>
                                     {% elif current_room.open_debt_count > 0 %}
                                         <button type="button"
                                                 class="btn btn-outline-danger btn-sm rounded-3"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#forceCloseModal"
-                                                {% if form.errors.status.data %}disabled{% endif %}>Close room</button>
+                                                {% if form.errors.status.data %}disabled{% endif %}>{% trans "Close room" %}</button>
                                     {% endif %}
                                 {% elif current_room.is_closed %}
                                     <button type="submit"
                                             class="btn btn-primary btn-sm rounded-3"
-                                            {% if form.errors.status.data %}disabled{% endif %}>Reopen room</button>
+                                            {% if form.errors.status.data %}disabled{% endif %}>{% trans "Reopen room" %}</button>
                                 {% endif %}
                             </div>
                             <div class="mt-3 text-center">
@@ -172,29 +173,29 @@
                     <div class="modal-content rounded-4 border-0 shadow">
                         <div class="modal-header border-0">
                             <div>
-                                <h5 class="modal-title fw-semibold" id="forceCloseModalLabel">Outstanding debts</h5>
-                                <p class="text-muted small mb-0">This room still has outstanding payments.</p>
+                                <h5 class="modal-title fw-semibold" id="forceCloseModalLabel">{% trans "Outstanding debts" %}</h5>
+                                <p class="text-muted small mb-0">{% trans "This room still has outstanding payments." %}</p>
                             </div>
                             <button type="button"
                                     class="btn-close"
                                     data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
+                                    aria-label="{% trans 'Close' %}"></button>
                         </div>
                         <div class="modal-body">
                             <p class="mb-2">
-                                {% if current_room.open_debt_count == 1 %}
-                                    There is still {{ current_room.open_debt_count }} open debt. Closing the room anyway will mark it as settled.
-                                {% else %}
-                                    There are still {{ current_room.open_debt_count }} open debts. Closing the room anyway will mark them as settled.
-                                {% endif %}
+                                {% blocktrans count current_room.open_debt_count as debt_count %}
+                                    There is still {{ debt_count }} open debt. Closing the room anyway will mark it as settled.
+                                {% plural %}
+                                    There are still {{ debt_count }} open debts. Closing the room anyway will mark them as settled.
+                                {% endblocktrans %}
                             </p>
-                            <p class="text-muted small mb-0">Use this option only if you want to skip manual settlement.</p>
+                            <p class="text-muted small mb-0">{% trans "Use this option only if you want to skip manual settlement." %}</p>
                         </div>
                         <div class="modal-footer border-0">
                             <button type="button"
                                     class="btn btn-outline-secondary"
-                                    data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-danger" id="forceCloseConfirm">Close anyway</button>
+                                    data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                            <button type="button" class="btn btn-danger" id="forceCloseConfirm">{% trans "Close anyway" %}</button>
                         </div>
                     </div>
                 </div>

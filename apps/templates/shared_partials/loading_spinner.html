@@ -1,8 +1,9 @@
+{% load i18n %}
 <div id="{{ spinner_id }}"
      class="w-100 h-100 d-flex justify-content-center align-items-center htmx-indicator loading-indicator-overlay">
     <div class="mt-5 d-flex align-items-center justify-content-center">
-        <div class="spinner-grow text-primary-emphasis" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <div class="spinner-grow text-primary-emphasis" role="status">
+                <span class="visually-hidden">{% trans "Loading..." %}</span>
         </div>
     </div>
 </div>

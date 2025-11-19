@@ -1,4 +1,5 @@
 {% load room_tags %}
+{% load i18n %}
 {% if current_user.open_room_qs_for_list %}
     {% include "side_menu_components/room_list_title.html" with title="Open" %}
     <section class="room-group">
@@ -41,10 +42,10 @@
          hx-push-url="true">
         <div class="room-circle{% if request.path == "/room/create/" %} selected{% endif %}">+</div>
         <div class="flex-grow-1 text-start">
-            <div class="room-name fw-semibold mb-0">New room</div>
-            <small class="room-description text-muted">Start a new group with friends</small>
+            <div class="room-name fw-semibold mb-0">{% trans "New room" %}</div>
+            <small class="room-description text-muted">{% trans "Start a new group with friends" %}</small>
         </div>
-        <span class="badge room-status-badge bg-primary text-white">Create</span>
+        <span class="badge room-status-badge bg-primary text-white">{% trans "Create" %}</span>
     </div>
 </section>
 {% if current_user.closed_room_qs_for_list %}

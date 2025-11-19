@@ -1,19 +1,20 @@
 {% load static %}
 {% load pwa_tags %}
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="{{ request.LANGUAGE_CODE|default:'en' }}" data-bs-theme="dark">
     <head>
         <meta charset="utf-8">
         <meta name="viewport"
               content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="description"
-              content="yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications.">
+              content="{% trans 'yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications.' %}">
         <meta name="keywords"
-              content="yamsa, shared expenses, roommate app, bill splitting, dashboards">
+              content="{% trans 'yamsa, shared expenses, roommate app, bill splitting, dashboards' %}">
         <title>
             {% if core.DEBUG %}⚒️{% endif %}
             {% block title %}
-                yamsa
+                {% trans "yamsa" %}
             {% endblock title %}
         </title>
         <link rel="icon" href="{% static 'images/favicon.ico' %}">

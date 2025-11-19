@@ -1,12 +1,13 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load i18n %}
 {% block content %}
     <div class="container-fluid py-4 px-2 px-md-4 px-lg-5">
         <div class="row g-4">
             <div class="col-12 col-lg-7">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
-                        <h1 class="h3 fw-semibold mb-4">Create Room</h1>
+                        <h1 class="h3 fw-semibold mb-4">{% trans "Create Room" %}</h1>
                         <form action="{% url 'room:create' %}" method="post">
                             {% csrf_token %}
                             <div class="mb-3">
@@ -42,7 +43,7 @@
                             </div>
                             <div id="suggested-guest-hidden-inputs" data-suggested-guest-inputs-target></div>
                             <div class="d-flex justify-content-center">
-                                <button type="submit" class="btn btn-primary btn-lg">Create</button>
+                                <button type="submit" class="btn btn-primary btn-lg">{% trans "Create" %}</button>
                             </div>
                         </form>
                     </div>
@@ -52,10 +53,10 @@
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body d-flex flex-column gap-3">
                         <div>
-                            <p class="text-uppercase text-muted small mb-2">Suggested guests</p>
-                            <h2 class="h5 fw-semibold mb-1">Invite frequent collaborators</h2>
+                            <p class="text-uppercase text-muted small mb-2">{% trans "Suggested guests" %}</p>
+                            <h2 class="h5 fw-semibold mb-1">{% trans "Invite frequent collaborators" %}</h2>
                             <p class="small text-muted mb-0">
-                                Add past roommates with one tap. Mark your go-to teammates as friends to pin them to the top.
+                                {% trans "Add past roommates with one tap. Mark your go-to teammates as friends to pin them to the top." %}
                             </p>
                         </div>
                         {% include "room/_suggested_guest_list.html" %}

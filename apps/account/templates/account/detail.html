@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load i18n %}
 {% block content %}
     <section class="container px-2 px-md-4 px-lg-5 account-detail">
         {% if user.is_guest %}
@@ -7,20 +8,22 @@
                 <div class="col-12 col-lg-8">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body text-center py-5 px-4 px-md-5">
-                            <div class="mb-4">
-                                <span class="badge bg-warning-subtle text-warning-emphasis text-uppercase fw-semibold">Guest Mode</span>
-                            </div>
-                            <h2 class="fw-semibold mb-2">Hi {{ user.name }} 👋</h2>
+                    <div class="mb-4">
+                        <span class="badge bg-warning-subtle text-warning-emphasis text-uppercase fw-semibold">{% trans "Guest Mode" %}</span>
+                    </div>
+                            <h2 class="fw-semibold mb-2">
+                                {% blocktrans trimmed %}Hi {{ user.name }}{% endblocktrans %} 👋
+                            </h2>
                             <p class="text-muted mb-4">
-                                Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account.
+                                {% trans "Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account." %}
                             </p>
                             <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
-                                <a class="btn btn-primary px-4" href="{% url 'account:register' %}">Create a free account</a>
+                                <a class="btn btn-primary px-4" href="{% url 'account:register' %}">{% trans "Create a free account" %}</a>
                                 <a class="btn btn-outline-secondary px-4"
-                                   href="{% url 'account:login' %}">I already have an account</a>
+                                   href="{% url 'account:login' %}">{% trans "I already have an account" %}</a>
                             </div>
                             <p class="small text-muted mt-4 mb-0">
-                                Not you? <a href="{% url 'account:logout' %}" class="link-secondary">Log out instead</a>.
+                                {% trans "Not you?" %} <a href="{% url 'account:logout' %}" class="link-secondary">{% trans "Log out instead" %}</a>.
                             </p>
                         </div>
                     </div>
@@ -67,6 +70,11 @@
                                     </p>
                                     <h1 class="h3 fw-semibold mb-2">{{ user.name }}</h1>
                                     <p class="text-muted mb-3">{{ user.email }}</p>
+                                    {% if user.language %}
+                                        <p class="text-muted small mb-3">
+                                            {% trans "Preferred language" %}: {{ user.get_language_display }}
+                                        </p>
+                                    {% endif %}
                                     <div class="d-flex flex-wrap gap-2">
                                         {% if user.is_superuser %}<span class="badge text-bg-dark">Superuser</span>{% endif %}
                                         {% if user.is_staff %}<span class="badge text-bg-info">Staff</span>{% endif %}

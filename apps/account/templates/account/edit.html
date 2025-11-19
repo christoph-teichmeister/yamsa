@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% load i18n %}
 {% block content %}
     <section class="container px-2 px-md-4 px-lg-5 account-edit">
         <div class="row justify-content-center gy-4">
@@ -16,8 +17,8 @@
                     <div class="card-body p-4 p-md-5">
                         <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4">
                             <div>
-                                <p class="text-uppercase small fw-semibold text-muted mb-1">Edit profile</p>
-                                <h1 class="h4 fw-semibold mb-0">Keep your details up to date</h1>
+                                <p class="text-uppercase small fw-semibold text-muted mb-1">{% trans "Edit profile" %}</p>
+                                <h1 class="h4 fw-semibold mb-0">{% trans "Keep your details up to date" %}</h1>
                             </div>
                             <div class="ms-md-auto d-flex flex-wrap gap-2">
                                 <button type="button"
@@ -26,10 +27,10 @@
                                         hx-target="#body"
                                         hx-indicator="#body-loading-spinner"
                                         hx-swap="morph:innerHTML"
-                                        hx-push-url="true">Cancel</button>
+                                        hx-push-url="true">{% trans "Cancel" %}</button>
                                 <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
                                     <i class="bi bi-check2-circle"></i>
-                                    Save changes
+                                    {% trans "Save changes" %}
                                 </button>
                             </div>
                         </div>
@@ -117,6 +118,17 @@
                                            placeholder="-">
                                 </div>
                                 {% for error_message in form.errors.paypal_me_username.data %}
+                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                {% endfor %}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="id_language" class="form-label fw-semibold">{{ form.fields.language.label }}</label>
+                                <select name="language" id="id_language" class="form-select">
+                                    {% for choice_value, choice_label in form.fields.language.choices %}
+                                        <option value="{{ choice_value }}" {% if form.language.value == choice_value %}selected{% endif %}>{{ choice_label }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% for error_message in form.errors.language.data %}
                                     <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>

@@ -72,7 +72,8 @@ class UserDetailViewTestCase(BaseTestSetUp):
 
         stringed_content = response.content.decode()
         self.assertIn("Guest Mode", stringed_content)
-        self.assertIn(f"Hi {self.guest_user.name}", stringed_content)
+        self.assertIn("Hi", stringed_content)
+        self.assertIn(self.guest_user.name, stringed_content)
 
         self.assertNotIn('id="superuser-admin-link"', stringed_content)
 

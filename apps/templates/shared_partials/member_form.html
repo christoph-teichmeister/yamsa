@@ -1,4 +1,5 @@
 {% load room_tags %}
+{% load i18n %}
 <style>
     .member-form-wrap {
         max-width: 640px;
@@ -100,7 +101,6 @@
     }
 </style>
 <div class="member-form-wrap">
-    <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
         {% if back_url %}
             <button type="button"
                     class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1"
@@ -110,21 +110,21 @@
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
                 <i class="bi bi-arrow-left"></i>
-                {{ back_label|default:"Back" }}
+                {{ back_label|default:_("Back") }}
             </button>
         {% endif %}
     </div>
     <div class="member-hero-card mb-4">
         <div class="d-flex justify-content-between flex-wrap gap-3">
             <div>
-                <p class="text-uppercase text-muted small mb-1">{{ hero_context|default:"Room access" }}</p>
+                <p class="text-uppercase text-muted small mb-1">{{ hero_context|default:_("Room access") }}</p>
                 <h2>{{ hero_title }}</h2>
                 <p>{{ hero_subtitle }}</p>
             </div>
             <div class="text-end">
                 <div class="member-badge">
                     <i class="bi {{ hero_badge_icon|default:'bi-people' }}"></i>
-                    {{ hero_badge_label|default:"New member" }}
+                    {{ hero_badge_label|default:_("New member") }}
                 </div>
             </div>
         </div>
@@ -160,16 +160,16 @@
             {% if helper_text %}<div class="member-helper">{{ helper_text }}</div>{% endif %}
         </div>
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <p class="member-tip mb-0">{{ tip_text|default:"We’ll notify members automatically." }}</p>
+            <p class="member-tip mb-0">{{ tip_text|default:_("We'll notify members automatically.") }}</p>
             <button type="submit"
                     class="btn btn-primary member-submit {% if submit_disabled %}disabled{% endif %}"
                     {% if submit_disabled %}disabled aria-disabled="true"{% endif %}>
                 <i class="bi {{ submit_icon|default:'bi-check-lg' }}"></i>
-                {{ submit_label|default:"Submit" }}
+                {{ submit_label|default:_("Submit") }}
             </button>
         </div>
         {% if submit_disabled %}
-            <div class="member-helper text-danger fw-semibold mt-2">This room is closed, so new members cannot be added.</div>
+            <div class="member-helper text-danger fw-semibold mt-2">{% trans "This room is closed, so new members cannot be added." %}</div>
         {% endif %}
     </form>
 </div>
