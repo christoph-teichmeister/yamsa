@@ -16,24 +16,24 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11.11'
-          cache: pipenv
+          cache: 'pip'
 
-      - name: Install pipenv
-        run: python -m pip install --upgrade pip pipenv
+      - name: Install uv runtime tooling
+        run: python -m pip install --upgrade pip uv
 
-      - name: Install dependencies
-        run: pipenv install --deploy --dev
+      - name: Sync dependencies
+        run: uv sync --all-extras --no-install-project
 
       - name: Run Ruff
-        run: pipenv run ruff check --output-format=github .
+        run: uv run ruff check --output-format=github .
 
       - name: Run Django system checks
         env:
           DJANGO_SECRET_KEY: 'ci-insecure-key'
-        run: pipenv run python manage.py check --deploy
+        run: uv run python manage.py check --deploy
 
       - name: Run djlint
-        run: pipenv run djlint apps --check
+        run: uv run djlint apps --check
 
   verify-pre-commit-packages-are-up-to-date:
     runs-on: ubuntu-latest
@@ -67,16 +67,16 @@ jobs:
         with:
           python-version: '3.11.11'
 
-      - name: Install pipenv
-        run: python -m pip install --upgrade pip pipenv
+      - name: Install uv runtime tooling
+        run: python -m pip install --upgrade pip uv
 
-      - name: Install dependencies
-        run: pipenv install --deploy --dev
+      - name: Sync dependencies
+        run: uv sync --all-extras --no-install-project
 
       - name: Check Migration Status
         env:
           DJANGO_DEBUG: 'False'
-        run: pipenv run python manage.py makemigrations --check --dry-run
+        run: uv run python manage.py makemigrations --check --dry-run
 
   validate-test-structure:
     runs-on: ubuntu-latest
@@ -89,13 +89,13 @@ jobs:
         with:
           python-version: '3.11.11'
 
-      - name: Install pipenv
-        run: python -m pip install --upgrade pip pipenv
+      - name: Install uv runtime tooling
+        run: python -m pip install --upgrade pip uv
 
-      - name: Install dependencies
-        run: pipenv install --deploy --dev
+      - name: Sync dependencies
+        run: uv sync --all-extras --no-install-project
 
       - name: Validate test structure
         env:
           DJANGO_DEBUG: 'False'
-        run: pipenv run python manage.py validate_test_structure
+        run: uv run python manage.py validate_test_structure
