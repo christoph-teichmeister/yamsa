@@ -6,6 +6,8 @@ from django.views import generic
 
 from apps.account.forms import LoginForm
 
+LANGUAGE_SESSION_KEY = "django_language"
+
 
 class LogInUserView(generic.FormView):
     template_name = "account/login.html"
@@ -27,7 +29,7 @@ class LogInUserView(generic.FormView):
             login(request=self.request, user=possible_user)
             if possible_user.language:
                 translation.activate(possible_user.language)
-                self.request.session['_language'] = possible_user.language
+                self.request.session[LANGUAGE_SESSION_KEY] = possible_user.language
             if cleaned_data.get("remember_me"):
                 self.request.session.set_expiry(settings.DJANGO_REMEMBER_ME_SESSION_AGE)
         else:

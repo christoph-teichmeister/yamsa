@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import mixins
 from django.urls import reverse
 from django.utils import translation
@@ -5,6 +6,8 @@ from django.views import generic
 
 from apps.account.forms import EditUserForm
 from apps.account.models import User
+
+LANGUAGE_SESSION_KEY = "django_language"
 
 
 class UserUpdateView(mixins.LoginRequiredMixin, generic.UpdateView):
@@ -22,7 +25,9 @@ class UserUpdateView(mixins.LoginRequiredMixin, generic.UpdateView):
             language_value = self.object.language
             if language_value:
                 translation.activate(language_value)
-                self.request.session['_language'] = language_value
+                self.request.session[LANGUAGE_SESSION_KEY] = language_value
+                response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language_value)
             else:
-                self.request.session.pop('_language', None)
+                self.request.session.pop(LANGUAGE_SESSION_KEY, None)
+                response.delete_cookie(settings.LANGUAGE_COOKIE_NAME)
         return response
