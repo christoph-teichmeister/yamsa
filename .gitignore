@@ -9,10 +9,12 @@ apps/config/.env
 /.issues/
 /.local/
 /.venv/
+/apps/locale/de/LC_MESSAGES/django.mo
 /media/
 /static/
 /staticfiles/
 /tmp/
+/yamsa.egg-info/
 
 apps/staticfiles
 staticfiles
