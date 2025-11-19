@@ -22,6 +22,9 @@ python manage.py collectstatic --no-input
 echo "" && echo "python manage.py migrate"
 python manage.py migrate
 
+echo "" && echo "python manage.py compilemessages"
+python manage.py compilemessages
+
 echo "" && echo "python manage.py deleteorphanedmedia --noinput"
 # https://pypi.org/project/django-cloudinary-storage/#deleteorphanedmedia
 python manage.py deleteorphanedmedia --noinput
