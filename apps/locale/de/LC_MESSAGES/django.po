@@ -45,6 +45,69 @@ msgstr "Nicht du?"
 msgid "Log out instead"
 msgstr "Stattdessen abmelden"
 
+msgid "Your account overview"
+msgstr "Deine Kontenübersicht"
+
+msgid "Member profile"
+msgstr "Mitgliederprofil"
+
+msgid "Not set"
+msgstr "Nicht gesetzt"
+
+msgid "Superuser"
+msgstr "Superuser"
+
+msgid "Staff"
+msgstr "Mitarbeitende"
+
+msgid "PayPal linked"
+msgstr "PayPal verknüpft"
+
+msgid "No PayPal link"
+msgstr "Kein PayPal-Link"
+
+msgid "Display name"
+msgstr "Anzeigename"
+
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+msgid "PayPal.me username"
+msgstr "PayPal.me-Benutzername"
+
+msgid "No PayPal link yet"
+msgstr "Noch kein PayPal-Link"
+
+msgid "Push notifications"
+msgstr "Push-Benachrichtigungen"
+
+msgid "Enabled"
+msgstr "Aktiviert"
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "Manage this toggle from the edit screen."
+msgstr "Verwalte diesen Schalter im Bearbeitungsbildschirm."
+
+msgid "Payment reminders"
+msgstr "Zahlungserinnerungen"
+
+msgid "Toggle this in the notifications center or via the email footer."
+msgstr "Schalte dies im Benachrichtigungszentrum oder über die Fußzeile der E-Mail um."
+
+msgid "Security"
+msgstr "Sicherheit"
+
+msgid "Change your password"
+msgstr "Ändere dein Passwort"
+
+msgid "Choose a unique password to keep your rooms safe."
+msgstr "Wähle ein einzigartiges Passwort, um deine Räume zu schützen."
+
+msgid "Change password"
+msgstr "Passwort ändern"
+
 msgid "Edit profile"
 msgstr "Profil bearbeiten"
 
@@ -490,3 +553,6 @@ msgstr "Registrierter Mitbewohner"
 
 msgid "Joined as a full member of this room."
 msgstr "Als volles Mitglied dieses Raums beigetreten."
+
+#~ msgid "Admin"
+#~ msgstr "Admin"

@@ -61,28 +61,31 @@
                                     </div>
                                 {% endwith %}
                                 <div class="flex-grow-1">
-                                    <p class="text-uppercase small fw-semibold text-muted mb-1">
-                                        {% if request.user.id == user.id %}
-                                            Your account overview
-                                        {% else %}
-                                            Member profile
-                                        {% endif %}
-                                    </p>
+                                        <p class="text-uppercase small fw-semibold text-muted mb-1">
+                                            {% if request.user.id == user.id %}
+                                                {% trans "Your account overview" %}
+                                            {% else %}
+                                                {% trans "Member profile" %}
+                                            {% endif %}
+                                        </p>
                                     <h1 class="h3 fw-semibold mb-2">{{ user.name }}</h1>
                                     <p class="text-muted mb-3">{{ user.email }}</p>
-                                    {% if user.language %}
                                         <p class="text-muted small mb-3">
-                                            {% trans "Preferred language" %}: {{ user.get_language_display }}
+                                            {% trans "Preferred language" %}:
+                                            {{ user.get_language_display|default:_("Not set") }}
                                         </p>
-                                    {% endif %}
                                     <div class="d-flex flex-wrap gap-2">
-                                        {% if user.is_superuser %}<span class="badge text-bg-dark">Superuser</span>{% endif %}
-                                        {% if user.is_staff %}<span class="badge text-bg-info">Staff</span>{% endif %}
+                                        {% if user.is_superuser %}
+                                            <span class="badge text-bg-dark">{% trans "Superuser" %}</span>
+                                        {% endif %}
+                                        {% if user.is_staff %}
+                                            <span class="badge text-bg-info">{% trans "Staff" %}</span>
+                                        {% endif %}
                                         <span class="badge text-bg-secondary">
                                             {% if user.paypal_me_username %}
-                                                PayPal linked
+                                                {% trans "PayPal linked" %}
                                             {% else %}
-                                                No PayPal link
+                                                {% trans "No PayPal link" %}
                                             {% endif %}
                                         </span>
                                     </div>
@@ -106,41 +109,41 @@
                 </div>
                 <div class="col-12 col-xl-9">
                     <div class="row g-4">
-                        <div class="col-12 col-md-6">
-                            <div class="border rounded-4 h-100 p-4 bg-body-secondary-subtle">
-                                <p class="text-uppercase small text-muted mb-1">Display name</p>
-                                <p class="fw-semibold mb-0">{{ user.name }}</p>
+                            <div class="col-12 col-md-6">
+                                <div class="border rounded-4 h-100 p-4 bg-body-secondary-subtle">
+                                    <p class="text-uppercase small text-muted mb-1">{% trans "Display name" %}</p>
+                                    <p class="fw-semibold mb-0">{{ user.name }}</p>
+                                </div>
                             </div>
-                        </div>
                         <div class="col-12 col-md-6">
-                            <div class="border rounded-4 h-100 p-4">
-                                <p class="text-uppercase small text-muted mb-1">Email address</p>
-                                <p class="fw-semibold text-break mb-0">{{ user.email }}</p>
+                                <div class="border rounded-4 h-100 p-4">
+                                    <p class="text-uppercase small text-muted mb-1">{% trans "Email address" %}</p>
+                                    <p class="fw-semibold text-break mb-0">{{ user.email }}</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="border rounded-4 h-100 p-4">
-                                <p class="text-uppercase small text-muted mb-1">PayPal.me username</p>
-                                {% if user.paypal_me_username %}
-                                    <p class="fw-semibold mb-0">@{{ user.paypal_me_username }}</p>
-                                {% else %}
-                                    <p class="text-muted mb-0">No PayPal link yet</p>
-                                {% endif %}
-                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="border rounded-4 h-100 p-4">
+                                    <p class="text-uppercase small text-muted mb-1">{% trans "PayPal.me username" %}</p>
+                                    {% if user.paypal_me_username %}
+                                        <p class="fw-semibold mb-0">@{{ user.paypal_me_username }}</p>
+                                    {% else %}
+                                        <p class="text-muted mb-0">{% trans "No PayPal link yet" %}</p>
+                                    {% endif %}
+                                </div>
                         </div>
                         {% if request.user == user %}
                             <div class="col-12 col-md-6">
                                 <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
                                     <div>
-                                        <p class="text-uppercase small text-muted mb-1">Push notifications</p>
-                                        <p class="fw-semibold mb-0">
-                                            {% if user.wants_to_receive_webpush_notifications %}
-                                                Enabled
+                                    <p class="text-uppercase small text-muted mb-1">{% trans "Push notifications" %}</p>
+                                    <p class="fw-semibold mb-0">
+                                        {% if user.wants_to_receive_webpush_notifications %}
+                                                {% trans "Enabled" %}
                                             {% else %}
-                                                Disabled
+                                                {% trans "Disabled" %}
                                             {% endif %}
                                         </p>
-                                        <p class="text-muted small mb-0">Manage this toggle from the edit screen.</p>
+                                        <p class="text-muted small mb-0">{% trans "Manage this toggle from the edit screen." %}</p>
                                     </div>
                                     <div class="form-check form-switch m-0">
                                         <input class="form-check-input"
@@ -155,15 +158,15 @@
                             <div class="col-12 col-md-6">
                                 <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
                                     <div>
-                                        <p class="text-uppercase small text-muted mb-1">Payment reminders</p>
-                                        <p class="fw-semibold mb-0">
-                                            {% if user.wants_to_receive_payment_reminders %}
-                                                Enabled
+                                    <p class="text-uppercase small text-muted mb-1">{% trans "Payment reminders" %}</p>
+                                    <p class="fw-semibold mb-0">
+                                        {% if user.wants_to_receive_payment_reminders %}
+                                                {% trans "Enabled" %}
                                             {% else %}
-                                                Disabled
+                                                {% trans "Disabled" %}
                                             {% endif %}
                                         </p>
-                                        <p class="text-muted small mb-0">Toggle this in the notifications center or via the email footer.</p>
+                                        <p class="text-muted small mb-0">{% trans "Toggle this in the notifications center or via the email footer." %}</p>
                                     </div>
                                     <div class="form-check form-switch m-0">
                                         <input class="form-check-input"
@@ -180,9 +183,9 @@
                             <div class="col-12">
                                 <div class="border rounded-4 h-100 p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
                                     <div>
-                                        <p class="text-uppercase small text-muted mb-1">Security</p>
-                                        <p class="fw-semibold mb-1">Change your password</p>
-                                        <p class="text-muted small mb-0">Choose a unique password to keep your rooms safe.</p>
+                                        <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
+                                        <p class="fw-semibold mb-1">{% trans "Change your password" %}</p>
+                                        <p class="text-muted small mb-0">{% trans "Choose a unique password to keep your rooms safe." %}</p>
                                     </div>
                                     <div class="ms-md-auto">
                                         <button type="button"
@@ -191,7 +194,7 @@
                                                 hx-target="#body"
                                                 hx-indicator="#body-loading-spinner"
                                                 hx-swap="morph:innerHTML"
-                                                hx-push-url="true">Change password</button>
+                                                hx-push-url="true">{% trans "Change password" %}</button>
                                     </div>
                                 </div>
                             </div>
