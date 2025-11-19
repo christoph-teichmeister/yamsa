@@ -4,10 +4,11 @@ apps/config/.env
 /yamsa_db_test
 
 /.cache/
-/.issues/
-/.local/
 /.github-issues/
 /.github-pull-requests/
+/.issues/
+/.local/
+/.venv/
 /media/
 /static/
 /staticfiles/

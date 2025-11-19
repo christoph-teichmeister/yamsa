@@ -4,13 +4,17 @@
 # Exit on error
 set -o errexit
 
-echo "" && echo "pip install --upgrade pip && pip install -U pip pipenv"
-pip install --upgrade pip && pip install -U pip pipenv
+echo "" && echo "pip install --upgrade pip && pip install -U pip uv"
+pip install --upgrade pip && pip install -U pip uv
 
-echo "" && echo "pipenv install --system --deploy"
-pipenv install --system --deploy
+echo "" && echo "uv export --locked --format=requirements.txt --no-dev > /tmp/requirements.txt"
+uv export --locked --format=requirements.txt --no-dev --output-file /tmp/requirements.txt
 
-echo "" && echo "python manage.py collectstatic --noinput"
+echo "" && echo "pip install --no-cache-dir -r /tmp/requirements.txt"
+pip install --no-cache-dir -r /tmp/requirements.txt
+rm /tmp/requirements.txt
+
+echo "" && echo "python manage.py collectstatic --no-input"
 python manage.py collectstatic --no-input
 
 echo "" && echo "python manage.py migrate"
