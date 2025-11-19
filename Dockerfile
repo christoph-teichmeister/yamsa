@@ -5,16 +5,17 @@ ARG PYTHON_MINOR_VERSION=3.11
 FROM python:${PYTHON_MINOR_VERSION} AS builder-python
 
 # Can be used to install dev dependencies (e.g. for local development in Docker):
-ARG ADDITIONAL_PIPENV_INSTALL_ARGS=""
+ARG UV_EXPORT_ARGS=""
 
 # Set work directory
 WORKDIR /tmp/
 
-# Move pipfiles to project
-COPY Pipfile Pipfile.lock /tmp/
-RUN pip install -U pip pipenv
-RUN pipenv install --system --deploy $ADDITIONAL_PIPENV_INSTALL_ARGS
-RUN pip uninstall -y pipenv
+# Move project metadata to build context
+COPY pyproject.toml uv.lock /tmp/
+RUN pip install -U pip uv
+RUN uv export --locked --format=requirements.txt --no-hashes --no-emit-project ${UV_EXPORT_ARGS} > /tmp/requirements.txt && \
+    pip install --no-cache-dir -r /tmp/requirements.txt && \
+    rm /tmp/requirements.txt
 
 ### STAGE 2: Setup ###
 FROM python:${PYTHON_MINOR_VERSION}-slim AS production

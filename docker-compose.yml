@@ -19,7 +19,7 @@ services:
     build:
       context: .
       args:
-        ADDITIONAL_PIPENV_INSTALL_ARGS: "--dev"
+        UV_EXPORT_ARGS: "--extra dev"
     container_name: yamsa_backend
     command: bash ./scripts/run_backend_local.sh
     volumes:
