@@ -1,3 +1,49 @@
+[project]
+name = "yamsa"
+version = "0.1.0"
+description = "Yet another money split app"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "ambient-toolbox==12.*",
+    "django[argon2]==5.*",
+    "django-axes==8.*",
+    "django-cloudinary-storage==0.*",
+    "django-context-decorator==1.*",
+    "django-environ==0.*",
+    "django-extensions==4.*",
+    "django-htmx==1.*",
+    "django-minify-html==1.*",
+    "django-pony-express==2.*",
+    "gunicorn==23.*",
+    "minify-html==0.18.*",
+    "model-bakery==1.*",
+    "pillow==11.*",
+    "psycopg2-binary==2.*",
+    "pywebpush==2.*",
+    "sentry-sdk[django]==2.*",
+    "whitenoise==6.*",
+]
+
+[project.optional-dependencies]
+dev = [
+    "coverage",
+    "django-browser-reload",
+    "django-debug-toolbar",
+    "django-upgrade",
+    "djlint",
+    "freezegun",
+    "kolo",
+    "ruff",
+]
+
+[build-system]
+requires = [
+    "setuptools>=65.5.1",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
 [tool.coverage.run]
 branch = true
 # do not test these things
