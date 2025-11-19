@@ -11,7 +11,10 @@
                                 <span class="badge bg-warning-subtle text-warning-emphasis text-uppercase fw-semibold">{% trans "Guest Mode" %}</span>
                             </div>
                             <h2 class="fw-semibold mb-2">
-                                {% blocktrans trimmed %}Hi {{ user.name }}{% endblocktrans %} 👋
+                                {% blocktrans trimmed %}
+                                    Hi {{ user.name }}
+                                {% endblocktrans %}
+                                👋
                             </h2>
                             <p class="text-muted mb-4">
                                 {% trans "Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account." %}
@@ -47,7 +50,7 @@
                             <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-4">
                                 {% with avatar_source=user.name|default:user.email %}
                                     <div class="rounded-circle bg-primary-subtle text-primary-emphasis d-inline-flex align-items-center justify-content-center account-avatar-circle">
-                                {% if user.profile_picture %}
+                                        {% if user.profile_picture %}
                                             <img src="{{ user.profile_picture_url }}"
                                                  onerror="this.onerror=null;this.src='{{ user.profile_picture_fallback_url }}';"
                                                  alt="{{ user.name }}"
@@ -135,9 +138,9 @@
                             <div class="col-12 col-md-6">
                                 <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
                                     <div>
-                                    <p class="text-uppercase small text-muted mb-1">{% trans "Push notifications" %}</p>
-                                    <p class="fw-semibold mb-0">
-                                        {% if user.wants_to_receive_webpush_notifications %}
+                                        <p class="text-uppercase small text-muted mb-1">{% trans "Push notifications" %}</p>
+                                        <p class="fw-semibold mb-0">
+                                            {% if user.wants_to_receive_webpush_notifications %}
                                                 {% trans "Enabled" %}
                                             {% else %}
                                                 {% trans "Disabled" %}
@@ -158,9 +161,9 @@
                             <div class="col-12 col-md-6">
                                 <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
                                     <div>
-                                    <p class="text-uppercase small text-muted mb-1">{% trans "Payment reminders" %}</p>
-                                    <p class="fw-semibold mb-0">
-                                        {% if user.wants_to_receive_payment_reminders %}
+                                        <p class="text-uppercase small text-muted mb-1">{% trans "Payment reminders" %}</p>
+                                        <p class="fw-semibold mb-0">
+                                            {% if user.wants_to_receive_payment_reminders %}
                                                 {% trans "Enabled" %}
                                             {% else %}
                                                 {% trans "Disabled" %}

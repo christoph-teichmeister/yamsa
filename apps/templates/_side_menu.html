@@ -146,16 +146,16 @@
                     <span class="badge bg-light text-dark room-status-badge">{% trans "Start" %}</span>
                 </div>
                 {% include "_side_menu_room_list.html" %}
-                    <div class="mt-auto">
-                        <button type="button"
-                                class="btn btn-primary w-100"
-                                hx-trigger="click"
-                                hx-get="{% url 'account:logout' %}"
-                                hx-target="#body"
-                                hx-indicator="#body-loading-spinner"
-                                hx-swap="morph:innerHTML"
-                                hx-push-url="true">{% trans "Log out" %}</button>
-                    </div>
+                <div class="mt-auto">
+                    <button type="button"
+                            class="btn btn-primary w-100"
+                            hx-trigger="click"
+                            hx-get="{% url 'account:logout' %}"
+                            hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true">{% trans "Log out" %}</button>
+                </div>
             </div>
         </div>
     </div>

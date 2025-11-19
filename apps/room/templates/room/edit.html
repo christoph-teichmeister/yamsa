@@ -148,18 +148,24 @@
                                     {% if current_room.can_be_closed %}
                                         <button type="submit"
                                                 class="btn btn-danger btn-sm rounded-3"
-                                                {% if form.errors.status.data %}disabled{% endif %}>{% trans "Close room" %}</button>
+                                                {% if form.errors.status.data %}disabled{% endif %}>
+                                            {% trans "Close room" %}
+                                        </button>
                                     {% elif current_room.open_debt_count > 0 %}
                                         <button type="button"
                                                 class="btn btn-outline-danger btn-sm rounded-3"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#forceCloseModal"
-                                                {% if form.errors.status.data %}disabled{% endif %}>{% trans "Close room" %}</button>
+                                                {% if form.errors.status.data %}disabled{% endif %}>
+                                            {% trans "Close room" %}
+                                        </button>
                                     {% endif %}
                                 {% elif current_room.is_closed %}
                                     <button type="submit"
                                             class="btn btn-primary btn-sm rounded-3"
-                                            {% if form.errors.status.data %}disabled{% endif %}>{% trans "Reopen room" %}</button>
+                                            {% if form.errors.status.data %}disabled{% endif %}>
+                                        {% trans "Reopen room" %}
+                                    </button>
                                 {% endif %}
                             </div>
                             <div class="mt-3 text-center">
