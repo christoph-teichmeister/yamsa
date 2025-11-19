@@ -126,8 +126,8 @@ line-length = 120
 
 fix = true
 
-# Assume Python 3.12.
-target-version = "py312"
+# Assume Python 3.11.
+target-version = "py311"  # Fixed version from onrender.com (If you change this, also change it in the Dockerfile!)
 
 [tool.ruff.lint]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
