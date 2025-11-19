@@ -355,15 +355,18 @@ msgstr "Dieser Raum ist zur Bearbeitung gesperrt. Öffne ihn auf dem Bearbeitung
 msgid "Back to room"
 msgstr "Zurück zum Raum"
 
+msgid "Save room details"
+msgstr "Raumdetails speichern"
+
+msgid "Close"
+msgstr "Schließen"
+
 msgid "Room settings"
 msgstr "Raumeinstellungen"
 
 #, python-format
 msgid "Edit \"%(current_room.name)s\""
 msgstr "\"%(current_room.name)s\" bearbeiten"
-
-msgid "Save room details"
-msgstr "Raumdetails speichern"
 
 msgid "Save"
 msgstr "Speichern"
@@ -416,9 +419,6 @@ msgstr "Ausstehende Schulden"
 msgid "This room still has outstanding payments."
 msgstr "Dieser Raum hat noch ausstehende Zahlungen."
 
-msgid "Close"
-msgstr "Schließen"
-
 #, python-format
 msgid ""
 "\n"
@@ -451,9 +451,6 @@ msgstr "Kopiere die Raum-URL in die Zwischenablage, um sie deinen Freunden zu sc
 
 msgid "Menu"
 msgstr "Menü"
-
-msgid "Language"
-msgstr "Sprache"
 
 msgid "Profile"
 msgstr "Profil"
@@ -524,6 +521,9 @@ msgstr "Aktualisierung"
 msgid "Something went wrong"
 msgstr "Etwas ist schiefgelaufen"
 
+msgid "Remove from room"
+msgstr "Aus dem Raum entfernen"
+
 msgid "Guest"
 msgstr "Gast"
 
@@ -535,9 +535,6 @@ msgstr "Raum gesehen"
 
 msgid "Not seen yet"
 msgstr "Noch nicht gesehen"
-
-msgid "Remove from room"
-msgstr "Aus dem Raum entfernen"
 
 msgid "Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!"
 msgstr "Bist du sicher, dass du dich aus diesem Raum entfernen möchtest? Danach kannst du ihn nicht mehr sehen!"
@@ -553,6 +550,3 @@ msgstr "Registrierter Mitbewohner"
 
 msgid "Joined as a full member of this room."
 msgstr "Als volles Mitglied dieses Raums beigetreten."
-
-#~ msgid "Admin"
-#~ msgstr "Admin"
