@@ -1,0 +1,475 @@
+msgid "Receive push notifications"
+msgstr "Push-Benachrichtigungen erhalten"
+
+msgid "Preferred language"
+msgstr "Bevorzugte Sprache"
+
+msgid "Receive payment reminder emails"
+msgstr "E-Mails mit Zahlungserinnerungen erhalten"
+
+msgid "Receive room reminder emails"
+msgstr "E-Mails mit Raumerinnerungen erhalten"
+
+msgid "Guest Mode"
+msgstr "Gastmodus"
+
+#, python-format
+msgid "Hi %(user.name)s"
+msgstr "Hallo %(user.name)s"
+
+msgid "Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account."
+msgstr "Danke, dass du als Gast einem Raum beigetreten bist. Schalte Erinnerungen, Push-Benachrichtigungen und erweiterte Historie frei, sobald du ein vollständiges Konto erstellst."
+
+msgid "Create a free account"
+msgstr "Kostenloses Konto erstellen"
+
+msgid "I already have an account"
+msgstr "Ich habe bereits ein Konto"
+
+msgid "Not you?"
+msgstr "Nicht du?"
+
+msgid "Log out instead"
+msgstr "Stattdessen abmelden"
+
+msgid "Edit profile"
+msgstr "Profil bearbeiten"
+
+msgid "Keep your details up to date"
+msgstr "Halte deine Daten aktuell"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+msgid "English"
+msgstr "Englisch"
+
+msgid "German"
+msgstr "Deutsch"
+
+msgid "yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications."
+msgstr "yamsa hilft Wohngemeinschaften, Ausgaben zu verfolgen, Schulden auszugleichen und organisiert zu bleiben - mit gemeinsamen Räumen, Dashboards und Benachrichtigungen."
+
+msgid "yamsa, shared expenses, roommate app, bill splitting, dashboards"
+msgstr "yamsa, gemeinsame Ausgaben, Mitbewohner-App, Rechnungsteilung, Dashboards"
+
+msgid "yamsa"
+msgstr "yamsa"
+
+msgid "yamsa | Yet another money split app"
+msgstr "yamsa | Yet another money split app"
+
+msgid "Hey"
+msgstr "Hey"
+
+msgid "New Password"
+msgstr "Neues Passwort"
+
+msgid "Log in with new password"
+msgstr "Mit neuem Passwort anmelden"
+
+msgid "Forgotten your password?"
+msgstr "Passwort vergessen?"
+
+msgid "No worries - happens to the best!"
+msgstr "Kein Problem - das passiert den Besten!"
+
+msgid "Your new password is:"
+msgstr "Dein neues Passwort lautet:"
+
+msgid "Log in with your new password, by clicking the button below"
+msgstr "Melde dich mit deinem neuen Passwort an, indem du auf den Button unten klickst"
+
+msgid "(And don't forget to change your password afterwards!)"
+msgstr "(Und vergiss nicht, dein Passwort danach zu ändern!)"
+
+msgid "Invitation"
+msgstr "Einladung"
+
+#, python-format
+msgid "You have been invited by %(inviter)s to join your friends on yamsa"
+msgstr "Du wurdest von %(inviter)s eingeladen, dich deinen Freunden auf yamsa anzuschließen"
+
+msgid "Click the button below to register!"
+msgstr "Klicke auf den Button unten, um dich zu registrieren!"
+
+msgid "Register here"
+msgstr "Hier registrieren"
+
+msgid "Payment reminder"
+msgstr "Zahlungserinnerung"
+
+#, python-format
+msgid "%(room_name)s | Payment reminder"
+msgstr "%(room_name)s | Zahlungserinnerung"
+
+#, python-format
+msgid "Hey there! It has been %(inactivity_days)d days since any activity in %(room_name)s."
+msgstr "Hey! In %(room_name)s ist seit %(inactivity_days)d Tagen keine Aktivität mehr passiert."
+
+#, python-format
+msgid "You currently owe %(amount_summary)s."
+msgstr "Du schuldest derzeit %(amount_summary)s."
+
+msgid "Please follow the link below to review and settle the outstanding balance before it grows stale."
+msgstr "Bitte folge dem untenstehenden Link, um den offenen Betrag zu prüfen und zu begleichen, bevor er veraltet."
+
+#, python-format
+msgid "Payment reminder: %(room_name)s"
+msgstr "Zahlungserinnerung: %(room_name)s"
+
+msgid "This reminder is generated automatically for overdue balances. We're cheering for you!"
+msgstr "Diese Erinnerung wird automatisch für überfällige Salden erstellt. Wir drücken dir die Daumen!"
+
+msgid "Need a hand? Reach out to your room admin if the numbers look off."
+msgstr "Braucht du Hilfe? Wende dich an deinen Raum-Admin, wenn die Zahlen nicht stimmen."
+
+msgid "Review pending debts"
+msgstr "Ausstehende Schulden prüfen"
+
+msgid "Welcome to yamsa"
+msgstr "Willkommen bei yamsa"
+
+msgid "It looks like you already belong to some rooms!"
+msgstr "Es sieht so aus, als gehörst du bereits zu einigen Räumen!"
+
+msgid "Check them out, by clicking the button below"
+msgstr "Sieh sie dir an, indem du auf den Button unten klickst"
+
+msgid "Create a new room, by clicking the button below"
+msgstr "Erstelle einen neuen Raum, indem du auf den Button unten klickst"
+
+msgid "Create a room"
+msgstr "Raum erstellen"
+
+msgid "See your rooms"
+msgstr "Deine Räume ansehen"
+
+msgid "Room status reminder"
+msgstr "Raumstatus-Erinnerung"
+
+#, python-format
+msgid "%(room_name)s | Room still open?"
+msgstr "%(room_name)s | Raum noch offen?"
+
+#, python-format
+msgid "%(room_name)s has been quiet for %(inactivity_days)d days."
+msgstr "In %(room_name)s herrscht seit %(inactivity_days)d Tagen Ruhe."
+
+msgid "If everyone already settled up, please mark the debts as paid and close the room so it stops lingering."
+msgstr "Wenn alle bereits bezahlt haben, markiere die Schulden als bezahlt und schließe den Raum, damit er nicht weiter offen bleibt."
+
+msgid "If you still need the room, feel free to ignore this reminder and keep it open."
+msgstr "Wenn du den Raum noch brauchst, kannst du diese Erinnerung ignorieren und ihn offen lassen."
+
+#, python-format
+msgid "Room cleanup reminder: %(room_name)s"
+msgstr "Raum-Aufräum-Erinnerung: %(room_name)s"
+
+msgid "This reminder is generated automatically when open rooms stay inactive. We're happy to help."
+msgstr "Diese Erinnerung wird automatisch erstellt, wenn offene Räume inaktiv bleiben. Wir helfen gerne."
+
+msgid "Give us a shout if the room history looks off."
+msgstr "Melde dich, wenn die Raumhistorie merkwürdig aussieht."
+
+msgid "Review room status"
+msgstr "Raumstatus prüfen"
+
+#, python-format
+msgid "Welcome to %(room_name)s"
+msgstr "Willkommen bei %(room_name)s"
+
+#, python-format
+msgid "You have been invited to %(room_name)s to join your friends"
+msgstr "Du wurdest zu %(room_name)s eingeladen, dich deinen Freunden anzuschließen"
+
+msgid "Click the button below to view the room!"
+msgstr "Klicke auf den Button unten, um den Raum aufzurufen!"
+
+msgid "See the room"
+msgstr "Raum ansehen"
+
+msgid "Create Room"
+msgstr "Raum erstellen"
+
+msgid "Create"
+msgstr "Erstellen"
+
+msgid "Suggested guests"
+msgstr "Vorgeschlagene Gäste"
+
+msgid "Invite frequent collaborators"
+msgstr "Lade regelmäßige Mitwirkende ein"
+
+msgid "Add past roommates with one tap. Mark your go-to teammates as friends to pin them to the top."
+msgstr "Füge ehemalige Mitbewohner mit einem Tippen hinzu. Markiere deine wichtigsten Teamkollegen als Freunde, um sie oben anzuheften."
+
+msgid "Room overview"
+msgstr "Raumübersicht"
+
+msgid "No description added yet."
+msgstr "Noch keine Beschreibung hinzugefügt."
+
+msgid "Closed"
+msgstr "Geschlossen"
+
+msgid "Open"
+msgstr "Offen"
+
+msgid "Preferred currency"
+msgstr "Bevorzugte Währung"
+
+msgid "Edit room"
+msgstr "Raum bearbeiten"
+
+msgid "Used as the default for new transactions."
+msgstr "Wird als Standard für neue Transaktionen verwendet."
+
+msgid "Members"
+msgstr "Mitglieder"
+
+msgid "Roommates and guests currently connected."
+msgstr "Aktuell verbundene Mitbewohner und Gäste."
+
+msgid "Closing readiness"
+msgstr "Bereitschaft zum Schließen"
+
+msgid "Ready to close"
+msgstr "Bereit zum Schließen"
+
+msgid "No unsettled debts remain."
+msgstr "Es bleiben keine offenen Schulden."
+
+msgid "Outstanding balances"
+msgstr "Ausstehende Salden"
+
+msgid "Settle open debts before closing."
+msgstr "Begleiche offene Schulden vor dem Schließen."
+
+msgid "Keep logging expenses and invite more roommates whenever you need to."
+msgstr "Halte weiter Ausgaben fest und lade bei Bedarf mehr Mitbewohner ein."
+
+msgid "This room is locked for editing. Reopen it from the edit screen if you need to make changes."
+msgstr "Dieser Raum ist zur Bearbeitung gesperrt. Öffne ihn über den Bearbeitungsbildschirm, wenn du Änderungen vornehmen musst."
+
+msgid "Back to room"
+msgstr "Zurück zum Raum"
+
+msgid "Room settings"
+msgstr "Raumeinstellungen"
+
+#, python-format
+msgid "Edit \"%(current_room.name)s\""
+msgstr "\"%(current_room.name)s\" bearbeiten"
+
+msgid "Save room details"
+msgstr "Raumdetails speichern"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Basics"
+msgstr "Grundlagen"
+
+msgid "Name, description & currency"
+msgstr "Name, Beschreibung & Währung"
+
+msgid "Please fix the highlighted errors in the form."
+msgstr "Bitte behebe die markierten Fehler im Formular."
+
+msgid "Room status"
+msgstr "Raumstatus"
+
+msgid "All debts are settled. You can close the room."
+msgstr "Alle Schulden sind beglichen. Du kannst den Raum schließen."
+
+#, python-format
+msgid ""
+"\n"
+"                                            There is still %(debt_count)s open debt.\n"
+"                                        "
+msgid_plural ""
+"\n"
+"                                            There are still %(debt_count)s open debts.\n"
+"                                        "
+msgstr[0] ""
+"                                            Es gibt noch %(debt_count)s offene Schuld.\n"
+"                                        "
+msgstr[1] ""
+"                                            Es gibt noch %(debt_count)s offene Schulden.\n"
+"                                        "
+
+msgid "The room is closed and can be reopened."
+msgstr "Der Raum ist geschlossen und kann wieder geöffnet werden."
+
+msgid "Close room"
+msgstr "Raum schließen"
+
+msgid "Reopen room"
+msgstr "Wieder öffnen"
+
+msgid "Outstanding debts"
+msgstr "Offene Schulden"
+
+msgid "This room still has outstanding payments."
+msgstr "Dieser Raum hat noch ausstehende Zahlungen."
+
+msgid "Close"
+msgstr "Schließen"
+
+#, python-format
+msgid ""
+"\n"
+"                                    There is still %(debt_count)s open debt. Closing the room anyway will mark it as settled.\n"
+"                                "
+msgid_plural ""
+"\n"
+"                                    There are still %(debt_count)s open debts. Closing the room anyway will mark them as settled.\n"
+"                                "
+msgstr[0] ""
+"                                    Es gibt noch %(debt_count)s offene Schuld. Wenn du den Raum trotzdem schließt, wird sie als beglichen markiert.\n"
+"                                "
+msgstr[1] ""
+"                                    Es gibt noch %(debt_count)s offene Schulden. Wenn du den Raum trotzdem schließt, werden sie als beglichen markiert.\n"
+"                                "
+
+msgid "Use this option only if you want to skip manual settlement."
+msgstr "Nutze diese Option nur, wenn du die manuelle Abrechnung überspringen willst."
+
+msgid "Close anyway"
+msgstr "Trotzdem schließen"
+
+msgid "Toggle navigation"
+msgstr "Navigation umschalten"
+
+msgid "Copy the rooms URL to your clipboard to send it to your friends"
+msgstr "Kopiere die Raum-URL in deine Zwischenablage, um sie an deine Freunde zu senden"
+
+msgid "Menu"
+msgstr "Menü"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Log in to access rooms"
+msgstr "Zum Zugriff auf Räume einloggen"
+
+msgid "Manage rooms and transactions"
+msgstr "Räume und Transaktionen verwalten"
+
+msgid "Sign in"
+msgstr "Anmelden"
+
+msgid "View profile"
+msgstr "Profil ansehen"
+
+msgid "Home"
+msgstr "Startseite"
+
+msgid "Back to home"
+msgstr "Zurück zur Startseite"
+
+msgid "Start"
+msgstr "Start"
+
+msgid "Log out"
+msgstr "Abmelden"
+
+msgid "New room"
+msgstr "Neuer Raum"
+
+msgid "Start a new group with friends"
+msgstr "Starte eine neue Gruppe mit Freunden"
+
+msgid "Loading..."
+msgstr "Lädt..."
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "Room access"
+msgstr "Raumzugang"
+
+msgid "New member"
+msgstr "Neues Mitglied"
+
+msgid "We'll notify members automatically."
+msgstr "Wir benachrichtigen Mitglieder automatisch."
+
+msgid "Submit"
+msgstr "Absenden"
+
+msgid "This room is closed, so new members cannot be added."
+msgstr "Dieser Raum ist geschlossen, daher können keine neuen Mitglieder hinzugefügt werden."
+
+msgid "No updates yet."
+msgstr "Noch keine Updates."
+
+msgid "You are all caught up."
+msgstr "Du bist auf dem Laufenden."
+
+msgid "Open related update"
+msgstr "Verwandtes Update öffnen"
+
+msgid "Update"
+msgstr "Aktualisieren"
+
+msgid "Something went wrong"
+msgstr "Etwas ist schiefgelaufen"
+
+msgid "Guest"
+msgstr "Gast"
+
+msgid "Member"
+msgstr "Mitglied"
+
+msgid "Seen room"
+msgstr "Raum gesehen"
+
+msgid "Not seen yet"
+msgstr "Noch nicht gesehen"
+
+msgid "Remove from room"
+msgstr "Aus Raum entfernen"
+
+msgid "Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!"
+msgstr "Möchtest du dich wirklich aus diesem Raum entfernen? Danach kannst du ihn nicht mehr sehen!"
+
+msgid "Are you sure you wish to remove this user from this room?"
+msgstr "Möchtest du diesen Nutzer wirklich aus diesem Raum entfernen?"
+
+msgid "Guest access with limited features"
+msgstr "Gastzugang mit eingeschränkten Funktionen"
+
+msgid "Registered roommate"
+msgstr "Registrierter Mitbewohner"
+
+msgid "Joined as a full member of this room."
+msgstr "Als vollwertiges Mitglied dieses Raums beigetreten."
+
+msgid "Room activity timeline"
+msgstr "Raumaktivitäts-Zeitleiste"
+
+msgid "See transactions and changes at a glance"
+msgstr "Sieh Transaktionen und Änderungen auf einen Blick"
+
+msgid "Every room update - expenses logged, settlements, highlights - lands here so you never miss a beat."
+msgstr "Jedes Raum-Update – protokollierte Ausgaben, Abrechnungen, Highlights – landet hier, damit du nichts verpasst."
+
+msgid "Auto-updated feed"
+msgstr "Automatisch aktualisierter Feed"
+
+msgid "Events appear in chronological order with the newest at the top."
+msgstr "Ereignisse erscheinen chronologisch mit den neuesten oben."
+
+msgid "No updates yet"
+msgstr "Noch keine Updates"
+
+msgid "Once roommates start logging expenses or changes, they will appear here."
+msgstr "Sobald Mitbewohner Ausgaben oder Änderungen protokollieren, erscheinen sie hier."
