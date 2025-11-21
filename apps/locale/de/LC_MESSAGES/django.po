@@ -120,6 +120,72 @@ msgstr "Abbrechen"
 msgid "Save changes"
 msgstr "Änderungen speichern"
 
+msgid "Welcome back"
+msgstr "Willkommen zurück"
+
+msgid "Keep your shared finances moving"
+msgstr "Halte eure gemeinsamen Finanzen in Bewegung"
+
+msgid "Stay in the flow: avoid surprising logouts and finish your next journal in one session."
+msgstr "Bleib im Fluss: Vermeide überraschende Abmeldungen und beende dein nächstes Journal in einer Sitzung."
+
+msgid "Create an account"
+msgstr "Konto erstellen"
+
+msgid "Secure login"
+msgstr "Sichere Anmeldung"
+
+msgid "Login"
+msgstr "Anmelden"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Stay signed in for 30 days"
+msgstr "Für 30 Tage angemeldet bleiben"
+
+msgid "Forgot password?"
+msgstr "Passwort vergessen?"
+
+msgid "Log in"
+msgstr "Anmelden"
+
+msgid "By logging in you agree that your session may be kept open when \"Stay signed in\" is enabled."
+msgstr "Durch die Anmeldung erklärst du dich damit einverstanden, dass deine Sitzung offen bleibt, wenn die Option \"Angemeldet bleiben\" aktiviert ist."
+
+msgid "Join yamsa"
+msgstr "yamsa beitreten"
+
+msgid "Create shared clarity in your rooms"
+msgstr "Schaffe gemeinsame Klarheit in deinen Räumen"
+
+msgid "Registering takes a minute and keeps every room, bill, and settlement in sync."
+msgstr "Die Registrierung dauert eine Minute und hält jeden Raum, jede Rechnung und jede Abrechnung synchron."
+
+msgid "Already have an account?"
+msgstr "Bereits ein Konto?"
+
+msgid "Login here!"
+msgstr "Hier anmelden!"
+
+msgid "Start now"
+msgstr "Jetzt anfangen"
+
+msgid "Register"
+msgstr "Registrieren"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "User ID"
+msgstr "Benutzer-ID"
+
+msgid "Is Guest"
+msgstr "Ist Gast"
+
+msgid "Register now"
+msgstr "Jetzt registrieren"
+
 msgid "English"
 msgstr "Englisch"
 
@@ -288,6 +354,21 @@ msgstr "Klicke auf den Button unten, um den Raum zu sehen!"
 
 msgid "See the room"
 msgstr "Raum ansehen"
+
+msgid "Room created"
+msgstr "Raum erstellt"
+
+msgid "Transaction created"
+msgstr "Transaktion erstellt"
+
+msgid "Transaction deleted"
+msgstr "Transaktion gelöscht"
+
+msgid "User added"
+msgstr "Nutzer:in hinzugefügt"
+
+msgid "News update"
+msgstr "News Update"
 
 msgid "Create Room"
 msgstr "Raum erstellen"
