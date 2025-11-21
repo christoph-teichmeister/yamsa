@@ -24,4 +24,5 @@ def create_news_on_transaction_create(context: ParentTransactionCreated.Context)
         message=message,
         room_id=parent_transaction.room_id,
         deeplink=deeplink,
+        type=News.TypeChoices.TRANSACTION_CREATED,
     )

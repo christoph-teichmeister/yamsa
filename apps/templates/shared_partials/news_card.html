@@ -18,7 +18,7 @@
                     <span>{{ news.created_at|date:"d.m.Y • H:i" }}</span>
                     <span>{{ news.created_at|timesince }} ago</span>
                 </div>
-                <h5 class="timeline-card-title">{{ news.title }}</h5>
+                <h5 class="timeline-card-title">{{ news.heading }}</h5>
                 <div class="timeline-card-body">
                     <p>{{ news.message }}</p>
                 </div>
@@ -37,7 +37,7 @@
                 <span>{{ news.created_at|date:"d.m.Y • H:i" }}</span>
                 <span>{{ news.created_at|timesince }} ago</span>
             </div>
-            <h5 class="timeline-card-title">{{ news.title }}</h5>
+            <h5 class="timeline-card-title">{{ news.heading }}</h5>
             <div class="timeline-card-body">
                 <p>{{ news.message }}</p>
             </div>

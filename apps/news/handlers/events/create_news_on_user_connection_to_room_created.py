@@ -22,4 +22,5 @@ def create_news_on_user_connection_to_room_created(context: UserConnectionToRoom
         message=message,
         room_id=user_connection_to_room.room_id,
         deeplink=deeplink,
+        type=News.TypeChoices.USER_ADDED,
     )
