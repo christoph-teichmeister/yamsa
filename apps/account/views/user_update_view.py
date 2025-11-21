@@ -4,10 +4,9 @@ from django.urls import reverse
 from django.utils import translation
 from django.views import generic
 
+from apps.account.constants import LANGUAGE_SESSION_KEY
 from apps.account.forms import EditUserForm
 from apps.account.models import User
-
-LANGUAGE_SESSION_KEY = "django_language"
 
 
 class UserUpdateView(mixins.LoginRequiredMixin, generic.UpdateView):

@@ -2,7 +2,6 @@ import http
 import tempfile
 from io import BytesIO
 
-from django.conf import settings
 from django.core.files.base import ContentFile
 from django.test import override_settings
 from django.urls import reverse
@@ -10,13 +9,6 @@ from PIL import Image
 
 from apps.account.views import UserDetailView
 from apps.core.tests.setup import BaseTestSetUp
-
-
-def build_profile_picture_fallback_url():
-    static_url = settings.STATIC_URL
-    if not static_url.endswith("/"):
-        static_url = f"{static_url}/"
-    return f"{static_url}img/profile-default.svg"
 
 
 class UserDetailViewTestCase(BaseTestSetUp):
@@ -170,5 +162,5 @@ class UserDetailViewTestCase(BaseTestSetUp):
             response = client.get(reverse("account:detail", args=(self.user.id,)))
 
             self.assertEqual(response.status_code, http.HTTPStatus.OK)
-            fallback_url = build_profile_picture_fallback_url()
+            fallback_url = self.user.profile_picture_fallback_url
             self.assertEqual(self.user.profile_picture_url, fallback_url)

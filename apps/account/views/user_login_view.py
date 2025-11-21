@@ -4,9 +4,8 @@ from django.urls import reverse
 from django.utils import translation
 from django.views import generic
 
+from apps.account.constants import LANGUAGE_SESSION_KEY
 from apps.account.forms import LoginForm
-
-LANGUAGE_SESSION_KEY = "django_language"
 
 
 class LogInUserView(generic.FormView):

@@ -2,7 +2,6 @@ import tempfile
 from io import BytesIO
 from time import time
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
@@ -14,13 +13,6 @@ from PIL import Image
 from apps.account.models import UserFriendship
 from apps.core.tests.setup import BaseTestSetUp
 from apps.room.models import UserConnectionToRoom
-
-
-def build_profile_picture_fallback_url():
-    static_url = settings.STATIC_URL
-    if not static_url.endswith("/"):
-        static_url = f"{static_url}/"
-    return f"{static_url}img/profile-default.svg"
 
 
 class UserModelTestCase(BaseTestSetUp):
@@ -112,7 +104,7 @@ class UserModelTestCase(BaseTestSetUp):
         self.assertNotEqual(password_hash_before, self.user.password)
 
     def test_profile_picture_url_defaults_to_placeholder(self):
-        fallback_url = build_profile_picture_fallback_url()
+        fallback_url = self.user.profile_picture_fallback_url
         self.assertEqual(self.user.profile_picture_url, fallback_url)
 
     def test_profile_picture_url_returns_file_url_when_available(self):
@@ -136,7 +128,7 @@ class UserModelTestCase(BaseTestSetUp):
             self.user.profile_picture.storage.delete(self.user.profile_picture.name)
             self.user.refresh_from_db()
 
-            fallback_url = build_profile_picture_fallback_url()
+            fallback_url = self.user.profile_picture_fallback_url
             self.assertEqual(self.user.profile_picture_url, fallback_url)
 
 
