@@ -17,7 +17,7 @@
 ## Running the Django app
 
 - `uv run python manage.py migrate` applies migrations.
-- `uv run python manage.py runserver 0.0.0.0:8000` starts the development server in the `uv` environment.
+- `uv run python manage.py runserver 0.0.0.0:8002` starts the development server in the `uv` environment.
 - `uv run python manage.py shell` launches a Django shell.
 
 ## Testing and linting
