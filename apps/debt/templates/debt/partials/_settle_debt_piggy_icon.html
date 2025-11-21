@@ -1,4 +1,4 @@
-{% load room_tags %}
+{% load room_tags i18n %}
 {% if debt.settled %}
     <i class="bi bi-piggy-bank-fill debt-list-debt-settled"></i>
 {% else %}
@@ -17,11 +17,12 @@
            hx-push-url="true"></i>
     {% else %}
         {# djlint:off H021 (inline style) #}
+        {% trans "This transaction is not yours to settle!" as tooltip_title %}
         <i class="bi bi-piggy-bank cursor-pointer"
            style="opacity: 25%"
            data-bs-toggle="tooltip"
            data-bs-placement="top"
-           data-bs-title="This transaction is not yours to settle!"></i>
+           data-bs-title="{{ tooltip_title }}"></i>
         {# djlint:on #}
     {% endif %}
 {% endif %}
