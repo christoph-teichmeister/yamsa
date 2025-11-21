@@ -11,6 +11,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Your current password is incorrect"
+msgstr "Dein aktuelles Passwort ist falsch"
+
+msgid "Passwords do not match"
+msgstr "Passwörter stimme nicht überein"
+
+msgid "Your current password"
+msgstr "Dein aktuelles Passwort"
+
+msgid "Your new password"
+msgstr "Dein neues Passwort"
+
+msgid "Confirm your new password"
+msgstr "Bestätige dein neues Passwort"
+
 msgid "Receive push notifications"
 msgstr "Push-Benachrichtigungen erhalten"
 
@@ -22,6 +37,18 @@ msgstr "E-Mail-Erinnerungen an Zahlungen erhalten"
 
 msgid "Receive room reminder emails"
 msgstr "E-Mail-Erinnerungen zum Raum erhalten"
+
+msgid "Change your password:"
+msgstr "Ändere dein Passwort:"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Note:"
+msgstr "Achtung:"
+
+msgid "After a successful password change, you will be prompted to login again."
+msgstr "Nach einer erfolgreichen Passwortänderung wirst du aufgefordert, dich erneut anzumelden."
 
 msgid "Guest Mode"
 msgstr "Gastmodus"
@@ -66,6 +93,9 @@ msgstr "PayPal verknüpft"
 msgid "No PayPal link"
 msgstr "Kein PayPal-Link"
 
+msgid "Edit profile"
+msgstr "Profil bearbeiten"
+
 msgid "Display name"
 msgstr "Anzeigename"
 
@@ -107,9 +137,6 @@ msgstr "Wähle ein einzigartiges Passwort, um deine Räume zu schützen."
 
 msgid "Change password"
 msgstr "Passwort ändern"
-
-msgid "Edit profile"
-msgstr "Profil bearbeiten"
 
 msgid "Keep your details up to date"
 msgstr "Halte deine Daten aktuell"
@@ -449,9 +476,6 @@ msgstr "Raumeinstellungen"
 msgid "Edit \"%(current_room.name)s\""
 msgstr "\"%(current_room.name)s\" bearbeiten"
 
-msgid "Save"
-msgstr "Speichern"
-
 msgid "Basics"
 msgstr "Grundlagen"
 
@@ -560,6 +584,9 @@ msgstr "Start"
 msgid "Log out"
 msgstr "Abmelden"
 
+msgid "New"
+msgstr "Neu"
+
 msgid "New room"
 msgstr "Neuer Raum"
 
@@ -631,3 +658,557 @@ msgstr "Registrierter Mitbewohner"
 
 msgid "Joined as a full member of this room."
 msgstr "Als volles Mitglied dieses Raums beigetreten."
+
+msgid "Back to transactions"
+msgstr "Zurück zu den Transaktionen"
+
+msgid "Category breakdown"
+msgstr "Kategorienübersicht"
+
+msgid "All recorded spend"
+msgstr "Alle erfassten Ausgaben"
+
+#, python-format
+msgid "Showing %(period)s."
+msgstr "Zeigt %(period)s."
+
+msgid "Add transaction"
+msgstr "Transaktion hinzufügen"
+
+msgid "Currency breakdown"
+msgstr "Währungsaufteilung"
+
+#, python-format
+msgid ""
+"\n"
+"                                            %(category_count)s category\n"
+"                                        "
+msgid_plural ""
+"\n"
+"                                            %(category_count)s categories\n"
+"                                        "
+msgstr[0] ""
+"\n"
+"                                            %(category_count)s Kategorie\n"
+"                                        "
+msgstr[1] ""
+"\n"
+"                                            %(category_count)s Kategorien\n"
+"                                        "
+
+msgid "Legend"
+msgstr "Legende"
+
+msgid "No tracked expenses yet. Add a transaction to populate the breakdown."
+msgstr "Noch keine erfassten Ausgaben. Füge eine Transaktion hinzu, um die Aufschlüsselung zu füllen."
+
+msgid "Add expenses to unlock the breakdown."
+msgstr "Füge Ausgaben hinzu, um die Aufschlüsselung freizuschalten."
+
+msgid "Amount"
+msgstr "Betrag"
+
+msgid "For"
+msgstr "Für"
+
+msgid "Remove this participant?"
+msgstr "Diese:n Teilnehmer:in entfernen?"
+
+msgid "Child Transaction ID"
+msgstr "ID der Untertransaktion"
+
+msgid "New transaction"
+msgstr "Neue Transaktion"
+
+#, python-format
+msgid ""
+"\n"
+"                        Add transaction for \"%(room_name)s\"\n"
+"                    "
+msgstr ""
+"\n"
+"                        Eine Transaktion für \"%(room_name)s\" hinzufügen\n"
+"                    "
+
+#, python-format
+msgid ""
+"\n"
+"                        %(member_count)s member\n"
+"                    "
+msgid_plural ""
+"\n"
+"                        %(member_count)s members\n"
+"                    "
+msgstr[0] ""
+"\n"
+"                        %(member_count)s Mitglied\n"
+"                    "
+msgstr[1] ""
+"\n"
+"                        %(member_count)s Mitglieder\n"
+"                    "
+
+#, python-format
+msgid ""
+"\n"
+"                        %(currency_sign)s preferred\n"
+"                    "
+msgstr ""
+"\n"
+"                        %(currency_sign)s bevorzugt\n"
+"                    "
+
+msgid "Unable to add transaction"
+msgstr "Transaktion konnte nicht hinzugefügt werden"
+
+msgid "Required details"
+msgstr "Erforderliche Angaben"
+
+msgid "What was this?"
+msgstr "Was war das?"
+
+msgid "e.g., Grocery run"
+msgstr "z. B. Lebensmitteleinkauf"
+
+msgid "Maximum 50 characters."
+msgstr "Maximal 50 Zeichen."
+
+msgid "Amount paid"
+msgstr "Bezahlter Betrag"
+
+msgid "Total paid in the selected currency."
+msgstr "In der gewählten Währung insgesamt bezahlt."
+
+msgid "Who paid?"
+msgstr "Wer hat bezahlt?"
+
+msgid "Person covering this expense."
+msgstr "Die Person, die diese Ausgabe getragen hat."
+
+msgid "Split between"
+msgstr "Aufgeteilt auf"
+
+msgid "Hold Cmd/Ctrl to adjust beneficiaries."
+msgstr "Halte Cmd/Ctrl gedrückt, um die Begünstigten anzupassen."
+
+msgid "Optional"
+msgstr "Optional"
+
+msgid "More details"
+msgstr "Weitere Details"
+
+msgid "Show fields"
+msgstr "Felder anzeigen"
+
+msgid "Paid at"
+msgstr "Bezahlt am"
+
+msgid "Use if the expense occurred earlier."
+msgstr "Verwenden, wenn die Ausgabe früher stattfand."
+
+msgid "Currency"
+msgstr "Währung"
+
+msgid "Defaults to the room preference."
+msgstr "Standardmäßig wird die Raumpräferenz verwendet."
+
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "Tag this expense for dashboards and charts."
+msgstr "Markiere diese Ausgabe für Dashboards und Diagramme."
+
+msgid "Notes"
+msgstr "Notizen"
+
+msgid "Add split details, receipts, or reminders"
+msgstr "Füge Split-Details, Belege oder Erinnerungen hinzu"
+
+msgid "Up to 5000 characters."
+msgstr "Bis zu 5000 Zeichen."
+
+msgid "Receipts"
+msgstr "Belege"
+
+msgid "Upload receipts as PDF or image (max 5 MB each)."
+msgstr "Lade Belege als PDF oder Bild hoch (maximal 5 MB pro Datei)."
+
+msgid "Room Slug"
+msgstr "Raum-Slug"
+
+msgid "Room"
+msgstr "Raum"
+
+msgid "Groceries"
+msgstr "Lebensmittel"
+
+msgid "Utilities"
+msgstr "Nebenkosten"
+
+msgid "Dinner"
+msgstr "Abendessen"
+
+msgid "Ride share"
+msgstr "Fahrgemeinschaft"
+
+msgid "House supplies"
+msgstr "Haushaltsbedarf"
+
+msgid "Back to list"
+msgstr "Zurück zur Liste"
+
+msgid "Expense"
+msgstr "Ausgabe"
+
+msgid "paid"
+msgstr "bezahlt"
+
+msgid "Edit transaction"
+msgstr "Transaktion bearbeiten"
+
+msgid "Edit expense"
+msgstr "Ausgabe bearbeiten"
+
+msgid "This room is closed, so the breakdown is read-only."
+msgstr "Dieser Raum ist geschlossen, daher ist die Aufschlüsselung read-only."
+
+msgid "Total amount"
+msgstr "Gesamtbetrag"
+
+msgid "Paid by"
+msgstr "Bezahlt von"
+
+msgid "on"
+msgstr "am"
+
+#, python-format
+msgid "Recorded at %(recorded_time)s"
+msgstr "Erfasst um %(recorded_time)s"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "No description"
+msgstr "Keine Beschreibung"
+
+msgid "Tap a row to edit the breakdown."
+msgstr "Tippe auf eine Zeile, um die Aufschlüsselung zu bearbeiten."
+
+#, python-format
+msgid ""
+"\n"
+"                        %(member_count)s person\n"
+"                    "
+msgid_plural ""
+"\n"
+"                        %(member_count)s people\n"
+"                    "
+msgstr[0] ""
+"\n"
+"                        %(member_count)s Person\n"
+"                    "
+msgstr[1] ""
+"\n"
+"                        %(member_count)s Personen\n"
+"                    "
+
+#, python-format
+msgid ""
+"\n"
+"                                    Owes %(owed_value)s%(owed_currency)s\n"
+"                                "
+msgstr ""
+"\n"
+"                                    Schuldet %(owed_value)s%(owed_currency)s\n"
+"                                "
+
+msgid "No split data available for this transaction yet."
+msgstr "Für diese Transaktion liegen noch keine Splits-Daten vor."
+
+msgid "Editing expense"
+msgstr "Ausgabe bearbeiten"
+
+msgid "Adjust who paid and how it is split."
+msgstr "Leg fest, wer bezahlt hat und wie geteilt wird."
+
+msgid "Are you sure you wish to delete this transaction?"
+msgstr "Bist du sicher, dass du diese Transaktion löschen möchtest?"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Total"
+msgstr "Gesamt"
+
+#, python-format
+msgid ""
+"\n"
+"                                    Current split: %(split_total)s%(split_currency)s\n"
+"                                "
+msgstr ""
+"\n"
+"                                    Aktuelle Aufteilung: %(split_total)s%(split_currency)s\n"
+"                                "
+
+msgid "Use categories to group similar spend."
+msgstr "Nutze Kategorien, um ähnliche Ausgaben zu bündeln."
+
+msgid "Receipts stay on the detail page, so upload PDFs there instead of here."
+msgstr "Belege bleiben auf der Detailseite, lade PDFs dort statt hier hoch."
+
+msgid "You can continue editing this transaction; switch to the detail view if you need to manage uploads."
+msgstr "Du kannst diese Transaktion weiter bearbeiten; wechsle zur Detailansicht, wenn du Uploads verwalten möchtest."
+
+msgid "Open detail view"
+msgstr "Detailansicht öffnen"
+
+msgid "Update each share or remove it entirely."
+msgstr "Aktualisiere jeden Anteil oder entferne ihn vollständig."
+
+#, python-format
+msgid ""
+"\n"
+"                                    %(participant_count)s person\n"
+"                                "
+msgid_plural ""
+"\n"
+"                                    %(participant_count)s people\n"
+"                                "
+msgstr[0] ""
+"\n"
+"                                    %(participant_count)s Person\n"
+"                                "
+msgstr[1] ""
+"\n"
+"                                    %(participant_count)s Personen\n"
+"                                "
+
+msgid "⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically."
+msgstr "⚠️ Gesamte Änderungen sperren einzelne Anteile; das Backend gleicht die Splits automatisch aus."
+
+msgid "No split entries yet."
+msgstr "Noch keine Splits erfasst."
+
+msgid "Add participant"
+msgstr "Teilnehmer hinzufügen"
+
+msgid "Add extra notes here"
+msgstr "Hier zusätzliche Notizen hinzufügen"
+
+msgid "Room transactions"
+msgstr "Raumtransaktionen"
+
+msgid "Click a row to explore the full breakdown."
+msgstr "Klicke eine Zeile, um die vollständige Aufschlüsselung zu sehen."
+
+msgid "Record your first expense to see the running history here."
+msgstr "Erfasse deine erste Ausgabe, um den Verlauf hier anzuzeigen."
+
+msgid "View category breakdown"
+msgstr "Kategorienaufteilung anzeigen"
+
+msgid "Break down spend"
+msgstr "Ausgaben aufschlüsseln"
+
+msgid "This room is closed, so transactions are read-only."
+msgstr "Dieser Raum ist geschlossen, daher sind Transaktionen nur lesbar."
+
+msgid "Search"
+msgstr "Suche"
+
+msgid "Filter by payer or description"
+msgstr "Nach Zahler:in oder Beschreibung filtern"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "Nothing to show yet"
+msgstr "Noch nichts zu zeigen"
+
+msgid "Start by logging an expense to build your history."
+msgstr "Erfasse zuerst eine Ausgabe, um deinen Verlauf aufzubauen."
+
+msgid "Room snapshot"
+msgstr "Raumzusammenfassung"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Transactions logged"
+msgstr "Erfasste Transaktionen"
+
+msgid "Last transaction"
+msgstr "Letzte Transaktion"
+
+msgid "Invite your roommates to start sharing expenses."
+msgstr "Lade deine Mitbewohner ein, Ausgaben gemeinsam zu teilen."
+
+msgid "Tips"
+msgstr "Tipps"
+
+msgid "Use the search field to filter by payer or description."
+msgstr "Nutze das Suchfeld, um nach Zahler:in oder Beschreibung zu filtern."
+
+msgid "Tap a row or the eye icon to review the split details."
+msgstr "Tippe eine Zeile oder das Augensymbol an, um die Split-Details anzusehen."
+
+msgid "The floating \"+\" button lets you capture a new transaction."
+msgstr "Der schwebende \"+\"-Button ermöglicht dir, eine neue Transaktion zu erfassen."
+
+msgid "Back to debts"
+msgstr "Zurück zu Schulden"
+
+msgid "Room spending overview"
+msgstr "Übersicht der Raumausgaben"
+
+msgid "Who paid what"
+msgstr "Wer hat was bezahlt"
+
+#, python-format
+msgid ""
+"\n"
+"                                    Total spent (%(currency_sign)s)\n"
+"                                "
+msgstr ""
+"\n"
+"                                    Insgesamt ausgegeben (%(currency_sign)s)\n"
+"                                "
+
+msgid "No spending yet"
+msgstr "Noch keine Ausgaben"
+
+msgid "Add expenses to populate this dashboard."
+msgstr "Füge Ausgaben hinzu, um dieses Dashboard zu füllen."
+
+msgid "Money spent by members"
+msgstr "Von Mitgliedern ausgegebenes Geld"
+
+msgid "Who covered the bills"
+msgstr "Wer hat die Rechnungen bezahlt"
+
+msgid "No payments recorded yet"
+msgstr "Noch keine Zahlungen erfasst"
+
+msgid "As soon as someone logs an expense, their share appears here."
+msgstr "Sobald jemand eine Ausgabe erfasst, erscheint sein Anteil hier."
+
+msgid "Money still owed"
+msgstr "Noch geschuldetes Geld"
+
+msgid "Who needs to settle up"
+msgstr "Wer muss noch ausgleichen"
+
+msgid "Pending balances"
+msgstr "Ausstehende Salden"
+
+msgid "Nothing owed right now"
+msgstr "Aktuell keine Schulden"
+
+msgid "All participants are even for the tracked expenses."
+msgstr "Alle Teilnehmer sind für die erfassten Ausgaben ausgeglichen."
+
+msgid "Loading spending timeline…"
+msgstr "Verlauf wird geladen…"
+
+msgid "Spending over time"
+msgstr "Ausgaben über die Zeit"
+
+msgid "Expense build-up"
+msgstr "Ausgabenaufbau"
+
+#, python-format
+msgid ""
+"\n"
+"                                Showing %(period)s (%(start)s – %(end)s).\n"
+"                            "
+msgstr ""
+"\n"
+"                                Zeigt %(period)s (%(start)s – %(end)s).\n"
+"                            "
+
+msgid "Spending trend ranges"
+msgstr "Ausgabentrend-Intervalle"
+
+msgid "Updating..."
+msgstr "Wird aktualisiert..."
+
+msgid "Not enough data to render the chart yet."
+msgstr "Noch nicht genug Daten, um das Diagramm darzustellen."
+
+msgid "No data available"
+msgstr "Keine Daten verfügbar"
+
+msgid "Add a few expenses to unlock the timeline."
+msgstr "Füge ein paar Ausgaben hinzu, um die Timeline freizuschalten."
+
+msgid "Stored documents are linked to this transaction."
+msgstr "Gespeicherte Dokumente sind mit dieser Transaktion verknüpft."
+
+msgid "Permanently delete this receipt?"
+msgstr "Beleg dauerhaft löschen?"
+
+msgid "Delete receipt"
+msgstr "Beleg löschen"
+
+msgid "PDF receipt preview"
+msgstr "PDF-Beleg-Vorschau"
+
+#, python-format
+msgid ""
+"\n"
+"                                                Uploaded by %(uploader)s\n"
+"                                            "
+msgstr ""
+"\n"
+"                                                Hochgeladen von %(uploader)s\n"
+"                                            "
+
+msgid "No receipts have been attached to this transaction yet."
+msgstr "Dieser Transaktion wurden noch keine Belege beigefügt."
+
+msgid "Receipts cannot be uploaded after the room has been closed."
+msgstr "Belege können nach Schließen des Raums nicht mehr hochgeladen werden."
+
+msgid "Upload receipt"
+msgstr "Beleg hochladen"
+
+msgid "PDF or PNG/JPEG/WebP/GIF (max 5 MB)."
+msgstr "PDF oder PNG/JPEG/WebP/GIF (max. 5 MB)."
+
+msgid "Paid on"
+msgstr "Bezahlt am"
+
+#, python-format
+msgid ""
+"\n"
+"                                    %(delta)s ago\n"
+"                                "
+msgstr ""
+"\n"
+"                                    Vor %(delta)s\n"
+"                                "
+
+msgid "Payer"
+msgstr "Zahler:in"
+
+msgid "View split details"
+msgstr "Split-Details ansehen"
+
+#, python-format
+msgid "No transactions match \"%(query)s\"."
+msgstr "Keine Transaktionen entsprechen \"%(query)s\"."
+
+msgid "No transactions to show yet."
+msgstr "Noch keine Transaktionen anzuzeigen."
+
+msgid "You're all caught up."
+msgstr "Du bist auf dem Laufenden."
+
+#~ msgid "you"
+#~ msgstr "du"
+
+#~ msgid "You"
+#~ msgstr "Du"

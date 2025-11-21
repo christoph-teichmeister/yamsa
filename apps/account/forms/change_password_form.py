@@ -1,20 +1,21 @@
 from django import forms
 from django.contrib.auth import authenticate, hashers
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 from apps.account.models import User
 
 
 class ChangePasswordForm(forms.ModelForm):
     class ExceptionMessage:
-        PASSWORD_INCORRECT = "Your current password is incorrect"
-        PASSWORDS_DO_NOT_MATCH = "Passwords do not match"
+        PASSWORD_INCORRECT = _("Your current password is incorrect")
+        PASSWORDS_DO_NOT_MATCH = _("Passwords do not match")
 
     _request = None  # set by .__init__()
 
-    old_password = forms.CharField(required=True, label="Your current password")
-    new_password = forms.CharField(required=True, label="Your new password")
-    new_password_confirmation = forms.CharField(required=True, label="Confirm your new password")
+    old_password = forms.CharField(required=True, label=_("Your current password"))
+    new_password = forms.CharField(required=True, label=_("Your new password"))
+    new_password_confirmation = forms.CharField(required=True, label=_("Confirm your new password"))
 
     class Meta:
         model = User

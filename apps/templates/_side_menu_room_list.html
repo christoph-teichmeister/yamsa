@@ -29,7 +29,7 @@
         {% endfor %}
     </section>
 {% endif %}
-{% include "side_menu_components/room_list_title.html" with title="New" %}
+{% include "side_menu_components/room_list_title.html" with title=_("New") %}
 <section class="room-group">
     <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm room-entry-callout{% if request.path == "/room/create/" %} active{% endif %}"
          data-bs-dismiss="offcanvas"
