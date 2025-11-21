@@ -46,6 +46,8 @@
                 <span class="badge text-bg-light align-self-center">
                     {% blocktrans count active_debt_count=active_debt_count %}
                         {{ active_debt_count }} pending
+                    {% plural %}
+                        {{ active_debt_count }} pending
                     {% endblocktrans %}
                 </span>
             {% endif %}
