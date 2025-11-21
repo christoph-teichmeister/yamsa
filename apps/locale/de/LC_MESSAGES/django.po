@@ -767,9 +767,6 @@ msgstr "Erforderliche Angaben"
 msgid "What was this?"
 msgstr "Was war das?"
 
-msgid "e.g., Grocery run"
-msgstr "z. B. Lebensmitteleinkauf"
-
 msgid "Maximum 50 characters."
 msgstr "Maximal 50 Zeichen."
 
@@ -820,9 +817,6 @@ msgstr "Markiere diese Ausgabe für Dashboards und Diagramme."
 
 msgid "Notes"
 msgstr "Notizen"
-
-msgid "Add split details, receipts, or reminders"
-msgstr "Füge Split-Details, Belege oder Erinnerungen hinzu"
 
 msgid "Up to 5000 characters."
 msgstr "Bis zu 5000 Zeichen."
@@ -1055,8 +1049,8 @@ msgstr "Nutze das Suchfeld, um nach Zahler:in oder Beschreibung zu filtern."
 msgid "Tap a row or the eye icon to review the split details."
 msgstr "Tippe eine Zeile oder das Augensymbol an, um die Split-Details anzusehen."
 
-msgid "The floating \"+\" button lets you capture a new transaction."
-msgstr "Der schwebende \"+\"-Button ermöglicht dir, eine neue Transaktion zu erfassen."
+msgid "The floating '+' button lets you capture a new transaction."
+msgstr "Der schwebende '+'-Button ermöglicht dir, eine neue Transaktion zu erfassen."
 
 msgid "Back to debts"
 msgstr "Zurück zu Schulden"
@@ -1206,9 +1200,3 @@ msgstr "Noch keine Transaktionen anzuzeigen."
 
 msgid "You're all caught up."
 msgstr "Du bist auf dem Laufenden."
-
-#~ msgid "you"
-#~ msgstr "du"
-
-#~ msgid "You"
-#~ msgstr "Du"
