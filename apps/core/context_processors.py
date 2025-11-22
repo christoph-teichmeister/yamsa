@@ -10,6 +10,7 @@ def core_context(request):
             "DEBUG": settings.DEBUG,
             "BACKEND_URL": settings.BACKEND_URL,
             "ADMIN_URL": settings.ADMIN_URL,
+            "LANGUAGES": settings.LANGUAGES,
         },
         "toast_classes": TOAST_TYPE_CLASSES,
     }

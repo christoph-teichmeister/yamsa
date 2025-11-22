@@ -20,26 +20,22 @@ from pathlib import Path
 
 import environ
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 CONFIG_DIR = Path(__file__).resolve().parent
 APPS_DIR = CONFIG_DIR.parent
 BASE_DIR = APPS_DIR.parent
 
-# Directories skipped by validators such as `validate_test_structure`.
-TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST = [
-    ".venv",
-]
-
 env = environ.Env(
     DJANGO_ADMIN_URL=(str, "admin"),
     DJANGO_ALLOWED_HOSTS=(list, ["127.0.0.1", "localhost"]),
-    DJANGO_BACKEND_URL=(str, "http://localhost:8000"),
+    DJANGO_BACKEND_URL=(str, "http://localhost:8002"),
     DJANGO_CACHE_URL=(str, "locmemcache://"),
     DJANGO_DATABASE_URL=(str, "sqlite:///sqlite.db"),
     DJANGO_DEBUG=(bool, False),
     DJANGO_DEBUG_TOOLBAR_USE_DOCKER=(bool, True),
-    DJANGO_FRONTEND_URL=(str, "http://localhost:8000"),
+    DJANGO_FRONTEND_URL=(str, "http://localhost:8002"),
     DJANGO_SECRET_KEY=(str, ""),
     DJANGO_SECURE_HSTS_SECONDS=(int, 0),
     DJANGO_SESSION_COOKIE_SECURE=(bool, True),
@@ -56,7 +52,7 @@ env = environ.Env(
     DJANGO_EMAIL_HOST=(str, "yamsa_mailhog"),
     DJANGO_EMAIL_HOST_PASSWORD=(str, ""),
     DJANGO_EMAIL_HOST_USER=(str, ""),
-    DJANGO_EMAIL_PORT=(int, 1025),
+    DJANGO_EMAIL_PORT=(int, 1027),
     DJANGO_EMAIL_URL=(environ.Env.email_url_config, "consolemail://"),
     DJANGO_EMAIL_USE_TLS=(bool, False),
     DJANGO_EMAIL_USE_SSL=(bool, False),
@@ -88,8 +84,10 @@ TIME_ZONE = "Europe/Berlin"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = "en"
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
-# from django.utils.translation import gettext_lazy as _
-LANGUAGES = (("en", "English"),)
+LANGUAGES = (
+    ("en", _("English")),
+    ("de", _("German")),
+)
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
@@ -203,6 +201,7 @@ MIDDLEWARE = (
     "django.middleware.gzip.GZipMiddleware",
     "django_minify_html.middleware.MinifyHtmlMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -832,6 +831,11 @@ PWA_SERVICE_WORKER_DEBUG = DEBUG
 # Test structure validator whitelist
 # https://ambient-toolbox.readthedocs.io/en/latest/features/tests.html#test-structure-validator
 TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = ["baker_recipes", "setup"]
+
+# Directories skipped by validators such as `validate_test_structure`.
+TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST = [
+    ".venv",
+]
 
 # WEBPUSH
 # ------------------------------------------------------------------------------

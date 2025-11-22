@@ -209,6 +209,7 @@ body {
 .toast-container.yamsa-toast-container {
     pointer-events: none;
     max-height: calc(100% - 1rem);
+    z-index: 1400;
 }
 
 .toast-yamsa-inner {

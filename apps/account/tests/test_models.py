@@ -1,9 +1,14 @@
+import tempfile
+from io import BytesIO
 from time import time
 
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.db import IntegrityError
+from django.test import override_settings
 from freezegun import freeze_time
 from model_bakery import baker
+from PIL import Image
 
 from apps.account.models import UserFriendship
 from apps.core.tests.setup import BaseTestSetUp
@@ -13,6 +18,12 @@ from apps.room.models import UserConnectionToRoom
 class UserModelTestCase(BaseTestSetUp):
     def test_str_method(self):
         self.assertEqual(self.user.__str__(), self.user.name)
+
+    def _build_image_bytes(self, width=64, height=64):
+        buffer = BytesIO()
+        Image.new("RGB", (width, height), color=(255, 255, 255)).save(buffer, format="PNG")
+        buffer.seek(0)
+        return buffer.getvalue()
 
     @freeze_time("2020-04-04 04:20:00")
     def test_clean_for_guests(self):
@@ -91,6 +102,34 @@ class UserModelTestCase(BaseTestSetUp):
         self.user.refresh_from_db()
 
         self.assertNotEqual(password_hash_before, self.user.password)
+
+    def test_profile_picture_url_defaults_to_placeholder(self):
+        fallback_url = self.user.profile_picture_fallback_url
+        self.assertEqual(self.user.profile_picture_url, fallback_url)
+
+    def test_profile_picture_url_returns_file_url_when_available(self):
+        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
+            self.user.profile_picture.save(
+                "avatar.png",
+                ContentFile(self._build_image_bytes()),
+                save=True,
+            )
+
+            self.assertEqual(self.user.profile_picture_url, self.user.profile_picture.url)
+
+    def test_profile_picture_url_falls_back_when_file_missing(self):
+        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
+            self.user.profile_picture.save(
+                "avatar.png",
+                ContentFile(self._build_image_bytes()),
+                save=True,
+            )
+
+            self.user.profile_picture.storage.delete(self.user.profile_picture.name)
+            self.user.refresh_from_db()
+
+            fallback_url = self.user.profile_picture_fallback_url
+            self.assertEqual(self.user.profile_picture_url, fallback_url)
 
 
 class UserFriendshipModelTestCase(BaseTestSetUp):

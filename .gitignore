@@ -1,11 +1,12 @@
-.idea
-
+.coverage
 apps/config/.env
-/yamsa_db_test
+yamsa.egg-info
+yamsa_db_test
 
 /.cache/
 /.github-issues/
 /.github-pull-requests/
+/.idea/
 /.issues/
 /.local/
 /.venv/
@@ -18,3 +19,7 @@ apps/config/.env
 
 apps/staticfiles
 staticfiles
+
+# Translations
+*.mo
+*.pot

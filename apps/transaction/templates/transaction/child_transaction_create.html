@@ -1,7 +1,8 @@
+{% load i18n %}
 <div class="split-row">
     <div class="row g-3 align-items-center">
         <div class="col-md-5">
-            <label class="form-label transaction-label" for="value_input_new">Amount</label>
+            <label class="form-label transaction-label" for="value_input_new">{% trans "Amount" %}</label>
             <div class="input-group">
                 <input id="value_input_new"
                        name="value"
@@ -16,7 +17,7 @@
             </div>
         </div>
         <div class="col-md-5">
-            <label class="form-label transaction-label" for="paid_for_select_new">For</label>
+            <label class="form-label transaction-label" for="paid_for_select_new">{% trans "For" %}</label>
             <select name="paid_for" class="form-select" id="paid_for_select_new" required>
                 {% for user in room_users %}<option value="{{ user.id }}">{{ user.name }}</option>{% endfor %}
             </select>
@@ -25,7 +26,7 @@
             <button type="button"
                     class="btn btn-outline-danger w-100"
                     hx-trigger="click"
-                    hx-confirm="Remove this participant?"
+                    hx-confirm="{% trans "Remove this participant?" %}"
                     hx-swap="none"
                     onclick="this.closest('.split-row').remove();">
                 <i class="bi bi-trash"></i>
@@ -33,7 +34,7 @@
         </div>
     </div>
     <div class="form-group" hidden>
-        <label class="visually-hidden" for="child_transaction_id_input_new">Child Transaction ID</label>
+        <label class="visually-hidden" for="child_transaction_id_input_new">{% trans "Child Transaction ID" %}</label>
         <input id="child_transaction_id_input_new"
                name="child_transaction_id"
                type="number"

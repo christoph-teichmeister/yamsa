@@ -8,5 +8,9 @@ echo "Applying fixtures" && echo ""
 bash ./scripts/apply_fixtures.sh
 echo "" && echo "Applying fixtures done." && echo ""
 
+echo "Running compilemessages" && echo ""
+python manage.py compilemessages
+echo "" && echo "Running compilemessages done." && echo ""
+
 echo "Starting django server (runserver) on 0.0.0.0:8000" && echo ""
 python manage.py runserver 0.0.0.0:8000

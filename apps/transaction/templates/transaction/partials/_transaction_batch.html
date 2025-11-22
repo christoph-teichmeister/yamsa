@@ -1,4 +1,4 @@
-{% load room_tags %}
+{% load room_tags i18n %}
 {% if parent_transactions %}
     {% for parent_transaction in parent_transactions %}
         <tr id="transaction-{{ parent_transaction.id }}"
@@ -15,24 +15,30 @@
                 <div class="d-flex flex-column gap-3">
                     <div class="transaction-grid row row-cols-2 g-3">
                         <div class="col">
-                            <div class="transaction-label text-muted text-uppercase small mb-1">Amount</div>
+                            <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Amount" %}</div>
                             <div class="transaction-amount fw-semibold text-primary fs-4 lh-sm">
                                 {{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}
                             </div>
                         </div>
                         <div class="col">
-                            <div class="transaction-label text-muted text-uppercase small mb-1">Description</div>
-                            <div class="fw-semibold">{{ parent_transaction.description|default_if_none:'No description'|truncatechars:70 }}</div>
+                            <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Description" %}</div>
+                            {% with description_value=parent_transaction.description|default_if_none:_("No description") %}
+                                <div class="fw-semibold">{{ description_value|truncatechars:70 }}</div>
+                            {% endwith %}
                         </div>
                     </div>
                     <div class="transaction-grid row row-cols-2 g-3">
                         <div class="col">
-                            <div class="transaction-label text-muted text-uppercase small mb-1">Paid on</div>
+                            <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Paid on" %}</div>
                             <div class="fw-semibold">{{ parent_transaction.paid_at|date:'M j, Y' }}</div>
-                            <div class="transaction-meta mt-1">{{ parent_transaction.paid_at|timesince }} ago</div>
+                            <div class="transaction-meta mt-1">
+                                {% blocktrans with delta=parent_transaction.paid_at|timesince %}
+                                    {{ delta }} ago
+                                {% endblocktrans %}
+                            </div>
                         </div>
                         <div class="col text-md-end">
-                            <div class="transaction-label text-muted text-uppercase small mb-1">Payer</div>
+                            <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Payer" %}</div>
                             <div class="fw-semibold">
                                 {% autoescape off %}
                                     {% parse_user_text parent_transaction.paid_by.name True %}
@@ -46,8 +52,8 @@
                 <div class="d-flex flex-column align-items-center gap-2">
                     <button type="button"
                             class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center w-100 w-md-auto"
-                            aria-label="View split details"
-                            title="View split details">
+                            aria-label="{% trans "View split details" %}"
+                            title="{% trans "View split details" %}">
                         <i class="bi bi-eye"></i>
                     </button>
                     <span class="text-muted small"
@@ -60,9 +66,9 @@
     <tr>
         <td colspan="2" class="py-4 text-center text-muted">
             {% if transaction_search_query %}
-                No transactions match "{{ transaction_search_query }}".
+                {% blocktrans with query=transaction_search_query %}No transactions match "{{ query }}".{% endblocktrans %}
             {% else %}
-                No transactions to show yet.
+                {% trans "No transactions to show yet." %}
             {% endif %}
         </td>
     </tr>
@@ -95,6 +101,6 @@
     </tr>
 {% elif parent_transactions and not transaction_initial_render %}
     <tr>
-        <td colspan="2" class="text-center text-muted small py-3">You're all caught up.</td>
+        <td colspan="2" class="text-center text-muted small py-3">{% trans "You're all caught up." %}</td>
     </tr>
 {% endif %}

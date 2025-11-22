@@ -16,4 +16,5 @@ def create_news_on_transaction_deleted(context: ParentTransactionDeleted.Context
         title=f"🗑️ {parent_transaction.room.capitalised_initials}: Transaction deleted",
         message=message,
         room_id=parent_transaction.room_id,
+        type=News.TypeChoices.TRANSACTION_DELETED,
     )

@@ -1,10 +1,10 @@
 {% extends "room/dashboard.html" %}
-{% load static %}
-{% load room_tags %}
+{% load static i18n room_tags %}
 {% block tab_content %}
     {% url 'account:guest-create' current_room.slug as guest_create_action %}
     {% url 'account:list' current_room.slug as roster_url %}
-    {% with guest_title="Invite a guest to "|add:current_room.name %}
-        {% include "shared_partials/member_form.html" with form=form field=form.name form_action=guest_create_action room_slug_value=current_room.slug hero_context="Guest access" hero_title=guest_title hero_subtitle="Perfect for roommates without accounts - give them lightweight access." hero_badge_label="Guest pass" hero_badge_icon="bi-person-plus" field_label="Guest name" field_placeholder="e.g. Alex from the kitchen" helper_text="Guests can later convert to full accounts without losing history." tip_text="We'll drop them right into this room." submit_label="Add guest" submit_icon="bi-check-circle" back_url=roster_url back_label="Back to people" submit_disabled=current_room.is_closed %}
+    {% blocktrans with current_room.name as room %}Invite a guest to "{{ room }}"{% endblocktrans %}
+    {% with hero_context=_("Guest access") hero_subtitle=_("Perfect for roommates without accounts - give them lightweight access.") hero_badge_label=_("Guest pass") field_label=_("Guest name") field_placeholder=_("e.g. Alex from the kitchen") helper_text=_("Guests can later convert to full accounts without losing history.") tip_text=_("We'll drop them right into this room.") submit_label=_("Add guest") back_label=_("Back to people") %}
+        {% include "shared_partials/member_form.html" with form=form field=form.name form_action=guest_create_action room_slug_value=current_room.slug hero_context=hero_context hero_title=guest_title hero_subtitle=hero_subtitle hero_badge_label=hero_badge_label hero_badge_icon="bi-person-plus" field_label=field_label field_placeholder=field_placeholder helper_text=helper_text tip_text=tip_text submit_label=submit_label submit_icon="bi-check-circle" back_url=roster_url back_label=back_label submit_disabled=current_room.is_closed %}
     {% endwith %}
 {% endblock tab_content %}

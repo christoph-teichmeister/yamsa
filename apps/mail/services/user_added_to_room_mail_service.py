@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from apps.mail.services.base_email_service import BaseYamsaEmailService, EmailExtraContext, EmailUserTextContext
 from apps.room.models import Room
@@ -13,13 +14,14 @@ class UserAddedToRoomEmailService(BaseYamsaEmailService):
         super().__init__(*args, **kwargs)
 
     def get_subject(self) -> str:
-        return f"Welcome to {self.new_room.name} 🥳️"
+        return (_("Welcome to %(room_name)s") % {"room_name": self.new_room.name}) + " 🥳"
 
     def get_email_user_text_context(self):
         return EmailUserTextContext(
             text_list=[
-                f"You have been invited to {self.new_room.name} to join your friends 🥳",
-                "Click the button below to view the room!",
+                _("You have been invited to %(room_name)s to join your friends") % {"room_name": self.new_room.name}
+                + " 🥳",
+                _("Click the button below to view the room!"),
             ]
         )
 
@@ -28,5 +30,5 @@ class UserAddedToRoomEmailService(BaseYamsaEmailService):
         return EmailExtraContext(
             show_cta=True,
             cta_link=cta_btn_link,
-            cta_label="See the room",
+            cta_label=_("See the room"),
         )

@@ -1,5 +1,5 @@
 {% extends "core/base.html" %}
-{% load static %}
+{% load i18n %}
 {% block content %}
     <section class="container px-2 px-md-4 px-lg-5 account-detail">
         {% if user.is_guest %}
@@ -8,19 +8,24 @@
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body text-center py-5 px-4 px-md-5">
                             <div class="mb-4">
-                                <span class="badge bg-warning-subtle text-warning-emphasis text-uppercase fw-semibold">Guest Mode</span>
+                                <span class="badge bg-warning-subtle text-warning-emphasis text-uppercase fw-semibold">{% trans "Guest Mode" %}</span>
                             </div>
-                            <h2 class="fw-semibold mb-2">Hi {{ user.name }} 👋</h2>
+                            <h2 class="fw-semibold mb-2">
+                                {% blocktrans trimmed %}
+                                    Hi {{ user.name }}
+                                {% endblocktrans %}
+                                👋
+                            </h2>
                             <p class="text-muted mb-4">
-                                Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account.
+                                {% trans "Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account." %}
                             </p>
                             <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
-                                <a class="btn btn-primary px-4" href="{% url 'account:register' %}">Create a free account</a>
+                                <a class="btn btn-primary px-4" href="{% url 'account:register' %}">{% trans "Create a free account" %}</a>
                                 <a class="btn btn-outline-secondary px-4"
-                                   href="{% url 'account:login' %}">I already have an account</a>
+                                   href="{% url 'account:login' %}">{% trans "I already have an account" %}</a>
                             </div>
                             <p class="small text-muted mt-4 mb-0">
-                                Not you? <a href="{% url 'account:logout' %}" class="link-secondary">Log out instead</a>.
+                                {% trans "Not you?" %} <a href="{% url 'account:logout' %}" class="link-secondary">{% trans "Log out instead" %}</a>.
                             </p>
                         </div>
                     </div>
@@ -34,7 +39,7 @@
                        href="{{ core.BACKEND_URL }}/{{ core.ADMIN_URL }}/login"
                        target="_blank">
                         <i class="bi bi-terminal"></i>
-                        Admin
+                        {% trans "Admin" %}
                     </a>
                 </div>
             {% endif %}
@@ -46,7 +51,8 @@
                                 {% with avatar_source=user.name|default:user.email %}
                                     <div class="rounded-circle bg-primary-subtle text-primary-emphasis d-inline-flex align-items-center justify-content-center account-avatar-circle">
                                         {% if user.profile_picture %}
-                                            <img src="{{ user.profile_picture.url }}"
+                                            <img src="{{ user.profile_picture_url }}"
+                                                 onerror="this.onerror=null;this.src='{{ user.profile_picture_fallback_url }}';"
                                                  alt="{{ user.name }}"
                                                  class="account-avatar-img rounded-circle w-100 h-100"
                                                  loading="lazy"
@@ -60,21 +66,29 @@
                                 <div class="flex-grow-1">
                                     <p class="text-uppercase small fw-semibold text-muted mb-1">
                                         {% if request.user.id == user.id %}
-                                            Your account overview
+                                            {% trans "Your account overview" %}
                                         {% else %}
-                                            Member profile
+                                            {% trans "Member profile" %}
                                         {% endif %}
                                     </p>
                                     <h1 class="h3 fw-semibold mb-2">{{ user.name }}</h1>
                                     <p class="text-muted mb-3">{{ user.email }}</p>
+                                    <p class="text-muted small mb-3">
+                                        {% trans "Preferred language" %}:
+                                        {{ user.get_language_display|default:_("Not set") }}
+                                    </p>
                                     <div class="d-flex flex-wrap gap-2">
-                                        {% if user.is_superuser %}<span class="badge text-bg-dark">Superuser</span>{% endif %}
-                                        {% if user.is_staff %}<span class="badge text-bg-info">Staff</span>{% endif %}
+                                        {% if user.is_superuser %}
+                                            <span class="badge text-bg-dark">{% trans "Superuser" %}</span>
+                                        {% endif %}
+                                        {% if user.is_staff %}
+                                            <span class="badge text-bg-info">{% trans "Staff" %}</span>
+                                        {% endif %}
                                         <span class="badge text-bg-secondary">
                                             {% if user.paypal_me_username %}
-                                                PayPal linked
+                                                {% trans "PayPal linked" %}
                                             {% else %}
-                                                No PayPal link
+                                                {% trans "No PayPal link" %}
                                             {% endif %}
                                         </span>
                                     </div>
@@ -88,7 +102,7 @@
                                                 hx-swap="morph:innerHTML"
                                                 hx-push-url="true">
                                             <i class="bi bi-pencil"></i>
-                                            Edit profile
+                                            {% trans "Edit profile" %}
                                         </button>
                                     </div>
                                 {% endif %}
@@ -100,23 +114,23 @@
                     <div class="row g-4">
                         <div class="col-12 col-md-6">
                             <div class="border rounded-4 h-100 p-4 bg-body-secondary-subtle">
-                                <p class="text-uppercase small text-muted mb-1">Display name</p>
+                                <p class="text-uppercase small text-muted mb-1">{% trans "Display name" %}</p>
                                 <p class="fw-semibold mb-0">{{ user.name }}</p>
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
                             <div class="border rounded-4 h-100 p-4">
-                                <p class="text-uppercase small text-muted mb-1">Email address</p>
+                                <p class="text-uppercase small text-muted mb-1">{% trans "Email address" %}</p>
                                 <p class="fw-semibold text-break mb-0">{{ user.email }}</p>
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
                             <div class="border rounded-4 h-100 p-4">
-                                <p class="text-uppercase small text-muted mb-1">PayPal.me username</p>
+                                <p class="text-uppercase small text-muted mb-1">{% trans "PayPal.me username" %}</p>
                                 {% if user.paypal_me_username %}
                                     <p class="fw-semibold mb-0">@{{ user.paypal_me_username }}</p>
                                 {% else %}
-                                    <p class="text-muted mb-0">No PayPal link yet</p>
+                                    <p class="text-muted mb-0">{% trans "No PayPal link yet" %}</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -124,15 +138,15 @@
                             <div class="col-12 col-md-6">
                                 <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
                                     <div>
-                                        <p class="text-uppercase small text-muted mb-1">Push notifications</p>
+                                        <p class="text-uppercase small text-muted mb-1">{% trans "Push notifications" %}</p>
                                         <p class="fw-semibold mb-0">
                                             {% if user.wants_to_receive_webpush_notifications %}
-                                                Enabled
+                                                {% trans "Enabled" %}
                                             {% else %}
-                                                Disabled
+                                                {% trans "Disabled" %}
                                             {% endif %}
                                         </p>
-                                        <p class="text-muted small mb-0">Manage this toggle from the edit screen.</p>
+                                        <p class="text-muted small mb-0">{% trans "Manage this toggle from the edit screen." %}</p>
                                     </div>
                                     <div class="form-check form-switch m-0">
                                         <input class="form-check-input"
@@ -147,15 +161,15 @@
                             <div class="col-12 col-md-6">
                                 <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
                                     <div>
-                                        <p class="text-uppercase small text-muted mb-1">Payment reminders</p>
+                                        <p class="text-uppercase small text-muted mb-1">{% trans "Payment reminders" %}</p>
                                         <p class="fw-semibold mb-0">
                                             {% if user.wants_to_receive_payment_reminders %}
-                                                Enabled
+                                                {% trans "Enabled" %}
                                             {% else %}
-                                                Disabled
+                                                {% trans "Disabled" %}
                                             {% endif %}
                                         </p>
-                                        <p class="text-muted small mb-0">Toggle this in the notifications center or via the email footer.</p>
+                                        <p class="text-muted small mb-0">{% trans "Toggle this in the notifications center or via the email footer." %}</p>
                                     </div>
                                     <div class="form-check form-switch m-0">
                                         <input class="form-check-input"
@@ -172,9 +186,9 @@
                             <div class="col-12">
                                 <div class="border rounded-4 h-100 p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
                                     <div>
-                                        <p class="text-uppercase small text-muted mb-1">Security</p>
-                                        <p class="fw-semibold mb-1">Change your password</p>
-                                        <p class="text-muted small mb-0">Choose a unique password to keep your rooms safe.</p>
+                                        <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
+                                        <p class="fw-semibold mb-1">{% trans "Change your password" %}</p>
+                                        <p class="text-muted small mb-0">{% trans "Choose a unique password to keep your rooms safe." %}</p>
                                     </div>
                                     <div class="ms-md-auto">
                                         <button type="button"
@@ -183,7 +197,7 @@
                                                 hx-target="#body"
                                                 hx-indicator="#body-loading-spinner"
                                                 hx-swap="morph:innerHTML"
-                                                hx-push-url="true">Change password</button>
+                                                hx-push-url="true">{% trans "Change password" %}</button>
                                     </div>
                                 </div>
                             </div>

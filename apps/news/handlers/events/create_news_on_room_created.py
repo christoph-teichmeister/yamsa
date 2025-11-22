@@ -18,4 +18,5 @@ def create_news_on_room_created(context: RoomCreated.Context):
         message=message,
         room_id=room.id,
         deeplink=deeplink,
+        type=News.TypeChoices.ROOM_CREATED,
     )

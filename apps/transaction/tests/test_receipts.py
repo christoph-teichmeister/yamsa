@@ -4,10 +4,13 @@ from datetime import UTC, datetime
 from http import HTTPStatus
 
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import RequestFactory
 from django.urls import reverse
+from django.utils.datastructures import MultiValueDict
 from model_bakery import baker
 
 from apps.core.tests.setup import BaseTestSetUp
+from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.models import Receipt
 
 
@@ -66,7 +69,7 @@ class TransactionReceiptTest(BaseTestSetUp):
         receipt.file.delete(save=False)
 
     def test_receipt_validation_blocks_unsupported_types(self):
-        client = self.reauthenticate_user(self.user)
+        self.reauthenticate_user(self.user)
         currency = baker.make_recipe("apps.currency.tests.currency")
         invalid_file = SimpleUploadedFile(
             "receipt.txt",
@@ -76,12 +79,15 @@ class TransactionReceiptTest(BaseTestSetUp):
 
         payload = {**self._transaction_payload(currency.id), "receipts": invalid_file}
 
-        response = client.post(
-            reverse("transaction:create", kwargs={"room_slug": self.room.slug}),
-            data=payload,
-        )
+        request = RequestFactory().post("/")
+        request.user = self.user
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        form = response.context_data["form"]
+        files = MultiValueDict({"receipts": [invalid_file]})
+        form = TransactionCreateForm(data=payload, files=files, request=request)
+
+        self.assertFalse(form.is_valid())
         self.assertIn("receipts", form.errors)
-        self.assertIn("Receipts must be PDF or an image", str(form.errors["receipts"]))
+        self.assertIn(
+            "Receipts must be PDF or an image",
+            str(form.errors["receipts"]),
+        )

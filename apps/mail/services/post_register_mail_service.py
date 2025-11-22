@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from apps.account.models import User
 from apps.mail.services.base_email_service import BaseYamsaEmailService, EmailExtraContext, EmailUserTextContext
 
 
 class PostRegisterEmailService(BaseYamsaEmailService):
-    subject = "Welcome to yamsa ❤️"
+    subject = _("Welcome to yamsa") + " ❤️"
     user_has_rooms = False
 
     def __init__(
@@ -16,23 +17,23 @@ class PostRegisterEmailService(BaseYamsaEmailService):
         super().__init__(recipient, recipient_email_list, *args, **kwargs)
 
     def get_email_user_text_context(self):
-        text_list = ["Welcome to yamsa 🥳"]
+        text_list = [_("Welcome to yamsa") + " 🥳"]
 
         if self.user_has_rooms:
-            text_list.append("It looks like you already belong to some rooms!")
-            text_list.append("Check them out, by clicking the button below ⬇️")
+            text_list.append(_("It looks like you already belong to some rooms!"))
+            text_list.append(_("Check them out, by clicking the button below") + " ⬇️")
         else:
-            text_list.append("Create a new room, by clicking the button below ⬇️")
+            text_list.append(_("Create a new room, by clicking the button below") + " ⬇️")
 
         return EmailUserTextContext(text_list=text_list)
 
     def get_email_extra_context(self):
         cta_btn_link = reverse(viewname="room:create")
-        cta_btn_text = "Create a room"
+        cta_btn_text = _("Create a room")
 
         if self.user_has_rooms:
             cta_btn_link = reverse(viewname="room:list")
-            cta_btn_text = "See your rooms"
+            cta_btn_text = _("See your rooms")
 
         return EmailExtraContext(
             show_cta=True,

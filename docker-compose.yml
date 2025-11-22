@@ -9,7 +9,7 @@ services:
     volumes:
       - yamsa_postgres_data:/var/lib/postgresql/data/
     ports:
-      - "5432:5432"
+      - "5431:5432"
     restart: "always"
 
   backend:
@@ -28,15 +28,15 @@ services:
       - /src/node_modules
       - ./apps/static:/src/apps/static
     ports:
-      - "8000:8000"
+      - "8002:8000"
     restart: "no"
 
   mailhog:
     image: mailhog/mailhog:v1.0.1
     container_name: yamsa_mailhog
     ports:
-      - "8025:8025"  # email inbox interface
-      - "1025:1025"  # smtp
+      - "8027:8025"  # email inbox interface
+      - "1027:1025"  # smtp
 
 volumes:
   yamsa_postgres_data:

@@ -1,6 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load static %}
-{% load room_tags %}
+{% load static room_tags i18n %}
 {% block tab_content %}
     <section class="container px-2 px-md-4 px-lg-5 py-4">
         <style>
@@ -27,12 +26,14 @@
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
                 <i class="bi bi-arrow-left"></i>
-                Back to transactions
+                {% trans "Back to transactions" %}
             </button>
             <div class="text-center flex-grow-1">
-                <p class="text-uppercase text-muted small mb-1">Category breakdown</p>
-                <h2 class="fs-4 fw-semibold mb-1">All recorded spend</h2>
-                <p class="text-muted small mb-0">Showing {{ category_breakdown_period }}.</p>
+                <p class="text-uppercase text-muted small mb-1">{% trans "Category breakdown" %}</p>
+                <h2 class="fs-4 fw-semibold mb-1">{% trans "All recorded spend" %}</h2>
+                <p class="text-muted small mb-0">
+                    {% blocktrans with period=category_breakdown_period %}Showing {{ period }}.{% endblocktrans %}
+                </p>
             </div>
             <button type="button"
                     class="btn btn-outline-primary d-flex align-items-center gap-2"
@@ -42,7 +43,7 @@
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
                 <i class="bi bi-plus-lg"></i>
-                Add transaction
+                {% trans "Add transaction" %}
             </button>
         </div>
         <div class="card border-0 rounded-4 shadow-sm">
@@ -53,14 +54,20 @@
                             <div class="col-12">
                                 <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
                                     <div>
-                                        <p class="text-uppercase text-muted small mb-1">Currency breakdown</p>
+                                        <p class="text-uppercase text-muted small mb-1">{% trans "Currency breakdown" %}</p>
                                         <h3 class="fs-5 fw-semibold mb-1">
                                             {{ breakdown.currency.name }}
                                             <span class="text-muted small text-uppercase ms-2">{{ breakdown.currency.code }}</span>
                                         </h3>
                                         <p class="text-muted small mb-0">{{ breakdown.currency.sign }}</p>
                                     </div>
-                                    <span class="text-muted small">{{ breakdown.categories|length }} categories</span>
+                                    <span class="text-muted small">
+                                        {% blocktrans count category_count=breakdown.categories|length %}
+                                            {{ category_count }} category
+                                        {% plural %}
+                                            {{ category_count }} categories
+                                        {% endblocktrans %}
+                                    </span>
                                 </div>
                             </div>
                             <div class="col-12 col-lg-7">
@@ -72,8 +79,14 @@
                             </div>
                             <div class="col-12 col-lg-5">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <p class="fw-semibold mb-0">Legend</p>
-                                    <span class="text-muted small">{{ breakdown.categories|length }} categories</span>
+                                    <p class="fw-semibold mb-0">{% trans "Legend" %}</p>
+                                    <span class="text-muted small">
+                                        {% blocktrans count category_count=breakdown.categories|length %}
+                                            {{ category_count }} category
+                                        {% plural %}
+                                            {{ category_count }} categories
+                                        {% endblocktrans %}
+                                    </span>
                                 </div>
                                 <div class="list-group list-group-flush">
                                     {% for category in breakdown.categories %}
@@ -95,7 +108,9 @@
                         {% if not forloop.last %}<hr class="my-4">{% endif %}
                     {% endfor %}
                 {% else %}
-                    <div class="text-center text-muted small">No tracked expenses yet. Add a transaction to populate the breakdown.</div>
+                    <div class="text-center text-muted small">
+                        {% trans "No tracked expenses yet. Add a transaction to populate the breakdown." %}
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -108,11 +123,12 @@
             if (!chartContainers.length) {
                 return;
             }
+            const emptyBreakdownMessage = '{% trans "Add expenses to unlock the breakdown." %}';
 
             const renderSingleChart = (container, dataset) => {
                 container.innerHTML = "";
                 if (!dataset.length) {
-                    container.innerHTML = "<p class='text-muted small mb-0'>Add expenses to unlock the breakdown.</p>";
+                    container.innerHTML = "<p class='text-muted small mb-0'>" + emptyBreakdownMessage + "</p>";
                     return;
                 }
 

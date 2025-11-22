@@ -1,6 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load static %}
-{% load room_tags %}
+{% load static room_tags i18n %}
 {% block tab_content %}
     <style>
         .transaction-label {
@@ -164,18 +163,18 @@
         <div class="col-12 col-lg-8">
             <div class="d-flex flex-row flex-md-row align-items-md-start gap-3 mb-3">
                 <div>
-                    <h4 class="mb-1">Room transactions</h4>
+                    <h4 class="mb-1">{% trans "Room transactions" %}</h4>
                     {% if transactions_available %}
-                        <p class="text-muted small mb-0">Click a row to explore the full breakdown.</p>
+                        <p class="text-muted small mb-0">{% trans "Click a row to explore the full breakdown." %}</p>
                     {% else %}
-                        <p class="text-muted small mb-0">Record your first expense to see the running history here.</p>
+                        <p class="text-muted small mb-0">{% trans "Record your first expense to see the running history here." %}</p>
                     {% endif %}
                 </div>
                 <div class="d-flex align-items-center justify-content-end gap-2">
                     <button type="button"
                             class="btn btn-primary btn-icon d-inline-flex align-items-center justify-content-center {% if current_room.is_closed %}disabled{% endif %}"
-                            aria-label="Add transaction"
-                            title="Add transaction"
+                            aria-label="{% trans "Add transaction" %}"
+                            title="{% trans "Add transaction" %}"
                             hx-get="{% room_url 'transaction:create' %}"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
@@ -188,28 +187,30 @@
             <div class="d-flex justify-content-end mb-3">
                 <button type="button"
                         class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
-                        title="View category breakdown"
+                        title="{% trans "View category breakdown" %}"
                         hx-get="{% room_url 'transaction:category-breakdown' %}"
                         hx-target="#body"
                         hx-indicator="#body-loading-spinner"
                         hx-swap="morph:innerHTML"
                         hx-push-url="true">
                     <i class="bi bi-pie-chart-fill"></i>
-                    Break down spend
+                    {% trans "Break down spend" %}
                 </button>
             </div>
             {% if current_room.is_closed %}
-                <div class="alert alert-warning small mb-3" role="alert">This room is closed, so transactions are read-only.</div>
+                <div class="alert alert-warning small mb-3" role="alert">
+                    {% trans "This room is closed, so transactions are read-only." %}
+                </div>
             {% endif %}
             <div class="card border-0 shadow-sm">
                 <div class="card-body pb-0">
-                    <label for="transaction-search" class="form-label text-muted small mb-1">Search</label>
+                    <label for="transaction-search" class="form-label text-muted small mb-1">{% trans "Search" %}</label>
                     <input type="search"
                            id="transaction-search"
                            class="form-control form-control-sm mb-3"
                            name="q"
                            value="{{ transaction_search_query }}"
-                           placeholder="Filter by payer or description"
+                           placeholder="{% trans "Filter by payer or description" %}"
                            autocomplete="off"
                            hx-get="{% room_url 'transaction:feed' %}"
                            hx-trigger="input changed delay:400ms, search"
@@ -223,8 +224,8 @@
                         <table class="table table-hover align-middle mb-0 transaction-table">
                             <thead class="text-muted text-uppercase small d-none d-md-table-header-group">
                                 <tr>
-                                    <th scope="col">Details</th>
-                                    <th scope="col" class="text-end">Actions</th>
+                                    <th scope="col">{% trans "Details" %}</th>
+                                    <th scope="col" class="text-end">{% trans "Actions" %}</th>
                                 </tr>
                             </thead>
                             <tbody id="transaction-table-body">
@@ -251,8 +252,8 @@
                     </div>
                 {% else %}
                     <div class="p-5 text-center text-muted" id="transaction-empty-placeholder">
-                        <p class="fw-semibold mb-1">Nothing to show yet</p>
-                        <p class="small mb-0">Start by logging an expense to build your history.</p>
+                        <p class="fw-semibold mb-1">{% trans "Nothing to show yet" %}</p>
+                        <p class="small mb-0">{% trans "Start by logging an expense to build your history." %}</p>
                     </div>
                 {% endif %}
             </div>
@@ -260,40 +261,40 @@
         <div class="col-12 col-lg-4">
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body">
-                    <h6 class="text-uppercase text-muted small mb-3">Room snapshot</h6>
+                    <h6 class="text-uppercase text-muted small mb-3">{% trans "Room snapshot" %}</h6>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-muted small">Status</span>
+                        <span class="text-muted small">{% trans "Status" %}</span>
                         <span class="badge {% if current_room.is_closed %}bg-secondary{% else %}bg-success{% endif %}">
                             {% if current_room.is_closed %}
-                                Closed
+                                {% trans "Closed" %}
                             {% else %}
-                                Open
+                                {% trans "Open" %}
                             {% endif %}
                         </span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-muted small">Transactions logged</span>
+                        <span class="text-muted small">{% trans "Transactions logged" %}</span>
                         <span class="fw-semibold">{{ transactions_total_count }}</span>
                     </div>
                     {% if parent_transactions %}
                         {% with parent_transactions|first as latest_transaction %}
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted small">Last transaction</span>
+                                <span class="text-muted small">{% trans "Last transaction" %}</span>
                                 <span class="fw-semibold">{{ latest_transaction.paid_at|date:'M j, Y' }}</span>
                             </div>
                         {% endwith %}
                     {% else %}
-                        <p class="text-muted small mb-0">Invite your roommates to start sharing expenses.</p>
+                        <p class="text-muted small mb-0">{% trans "Invite your roommates to start sharing expenses." %}</p>
                     {% endif %}
                 </div>
             </div>
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <h6 class="text-uppercase text-muted small mb-3">Tips</h6>
+                    <h6 class="text-uppercase text-muted small mb-3">{% trans "Tips" %}</h6>
                     <ul class="list-unstyled mb-0 small text-muted">
-                        <li>Use the search field to filter by payer or description.</li>
-                        <li>Tap a row or the eye icon to review the split details.</li>
-                        <li>The floating "+" button lets you capture a new transaction.</li>
+                        <li>{% trans "Use the search field to filter by payer or description." %}</li>
+                        <li>{% trans "Tap a row or the eye icon to review the split details." %}</li>
+                        <li>{% trans "The floating '+' button lets you capture a new transaction." %}</li>
                     </ul>
                 </div>
             </div>

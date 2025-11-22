@@ -1,6 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load static %}
-{% load room_tags %}
+{% load static room_tags i18n %}
 {% block tab_content %}
     <style>
         .overview-card {
@@ -69,11 +68,11 @@
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
                 <i class="bi bi-arrow-left"></i>
-                Back to debts
+                {% trans "Back to debts" %}
             </button>
             <div class="text-center flex-grow-1">
-                <p class="text-muted small mb-0">Room spending overview</p>
-                <h4 class="mb-0">Who paid what</h4>
+                <p class="text-muted small mb-0">{% trans "Room spending overview" %}</p>
+                <h4 class="mb-0">{% trans "Who paid what" %}</h4>
             </div>
         </div>
         <div class="row g-3 mt-4">
@@ -81,7 +80,11 @@
                 <div class="col-12 col-md-4">
                     <div class="card overview-card shadow-sm">
                         <div class="card-body">
-                            <p class="text-muted small mb-1">Total spent ({{ total_money_spent_entry.currency_sign }})</p>
+                            <p class="text-muted small mb-1">
+                                {% blocktrans with currency_sign=total_money_spent_entry.currency_sign %}
+                                    Total spent ({{ currency_sign }})
+                                {% endblocktrans %}
+                            </p>
                             <p class="fs-3 fw-semibold mb-0">{{ total_money_spent_entry.total_spent }}</p>
                         </div>
                     </div>
@@ -89,8 +92,8 @@
             {% empty %}
                 <div class="col-12">
                     <div class="empty-state">
-                        <p class="fw-semibold mb-1">No spending yet</p>
-                        <p class="text-muted small mb-0">Add expenses to populate this dashboard.</p>
+                        <p class="fw-semibold mb-1">{% trans "No spending yet" %}</p>
+                        <p class="text-muted small mb-0">{% trans "Add expenses to populate this dashboard." %}</p>
                     </div>
                 </div>
             {% endfor %}
@@ -101,8 +104,8 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div>
-                                <p class="text-muted small mb-0">Money spent by members</p>
-                                <h5 class="mb-0">Who covered the bills</h5>
+                                <p class="text-muted small mb-0">{% trans "Money spent by members" %}</p>
+                                <h5 class="mb-0">{% trans "Who covered the bills" %}</h5>
                             </div>
                             <span class="overview-chip">
                                 <i class="bi bi-graph-up"></i>
@@ -137,8 +140,8 @@
                             {% endwith %}
                         {% else %}
                             <div class="empty-state mt-3">
-                                <p class="fw-semibold mb-1">No payments recorded yet</p>
-                                <p class="text-muted small mb-0">As soon as someone logs an expense, their share appears here.</p>
+                                <p class="fw-semibold mb-1">{% trans "No payments recorded yet" %}</p>
+                                <p class="text-muted small mb-0">{% trans "As soon as someone logs an expense, their share appears here." %}</p>
                             </div>
                         {% endif %}
                     </div>
@@ -149,12 +152,12 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div>
-                                <p class="text-muted small mb-0">Money still owed</p>
-                                <h5 class="mb-0">Who needs to settle up</h5>
+                                <p class="text-muted small mb-0">{% trans "Money still owed" %}</p>
+                                <h5 class="mb-0">{% trans "Who needs to settle up" %}</h5>
                             </div>
                             <span class="overview-chip">
                                 <i class="bi bi-cash-coin"></i>
-                                <span class="text-center">Pending balances</span>
+                                <span class="text-center">{% trans "Pending balances" %}</span>
                             </span>
                         </div>
                         {% with total_entry=total_money_spent|first %}
@@ -176,8 +179,8 @@
                                 {% endif %}
                             {% empty %}
                                 <div class="empty-state mt-3">
-                                    <p class="fw-semibold mb-1">Nothing owed right now</p>
-                                    <p class="text-muted small mb-0">All participants are even for the tracked expenses.</p>
+                                    <p class="fw-semibold mb-1">{% trans "Nothing owed right now" %}</p>
+                                    <p class="text-muted small mb-0">{% trans "All participants are even for the tracked expenses." %}</p>
                                 </div>
                             {% endfor %}
                         {% endwith %}
@@ -194,7 +197,7 @@
             <div class="card overview-card shadow-sm">
                 <div class="card-body text-center py-4">
                     <div class="spinner-border text-primary mb-2" role="status"></div>
-                    <p class="text-muted small mb-0">Loading spending timeline…</p>
+                    <p class="text-muted small mb-0">{% trans "Loading spending timeline…" %}</p>
                 </div>
             </div>
         </div>

@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
+from django.utils import translation
 from django.views import generic
 
+from apps.account.constants import LANGUAGE_SESSION_KEY
 from apps.account.forms import LoginForm
 
 
@@ -24,6 +26,9 @@ class LogInUserView(generic.FormView):
 
         if possible_user is not None:
             login(request=self.request, user=possible_user)
+            if possible_user.language:
+                translation.activate(possible_user.language)
+                self.request.session[LANGUAGE_SESSION_KEY] = possible_user.language
             if cleaned_data.get("remember_me"):
                 self.request.session.set_expiry(settings.DJANGO_REMEMBER_ME_SESSION_AGE)
         else:

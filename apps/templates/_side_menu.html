@@ -1,4 +1,6 @@
-{% load room_tags %}
+{% load room_tags i18n %}
+{% trans "Toggle navigation" as offcanvas_toggle_label %}
+{% trans "Copy the rooms URL to your clipboard to send it to your friends" as copy_rooms_url_tooltip %}
 <nav class="navbar fixed-top pt-4">
     <div class="container-fluid pt-4 justify-content-center"
          id="offcanvasContainer">
@@ -9,7 +11,7 @@
                         data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasNavbar"
                         aria-controls="offcanvasNavbar"
-                        aria-label="Toggle navigation">
+                        aria-label="{{ offcanvas_toggle_label }}">
                     <i class="bi bi-list"></i>
                 </button>
             </div>
@@ -31,7 +33,7 @@
                                 data-copy-share-url="true"
                                 data-share-url="{{ request.build_absolute_uri }}"
                                 data-bs-toggle="tooltip"
-                                data-bs-title="Copy the rooms URL to your clipboard to send it to your friends"
+                                data-bs-title="{{ copy_rooms_url_tooltip }}"
                                 hx-get="{% url 'room:htmx-checked-clipboard' %}"
                                 hx-swap="morph:innerHTML">
                             {% include "shared_partials/clipboard_icon_unchecked.html" %}
@@ -56,7 +58,7 @@
              tabindex="-1"
              id="offcanvasNavbar">
             <div class="offcanvas-header mt-4 pt-4">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">{% trans "Menu" %}</h5>
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="offcanvas"
@@ -81,7 +83,8 @@
                         {% with sidebar_avatar_source=request.user.name|default:request.user.email %}
                             <div class="profile-avatar mb-2">
                                 {% if request.user.profile_picture %}
-                                    <img src="{{ request.user.profile_picture.url }}"
+                                    <img src="{{ request.user.profile_picture_url }}"
+                                         onerror="this.onerror=null;this.src='{{ request.user.profile_picture_fallback_url }}';"
                                          alt="{{ request.user.name }}"
                                          class="rounded-4 w-100 h-100 object-fit-cover"
                                          width="64"
@@ -93,16 +96,16 @@
                         {% endwith %}
                         <div class="fw-semibold">
                             {% if request.user.is_anonymous %}
-                                Profile
+                                {% trans "Profile" %}
                             {% else %}
                                 {{ request.user.name }}
                             {% endif %}
                         </div>
                         <div class="text-muted small">
                             {% if request.user.is_anonymous %}
-                                Log in to access rooms
+                                {% trans "Log in to access rooms" %}
                             {% else %}
-                                Manage rooms and transactions
+                                {% trans "Manage rooms and transactions" %}
                             {% endif %}
                         </div>
                         <button type="button"
@@ -117,9 +120,9 @@
                                 hx-swap="innerHTML"
                                 hx-push-url="true">
                             {% if request.user.is_anonymous %}
-                                Sign in
+                                {% trans "Sign in" %}
                             {% else %}
-                                View profile
+                                {% trans "View profile" %}
                             {% endif %}
                         </button>
                     </div>
@@ -137,10 +140,10 @@
                         <i class="bi bi-house"></i>
                     </div>
                     <div class="flex-grow-1 text-start">
-                        <div class="room-name fw-semibold mb-0">Home</div>
-                        <small class="room-description text-muted">Back to home</small>
+                        <div class="room-name fw-semibold mb-0">{% trans "Home" %}</div>
+                        <small class="room-description text-muted">{% trans "Back to home" %}</small>
                     </div>
-                    <span class="badge bg-light text-dark room-status-badge">Start</span>
+                    <span class="badge bg-light text-dark room-status-badge">{% trans "Start" %}</span>
                 </div>
                 {% include "_side_menu_room_list.html" %}
                 <div class="mt-auto">
@@ -151,7 +154,7 @@
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"
-                            hx-push-url="true">Log out</button>
+                            hx-push-url="true">{% trans "Log out" %}</button>
                 </div>
             </div>
         </div>
