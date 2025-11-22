@@ -39,7 +39,7 @@
                                     <div class="profile-avatar profile-avatar--expanded position-relative overflow-hidden d-inline-flex align-items-center justify-content-center">
                                         <img id="profile-picture-preview-img"
                                              class="profile-picture-preview-img w-100 h-100 object-fit-cover rounded-4 {% if not user.profile_picture %}d-none{% endif %}"
-                                             alt="Profile picture preview"
+                                             alt="{% trans "Profile picture preview" %}"
                                              loading="lazy"
                                              width="68"
                                              height="68"
@@ -52,7 +52,7 @@
                                     </div>
                                     <div class="flex-grow-1 d-flex flex-column gap-2">
                                         <div class="d-flex flex-column gap-1">
-                                            <label for="profile_picture" class="form-label fw-semibold">Profile photo</label>
+                                            <label for="profile_picture" class="form-label fw-semibold">{% trans "Profile photo" %}</label>
                                             <input type="file"
                                                    id="profile_picture"
                                                    name="profile_picture"
@@ -63,7 +63,7 @@
                                             {% endfor %}
                                         </div>
                                         <div class="d-flex flex-wrap align-items-center gap-2">
-                                            <small class="text-muted small mb-0">PNG / JPEG up to 3 MB and 2048×2048 px.</small>
+                                            <small class="text-muted small mb-0">{% trans "PNG / JPEG up to 3 MB and 2048×2048 px." %}</small>
                                             <button type="button"
                                                     class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
                                                     hx-post="{% url 'account:profile-picture-delete' %}"
@@ -71,10 +71,10 @@
                                                     hx-indicator="#body-loading-spinner"
                                                     hx-swap="morph:innerHTML"
                                                     hx-push-url="true"
-                                                    hx-confirm="Remove your profile picture?"
+                                                    hx-confirm="{% trans "Remove your profile picture?" %}"
                                                     {% if not user.profile_picture %}disabled{% endif %}>
                                                 <i class="bi bi-trash"></i>
-                                                Remove photo
+                                                {% trans "Remove photo" %}
                                             </button>
                                         </div>
                                     </div>
@@ -136,8 +136,8 @@
                                 {% endfor %}
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold d-block mb-0">Notification Center</label>
-                                <p class="text-muted small mt-0">Choose how you want to hear from us.</p>
+                                <label class="form-label fw-semibold d-block mb-0">{% trans "Notification Center" %}</label>
+                                <p class="text-muted small mt-0">{% trans "Choose how you want to hear from us." %}</p>
                                 <div class="form-check form-switch">
                                     <input type="checkbox"
                                            class="form-check-input"
@@ -186,9 +186,11 @@
                 <div class="card border-0 rounded-4 shadow-sm">
                     <div class="card-body p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
                         <div>
-                            <p class="text-uppercase small text-muted mb-1">Security</p>
-                            <h2 class="h5 fw-semibold mb-2">Need a new password?</h2>
-                            <p class="text-muted mb-0">Set a fresh password any time. We’ll keep you logged in while you update it.</p>
+                            <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
+                            <h2 class="h5 fw-semibold mb-2">{% trans "Need a new password?" %}</h2>
+                            <p class="text-muted mb-0">
+                                {% trans "Set a fresh password any time. We’ll keep you logged in while you update it." %}
+                            </p>
                         </div>
                         <div class="ms-md-auto">
                             <button type="button"
@@ -197,7 +199,7 @@
                                     hx-target="#body"
                                     hx-indicator="#body-loading-spinner"
                                     hx-swap="morph:innerHTML"
-                                    hx-push-url="true">Change password</button>
+                                    hx-push-url="true">{% trans "Change password" %}</button>
                         </div>
                     </div>
                 </div>

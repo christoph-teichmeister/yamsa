@@ -50,6 +50,37 @@ msgstr "Achtung:"
 msgid "After a successful password change, you will be prompted to login again."
 msgstr "Nach einer erfolgreichen Passwortänderung wirst du aufgefordert, dich erneut anzumelden."
 
+#, python-format
+msgid "Invite a guest to \"%(room)s\""
+msgstr "Gast zu \"%(room)s\" einladen"
+
+msgid "Guest access"
+msgstr "Gastzugang"
+
+msgid "Perfect for roommates without accounts - give them lightweight access."
+msgstr "Perfekt für Mitbewohner ohne Konto - gib ihnen leichten Zugang."
+
+msgid "Guest pass"
+msgstr "Gastpass"
+
+msgid "Guest name"
+msgstr "Gastname"
+
+msgid "e.g. Alex from the kitchen"
+msgstr "z. B. Alex aus der Küche"
+
+msgid "Guests can later convert to full accounts without losing history."
+msgstr "Gäste können später in vollständige Konten konvertieren, ohne ihre Historie zu verlieren."
+
+msgid "We'll drop them right into this room."
+msgstr "Wir setzen sie direkt in diesen Raum."
+
+msgid "Add guest"
+msgstr "Gast hinzufügen"
+
+msgid "Back to people"
+msgstr "Zurück zur Personenliste"
+
 msgid "Guest Mode"
 msgstr "Gastmodus"
 
@@ -71,6 +102,9 @@ msgstr "Nicht du?"
 
 msgid "Log out instead"
 msgstr "Stattdessen abmelden"
+
+msgid "Admin"
+msgstr "Administrator"
 
 msgid "Your account overview"
 msgstr "Deine Kontenübersicht"
@@ -147,6 +181,92 @@ msgstr "Abbrechen"
 msgid "Save changes"
 msgstr "Änderungen speichern"
 
+msgid "Profile picture preview"
+msgstr "Vorschau des Profilbilds"
+
+msgid "Profile photo"
+msgstr "Profilfoto"
+
+msgid "PNG / JPEG up to 3 MB and 2048×2048 px."
+msgstr "PNG / JPEG bis 3 MB und 2048x2048 px."
+
+msgid "Remove your profile picture?"
+msgstr "Profilbild entfernen?"
+
+msgid "Remove photo"
+msgstr "Foto entfernen"
+
+msgid "Notification Center"
+msgstr "Benachrichtigungszentrum"
+
+msgid "Choose how you want to hear from us."
+msgstr "Wähle, wie du von uns hören möchtest."
+
+msgid "Need a new password?"
+msgstr "Neues Passwort benötigt?"
+
+msgid "Set a fresh password any time. We’ll keep you logged in while you update it."
+msgstr "Lege jederzeit ein neues Passwort fest. Wir halten dich während der Aktualisierung angemeldet."
+
+msgid "Forgot password"
+msgstr "Passwort vergessen"
+
+msgid "We'll send you a recovery link"
+msgstr "Wir senden dir einen Wiederherstellungslink"
+
+msgid "Tell us which email address is linked to your account and we’ll do the rest."
+msgstr "Sag uns, welche E-Mail-Adresse mit deinem Konto verknüpft ist, und wir übernehmen den Rest."
+
+msgid "Back to login"
+msgstr "Zurück zur Anmeldung"
+
+msgid "Need to reset your password?"
+msgstr "Möchtest du dein Passwort zurücksetzen?"
+
+msgid "Request a new password"
+msgstr "Neues Passwort anfordern"
+
+#, python-format
+msgid ""
+"\n"
+"                    Invite %(invitee)s to \"%(room)s\"\n"
+"                "
+msgstr ""
+"\n"
+"                    Lade %(invitee)s zu \"%(room)s\" ein\n"
+"                "
+
+msgid "Send invite"
+msgstr "Einladung senden"
+
+msgid "Room roster"
+msgstr "Raumteilnehmerliste"
+
+#, python-format
+msgid "Everyone in %(room_name)s"
+msgstr "Alle in %(room_name)s"
+
+msgid "Invite roommates, add guests, and keep tabs on who has already viewed the room."
+msgstr "Lade Mitbewohner ein, füge Gäste hinzu und behalte im Blick, wer den Raum bereits angesehen hat."
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Room closed"
+msgstr "Raum geschlossen"
+
+msgid "Room open"
+msgstr "Raum geöffnet"
+
+msgid "Add existing user"
+msgstr "Bestehenden Nutzer hinzufügen"
+
+msgid "No one here yet"
+msgstr "Noch niemand hier"
+
+msgid "Invite a roommate or add a guest to start splitting expenses."
+msgstr "Lade einen Mitbewohner ein oder füge einen Gast hinzu, um mit dem Aufteilen der Ausgaben zu beginnen."
+
 msgid "Welcome back"
 msgstr "Willkommen zurück"
 
@@ -179,6 +299,30 @@ msgstr "Anmelden"
 
 msgid "By logging in you agree that your session may be kept open when \"Stay signed in\" is enabled."
 msgstr "Durch die Anmeldung erklärst du dich damit einverstanden, dass deine Sitzung offen bleibt, wenn die Option \"Angemeldet bleiben\" aktiviert ist."
+
+msgid "Unsubscribed"
+msgstr "Abgemeldet"
+
+msgid "You’re no longer receiving payment reminders."
+msgstr "Du erhältst keine Zahlungserinnerungen mehr."
+
+msgid "Oops"
+msgstr "Hoppla"
+
+msgid "We couldn’t process the unsubscribe."
+msgstr "Wir konnten die Abmeldung nicht verarbeiten."
+
+msgid "Email"
+msgstr "E-Mail"
+
+msgid "Sign in"
+msgstr "Anmelden"
+
+msgid "Account settings"
+msgstr "Kontoeinstellungen"
+
+msgid "You can always re-enable reminders from your notification settings."
+msgstr "Du kannst Erinnerungen jederzeit über deine Benachrichtigungseinstellungen wieder aktivieren."
 
 msgid "Join yamsa"
 msgstr "yamsa beitreten"
@@ -667,9 +811,6 @@ msgstr "Melde dich an, um Räume zu nutzen"
 msgid "Manage rooms and transactions"
 msgstr "Räume und Transaktionen verwalten"
 
-msgid "Sign in"
-msgstr "Anmelden"
-
 msgid "View profile"
 msgstr "Profil ansehen"
 
@@ -1128,9 +1269,6 @@ msgstr "Erfasse zuerst eine Ausgabe, um deinen Verlauf aufzubauen."
 
 msgid "Room snapshot"
 msgstr "Raumzusammenfassung"
-
-msgid "Status"
-msgstr "Status"
 
 msgid "Transactions logged"
 msgstr "Erfasste Transaktionen"

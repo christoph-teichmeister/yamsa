@@ -1,7 +1,7 @@
 {% extends "core/base.html" %}
-{% load static %}
+{% load static i18n %}
 {% block title %}
-    yamsa | Payment reminders
+    yamsa | {% trans "Payment reminders" %}
 {% endblock title %}
 {% block content %}
     <section class="container px-2 px-md-4 px-lg-5 my-5">
@@ -10,21 +10,25 @@
                 <div class="card border-0 shadow-sm rounded-4">
                     <div class="card-body text-center p-5">
                         {% if success %}
-                            <span class="badge text-bg-success text-uppercase mb-3">Unsubscribed</span>
-                            <h1 class="h4 fw-semibold mb-3">You’re no longer receiving payment reminders.</h1>
+                            <span class="badge text-bg-success text-uppercase mb-3">{% trans "Unsubscribed" %}</span>
+                            <h1 class="h4 fw-semibold mb-3">{% trans "You’re no longer receiving payment reminders." %}</h1>
                         {% else %}
-                            <span class="badge text-bg-danger text-uppercase mb-3">Oops</span>
-                            <h1 class="h4 fw-semibold mb-3">We couldn’t process the unsubscribe.</h1>
+                            <span class="badge text-bg-danger text-uppercase mb-3">{% trans "Oops" %}</span>
+                            <h1 class="h4 fw-semibold mb-3">{% trans "We couldn’t process the unsubscribe." %}</h1>
                         {% endif %}
                         <p class="text-muted mb-4">{{ message }}</p>
-                        {% if user_email %}<p class="text-muted small mb-4">Email: {{ user_email }}</p>{% endif %}
+                        {% if user_email %}
+                            <p class="text-muted small mb-4">{% trans "Email" %}: {{ user_email }}</p>
+                        {% endif %}
                         <div class="d-flex justify-content-center gap-3 flex-wrap">
-                            <a class="btn btn-primary px-4" href="{% url 'account:login' %}">Sign in</a>
+                            <a class="btn btn-primary px-4" href="{% url 'account:login' %}">{% trans "Sign in" %}</a>
                             {% if request.user.is_authenticated %}
                                 <a class="btn btn-outline-secondary px-4"
-                                   href="{% url 'account:update' pk=request.user.id %}">Account settings</a>
+                                   href="{% url 'account:update' pk=request.user.id %}">{% trans "Account settings" %}</a>
                             {% else %}
-                                <p class="small text-muted mt-4 mb-0">You can always re-enable reminders from your notification settings.</p>
+                                <p class="small text-muted mt-4 mb-0">
+                                    {% trans "You can always re-enable reminders from your notification settings." %}
+                                </p>
                             {% endif %}
                         </div>
                     </div>
