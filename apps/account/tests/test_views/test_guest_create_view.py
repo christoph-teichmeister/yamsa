@@ -19,7 +19,7 @@ class GuestCreateViewTestCase(BaseTestSetUp):
 
         self.assertTrue(response.template_name[0], GuestCreateView.template_name)
         response_content = response.content.decode()
-        self.assertIn(f"Invite a guest to {self.room.name}", response_content)
+        self.assertIn(f'Invite a guest to "{self.room.name}"', response_content)
 
         self.assertEqual(response.context_data["active_tab"], "people")
 
