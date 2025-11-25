@@ -1009,6 +1009,9 @@ msgstr "Erforderliche Angaben"
 msgid "What was this?"
 msgstr "Was war das?"
 
+msgid "e.g., Grocery run"
+msgstr "e.g., Einkaufen"
+
 msgid "Maximum 50 characters."
 msgstr "Maximal 50 Zeichen."
 
@@ -1059,6 +1062,9 @@ msgstr "Markiere diese Ausgabe für Dashboards und Diagramme."
 
 msgid "Notes"
 msgstr "Notizen"
+
+msgid "Add split details, receipts, or reminders"
+msgstr "Füge Aufteilungsdetails, Belege oder Erinnerungen hinzu"
 
 msgid "Up to 5000 characters."
 msgstr "Bis zu 5000 Zeichen."

@@ -62,7 +62,7 @@
                                            maxlength="50"
                                            minlength="1"
                                            list="descriptionSuggestions"
-                                           placeholder="{% trans \"e.g., Grocery run\" %}"
+                                           placeholder="{% trans "e.g., Grocery run" %}"
                                            value="{{ description_field.value|default:'' }}"
                                            required />
                                     {% if description_field.errors %}
@@ -224,7 +224,7 @@
                                               rows="3"
                                               maxlength="5000"
                                               minlength="1"
-                                              placeholder="{% trans \"Add split details, receipts, or reminders\" %}">{{ notes_field.value|default:'' }}</textarea>
+                                              placeholder="{% trans "Add split details, receipts, or reminders" %}">{{ notes_field.value|default:'' }}</textarea>
                                     {% if notes_field.errors %}<div class="invalid-feedback d-block">{{ notes_field.errors.0 }}</div>{% endif %}
                                 {% endwith %}
                                 <div class="form-text">{% trans "Up to 5000 characters." %}</div>
