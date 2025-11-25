@@ -627,6 +627,44 @@ msgstr "Klicke auf den Button unten, um den Raum zu sehen!"
 msgid "See the room"
 msgstr "Raum ansehen"
 
+#, python-brace-format
+msgid "{creator} created \"{room_name}\""
+msgstr "{creator} hat \"{room_name}\" erstellt"
+
+#, python-brace-format
+msgid "{icon} {initials}: Created"
+msgstr "{icon} {initials}: Erstellt"
+
+#, python-brace-format
+msgid "{payer} paid {amount}{currency} in \"{room}\""
+msgstr "{payer} hat {amount}{currency} in \"{room}\" bezahlt"
+
+#, python-brace-format
+msgid "{icon} {initials}: Transaction created"
+msgstr "{icon} {initials}: Transaktion erstellt"
+
+#, python-brace-format
+msgid "{actor} deleted the transaction \"{description}\" ({amount}{currency}) in \"{room}\""
+msgstr "{actor} hat die Transaktion \"{description}\" ({amount}{currency}) in \"{room}\" gelöscht"
+
+#, python-brace-format
+msgid "{icon} {initials}: Transaction deleted"
+msgstr "{icon} {initials}: Transaktion gelöscht"
+
+msgid "themselves"
+msgstr "sich selbst"
+
+msgid "System"
+msgstr "System"
+
+#, python-brace-format
+msgid "{created_by} added {added_user} to \"{room_name}\""
+msgstr "{created_by} hat {added_user} zu \"{room_name}\" hinzugefügt"
+
+#, python-brace-format
+msgid "{icon} {initials}: User added"
+msgstr "{icon} {initials}: Nutzer:in hinzugefügt"
+
 msgid "Room created"
 msgstr "Raum erstellt"
 
@@ -641,6 +679,9 @@ msgstr "Nutzer:in hinzugefügt"
 
 msgid "News update"
 msgstr "News Update"
+
+msgid "News"
+msgstr "Neuigkeiten"
 
 msgid "Create Room"
 msgstr "Raum erstellen"
@@ -868,6 +909,10 @@ msgstr "Verwandtes Update öffnen"
 msgid "Update"
 msgstr "Aktualisierung"
 
+#, python-format
+msgid "%(timesince)s ago"
+msgstr "vor %(timesince)s"
+
 msgid "Something went wrong"
 msgstr "Etwas ist schiefgelaufen"
 
@@ -900,6 +945,10 @@ msgstr "Registrierter Mitbewohner"
 
 msgid "Joined as a full member of this room."
 msgstr "Als volles Mitglied dieses Raums beigetreten."
+
+#, python-brace-format
+msgid "{paid_by} paid {value}{currency} for {paid_for}"
+msgstr "{paid_by} hat {value}{currency} für {paid_for} bezahlt"
 
 msgid "Back to transactions"
 msgstr "Zurück zu den Transaktionen"
