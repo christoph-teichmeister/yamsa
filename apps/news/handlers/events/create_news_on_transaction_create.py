@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.utils.translation import gettext as _
 
 from apps.core.event_loop.registry import message_registry
 from apps.news.models import News
@@ -9,9 +10,11 @@ from apps.transaction.messages.events.transaction import ParentTransactionCreate
 def create_news_on_transaction_create(context: ParentTransactionCreated.Context):
     parent_transaction = context.parent_transaction
 
-    message = (
-        f"{parent_transaction.paid_by.name} paid {parent_transaction.value}{parent_transaction.currency.sign} "
-        f'in "{parent_transaction.room.name}"'
+    message = _('{payer} paid {amount}{currency} in "{room}"').format(
+        payer=parent_transaction.paid_by.name,
+        amount=parent_transaction.value,
+        currency=parent_transaction.currency.sign,
+        room=parent_transaction.room.name,
     )
 
     deeplink = reverse(
@@ -20,7 +23,10 @@ def create_news_on_transaction_create(context: ParentTransactionCreated.Context)
     )
 
     News.objects.create(
-        title=f"💸 {parent_transaction.room.capitalised_initials}: Transaction created",
+        title=_("{icon} {initials}: Transaction created").format(
+            icon="💸",
+            initials=parent_transaction.room.capitalised_initials,
+        ),
         message=message,
         room_id=parent_transaction.room_id,
         deeplink=deeplink,
