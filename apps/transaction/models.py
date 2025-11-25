@@ -29,7 +29,7 @@ class Category(FullCleanOnSaveMixin, CommonInfo):
         verbose_name = _lazy("Transaction Category")
         verbose_name_plural = _lazy("Transaction Categories")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.emoji} {self.name}"
 
     @classmethod
@@ -63,7 +63,7 @@ class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
         verbose_name = _lazy("Parent Transaction")
         verbose_name_plural = _lazy("Parent Transactions")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.id}: {self.description}"
 
     @property
@@ -90,7 +90,7 @@ class ChildTransaction(FullCleanOnSaveMixin, CommonInfo):
         verbose_name = _lazy("Child Transaction")
         verbose_name_plural = _lazy("Child Transactions")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return _("{paid_by} paid {value}{currency} for {paid_for}").format(
             paid_by=self.parent_transaction.paid_by,
             value=self.value,
@@ -132,5 +132,5 @@ class Receipt(CommonInfo):
         verbose_name = _lazy("Transaction receipt")
         verbose_name_plural = _lazy("Transaction receipts")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.original_name
