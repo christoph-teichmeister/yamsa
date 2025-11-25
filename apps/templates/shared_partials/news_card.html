@@ -16,7 +16,7 @@
                         {% endif %}
                     </span>
                     <span>{{ news.created_at|date:"d.m.Y • H:i" }}</span>
-                    <span>{{ news.created_at|timesince }} ago</span>
+                    {% blocktrans with timesince=news.created_at|timesince %}{{ timesince }} ago{% endblocktrans %}
                 </div>
                 <h5 class="timeline-card-title">{{ news.heading }}</h5>
                 <div class="timeline-card-body">
@@ -35,7 +35,7 @@
                     {% endif %}
                 </span>
                 <span>{{ news.created_at|date:"d.m.Y • H:i" }}</span>
-                <span>{{ news.created_at|timesince }} ago</span>
+                {% blocktrans with timesince=news.created_at|timesince %}{{ timesince }} ago{% endblocktrans %}
             </div>
             <h5 class="timeline-card-title">{{ news.heading }}</h5>
             <div class="timeline-card-body">

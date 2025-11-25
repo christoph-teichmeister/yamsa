@@ -252,8 +252,8 @@
                             <i class="bi bi-plus-circle"></i>
                             {% trans "Add transaction" %}
                         </button>
-                        <a href="{% room_url 'room:dashboard' %}"
-                           class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 w-100 w-md-auto"
+                        <a class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 w-100 w-md-auto"
+                           href="{% room_url 'transaction:list' %}"
                            hx-boost="true">
                             <i class="bi bi-arrow-left"></i>
                             {% trans "Cancel" %}
