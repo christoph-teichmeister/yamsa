@@ -1,5 +1,7 @@
 from ambient_toolbox.models import CommonInfo
 from django.db import models
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _lazy
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
 from apps.debt.managers import DebtManager
@@ -21,11 +23,15 @@ class Debt(FullCleanOnSaveMixin, CommonInfo, models.Model):
     objects = DebtManager.from_queryset(DebtQuerySet)()
 
     class Meta:
-        verbose_name = "Debt"
-        verbose_name_plural = "Debts"
+        verbose_name = _lazy("Debt")
+        verbose_name_plural = _lazy("Debts")
 
     def __str__(self):
-        return (
-            f"{'Settled: ' if self.settled else ''}{self.debitor.name} "
-            f"owes {self.value}{self.currency.sign} to {self.creditor.name}"
+        settled_prefix = _("Settled: ") if self.settled else ""
+        return _("{settled_prefix}{debitor} owes {value}{currency} to {creditor}").format(
+            settled_prefix=settled_prefix,
+            debitor=self.debitor.name,
+            value=self.value,
+            currency=self.currency.sign,
+            creditor=self.creditor.name,
         )

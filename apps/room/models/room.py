@@ -3,6 +3,7 @@ from functools import cached_property
 
 from ambient_toolbox.models import CommonInfo
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
 from apps.core.models.mixins.emit_model_created_event_on_save import EmitModelCreatedEventOnSaveMixin
@@ -11,8 +12,8 @@ from apps.room.managers import RoomManager
 
 class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     class StatusChoices(models.IntegerChoices):
-        OPEN = 1, "Open"
-        CLOSED = 2, "Closed"
+        OPEN = 1, _("Open")
+        CLOSED = 2, _("Closed")
 
     slug = models.UUIDField(unique=True)
     name = models.CharField(max_length=100)
@@ -26,8 +27,8 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     objects = RoomManager()
 
     class Meta:
-        verbose_name = "Room"
-        verbose_name_plural = "Rooms"
+        verbose_name = _("Room")
+        verbose_name_plural = _("Rooms")
 
     def __str__(self):
         return f"{self.name} ({self.get_status_display()})"

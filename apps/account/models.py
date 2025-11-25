@@ -12,6 +12,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
 from apps.account.managers import UserManager
 from apps.core.utils import determine_upload_to
@@ -68,9 +69,9 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
 
     is_guest = models.BooleanField(default=True)
     is_staff = models.BooleanField(
-        "Staff Status",
+        _("Staff Status"),
         default=False,
-        help_text="Designates whether the user can log into this admin site.",
+        help_text=_("Designates whether the user can log into this admin site."),
     )
 
     wants_to_receive_webpush_notifications = models.BooleanField(default=False)
@@ -85,8 +86,8 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     class Meta:
-        verbose_name = "User"
-        verbose_name_plural = "Users"
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
 
     def __str__(self):
         return self.name
@@ -152,8 +153,8 @@ class UserFriendship(CommonInfo):
     friend = models.ForeignKey("account.User", on_delete=models.CASCADE, related_name="friended_by")
 
     class Meta:
-        verbose_name = "User friendship"
-        verbose_name_plural = "User friendships"
+        verbose_name = _("User friendship")
+        verbose_name_plural = _("User friendships")
         constraints = [models.UniqueConstraint(fields=["user", "friend"], name="unique_user_friendship")]
         indexes = [
             models.Index(fields=["user", "friend"], name="acc_usrfrndshp_usr_frnd_idx"),
@@ -165,7 +166,7 @@ class UserFriendship(CommonInfo):
 
     def clean(self):
         if self.user_id == self.friend_id:
-            error_msg = "Users cannot be friends with themselves."
+            error_msg = _("Users cannot be friends with themselves.")
             raise ValidationError(error_msg)
 
         super().clean()

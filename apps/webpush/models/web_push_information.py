@@ -1,6 +1,8 @@
 from ambient_toolbox.models import CommonInfo
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _lazy
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
 
@@ -15,8 +17,8 @@ class WebpushInformation(FullCleanOnSaveMixin, CommonInfo):
     p256dh = models.CharField(max_length=100)
 
     class Meta:
-        verbose_name = "Webpush Information"
-        verbose_name_plural = "Webpush Informations"
+        verbose_name = _lazy("Webpush Information")
+        verbose_name_plural = _lazy("Webpush Informations")
 
     def __str__(self):
-        return f"Webpush Information for {self.user}"
+        return _("Webpush Information for {user}").format(user=self.user)

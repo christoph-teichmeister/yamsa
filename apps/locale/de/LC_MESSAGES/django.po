@@ -38,6 +38,27 @@ msgstr "E-Mail-Erinnerungen an Zahlungen erhalten"
 msgid "Receive room reminder emails"
 msgstr "E-Mail-Erinnerungen zum Raum erhalten"
 
+msgid "Staff Status"
+msgstr "Status der Mitarbeitenden"
+
+msgid "Designates whether the user can log into this admin site."
+msgstr "Legt fest, ob Benutzer:innen sich im Adminbereich anmelden kann."
+
+msgid "User"
+msgstr "Benutzer:in"
+
+msgid "Users"
+msgstr "Benutzer:innen"
+
+msgid "User friendship"
+msgstr "Benutzer:innenfreundschaft"
+
+msgid "User friendships"
+msgstr "Benutzer:innenfreundschaften"
+
+msgid "Users cannot be friends with themselves."
+msgstr "Benutzer:innen können nicht mit sich selbst befreundet sein."
+
 msgid "Change your password:"
 msgstr "Ändere dein Passwort:"
 
@@ -177,6 +198,90 @@ msgstr "Halte deine Daten aktuell"
 
 msgid "Cancel"
 msgstr "Abbrechen"
+
+msgid "Debt"
+msgstr "Schuld"
+
+msgid "Debts"
+msgstr "Schulden"
+
+msgid "Settled: "
+msgstr "Beglichen: "
+
+#, python-format
+msgid "{settled_prefix}{debitor} owes {value}{currency} to {creditor}"
+msgstr "{settled_prefix}{debitor} schuldet {value}{currency} an {creditor}"
+
+msgid "Inactive debt reminder"
+msgstr "Erinnerung für inaktive Schulden"
+
+msgid "Inactive room reminder"
+msgstr "Erinnerung für inaktiven Raum"
+
+msgid "Room"
+msgstr "Raum"
+
+msgid "Rooms"
+msgstr "Räume"
+
+msgid "Open"
+msgstr "Offen"
+
+msgid "Closed"
+msgstr "Geschlossen"
+
+msgid "User-Connection to Room"
+msgstr "Benutzer:innen-Verbindung zum Raum"
+
+msgid "User-Connections to Rooms"
+msgstr "Benutzer:innen-Verbindungen zu Räumen"
+
+#, python-format
+msgid "{user} belongs to {room}"
+msgstr "{user} gehört zu {room}"
+
+msgid "Transaction Category"
+msgstr "Transaktionskategorie"
+
+msgid "Transaction Categories"
+msgstr "Transaktionskategorien"
+
+msgid "Paid at"
+msgstr "Bezahlt am"
+
+msgid "Parent Transaction"
+msgstr "Haupttransaktion"
+
+msgid "Parent Transactions"
+msgstr "Haupttransaktionen"
+
+msgid "Child Transaction"
+msgstr "Untertransaktion"
+
+msgid "Child Transactions"
+msgstr "Untertransaktionen"
+
+msgid "Transaction receipt"
+msgstr "Transaktionsbeleg"
+
+msgid "Transaction receipts"
+msgstr "Transaktionsbelege"
+
+msgid "Currency"
+msgstr "Währung"
+
+msgid "Currencies"
+msgstr "Währungen"
+
+msgid "Webpush Information"
+msgstr "Webpush-Information"
+
+msgid "Webpush Informations"
+msgstr "Webpush-Informationen"
+
+#, python-format
+msgid "Webpush Information for {user}"
+msgstr "Webpush-Information für {user}"
 
 msgid "Save changes"
 msgstr "Änderungen speichern"
@@ -392,6 +497,31 @@ msgstr "yamsa, gemeinsame Ausgaben, Mitbewohner-App, Rechnungsteilung, Dashboard
 
 msgid "yamsa"
 msgstr "yamsa"
+
+msgid "Currency"
+msgstr "Währung"
+
+msgid "Currencies"
+msgstr "Währungen"
+
+msgid "Settled: "
+msgstr "Beglichen:"
+
+#, python-brace-format
+msgid "{settled_prefix}{debitor} owes {value}{currency} to {creditor}"
+msgstr "{settled_prefix}{debitor} schuldet {value}{currency} an {creditor}"
+
+msgid "Inactive debt reminder"
+msgstr "Erinnerung für inaktive Schulden"
+
+msgid "Inactive room reminder"
+msgstr "Erinnerung für inaktiven Raum"
+
+msgid "Reminder log"
+msgstr "Erinnerungsprotokoll"
+
+msgid "Reminder logs"
+msgstr "Erinnerungsprotokolle"
 
 msgid "Optimised debts"
 msgstr "Optimierte Schulden"
@@ -683,6 +813,22 @@ msgstr "News Update"
 msgid "News"
 msgstr "Neuigkeiten"
 
+msgid "Open"
+msgstr "Offen"
+
+msgid "Closed"
+msgstr "Geschlossen"
+
+msgid "Room"
+msgstr "Raum"
+
+msgid "Rooms"
+msgstr "Räume"
+
+#, python-brace-format
+msgid "{user} belongs to {room}"
+msgstr "{user} gehört zu {room}"
+
 msgid "Create Room"
 msgstr "Raum erstellen"
 
@@ -703,12 +849,6 @@ msgstr "Raumübersicht"
 
 msgid "No description added yet."
 msgstr "Noch keine Beschreibung hinzugefügt."
-
-msgid "Closed"
-msgstr "Geschlossen"
-
-msgid "Open"
-msgstr "Offen"
 
 msgid "Preferred currency"
 msgstr "Bevorzugte Währung"
@@ -1097,9 +1237,6 @@ msgstr "Bezahlt am"
 msgid "Use if the expense occurred earlier."
 msgstr "Verwenden, wenn die Ausgabe früher stattfand."
 
-msgid "Currency"
-msgstr "Währung"
-
 msgid "Defaults to the room preference."
 msgstr "Standardmäßig wird die Raumpräferenz verwendet."
 
@@ -1126,9 +1263,6 @@ msgstr "Lade Belege als PDF oder Bild hoch (maximal 5 MB pro Datei)."
 
 msgid "Room Slug"
 msgstr "Raum-Slug"
-
-msgid "Room"
-msgstr "Raum"
 
 msgid "Groceries"
 msgstr "Lebensmittel"
@@ -1494,3 +1628,7 @@ msgstr "Noch keine Transaktionen anzuzeigen."
 
 msgid "You're all caught up."
 msgstr "Du bist auf dem Laufenden."
+
+#, python-brace-format
+msgid "Webpush Information for {user}"
+msgstr "Webpush-Information für {user}"
