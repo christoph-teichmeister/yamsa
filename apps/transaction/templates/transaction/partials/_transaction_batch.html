@@ -22,7 +22,7 @@
                         </div>
                         <div class="col">
                             <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Description" %}</div>
-                            {% with description_value=parent_transaction.description|default_if_none:_("No description") %}
+                            {% with description_value=parent_transaction.description|default:_("No description") %}
                                 <div class="fw-semibold">{{ description_value|truncatechars:70 }}</div>
                             {% endwith %}
                         </div>
