@@ -1,5 +1,5 @@
 # Set Python version
-ARG PYTHON_MINOR_VERSION=3.11
+ARG PYTHON_MINOR_VERSION=3.13
 
 ### STAGE 1: Build python ###
 FROM python:${PYTHON_MINOR_VERSION} AS builder-python

@@ -5,6 +5,15 @@
 - Python 3.11 (the Docker images and production deployments target `python:3.11`).
 - `uv` as the dependency manager (`python -m pip install --user uv` or via your OS package manager).
 
+## Datenbank-Setup
+
+- Die lokale Docker-Umgebung nutzt `postgres:18-alpine` (siehe `docker-compose.yml`), damit Development und CI die
+  gleiche Major-Version verwenden.
+- Starte die Datenbank (`docker compose up database` oder ähnliche Scripts aus `scripts/`) bevor du
+  `uv run python manage.py migrate` ausführst; alle Befehle laufen gegen Postgres 18.
+- Import-Anleitungen (z. B. in `apps/docs/notes.md`) setzen auf dieselben Zugangsdaten und Ports wie in
+  `docker-compose`, sodass Dumps direkt in die neue Version eingespielt werden können.
+
 ## Bootstrapping dependencies
 
 1. Run `uv sync --all-extras --no-install-project` to install the locked dependency set into the local `.venv`.
