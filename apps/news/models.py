@@ -58,8 +58,8 @@ class News(FullCleanOnSaveMixin, CommonInfo):
         return label
 
     class Meta:
-        verbose_name = "News"
-        verbose_name_plural = "News"
+        verbose_name = _("News")
+        verbose_name_plural = _("News")
         ordering = (
             "highlighted",
             "-id",

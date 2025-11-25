@@ -6,6 +6,7 @@ from django.db import models
 from django.db.models.aggregates import Sum
 from django.utils.text import slugify
 from django.utils.timezone import now
+from django.utils.translation import gettext as _
 
 from apps.account.models import User
 from apps.core.models.mixins import FullCleanOnSaveMixin
@@ -89,9 +90,11 @@ class ChildTransaction(FullCleanOnSaveMixin, CommonInfo):
         verbose_name_plural = "Child Transactions"
 
     def __str__(self):
-        return (
-            f"{self.parent_transaction.paid_by} paid {self.value}{self.parent_transaction.currency.sign} for "
-            f"{self.paid_for}"
+        return _("{paid_by} paid {value}{currency} for {paid_for}").format(
+            paid_by=self.parent_transaction.paid_by,
+            value=self.value,
+            currency=self.parent_transaction.currency.sign,
+            paid_for=self.paid_for,
         )
 
 
