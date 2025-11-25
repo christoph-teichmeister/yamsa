@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.utils import translation
+from django.utils.translation import get_supported_language_variant
+from django.utils.translation import gettext_lazy as _
 from django.views import generic
 
 from apps.account.constants import LANGUAGE_SESSION_KEY
@@ -13,7 +15,7 @@ class LogInUserView(generic.FormView):
     form_class = LoginForm
 
     class ExceptionMessage:
-        AUTH_FAILED = "The combination of email and password does not match"
+        AUTH_FAILED = _("The combination of email and password does not match")
 
     def get_success_url(self):
         return reverse(viewname="core:welcome")
@@ -26,9 +28,15 @@ class LogInUserView(generic.FormView):
 
         if possible_user is not None:
             login(request=self.request, user=possible_user)
-            if possible_user.language:
-                translation.activate(possible_user.language)
-                self.request.session[LANGUAGE_SESSION_KEY] = possible_user.language
+            language_code = possible_user.language
+            if language_code:
+                try:
+                    supported_language = get_supported_language_variant(language_code)
+                except LookupError:
+                    supported_language = None
+                if supported_language:
+                    translation.activate(supported_language)
+                    self.request.session[LANGUAGE_SESSION_KEY] = supported_language
             if cleaned_data.get("remember_me"):
                 self.request.session.set_expiry(settings.DJANGO_REMEMBER_ME_SESSION_AGE)
         else:
