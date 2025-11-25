@@ -38,6 +38,24 @@ msgstr "E-Mail-Erinnerungen an Zahlungen erhalten"
 msgid "Receive room reminder emails"
 msgstr "E-Mail-Erinnerungen zum Raum erhalten"
 
+#, python-brace-format
+msgid "User with email address '{email}' already exists"
+msgstr "Benutzer:in mit der E-Mail-Adresse '{email}' existiert bereits"
+
+#, python-brace-format
+msgid "The email address '{email}' is already in use"
+msgstr "Die E-Mail-Adresse '{email}' wird bereits verwendet"
+
+#, python-brace-format
+msgid "The email address '{email}' is not registered with yamsa"
+msgstr "Die E-Mail-Adresse '{email}' ist nicht bei yamsa registriert"
+
+msgid "Email"
+msgstr "E-Mail"
+
+msgid "Email your account is linked to"
+msgstr "E-Mail-Adresse, mit der dein Konto verknüpft ist"
+
 msgid "Staff Status"
 msgstr "Status der Mitarbeitenden"
 
@@ -333,9 +351,6 @@ msgstr "Hoppla"
 msgid "We couldn’t process the unsubscribe."
 msgstr "Wir konnten die Abmeldung nicht verarbeiten."
 
-msgid "Email"
-msgstr "E-Mail"
-
 msgid "Sign in"
 msgstr "Anmelden"
 
@@ -377,6 +392,9 @@ msgstr "Ist Gast"
 
 msgid "Register now"
 msgstr "Jetzt registrieren"
+
+msgid "The combination of email and password does not match"
+msgstr "Die Kombination aus E-Mail und Passwort ist nicht korrekt"
 
 msgid "English"
 msgstr "Englisch"
