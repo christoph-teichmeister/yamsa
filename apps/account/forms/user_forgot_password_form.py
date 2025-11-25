@@ -1,14 +1,18 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 from apps.account.models import User
 
 
 class UserForgotPasswordForm(forms.Form):
     class ExceptionMessage:
-        UNKNOWN_EMAIL_ADDRESS = "The email address '{email}' is not registered with yamsa"
+        UNKNOWN_EMAIL_ADDRESS = _("The email address '{email}' is not registered with yamsa")
 
-    email = forms.EmailField(label="Email", help_text="Email your account is linked to")
+    email = forms.EmailField(
+        label=_("Email"),
+        help_text=_("Email your account is linked to"),
+    )
 
     class Meta:
         fields = ("email",)
