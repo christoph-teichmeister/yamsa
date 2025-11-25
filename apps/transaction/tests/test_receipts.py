@@ -69,7 +69,6 @@ class TransactionReceiptTest(BaseTestSetUp):
         receipt.file.delete(save=False)
 
     def test_receipt_validation_blocks_unsupported_types(self):
-        self.reauthenticate_user(self.user)
         currency = baker.make_recipe("apps.currency.tests.currency")
         invalid_file = SimpleUploadedFile(
             "receipt.txt",
