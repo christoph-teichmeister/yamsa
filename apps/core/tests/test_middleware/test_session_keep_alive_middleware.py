@@ -10,27 +10,36 @@ from apps.core.tests.setup import BaseTestSetUp
 
 class SessionKeepAliveMiddlewareTestCase(BaseTestSetUp):
     def test_refreshes_session_ttl_on_authenticated_requests(self):
-        self.client.session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
-        self.client.session.set_expiry(30)
-        self.client.session.save()
+        self.client.force_login(self.user)
+        session = self.client.session
+        session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
+        session.set_expiry(30)
+        session.save()
+        self.client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
 
         self.client.get(reverse("core:welcome"))
 
         self.assertEqual(settings.SESSION_COOKIE_AGE, self.client.session.get_expiry_age())
 
     def test_maintains_remember_me_ttl(self):
-        self.client.session[SESSION_TTL_SESSION_KEY] = settings.DJANGO_REMEMBER_ME_SESSION_AGE
-        self.client.session.set_expiry(30)
-        self.client.session.save()
+        self.client.force_login(self.user)
+        session = self.client.session
+        session[SESSION_TTL_SESSION_KEY] = settings.DJANGO_REMEMBER_ME_SESSION_AGE
+        session.set_expiry(30)
+        session.save()
+        self.client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
 
         self.client.get(reverse("core:welcome"))
 
         self.assertEqual(settings.DJANGO_REMEMBER_ME_SESSION_AGE, self.client.session.get_expiry_age())
 
     def test_skips_safe_htmx_fragments(self):
-        self.client.session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
-        self.client.session.set_expiry(30)
-        self.client.session.save()
+        self.client.force_login(self.user)
+        session = self.client.session
+        session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
+        session.set_expiry(30)
+        session.save()
+        self.client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
 
         self.client.get(
             reverse("core:welcome"),
