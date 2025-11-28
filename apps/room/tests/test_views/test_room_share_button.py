@@ -27,6 +27,15 @@ class RoomShareButtonTests(TestCase):
             response, "data-copy-share-url", msg_prefix="Share button should render even without guests"
         )
 
+    def test_share_button_shows_for_open_room_with_guests(self):
+        guest = user_recipe.make(is_guest=True)
+        UserConnectionToRoom.objects.create(user=guest, room=self.room)
+
+        response = self.client.get(reverse("room:dashboard", kwargs={"room_slug": self.room.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "data-copy-share-url", msg_prefix="Share button should render when guests exist")
+
     def test_share_button_hides_when_room_closed(self):
         self.room.status = Room.StatusChoices.CLOSED
         self.room.save()
