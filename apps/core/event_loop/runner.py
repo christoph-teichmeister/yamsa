@@ -50,15 +50,14 @@ def handle_command(command: Command, queue: list[Message]):
                 uuid_list = [f"{m!s}" for m in new_messages]
                 logger.debug("New messages: %s", uuid_list)
                 queue.extend(new_messages)
-        except Exception as e:
+        except Exception:
             logger.exception(
-                "Exception handling command %s (%s) with handler '%s': %s",
+                "Exception handling command %s (%s) with handler '%s'",
                 command.__class__.__name__,
                 command.uuid,
                 handler.__name__,
-                e,
             )
-            raise e
+            raise
 
 
 def handle_event(event: Event, queue: list[Message]):
@@ -77,12 +76,11 @@ def handle_event(event: Event, queue: list[Message]):
                 uuid_list = [f"{m!s}" for m in new_messages]
                 logger.debug("New messages: %s", uuid_list)
                 queue.extend(new_messages)
-        except Exception as e:
+        except Exception:
             logger.exception(
-                "Exception handling event %s (%s) with handler '%s': %s",
+                "Exception handling event %s (%s) with handler '%s'",
                 event.__class__.__name__,
                 event.uuid,
                 handler.__name__,
-                e,
             )
-            raise e
+            raise

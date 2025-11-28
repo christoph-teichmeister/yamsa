@@ -3,6 +3,7 @@
 import logging
 from dataclasses import dataclass
 
+import pytest
 from django.test import TestCase
 
 from apps.core.event_loop.messages import Command, Event
@@ -36,7 +37,7 @@ def _failing_event_handler(context: _DummyContext) -> None:
 class _CaptureHandler(logging.Handler):
     """Collect emitted log records for later inspection."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(level=logging.DEBUG)
         self.records: list[logging.LogRecord] = []
 
@@ -87,27 +88,27 @@ class RunnerLoggingTests(TestCase):
         self.capture_handler.records.clear()
         command = _DummyCommand({})
 
-        with self.assertRaises(RuntimeError):
+        with pytest.raises(RuntimeError):
             handle_command(command, [])
 
         record = self._latest_error_record(logging.ERROR)
-        self.assertIsNotNone(record, "Expected an ERROR record when the handler raises")
-        self.assertIn("Exception handling command", record.getMessage())
-        self.assertIn(command.__class__.__name__, record.getMessage())
-        self.assertIn(command.uuid, record.getMessage())
-        self.assertIsNotNone(record.exc_info)
+        assert record is not None, "Expected an ERROR record when the handler raises"
+        assert "Exception handling command" in record.getMessage()
+        assert command.__class__.__name__ in record.getMessage()
+        assert command.uuid in record.getMessage()
+        assert record.exc_info is not None
 
     def test_handle_event_exception_logs_context(self):
         self._register_event_handler()
         self.capture_handler.records.clear()
         event = _DummyEvent({})
 
-        with self.assertRaises(RuntimeError):
+        with pytest.raises(RuntimeError):
             handle_event(event, [])
 
         record = self._latest_error_record(logging.ERROR)
-        self.assertIsNotNone(record, "Expected an ERROR record when the handler raises")
-        self.assertIn("Exception handling event", record.getMessage())
-        self.assertIn(event.__class__.__name__, record.getMessage())
-        self.assertIn(event.uuid, record.getMessage())
-        self.assertIsNotNone(record.exc_info)
+        assert record is not None, "Expected an ERROR record when the handler raises"
+        assert "Exception handling event" in record.getMessage()
+        assert event.__class__.__name__ in record.getMessage()
+        assert event.uuid in record.getMessage()
+        assert record.exc_info is not None
