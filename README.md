@@ -45,3 +45,4 @@ The Django stack is managed through `uv` with a `.venv` stored beside the projec
   the installation step.
 - If a dependency mismatch is reported (`uv sync` urges `uv.lock` changes), rerun `uv lock`, verify
   `uv sync --no-install-project --locked` succeeds, and commit the updated `uv.lock`.
+- Run `uv lock --check` to verify that the lockfile is up to date and `uv lock --upgrade` to upgrade it.
