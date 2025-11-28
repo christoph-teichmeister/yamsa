@@ -15,7 +15,7 @@ msgid "Your current password is incorrect"
 msgstr "Dein aktuelles Passwort ist falsch"
 
 msgid "Passwords do not match"
-msgstr "Passwörter stimme nicht überein"
+msgstr "Passwörter stimmen nicht überein"
 
 msgid "Your current password"
 msgstr "Dein aktuelles Passwort"

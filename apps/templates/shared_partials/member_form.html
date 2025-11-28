@@ -110,20 +110,34 @@
                 hx-swap="morph:innerHTML"
                 hx-push-url="true">
             <i class="bi bi-arrow-left"></i>
-            {{ back_label|default:_("Back") }}
+            {% if back_label %}
+                {{ back_label }}
+            {% else %}
+                {% trans "Back" %}
+            {% endif %}
         </button>
     {% endif %}
     <div class="member-hero-card mb-4">
         <div class="d-flex justify-content-between flex-wrap gap-3">
             <div>
-                <p class="text-uppercase text-muted small mb-1">{{ hero_context|default:_("Room access") }}</p>
+                <p class="text-uppercase text-muted small mb-1">
+                    {% if hero_context %}
+                        {{ hero_context }}
+                    {% else %}
+                        {% trans "Room access" %}
+                    {% endif %}
+                </p>
                 <h2>{{ hero_title }}</h2>
                 <p>{{ hero_subtitle }}</p>
             </div>
             <div class="text-end">
                 <div class="member-badge">
                     <i class="bi {{ hero_badge_icon|default:'bi-people' }}"></i>
-                    {{ hero_badge_label|default:_("New member") }}
+                    {% if hero_badge_label %}
+                        {{ hero_badge_label }}
+                    {% else %}
+                        {% trans "New member" %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -159,12 +173,22 @@
             {% if helper_text %}<div class="member-helper">{{ helper_text }}</div>{% endif %}
         </div>
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <p class="member-tip mb-0">{{ tip_text|default:_("We'll notify members automatically.") }}</p>
+            <p class="member-tip mb-0">
+                {% if tip_text %}
+                    {{ tip_text }}
+                {% else %}
+                    {% trans "We'll notify members automatically." %}
+                {% endif %}
+            </p>
             <button type="submit"
                     class="btn btn-primary member-submit {% if submit_disabled %}disabled{% endif %}"
                     {% if submit_disabled %}disabled aria-disabled="true"{% endif %}>
                 <i class="bi {{ submit_icon|default:'bi-check-lg' }}"></i>
-                {{ submit_label|default:_("Submit") }}
+                {% if submit_label %}
+                    {{ submit_label }}
+                {% else %}
+                    {% trans "Submit" %}
+                {% endif %}
             </button>
         </div>
         {% if submit_disabled %}

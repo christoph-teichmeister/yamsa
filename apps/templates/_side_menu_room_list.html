@@ -1,7 +1,7 @@
 {% load room_tags %}
 {% load i18n %}
 {% if current_user.open_room_qs_for_list %}
-    {% include "side_menu_components/room_list_title.html" with title="Open" %}
+    {% include "side_menu_components/room_list_title.html" with title=_("Open") %}
     <section class="room-group">
         {% for room in current_user.open_room_qs_for_list %}
             <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm{% if current_room and current_room.slug == room.slug %} active{% endif %}"
@@ -49,7 +49,7 @@
     </div>
 </section>
 {% if current_user.closed_room_qs_for_list %}
-    {% include "side_menu_components/room_list_title.html" with title="Closed" %}
+    {% include "side_menu_components/room_list_title.html" with title=_("Closed") %}
     <section class="room-group">
         {% for room in current_user.closed_room_qs_for_list %}
             <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm{% if current_room and current_room.slug == room.slug %} active{% endif %}"
@@ -78,7 +78,7 @@
     </section>
 {% endif %}
 {% if current_user.other_rooms_qs_for_list %}
-    {% include "side_menu_components/room_list_title.html" with title="Other" %}
+    {% include "side_menu_components/room_list_title.html" with title=_("Other") %}
     <section class="room-group">
         {% for room in current_user.other_rooms_qs_for_list %}
             <div class="room-entry room-entry-ghost fst-italic text-muted d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm{% if current_room and current_room.slug == room.slug %} active{% endif %}"
