@@ -438,12 +438,13 @@ msgstr "Währung"
 msgid "Currencies"
 msgstr "Währungen"
 
-msgid "Settled: "
-msgstr "Beglichen: "
+#, python-brace-format
+msgid "Settled: {debitor} owes {value}{currency} to {creditor}"
+msgstr "Beglichen: {debitor} schuldet {value}{currency} an {creditor}"
 
 #, python-brace-format
-msgid "{settled_prefix}{debitor} owes {value}{currency} to {creditor}"
-msgstr "{settled_prefix}{debitor} schuldet {value}{currency} an {creditor}"
+msgid "{debitor} owes {value}{currency} to {creditor}"
+msgstr "{debitor} schuldet {value}{currency} an {creditor}"
 
 msgid "Inactive debt reminder"
 msgstr "Erinnerung für inaktive Schulden"
@@ -466,19 +467,19 @@ msgstr "Verfolge, was in diesem Raum noch ausgeglichen werden muss. Klicke auf d
 #, python-format
 msgid ""
 "\n"
-"                        %(active_debt_count)s pending\n"
+"                        %(active_debt_count)s pending debt\n"
 "                    "
 msgid_plural ""
 "\n"
-"                        %(active_debt_count)s pending\n"
+"                        %(active_debt_count)s pending debts\n"
 "                    "
 msgstr[0] ""
 "\n"
-"                        %(active_debt_count)s ausstehend\n"
+"                        %(active_debt_count)s ausstehende Schuld\n"
 "                    "
 msgstr[1] ""
 "\n"
-"                        %(active_debt_count)s ausstehend\n"
+"                        %(active_debt_count)s ausstehende Schulden\n"
 "                    "
 
 msgid "Money overview"
@@ -487,11 +488,9 @@ msgstr "Geldübersicht"
 msgid "See how much each person has paid and who still owes what."
 msgstr "Sieh, wie viel jede Person bezahlt hat und wer noch was schuldet."
 
-msgid "owe"
-msgstr "schuldest"
-
-msgid "owes"
-msgstr "schuldet"
+#, python-format
+msgid "%(debitor_display)s owes %(value)s%(currency)s to %(creditor_display)s"
+msgstr "%(debitor_display)s schuldet %(value)s%(currency)s an %(creditor_display)s"
 
 #, python-format
 msgid ""
@@ -552,6 +551,9 @@ msgstr "Beglichen?"
 msgid "No, take me to their paypal"
 msgstr "Nein, bring mich zu ihrem PayPal"
 
+msgid "No action available"
+msgstr "Keine Aktion möglich"
+
 msgid "No"
 msgstr "Nein"
 
@@ -597,9 +599,6 @@ msgstr "Klicke auf den Button unten, um dich zu registrieren!"
 
 msgid "Register here"
 msgstr "Hier registrieren"
-
-msgid "Payment reminder"
-msgstr "Zahlungserinnerung"
 
 #, python-format
 msgid "%(room_name)s | Payment reminder"
@@ -647,9 +646,6 @@ msgstr "Einen Raum erstellen"
 msgid "See your rooms"
 msgstr "Deine Räume ansehen"
 
-msgid "Room status reminder"
-msgstr "Erinnerung an Raumstatus"
-
 #, python-format
 msgid "%(room_name)s | Room still open?"
 msgstr "%(room_name)s | Raum noch offen?"
@@ -696,16 +692,8 @@ msgid "{creator} created \"{room_name}\""
 msgstr "{creator} hat \"{room_name}\" erstellt"
 
 #, python-brace-format
-msgid "{icon} {initials}: Created"
-msgstr "{icon} {initials}: Erstellt"
-
-#, python-brace-format
 msgid "{payer} paid {amount}{currency} in \"{room}\""
 msgstr "{payer} hat {amount}{currency} in \"{room}\" bezahlt"
-
-#, python-brace-format
-msgid "{icon} {initials}: Transaction created"
-msgstr "{icon} {initials}: Transaktion erstellt"
 
 #, python-brace-format
 msgid "{actor} deleted the transaction \"{description}\" ({amount}{currency}) in \"{room}\""
@@ -724,10 +712,6 @@ msgstr "System"
 #, python-brace-format
 msgid "{created_by} added {added_user} to \"{room_name}\""
 msgstr "{created_by} hat {added_user} zu \"{room_name}\" hinzugefügt"
-
-#, python-brace-format
-msgid "{icon} {initials}: User added"
-msgstr "{icon} {initials}: Nutzer:in hinzugefügt"
 
 msgid "Room created"
 msgstr "Raum erstellt"
@@ -949,6 +933,9 @@ msgstr "Neuer Raum"
 
 msgid "Start a new group with friends"
 msgstr "Starte eine neue Gruppe mit Freunden"
+
+msgid "Other"
+msgstr "Andere"
 
 msgid "Loading..."
 msgstr "Wird geladen..."
