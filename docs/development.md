@@ -36,6 +36,16 @@
   `pyproject.toml`.
 - Run `uv run ruff check --fix .` followed by `uv run djlint apps --reformat`.
 
+## Session management
+
+- Logging in stores the target TTL under `apps.account.constants.SESSION_TTL_SESSION_KEY` and the new
+  `apps.core.middleware.session_keep_alive_middleware.SessionKeepAliveMiddleware` re-applies it on every meaningful
+  authenticated request, so the cookie keeps sliding as you stay active.
+- Remember-me continues to use `DJANGO_REMEMBER_ME_SESSION_AGE` while the standard path runs against
+  `SESSION_COOKIE_AGE`, but both paths now refresh automatically and clean up the metadata on logout.
+- Once the configured window elapses without requests, Django still expires the session and the next protected
+  view routes to `account:login`, proving the sliding window only works while activity is maintained.
+
 ## Troubleshooting
 
 - Lockfile mismatches? Run `uv lock`, then `uv sync --no-install-project --locked` to ensure the environment matches the

@@ -3,6 +3,7 @@ import http
 from django.conf import settings
 from django.urls import reverse
 
+from apps.account.constants import SESSION_TTL_SESSION_KEY
 from apps.account.tests.baker_recipes import default_password
 from apps.account.views import LogInUserView
 from apps.core.tests.setup import BaseTestSetUp
@@ -31,6 +32,8 @@ class LogInUserViewTestCase(BaseTestSetUp):
 
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], WelcomePartialView.template_name)
+        self.assertEqual(settings.SESSION_COOKIE_AGE, self.client.session[SESSION_TTL_SESSION_KEY])
+        self.assertEqual(settings.SESSION_COOKIE_AGE, self.client.session.get_expiry_age())
 
     def test_post_email_and_password_are_required(self):
         self.client.logout()
@@ -53,6 +56,7 @@ class LogInUserViewTestCase(BaseTestSetUp):
 
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertEqual(settings.DJANGO_REMEMBER_ME_SESSION_AGE, self.client.session.get_expiry_age())
+        self.assertEqual(settings.DJANGO_REMEMBER_ME_SESSION_AGE, self.client.session[SESSION_TTL_SESSION_KEY])
 
     def test_post_email_and_password_do_not_match(self):
         self.client.logout()
