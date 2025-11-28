@@ -4,7 +4,17 @@
     {% url 'account:guest-create' current_room.slug as guest_create_action %}
     {% url 'account:list' current_room.slug as roster_url %}
     {% blocktrans with current_room.name as room %}Invite a guest to "{{ room }}"{% endblocktrans %}
-    {% with hero_context=_("Guest access") hero_subtitle=_("Perfect for roommates without accounts - give them lightweight access.") hero_badge_label=_("Guest pass") field_label=_("Guest name") field_placeholder=_("e.g. Alex from the kitchen") helper_text=_("Guests can later convert to full accounts without losing history.") tip_text=_("We'll drop them right into this room.") submit_label=_("Add guest") back_label=_("Back to people") %}
+    {% trans "Guest access" as hero_context %}
+    {% trans "Guest access" as guest_title %}
+    {% trans "Perfect for roommates without accounts - give them lightweight access." as hero_subtitle %}
+    {% trans "Guest pass" as hero_badge_label %}
+    {% trans "Guest name" as field_label %}
+    {% trans "e.g. Alex from the kitchen" as field_placeholder %}
+    {% trans "Guests can later convert to full accounts without losing history." as helper_text %}
+    {% trans "We'll drop them right into this room." as tip_text %}
+    {% trans "Add guest" as submit_label %}
+    {% trans "Back to people" as back_label %}
+    {% with hero_context=hero_context hero_subtitle=hero_subtitle hero_badge_label=hero_badge_label field_label=field_label field_placeholder=field_placeholder helper_text=helper_text tip_text=tip_text submit_label=submit_label back_label=back_label %}
         {% include "shared_partials/member_form.html" with form=form field=form.name form_action=guest_create_action room_slug_value=current_room.slug hero_context=hero_context hero_title=guest_title hero_subtitle=hero_subtitle hero_badge_label=hero_badge_label hero_badge_icon="bi-person-plus" field_label=field_label field_placeholder=field_placeholder helper_text=helper_text tip_text=tip_text submit_label=submit_label submit_icon="bi-check-circle" back_url=roster_url back_label=back_label submit_disabled=current_room.is_closed %}
     {% endwith %}
 {% endblock tab_content %}
