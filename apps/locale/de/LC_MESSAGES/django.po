@@ -892,6 +892,30 @@ msgstr "Nutze diese Option nur, wenn du die manuelle Abrechnung überspringen m�
 msgid "Close anyway"
 msgstr "Trotzdem schließen"
 
+msgid "Open to guests"
+msgstr "Für Gäste offen"
+
+msgid "Claim your invitation"
+msgstr "Einladung annehmen"
+
+msgid "Guests who arrive via the shared link can register or log in here to confirm their spot."
+msgstr "Gäste, die über den geteilten Link kommen, können sich hier registrieren oder anmelden, um ihren Platz zu bestätigen."
+
+msgid "Who are you?"
+msgstr "Wer bist du?"
+
+msgid "Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in."
+msgstr "Nur Gastnutzer:innen des Raums werden hier angezeigt. Wenn du deinen Namen nicht siehst, bist du entweder nicht Teil dieses Raums oder hast bereits ein Konto. Wenn du schon ein Konto hast, versuche dich einzuloggen."
+
+msgid "Not seeing your name?"
+msgstr "Siehst du deinen Namen nicht?"
+
+msgid "That's me!"
+msgstr "Das bin ich!"
+
+msgid "No guests have been invited yet. Create an account to add yourself to the room."
+msgstr "Es wurden noch keine Gäste eingeladen. Erstelle ein Konto, um dich selbst zum Raum hinzuzufügen."
+
 msgid "Toggle navigation"
 msgstr "Navigation umschalten"
 

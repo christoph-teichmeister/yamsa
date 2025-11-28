@@ -27,8 +27,7 @@
             {% endif %}
             {% if current_room %}
                 <div class="col-1 px-0 d-flex align-items-center justify-content-end">
-                    {% if current_room.is_open and current_room.has_guests %}
-                        {# TODO CT: Show btn independent of has_guests and let guests instead "register as guests" upon viewing "Who are you" screen #}
+                    {% if current_room.is_open %}
                         <button class="btn btn-light btn-sm"
                                 data-copy-share-url="true"
                                 data-share-url="{{ request.build_absolute_uri }}"
