@@ -1,4 +1,7 @@
+from collections.abc import Callable
+
 from django.conf import settings
+from django.http import HttpRequest, HttpResponse
 
 from apps.account.constants import SESSION_TTL_SESSION_KEY
 
@@ -8,14 +11,14 @@ class SessionKeepAliveMiddleware:
 
     SKIP_KEYWORDS = ("heartbeat", "reminder", "keepalive")
 
-    def __init__(self, get_response):
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
         self.get_response = get_response
 
     def __call__(self, request):
         self._refresh_session_if_needed(request)
         return self.get_response(request)
 
-    def _refresh_session_if_needed(self, request):
+    def _refresh_session_if_needed(self, request) -> None:
         if not self._should_refresh(request):
             return
 

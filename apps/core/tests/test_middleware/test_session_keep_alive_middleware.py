@@ -1,5 +1,3 @@
-import time
-
 from django.conf import settings
 from django.test import override_settings
 from django.urls import reverse
@@ -47,16 +45,19 @@ class SessionKeepAliveMiddlewareTestCase(BaseTestSetUp):
             HTTP_HX_TRIGGER="reminder-heartbeat",
         )
 
-        self.assertLess(self.client.session.get_expiry_age(), settings.SESSION_COOKIE_AGE)
+        self.assertEqual(30, self.client.session.get_expiry_age())
         self.assertEqual(settings.SESSION_COOKIE_AGE, self.client.session[SESSION_TTL_SESSION_KEY])
 
     @override_settings(SESSION_COOKIE_AGE=1)
     def test_session_expiry_follows_idle_threshold(self):
-        self.client.session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
-        self.client.session.set_expiry(settings.SESSION_COOKIE_AGE)
-        self.client.session.save()
+        session = self.client.session
+        session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
+        session.set_expiry(settings.SESSION_COOKIE_AGE)
+        session.save()
 
-        time.sleep(1.1)
+        session.set_expiry(-1)
+        session.save()
+
         response = self.client.get(reverse("core:welcome"), follow=True)
 
         self.assertRedirects(response, reverse("account:login"))

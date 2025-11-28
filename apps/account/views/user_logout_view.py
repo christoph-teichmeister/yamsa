@@ -14,5 +14,5 @@ class LogOutUserView(generic.View):
         logout(request=request)
         return HttpResponseRedirect(redirect_to=reverse(viewname="account:login"))
 
-    def _clear_session_ttl(self, *, request):
+    def _clear_session_ttl(self, *, request) -> None:
         request.session.pop(SESSION_TTL_SESSION_KEY, None)
