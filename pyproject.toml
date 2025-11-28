@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "ambient-toolbox==12.*",
-    "django[argon2]==5.*",
     "django-axes==8.*",
     "django-cloudinary-storage==0.*",
     "django-context-decorator==1.*",
@@ -15,11 +14,13 @@ dependencies = [
     "django-htmx==1.*",
     "django-minify-html==1.*",
     "django-pony-express==2.*",
+    "django[argon2]==5.*",
     "gunicorn==23.*",
     "minify-html==0.18.*",
     "model-bakery==1.*",
     "pillow==11.*",
     "psycopg2-binary==2.*",
+    "pytest==9.*",
     "pywebpush==2.*",
     "sentry-sdk[django]==2.*",
     "whitenoise==6.*",
