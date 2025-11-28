@@ -1,9 +1,9 @@
 from django import forms
 from django.contrib.auth import hashers
-from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
+from apps.account.forms.utils import validate_unique_email
 from apps.account.models import User
 
 
@@ -19,10 +19,12 @@ class RegisterForm(ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data["email"]
-        if User.objects.filter(email=email).exists():
-            raise ValidationError(self.ExceptionMessage.EMAIL_ADDRESS_ALREADY_IN_USE.format(email=email))
+        normalized_email = validate_unique_email(
+            email, error_message=self.ExceptionMessage.EMAIL_ADDRESS_ALREADY_IN_USE
+        )
 
-        return email
+        self.cleaned_data["email"] = normalized_email
+        return normalized_email
 
     def clean_password(self):
         return hashers.make_password(self.cleaned_data["password"])
