@@ -13,7 +13,7 @@ def get_templatetag_context(context):
         "group": context.get("webpush", {}).get("group"),
         "user": getattr(request, "user", None),
         "vapid_public_key": vapid_public_key,
-        "webpush_save_url": reverse("save_webweb_push_info"),
+        "webpush_save_url": reverse("webpush:save"),
     }
 
     return data

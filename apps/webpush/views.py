@@ -34,16 +34,21 @@ class WebPushSaveView(generic.CreateView):
         if not self.request.user.is_authenticated:
             return HttpResponse(status=http.HTTPStatus.BAD_REQUEST)
 
+        status_type = form.cleaned_data.get("status_type")
+
         # Save the subscription info with subscription data as the subscription data is a dictionary and its valid
         form.save_or_delete()
-
-        status_type = form.cleaned_data.get("status_type")
         if status_type == "subscribe":
             # If subscribe was passed, that means object is created, so return 201
             return HttpResponse(status=http.HTTPStatus.CREATED)
-        elif "unsubscribe":
+        if status_type == "unsubscribe":
             # If unsubscribe was passed, that means the object was deleted, so return 202
             return HttpResponse(status=http.HTTPStatus.ACCEPTED)
+
+        return HttpResponse(
+            status=http.HTTPStatus.BAD_REQUEST,
+            content="Unknown status_type",
+        )
 
     def form_invalid(self, form):
         return HttpResponse(status=http.HTTPStatus.BAD_REQUEST, content=form.errors)
