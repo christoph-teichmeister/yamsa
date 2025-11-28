@@ -55,6 +55,6 @@ class RoomShareButtonTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(
-            response, "We have not invited guest slots yet", msg_prefix="Prompt should appear when no guests exist"
+            response, "No guests have been invited yet", msg_prefix="Prompt should appear when no guests exist"
         )
         self.assertNotContains(response, 'name="user_id"', msg_prefix="Form is hidden until guests exist")
