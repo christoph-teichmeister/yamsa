@@ -1,0 +1,1555 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yamsa\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2025-01-01 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Your current password is incorrect"
+msgstr "Dein aktuelles Passwort ist falsch"
+
+msgid "Passwords do not match"
+msgstr "Passwörter stimmen nicht überein"
+
+msgid "Your current password"
+msgstr "Dein aktuelles Passwort"
+
+msgid "Your new password"
+msgstr "Dein neues Passwort"
+
+msgid "Confirm your new password"
+msgstr "Bestätige dein neues Passwort"
+
+msgid "Receive push notifications"
+msgstr "Push-Benachrichtigungen erhalten"
+
+msgid "Preferred language"
+msgstr "Bevorzugte Sprache"
+
+msgid "Receive payment reminder emails"
+msgstr "E-Mail-Erinnerungen an Zahlungen erhalten"
+
+msgid "Receive room reminder emails"
+msgstr "E-Mail-Erinnerungen zum Raum erhalten"
+
+#, python-brace-format
+msgid "User with email address '{email}' already exists"
+msgstr "Benutzer:in mit der E-Mail-Adresse '{email}' existiert bereits"
+
+#, python-brace-format
+msgid "The email address '{email}' is already in use"
+msgstr "Die E-Mail-Adresse '{email}' wird bereits verwendet"
+
+#, python-brace-format
+msgid "The email address '{email}' is not registered with yamsa"
+msgstr "Die E-Mail-Adresse '{email}' ist nicht bei yamsa registriert"
+
+msgid "Email"
+msgstr "E-Mail"
+
+msgid "Email your account is linked to"
+msgstr "E-Mail-Adresse, mit der dein Konto verknüpft ist"
+
+msgid "Staff Status"
+msgstr "Status der Mitarbeitenden"
+
+msgid "Designates whether the user can log into this admin site."
+msgstr "Legt fest, ob Benutzer:innen sich im Adminbereich anmelden kann."
+
+msgid "User"
+msgstr "Benutzer:in"
+
+msgid "Users"
+msgstr "Benutzer:innen"
+
+msgid "User friendship"
+msgstr "Benutzer:innenfreundschaft"
+
+msgid "User friendships"
+msgstr "Benutzer:innenfreundschaften"
+
+msgid "Users cannot be friends with themselves."
+msgstr "Benutzer:innen können nicht mit sich selbst befreundet sein."
+
+msgid "Change your password:"
+msgstr "Ändere dein Passwort:"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Note:"
+msgstr "Achtung:"
+
+msgid "After a successful password change, you will be prompted to login again."
+msgstr "Nach einer erfolgreichen Passwortänderung wirst du aufgefordert, dich erneut anzumelden."
+
+#, python-format
+msgid "Invite a guest to \"%(room)s\""
+msgstr "Gast zu \"%(room)s\" einladen"
+
+msgid "Guest access"
+msgstr "Gastzugang"
+
+msgid "Perfect for roommates without accounts - give them lightweight access."
+msgstr "Perfekt für Mitbewohner ohne Konto - gib ihnen leichten Zugang."
+
+msgid "Guest pass"
+msgstr "Gastpass"
+
+msgid "Guest name"
+msgstr "Gastname"
+
+msgid "e.g. Alex from the kitchen"
+msgstr "z. B. Alex aus der Küche"
+
+msgid "Guests can later convert to full accounts without losing history."
+msgstr "Gäste können später in vollständige Konten konvertieren, ohne ihre Historie zu verlieren."
+
+msgid "We'll drop them right into this room."
+msgstr "Wir setzen sie direkt in diesen Raum."
+
+msgid "Add guest"
+msgstr "Gast hinzufügen"
+
+msgid "Back to people"
+msgstr "Zurück zur Personenliste"
+
+msgid "Guest Mode"
+msgstr "Gastmodus"
+
+#, python-format
+msgid "Hi %(user.name)s"
+msgstr "Hallo %(user.name)s"
+
+msgid "Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account."
+msgstr "Danke, dass du als Gast einem Raum beigetreten bist. Schalte Erinnerungen, Push-Benachrichtigungen und ausführlichere Historie frei, sobald du ein vollständiges Konto erstellst."
+
+msgid "Create a free account"
+msgstr "Kostenloses Konto erstellen"
+
+msgid "I already have an account"
+msgstr "Ich habe bereits ein Konto"
+
+msgid "Not you?"
+msgstr "Nicht du?"
+
+msgid "Log out instead"
+msgstr "Stattdessen abmelden"
+
+msgid "Admin"
+msgstr "Administrator"
+
+msgid "Your account overview"
+msgstr "Deine Kontenübersicht"
+
+msgid "Member profile"
+msgstr "Mitgliederprofil"
+
+msgid "Not set"
+msgstr "Nicht gesetzt"
+
+msgid "Superuser"
+msgstr "Superuser"
+
+msgid "Staff"
+msgstr "Mitarbeitende"
+
+msgid "PayPal linked"
+msgstr "PayPal verknüpft"
+
+msgid "No PayPal link"
+msgstr "Kein PayPal-Link"
+
+msgid "Edit profile"
+msgstr "Profil bearbeiten"
+
+msgid "Display name"
+msgstr "Anzeigename"
+
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+msgid "PayPal.me username"
+msgstr "PayPal.me-Benutzername"
+
+msgid "No PayPal link yet"
+msgstr "Noch kein PayPal-Link"
+
+msgid "Push notifications"
+msgstr "Push-Benachrichtigungen"
+
+msgid "Enabled"
+msgstr "Aktiviert"
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "Manage this toggle from the edit screen."
+msgstr "Verwalte diesen Schalter im Bearbeitungsbildschirm."
+
+msgid "Payment reminders"
+msgstr "Zahlungserinnerungen"
+
+msgid "Toggle this in the notifications center or via the email footer."
+msgstr "Schalte dies im Benachrichtigungszentrum oder über die Fußzeile der E-Mail um."
+
+msgid "Security"
+msgstr "Sicherheit"
+
+msgid "Change your password"
+msgstr "Ändere dein Passwort"
+
+msgid "Choose a unique password to keep your rooms safe."
+msgstr "Wähle ein einzigartiges Passwort, um deine Räume zu schützen."
+
+msgid "Change password"
+msgstr "Passwort ändern"
+
+msgid "Keep your details up to date"
+msgstr "Halte deine Daten aktuell"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+msgid "Profile picture preview"
+msgstr "Vorschau des Profilbilds"
+
+msgid "Profile photo"
+msgstr "Profilfoto"
+
+msgid "PNG / JPEG up to 3 MB and 2048×2048 px."
+msgstr "PNG / JPEG bis 3 MB und 2048x2048 px."
+
+msgid "Remove your profile picture?"
+msgstr "Profilbild entfernen?"
+
+msgid "Remove photo"
+msgstr "Foto entfernen"
+
+msgid "Notification Center"
+msgstr "Benachrichtigungszentrum"
+
+msgid "Choose how you want to hear from us."
+msgstr "Wähle, wie du von uns hören möchtest."
+
+msgid "Need a new password?"
+msgstr "Neues Passwort benötigt?"
+
+msgid "Set a fresh password any time. We’ll keep you logged in while you update it."
+msgstr "Lege jederzeit ein neues Passwort fest. Wir halten dich während der Aktualisierung angemeldet."
+
+msgid "Forgot password"
+msgstr "Passwort vergessen"
+
+msgid "We'll send you a recovery link"
+msgstr "Wir senden dir einen Wiederherstellungslink"
+
+msgid "Tell us which email address is linked to your account and we’ll do the rest."
+msgstr "Sag uns, welche E-Mail-Adresse mit deinem Konto verknüpft ist, und wir übernehmen den Rest."
+
+msgid "Back to login"
+msgstr "Zurück zur Anmeldung"
+
+msgid "Need to reset your password?"
+msgstr "Möchtest du dein Passwort zurücksetzen?"
+
+msgid "Request a new password"
+msgstr "Neues Passwort anfordern"
+
+#, python-format
+msgid ""
+"\n"
+"                    Invite %(invitee)s to \"%(room)s\"\n"
+"                "
+msgstr ""
+"\n"
+"                    Lade %(invitee)s zu \"%(room)s\" ein\n"
+"                "
+
+msgid "Send invite"
+msgstr "Einladung senden"
+
+msgid "Room roster"
+msgstr "Raumteilnehmerliste"
+
+#, python-format
+msgid "Everyone in %(room_name)s"
+msgstr "Alle in %(room_name)s"
+
+msgid "Invite roommates, add guests, and keep tabs on who has already viewed the room."
+msgstr "Lade Mitbewohner ein, füge Gäste hinzu und behalte im Blick, wer den Raum bereits angesehen hat."
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Room closed"
+msgstr "Raum geschlossen"
+
+msgid "Room open"
+msgstr "Raum geöffnet"
+
+msgid "Add existing user"
+msgstr "Bestehenden Nutzer hinzufügen"
+
+msgid "No one here yet"
+msgstr "Noch niemand hier"
+
+msgid "Invite a roommate or add a guest to start splitting expenses."
+msgstr "Lade einen Mitbewohner ein oder füge einen Gast hinzu, um mit dem Aufteilen der Ausgaben zu beginnen."
+
+msgid "Welcome back"
+msgstr "Willkommen zurück"
+
+msgid "Keep your shared finances moving"
+msgstr "Halte eure gemeinsamen Finanzen in Bewegung"
+
+msgid "Stay in the flow: avoid surprising logouts and finish your next journal in one session."
+msgstr "Bleib im Fluss: Vermeide überraschende Abmeldungen und beende dein nächstes Journal in einer Sitzung."
+
+msgid "Create an account"
+msgstr "Konto erstellen"
+
+msgid "Secure login"
+msgstr "Sichere Anmeldung"
+
+msgid "Login"
+msgstr "Anmelden"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Stay signed in for 30 days"
+msgstr "Für 30 Tage angemeldet bleiben"
+
+msgid "Forgot password?"
+msgstr "Passwort vergessen?"
+
+msgid "Log in"
+msgstr "Anmelden"
+
+msgid "By logging in you agree that your session may be kept open when \"Stay signed in\" is enabled."
+msgstr "Durch die Anmeldung erklärst du dich damit einverstanden, dass deine Sitzung offen bleibt, wenn die Option \"Angemeldet bleiben\" aktiviert ist."
+
+msgid "Unsubscribed"
+msgstr "Abgemeldet"
+
+msgid "You’re no longer receiving payment reminders."
+msgstr "Du erhältst keine Zahlungserinnerungen mehr."
+
+msgid "Oops"
+msgstr "Hoppla"
+
+msgid "We couldn’t process the unsubscribe."
+msgstr "Wir konnten die Abmeldung nicht verarbeiten."
+
+msgid "Sign in"
+msgstr "Anmelden"
+
+msgid "Account settings"
+msgstr "Kontoeinstellungen"
+
+msgid "You can always re-enable reminders from your notification settings."
+msgstr "Du kannst Erinnerungen jederzeit über deine Benachrichtigungseinstellungen wieder aktivieren."
+
+msgid "Join yamsa"
+msgstr "yamsa beitreten"
+
+msgid "Create shared clarity in your rooms"
+msgstr "Schaffe gemeinsame Klarheit in deinen Räumen"
+
+msgid "Registering takes a minute and keeps every room, bill, and settlement in sync."
+msgstr "Die Registrierung dauert eine Minute und hält jeden Raum, jede Rechnung und jede Abrechnung synchron."
+
+msgid "Already have an account?"
+msgstr "Bereits ein Konto?"
+
+msgid "Login here!"
+msgstr "Hier anmelden!"
+
+msgid "Start now"
+msgstr "Jetzt anfangen"
+
+msgid "Register"
+msgstr "Registrieren"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "User ID"
+msgstr "Benutzer-ID"
+
+msgid "Is Guest"
+msgstr "Ist Gast"
+
+msgid "Register now"
+msgstr "Jetzt registrieren"
+
+msgid "The combination of email and password does not match"
+msgstr "Die Kombination aus E-Mail und Passwort ist nicht korrekt"
+
+msgid "English"
+msgstr "Englisch"
+
+msgid "German"
+msgstr "Deutsch"
+
+msgid "Room activity timeline"
+msgstr "Aktivitätsverlauf des Raums"
+
+msgid "See transactions and changes at a glance"
+msgstr "Transaktionen und Änderungen auf einen Blick sehen"
+
+msgid "Every room update - expenses logged, settlements, highlights - lands here so you never miss a beat."
+msgstr "Jedes Raum-Update – erfasste Ausgaben, Abrechnungen, Highlights – landet hier, damit du nichts verpasst."
+
+msgid "Auto-updated feed"
+msgstr "Automatisch aktualisierter Feed"
+
+msgid "Events appear in chronological order with the newest at the top."
+msgstr "Ereignisse erscheinen in chronologischer Reihenfolge, die neuesten oben."
+
+msgid "No updates yet"
+msgstr "Noch keine Aktualisierungen"
+
+msgid "Once roommates start logging expenses or changes, they will appear here."
+msgstr "Sobald Mitbewohner Ausgaben oder Änderungen erfassen, erscheinen sie hier."
+
+msgid "yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications."
+msgstr "yamsa hilft Wohngemeinschaften dabei, Ausgaben zu verfolgen, Schulden auszugleichen und mit kollaborativen Räumen, Dashboards und Benachrichtigungen organisiert zu bleiben."
+
+msgid "yamsa, shared expenses, roommate app, bill splitting, dashboards"
+msgstr "yamsa, gemeinsame Ausgaben, Mitbewohner-App, Rechnungsteilung, Dashboards"
+
+msgid "yamsa"
+msgstr "yamsa"
+
+msgid "Currency"
+msgstr "Währung"
+
+msgid "Currencies"
+msgstr "Währungen"
+
+#, python-brace-format
+msgid "Settled: {debitor} owes {value}{currency} to {creditor}"
+msgstr "Beglichen: {debitor} schuldet {value}{currency} an {creditor}"
+
+#, python-brace-format
+msgid "{debitor} owes {value}{currency} to {creditor}"
+msgstr "{debitor} schuldet {value}{currency} an {creditor}"
+
+msgid "Inactive debt reminder"
+msgstr "Erinnerung für inaktive Schulden"
+
+msgid "Inactive room reminder"
+msgstr "Erinnerung für inaktiven Raum"
+
+msgid "Reminder log"
+msgstr "Erinnerungsprotokoll"
+
+msgid "Reminder logs"
+msgstr "Erinnerungsprotokolle"
+
+msgid "Optimised debts"
+msgstr "Optimierte Schulden"
+
+msgid "Track what is left to settle inside this room. Click the piggy-bank to mark a debt as paid."
+msgstr "Verfolge, was in diesem Raum noch ausgeglichen werden muss. Klicke auf das Sparschwein, um eine Schuld als bezahlt zu markieren."
+
+#, python-format
+msgid ""
+"\n"
+"                        %(active_debt_count)s pending debt\n"
+"                    "
+msgid_plural ""
+"\n"
+"                        %(active_debt_count)s pending debts\n"
+"                    "
+msgstr[0] ""
+"\n"
+"                        %(active_debt_count)s ausstehende Schuld\n"
+"                    "
+msgstr[1] ""
+"\n"
+"                        %(active_debt_count)s ausstehende Schulden\n"
+"                    "
+
+msgid "Money overview"
+msgstr "Geldübersicht"
+
+msgid "See how much each person has paid and who still owes what."
+msgstr "Sieh, wie viel jede Person bezahlt hat und wer noch was schuldet."
+
+#, python-format
+msgid "%(debitor_display)s owes %(value)s%(currency)s to %(creditor_display)s"
+msgstr "%(debitor_display)s schuldet %(value)s%(currency)s an %(creditor_display)s"
+
+#, python-format
+msgid ""
+"\n"
+"                                                Settled on %(settled_at)s\n"
+"                                            "
+msgstr ""
+"\n"
+"                                                Am %(settled_at)s beglichen\n"
+"                                            "
+
+msgid "Tap the piggy-bank when this debt is paid off."
+msgstr "Tippe auf das Sparschwein, wenn diese Schuld beglichen ist."
+
+msgid "Settled"
+msgstr "Beglichen"
+
+msgid "Outstanding"
+msgstr "Ausstehend"
+
+msgid "No debts yet"
+msgstr "Noch keine Schulden"
+
+msgid "As expenses are added, we will surface who owes whom here."
+msgstr "Wenn Ausgaben hinzukommen, zeigen wir hier, wer wem etwas schuldet."
+
+msgid "This transaction is not yours to settle!"
+msgstr "Diese Transaktion darfst du nicht ausgleichen!"
+
+#, python-format
+msgid ""
+"\n"
+"                    Your debt to %(creditor_name)s\n"
+"                "
+msgstr ""
+"\n"
+"                    Deine Schuld an %(creditor_name)s\n"
+"                "
+
+#, python-format
+msgid ""
+"\n"
+"                    Are you sure that you have settled your debt (%(debt_value)s%(debt_currency)s)\n"
+"                    to %(creditor_name)s?\n"
+"                "
+msgstr ""
+"\n"
+"                    Bist du sicher, dass du deine Schuld (%(debt_value)s%(debt_currency)s)\n"
+"                    bei %(creditor_name)s beglichen hast?\n"
+"                "
+
+msgid "Debt ID"
+msgstr "Schulden-ID"
+
+msgid "Settled?"
+msgstr "Beglichen?"
+
+msgid "No, take me to their paypal"
+msgstr "Nein, bring mich zu ihrem PayPal"
+
+msgid "No action available"
+msgstr "Keine Aktion möglich"
+
+msgid "No"
+msgstr "Nein"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "yamsa | Yet another money split app"
+msgstr "yamsa | Noch eine App zum Geldteilen"
+
+msgid "Hey"
+msgstr "Hey"
+
+msgid "New Password"
+msgstr "Neues Passwort"
+
+msgid "Log in with new password"
+msgstr "Mit neuem Passwort anmelden"
+
+msgid "Forgotten your password?"
+msgstr "Passwort vergessen?"
+
+msgid "No worries - happens to the best!"
+msgstr "Keine Sorge – passiert den Besten!"
+
+msgid "Your new password is:"
+msgstr "Dein neues Passwort lautet:"
+
+msgid "Log in with your new password, by clicking the button below"
+msgstr "Melde dich mit deinem neuen Passwort an, indem du auf den Button unten klickst"
+
+msgid "(And don't forget to change your password afterwards!)"
+msgstr "(Und vergiss nicht, dein Passwort danach zu ändern!)"
+
+msgid "Invitation"
+msgstr "Einladung"
+
+#, python-format
+msgid "You have been invited by %(inviter)s to join your friends on yamsa"
+msgstr "Du wurdest von %(inviter)s eingeladen, dich deinen Freunden auf yamsa anzuschließen"
+
+msgid "Click the button below to register!"
+msgstr "Klicke auf den Button unten, um dich zu registrieren!"
+
+msgid "Register here"
+msgstr "Hier registrieren"
+
+#, python-format
+msgid "%(room_name)s | Payment reminder"
+msgstr "%(room_name)s | Zahlungserinnerung"
+
+#, python-format
+msgid "Hey there! It has been %(inactivity_days)d days since any activity in %(room_name)s."
+msgstr "Hallo! Es sind %(inactivity_days)d Tage seit der letzten Aktivität in %(room_name)s vergangen."
+
+#, python-format
+msgid "You currently owe %(amount_summary)s."
+msgstr "Du schuldest aktuell %(amount_summary)s."
+
+msgid "Please follow the link below to review and settle the outstanding balance before it grows stale."
+msgstr "Bitte folge dem Link unten, um den offenen Betrag zu prüfen und zu begleichen, bevor er veraltet."
+
+#, python-format
+msgid "Payment reminder: %(room_name)s"
+msgstr "Zahlungserinnerung: %(room_name)s"
+
+msgid "This reminder is generated automatically for overdue balances. We're cheering for you!"
+msgstr "Diese Erinnerung wird automatisch bei überfälligen Beträgen erzeugt. Wir drücken dir die Daumen!"
+
+msgid "Need a hand? Reach out to your room admin if the numbers look off."
+msgstr "Brauchst du Unterstützung? Wende dich an den Raum-Admin, wenn die Zahlen nicht stimmen."
+
+msgid "Review pending debts"
+msgstr "Ausstehende Schulden prüfen"
+
+msgid "Welcome to yamsa"
+msgstr "Willkommen bei yamsa"
+
+msgid "It looks like you already belong to some rooms!"
+msgstr "Es sieht so aus, als würdest du bereits zu einigen Räumen gehören!"
+
+msgid "Check them out, by clicking the button below"
+msgstr "Schau sie dir an, indem du auf den Button unten klickst"
+
+msgid "Create a new room, by clicking the button below"
+msgstr "Erstelle einen neuen Raum, indem du auf den Button unten klickst"
+
+msgid "Create a room"
+msgstr "Einen Raum erstellen"
+
+msgid "See your rooms"
+msgstr "Deine Räume ansehen"
+
+#, python-format
+msgid "%(room_name)s | Room still open?"
+msgstr "%(room_name)s | Raum noch offen?"
+
+#, python-format
+msgid "%(room_name)s has been quiet for %(inactivity_days)d days."
+msgstr "%(room_name)s war seit %(inactivity_days)d Tagen inaktiv."
+
+msgid "If everyone already settled up, please mark the debts as paid and close the room so it stops lingering."
+msgstr "Wenn alle bereits abgerechnet haben, markiere die Schulden bitte als bezahlt und schließe den Raum, damit er nicht weiter offen bleibt."
+
+msgid "If you still need the room, feel free to ignore this reminder and keep it open."
+msgstr "Wenn du den Raum noch brauchst, ignoriere diese Erinnerung und lasse ihn geöffnet."
+
+#, python-format
+msgid "Room cleanup reminder: %(room_name)s"
+msgstr "Erinnerung zur Raumbereinigung: %(room_name)s"
+
+msgid "This reminder is generated automatically when open rooms stay inactive. We're happy to help."
+msgstr "Diese Erinnerung wird automatisch erzeugt, wenn offene Räume inaktiv bleiben. Wir helfen gern."
+
+msgid "Give us a shout if the room history looks off."
+msgstr "Melde dich, wenn die Raumhistorie nicht stimmt."
+
+msgid "Review room status"
+msgstr "Raumstatus prüfen"
+
+#, python-format
+msgid "Welcome to %(room_name)s"
+msgstr "Willkommen bei %(room_name)s"
+
+#, python-format
+msgid "You have been invited to %(room_name)s to join your friends"
+msgstr "Du wurdest eingeladen, dich deinen Freunden in %(room_name)s anzuschließen"
+
+msgid "Click the button below to view the room!"
+msgstr "Klicke auf den Button unten, um den Raum zu sehen!"
+
+msgid "See the room"
+msgstr "Raum ansehen"
+
+#, python-brace-format
+msgid "{creator} created \"{room_name}\""
+msgstr "{creator} hat \"{room_name}\" erstellt"
+
+#, python-brace-format
+msgid "{payer} paid {amount}{currency} in \"{room}\""
+msgstr "{payer} hat {amount}{currency} in \"{room}\" bezahlt"
+
+#, python-brace-format
+msgid "{actor} deleted the transaction \"{description}\" ({amount}{currency}) in \"{room}\""
+msgstr "{actor} hat die Transaktion \"{description}\" ({amount}{currency}) in \"{room}\" gelöscht"
+
+#, python-brace-format
+msgid "{icon} {initials}: Transaction deleted"
+msgstr "{icon} {initials}: Transaktion gelöscht"
+
+msgid "themselves"
+msgstr "sich selbst"
+
+msgid "System"
+msgstr "System"
+
+#, python-brace-format
+msgid "{created_by} added {added_user} to \"{room_name}\""
+msgstr "{created_by} hat {added_user} zu \"{room_name}\" hinzugefügt"
+
+msgid "Room created"
+msgstr "Raum erstellt"
+
+msgid "Transaction created"
+msgstr "Transaktion erstellt"
+
+msgid "Transaction deleted"
+msgstr "Transaktion gelöscht"
+
+msgid "User added"
+msgstr "Nutzer:in hinzugefügt"
+
+msgid "News update"
+msgstr "News Update"
+
+msgid "News"
+msgstr "Neuigkeiten"
+
+msgid "Open"
+msgstr "Offen"
+
+msgid "Closed"
+msgstr "Geschlossen"
+
+msgid "Room"
+msgstr "Raum"
+
+msgid "Rooms"
+msgstr "Räume"
+
+#, python-brace-format
+msgid "{user} belongs to {room}"
+msgstr "{user} gehört zu {room}"
+
+msgid "Create Room"
+msgstr "Raum erstellen"
+
+msgid "Create"
+msgstr "Erstellen"
+
+msgid "Suggested guests"
+msgstr "Vorgeschlagene Gäste"
+
+msgid "Invite frequent collaborators"
+msgstr "Lade häufige Mitwirkende ein"
+
+msgid "Add past roommates with one tap. Mark your go-to teammates as friends to pin them to the top."
+msgstr "Füge frühere Mitbewohner mit einem Tippen hinzu. Markiere deine bevorzugten Teammitglieder als Freunde, um sie oben anzupinnen."
+
+msgid "Room overview"
+msgstr "Raumübersicht"
+
+msgid "No description added yet."
+msgstr "Noch keine Beschreibung hinzugefügt."
+
+msgid "Preferred currency"
+msgstr "Bevorzugte Währung"
+
+msgid "Edit room"
+msgstr "Raum bearbeiten"
+
+msgid "Used as the default for new transactions."
+msgstr "Wird als Standard für neue Transaktionen verwendet."
+
+msgid "Members"
+msgstr "Mitglieder"
+
+msgid "Roommates and guests currently connected."
+msgstr "Derzeit verbundene Mitbewohner und Gäste."
+
+msgid "Closing readiness"
+msgstr "Schließbereitschaft"
+
+msgid "Ready to close"
+msgstr "Bereit zum Schließen"
+
+msgid "No unsettled debts remain."
+msgstr "Es bleiben keine offenen Schulden."
+
+msgid "Outstanding balances"
+msgstr "Ausstehende Salden"
+
+msgid "Settle open debts before closing."
+msgstr "Begleiche offene Schulden vor dem Schließen."
+
+msgid "Keep logging expenses and invite more roommates whenever you need to."
+msgstr "Erfasse weiterhin Ausgaben und lade bei Bedarf weitere Mitbewohner ein."
+
+msgid "This room is locked for editing. Reopen it from the edit screen if you need to make changes."
+msgstr "Dieser Raum ist zur Bearbeitung gesperrt. Öffne ihn auf dem Bearbeitungsbildschirm, wenn du Änderungen brauchst."
+
+msgid "Back to room"
+msgstr "Zurück zum Raum"
+
+msgid "Save room details"
+msgstr "Raumdetails speichern"
+
+msgid "Close"
+msgstr "Schließen"
+
+msgid "Room settings"
+msgstr "Raumeinstellungen"
+
+#, python-format
+msgid "Edit \"%(room_name)s\""
+msgstr "\"%(room_name)s\" bearbeiten"
+
+msgid "Basics"
+msgstr "Grundlagen"
+
+msgid "Name, description & currency"
+msgstr "Name, Beschreibung & Währung"
+
+msgid "Please fix the highlighted errors in the form."
+msgstr "Bitte behebe die markierten Fehler im Formular."
+
+msgid "Room status"
+msgstr "Raumstatus"
+
+msgid "All debts are settled. You can close the room."
+msgstr "Alle Schulden sind beglichen. Du kannst den Raum schließen."
+
+#, python-format
+msgid ""
+"\n"
+"                                            There is still %(debt_count)s open debt.\n"
+"                                        "
+msgid_plural ""
+"\n"
+"                                            There are still %(debt_count)s open debts.\n"
+"                                        "
+msgstr[0] ""
+"\n"
+"                                            Es gibt noch %(debt_count)s offene Schuld.\n"
+"                                        "
+msgstr[1] ""
+"\n"
+"                                            Es gibt noch %(debt_count)s offene Schulden.\n"
+"                                        "
+
+msgid "The room is closed and can be reopened."
+msgstr "Der Raum ist geschlossen und kann wieder geöffnet werden."
+
+msgid "Close room"
+msgstr "Raum schließen"
+
+msgid "Reopen room"
+msgstr "Raum wieder öffnen"
+
+msgid "Outstanding debts"
+msgstr "Ausstehende Schulden"
+
+msgid "This room still has outstanding payments."
+msgstr "Dieser Raum hat noch ausstehende Zahlungen."
+
+#, python-format
+msgid ""
+"\n"
+"                                    There is still %(debt_count)s open debt. Closing the room anyway will mark it as settled.\n"
+"                                "
+msgid_plural ""
+"\n"
+"                                    There are still %(debt_count)s open debts. Closing the room anyway will mark them as settled.\n"
+"                                "
+msgstr[0] ""
+"\n"
+"                                    Es gibt noch %(debt_count)s offene Schuld. Wenn du den Raum trotzdem schließt, wird sie als beglichen markiert.\n"
+"                                "
+msgstr[1] ""
+"\n"
+"                                    Es gibt noch %(debt_count)s offene Schulden. Wenn du den Raum trotzdem schließt, werden sie als beglichen markiert.\n"
+"                                "
+
+msgid "Use this option only if you want to skip manual settlement."
+msgstr "Nutze diese Option nur, wenn du die manuelle Abrechnung überspringen möchtest."
+
+msgid "Close anyway"
+msgstr "Trotzdem schließen"
+
+msgid "Toggle navigation"
+msgstr "Navigation umschalten"
+
+msgid "Copy the rooms URL to your clipboard to send it to your friends"
+msgstr "Kopiere die Raum-URL in die Zwischenablage, um sie deinen Freunden zu schicken"
+
+msgid "Menu"
+msgstr "Menü"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Log in to access rooms"
+msgstr "Melde dich an, um Räume zu nutzen"
+
+msgid "Manage rooms and transactions"
+msgstr "Räume und Transaktionen verwalten"
+
+msgid "View profile"
+msgstr "Profil ansehen"
+
+msgid "Home"
+msgstr "Startseite"
+
+msgid "Back to home"
+msgstr "Zur Startseite"
+
+msgid "Start"
+msgstr "Start"
+
+msgid "Log out"
+msgstr "Abmelden"
+
+msgid "New"
+msgstr "Neu"
+
+msgid "New room"
+msgstr "Neuer Raum"
+
+msgid "Start a new group with friends"
+msgstr "Starte eine neue Gruppe mit Freunden"
+
+msgid "Other"
+msgstr "Andere"
+
+msgid "Loading..."
+msgstr "Wird geladen..."
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "Room access"
+msgstr "Raumzugang"
+
+msgid "New member"
+msgstr "Neues Mitglied"
+
+msgid "We'll notify members automatically."
+msgstr "Wir benachrichtigen die Mitglieder automatisch."
+
+msgid "Submit"
+msgstr "Absenden"
+
+msgid "This room is closed, so new members cannot be added."
+msgstr "Dieser Raum ist geschlossen, daher können keine neuen Mitglieder hinzugefügt werden."
+
+msgid "No updates yet."
+msgstr "Noch keine Updates."
+
+msgid "You are all caught up."
+msgstr "Du bist auf dem Laufenden."
+
+msgid "Open related update"
+msgstr "Verwandtes Update öffnen"
+
+msgid "Update"
+msgstr "Aktualisierung"
+
+#, python-format
+msgid "%(timesince)s ago"
+msgstr "vor %(timesince)s"
+
+msgid "Something went wrong"
+msgstr "Etwas ist schiefgelaufen"
+
+msgid "Remove from room"
+msgstr "Aus dem Raum entfernen"
+
+msgid "Guest"
+msgstr "Gast"
+
+msgid "Member"
+msgstr "Mitglied"
+
+msgid "Seen room"
+msgstr "Raum gesehen"
+
+msgid "Not seen yet"
+msgstr "Noch nicht gesehen"
+
+msgid "Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!"
+msgstr "Bist du sicher, dass du dich aus diesem Raum entfernen möchtest? Danach kannst du ihn nicht mehr sehen!"
+
+msgid "Are you sure you wish to remove this user from this room?"
+msgstr "Bist du sicher, dass du diesen Nutzer aus diesem Raum entfernen möchtest?"
+
+msgid "Guest access with limited features"
+msgstr "Gastzugang mit eingeschränkten Funktionen"
+
+msgid "Registered roommate"
+msgstr "Registrierter Mitbewohner"
+
+msgid "Joined as a full member of this room."
+msgstr "Als volles Mitglied dieses Raums beigetreten."
+
+#, python-brace-format
+msgid "{paid_by} paid {value}{currency} for {paid_for}"
+msgstr "{paid_by} hat {value}{currency} für {paid_for} bezahlt"
+
+msgid "Back to transactions"
+msgstr "Zurück zu den Transaktionen"
+
+msgid "Category breakdown"
+msgstr "Kategorienübersicht"
+
+msgid "All recorded spend"
+msgstr "Alle erfassten Ausgaben"
+
+#, python-format
+msgid "Showing %(period)s."
+msgstr "Zeigt %(period)s."
+
+msgid "Add transaction"
+msgstr "Transaktion hinzufügen"
+
+msgid "Currency breakdown"
+msgstr "Währungsaufteilung"
+
+#, python-format
+msgid ""
+"\n"
+"                                            %(category_count)s category\n"
+"                                        "
+msgid_plural ""
+"\n"
+"                                            %(category_count)s categories\n"
+"                                        "
+msgstr[0] ""
+"\n"
+"                                            %(category_count)s Kategorie\n"
+"                                        "
+msgstr[1] ""
+"\n"
+"                                            %(category_count)s Kategorien\n"
+"                                        "
+
+msgid "Legend"
+msgstr "Legende"
+
+msgid "No tracked expenses yet. Add a transaction to populate the breakdown."
+msgstr "Noch keine erfassten Ausgaben. Füge eine Transaktion hinzu, um die Aufschlüsselung zu füllen."
+
+msgid "Add expenses to unlock the breakdown."
+msgstr "Füge Ausgaben hinzu, um die Aufschlüsselung freizuschalten."
+
+msgid "Amount"
+msgstr "Betrag"
+
+msgid "For"
+msgstr "Für"
+
+msgid "Remove this participant?"
+msgstr "Diese:n Teilnehmer:in entfernen?"
+
+msgid "Child Transaction ID"
+msgstr "ID der Untertransaktion"
+
+msgid "New transaction"
+msgstr "Neue Transaktion"
+
+#, python-format
+msgid ""
+"\n"
+"                        Add transaction for \"%(room_name)s\"\n"
+"                    "
+msgstr ""
+"\n"
+"                        Eine Transaktion für \"%(room_name)s\" hinzufügen\n"
+"                    "
+
+#, python-format
+msgid ""
+"\n"
+"                        %(member_count)s member\n"
+"                    "
+msgid_plural ""
+"\n"
+"                        %(member_count)s members\n"
+"                    "
+msgstr[0] ""
+"\n"
+"                        %(member_count)s Mitglied\n"
+"                    "
+msgstr[1] ""
+"\n"
+"                        %(member_count)s Mitglieder\n"
+"                    "
+
+#, python-format
+msgid ""
+"\n"
+"                        %(currency_sign)s preferred\n"
+"                    "
+msgstr ""
+"\n"
+"                        %(currency_sign)s bevorzugt\n"
+"                    "
+
+msgid "Unable to add transaction"
+msgstr "Transaktion konnte nicht hinzugefügt werden"
+
+msgid "Required details"
+msgstr "Erforderliche Angaben"
+
+msgid "What was this?"
+msgstr "Was war das?"
+
+msgid "e.g., Grocery run"
+msgstr "e.g., Einkaufen"
+
+msgid "Maximum 50 characters."
+msgstr "Maximal 50 Zeichen."
+
+msgid "Amount paid"
+msgstr "Bezahlter Betrag"
+
+msgid "Total paid in the selected currency."
+msgstr "In der gewählten Währung insgesamt bezahlt."
+
+msgid "Who paid?"
+msgstr "Wer hat bezahlt?"
+
+msgid "Person covering this expense."
+msgstr "Die Person, die diese Ausgabe getragen hat."
+
+msgid "Split between"
+msgstr "Aufgeteilt auf"
+
+msgid "Hold Cmd/Ctrl to adjust beneficiaries."
+msgstr "Halte Cmd/Ctrl gedrückt, um die Begünstigten anzupassen."
+
+msgid "Optional"
+msgstr "Optional"
+
+msgid "More details"
+msgstr "Weitere Details"
+
+msgid "Show fields"
+msgstr "Felder anzeigen"
+
+msgid "Paid at"
+msgstr "Bezahlt am"
+
+msgid "Use if the expense occurred earlier."
+msgstr "Verwenden, wenn die Ausgabe früher stattfand."
+
+msgid "Defaults to the room preference."
+msgstr "Standardmäßig wird die Raumpräferenz verwendet."
+
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "Tag this expense for dashboards and charts."
+msgstr "Markiere diese Ausgabe für Dashboards und Diagramme."
+
+msgid "Notes"
+msgstr "Notizen"
+
+msgid "Add split details, receipts, or reminders"
+msgstr "Füge Aufteilungsdetails, Belege oder Erinnerungen hinzu"
+
+msgid "Up to 5000 characters."
+msgstr "Bis zu 5000 Zeichen."
+
+msgid "Receipts"
+msgstr "Belege"
+
+msgid "Upload receipts as PDF or image (max 5 MB each)."
+msgstr "Lade Belege als PDF oder Bild hoch (maximal 5 MB pro Datei)."
+
+msgid "Room Slug"
+msgstr "Raum-Slug"
+
+msgid "Groceries"
+msgstr "Lebensmittel"
+
+msgid "Utilities"
+msgstr "Nebenkosten"
+
+msgid "Dinner"
+msgstr "Abendessen"
+
+msgid "Ride share"
+msgstr "Fahrgemeinschaft"
+
+msgid "House supplies"
+msgstr "Haushaltsbedarf"
+
+msgid "Back to list"
+msgstr "Zurück zur Liste"
+
+msgid "Expense"
+msgstr "Ausgabe"
+
+msgid "paid"
+msgstr "bezahlt"
+
+msgid "Edit transaction"
+msgstr "Transaktion bearbeiten"
+
+msgid "Edit expense"
+msgstr "Ausgabe bearbeiten"
+
+msgid "This room is closed, so the breakdown is read-only."
+msgstr "Dieser Raum ist geschlossen, daher ist die Aufschlüsselung read-only."
+
+msgid "Total amount"
+msgstr "Gesamtbetrag"
+
+msgid "Paid by"
+msgstr "Bezahlt von"
+
+msgid "on"
+msgstr "am"
+
+#, python-format
+msgid "Recorded at %(recorded_time)s"
+msgstr "Erfasst um %(recorded_time)s"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "No description"
+msgstr "Keine Beschreibung"
+
+msgid "Tap a row to edit the breakdown."
+msgstr "Tippe auf eine Zeile, um die Aufschlüsselung zu bearbeiten."
+
+#, python-format
+msgid ""
+"\n"
+"                        %(member_count)s person\n"
+"                    "
+msgid_plural ""
+"\n"
+"                        %(member_count)s people\n"
+"                    "
+msgstr[0] ""
+"\n"
+"                        %(member_count)s Person\n"
+"                    "
+msgstr[1] ""
+"\n"
+"                        %(member_count)s Personen\n"
+"                    "
+
+#, python-format
+msgid ""
+"\n"
+"                                    Owes %(owed_value)s%(owed_currency)s\n"
+"                                "
+msgstr ""
+"\n"
+"                                    Schuldet %(owed_value)s%(owed_currency)s\n"
+"                                "
+
+msgid "No split data available for this transaction yet."
+msgstr "Für diese Transaktion liegen noch keine Splits-Daten vor."
+
+msgid "Editing expense"
+msgstr "Ausgabe bearbeiten"
+
+msgid "Adjust who paid and how it is split."
+msgstr "Leg fest, wer bezahlt hat und wie geteilt wird."
+
+msgid "Are you sure you wish to delete this transaction?"
+msgstr "Bist du sicher, dass du diese Transaktion löschen möchtest?"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Total"
+msgstr "Gesamt"
+
+#, python-format
+msgid ""
+"\n"
+"                                    Current split: %(split_total)s%(split_currency)s\n"
+"                                "
+msgstr ""
+"\n"
+"                                    Aktuelle Aufteilung: %(split_total)s%(split_currency)s\n"
+"                                "
+
+msgid "Use categories to group similar spend."
+msgstr "Nutze Kategorien, um ähnliche Ausgaben zu bündeln."
+
+msgid "Receipts stay on the detail page, so upload PDFs there instead of here."
+msgstr "Belege bleiben auf der Detailseite, lade PDFs dort statt hier hoch."
+
+msgid "You can continue editing this transaction; switch to the detail view if you need to manage uploads."
+msgstr "Du kannst diese Transaktion weiter bearbeiten; wechsle zur Detailansicht, wenn du Uploads verwalten möchtest."
+
+msgid "Open detail view"
+msgstr "Detailansicht öffnen"
+
+msgid "Update each share or remove it entirely."
+msgstr "Aktualisiere jeden Anteil oder entferne ihn vollständig."
+
+#, python-format
+msgid ""
+"\n"
+"                                    %(participant_count)s person\n"
+"                                "
+msgid_plural ""
+"\n"
+"                                    %(participant_count)s people\n"
+"                                "
+msgstr[0] ""
+"\n"
+"                                    %(participant_count)s Person\n"
+"                                "
+msgstr[1] ""
+"\n"
+"                                    %(participant_count)s Personen\n"
+"                                "
+
+msgid "⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically."
+msgstr "⚠️ Gesamte Änderungen sperren einzelne Anteile; das Backend gleicht die Splits automatisch aus."
+
+msgid "No split entries yet."
+msgstr "Noch keine Splits erfasst."
+
+msgid "Add participant"
+msgstr "Teilnehmer hinzufügen"
+
+msgid "Add extra notes here"
+msgstr "Hier zusätzliche Notizen hinzufügen"
+
+msgid "Room transactions"
+msgstr "Raumtransaktionen"
+
+msgid "Click a row to explore the full breakdown."
+msgstr "Klicke eine Zeile, um die vollständige Aufschlüsselung zu sehen."
+
+msgid "Record your first expense to see the running history here."
+msgstr "Erfasse deine erste Ausgabe, um den Verlauf hier anzuzeigen."
+
+msgid "View category breakdown"
+msgstr "Kategorienaufteilung anzeigen"
+
+msgid "Break down spend"
+msgstr "Ausgaben aufschlüsseln"
+
+msgid "This room is closed, so transactions are read-only."
+msgstr "Dieser Raum ist geschlossen, daher sind Transaktionen nur lesbar."
+
+msgid "Search"
+msgstr "Suche"
+
+msgid "Filter by payer or description"
+msgstr "Nach Zahler:in oder Beschreibung filtern"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "Nothing to show yet"
+msgstr "Noch nichts zu zeigen"
+
+msgid "Start by logging an expense to build your history."
+msgstr "Erfasse zuerst eine Ausgabe, um deinen Verlauf aufzubauen."
+
+msgid "Room snapshot"
+msgstr "Raumzusammenfassung"
+
+msgid "Transactions logged"
+msgstr "Erfasste Transaktionen"
+
+msgid "Last transaction"
+msgstr "Letzte Transaktion"
+
+msgid "Invite your roommates to start sharing expenses."
+msgstr "Lade deine Mitbewohner ein, Ausgaben gemeinsam zu teilen."
+
+msgid "Tips"
+msgstr "Tipps"
+
+msgid "Use the search field to filter by payer or description."
+msgstr "Nutze das Suchfeld, um nach Zahler:in oder Beschreibung zu filtern."
+
+msgid "Tap a row or the eye icon to review the split details."
+msgstr "Tippe eine Zeile oder das Augensymbol an, um die Split-Details anzusehen."
+
+msgid "The floating '+' button lets you capture a new transaction."
+msgstr "Der schwebende '+'-Button ermöglicht dir, eine neue Transaktion zu erfassen."
+
+msgid "Back to debts"
+msgstr "Zurück zu Schulden"
+
+msgid "Room spending overview"
+msgstr "Übersicht der Raumausgaben"
+
+msgid "Who paid what"
+msgstr "Wer hat was bezahlt"
+
+#, python-format
+msgid ""
+"\n"
+"                                    Total spent (%(currency_sign)s)\n"
+"                                "
+msgstr ""
+"\n"
+"                                    Insgesamt ausgegeben (%(currency_sign)s)\n"
+"                                "
+
+msgid "No spending yet"
+msgstr "Noch keine Ausgaben"
+
+msgid "Add expenses to populate this dashboard."
+msgstr "Füge Ausgaben hinzu, um dieses Dashboard zu füllen."
+
+msgid "Money spent by members"
+msgstr "Von Mitgliedern ausgegebenes Geld"
+
+msgid "Who covered the bills"
+msgstr "Wer hat die Rechnungen bezahlt"
+
+msgid "No payments recorded yet"
+msgstr "Noch keine Zahlungen erfasst"
+
+msgid "As soon as someone logs an expense, their share appears here."
+msgstr "Sobald jemand eine Ausgabe erfasst, erscheint sein Anteil hier."
+
+msgid "Money still owed"
+msgstr "Noch geschuldetes Geld"
+
+msgid "Who needs to settle up"
+msgstr "Wer muss noch ausgleichen"
+
+msgid "Pending balances"
+msgstr "Ausstehende Salden"
+
+msgid "Nothing owed right now"
+msgstr "Aktuell keine Schulden"
+
+msgid "All participants are even for the tracked expenses."
+msgstr "Alle Teilnehmer sind für die erfassten Ausgaben ausgeglichen."
+
+msgid "Loading spending timeline…"
+msgstr "Verlauf wird geladen…"
+
+msgid "Spending over time"
+msgstr "Ausgaben über die Zeit"
+
+msgid "Expense build-up"
+msgstr "Ausgabenaufbau"
+
+#, python-format
+msgid ""
+"\n"
+"                                Showing %(period)s (%(start)s – %(end)s).\n"
+"                            "
+msgstr ""
+"\n"
+"                                Zeigt %(period)s (%(start)s – %(end)s).\n"
+"                            "
+
+msgid "Spending trend ranges"
+msgstr "Ausgabentrend-Intervalle"
+
+msgid "Updating..."
+msgstr "Wird aktualisiert..."
+
+msgid "Not enough data to render the chart yet."
+msgstr "Noch nicht genug Daten, um das Diagramm darzustellen."
+
+msgid "No data available"
+msgstr "Keine Daten verfügbar"
+
+msgid "Add a few expenses to unlock the timeline."
+msgstr "Füge ein paar Ausgaben hinzu, um die Timeline freizuschalten."
+
+msgid "Stored documents are linked to this transaction."
+msgstr "Gespeicherte Dokumente sind mit dieser Transaktion verknüpft."
+
+msgid "Permanently delete this receipt?"
+msgstr "Beleg dauerhaft löschen?"
+
+msgid "Delete receipt"
+msgstr "Beleg löschen"
+
+msgid "PDF receipt preview"
+msgstr "PDF-Beleg-Vorschau"
+
+#, python-format
+msgid ""
+"\n"
+"                                                Uploaded by %(uploader)s\n"
+"                                            "
+msgstr ""
+"\n"
+"                                                Hochgeladen von %(uploader)s\n"
+"                                            "
+
+msgid "No receipts have been attached to this transaction yet."
+msgstr "Dieser Transaktion wurden noch keine Belege beigefügt."
+
+msgid "Receipts cannot be uploaded after the room has been closed."
+msgstr "Belege können nach Schließen des Raums nicht mehr hochgeladen werden."
+
+msgid "Upload receipt"
+msgstr "Beleg hochladen"
+
+msgid "PDF or PNG/JPEG/WebP/GIF (max 5 MB)."
+msgstr "PDF oder PNG/JPEG/WebP/GIF (max. 5 MB)."
+
+msgid "Paid on"
+msgstr "Bezahlt am"
+
+#, python-format
+msgid ""
+"\n"
+"                                    %(delta)s ago\n"
+"                                "
+msgstr ""
+"\n"
+"                                    Vor %(delta)s\n"
+"                                "
+
+msgid "Payer"
+msgstr "Zahler:in"
+
+msgid "View split details"
+msgstr "Split-Details ansehen"
+
+#, python-format
+msgid "No transactions match \"%(query)s\"."
+msgstr "Keine Transaktionen entsprechen \"%(query)s\"."
+
+msgid "No transactions to show yet."
+msgstr "Noch keine Transaktionen anzuzeigen."
+
+msgid "You're all caught up."
+msgstr "Du bist auf dem Laufenden."
+
+#, python-brace-format
+msgid "Webpush Information for {user}"
+msgstr "Webpush-Information für {user}"

@@ -1,5 +1,7 @@
 from ambient_toolbox.models import CommonInfo
 from django.db import models
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _lazy
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
 from apps.core.models.mixins.emit_model_created_event_on_save import EmitModelCreatedEventOnSaveMixin
@@ -11,11 +13,11 @@ class UserConnectionToRoom(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixi
     user_has_seen_this_room = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name = "User-Connection to Room"
-        verbose_name_plural = "User-Connections to Rooms"
+        verbose_name = _lazy("User-Connection to Room")
+        verbose_name_plural = _lazy("User-Connections to Rooms")
 
-    def __str__(self):
-        return f"{self.user} belongs to {self.room}"
+    def __str__(self) -> str:
+        return _("{user} belongs to {room}").format(user=self.user, room=self.room)
 
     @property
     def created_by_is_connection_user(self) -> bool:

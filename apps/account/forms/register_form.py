@@ -2,13 +2,14 @@ from django import forms
 from django.contrib.auth import hashers
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
+from django.utils.translation import gettext_lazy as _
 
 from apps.account.models import User
 
 
 class RegisterForm(ModelForm):
     class ExceptionMessage:
-        EMAIL_ADDRESS_ALREADY_IN_USE = "The email address '{email}' is already in use"
+        EMAIL_ADDRESS_ALREADY_IN_USE = _("The email address '{email}' is already in use")
 
     id = forms.IntegerField(required=False)
 

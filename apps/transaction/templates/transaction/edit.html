@@ -1,6 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load static %}
-{% load room_tags %}
+{% load static room_tags i18n %}
 {% block tab_content %}
     <style>
         .transaction-label {
@@ -57,23 +56,23 @@
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
                 <i class="bi bi-arrow-left"></i>
-                Back to list
+                {% trans "Back to list" %}
             </button>
             <div class="text-center flex-grow-1">
-                <p class="transaction-label mb-1">Editing expense</p>
-                <p class="mb-0">Adjust who paid and how it is split.</p>
+                <p class="transaction-label mb-1">{% trans "Editing expense" %}</p>
+                <p class="mb-0">{% trans "Adjust who paid and how it is split." %}</p>
             </div>
             <button type="button"
                     class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-2"
                     hx-trigger="click"
                     hx-post="{% room_url 'transaction:parent-transaction-delete' pk=parent_transaction.id %}"
-                    hx-confirm="Are you sure you wish to delete this transaction?"
+                    hx-confirm="{% trans "Are you sure you wish to delete this transaction?" %}"
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
                 <i class="bi bi-trash"></i>
-                Delete
+                {% trans "Delete" %}
             </button>
         </div>
         <form class="needs-validation"
@@ -87,7 +86,7 @@
                 <div class="card-body">
                     <div class="row g-3 align-items-end">
                         <div class="col-md-4">
-                            <label class="form-label transaction-label" for="paid_by_select">Paid by</label>
+                            <label class="form-label transaction-label" for="paid_by_select">{% trans "Paid by" %}</label>
                             <select name="paid_by" class="form-select" id="paid_by_select" required>
                                 {% for user in form.fields.paid_by.queryset %}
                                     <option {% if user.id == form.initial.paid_by %}selected{% endif %}
@@ -96,7 +95,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label transaction-label" for="total_value_input">Total</label>
+                            <label class="form-label transaction-label" for="total_value_input">{% trans "Total" %}</label>
                             <div class="input-group">
                                 <span class="input-group-text">{{ parent_transaction.currency.sign }}</span>
                                 <input id="total_value_input"
@@ -112,11 +111,13 @@
                                 <div class="invalid-feedback d-block">{{ form.total_value.errors|join:" " }}</div>
                             {% endif %}
                             <p class="text-muted small mb-0">
-                                Current split: {{ parent_transaction.value }}{{ parent_transaction.currency.sign }}
+                                {% blocktrans with split_total=parent_transaction.value split_currency=parent_transaction.currency.sign %}
+                                    Current split: {{ split_total }}{{ split_currency }}
+                                {% endblocktrans %}
                             </p>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label transaction-label" for="currency_select">Currency</label>
+                            <label class="form-label transaction-label" for="currency_select">{% trans "Currency" %}</label>
                             <select name="currency" class="form-select" id="currency_select" required>
                                 {% for currency in form.fields.currency.queryset %}
                                     <option {% if currency.id == form.initial.currency %}selected{% endif %}
@@ -125,7 +126,7 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label transaction-label" for="paid_at_input">Paid at</label>
+                            <label class="form-label transaction-label" for="paid_at_input">{% trans "Paid at" %}</label>
                             <input id="paid_at_input"
                                    name="paid_at"
                                    class="form-control"
@@ -135,20 +136,20 @@
                                    max="2099-12-31T00:00" />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label transaction-label" for="description">Description</label>
+                            <label class="form-label transaction-label" for="description">{% trans "Description" %}</label>
                             <textarea class="form-control"
-                                      aria-label="Description"
+                                      aria-label="{% trans "Description" %}"
                                       id="description"
                                       name="description"
                                       rows="2"
                                       maxlength="50"
                                       minlength="1">{{ parent_transaction.description }}</textarea>
-                            <div class="form-text">Maximum 50 characters.</div>
+                            <div class="form-text">{% trans "Maximum 50 characters." %}</div>
                         </div>
                     </div>
                     <div class="row g-3 mt-3">
                         <div class="col-md-6">
-                            <label class="form-label transaction-label" for="category_select">Category</label>
+                            <label class="form-label transaction-label" for="category_select">{% trans "Category" %}</label>
                             <select name="category" class="form-select" id="category_select" required>
                                 {% for category in form.fields.category.queryset %}
                                     <option value="{{ category.id }}"
@@ -157,7 +158,7 @@
                                     </option>
                                 {% endfor %}
                             </select>
-                            <small class="text-muted">Use categories to group similar spend.</small>
+                            <small class="text-muted">{% trans "Use categories to group similar spend." %}</small>
                         </div>
                     </div>
                 </div>
@@ -166,12 +167,14 @@
                 <div class="card-body">
                     <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3">
                         <div>
-                            <p class="transaction-label mb-1">Receipts</p>
-                            <p class="mb-0 text-muted small">Receipts stay on the detail page, so upload PDFs there instead of here.</p>
+                            <p class="transaction-label mb-1">{% trans "Receipts" %}</p>
+                            <p class="mb-0 text-muted small">
+                                {% trans "Receipts stay on the detail page, so upload PDFs there instead of here." %}
+                            </p>
                         </div>
                         <div class="text-md-end">
                             <p class="text-muted small mb-2">
-                                You can continue editing this transaction; switch to the detail view if you need to manage uploads.
+                                {% trans "You can continue editing this transaction; switch to the detail view if you need to manage uploads." %}
                             </p>
                             <button type="button"
                                     class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-2"
@@ -182,7 +185,7 @@
                                     hx-swap="morph:innerHTML"
                                     hx-push-url="true">
                                 <i class="bi bi-file-earmark-text"></i>
-                                Open detail view
+                                {% trans "Open detail view" %}
                             </button>
                         </div>
                     </div>
@@ -191,24 +194,28 @@
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-transparent border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div>
-                        <p class="transaction-label mb-0">Split between</p>
-                        <p class="mb-0 text-muted small">Update each share or remove it entirely.</p>
+                        <p class="transaction-label mb-0">{% trans "Split between" %}</p>
+                        <p class="mb-0 text-muted small">{% trans "Update each share or remove it entirely." %}</p>
                     </div>
                     <span class="transaction-chip">
                         <i class="bi bi-people"></i>
-                        {{ child_transaction_qs|length }} people
+                        {% blocktrans count participant_count=child_transaction_qs|length %}
+                                    {{ participant_count }} person
+                                {% plural %}
+                                    {{ participant_count }} people
+                                {% endblocktrans %}
                     </span>
                 </div>
                 <div class="card-body pt-0">
                     <p id="split-lock-hint" class="text-muted small mb-2 d-none">
-                        ⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically.
+                        {% trans "⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically." %}
                     </p>
                     {% for child_transaction in child_transaction_qs %}
                         <div class="split-row">
                             <div class="row g-3 align-items-center">
                                 <div class="col-md-5">
                                     <label class="form-label transaction-label"
-                                           for="value_input_{{ forloop.counter }}">Amount</label>
+                                           for="value_input_{{ forloop.counter }}">{% trans "Amount" %}</label>
                                     <div class="input-group">
                                         <input id="value_input_{{ forloop.counter }}"
                                                name="value"
@@ -224,7 +231,7 @@
                                 </div>
                                 <div class="col-md-5">
                                     <label class="form-label transaction-label"
-                                           for="paid_for_select_{{ forloop.counter }}">For</label>
+                                           for="paid_for_select_{{ forloop.counter }}">{% trans "For" %}</label>
                                     <select name="paid_for"
                                             class="form-select"
                                             id="paid_for_select_{{ forloop.counter }}"
@@ -240,7 +247,7 @@
                                             class="btn btn-outline-danger w-100"
                                             hx-trigger="click"
                                             hx-post="{% room_url 'transaction:child-transaction-delete' pk=child_transaction.id %}"
-                                            hx-confirm="Are you sure you wish to delete this transaction?"
+                                            hx-confirm="{% trans "Are you sure you wish to delete this transaction?" %}"
                                             hx-target="#body"
                                             hx-indicator="#body-loading-spinner"
                                             hx-swap="morph:innerHTML"
@@ -252,7 +259,7 @@
                             <div class="form-group" hidden>
                                 <label class="visually-hidden"
                                        for="child_transaction_id_input_{{ forloop.counter }}">
-                                    Child Transaction ID
+                                    {% trans "Child Transaction ID" %}
                                 </label>
                                 <input id="child_transaction_id_input_{{ forloop.counter }}"
                                        name="child_transaction_id"
@@ -266,7 +273,7 @@
                             </div>
                         </div>
                     {% empty %}
-                        <p class="text-muted small mb-0">No split entries yet.</p>
+                        <p class="text-muted small mb-0">{% trans "No split entries yet." %}</p>
                     {% endfor %}
                     <span id="add-child-transaction-container"></span>
                     <div class="text-center mt-3">
@@ -278,29 +285,29 @@
                                 hx-swap="morph:outerHTML"
                                 hx-push-url="false">
                             <i class="bi bi-plus-circle"></i>
-                            Add participant
+                            {% trans "Add participant" %}
                         </button>
                     </div>
                 </div>
             </div>
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
-                    <label class="form-label transaction-label" for="further_notes">Notes</label>
+                    <label class="form-label transaction-label" for="further_notes">{% trans "Notes" %}</label>
                     <textarea class="form-control"
-                              aria-label="Notes"
+                              aria-label="{% trans "Notes" %}"
                               id="further_notes"
                               name="further_notes"
                               rows="3"
                               maxlength="500"
                               minlength="1"
-                              placeholder="Add extra notes here">{{ parent_transaction.further_notes|default:"" }}</textarea>
+                              placeholder="{% trans "Add extra notes here" %}">{{ parent_transaction.further_notes|default:"" }}</textarea>
                 </div>
             </div>
             <div class="d-flex justify-content-end">
                 <button type="submit"
                         class="btn btn-primary px-4 d-inline-flex align-items-center gap-2">
                     <i class="bi bi-check2-circle"></i>
-                    Save changes
+                    {% trans "Save changes" %}
                 </button>
             </div>
         </form>

@@ -1,9 +1,10 @@
+{% load i18n %}
 {% if news %}
     {% for news_object in news %}
         {% include "shared_partials/news_card.html" with news=news_object %}
     {% endfor %}
 {% elif news_initial_render %}
-    <p class="text-center text-muted small py-3 mb-0">No updates yet.</p>
+    <p class="text-center text-muted small py-3 mb-0">{% trans "No updates yet." %}</p>
 {% endif %}
 {% if news_next_cursor %}
     <div class="news-load-trigger"
@@ -32,5 +33,5 @@
         </div>
     </div>
 {% elif news or not news_initial_render %}
-    <div class="news-feed-end text-center text-muted small py-4">You are all caught up.</div>
+    <div class="news-feed-end text-center text-muted small py-4">{% trans "You are all caught up." %}</div>
 {% endif %}

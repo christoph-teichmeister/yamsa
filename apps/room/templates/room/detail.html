@@ -1,6 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load static %}
-{% load room_tags %}
+{% load static room_tags i18n %}
 {% block tab_content %}
     <style>
         .room-detail-wrap {
@@ -86,18 +85,18 @@
         <div class="room-hero">
             <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-start">
                 <div>
-                    <p class="text-uppercase text-muted small mb-1">Room overview</p>
+                    <p class="text-uppercase text-muted small mb-1">{% trans "Room overview" %}</p>
                     <h2>{{ room.name }}</h2>
-                    <p class="mb-3">{{ room.description|default:"No description added yet." }}</p>
+                    <p class="mb-3">{{ room.description|default:_("No description added yet.") }}</p>
                     <div class="d-flex flex-wrap gap-2">
                         <span class="room-status-pill {% if current_room.is_closed %}room-status-pill-closed{% endif %}">
                             {% if current_room.is_closed %}
-                                <i class="bi bi-lock-fill"></i> Closed
+                                <i class="bi bi-lock-fill"></i> {% trans "Closed" %}
                             {% else %}
-                                <i class="bi bi-unlock"></i> Open
+                                <i class="bi bi-unlock"></i> {% trans "Open" %}
                             {% endif %}
                         </span>
-                        <span class="badge rounded-pill bg-light text-dark d-flex align-items-center">Preferred currency: {{ room.preferred_currency }}</span>
+                        <span class="badge rounded-pill bg-light text-dark d-flex align-items-center">{% trans "Preferred currency" %}: {{ room.preferred_currency }}</span>
                     </div>
                 </div>
                 <div>
@@ -108,7 +107,7 @@
                             hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"
                             hx-push-url="true">
-                        <i class="bi bi-pencil-square me-2"></i>Edit room
+                        <i class="bi bi-pencil-square me-2"></i>{% trans "Edit room" %}
                     </button>
                 </div>
             </div>
@@ -116,37 +115,37 @@
         <div class="row room-meta-grid g-3">
             <div class="col-12 col-md-4">
                 <div class="room-info-card">
-                    <p class="text-uppercase small">Preferred currency</p>
+                    <p class="text-uppercase small">{% trans "Preferred currency" %}</p>
                     <h5 class="mb-1">{{ room.preferred_currency }}</h5>
-                    <p class="mb-0">Used as the default for new transactions.</p>
+                    <p class="mb-0">{% trans "Used as the default for new transactions." %}</p>
                 </div>
             </div>
             <div class="col-12 col-md-4">
                 <div class="room-info-card">
-                    <p class="text-uppercase small">Members</p>
+                    <p class="text-uppercase small">{% trans "Members" %}</p>
                     <h3 class="mb-1">{{ room.users.count }}</h3>
-                    <p class="mb-0">Roommates and guests currently connected.</p>
+                    <p class="mb-0">{% trans "Roommates and guests currently connected." %}</p>
                 </div>
             </div>
             <div class="col-12 col-md-4">
                 <div class="room-info-card">
-                    <p class="text-uppercase small">Closing readiness</p>
+                    <p class="text-uppercase small">{% trans "Closing readiness" %}</p>
                     {% if room.can_be_closed %}
-                        <h5 class="text-success mb-1">Ready to close</h5>
-                        <p class="mb-0">No unsettled debts remain.</p>
+                        <h5 class="text-success mb-1">{% trans "Ready to close" %}</h5>
+                        <p class="mb-0">{% trans "No unsettled debts remain." %}</p>
                     {% else %}
-                        <h5 class="text-warning mb-1">Outstanding balances</h5>
-                        <p class="mb-0">Settle open debts before closing.</p>
+                        <h5 class="text-warning mb-1">{% trans "Outstanding balances" %}</h5>
+                        <p class="mb-0">{% trans "Settle open debts before closing." %}</p>
                     {% endif %}
                 </div>
             </div>
-        </div>
-        <div class="room-state-banner mt-4">
-            {% if current_room.is_open %}
-                Keep logging expenses and invite more roommates whenever you need to.
-            {% else %}
-                This room is locked for editing. Reopen it from the edit screen if you need to make changes.
-            {% endif %}
+            <div class="room-state-banner mt-4">
+                {% if current_room.is_open %}
+                    {% trans "Keep logging expenses and invite more roommates whenever you need to." %}
+                {% else %}
+                    {% trans "This room is locked for editing. Reopen it from the edit screen if you need to make changes." %}
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock tab_content %}

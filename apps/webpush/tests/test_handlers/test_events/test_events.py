@@ -1,6 +1,7 @@
 from decimal import Decimal
 from unittest import mock
 
+from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 from model_bakery import baker
 
 from apps.core.tests.setup import BaseTestSetUp
@@ -56,14 +57,15 @@ class EventTestCase(BaseTestSetUp):
     def test_send_notification_on_transaction_create_to_debitors_except_for_creator_and_creditor_if_someone_else_created(  # noqa: E501
         self,
     ):
-        parent_transaction, _ = create_parent_transaction_with_optimisation(
-            room=self.room,
-            paid_by=self.user,
-            paid_for_tuple=(self.guest_user, self.user, self.another_user),
-            parent_transaction_kwargs={"created_by": self.another_user},
-            child_transaction_kwargs={"value": Decimal(10)},
-        )
-
+        # The optimization path now queries CurrentRequestMiddleware for the current user before filtering/localization.
+        with mock.patch.object(CurrentRequestMiddleware, "get_current_user", return_value=self.another_user):
+            parent_transaction, _ = create_parent_transaction_with_optimisation(
+                room=self.room,
+                paid_by=self.user,
+                paid_for_tuple=(self.guest_user, self.user, self.another_user),
+                parent_transaction_kwargs={"created_by": self.another_user},
+                child_transaction_kwargs={"value": Decimal(10)},
+            )
         with mock.patch.object(Notification, "send_to_user") as mocked_send:
             send_notification_on_transaction_create(
                 context=ParentTransactionCreated.Context(parent_transaction=parent_transaction, room=self.room)

@@ -27,7 +27,7 @@ The Django stack is managed through `uv` with a `.venv` stored beside the projec
 1. Install `uv` if you don’t already have it (e.g. `python -m pip install --user uv`).
 2. Run `uv sync --all-extras --no-install-project` to populate `.venv` with the pinned dependencies.
 3. Use `uv run python manage.py migrate` to align the database schema and
-   `uv run python manage.py runserver 0.0.0.0:8000` to start the local server.
+   `uv run python manage.py runserver 0.0.0.0:8002` to start the local server.
 
 ## Testing & Quality
 

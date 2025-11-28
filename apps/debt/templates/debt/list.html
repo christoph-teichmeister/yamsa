@@ -1,6 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load static %}
-{% load room_tags %}
+{% load static room_tags i18n %}
 {% block tab_content %}
     <style>
         .debt-card {
@@ -38,12 +37,20 @@
     <div class="container-fluid px-0 px-md-2 mt-3">
         <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
             <div>
-                <h4 class="mb-1">Optimised debts</h4>
+                <h4 class="mb-1">{% trans "Optimised debts" %}</h4>
                 <p class="text-muted small mb-0">
-                    Track what is left to settle inside this room. Click the piggy-bank to mark a debt as paid.
+                    {% trans "Track what is left to settle inside this room. Click the piggy-bank to mark a debt as paid." %}
                 </p>
             </div>
-            {% if debts %}<span class="badge text-bg-light align-self-center">{{ active_debt_count }} pending</span>{% endif %}
+            {% if debts %}
+                <span class="badge text-bg-light align-self-center">
+                    {% blocktrans count active_debt_count=active_debt_count %}
+                        {{ active_debt_count }} pending debt
+                    {% plural %}
+                        {{ active_debt_count }} pending debts
+                    {% endblocktrans %}
+                </span>
+            {% endif %}
         </div>
         {% if has_transactions %}
             <div class="action-card mt-4 d-flex align-items-center justify-content-between"
@@ -56,8 +63,8 @@
                  hx-swap="morph:innerHTML"
                  hx-push-url="true">
                 <div>
-                    <p class="mb-1 fw-semibold">Money overview</p>
-                    <p class="text-muted small mb-0">See how much each person has paid and who still owes what.</p>
+                    <p class="mb-1 fw-semibold">{% trans "Money overview" %}</p>
+                    <p class="text-muted small mb-0">{% trans "See how much each person has paid and who still owes what." %}</p>
                 </div>
                 <i class="bi bi-arrow-up-right-circle fs-4 text-primary"></i>
             </div>
@@ -70,30 +77,27 @@
                             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                                 <div>
                                     <p class="fw-semibold mb-1">
-                                        {% autoescape off %}
-                                            {% parse_user_text debt.debitor.name True %}
-                                        {% endautoescape %}
-                                        {% if request.user.name == debt.debitor.name %}
-                                            owe
-                                        {% else %}
-                                            owes
-                                        {% endif %}
-                                        {{ debt.value }}{{ debt.currency.sign }} to
-                                        {% autoescape off %}
-                                            {% parse_user_text debt.creditor.name True %}
-                                        {% endautoescape %}
+                                        {% parse_user_text debt.debitor.name True as debitor_display %}
+                                        {% parse_user_text debt.creditor.name as creditor_display %}
+                                        {% blocktrans with debitor_display=debitor_display creditor_display=creditor_display value=debt.value currency=debt.currency.sign trimmed %}
+                                            {{ debitor_display }} owes {{ value }}{{ currency }} to {{ creditor_display }}
+                                        {% endblocktrans %}
                                     </p>
                                     {% if debt.settled %}
-                                        <p class="text-success small mb-0">Settled on {{ debt.settled_at|date:"d.m.Y" }}</p>
+                                        <p class="text-success small mb-0">
+                                            {% blocktrans with settled_at=debt.settled_at|date:"d.m.Y" %}
+                                                Settled on {{ settled_at }}
+                                            {% endblocktrans %}
+                                        </p>
                                     {% else %}
-                                        <p class="text-muted small mb-0">Tap the piggy-bank when this debt is paid off.</p>
+                                        <p class="text-muted small mb-0">{% trans "Tap the piggy-bank when this debt is paid off." %}</p>
                                     {% endif %}
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
                                     {% if debt.settled %}
-                                        <span class="badge text-bg-success-subtle text-success">Settled</span>
+                                        <span class="badge text-bg-success-subtle text-success">{% trans "Settled" %}</span>
                                     {% else %}
-                                        <span class="badge text-bg-warning-subtle text-warning">Outstanding</span>
+                                        <span class="badge text-bg-warning-subtle text-warning">{% trans "Outstanding" %}</span>
                                     {% endif %}
                                     <div>{% include "debt/partials/_settle_debt_piggy_icon.html" with debt=debt %}</div>
                                 </div>
@@ -105,8 +109,8 @@
         {% else %}
             <div class="card debt-card shadow-sm mt-4">
                 <div class="card-body text-center py-5">
-                    <p class="fw-semibold mb-1">No debts yet</p>
-                    <p class="text-muted small mb-0">As expenses are added, we will surface who owes whom here.</p>
+                    <p class="fw-semibold mb-1">{% trans "No debts yet" %}</p>
+                    <p class="text-muted small mb-0">{% trans "As expenses are added, we will surface who owes whom here." %}</p>
                 </div>
             </div>
         {% endif %}

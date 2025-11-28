@@ -65,7 +65,7 @@ class LogInUserViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], LogInUserView.template_name)
 
-        self.assertIn(LogInUserView.ExceptionMessage.AUTH_FAILED, str(response.content))
+        self.assertIn(str(LogInUserView.ExceptionMessage.AUTH_FAILED), str(response.content))
 
         # Wrong email
         response = self.client.post(
@@ -75,4 +75,4 @@ class LogInUserViewTestCase(BaseTestSetUp):
         self.assertEqual(response.status_code, http.HTTPStatus.OK)
         self.assertTrue(response.template_name[0], LogInUserView.template_name)
 
-        self.assertIn(LogInUserView.ExceptionMessage.AUTH_FAILED, str(response.content))
+        self.assertIn(str(LogInUserView.ExceptionMessage.AUTH_FAILED), str(response.content))

@@ -1,5 +1,10 @@
 from dataclasses import dataclass
 
+from django.conf import settings
+from django.utils import translation
+from django.utils.encoding import force_str
+from django.utils.functional import Promise
+from django.utils.translation import gettext_lazy as _
 from django_pony_express.services.base import BaseEmailService
 
 from apps.account.models import User
@@ -12,14 +17,14 @@ class EmailBaseTextContext:
     header: str = "yamsa"
     # footer: str = "Your yamsa team"
     footer: str = ""
-    sub_footer: str = "yamsa | Yet another money split app"
+    sub_footer: str = _("yamsa | Yet another money split app")
     preheader_text: str = ""
     footer_disclaimer: str = ""
 
 
 @dataclass
 class EmailUserTextContext:
-    greeting_prefix: str = "Hey"
+    greeting_prefix: str = _("Hey")
     greeting_suffix: str = "👋"
 
     user: User = None
@@ -59,15 +64,43 @@ class BaseYamsaEmailService(BaseEmailService):
         return self.email_base_text_context.SUBJECT_PREFIX + self.subject
 
     def get_context_data(self) -> dict:
-        return {
-            "context": {
-                "subject": self.get_subject(),
-                "greeting": self.get_greeting(),
-                **self.get_email_base_text_context().__dict__,
-                **self.get_email_user_text_context().__dict__,
-                **self.get_email_extra_context().__dict__,
+        language_code = self.get_language_code()
+
+        def resolve_lazy_dict(raw_dict: dict) -> dict:
+            resolved = {}
+            for key, value in raw_dict.items():
+                if isinstance(value, Promise) or hasattr(value, "_proxy____cast"):
+                    resolved[key] = force_str(value)
+                else:
+                    resolved[key] = value
+            return resolved
+
+        with translation.override(language_code):
+            base_ctx = resolve_lazy_dict(self.get_email_base_text_context().__dict__)
+            user_ctx = resolve_lazy_dict(self.get_email_user_text_context().__dict__)
+            extra_ctx = resolve_lazy_dict(self.get_email_extra_context().__dict__)
+
+            context_payload = {
+                "context": {
+                    "subject": self.get_subject(),
+                    "greeting": self.get_greeting(),
+                    **base_ctx,
+                    **user_ctx,
+                    **extra_ctx,
+                }
             }
-        }
+
+        context_payload["language_code"] = language_code
+        return context_payload
+
+    def get_language_code(self) -> str:
+        language_value = None
+        if self.recipient is not None:
+            language_value = self.recipient.language
+        valid_languages = dict(settings.LANGUAGES)
+        if language_value in valid_languages:
+            return language_value
+        return settings.LANGUAGE_CODE
 
     def get_greeting(self):
         context = self.email_user_text_context

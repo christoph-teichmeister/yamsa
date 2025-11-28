@@ -1,5 +1,6 @@
-<div class="toast-container yamsa-toast-container position-fixed bottom-0 start-50 translate-middle-x px-1 pb-5 mb-5 w-100"
-     style="z-index: 1400">
+{% load i18n %}
+{% trans "Close" as toast_close_label %}
+<div class="toast-container yamsa-toast-container position-fixed bottom-0 start-50 translate-middle-x px-1 pb-5 mb-5 w-100">
     <div class="toast yamsa-toast border-0 w-100"
          id="toast-id"
          role="alert"
@@ -12,7 +13,7 @@
             <button type="button"
                     class="btn-close btn-close-white"
                     data-bs-dismiss="toast"
-                    aria-label="Close"></button>
+                    aria-label="{{ toast_close_label }}"></button>
         </div>
     </div>
 </div>
@@ -21,6 +22,7 @@
 {% else %}
     <script id="queued-toasts-data" type="application/json">[]</script>
 {% endif %}
+{% trans "Something went wrong" as something_went_wrong %}
 <!-- Toast handler -->
 <script type="module">
     const toastElement = document.getElementById("toast-id")
@@ -31,6 +33,7 @@
     const baseToastClasses =
         "toast-yamsa-inner d-flex align-items-center justify-content-between gap-3 rounded-4 shadow-sm px-4 py-3"
     const defaultErrorToastClasses = "{{ toast_classes.error|escapejs }}"
+    const defaultErrorMessage = "⚠️ {{ something_went_wrong|escapejs }} 🥺"
 
     let toastIsVisible = false
     const toastQueue = []
@@ -127,7 +130,7 @@
             return
         }
         enqueueToast({
-            message: "⚠️ Something went wrong 🥺",
+            message: defaultErrorMessage,
             type: defaultErrorToastClasses,
         })
         showNextToast()

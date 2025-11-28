@@ -1,5 +1,6 @@
+{% load i18n %}
 {% if title %}
-    <div class="room-group-label text-uppercase small fw-semibold text-muted">{{ title }}</div>
+    <div class="room-group-label text-uppercase small fw-semibold text-muted">{% trans title %}</div>
 {% else %}
     <div class="room-list-divider my-3">
         <hr class="m-0">

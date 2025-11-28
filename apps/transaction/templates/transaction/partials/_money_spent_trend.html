@@ -1,4 +1,4 @@
-{% load room_tags %}
+{% load room_tags i18n %}
 <div id="spending-trend">
     <style>
         .timeline-card {
@@ -87,14 +87,18 @@
         <div class="card-body">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
                 <div>
-                    <p class="text-muted small mb-1">Spending over time</p>
-                    <h5 class="mb-1">Expense build-up</h5>
+                    <p class="text-muted small mb-1">{% trans "Spending over time" %}</p>
+                    <h5 class="mb-1">{% trans "Expense build-up" %}</h5>
                     <p class="text-muted small mb-0">
-                        Showing {{ trend_period_label|lower }} ({{ trend_range_start|date:"d M" }} – {{ trend_range_end|date:"d M" }}).
+                        {% blocktrans with period=trend_period_label|lower start=trend_range_start|date:"d M" end=trend_range_end|date:"d M" %}
+                                Showing {{ period }} ({{ start }} – {{ end }}).
+                            {% endblocktrans %}
                     </p>
                 </div>
                 <div class="d-flex flex-column align-items-start align-items-lg-end gap-2">
-                    <div class="range-toggle" role="group" aria-label="Spending trend ranges">
+                    <div class="range-toggle"
+                         role="group"
+                         aria-label="{% trans "Spending trend ranges" %}">
                         {% for option in period_options %}
                             <button type="button"
                                     class="range-btn {% if option.is_wide %}range-btn-wide{% endif %} {% if option.active %}active{% endif %}"
@@ -108,7 +112,7 @@
                     <div class="htmx-indicator d-flex align-items-center gap-2 text-muted small"
                          id="spending-trend-indicator">
                         <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                        Updating…
+                        {% trans "Updating..." %}
                     </div>
                 </div>
             </div>
@@ -128,13 +132,14 @@
                         }
                         const dataset = JSON.parse(dataNode.textContent || "[]");
                         const currency = container.dataset.currency || "";
+                        const notEnoughDataMessage = '{% trans "Not enough data to render the chart yet." %}';
 
                         const renderChart = () => {
                             if (!window.d3) {
                                 return;
                             }
                             if (!dataset.length) {
-                                container.innerHTML = "<p class='text-muted small mb-0'>Not enough data to render the chart yet.</p>";
+                                container.innerHTML = "<p class='text-muted small mb-0'>" + notEnoughDataMessage + "</p>";
                                 return;
                             }
                             const parseDate = d3.utcParse("%Y-%m-%d");
@@ -147,7 +152,7 @@
                                 .sort((a, b) => d3.ascending(a.date, b.date));
 
                             if (!data.length) {
-                                container.innerHTML = "<p class='text-muted small mb-0'>Not enough data to render the chart yet.</p>";
+                                container.innerHTML = "<p class='text-muted small mb-0'>" + notEnoughDataMessage + "</p>";
                                 return;
                             }
 
@@ -287,8 +292,8 @@
                 </script>
             {% else %}
                 <div class="timeline-empty mt-3">
-                    <p class="fw-semibold mb-1">No data available</p>
-                    <p class="text-muted small mb-0">Add a few expenses to unlock the timeline.</p>
+                    <p class="fw-semibold mb-1">{% trans "No data available" %}</p>
+                    <p class="text-muted small mb-0">{% trans "Add a few expenses to unlock the timeline." %}</p>
                 </div>
             {% endif %}
         </div>

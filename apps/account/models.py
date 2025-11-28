@@ -5,12 +5,14 @@ from time import time
 
 from ambient_toolbox.mixins.validation import CleanOnSaveMixin
 from ambient_toolbox.models import CommonInfo
+from django.conf import settings
 from django.contrib.auth import hashers
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
 from apps.account.managers import UserManager
 from apps.core.utils import determine_upload_to
@@ -31,17 +33,45 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ("name",)
 
     UPLOAD_FOLDER_NAME = "profile_picture"
+    PROFILE_PICTURE_FALLBACK_PATH = "img/profile-default.svg"
+
+    def _build_fallback_profile_picture_url(self) -> str:
+        static_url = settings.STATIC_URL
+        if not static_url.endswith("/"):
+            static_url = f"{static_url}/"
+        return f"{static_url}{self.PROFILE_PICTURE_FALLBACK_PATH.lstrip('/')}"
+
+    @property
+    def profile_picture_fallback_url(self) -> str:
+        return self._build_fallback_profile_picture_url()
+
+    @property
+    def profile_picture_url(self) -> str:
+        fallback_url = self._build_fallback_profile_picture_url()
+        picture = self.profile_picture
+
+        if not picture or not getattr(picture, "name", None):
+            return fallback_url
+
+        try:
+            if not picture.storage.exists(picture.name):
+                return fallback_url
+
+            return picture.url
+        except Exception:
+            return fallback_url
 
     name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
     paypal_me_username = models.CharField(max_length=100, null=True, blank=True)
     profile_picture = models.ImageField(upload_to=determine_upload_to, null=True, blank=True)
+    language = models.CharField(max_length=5, choices=settings.LANGUAGES, blank=True)
 
     is_guest = models.BooleanField(default=True)
     is_staff = models.BooleanField(
-        "Staff Status",
+        _("Staff Status"),
         default=False,
-        help_text="Designates whether the user can log into this admin site.",
+        help_text=_("Designates whether the user can log into this admin site."),
     )
 
     wants_to_receive_webpush_notifications = models.BooleanField(default=False)
@@ -56,8 +86,8 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     class Meta:
-        verbose_name = "User"
-        verbose_name_plural = "Users"
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
 
     def __str__(self):
         return self.name
@@ -123,8 +153,8 @@ class UserFriendship(CommonInfo):
     friend = models.ForeignKey("account.User", on_delete=models.CASCADE, related_name="friended_by")
 
     class Meta:
-        verbose_name = "User friendship"
-        verbose_name_plural = "User friendships"
+        verbose_name = _("User friendship")
+        verbose_name_plural = _("User friendships")
         constraints = [models.UniqueConstraint(fields=["user", "friend"], name="unique_user_friendship")]
         indexes = [
             models.Index(fields=["user", "friend"], name="acc_usrfrndshp_usr_frnd_idx"),
@@ -136,7 +166,7 @@ class UserFriendship(CommonInfo):
 
     def clean(self):
         if self.user_id == self.friend_id:
-            error_msg = "Users cannot be friends with themselves."
+            error_msg = _("Users cannot be friends with themselves.")
             raise ValidationError(error_msg)
 
         super().clean()

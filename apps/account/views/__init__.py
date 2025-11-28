@@ -12,4 +12,5 @@ from apps.account.views.user_logout_view import LogOutUserView
 from apps.account.views.user_profile_picture_delete_view import UserProfilePictureDeleteView
 from apps.account.views.user_register_view import RegisterUserView
 from apps.account.views.user_remove_from_room_view import UserRemoveFromRoomView
+from apps.account.views.user_set_language_view import SetLanguageView
 from apps.account.views.user_update_view import UserUpdateView

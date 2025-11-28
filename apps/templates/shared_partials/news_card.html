@@ -1,22 +1,24 @@
 <article id="news-{{ news.id }}"
          class="timeline-event {% if news.highlighted %}timeline-event-highlight{% endif %}">
+    {% load i18n %}
+    {% trans "Open related update" as news_open_label %}
     {% if news.deeplink %}
         <a href="{{ news.deeplink }}"
            class="timeline-card-link"
-           aria-label="Open related update">
+           aria-label="{{ news_open_label }}">
             <div class="timeline-card timeline-card-interactive">
                 <div class="timeline-card-meta mb-2">
                     <span class="timeline-card-pill">
                         {% if news.highlighted %}
                             ✨
                         {% else %}
-                            Update
+                            {% trans "Update" %}
                         {% endif %}
                     </span>
-                    <span>{{ news.created_at|date:"d.m.Y • H:i" }}</span>
-                    <span>{{ news.created_at|timesince }} ago</span>
+                    <span>{{ news.created_at|date:"SHORT_DATETIME_FORMAT" }}</span>
+                    {% blocktrans with timesince=news.created_at|timesince %}{{ timesince }} ago{% endblocktrans %}
                 </div>
-                <h5 class="timeline-card-title">{{ news.title }}</h5>
+                <h5 class="timeline-card-title">{{ news.heading }}</h5>
                 <div class="timeline-card-body">
                     <p>{{ news.message }}</p>
                 </div>
@@ -29,13 +31,13 @@
                     {% if news.highlighted %}
                         ✨
                     {% else %}
-                        Update
+                        {% trans "Update" %}
                     {% endif %}
                 </span>
-                <span>{{ news.created_at|date:"d.m.Y • H:i" }}</span>
-                <span>{{ news.created_at|timesince }} ago</span>
+                <span>{{ news.created_at|date:"SHORT_DATETIME_FORMAT" }}</span>
+                {% blocktrans with timesince=news.created_at|timesince %}{{ timesince }} ago{% endblocktrans %}
             </div>
-            <h5 class="timeline-card-title">{{ news.title }}</h5>
+            <h5 class="timeline-card-title">{{ news.heading }}</h5>
             <div class="timeline-card-body">
                 <p>{{ news.message }}</p>
             </div>

@@ -72,7 +72,8 @@ class UserDetailViewTestCase(BaseTestSetUp):
 
         stringed_content = response.content.decode()
         self.assertIn("Guest Mode", stringed_content)
-        self.assertIn(f"Hi {self.guest_user.name}", stringed_content)
+        self.assertIn("Hi", stringed_content)
+        self.assertIn(self.guest_user.name, stringed_content)
 
         self.assertNotIn('id="superuser-admin-link"', stringed_content)
 
@@ -138,10 +139,28 @@ class UserDetailViewTestCase(BaseTestSetUp):
 
             self.assertEqual(response.status_code, http.HTTPStatus.OK)
             content = response.content.decode()
-            profile_picture_url = self.user.profile_picture.url
+            profile_picture_url = self.user.profile_picture_url
             has_src_with_quotes = f'src="{profile_picture_url}"' in content
             has_src_without_quotes = f"src={profile_picture_url}" in content
             self.assertTrue(
                 has_src_with_quotes or has_src_without_quotes,
                 msg=f"profile picture wasn't rendered with url {profile_picture_url}",
             )
+
+    def test_profile_picture_fallbacks_to_default_when_missing(self):
+        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
+            self.user.profile_picture.save(
+                "avatar.png",
+                ContentFile(self._build_image_bytes()),
+                save=True,
+            )
+
+            self.user.profile_picture.storage.delete(self.user.profile_picture.name)
+            self.user.refresh_from_db()
+
+            client = self.reauthenticate_user(self.user)
+            response = client.get(reverse("account:detail", args=(self.user.id,)))
+
+            self.assertEqual(response.status_code, http.HTTPStatus.OK)
+            fallback_url = self.user.profile_picture_fallback_url
+            self.assertEqual(self.user.profile_picture_url, fallback_url)

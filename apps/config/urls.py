@@ -5,6 +5,8 @@ from django.templatetags.static import static as staticfiles_url
 from django.urls import include, path
 from django.views.generic import RedirectView
 
+from apps.account import views as account_views
+
 
 class FaviconRedirectView(RedirectView):
     permanent = True
@@ -15,6 +17,7 @@ class FaviconRedirectView(RedirectView):
 
 urlpatterns = [
     path("favicon.ico", FaviconRedirectView.as_view()),
+    path("set-language/", account_views.SetLanguageView.as_view(), name="set_language"),
     path("", include("apps.core.urls")),
     # Django Admin, use {% url 'admin:index' %}
     path(f"{settings.ADMIN_URL}/", admin.site.urls),

@@ -1,5 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load static %}
+{% load static i18n %}
 {% load room_tags %}
 {% block tab_content %}
     <style>
@@ -142,17 +142,21 @@
         <div class="people-hero">
             <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
                 <div>
-                    <p class="text-uppercase text-muted small mb-1">Room roster</p>
-                    <h3 class="mb-1">Everyone in {{ room.name }}</h3>
-                    <p class="mb-0">Invite roommates, add guests, and keep tabs on who has already viewed the room.</p>
+                    <p class="text-uppercase text-muted small mb-1">{% trans "Room roster" %}</p>
+                    <h3 class="mb-1">
+                        {% with current_room.name as room_name %}
+                            {% blocktrans %}Everyone in {{ room_name }}{% endblocktrans %}
+                        {% endwith %}
+                    </h3>
+                    <p class="mb-0">{% trans "Invite roommates, add guests, and keep tabs on who has already viewed the room." %}</p>
                 </div>
                 <div class="text-md-end">
-                    <p class="mb-1 small text-muted">Status</p>
+                    <p class="mb-1 small text-muted">{% trans "Status" %}</p>
                     <span class="badge {% if current_room.is_closed %}bg-secondary{% else %}bg-success{% endif %}">
                         {% if current_room.is_closed %}
-                            Room closed
+                            {% trans "Room closed" %}
                         {% else %}
-                            Room open
+                            {% trans "Room open" %}
                         {% endif %}
                     </span>
                 </div>
@@ -169,7 +173,7 @@
                         hx-push-url="true">
                     <span class="d-flex align-items-center gap-2">
                         <i class="bi bi-person-plus-fill"></i>
-                        Add existing user
+                        {% trans "Add existing user" %}
                     </span>
                     <i class="bi bi-arrow-up-right"></i>
                 </button>
@@ -184,7 +188,7 @@
                         hx-push-url="true">
                     <span class="d-flex align-items-center gap-2">
                         <i class="bi bi-person-plus"></i>
-                        Add guest
+                        {% trans "Add guest" %}
                     </span>
                     <i class="bi bi-arrow-up-right"></i>
                 </button>
@@ -199,8 +203,8 @@
             {% else %}
                 <div class="col">
                     <div class="people-empty">
-                        <p class="fw-semibold mb-1">No one here yet</p>
-                        <p class="mb-0 small">Invite a roommate or add a guest to start splitting expenses.</p>
+                        <p class="fw-semibold mb-1">{% trans "No one here yet" %}</p>
+                        <p class="mb-0 small">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
                     </div>
                 </div>
             {% endif %}

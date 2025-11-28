@@ -1,6 +1,7 @@
 {% load room_tags %}
+{% load i18n %}
 {% if current_user.open_room_qs_for_list %}
-    {% include "side_menu_components/room_list_title.html" with title="Open" %}
+    {% include "side_menu_components/room_list_title.html" with title=_("Open") %}
     <section class="room-group">
         {% for room in current_user.open_room_qs_for_list %}
             <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm{% if current_room and current_room.slug == room.slug %} active{% endif %}"
@@ -28,7 +29,7 @@
         {% endfor %}
     </section>
 {% endif %}
-{% include "side_menu_components/room_list_title.html" with title="New" %}
+{% include "side_menu_components/room_list_title.html" with title=_("New") %}
 <section class="room-group">
     <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm room-entry-callout{% if request.path == "/room/create/" %} active{% endif %}"
          data-bs-dismiss="offcanvas"
@@ -41,14 +42,14 @@
          hx-push-url="true">
         <div class="room-circle{% if request.path == "/room/create/" %} selected{% endif %}">+</div>
         <div class="flex-grow-1 text-start">
-            <div class="room-name fw-semibold mb-0">New room</div>
-            <small class="room-description text-muted">Start a new group with friends</small>
+            <div class="room-name fw-semibold mb-0">{% trans "New room" %}</div>
+            <small class="room-description text-muted">{% trans "Start a new group with friends" %}</small>
         </div>
-        <span class="badge room-status-badge bg-primary text-white">Create</span>
+        <span class="badge room-status-badge bg-primary text-white">{% trans "Create" %}</span>
     </div>
 </section>
 {% if current_user.closed_room_qs_for_list %}
-    {% include "side_menu_components/room_list_title.html" with title="Closed" %}
+    {% include "side_menu_components/room_list_title.html" with title=_("Closed") %}
     <section class="room-group">
         {% for room in current_user.closed_room_qs_for_list %}
             <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm{% if current_room and current_room.slug == room.slug %} active{% endif %}"
@@ -77,7 +78,7 @@
     </section>
 {% endif %}
 {% if current_user.other_rooms_qs_for_list %}
-    {% include "side_menu_components/room_list_title.html" with title="Other" %}
+    {% include "side_menu_components/room_list_title.html" with title=_("Other") %}
     <section class="room-group">
         {% for room in current_user.other_rooms_qs_for_list %}
             <div class="room-entry room-entry-ghost fst-italic text-muted d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm{% if current_room and current_room.slug == room.slug %} active{% endif %}"
