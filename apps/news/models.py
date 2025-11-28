@@ -15,7 +15,7 @@ class News(FullCleanOnSaveMixin, CommonInfo):
         USER_ADDED = 4, _("User added")
 
     highlighted = models.BooleanField(default=False)
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, blank=True)
     message = models.TextField(max_length=10000)
     room = models.ForeignKey("room.Room", related_name="news", on_delete=models.DO_NOTHING)
     type = models.IntegerField(choices=TypeChoices.choices, null=True, blank=True)
