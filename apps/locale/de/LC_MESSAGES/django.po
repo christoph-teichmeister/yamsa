@@ -817,8 +817,8 @@ msgid "Room settings"
 msgstr "Raumeinstellungen"
 
 #, python-format
-msgid "Edit \"%(current_room.name)s\""
-msgstr "\"%(current_room.name)s\" bearbeiten"
+msgid "Edit \"%(room_name)s\""
+msgstr "\"%(room_name)s\" bearbeiten"
 
 msgid "Basics"
 msgstr "Grundlagen"

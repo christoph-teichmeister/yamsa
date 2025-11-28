@@ -21,8 +21,8 @@
                 <div>
                     <p class="text-muted small mb-1">{% trans "Room settings" %}</p>
                     <h3 class="fw-semibold mb-0">
-                        {% blocktrans trimmed %}
-                            Edit "{{ current_room.name }}"
+                        {% blocktrans trimmed with room_name=current_room.name %}
+                            Edit "{{ room_name }}"
                         {% endblocktrans %}
                     </h3>
                 </div>
