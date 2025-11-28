@@ -15,7 +15,6 @@ from apps.mail.services.base_email_service import (
 
 class PaymentReminderEmailService(BaseYamsaEmailService):
     FROM_EMAIL = settings.EMAIL_DEFAULT_FROM_EMAIL
-    subject = _("Payment reminder") + " ⚠️"
 
     def __init__(self, recipient, *, room_name: str, amount_summary: str, inactivity_days: int, payment_link: str):
         self.room_name = room_name

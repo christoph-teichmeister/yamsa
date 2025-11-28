@@ -15,9 +15,8 @@ from apps.mail.services.base_email_service import (
 
 class RoomClosureReminderEmailService(BaseYamsaEmailService):
     FROM_EMAIL = settings.EMAIL_DEFAULT_FROM_EMAIL
-    subject = _("Room status reminder") + " 🌿"
 
-    def __init__(self, recipient, *, room_name: str, inactivity_days: int, room_link: str):
+    def __init__(self, recipient, *, room_name: str, inactivity_days: int, room_link: str) -> None:
         self.room_name = room_name
         self.inactivity_days = inactivity_days
         self.room_link = room_link

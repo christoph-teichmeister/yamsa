@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 from django.conf import settings
 from django.utils import translation
+from django.utils.encoding import force_str
+from django.utils.functional import Promise
 from django.utils.translation import gettext_lazy as _
 from django_pony_express.services.base import BaseEmailService
 
@@ -63,14 +65,28 @@ class BaseYamsaEmailService(BaseEmailService):
 
     def get_context_data(self) -> dict:
         language_code = self.get_language_code()
+
+        def resolve_lazy_dict(raw_dict: dict) -> dict:
+            resolved = {}
+            for key, value in raw_dict.items():
+                if isinstance(value, Promise) or hasattr(value, "_proxy____cast"):
+                    resolved[key] = force_str(value)
+                else:
+                    resolved[key] = value
+            return resolved
+
         with translation.override(language_code):
+            base_ctx = resolve_lazy_dict(self.get_email_base_text_context().__dict__)
+            user_ctx = resolve_lazy_dict(self.get_email_user_text_context().__dict__)
+            extra_ctx = resolve_lazy_dict(self.get_email_extra_context().__dict__)
+
             context_payload = {
                 "context": {
                     "subject": self.get_subject(),
                     "greeting": self.get_greeting(),
-                    **self.get_email_base_text_context().__dict__,
-                    **self.get_email_user_text_context().__dict__,
-                    **self.get_email_extra_context().__dict__,
+                    **base_ctx,
+                    **user_ctx,
+                    **extra_ctx,
                 }
             }
 
