@@ -15,7 +15,11 @@ class GuestSendInvitationEmailForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data["email"]
-        normalized_email = validate_unique_email(email, error_message=self.ExceptionMessage.EMAIL_ALREADY_EXISTS)
+        normalized_email = validate_unique_email(
+            email,
+            error_message=self.ExceptionMessage.EMAIL_ALREADY_EXISTS,
+            exclude_user_id=self.instance.id,
+        )
 
         self.cleaned_data["email"] = normalized_email
         return normalized_email
