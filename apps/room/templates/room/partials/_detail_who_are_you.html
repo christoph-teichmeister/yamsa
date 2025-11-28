@@ -29,7 +29,7 @@
                             {% trans "Guests who arrive via the shared link can register or log in here to confirm their spot." %}
                         </p>
                         <div class="d-flex flex-wrap gap-2">
-                            <a class="btn btn-sm btn-outline-dark px-3"
+                            <a class="btn btn-sm btn-outline-light px-3"
                                href="{% url 'account:register' %}">{% trans "Create a free account" %}</a>
                             <a class="btn btn-sm btn-link px-3" href="{% url 'account:login' %}">{% trans "Already have an account?" %}</a>
                         </div>
@@ -38,19 +38,11 @@
                 <form action="{% url 'account:guest-login' %}" method="post">
                     {% csrf_token %}
                     <div class="mb-4 form-group">
-                        <div class="row gx-0 px-2 my-2 align-items-center">
+                        <div class="row px-2 mt-2 align-items-center">
                             <div class="col">
                                 <h5 class="mb-0">
                                     <label for="userSelect" class="form-label">{% trans "Who are you?" %}</label>
                                 </h5>
-                            </div>
-                            <div class="col text-muted d-flex align-items-center justify-content-end small">
-                                <small class="cursor-pointer"
-                                       data-bs-toggle="popover"
-                                       data-bs-placement="top"
-                                       data-bs-content="{% blocktrans trimmed %}Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in.{% endblocktrans %}">
-                                    {% trans "Not seeing your name?" %} <i class="bi bi-question-circle"></i>
-                                </small>
                             </div>
                         </div>
                         <select name="user_id"
@@ -61,6 +53,14 @@
                                 {% if room_user.is_guest %}<option value="{{ room_user.id }}">{{ room_user.name }}</option>{% endif %}
                             {% endfor %}
                         </select>
+                        <div class="text-muted small d-flex justify-content-start px-2">
+                            <small class="cursor-pointer"
+                                   data-bs-toggle="popover"
+                                   data-bs-placement="top"
+                                   data-bs-content="{% blocktrans trimmed %}Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in.{% endblocktrans %}">
+                                {% trans "Not seeing your name?" %} <i class="bi bi-question-circle"></i>
+                            </small>
+                        </div>
                     </div>
                     <div class="form-group" hidden>
                         <label for="room_slug" class="form-label">{% trans "Room" %}</label>
