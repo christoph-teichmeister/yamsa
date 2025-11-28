@@ -1,5 +1,6 @@
 from django import template
 from django.template.defaulttags import url
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -13,7 +14,7 @@ def parse_user_text(context, user_name: str, start_of_sentence: bool = False):
     else:
         user_text = f"<strong>{user_name}</strong>"
 
-    return user_text
+    return mark_safe(user_text)
 
 
 @register.tag

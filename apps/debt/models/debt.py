@@ -27,11 +27,17 @@ class Debt(FullCleanOnSaveMixin, CommonInfo, models.Model):
         verbose_name_plural = _lazy("Debts")
 
     def __str__(self):
-        settled_prefix = _("Settled: ") if self.settled else ""
-        return _("{settled_prefix}{debitor} owes {value}{currency} to {creditor}").format(
-            settled_prefix=settled_prefix,
-            debitor=self.debitor.name,
-            value=self.value,
-            currency=self.currency.sign,
-            creditor=self.creditor.name,
+        debitor = self.debitor.name
+        creditor = self.creditor.name
+        value = self.value
+        currency = self.currency.sign
+        if self.settled:
+            full_sentence = _("Settled: {debitor} owes {value}{currency} to {creditor}")
+        else:
+            full_sentence = _("{debitor} owes {value}{currency} to {creditor}")
+        return full_sentence.format(
+            debitor=debitor,
+            value=value,
+            currency=currency,
+            creditor=creditor,
         )
