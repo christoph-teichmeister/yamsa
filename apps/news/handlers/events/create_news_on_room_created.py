@@ -18,10 +18,6 @@ def create_news_on_room_created(context: RoomCreated.Context):
     deeplink = reverse("room:detail", kwargs={"room_slug": room.slug})
 
     News.objects.create(
-        title=_("{icon} {initials}: Created").format(
-            icon="🛠️",
-            initials=room.capitalised_initials,
-        ),
         message=message,
         room_id=room.id,
         deeplink=deeplink,

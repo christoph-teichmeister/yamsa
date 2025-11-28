@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from ambient_toolbox.models import CommonInfo
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -19,7 +21,7 @@ class News(FullCleanOnSaveMixin, CommonInfo):
     type = models.IntegerField(choices=TypeChoices.choices, null=True, blank=True)
     deeplink = models.CharField(max_length=512, blank=True)
 
-    TYPE_ICONS = {
+    TYPE_ICONS: ClassVar[dict[TypeChoices, str]] = {
         TypeChoices.ROOM_CREATED: "🛠️",
         TypeChoices.TRANSACTION_CREATED: "💸",
         TypeChoices.TRANSACTION_DELETED: "🗑️",
@@ -65,7 +67,7 @@ class News(FullCleanOnSaveMixin, CommonInfo):
             "-id",
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         heading = self.heading
         return f"{heading}: {self.message[:20]}..."
 

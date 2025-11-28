@@ -23,10 +23,6 @@ def create_news_on_transaction_create(context: ParentTransactionCreated.Context)
     )
 
     News.objects.create(
-        title=_("{icon} {initials}: Transaction created").format(
-            icon="💸",
-            initials=parent_transaction.room.capitalised_initials,
-        ),
         message=message,
         room_id=parent_transaction.room_id,
         deeplink=deeplink,

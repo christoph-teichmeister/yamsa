@@ -23,10 +23,6 @@ def create_news_on_user_connection_to_room_created(context: UserConnectionToRoom
     deeplink = reverse("account:list", kwargs={"room_slug": user_connection_to_room.room.slug})
 
     News.objects.create(
-        title=_("{icon} {initials}: User added").format(
-            icon="✨",
-            initials=user_connection_to_room.room.capitalised_initials,
-        ),
         message=message,
         room_id=user_connection_to_room.room_id,
         deeplink=deeplink,
