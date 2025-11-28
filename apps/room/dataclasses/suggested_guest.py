@@ -28,7 +28,7 @@ class SuggestedGuest:
             name=user.name,
             email=user.email,
             initials=cls.derive_initials(user.name),
-            profile_picture_url=None if user.profile_picture._file is None else user.profile_picture_url,
+            profile_picture_url=user.profile_picture_url,
             is_friend=is_friend,
             rooms_together=rooms_together,
         )

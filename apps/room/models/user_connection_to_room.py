@@ -16,7 +16,7 @@ class UserConnectionToRoom(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixi
         verbose_name = _lazy("User-Connection to Room")
         verbose_name_plural = _lazy("User-Connections to Rooms")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return _("{user} belongs to {room}").format(user=self.user, room=self.room)
 
     @property
