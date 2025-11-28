@@ -1,4 +1,5 @@
 from apps.account.forms.guest_send_invitation_form import GuestSendInvitationEmailForm
+from apps.account.models import User
 from apps.core.tests.setup import BaseTestSetUp
 
 
@@ -24,4 +25,14 @@ class GuestSendInvitationEmailFormTestCase(BaseTestSetUp):
 
         self.assertEqual(
             form.errors["email"][0], form.ExceptionMessage.EMAIL_ALREADY_EXISTS.format(email=self.superuser.email)
+        )
+
+    def test_case_insensitive_email_duplicate(self):
+        uppercased_email = self.superuser.email.upper()
+        form = self.form(instance=self.user, data={"email": uppercased_email})
+        self.assertFalse(form.is_valid())
+
+        expected_email = User.objects.normalize_email(uppercased_email)
+        self.assertEqual(
+            form.errors["email"][0], form.ExceptionMessage.EMAIL_ALREADY_EXISTS.format(email=expected_email)
         )

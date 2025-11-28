@@ -1,7 +1,7 @@
 from django import forms
-from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from apps.account.forms.utils import validate_unique_email
 from apps.account.models import User
 
 
@@ -15,7 +15,11 @@ class GuestSendInvitationEmailForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data["email"]
-        if User.objects.filter(email=email).exists():
-            raise ValidationError(self.ExceptionMessage.EMAIL_ALREADY_EXISTS.format(email=email))
+        normalized_email = validate_unique_email(
+            email,
+            error_message=self.ExceptionMessage.EMAIL_ALREADY_EXISTS,
+            exclude_user_id=self.instance.id,
+        )
 
-        return email
+        self.cleaned_data["email"] = normalized_email
+        return normalized_email

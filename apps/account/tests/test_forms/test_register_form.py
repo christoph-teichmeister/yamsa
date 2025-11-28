@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate
 from django.test import RequestFactory
 
 from apps.account.forms import RegisterForm
+from apps.account.models import User
 from apps.core.tests.setup import BaseTestSetUp
 
 
@@ -68,4 +69,17 @@ class RegisterFormTestCase(BaseTestSetUp):
 
         self.assertEqual(
             form.errors["email"][0], form.ExceptionMessage.EMAIL_ADDRESS_ALREADY_IN_USE.format(email=self.user.email)
+        )
+
+    def test_duplicate_email_case_insensitive(self):
+        uppercased = self.user.email.upper()
+        form = self.form(
+            data={"email": uppercased, "name": "name", "password": "password"},
+        )
+        self.assertFalse(form.is_valid())
+
+        expected_email = User.objects.normalize_email(uppercased)
+        self.assertEqual(
+            form.errors["email"][0],
+            form.ExceptionMessage.EMAIL_ADDRESS_ALREADY_IN_USE.format(email=expected_email),
         )
