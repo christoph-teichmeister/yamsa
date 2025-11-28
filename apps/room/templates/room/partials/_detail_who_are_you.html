@@ -1,41 +1,81 @@
-<h2 class="mb-5">{{ current_room.name }}</h2>
-<form action="{% url "account:guest-login" %}" method="post">
-    {% csrf_token %}
-    <div class="mb-3 form-group">
-        <div class="row gx-0 px-2 my-2">
-            <div class="col">
-                <h5>
-                    <label for="userSelect">Who are you?</label>
-                </h5>
-            </div>
-            <div class="col text-muted d-flex align-items-center justify-content-end">
-                <small class="cursor-pointer"
-                       data-bs-toggle="popover"
-                       data-bs-placement="top"
-                       data-bs-content="Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account try logging in.">
-                    Not seeing your name <i class="bi bi-question-circle"></i>
-                </small>
+{% load i18n %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-10 col-xl-8">
+        <div class="card shadow-sm border-0 rounded-4 px-3 px-md-5 py-5">
+            <div class="card-body">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
+                    <div>
+                        <p class="text-uppercase text-muted small mb-1">{% trans "Guest access" %}</p>
+                        <h2 class="fw-semibold mb-1">{{ current_room.name }}</h2>
+                        <p class="text-muted small mb-0">
+                            {% trans "Select the name that matches your invite so we can connect you to the room." %}
+                        </p>
+                    </div>
+                    <span class="badge rounded-pill {{ current_room.is_closed|yesno:'text-bg-danger,text-bg-success' }} py-2 px-3">
+                        {% if current_room.is_closed %}
+                            <i class="bi bi-lock-fill me-1"></i>{% trans "Closed" %}
+                        {% else %}
+                            <i class="bi bi-share-fill me-1"></i>{% trans "Open to guests" %}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="alert alert-primary rounded-4 px-4 py-3 mb-4 d-flex flex-column flex-md-row align-items-start gap-3">
+                    <div class="fs-3 text-primary-emphasis">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <p class="fw-semibold mb-1">{% trans "Claim your invitation" %}</p>
+                        <p class="mb-2 small text-muted">
+                            {% trans "Guests who arrive via the shared link can register or log in here to confirm their spot." %}
+                        </p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-sm btn-outline-dark px-3"
+                               href="{% url 'account:register' %}">{% trans "Create a free account" %}</a>
+                            <a class="btn btn-sm btn-link px-3" href="{% url 'account:login' %}">{% trans "Already have an account?" %}</a>
+                        </div>
+                    </div>
+                </div>
+                <form action="{% url 'account:guest-login' %}" method="post">
+                    {% csrf_token %}
+                    <div class="mb-4 form-group">
+                        <div class="row gx-0 px-2 my-2 align-items-center">
+                            <div class="col">
+                                <h5 class="mb-0">
+                                    <label for="userSelect" class="form-label">{% trans "Who are you?" %}</label>
+                                </h5>
+                            </div>
+                            <div class="col text-muted d-flex align-items-center justify-content-end small">
+                                <small class="cursor-pointer"
+                                       data-bs-toggle="popover"
+                                       data-bs-placement="top"
+                                       data-bs-content="{% blocktrans trimmed %}Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in.{% endblocktrans %}">
+                                    {% trans "Not seeing your name?" %} <i class="bi bi-question-circle"></i>
+                                </small>
+                            </div>
+                        </div>
+                        <select name="user_id"
+                                class="form-control form-select mb-3"
+                                id="userSelect"
+                                required>
+                            {% for room_user in current_room.users %}
+                                {% if room_user.is_guest %}<option value="{{ room_user.id }}">{{ room_user.name }}</option>{% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label for="room_slug" class="form-label">{% trans "Room" %}</label>
+                        <input id="room_slug"
+                               name="room_slug"
+                               type="text"
+                               class="form-control"
+                               required
+                               value="{{ current_room.slug }}" />
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary px-4 py-2">{% trans "That's me!" %}</button>
+                    </div>
+                </form>
             </div>
         </div>
-        <select name="user_id"
-                class="form-control form-select mb-3"
-                id="userSelect"
-                required>
-            {% for room_user in current_room.users %}
-                {% if room_user.is_guest %}<option value="{{ room_user.id }}">{{ room_user.name }}</option>{% endif %}
-            {% endfor %}
-        </select>
     </div>
-    <div class="form-group" hidden>
-        <label for="room_slug" class="form-label">Room</label>
-        <input id="room_slug"
-               name="room_slug"
-               type="text"
-               class="form-control"
-               required
-               value="{{ current_room.slug }}" />
-    </div>
-    <div class="d-flex justify-content-center">
-        <button type="submit" class="btn btn-primary">That's me!</button>
-    </div>
-</form>
+</div>
