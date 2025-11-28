@@ -29,5 +29,7 @@ def room_context(request):
             "has_guests": room.has_guests,
             "open_debt_count": room.debts.filter(settled=False).count(),
             "can_be_closed": room.can_be_closed,
+            # Processed info
+            "guest_users": room.room_users.filter(is_guest=True),
         },
     }

@@ -47,8 +47,8 @@
                                     class="form-control form-select mb-1"
                                     id="userSelect"
                                     required>
-                                {% for room_user in current_room.users %}
-                                    {% if room_user.is_guest %}<option value="{{ room_user.id }}">{{ room_user.name }}</option>{% endif %}
+                                {% for guest_user in current_room.guest_users %}
+                                    <option value="{{ guest_user.id }}">{{ guest_user.name }}</option>
                                 {% endfor %}
                             </select>
                             <div class="text-muted small d-flex justify-content-start px-2 mb-3">
