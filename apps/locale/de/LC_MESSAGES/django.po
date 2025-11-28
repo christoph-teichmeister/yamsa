@@ -330,14 +330,17 @@ msgstr "Passwort"
 msgid "Stay signed in for 30 days"
 msgstr "Für 30 Tage angemeldet bleiben"
 
+msgid "Active requests keep your session fresh for the configured window (48 hours by default or 30 days when \"Stay signed in\" is checked)."
+msgstr "Aktive Anfragen halten deine Sitzung für das konfigurierte Zeitfenster frisch (standardmäßig 48 Stunden oder 30 Tage, wenn \"Angemeldet bleiben\" aktiviert ist)."
+
 msgid "Forgot password?"
 msgstr "Passwort vergessen?"
 
 msgid "Log in"
 msgstr "Anmelden"
 
-msgid "By logging in you agree that your session may be kept open when \"Stay signed in\" is enabled."
-msgstr "Durch die Anmeldung erklärst du dich damit einverstanden, dass deine Sitzung offen bleibt, wenn die Option \"Angemeldet bleiben\" aktiviert ist."
+msgid "We automatically renew the cookie whenever you stay active so only real inactivity (more than the configured window) forces a re-login, while the \"Stay signed in\" path still lets the 30-day TTL slide."
+msgstr "Wir erneuern das Cookie automatisch, solange du aktiv bleibst, sodass nur echte Inaktivität (länger als das konfigurierte Fenster) eine erneute Anmeldung erzwingt, während der \"Angemeldet bleiben\"-Pfad die 30-Tage-Lebensdauer weiterlaufen lässt."
 
 msgid "Unsubscribed"
 msgstr "Abgemeldet"
