@@ -47,3 +47,14 @@ class RoomShareButtonTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Claim your invitation")
         self.assertContains(response, "Create a free account")
+
+    def test_who_are_you_without_guests_promotes_account_creation(self):
+        self.client.logout()
+
+        response = self.client.get(reverse("room:detail", kwargs={"room_slug": self.room.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, "We have not invited guest slots yet", msg_prefix="Prompt should appear when no guests exist"
+        )
+        self.assertNotContains(response, 'name="user_id"', msg_prefix="Form is hidden until guests exist")
