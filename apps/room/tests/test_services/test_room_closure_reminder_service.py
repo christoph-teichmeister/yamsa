@@ -1,73 +1,56 @@
-from datetime import timedelta
 from unittest import mock
 
-from django.conf import settings
+import pytest
 from django.utils import timezone
 
-from apps.core.tests.setup import BaseTestSetUp
 from apps.debt.models import ReminderLog
+from apps.room.models import Room
 from apps.room.services.room_closure_reminder_service import RoomClosureReminderService
-from apps.transaction.models import Category, ParentTransaction
+
+REMINDER_SERVICE_PATH = "apps.room.services.room_closure_reminder_service.RoomClosureReminderEmailService.process"
 
 
-class RoomClosureReminderServiceTestCase(BaseTestSetUp):
-    def setUp(self):
-        super().setUp()
-        self.category = Category.objects.create(
-            slug=f"room-reminder-{self.room.pk}",
-            name="Room reminder",
-            emoji="🧹",
-        )
-        self._create_old_transaction()
-        self.service = RoomClosureReminderService()
+@pytest.mark.django_db
+class TestRoomClosureReminderService:
+    def test_notifies_creator(self, room_with_stale_activity):
+        service = RoomClosureReminderService(now=timezone.now())
 
-    def _create_old_transaction(self):
-        transaction = ParentTransaction.objects.create(
-            room=self.room,
-            paid_by=self.user,
-            currency=self.room.preferred_currency,
-            description="Quiet room trigger",
-            category=self.category,
-        )
-        timestamp = timezone.now() - timedelta(days=settings.INACTIVITY_REMINDER_DAYS + 4)
-        ParentTransaction.objects.filter(pk=transaction.pk).update(lastmodified_at=timestamp)
+        with mock.patch(REMINDER_SERVICE_PATH) as mocked_process:
+            candidates = service.run()
 
-    def test_inactive_rooms_send_room_reminder(self):
-        with mock.patch(
-            "apps.room.services.room_closure_reminder_service.RoomClosureReminderEmailService.process"
-        ) as mocked_process:
-            candidates = self.service.run()
+        assert candidates
+        assert candidates[0].pk == room_with_stale_activity.pk
+        assert mocked_process.called
 
-        self.assertEqual(len(candidates), 1)
-        self.assertTrue(mocked_process.called)
+        log = ReminderLog.objects.get(reminder_type=service.REMINDER_TYPE)
+        assert log.recipients == [room_with_stale_activity.created_by.email]
 
-        log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
-        self.assertEqual(log.recipients, [self.room.created_by.email])
+    def test_respects_creator_opt_out(self, room_with_stale_activity):
+        room = room_with_stale_activity
+        room.created_by.wants_to_receive_room_reminders = False
+        room.created_by.save(update_fields=["wants_to_receive_room_reminders"])
+        service = RoomClosureReminderService(now=timezone.now())
 
-    def test_opted_out_creator_is_skipped(self):
-        self.room.created_by.wants_to_receive_room_reminders = False
-        self.room.created_by.save(update_fields=["wants_to_receive_room_reminders"])
+        with mock.patch(REMINDER_SERVICE_PATH) as mocked_process:
+            candidates = service.run()
 
-        with mock.patch(
-            "apps.room.services.room_closure_reminder_service.RoomClosureReminderEmailService.process"
-        ) as mocked_process:
-            candidates = self.service.run()
+        assert candidates == []
+        assert not mocked_process.called
 
-        self.assertEqual(len(candidates), 0)
-        self.assertFalse(mocked_process.called)
-        log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
-        self.assertEqual(log.recipients, [])
+        log = ReminderLog.objects.get(reminder_type=service.REMINDER_TYPE)
+        assert log.recipients == []
 
-    def test_closed_rooms_are_skipped(self):
-        self.room.status = self.room.StatusChoices.CLOSED
-        self.room.save(update_fields=["status"])
+    def test_closed_rooms_are_skipped(self, room_with_stale_activity):
+        room = room_with_stale_activity
+        room.status = Room.StatusChoices.CLOSED
+        room.save(update_fields=["status"])
+        service = RoomClosureReminderService(now=timezone.now())
 
-        with mock.patch(
-            "apps.room.services.room_closure_reminder_service.RoomClosureReminderEmailService.process"
-        ) as mocked_process:
-            candidates = self.service.run()
+        with mock.patch(REMINDER_SERVICE_PATH) as mocked_process:
+            candidates = service.run()
 
-        self.assertEqual(len(candidates), 0)
-        self.assertFalse(mocked_process.called)
-        log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
-        self.assertEqual(log.recipients, [])
+        assert candidates == []
+        assert not mocked_process.called
+
+        log = ReminderLog.objects.get(reminder_type=service.REMINDER_TYPE)
+        assert log.recipients == []
