@@ -1,6 +1,8 @@
+from datetime import timedelta
 from unittest import mock
 
 import pytest
+from django.test import override_settings
 from django.utils import timezone
 
 from apps.debt.models import ReminderLog
@@ -54,3 +56,37 @@ class TestRoomClosureReminderService:
 
         log = ReminderLog.objects.get(reminder_type=service.REMINDER_TYPE)
         assert log.recipients == []
+
+    @override_settings(INACTIVITY_REMINDER_ENABLED=False)
+    def test_should_run_returns_false_when_disabled(self):
+        service = RoomClosureReminderService(now=timezone.now())
+
+        assert not service.should_run()
+
+    def test_should_run_respects_heartbeat_interval(self):
+        ReminderLog.objects.create(reminder_type=RoomClosureReminderService.REMINDER_TYPE, recipients=[])
+        last_log = ReminderLog.objects.order_by("-created_at").first()
+        service = RoomClosureReminderService(
+            now=last_log.created_at + RoomClosureReminderService.HEARTBEAT_INTERVAL - timedelta(seconds=1)
+        )
+
+        assert not service.should_run()
+
+    def test_should_run_after_heartbeat_expires(self):
+        ReminderLog.objects.create(reminder_type=RoomClosureReminderService.REMINDER_TYPE, recipients=[])
+        last_log = ReminderLog.objects.order_by("-created_at").first()
+        service = RoomClosureReminderService(
+            now=last_log.created_at + RoomClosureReminderService.HEARTBEAT_INTERVAL + timedelta(seconds=1)
+        )
+
+        assert service.should_run()
+
+    def test_run_if_due_skips_when_not_ready(self):
+        service = RoomClosureReminderService(now=timezone.now())
+
+        with (
+            mock.patch.object(service, "should_run", return_value=False),
+            mock.patch.object(service, "run") as mocked_run,
+        ):
+            assert service.run_if_due() == []
+            mocked_run.assert_not_called()
