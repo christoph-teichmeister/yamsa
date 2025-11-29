@@ -8,7 +8,7 @@ from freezegun import freeze_time
 from apps.account.tests.factories import GuestUserFactory, UserFactory
 from apps.currency.tests.factories import CurrencyFactory
 from apps.debt.models import Debt
-from apps.transaction.tests.baker_recipes import create_parent_transaction_with_optimisation
+from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 
 
 @pytest.mark.django_db
