@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 from django.test import RequestFactory
 from django.urls import reverse
 
-from apps.account.tests.baker_recipes import default_password
+from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.views import UserChangePasswordView, UserDetailView
 
 pytestmark = pytest.mark.django_db
@@ -24,7 +24,7 @@ def test_post_regular(authenticated_client, user):
     response = authenticated_client.post(
         reverse("account:change-password", args=(user.id,)),
         data={
-            "old_password": default_password,
+            "old_password": DEFAULT_PASSWORD,
             "new_password": new_password,
             "new_password_confirmation": new_password,
         },

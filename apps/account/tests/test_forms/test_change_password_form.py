@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 
 from apps.account.forms.change_password_form import ChangePasswordForm
-from apps.account.tests.baker_recipes import default_password
+from apps.account.tests.constants import DEFAULT_PASSWORD
 
 
 class TestChangePasswordForm:
@@ -13,7 +13,7 @@ class TestChangePasswordForm:
             instance=user,
             data={
                 "id": user.id,
-                "old_password": default_password,
+                "old_password": DEFAULT_PASSWORD,
                 "new_password": new_password,
                 "new_password_confirmation": new_password,
             },
@@ -46,7 +46,7 @@ class TestChangePasswordForm:
             instance=user,
             data={
                 "id": user.id,
-                "old_password": default_password,
+                "old_password": DEFAULT_PASSWORD,
                 "new_password": "1",
                 "new_password_confirmation": "2",
             },

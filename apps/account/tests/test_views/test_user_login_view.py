@@ -5,7 +5,7 @@ from django.conf import settings
 from django.urls import reverse
 
 from apps.account.constants import SESSION_TTL_SESSION_KEY
-from apps.account.tests.baker_recipes import default_password
+from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.views import LogInUserView
 from apps.core.views import WelcomePartialView
 
@@ -28,7 +28,7 @@ def test_get_regular(client):
 def test_post_regular(client, user):
     response = client.post(
         reverse("account:login"),
-        data={"email": user.email, "password": default_password},
+        data={"email": user.email, "password": DEFAULT_PASSWORD},
         follow=True,
     )
 
@@ -50,7 +50,7 @@ def test_post_email_and_password_are_required(client):
 def test_post_with_remember_me_extends_session(client, user):
     response = client.post(
         reverse("account:login"),
-        data={"email": user.email, "password": default_password, "remember_me": "on"},
+        data={"email": user.email, "password": DEFAULT_PASSWORD, "remember_me": "on"},
         follow=True,
     )
 
@@ -71,7 +71,7 @@ def test_post_email_and_password_do_not_match(client, user):
 
     response = client.post(
         reverse("account:login"),
-        data={"email": f"{user.email}-wrong", "password": default_password},
+        data={"email": f"{user.email}-wrong", "password": DEFAULT_PASSWORD},
     )
 
     assert response.status_code == http.HTTPStatus.OK
