@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="yamsa: all tests (pytest)" type="tests" factoryName="Autodetect">
+  <configuration default="false" name="yamsa: all tests" type="tests" factoryName="Autodetect">
     <module name="yamsa" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
