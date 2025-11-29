@@ -1,8 +1,7 @@
-from django.test import Client, RequestFactory, TestCase, override_settings
+from django.test import Client, TestCase, override_settings
 from model_bakery import baker
 
 from apps.account.models import User
-from apps.account.tests.baker_recipes import default_password
 
 
 @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
@@ -24,10 +23,5 @@ class BaseTestSetUp(TestCase):
     def reauthenticate_user(cls, user: User) -> Client:
         cls.client = Client()
         cls.client.defaults["HTTP_HX_REQUEST"] = "true"
-        # Create a request object for django-axes
-        request = RequestFactory().get("/")
-
-        login = cls.client.login(request=request, email=user.email, password=default_password)
-        cls.assertTrue(cls(), login, f"{login=}")
-
+        cls.client.force_login(user)
         return cls.client

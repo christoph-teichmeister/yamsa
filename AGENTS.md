@@ -16,8 +16,8 @@ and `entrypoint.sh`. Documentation, including AI prompt history, lives in `docs/
 - `uv sync --all-extras --no-install-project` - install Python 3.11.11 dependencies including tooling.
 - `uv run python manage.py migrate` - apply schema changes before running the app.
 - `uv run python manage.py runserver 0.0.0.0:8000` - local dev server with HTMX/Bootstrap UI.
-- `uv run python manage.py test` - execute Django test suite under the default settings module.
-- `uv run coverage run manage.py test && uv run coverage report` - generate coverage (config in
+- `uv run pytest` - execute Django test suite via pytest under the default settings module.
+- `uv run coverage run -m pytest && uv run coverage report` - generate coverage (config in
   `pyproject.toml`).
 
 ## Coding Style & Naming Conventions
@@ -56,7 +56,7 @@ factories or fixtures over ad-hoc object creation to keep tests deterministic.
 
 History follows Conventional Commits (`feat: add split animation`, `fix: correct room balance`). Keep messages in the
 imperative and scoped to a single concern. Every PR should: describe the change and rationale, link the related issue,
-list validation commands (`manage.py test`, linters), and attach before/after screenshots or GIFs for UI tweaks (
+list validation commands (`uv run pytest`, linters), and attach before/after screenshots or GIFs for UI tweaks (
 especially mobile layouts). Request review only after CI passes locally to reduce churn.
 
 ## Security & Configuration Tips

@@ -2,10 +2,11 @@ from model_bakery import seq
 from model_bakery.recipe import Recipe
 
 from apps.account.models import User
+from apps.account.tests.constants import DEFAULT_PASSWORD, DEFAULT_PASSWORD_HASHED
 
-default_password = "Admin123$"
+default_password = DEFAULT_PASSWORD
 # Tests use django.contrib.auth.hashers.MD5PasswordHasher
-default_password_hashed = "md5$JBOrgPJ8jG4q6wYGkVhIxp$327dd1d9a3cc74ff43fae52623871315"
+default_password_hashed = DEFAULT_PASSWORD_HASHED
 
 base_user_data = {
     "is_superuser": False,

@@ -31,8 +31,9 @@ The Django stack is managed through `uv` with a `.venv` stored beside the projec
 
 ## Testing & Quality
 
-- `uv run python manage.py test apps` runs the Django app suite inside `uv`’s environment.
-- `uv run coverage run manage.py test && uv run coverage report` generates coverage reports (see `pyproject.toml` for
+- `uv run pytest` runs the full Django suite through `pytest`, leveraging the shared fixtures in `conftest.py` and
+  the per-app factories under `apps/*/tests/factories.py`.
+- `uv run coverage run -m pytest && uv run coverage report` generates coverage reports (see `pyproject.toml` for
   configuration).
 - Run `uv run ruff check --fix .` and `uv run djlint apps --reformat` to keep formatting consistent.
 

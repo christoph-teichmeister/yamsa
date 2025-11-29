@@ -855,7 +855,7 @@ MAINTENANCE = env("MAINTENANCE")
 # Exclude main app from database serialization, speeds up tests, but removes ability to simulate rollbacks in tests
 TEST_NON_SERIALIZED_APPS = ("apps",)
 
-if "test" in sys.argv or "test_coverage" in sys.argv:
+if env.bool("DJANGO_TESTING", False) or any(keyword in sys.argv for keyword in ("test", "test_coverage")):
     base = environ.Path(__file__) - 1
     environ.Env.read_env(env_file=base("unittest.env"))
 
