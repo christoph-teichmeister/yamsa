@@ -5,7 +5,6 @@ from decimal import Decimal
 import pytest
 from django.urls import reverse
 from freezegun import freeze_time
-from model_bakery import baker
 
 from apps.transaction.models import ChildTransaction, ParentTransaction
 from apps.transaction.views import TransactionListView
@@ -18,12 +17,11 @@ class TestTransactionCreateView:
     def test_post_regular(self, authenticated_client, room, user):
         assert room.users.count() > 1, "This test requires more than one participant in the room"
 
-        currency = baker.make_recipe("apps.currency.tests.currency")
         response = authenticated_client.post(
             reverse("transaction:create", kwargs={"room_slug": room.slug}),
             data={
                 "description": "My description",
-                "currency": currency.id,
+                "currency": room.preferred_currency.id,
                 "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
                 "paid_by": user.id,
                 "room": room.id,

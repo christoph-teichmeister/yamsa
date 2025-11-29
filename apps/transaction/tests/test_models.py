@@ -1,7 +1,7 @@
 import pytest
 from django.utils import timezone
-from model_bakery import baker
 
+from apps.currency.tests.factories import CurrencyFactory
 from apps.transaction.models import Category, ParentTransaction
 
 pytestmark = pytest.mark.django_db
@@ -34,7 +34,7 @@ class TestCategoryModel:
 
 class TestParentTransactionModel:
     def test_parent_transaction_defaults_to_misc_category(self, user, room):
-        currency = baker.make_recipe("apps.currency.tests.currency")
+        currency = CurrencyFactory()
         transaction = ParentTransaction.objects.create(
             description="Default category check",
             paid_by=user,

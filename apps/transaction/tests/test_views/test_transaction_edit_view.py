@@ -3,8 +3,9 @@ from decimal import Decimal
 
 import pytest
 from django.urls import reverse
-from model_bakery import baker
 
+from apps.transaction.models import ChildTransaction
+from apps.transaction.tests.factories import ParentTransactionFactory
 from apps.transaction.utils import split_total_across_paid_for
 
 pytestmark = pytest.mark.django_db
@@ -12,19 +13,13 @@ pytestmark = pytest.mark.django_db
 
 class TestTransactionEditView:
     def test_post_rebalances_child_transactions_when_total_changes(self, authenticated_client, room, user, guest_user):
-        parent_transaction = baker.make_recipe(
-            "apps.transaction.tests.parent_transaction",
-            room=room,
-            paid_by=user,
-        )
-        baker.make_recipe(
-            "apps.transaction.tests.child_transaction",
+        parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
+        ChildTransaction.objects.create(
             parent_transaction=parent_transaction,
             paid_for=user,
             value=Decimal("10.00"),
         )
-        baker.make_recipe(
-            "apps.transaction.tests.child_transaction",
+        ChildTransaction.objects.create(
             parent_transaction=parent_transaction,
             paid_for=guest_user,
             value=Decimal("20.00"),

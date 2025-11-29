@@ -4,8 +4,9 @@ from http import HTTPStatus
 import pytest
 from django.urls import reverse
 from freezegun import freeze_time
-from model_bakery import baker
 
+from apps.account.tests.factories import GuestUserFactory, UserFactory
+from apps.currency.tests.factories import CurrencyFactory
 from apps.debt.models import Debt
 from apps.transaction.tests.baker_recipes import create_parent_transaction_with_optimisation
 
@@ -13,7 +14,7 @@ from apps.transaction.tests.baker_recipes import create_parent_transaction_with_
 @pytest.mark.django_db
 class TestCalculateOptimisedDebts:
     def test_simple_reduction_single_currency_no_settle(self, room, user, guest_user):
-        currency = baker.make_recipe("apps.currency.tests.currency")
+        currency = CurrencyFactory()
 
         create_parent_transaction_with_optimisation(
             room=room,
@@ -63,7 +64,7 @@ class TestCalculateOptimisedDebts:
 
     @freeze_time("2020-04-04 4:20:00")
     def test_simple_reduction_single_currency_with_settle(self, room, user, guest_user, authenticated_client):
-        currency = baker.make_recipe("apps.currency.tests.currency")
+        currency = CurrencyFactory()
 
         create_parent_transaction_with_optimisation(
             room=room,
@@ -174,12 +175,12 @@ class TestCalculateOptimisedDebts:
         assert room.debts.filter(settled=False).count() == 1
 
     def test_complicated_reduction_two_currencies_no_settle(self, room, user, guest_user):
-        currency_list = baker.make_recipe("apps.currency.tests.currency", _quantity=2)
+        currency_list = [CurrencyFactory(), CurrencyFactory()]
         currency_1 = currency_list[0]
         currency_2 = currency_list[1]
 
-        user_list = baker.make_recipe("apps.account.tests.user", _quantity=2)
-        guest_user_list = baker.make_recipe("apps.account.tests.guest_user", _quantity=2)
+        user_list = [UserFactory(), UserFactory()]
+        guest_user_list = [GuestUserFactory(), GuestUserFactory()]
 
         default_kwargs = {"room": room}
         currency_1_kwargs = {**default_kwargs, "parent_transaction_kwargs": {"currency": currency_1}}
@@ -544,15 +545,15 @@ class TestCalculateOptimisedDebts:
 
     @freeze_time("2020-04-04 4:20:00")
     def test_complicated_reduction_two_currencies_with_settle(self, room, user, guest_user, authenticated_client):
-        currency_list = baker.make_recipe("apps.currency.tests.currency", _quantity=2)
+        currency_list = [CurrencyFactory(), CurrencyFactory()]
         currency_1 = currency_list[0]
         currency_2 = currency_list[1]
 
         user_1 = user
-        user_2 = baker.make_recipe("apps.account.tests.user")
+        user_2 = UserFactory()
 
         guest_user_1 = guest_user
-        guest_user_2 = baker.make_recipe("apps.account.tests.guest_user")
+        guest_user_2 = GuestUserFactory()
 
         default_kwargs = {"room": room}
         currency_1_kwargs = {**default_kwargs, "parent_transaction_kwargs": {"currency": currency_1}}
@@ -734,11 +735,11 @@ class TestCalculateOptimisedDebts:
 
     @freeze_time("2020-04-04 4:20:00")
     def test_debt_optimisation_bug_real_life_example(self, room, user, guest_user):
-        currency_1 = baker.make_recipe("apps.currency.tests.currency")
+        currency_1 = CurrencyFactory()
 
         chris = user
-        carina = baker.make_recipe("apps.account.tests.user")
-        oliver = baker.make_recipe("apps.account.tests.user")
+        carina = UserFactory()
+        oliver = UserFactory()
         rici = guest_user
 
         default_kwargs = {"room": room}

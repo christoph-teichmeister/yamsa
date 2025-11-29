@@ -1,20 +1,15 @@
 from unittest import mock
 
 import pytest
-from model_bakery import baker
 from pywebpush import WebPushException
 
-from apps.webpush.models import WebpushInformation
 from apps.webpush.services.notification_send_service import NotificationSendService
+from apps.webpush.tests.factories import WebpushInformationFactory
 
 
 @pytest.fixture
-def webpush_info(db, user):
-    return baker.make(WebpushInformation, user=user)
-
-
-@pytest.fixture
-def notification_send_service(webpush_info):
+def notification_send_service(db, user):
+    WebpushInformationFactory(user=user)
     return NotificationSendService()
 
 

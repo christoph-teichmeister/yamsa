@@ -6,7 +6,6 @@ from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 
 from apps.account.tests.factories import UserFactory
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
-from apps.transaction.tests.baker_recipes import create_parent_transaction_with_optimisation
 from apps.webpush.handlers.events.events import send_notification_on_transaction_create
 from apps.webpush.utils import Notification
 
@@ -22,6 +21,7 @@ class TestSendNotificationOnTransactionCreate:
         room,
         user,
         guest_user,
+        create_parent_transaction_with_optimisation,
     ):
         parent_transaction, _ = create_parent_transaction_with_optimisation(
             room=room,
@@ -44,6 +44,7 @@ class TestSendNotificationOnTransactionCreate:
         user,
         guest_user,
         another_user,
+        create_parent_transaction_with_optimisation,
     ):
         room.users.add(another_user)
 
@@ -71,6 +72,7 @@ class TestSendNotificationOnTransactionCreate:
         user,
         guest_user,
         another_user,
+        create_parent_transaction_with_optimisation,
     ):
         room.users.add(another_user)
         with mock.patch.object(CurrentRequestMiddleware, "get_current_user", return_value=another_user):

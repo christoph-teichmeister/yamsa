@@ -3,20 +3,16 @@ from decimal import Decimal
 import pytest
 from django.urls import reverse
 from django.utils import timezone
-from model_bakery import baker
 
-from apps.transaction.models import Category
+from apps.currency.tests.factories import CurrencyFactory
+from apps.transaction.models import Category, ChildTransaction
+from apps.transaction.tests.factories import ParentTransactionFactory
 
 pytestmark = pytest.mark.django_db
 
 
 def _make_child(parent_transaction, paid_for, value):
-    baker.make_recipe(
-        "apps.transaction.tests.child_transaction",
-        parent_transaction=parent_transaction,
-        paid_for=paid_for,
-        value=value,
-    )
+    ChildTransaction.objects.create(parent_transaction=parent_transaction, paid_for=paid_for, value=value)
 
 
 class TestTransactionCategoryBreakdownView:
@@ -24,8 +20,7 @@ class TestTransactionCategoryBreakdownView:
         groceries = Category.objects.get(slug="groceries")
         transport = Category.objects.get(slug="transport")
 
-        parent_groceries = baker.make_recipe(
-            "apps.transaction.tests.parent_transaction",
+        parent_groceries = ParentTransactionFactory(
             room=room,
             paid_by=user,
             currency=room.preferred_currency,
@@ -34,8 +29,7 @@ class TestTransactionCategoryBreakdownView:
         )
         _make_child(parent_groceries, user, Decimal("34.25"))
 
-        parent_transport = baker.make_recipe(
-            "apps.transaction.tests.parent_transaction",
+        parent_transport = ParentTransactionFactory(
             room=room,
             paid_by=user,
             currency=room.preferred_currency,
@@ -62,9 +56,8 @@ class TestTransactionCategoryBreakdownView:
         groceries = Category.objects.get(slug="groceries")
         transport = Category.objects.get(slug="transport")
 
-        other_currency = baker.make_recipe("apps.currency.tests.currency", code="ALT")
-        parent_groceries = baker.make_recipe(
-            "apps.transaction.tests.parent_transaction",
+        other_currency = CurrencyFactory(code="ALT")
+        parent_groceries = ParentTransactionFactory(
             room=room,
             paid_by=user,
             currency=room.preferred_currency,
@@ -73,8 +66,7 @@ class TestTransactionCategoryBreakdownView:
         )
         _make_child(parent_groceries, user, Decimal("20"))
 
-        parent_transport = baker.make_recipe(
-            "apps.transaction.tests.parent_transaction",
+        parent_transport = ParentTransactionFactory(
             room=room,
             paid_by=user,
             currency=other_currency,

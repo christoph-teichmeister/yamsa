@@ -1,11 +1,11 @@
 from decimal import Decimal
 
 import pytest
-from model_bakery import baker
 
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.models import Category, ChildTransaction
+from apps.transaction.tests.factories import ParentTransactionFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -21,10 +21,7 @@ class TestTransactionFormStructure:
 
     def test_edit_form_initial_category_matches_instance(self):
         category = Category.objects.get(slug="groceries")
-        parent_transaction = baker.make_recipe(
-            "apps.transaction.tests.parent_transaction",
-            category=category,
-        )
+        parent_transaction = ParentTransactionFactory(category=category)
         form = TransactionEditForm(instance=parent_transaction)
 
         assert form.initial["category"] == category.pk
@@ -32,11 +29,7 @@ class TestTransactionFormStructure:
 
 @pytest.fixture
 def parent_transaction_with_children(room, guest_user, user):
-    parent_transaction = baker.make_recipe(
-        "apps.transaction.tests.parent_transaction",
-        room=room,
-        paid_by=user,
-    )
+    parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
     first_child = ChildTransaction.objects.create(
         parent_transaction=parent_transaction,
         paid_for=user,

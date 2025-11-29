@@ -5,10 +5,10 @@ from http import HTTPStatus
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
-from model_bakery import baker
 
 from apps.core.toast_constants import SUCCESS_TOAST_CLASS
-from apps.transaction.models import Receipt
+from apps.transaction.models import ChildTransaction, Receipt
+from apps.transaction.tests.factories import ParentTransactionFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -21,16 +21,14 @@ def enforce_media_root(tmp_path, settings):
 
 @pytest.fixture
 def transaction_with_children(room, user):
-    parent_transaction = baker.make_recipe(
-        "apps.transaction.tests.parent_transaction",
+    parent_transaction = ParentTransactionFactory(
         room=room,
         paid_by=user,
         currency=room.preferred_currency,
     )
 
     for member in room.users.all():
-        baker.make_recipe(
-            "apps.transaction.tests.child_transaction",
+        ChildTransaction.objects.create(
             parent_transaction=parent_transaction,
             paid_for=member,
             value=Decimal("5"),
