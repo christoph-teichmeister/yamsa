@@ -829,9 +829,9 @@ PWA_SERVICE_WORKER_DEBUG = DEBUG
 # AMBIENT TOOLBOX
 # ------------------------------------------------------------------------------
 
-# Test structure validator whitelist
+# Test structure validator allowlist
 # https://ambient-toolbox.readthedocs.io/en/latest/features/tests.html#test-structure-validator
-TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = ["baker_recipes", "setup"]
+TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = ["factories", "conftest"]
 
 # Directories skipped by validators such as `validate_test_structure`.
 TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST = [
