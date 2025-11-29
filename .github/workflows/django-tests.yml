@@ -32,10 +32,8 @@ jobs:
       - name: Run Tests
         run: |-
           uv run python manage.py collectstatic --no-input
-        # TODO CT: Remove the following two lines
           uv run coverage erase
           rm -f .coverage
-        # TODO CT: Remove above two lines
           uv run coverage run manage.py test apps -v3
         env:
           DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
