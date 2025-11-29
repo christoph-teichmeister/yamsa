@@ -1,82 +1,120 @@
 import http
 import json
-from unittest import mock
 
+import pytest
 from django.urls import reverse
 
 from apps.account.messages.commands.remove_user_from_room import RemoveUserFromRoom
 from apps.account.models import User
 from apps.account.views import UserListForRoomView
-from apps.core.tests.setup import BaseTestSetUp
 from apps.core.toast_constants import ERROR_TOAST_CLASS
-from apps.room.views import RoomListView
+from apps.core.views import WelcomePartialView
+
+pytestmark = pytest.mark.django_db
 
 
-class UserRemoveFromRoomViewTestCase(BaseTestSetUp):
-    def test_post_user_can_not_be_removed_from_room(self):
-        self.room.users.add(self.guest_user)
+def test_post_user_can_not_be_removed_from_room(room, guest_user, user, hx_client, monkeypatch):
+    room.users.add(guest_user)
 
-        with (
-            mock.patch("apps.account.views.user_remove_from_room_view.handle_message") as mocked_handle_message,
-            mock.patch.object(User, "can_be_removed_from_room", return_value=False),
-        ):
-            client = self.reauthenticate_user(self.user)
-            response = client.post(
-                reverse(
-                    "account:remove-from-room",
-                    kwargs={"room_slug": self.room.slug, "pk": self.guest_user.id},
-                ),
-                follow=True,
-            )
-            self.assertEqual(response.status_code, http.HTTPStatus.OK)
+    recorded_messages = []
 
-            mocked_handle_message.assert_not_called()
+    def handle_message(message):
+        recorded_messages.append(message)
+        return message
 
-        self.assertTrue(response.template_name[0], UserListForRoomView.template_name)
-        payload = json.loads(response.headers["HX-Trigger-After-Settle"])
-        toasts = payload["triggerToast"]
-        self.assertIsInstance(toasts, list)
-        self.assertEqual(
-            toasts[0]["message"],
-            f'"{self.guest_user.name}" can not be removed from this room, '
-            f"because they still have either transactions or open debts.",
-        )
-        self.assertEqual(toasts[0]["type"], ERROR_TOAST_CLASS)
+    def deny_removal(self, room_id):
+        return False
 
-    def test_post_user_can_be_removed_from_room(self):
-        self.room.users.add(self.guest_user)
+    monkeypatch.setattr(
+        "apps.account.views.user_remove_from_room_view.handle_message",
+        handle_message,
+    )
+    monkeypatch.setattr(User, "can_be_removed_from_room", deny_removal)
 
-        with mock.patch("apps.account.views.user_remove_from_room_view.handle_message") as mocked_handle_message:
-            client = self.reauthenticate_user(self.user)
-            response = client.post(
-                reverse(
-                    "account:remove-from-room",
-                    kwargs={"room_slug": self.room.slug, "pk": self.guest_user.id},
-                ),
-                follow=True,
-            )
-            self.assertEqual(response.status_code, http.HTTPStatus.OK)
+    client = hx_client(user)
+    response = client.post(
+        reverse(
+            "account:remove-from-room",
+            kwargs={"room_slug": room.slug, "pk": guest_user.id},
+        ),
+        follow=True,
+    )
 
-            mocked_handle_message.assert_called_once()
-            self.assertIsInstance(mocked_handle_message.call_args[0][0], RemoveUserFromRoom)
+    assert response.status_code == http.HTTPStatus.OK
+    assert not recorded_messages
 
-        self.assertTrue(response.template_name[0], UserListForRoomView.template_name)
+    assert response.template_name[0] == UserListForRoomView.template_name
+    payload = json.loads(response.headers["HX-Trigger-After-Settle"])
+    toasts = payload["triggerToast"]
+    assert isinstance(toasts, list)
+    assert toasts[0]["message"] == (
+        f'"{guest_user.name}" can not be removed from this room, '
+        "because they still have either transactions or open debts."
+    )
+    assert toasts[0]["type"] == ERROR_TOAST_CLASS
 
-    def test_post_user_removes_themselves_from_room(self):
-        self.room.users.add(self.guest_user)
 
-        with mock.patch("apps.account.views.user_remove_from_room_view.handle_message") as mocked_handle_message:
-            client = self.reauthenticate_user(self.user)
-            response = client.post(
-                reverse(
-                    "account:remove-from-room",
-                    kwargs={"room_slug": self.room.slug, "pk": self.user.id},
-                ),
-                follow=True,
-            )
-            self.assertEqual(response.status_code, http.HTTPStatus.OK)
+def test_post_user_can_be_removed_from_room(room, guest_user, user, hx_client, monkeypatch):
+    room.users.add(guest_user)
 
-            mocked_handle_message.assert_called_once()
-            self.assertIsInstance(mocked_handle_message.call_args[0][0], RemoveUserFromRoom)
+    recorded_messages = []
 
-        self.assertTrue(response.template_name[0], RoomListView.template_name)
+    def handle_message(message):
+        recorded_messages.append(message)
+        return message
+
+    def allow_removal(self, room_id):
+        return True
+
+    monkeypatch.setattr(
+        "apps.account.views.user_remove_from_room_view.handle_message",
+        handle_message,
+    )
+    monkeypatch.setattr(User, "can_be_removed_from_room", allow_removal)
+
+    client = hx_client(user)
+    response = client.post(
+        reverse(
+            "account:remove-from-room",
+            kwargs={"room_slug": room.slug, "pk": guest_user.id},
+        ),
+        follow=True,
+    )
+
+    assert response.status_code == http.HTTPStatus.OK
+    assert len(recorded_messages) == 1
+    assert isinstance(recorded_messages[0], RemoveUserFromRoom)
+    assert response.template_name[0] == UserListForRoomView.template_name
+
+
+def test_post_user_removes_themselves_from_room(room, user, hx_client, monkeypatch):
+    room.users.add(user)
+
+    recorded_messages = []
+
+    def handle_message(message):
+        recorded_messages.append(message)
+        return message
+
+    def allow_removal(self, room_id):
+        return True
+
+    monkeypatch.setattr(
+        "apps.account.views.user_remove_from_room_view.handle_message",
+        handle_message,
+    )
+    monkeypatch.setattr(User, "can_be_removed_from_room", allow_removal)
+
+    client = hx_client(user)
+    response = client.post(
+        reverse(
+            "account:remove-from-room",
+            kwargs={"room_slug": room.slug, "pk": user.id},
+        ),
+        follow=True,
+    )
+
+    assert response.status_code == http.HTTPStatus.OK
+    assert len(recorded_messages) == 1
+    assert isinstance(recorded_messages[0], RemoveUserFromRoom)
+    assert response.template_name[0] == WelcomePartialView.template_name

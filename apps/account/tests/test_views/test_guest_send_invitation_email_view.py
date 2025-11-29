@@ -1,66 +1,67 @@
 import http
-from unittest import mock
 
+import pytest
 from django.urls import reverse
 
 from apps.account.messages.commands.send_invitation_email import SendInvitationEmail
 from apps.account.views import GuestSendInvitationEmailView, UserListForRoomView
-from apps.core.tests.setup import BaseTestSetUp
+
+pytestmark = pytest.mark.django_db
 
 
-class GuestSendInvitationEmailViewTestCase(BaseTestSetUp):
-    def test_get_regular(self):
-        client = self.reauthenticate_user(self.user)
-        response = client.get(
-            reverse(
-                "account:guest-send-invitation-email", kwargs={"room_slug": self.room.slug, "pk": self.guest_user.id}
-            )
-        )
-        self.assertEqual(response.status_code, http.HTTPStatus.OK)
+@pytest.fixture
+def guest_send_invitation_url(room, guest_user):
+    return reverse(
+        "account:guest-send-invitation-email",
+        kwargs={"room_slug": room.slug, "pk": guest_user.id},
+    )
 
-        self.assertTrue(response.template_name[0], GuestSendInvitationEmailView.template_name)
-        self.assertIn(f'Invite {self.guest_user.name} to "{self.room.name}"', str(response.content))
 
-        self.assertEqual(response.context_data["active_tab"], "people")
+def test_get_regular(authenticated_client, guest_user, room, guest_send_invitation_url):
+    response = authenticated_client.get(guest_send_invitation_url)
 
-    def test_post_regular(self):
-        client = self.reauthenticate_user(self.user)
+    assert response.status_code == http.HTTPStatus.OK
+    assert response.template_name[0] == GuestSendInvitationEmailView.template_name
+    assert f'Invite {guest_user.name} to "{room.name}"' in response.content.decode()
+    assert response.context_data["active_tab"] == "people"
 
-        with mock.patch("apps.account.views.guest_send_invitation_email_view.handle_message") as mocked_handle_message:
-            response = client.post(
-                reverse(
-                    "account:guest-send-invitation-email",
-                    kwargs={"room_slug": self.room.slug, "pk": self.guest_user.id},
-                ),
-                data={"email": "some_email@local.local"},
-                follow=True,
-            )
-            self.assertEqual(response.status_code, http.HTTPStatus.OK)
 
-            mocked_handle_message.assert_called_once()
-            self.assertIsInstance(mocked_handle_message.call_args[0][0], SendInvitationEmail)
+def test_post_regular(authenticated_client, room, guest_user, guest_send_invitation_url, monkeypatch):
+    recorded_messages = []
 
-        self.assertTrue(response.template_name[0], UserListForRoomView.template_name)
-        response_content = response.content.decode()
-        self.assertIn("Room roster", response_content)
-        self.assertIn("Add guest", response_content)
+    def handle_message(message):
+        recorded_messages.append(message)
+        return message
 
-        self.assertEqual(response.context_data["active_tab"], "people")
+    monkeypatch.setattr(
+        "apps.account.views.guest_send_invitation_email_view.handle_message",
+        handle_message,
+    )
+    response = authenticated_client.post(
+        guest_send_invitation_url,
+        data={"email": "some_email@local.local"},
+        follow=True,
+    )
 
-    def test_post_email_invalid(self):
-        client = self.reauthenticate_user(self.user)
+    assert response.status_code == http.HTTPStatus.OK
+    assert len(recorded_messages) == 1
+    assert isinstance(recorded_messages[0], SendInvitationEmail)
 
-        response = client.post(
-            reverse(
-                "account:guest-send-invitation-email",
-                kwargs={"room_slug": self.room.slug, "pk": self.guest_user.id},
-            ),
-            data={"email": "invalid_email_format"},
-            follow=True,
-        )
-        self.assertEqual(response.status_code, http.HTTPStatus.OK)
+    assert response.template_name[0] == UserListForRoomView.template_name
+    content = response.content.decode()
+    assert "Room roster" in content
+    assert "Add guest" in content
+    assert response.context_data["active_tab"] == "people"
 
-        self.assertTrue(response.template_name[0], GuestSendInvitationEmailView.template_name)
-        self.assertIn("Enter a valid email address.", str(response.content))
 
-        self.assertEqual(response.context_data["active_tab"], "people")
+def test_post_email_invalid(authenticated_client, guest_send_invitation_url):
+    response = authenticated_client.post(
+        guest_send_invitation_url,
+        data={"email": "invalid_email_format"},
+        follow=True,
+    )
+
+    assert response.status_code == http.HTTPStatus.OK
+    assert response.template_name[0] == GuestSendInvitationEmailView.template_name
+    assert "Enter a valid email address." in response.content.decode()
+    assert response.context_data["active_tab"] == "people"

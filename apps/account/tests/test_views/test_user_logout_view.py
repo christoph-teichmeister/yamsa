@@ -1,25 +1,28 @@
 import http
 
+import pytest
 from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 
 from apps.account.views import LogInUserView
-from apps.core.tests.setup import BaseTestSetUp
+
+pytestmark = pytest.mark.django_db
 
 
-class LogOutUserViewTestCase(BaseTestSetUp):
-    def test_get_regular_as_user_and_guest_user(self):
-        for authenticated_user in [self.user, self.guest_user]:
-            self.client.force_login(authenticated_user)
-            response = self.client.get(reverse("account:logout"), follow=True)
+def test_get_regular_as_user_and_guest_user(client, guest_user, user):
+    for authenticated_user in (user, guest_user):
+        client.defaults["HTTP_HX_REQUEST"] = "true"
+        client.force_login(authenticated_user)
 
-            self.assertEqual(response.status_code, http.HTTPStatus.OK)
-            self.assertTrue(response.template_name[0], LogInUserView.template_name)
+        response = client.get(reverse("account:logout"), follow=True)
 
-            self.assertIsInstance(response.wsgi_request.user, AnonymousUser)
+        assert response.status_code == http.HTTPStatus.OK
+        assert response.template_name[0] == LogInUserView.template_name
+        assert isinstance(response.wsgi_request.user, AnonymousUser)
 
-            stringed_content = str(response.content)
-            self.assertIn("Login", stringed_content)
-            self.assertIn("Forgot password?", stringed_content)
+        content = response.content.decode()
+        assert "Login" in content
+        assert "Forgot password?" in content
+        assert "Create an account" in content
 
-            self.assertIn("Create an account", stringed_content)
+        client.logout()

@@ -23,3 +23,8 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class GuestUserFactory(UserFactory):
     is_guest = True
+
+
+class SuperuserFactory(UserFactory):
+    is_staff = True
+    is_superuser = True

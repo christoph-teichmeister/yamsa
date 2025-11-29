@@ -2,11 +2,7 @@ from model_bakery import seq
 from model_bakery.recipe import Recipe
 
 from apps.account.models import User
-from apps.account.tests.constants import DEFAULT_PASSWORD, DEFAULT_PASSWORD_HASHED
-
-default_password = DEFAULT_PASSWORD
-# Tests use django.contrib.auth.hashers.MD5PasswordHasher
-default_password_hashed = DEFAULT_PASSWORD_HASHED
+from apps.account.tests.constants import DEFAULT_PASSWORD_HASHED
 
 base_user_data = {
     "is_superuser": False,
@@ -18,7 +14,7 @@ base_user_data = {
 guest_user = Recipe(
     User,
     name=seq("Guest User "),
-    password=default_password_hashed,
+    password=DEFAULT_PASSWORD_HASHED,
     email=seq("guest-user-", suffix="@yamsa.local"),
     is_guest=True,
     **base_user_data,
@@ -27,7 +23,7 @@ guest_user = Recipe(
 user = Recipe(
     User,
     name=seq("User "),
-    password=default_password_hashed,
+    password=DEFAULT_PASSWORD_HASHED,
     email=seq("user-", suffix="@yamsa.local"),
     is_guest=False,
     **base_user_data,
@@ -36,7 +32,7 @@ user = Recipe(
 superuser = Recipe(
     User,
     name=seq("Superuser "),
-    password=default_password_hashed,
+    password=DEFAULT_PASSWORD_HASHED,
     email=seq("superuser-", suffix="@yamsa.local"),
     is_guest=False,
     is_superuser=True,
