@@ -1,63 +1,68 @@
+import pytest
 from django.conf import settings
 from django.test import override_settings
 from django.urls import reverse
 
 from apps.account.constants import SESSION_TTL_SESSION_KEY
-from apps.core.tests.setup import BaseTestSetUp
+
+pytestmark = pytest.mark.django_db
 
 
-class SessionKeepAliveMiddlewareTestCase(BaseTestSetUp):
-    def test_refreshes_session_ttl_on_authenticated_requests(self):
-        self.client.force_login(self.user)
-        session = self.client.session
-        session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
-        session.set_expiry(30)
-        session.save()
-        self.client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
+def test_refreshes_session_ttl_on_authenticated_requests(authenticated_client):
+    client = authenticated_client
+    session = client.session
+    session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
+    session.set_expiry(30)
+    session.save()
+    client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
 
-        self.client.get(reverse("core:welcome"))
+    client.get(reverse("core:welcome"))
 
-        self.assertEqual(settings.SESSION_COOKIE_AGE, self.client.session.get_expiry_age())
+    assert client.session.get_expiry_age() == settings.SESSION_COOKIE_AGE
 
-    def test_maintains_remember_me_ttl(self):
-        self.client.force_login(self.user)
-        session = self.client.session
-        session[SESSION_TTL_SESSION_KEY] = settings.DJANGO_REMEMBER_ME_SESSION_AGE
-        session.set_expiry(30)
-        session.save()
-        self.client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
 
-        self.client.get(reverse("core:welcome"))
+def test_maintains_remember_me_ttl(authenticated_client):
+    client = authenticated_client
+    session = client.session
+    session[SESSION_TTL_SESSION_KEY] = settings.DJANGO_REMEMBER_ME_SESSION_AGE
+    session.set_expiry(30)
+    session.save()
+    client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
 
-        self.assertEqual(settings.DJANGO_REMEMBER_ME_SESSION_AGE, self.client.session.get_expiry_age())
+    client.get(reverse("core:welcome"))
 
-    def test_skips_safe_htmx_fragments(self):
-        self.client.force_login(self.user)
-        session = self.client.session
-        session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
-        session.set_expiry(30)
-        session.save()
-        self.client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
+    assert client.session.get_expiry_age() == settings.DJANGO_REMEMBER_ME_SESSION_AGE
 
-        self.client.get(
-            reverse("core:welcome"),
-            HTTP_HX_REQUEST="true",
-            HTTP_HX_TRIGGER="reminder-heartbeat",
-        )
 
-        self.assertEqual(30, self.client.session.get_expiry_age())
-        self.assertEqual(settings.SESSION_COOKIE_AGE, self.client.session[SESSION_TTL_SESSION_KEY])
+def test_skips_safe_htmx_fragments(authenticated_client):
+    client = authenticated_client
+    session = client.session
+    session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
+    session.set_expiry(30)
+    session.save()
+    client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
 
-    @override_settings(SESSION_COOKIE_AGE=1)
-    def test_session_expiry_follows_idle_threshold(self):
-        session = self.client.session
-        session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
-        session.set_expiry(settings.SESSION_COOKIE_AGE)
-        session.save()
+    client.get(
+        reverse("core:welcome"),
+        HTTP_HX_REQUEST="true",
+        HTTP_HX_TRIGGER="reminder-heartbeat",
+    )
 
-        session.set_expiry(-1)
-        session.save()
+    assert client.session.get_expiry_age() == 30
+    assert client.session[SESSION_TTL_SESSION_KEY] == settings.SESSION_COOKIE_AGE
 
-        response = self.client.get(reverse("core:welcome"), follow=True)
 
-        self.assertRedirects(response, reverse("account:login"))
+@override_settings(SESSION_COOKIE_AGE=1)
+def test_session_expiry_follows_idle_threshold(client):
+    session = client.session
+    session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
+    session.set_expiry(settings.SESSION_COOKIE_AGE)
+    session.save()
+
+    session.set_expiry(-1)
+    session.save()
+
+    response = client.get(reverse("core:welcome"), follow=True)
+
+    assert response.redirect_chain
+    assert response.redirect_chain[-1][0] == reverse("account:login")
