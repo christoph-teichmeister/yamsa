@@ -1,146 +1,163 @@
-import tempfile
 from io import BytesIO
 from time import time
 
+import pytest
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
 from django.test import override_settings
 from freezegun import freeze_time
-from model_bakery import baker
 from PIL import Image
 
 from apps.account.models import UserFriendship
-from apps.core.tests.setup import BaseTestSetUp
 from apps.room.models import UserConnectionToRoom
+from apps.room.tests.factories import RoomFactory
+from apps.transaction.tests.factories import ParentTransactionFactory
 
 
-class UserModelTestCase(BaseTestSetUp):
-    def test_str_method(self):
-        self.assertEqual(self.user.__str__(), self.user.name)
-
-    def _build_image_bytes(self, width=64, height=64):
-        buffer = BytesIO()
-        Image.new("RGB", (width, height), color=(255, 255, 255)).save(buffer, format="PNG")
-        buffer.seek(0)
-        return buffer.getvalue()
-
-    @freeze_time("2020-04-04 04:20:00")
-    def test_clean_for_guests(self):
-        timestamp = time()
-
-        name_before = self.guest_user.name
-        email_before = self.guest_user.email
-        password_before = self.guest_user.password
-
-        self.guest_user.clean()
-
-        self.assertEqual(name_before, self.guest_user.name)
-        self.assertNotEqual(email_before, self.guest_user.email)
-        self.assertNotEqual(password_before, self.guest_user.password)
-
-        self.assertEqual(self.guest_user.email, f"{self.guest_user.name}-{timestamp}@local.local")
-        self.assertEqual(self.guest_user.password, f"{self.guest_user.name}-{timestamp}")
-
-    def test_clean_for_regular_user(self):
-        name_before = self.user.name
-        email_before = self.user.email
-        password_before = self.user.password
-
-        self.user.clean()
-
-        self.assertEqual(name_before, self.user.name)
-        self.assertEqual(email_before, self.user.email)
-        self.assertEqual(password_before, self.user.password)
-
-    def test_room_qs_for_list_user(self):
-        qs = self.user.room_qs_for_list
-
-        self.assertEqual(qs.count(), 1)
-        self.assertEqual(qs.first()["name"], self.room.name)
-
-    def test_room_qs_for_list_superuser(self):
-        baker.make_recipe("apps.room.tests.room")
-
-        qs = self.superuser.room_qs_for_list
-
-        self.assertEqual(qs.count(), 2)
-
-    def test_has_seen_room_true(self):
-        connection = UserConnectionToRoom.objects.get(user=self.user)
-        connection.user_has_seen_this_room = True
-        connection.save()
-
-        found_connection, has_seen_room = self.user.has_seen_room(self.room.id)
-
-        self.assertTrue(has_seen_room)
-        self.assertEqual(connection, found_connection)
-
-    def test_has_seen_room_false(self):
-        self.room.users.remove(self.user)
-
-        connection, has_seen_room = self.user.has_seen_room(self.room.id)
-
-        self.assertFalse(has_seen_room)
-        self.assertIsNone(connection)
-
-    def test_can_be_removed_from_room_true(self):
-        self.assertTrue(self.user.can_be_removed_from_room(self.room.id))
-
-    def test_can_be_removed_from_room_false(self):
-        baker.make_recipe("apps.transaction.tests.parent_transaction", room=self.room, paid_by=self.user)
-
-        self.assertFalse(self.user.can_be_removed_from_room(self.room.id))
-
-    def test_generate_random_password_with_length(self):
-        password_hash_before = self.user.password
-
-        length = 10
-        new_password = self.user.generate_random_password_with_length(length)
-        self.assertEqual(len(new_password), length)
-
-        self.user.refresh_from_db()
-
-        self.assertNotEqual(password_hash_before, self.user.password)
-
-    def test_profile_picture_url_defaults_to_placeholder(self):
-        fallback_url = self.user.profile_picture_fallback_url
-        self.assertEqual(self.user.profile_picture_url, fallback_url)
-
-    def test_profile_picture_url_returns_file_url_when_available(self):
-        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
-            self.user.profile_picture.save(
-                "avatar.png",
-                ContentFile(self._build_image_bytes()),
-                save=True,
-            )
-
-            self.assertEqual(self.user.profile_picture_url, self.user.profile_picture.url)
-
-    def test_profile_picture_url_falls_back_when_file_missing(self):
-        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
-            self.user.profile_picture.save(
-                "avatar.png",
-                ContentFile(self._build_image_bytes()),
-                save=True,
-            )
-
-            self.user.profile_picture.storage.delete(self.user.profile_picture.name)
-            self.user.refresh_from_db()
-
-            fallback_url = self.user.profile_picture_fallback_url
-            self.assertEqual(self.user.profile_picture_url, fallback_url)
+def _build_image_bytes(width=64, height=64) -> bytes:
+    buffer = BytesIO()
+    Image.new("RGB", (width, height), color=(255, 255, 255)).save(buffer, format="PNG")
+    buffer.seek(0)
+    return buffer.getvalue()
 
 
-class UserFriendshipModelTestCase(BaseTestSetUp):
-    def test_cannot_friend_self(self):
-        friendship = UserFriendship(user=self.user, friend=self.user)
+def test_str_method(user):
+    assert str(user) == user.name
 
-        with self.assertRaises(ValidationError):
-            friendship.clean()
 
-    def test_unique_constraint_applies(self):
-        UserFriendship.objects.create(user=self.user, friend=self.guest_user)
+@freeze_time("2020-04-04 04:20:00")
+def test_clean_for_guests(guest_user):
+    timestamp = time()
 
-        with self.assertRaises(IntegrityError):
-            UserFriendship.objects.create(user=self.user, friend=self.guest_user)
+    name_before = guest_user.name
+    email_before = guest_user.email
+    password_before = guest_user.password
+
+    guest_user.clean()
+
+    assert name_before == guest_user.name
+    assert email_before != guest_user.email
+    assert password_before != guest_user.password
+    assert guest_user.email == f"{guest_user.name}-{timestamp}@local.local"
+    assert guest_user.password == f"{guest_user.name}-{timestamp}"
+
+
+def test_clean_for_regular_user(user):
+    name_before = user.name
+    email_before = user.email
+    password_before = user.password
+
+    user.clean()
+
+    assert name_before == user.name
+    assert email_before == user.email
+    assert password_before == user.password
+
+
+def test_room_qs_for_list_user(user, room):
+    qs = user.room_qs_for_list
+
+    assert qs.count() == 1
+    assert qs.first()["name"] == room.name
+
+
+def test_room_qs_for_list_superuser(superuser, room):
+    _ = room  # ensure fixture creates first room for superuser
+    RoomFactory()
+
+    qs = superuser.room_qs_for_list
+
+    assert qs.count() == 2
+
+
+def test_has_seen_room_true(user, room):
+    connection = UserConnectionToRoom.objects.get(user=user, room=room)
+    connection.user_has_seen_this_room = True
+    connection.save()
+
+    found_connection, has_seen_room = user.has_seen_room(room.id)
+
+    assert has_seen_room is True
+    assert found_connection == connection
+
+
+def test_has_seen_room_false(user, room):
+    room.users.remove(user)
+
+    connection, has_seen_room = user.has_seen_room(room.id)
+
+    assert has_seen_room is False
+    assert connection is None
+
+
+def test_can_be_removed_from_room_true(user, room):
+    assert user.can_be_removed_from_room(room.id) is True
+
+
+def test_can_be_removed_from_room_false(user, room):
+    ParentTransactionFactory(room=room, paid_by=user)
+
+    assert user.can_be_removed_from_room(room.id) is False
+
+
+def test_generate_random_password_with_length(user):
+    password_hash_before = user.password
+
+    length = 10
+    new_password = user.generate_random_password_with_length(length)
+    assert len(new_password) == length
+
+    user.refresh_from_db()
+    assert user.password != password_hash_before
+
+
+def test_profile_picture_url_defaults_to_placeholder(user):
+    fallback_url = user.profile_picture_fallback_url
+    assert user.profile_picture_url == fallback_url
+
+
+def test_profile_picture_url_returns_file_url_when_available(user, tmp_path):
+    tmp_media_root = tmp_path / "media"
+    tmp_media_root.mkdir()
+
+    with override_settings(MEDIA_ROOT=str(tmp_media_root)):
+        user.profile_picture.save(
+            "avatar.png",
+            ContentFile(_build_image_bytes()),
+            save=True,
+        )
+
+        assert user.profile_picture_url == user.profile_picture.url
+
+
+def test_profile_picture_url_falls_back_when_file_missing(user, tmp_path):
+    tmp_media_root = tmp_path / "media"
+    tmp_media_root.mkdir()
+
+    with override_settings(MEDIA_ROOT=str(tmp_media_root)):
+        user.profile_picture.save(
+            "avatar.png",
+            ContentFile(_build_image_bytes()),
+            save=True,
+        )
+
+        user.profile_picture.storage.delete(user.profile_picture.name)
+        user.refresh_from_db()
+
+        fallback_url = user.profile_picture_fallback_url
+        assert user.profile_picture_url == fallback_url
+
+
+def test_cannot_friend_self(user):
+    friendship = UserFriendship(user=user, friend=user)
+
+    with pytest.raises(ValidationError):
+        friendship.clean()
+
+
+def test_unique_constraint_applies(user, guest_user):
+    UserFriendship.objects.create(user=user, friend=guest_user)
+
+    with pytest.raises(IntegrityError):
+        UserFriendship.objects.create(user=user, friend=guest_user)

@@ -12,8 +12,8 @@ steps below before submitting changes:
 
 ## Testing and linting
 
-- Unit tests: `uv run python manage.py test apps`.
-- Coverage: `uv run coverage run manage.py test && uv run coverage report`.
+- Unit tests: `uv run pytest`.
+- Coverage: `uv run coverage run -m pytest && uv run coverage report`.
 - Formatting: run `uv run ruff check --fix .` followed by `uv run djlint apps --reformat`.
 
 ## Lockfile updates

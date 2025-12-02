@@ -1,19 +1,21 @@
-from django.test import TestCase
+import pytest
 
 from apps.account.models import UserFriendship
-from apps.account.tests.baker_recipes import user as user_recipe
-from apps.currency.tests.baker_recipes import currency as currency_recipe
+from apps.account.tests.factories import GuestUserFactory, UserFactory
+from apps.currency.tests.factories import CurrencyFactory
 from apps.room.models import Room, UserConnectionToRoom
 from apps.room.services.suggested_guest_service import SuggestedGuestService
 
 
-class SuggestedGuestServiceTest(TestCase):
-    def setUp(self):
-        self.currency = currency_recipe.make()
-        self.creator = user_recipe.make(is_guest=False)
-        self.friendliest = user_recipe.make(is_guest=False)
-        self.recurring = user_recipe.make(is_guest=False)
-        self.guest_user = user_recipe.make(is_guest=True)
+@pytest.mark.django_db
+class TestSuggestedGuestService:
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        self.currency = CurrencyFactory()
+        self.creator = UserFactory(is_guest=False)
+        self.friendliest = UserFactory(is_guest=False)
+        self.recurring = UserFactory(is_guest=False)
+        self.guest_user = GuestUserFactory()
 
         self.room_one = Room.objects.create(
             name="Trip One",
@@ -41,12 +43,12 @@ class SuggestedGuestServiceTest(TestCase):
     def test_service_returns_friend_first_and_counts_rooms(self):
         suggestions = SuggestedGuestService(user=self.creator).get_suggested_guests()
 
-        self.assertGreaterEqual(len(suggestions), 2)
-        self.assertEqual(suggestions[0].user_id, self.friendliest.id)
-        self.assertTrue(suggestions[0].is_friend)
-        self.assertEqual(suggestions[0].rooms_together, 2)
+        assert len(suggestions) >= 2
+        assert suggestions[0].user_id == self.friendliest.id
+        assert suggestions[0].is_friend
+        assert suggestions[0].rooms_together == 2
 
         non_friend = next(guest for guest in suggestions if not guest.is_friend)
-        self.assertEqual(non_friend.user_id, self.recurring.id)
-        self.assertEqual(non_friend.rooms_together, 1)
-        self.assertFalse(any(guest.user_id == self.guest_user.id for guest in suggestions))
+        assert non_friend.user_id == self.recurring.id
+        assert non_friend.rooms_together == 1
+        assert all(guest.user_id != self.guest_user.id for guest in suggestions)

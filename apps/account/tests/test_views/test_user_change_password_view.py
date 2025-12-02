@@ -1,47 +1,40 @@
 import http
 
+import pytest
 from django.contrib.auth import authenticate
 from django.test import RequestFactory
 from django.urls import reverse
 
-from apps.account.tests.baker_recipes import default_password
+from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.views import UserChangePasswordView, UserDetailView
-from apps.core.tests.setup import BaseTestSetUp
+
+pytestmark = pytest.mark.django_db
+
+NEW_PASSWORD = "my_new_password"
 
 
-class UserChangePasswordViewTestCase(BaseTestSetUp):
-    def test_get_regular(self):
-        client = self.reauthenticate_user(self.user)
-        response = client.get(reverse("account:change-password", args=(self.user.id,)))
+def test_get_regular(authenticated_client, user):
+    response = authenticated_client.get(reverse("account:change-password", args=(user.id,)))
 
-        self.assertEqual(response.status_code, http.HTTPStatus.OK)
-        self.assertTrue(response.template_name[0], UserChangePasswordView.template_name)
+    assert response.status_code == http.HTTPStatus.OK
+    assert response.template_name[0] == UserChangePasswordView.template_name
+    assert "Change your password" in response.content.decode()
 
-        self.assertIn("Change your password", str(response.content))
 
-    def test_post_regular(self):
-        new_password = "my_new_password"
+def test_post_regular(authenticated_client, user):
+    response = authenticated_client.post(
+        reverse("account:change-password", args=(user.id,)),
+        data={
+            "old_password": DEFAULT_PASSWORD,
+            "new_password": NEW_PASSWORD,
+            "new_password_confirmation": NEW_PASSWORD,
+        },
+        follow=True,
+    )
 
-        client = self.reauthenticate_user(self.user)
+    assert response.status_code == http.HTTPStatus.OK
+    assert response.template_name[0] == UserDetailView.template_name
+    assert "Your account overview" in response.content.decode()
 
-        # Change password
-        response = client.post(
-            reverse("account:change-password", args=(self.user.id,)),
-            data={
-                "old_password": default_password,
-                "new_password": new_password,
-                "new_password_confirmation": new_password,
-            },
-            follow=True,
-        )
-        self.assertEqual(response.status_code, http.HTTPStatus.OK)
-
-        # Assert, that we've been redirected to the detail view
-        self.assertTrue(response.template_name[0], UserDetailView.template_name)
-        stringed_content = response.content.decode()
-        self.assertIn("Your account overview", stringed_content)
-
-        # Assert, that the password-change worked
-        self.assertEqual(
-            self.user, authenticate(request=RequestFactory().get("/"), email=self.user.email, password=new_password)
-        )
+    request = RequestFactory().get("/")
+    assert authenticate(request=request, email=user.email, password=NEW_PASSWORD) == user

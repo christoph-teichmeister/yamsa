@@ -1,69 +1,82 @@
-from django.test import TestCase
+import pytest
 from django.urls import reverse
 
-from apps.account.tests.baker_recipes import user as user_recipe
-from apps.currency.tests.baker_recipes import currency as currency_recipe
-from apps.room.models import Room, UserConnectionToRoom
+from apps.account.tests.factories import GuestUserFactory, UserFactory
+from apps.currency.tests.factories import CurrencyFactory
+from apps.room.models import Room
+from apps.room.tests.factories import RoomFactory, UserConnectionToRoomFactory
 
 
-class RoomShareButtonTests(TestCase):
-    def setUp(self):
-        self.currency = currency_recipe.make()
-        self.owner = user_recipe.make(is_guest=False)
-        self.room = Room.objects.create(
+@pytest.mark.django_db
+class TestRoomShareButton:
+    @pytest.fixture
+    def owner(self):
+        return UserFactory(is_guest=False)
+
+    @pytest.fixture
+    def currency(self):
+        return CurrencyFactory()
+
+    @pytest.fixture
+    def room(self, owner, currency):
+        room = RoomFactory(
             name="Trip Space",
             description="Group",
-            preferred_currency=self.currency,
-            created_by=self.owner,
+            preferred_currency=currency,
+            created_by=owner,
         )
-        UserConnectionToRoom.objects.create(user=self.owner, room=self.room)
-        self.client.force_login(self.owner)
+        UserConnectionToRoomFactory(user=owner, room=room)
+        return room
 
-    def test_share_button_shows_for_open_rooms_without_guests(self):
-        response = self.client.get(reverse("room:dashboard", kwargs={"room_slug": self.room.slug}))
+    @pytest.fixture
+    def owner_client(self, client, owner):
+        client.force_login(owner)
+        return client
 
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response, "data-copy-share-url", msg_prefix="Share button should render even without guests"
-        )
+    def test_share_button_shows_for_open_rooms_without_guests(self, owner_client, room):
+        response = owner_client.get(reverse("room:dashboard", kwargs={"room_slug": room.slug}))
 
-    def test_share_button_shows_for_open_room_with_guests(self):
-        guest = user_recipe.make(is_guest=True)
-        UserConnectionToRoom.objects.create(user=guest, room=self.room)
+        assert response.status_code == 200
+        assert "data-copy-share-url" in response.content.decode()
 
-        response = self.client.get(reverse("room:dashboard", kwargs={"room_slug": self.room.slug}))
+    def test_share_button_shows_for_open_room_with_guests(self, owner_client, room):
+        guest = GuestUserFactory()
+        UserConnectionToRoomFactory(user=guest, room=room)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "data-copy-share-url", msg_prefix="Share button should render when guests exist")
+        response = owner_client.get(reverse("room:dashboard", kwargs={"room_slug": room.slug}))
 
-    def test_share_button_hides_when_room_closed(self):
-        self.room.status = Room.StatusChoices.CLOSED
-        self.room.save()
+        assert response.status_code == 200
+        assert "data-copy-share-url" in response.content.decode()
 
-        response = self.client.get(reverse("room:dashboard", kwargs={"room_slug": self.room.slug}))
+    def test_share_button_hides_when_room_closed(self, owner_client, room):
+        room.status = Room.StatusChoices.CLOSED
+        room.save(update_fields=["status"])
 
-        self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "data-copy-share-url")
-        self.assertContains(response, "bi-dash-circle")
+        response = owner_client.get(reverse("room:dashboard", kwargs={"room_slug": room.slug}))
 
-    def test_who_are_you_partial_calls_out_registration_cta(self):
-        self.client.logout()
-        guest = user_recipe.make(is_guest=True)
-        UserConnectionToRoom.objects.create(user=guest, room=self.room)
+        assert response.status_code == 200
+        content = response.content.decode()
+        assert "data-copy-share-url" not in content
+        assert "bi-dash-circle" in content
 
-        response = self.client.get(reverse("room:detail", kwargs={"room_slug": self.room.slug}))
+    def test_who_are_you_partial_calls_out_registration_cta(self, owner_client, room):
+        owner_client.logout()
+        guest = GuestUserFactory()
+        UserConnectionToRoomFactory(user=guest, room=room)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Claim your invitation")
-        self.assertContains(response, "Create a free account")
+        response = owner_client.get(reverse("room:detail", kwargs={"room_slug": room.slug}))
 
-    def test_who_are_you_without_guests_promotes_account_creation(self):
-        self.client.logout()
+        assert response.status_code == 200
+        content = response.content.decode()
+        assert "Claim your invitation" in content
+        assert "Create a free account" in content
 
-        response = self.client.get(reverse("room:detail", kwargs={"room_slug": self.room.slug}))
+    def test_who_are_you_without_guests_promotes_account_creation(self, owner_client, room):
+        owner_client.logout()
 
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response, "No guests have been invited yet", msg_prefix="Prompt should appear when no guests exist"
-        )
-        self.assertNotContains(response, 'name="user_id"', msg_prefix="Form is hidden until guests exist")
+        response = owner_client.get(reverse("room:detail", kwargs={"room_slug": room.slug}))
+
+        assert response.status_code == 200
+        content = response.content.decode()
+        assert "No guests have been invited yet" in content
+        assert 'name="user_id"' not in content

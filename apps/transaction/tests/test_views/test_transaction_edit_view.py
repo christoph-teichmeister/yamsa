@@ -1,30 +1,27 @@
 import http
 from decimal import Decimal
 
+import pytest
 from django.urls import reverse
-from model_bakery import baker
 
-from apps.core.tests.setup import BaseTestSetUp
+from apps.transaction.models import ChildTransaction
+from apps.transaction.tests.factories import ParentTransactionFactory
 from apps.transaction.utils import split_total_across_paid_for
 
+pytestmark = pytest.mark.django_db
 
-class TransactionEditViewTests(BaseTestSetUp):
-    def test_post_rebalances_child_transactions_when_total_changes(self):
-        parent_transaction = baker.make_recipe(
-            "apps.transaction.tests.parent_transaction",
-            room=self.room,
-            paid_by=self.user,
-        )
-        baker.make_recipe(
-            "apps.transaction.tests.child_transaction",
+
+class TestTransactionEditView:
+    def test_post_rebalances_child_transactions_when_total_changes(self, authenticated_client, room, user, guest_user):
+        parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
+        ChildTransaction.objects.create(
             parent_transaction=parent_transaction,
-            paid_for=self.user,
+            paid_for=user,
             value=Decimal("10.00"),
         )
-        baker.make_recipe(
-            "apps.transaction.tests.child_transaction",
+        ChildTransaction.objects.create(
             parent_transaction=parent_transaction,
-            paid_for=self.guest_user,
+            paid_for=guest_user,
             value=Decimal("20.00"),
         )
 
@@ -42,22 +39,21 @@ class TransactionEditViewTests(BaseTestSetUp):
             "total_value": "51.01",
         }
 
-        client = self.reauthenticate_user(self.user)
-        response = client.post(
+        response = authenticated_client.post(
             reverse(
                 "transaction:edit",
-                kwargs={"room_slug": self.room.slug, "pk": parent_transaction.id},
+                kwargs={"room_slug": room.slug, "pk": parent_transaction.id},
             ),
             data=data,
             follow=True,
         )
 
-        self.assertEqual(response.status_code, http.HTTPStatus.OK)
+        assert response.status_code == http.HTTPStatus.OK
 
         shares = split_total_across_paid_for(Decimal("51.01"), ordered_children)
         for child, expected in zip(ordered_children, shares, strict=False):
             child.refresh_from_db()
-            self.assertEqual(child.value, expected)
+            assert child.value == expected
 
         parent_transaction.refresh_from_db()
-        self.assertEqual(parent_transaction.value, Decimal("51.01"))
+        assert parent_transaction.value == Decimal("51.01")

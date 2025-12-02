@@ -1,11 +1,13 @@
-from django.test import TestCase
+import pytest
 from django.utils import timezone
-from model_bakery import baker
 
+from apps.currency.tests.factories import CurrencyFactory
 from apps.transaction.models import Category, ParentTransaction
 
+pytestmark = pytest.mark.django_db
 
-class CategoryModelTests(TestCase):
+
+class TestCategoryModel:
     def test_default_categories_seeded(self):
         expected = [
             {"slug": "accommodation", "name": "Accommodation", "color": "#6C5CE7"},
@@ -21,29 +23,24 @@ class CategoryModelTests(TestCase):
         ]
 
         categories = list(Category.objects.order_by("order_index"))
-        self.assertEqual(len(categories), len(expected))
+        assert len(categories) == len(expected)
 
         for expected_category, actual in zip(expected, categories, strict=False):
-            self.assertEqual(actual.slug, expected_category["slug"])
-            self.assertEqual(actual.name, expected_category["name"])
-            self.assertEqual(actual.color, expected_category["color"])
-            self.assertTrue(actual.is_default)
+            assert actual.slug == expected_category["slug"]
+            assert actual.name == expected_category["name"]
+            assert actual.color == expected_category["color"]
+            assert actual.is_default
 
 
-class ParentTransactionModelTests(TestCase):
-    def setUp(self):
-        self.user = baker.make_recipe("apps.account.tests.user")
-        self.room = baker.make_recipe("apps.room.tests.room")
-        self.room.users.add(self.user)
-        self.currency = baker.make_recipe("apps.currency.tests.currency")
-
-    def test_parent_transaction_defaults_to_misc_category(self):
+class TestParentTransactionModel:
+    def test_parent_transaction_defaults_to_misc_category(self, user, room):
+        currency = CurrencyFactory()
         transaction = ParentTransaction.objects.create(
             description="Default category check",
-            paid_by=self.user,
+            paid_by=user,
             paid_at=timezone.now(),
-            room=self.room,
-            currency=self.currency,
+            room=room,
+            currency=currency,
         )
 
-        self.assertEqual(transaction.category.slug, "misc")
+        assert transaction.category.slug == "misc"

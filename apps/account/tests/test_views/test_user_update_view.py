@@ -1,71 +1,59 @@
 import http
-import tempfile
-from io import BytesIO
 
+import pytest
 from django.core.files.base import ContentFile
-from django.test import override_settings
 from django.urls import reverse
-from PIL import Image
 
+from apps.account.tests.test_utils import build_image_bytes
 from apps.account.views import UserDetailView, UserUpdateView
-from apps.core.tests.setup import BaseTestSetUp
+
+pytestmark = pytest.mark.django_db
 
 
-class UserUpdateViewTestCase(BaseTestSetUp):
-    def _build_image_bytes(self, width=100, height=100):
-        buffer = BytesIO()
-        Image.new("RGB", (width, height), color=(255, 255, 255)).save(buffer, format="PNG")
-        buffer.seek(0)
-        return buffer.getvalue()
+def test_get_regular(authenticated_client, user):
+    response = authenticated_client.get(reverse("account:update", kwargs={"pk": user.id}))
 
-    def test_get_regular(self):
-        client = self.reauthenticate_user(self.user)
-        response = client.get(reverse("account:update", kwargs={"pk": self.user.id}))
-        self.assertEqual(response.status_code, http.HTTPStatus.OK)
+    assert response.status_code == http.HTTPStatus.OK
+    assert response.template_name[0] == UserUpdateView.template_name
 
-        self.assertTrue(response.template_name[0], UserUpdateView.template_name)
+    content = response.content.decode()
+    assert "Keep your details up to date" in content
+    assert "Need a new password?" in content
 
-        stringed_content = response.content.decode()
 
-        self.assertIn("Keep your details up to date", stringed_content)
-        self.assertIn("Need a new password?", stringed_content)
+def test_post_regular(authenticated_client, user):
+    new_name = "new_name"
+    response = authenticated_client.post(
+        reverse("account:update", kwargs={"pk": user.id}),
+        data={"name": new_name, "email": user.email},
+        follow=True,
+    )
 
-    def test_post_regular(self):
-        new_name = "new_name"
+    assert response.status_code == http.HTTPStatus.OK
+    assert response.template_name[0] == UserDetailView.template_name
 
-        client = self.reauthenticate_user(self.user)
-        response = client.post(
-            reverse("account:update", kwargs={"pk": self.user.id}),
-            data={"name": new_name, "email": self.user.email},
-            follow=True,
-        )
-        self.assertEqual(response.status_code, http.HTTPStatus.OK)
+    content = response.content.decode()
+    assert "Your account overview" in content
+    assert "Edit profile" in content
 
-        self.assertTrue(response.template_name[0], UserDetailView.template_name)
+    user.refresh_from_db()
+    assert user.name == new_name
 
-        stringed_content = response.content.decode()
 
-        self.assertIn("Your account overview", stringed_content)
-        self.assertIn("Edit profile", stringed_content)
+def test_profile_picture_delete(tmp_path, authenticated_client, settings, user):
+    media_root = tmp_path / "media"
+    media_root.mkdir()
+    settings.MEDIA_ROOT = str(media_root)
 
-        self.user.refresh_from_db()
-        self.assertEqual(self.user.name, new_name)
+    user.profile_picture.save("avatar.png", ContentFile(build_image_bytes()), save=True)
+    file_name = user.profile_picture.name
+    assert user.profile_picture.storage.exists(file_name)
 
-    def test_profile_picture_delete(self):
-        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
-            self.user.profile_picture.save(
-                "avatar.png",
-                ContentFile(self._build_image_bytes()),
-                save=True,
-            )
-            file_name = self.user.profile_picture.name
-            self.assertTrue(self.user.profile_picture.storage.exists(file_name))
+    response = authenticated_client.post(reverse("account:profile-picture-delete"), follow=True)
 
-            client = self.reauthenticate_user(self.user)
-            response = client.post(reverse("account:profile-picture-delete"), follow=True)
-            self.assertEqual(response.status_code, http.HTTPStatus.OK)
-            self.assertIn(UserUpdateView.template_name, response.template_name)
+    assert response.status_code == http.HTTPStatus.OK
+    assert UserUpdateView.template_name in response.template_name
 
-            self.user.refresh_from_db()
-            self.assertFalse(self.user.profile_picture)
-            self.assertFalse(self.user.profile_picture.storage.exists(file_name))
+    user.refresh_from_db()
+    assert not user.profile_picture
+    assert not user.profile_picture.storage.exists(file_name)

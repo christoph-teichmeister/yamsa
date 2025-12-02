@@ -1,38 +1,35 @@
+import pytest
+
 from apps.account.forms.guest_send_invitation_form import GuestSendInvitationEmailForm
 from apps.account.models import User
-from apps.core.tests.setup import BaseTestSetUp
+
+pytestmark = pytest.mark.django_db
 
 
-class GuestSendInvitationEmailFormTestCase(BaseTestSetUp):
-    form = GuestSendInvitationEmailForm
+class TestGuestSendInvitationEmailForm:
+    form_class = GuestSendInvitationEmailForm
 
-    def test_new_email_is_set(self):
+    def test_new_email_is_set(self, user):
         new_email = "new_email@local.local"
-        new_data = {"email": new_email}
-
-        form = self.form(instance=self.user, data=new_data)
-        self.assertTrue(form.is_valid())
+        form = self.form_class(instance=user, data={"email": new_email})
+        assert form.is_valid()
 
         form.save()
 
-        self.user.refresh_from_db()
+        user.refresh_from_db()
 
-        self.assertEqual(self.user.email, new_email)
+        assert user.email == new_email
 
-    def test_form_raises_error_if_email_already_exists(self):
-        form = self.form(instance=self.user, data={"email": self.superuser.email})
-        self.assertFalse(form.is_valid())
+    def test_form_raises_error_if_email_already_exists(self, user, superuser):
+        form = self.form_class(instance=user, data={"email": superuser.email})
+        assert not form.is_valid()
 
-        self.assertEqual(
-            form.errors["email"][0], form.ExceptionMessage.EMAIL_ALREADY_EXISTS.format(email=self.superuser.email)
-        )
+        assert form.errors["email"][0] == form.ExceptionMessage.EMAIL_ALREADY_EXISTS.format(email=superuser.email)
 
-    def test_case_insensitive_email_duplicate(self):
-        uppercased_email = self.superuser.email.upper()
-        form = self.form(instance=self.user, data={"email": uppercased_email})
-        self.assertFalse(form.is_valid())
+    def test_case_insensitive_email_duplicate(self, user, superuser):
+        uppercased_email = superuser.email.upper()
+        form = self.form_class(instance=user, data={"email": uppercased_email})
+        assert not form.is_valid()
 
         expected_email = User.objects.normalize_email(uppercased_email)
-        self.assertEqual(
-            form.errors["email"][0], form.ExceptionMessage.EMAIL_ALREADY_EXISTS.format(email=expected_email)
-        )
+        assert form.errors["email"][0] == form.ExceptionMessage.EMAIL_ALREADY_EXISTS.format(email=expected_email)

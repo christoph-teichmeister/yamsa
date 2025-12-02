@@ -1,30 +1,28 @@
 import json
 
-from django.test import RequestFactory, SimpleTestCase
+import pytest
+from django.test import RequestFactory
 from django.urls import reverse
 
-from apps.core.tests.setup import BaseTestSetUp
 from apps.webpush.dataclasses import Notification
 from apps.webpush.utils import get_templatetag_context
 
 
-class WebPushTemplateTagContextTestCase(BaseTestSetUp):
-    def setUp(self):
-        super().setUp()
-        self.request = RequestFactory().get("/")
-        self.request.user = self.user
-
-    def test_webpush_save_url_is_current(self):
-        context = {"request": self.request, "webpush": {"group": "alerts"}}
+@pytest.mark.django_db
+class TestWebPushTemplateTagContext:
+    def test_webpush_save_url_is_current(self, user):
+        request = RequestFactory().get("/")
+        request.user = user
+        context = {"request": request, "webpush": {"group": "alerts"}}
 
         data = get_templatetag_context(context)
 
-        self.assertEqual(data["webpush_save_url"], reverse("webpush:save"))
-        self.assertEqual(data["group"], "alerts")
-        self.assertEqual(data["user"], self.user)
+        assert data["webpush_save_url"] == reverse("webpush:save")
+        assert data["group"] == "alerts"
+        assert data["user"] == user
 
 
-class NotificationPayloadTestCase(SimpleTestCase):
+class TestNotificationPayload:
     def test_action_urls_are_preserved(self):
         action = {"action": "open", "title": "Open", "url": "https://example.com"}
         payload = Notification.Payload(
@@ -37,6 +35,6 @@ class NotificationPayloadTestCase(SimpleTestCase):
         first = json.loads(payload.format_for_webpush())
         second = json.loads(payload.format_for_webpush())
 
-        self.assertEqual(first["data"]["actionClickUrls"][0]["url"], action["url"])
-        self.assertEqual(second["data"]["actionClickUrls"][0]["url"], action["url"])
-        self.assertEqual(payload.actions[0]["url"], action["url"])
+        assert first["data"]["actionClickUrls"][0]["url"] == action["url"]
+        assert second["data"]["actionClickUrls"][0]["url"] == action["url"]
+        assert payload.actions[0]["url"] == action["url"]

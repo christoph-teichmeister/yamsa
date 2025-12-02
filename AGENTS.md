@@ -11,13 +11,13 @@ and `entrypoint.sh`. Documentation, including AI prompt history, lives in `docs/
 ## Build, Test, and Development Commands
 
 - All Django/manage.py invocations must run inside the local `uv shell` (e.g. start it via `uv shell` and then run
-  `python manage.py <cmd>`) so you benefit from the pinned Python 3.11.11 environment. Agents are always allowed to open the
-  uv shell and run commands there without asking for extra permission; no Docker-based workflows are required.
+  `python manage.py <cmd>`) so you benefit from the pinned Python 3.11.11 environment. Agents are always allowed to open
+  the uv shell and run commands there without asking for extra permission; no Docker-based workflows are required.
 - `uv sync --all-extras --no-install-project` - install Python 3.11.11 dependencies including tooling.
 - `uv run python manage.py migrate` - apply schema changes before running the app.
 - `uv run python manage.py runserver 0.0.0.0:8000` - local dev server with HTMX/Bootstrap UI.
-- `uv run python manage.py test` - execute Django test suite under the default settings module.
-- `uv run coverage run manage.py test && uv run coverage report` - generate coverage (config in
+- `uv run pytest` - execute Django test suite via pytest under the default settings module.
+- `uv run coverage run -m pytest && uv run coverage report` - generate coverage (config in
   `pyproject.toml`).
 
 ## Coding Style & Naming Conventions
@@ -47,16 +47,19 @@ in `static/`/`staticfiles/` be generated artifacts.**
 
 ## Testing Guidelines
 
-Place tests beside their apps under `apps/*/tests/` using `test_<unit>.py` naming. Prefer Django’s `TestCase`/
-`TransactionTestCase` plus `pytest`-style assertions for clarity. Aim for coverage parity with existing badges (>85%);
-add regression tests when touching business-critical flows such as settlement math or transaction rendering. Use
-factories or fixtures over ad-hoc object creation to keep tests deterministic.
+Place tests beside their apps under `apps/*/tests/` using `test_<unit>.py` naming and write them with PyTest as the
+preferred runner. Structure each PyTest module as a class that groups its test methods (mirroring Django’s test runner
+best practices) instead of scattering standalone functions. When you need models, instances, or complex recipes, define
+fixtures in `conftest.py` and rely on factories rather than ad-hoc object creation—put every factory implementation in
+`factories.py` (app-level if specific to one app, or a shared `conftest.py`/`factories.py` for cross-app reuse). Aim for
+coverage parity with existing badges (>85%); add regression tests when touching business-critical flows such as
+settlement math or transaction rendering.
 
 ## Commit & Pull Request Guidelines
 
 History follows Conventional Commits (`feat: add split animation`, `fix: correct room balance`). Keep messages in the
 imperative and scoped to a single concern. Every PR should: describe the change and rationale, link the related issue,
-list validation commands (`manage.py test`, linters), and attach before/after screenshots or GIFs for UI tweaks (
+list validation commands (`uv run pytest`, linters), and attach before/after screenshots or GIFs for UI tweaks (
 especially mobile layouts). Request review only after CI passes locally to reduce churn.
 
 ## Security & Configuration Tips

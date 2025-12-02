@@ -1,39 +1,36 @@
 from unittest import mock
 
-from model_bakery import baker
+import pytest
 from pywebpush import WebPushException
 
-from apps.core.tests.setup import BaseTestSetUp
-from apps.webpush.models import WebpushInformation
 from apps.webpush.services.notification_send_service import NotificationSendService
+from apps.webpush.tests.factories import WebpushInformationFactory
 
 
-class NotificationSendServiceTestCase(BaseTestSetUp):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.webpush_info = baker.make(WebpushInformation, user=cls.user)
+@pytest.fixture
+def notification_send_service(user):
+    WebpushInformationFactory(user=user)
+    return NotificationSendService()
 
-    def setUp(self):
-        super().setUp()
-        self.service = NotificationSendService()
 
-    def test_webpush_exception_is_swallowed(self):
+@pytest.mark.django_db
+class TestNotificationSendService:
+    def test_webpush_exception_is_swallowed(self, notification_send_service, user):
         exception = WebPushException("boom", response=mock.Mock(status_code=500))
 
         with mock.patch(
             "apps.webpush.services.notification_send_service.webpush",
             side_effect=exception,
         ):
-            responses = self.service.send_notification_to_user(self.user, payload="{}", ttl=60)
+            responses = notification_send_service.send_notification_to_user(user, payload="{}", ttl=60)
 
-        self.assertEqual(responses, [])
+        assert responses == []
 
-    def test_unexpected_exception_is_swallowed(self):
+    def test_unexpected_exception_is_swallowed(self, notification_send_service, user):
         with mock.patch(
             "apps.webpush.services.notification_send_service.webpush",
             side_effect=RuntimeError("network down"),
         ):
-            responses = self.service.send_notification_to_user(self.user, payload="{}", ttl=60)
+            responses = notification_send_service.send_notification_to_user(user, payload="{}", ttl=60)
 
-        self.assertEqual(responses, [])
+        assert responses == []

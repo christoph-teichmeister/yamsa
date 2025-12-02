@@ -1,104 +1,87 @@
-from __future__ import annotations
-
-from datetime import timedelta
 from decimal import Decimal
 from unittest import mock
 
-from django.conf import settings
-from django.utils import timezone
+import pytest
 
-from apps.core.tests.setup import BaseTestSetUp
 from apps.debt.models import Debt, ReminderLog
 from apps.debt.services.payment_reminder_service import PaymentReminderService
-from apps.transaction.models import Category, ParentTransaction
+from apps.room.models import Room
 
 
-class PaymentReminderServiceTestCase(BaseTestSetUp):
-    def setUp(self):
-        super().setUp()
-        self.category = Category.objects.create(
-            slug=f"reminder-{self.room.pk}",
-            name="Reminder",
-            emoji="⏰",
-        )
-        self._create_old_transaction()
-        self._create_debt()
-        self.service = PaymentReminderService()
-
-    def _create_old_transaction(self):
-        transaction = ParentTransaction.objects.create(
-            room=self.room,
-            paid_by=self.user,
-            currency=self.room.preferred_currency,
-            description="Old reminder trigger",
-            category=self.category,
-        )
-        timestamp = timezone.now() - timedelta(days=settings.INACTIVITY_REMINDER_DAYS + 4)
-        ParentTransaction.objects.filter(pk=transaction.pk).update(lastmodified_at=timestamp)
-
-    def _create_debt(self):
-        Debt.objects.create(
-            debitor=self.user,
-            creditor=self.guest_user,
-            room=self.room,
-            value=Decimal("42.00"),
-            currency=self.room.preferred_currency,
+@pytest.fixture
+def debt_factory(room_with_stale_activity):
+    def _factory(*, debitor, creditor, value):
+        return Debt.objects.create(
+            debitor=debitor,
+            creditor=creditor,
+            room=room_with_stale_activity,
+            currency=room_with_stale_activity.preferred_currency,
+            value=value,
         )
 
-    def test_inactive_rooms_send_reminders(self):
-        with mock.patch(
-            "apps.debt.services.payment_reminder_service.PaymentReminderEmailService.process"
-        ) as mocked_process:
-            candidates = self.service.run()
+    return _factory
 
-        self.assertEqual(len(candidates), 1)
-        self.assertTrue(mocked_process.called)
-        log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
-        self.assertEqual(log.recipients, [self.user.email])
 
-    def test_opted_out_users_are_skipped(self):
-        self.user.wants_to_receive_payment_reminders = False
-        self.user.save(update_fields=["wants_to_receive_payment_reminders"])
+@pytest.fixture
+def reminder_service():
+    return PaymentReminderService()
+
+
+@pytest.mark.django_db
+class TestPaymentReminderService:
+    def test_inactive_rooms_send_reminders(self, reminder_service, user, guest_user, debt_factory):
+        debt_factory(debitor=user, creditor=guest_user, value=Decimal("42.00"))
 
         with mock.patch(
             "apps.debt.services.payment_reminder_service.PaymentReminderEmailService.process"
         ) as mocked_process:
-            candidates = self.service.run()
+            candidates = reminder_service.run()
 
-        self.assertEqual(len(candidates), 0)
-        self.assertFalse(mocked_process.called)
-        log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
-        self.assertEqual(log.recipients, [])
+        assert len(candidates) == 1
+        assert mocked_process.called
+        log = ReminderLog.objects.get(reminder_type=reminder_service.REMINDER_TYPE)
+        assert log.recipients == [user.email]
 
-    def test_guest_users_are_skipped(self):
-        Debt.objects.create(
-            debitor=self.guest_user,
-            creditor=self.user,
-            room=self.room,
-            value=Decimal("13.37"),
-            currency=self.room.preferred_currency,
-        )
+    def test_opted_out_users_are_skipped(self, reminder_service, user, guest_user, debt_factory):
+        debt_factory(debitor=user, creditor=guest_user, value=Decimal("42.00"))
+        user.wants_to_receive_payment_reminders = False
+        user.save(update_fields=["wants_to_receive_payment_reminders"])
 
         with mock.patch(
             "apps.debt.services.payment_reminder_service.PaymentReminderEmailService.process"
         ) as mocked_process:
-            candidates = self.service.run()
+            candidates = reminder_service.run()
 
-        self.assertEqual(len(candidates), 1)
-        self.assertTrue(mocked_process.called)
-        log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
-        self.assertEqual(log.recipients, [self.user.email])
+        assert len(candidates) == 0
+        assert not mocked_process.called
+        log = ReminderLog.objects.get(reminder_type=reminder_service.REMINDER_TYPE)
+        assert log.recipients == []
 
-    def test_closed_rooms_are_skipped(self):
-        self.room.status = self.room.StatusChoices.CLOSED
-        self.room.save(update_fields=["status"])
+    def test_guest_users_are_skipped(self, reminder_service, user, guest_user, debt_factory):
+        debt_factory(debitor=user, creditor=guest_user, value=Decimal("42.00"))
+        debt_factory(debitor=guest_user, creditor=user, value=Decimal("13.37"))
 
         with mock.patch(
             "apps.debt.services.payment_reminder_service.PaymentReminderEmailService.process"
         ) as mocked_process:
-            candidates = self.service.run()
+            candidates = reminder_service.run()
 
-        self.assertEqual(len(candidates), 0)
-        self.assertFalse(mocked_process.called)
-        log = ReminderLog.objects.get(reminder_type=self.service.REMINDER_TYPE)
-        self.assertEqual(log.recipients, [])
+        assert len(candidates) == 1
+        assert mocked_process.called
+        log = ReminderLog.objects.get(reminder_type=reminder_service.REMINDER_TYPE)
+        assert log.recipients == [user.email]
+
+    def test_closed_rooms_are_skipped(self, reminder_service, user, guest_user, debt_factory, room_with_stale_activity):
+        debt_factory(debitor=user, creditor=guest_user, value=Decimal("42.00"))
+        room_with_stale_activity.status = Room.StatusChoices.CLOSED
+        room_with_stale_activity.save(update_fields=["status"])
+
+        with mock.patch(
+            "apps.debt.services.payment_reminder_service.PaymentReminderEmailService.process"
+        ) as mocked_process:
+            candidates = reminder_service.run()
+
+        assert len(candidates) == 0
+        assert not mocked_process.called
+        log = ReminderLog.objects.get(reminder_type=reminder_service.REMINDER_TYPE)
+        assert log.recipients == []

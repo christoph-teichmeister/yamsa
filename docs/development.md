@@ -29,10 +29,10 @@
 - `uv run python manage.py runserver 0.0.0.0:8002` starts the development server in the `uv` environment.
 - `uv run python manage.py shell` launches a Django shell.
 
-## Testing and linting
-
-- `uv run python manage.py test apps` exercises the backend test suite.
-- `uv run coverage run manage.py test && uv run coverage report` generates coverage data as configured in
+-## Testing and linting
+- `uv run pytest` exercises the backend test suite using the shared fixtures defined in `conftest.py` and
+  `apps/*/tests/factories.py`.
+- `uv run coverage run -m pytest && uv run coverage report` generates coverage data as configured in
   `pyproject.toml`.
 - Run `uv run ruff check --fix .` followed by `uv run djlint apps --reformat`.
 

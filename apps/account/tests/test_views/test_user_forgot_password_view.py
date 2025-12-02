@@ -1,53 +1,55 @@
 import http
-from unittest import mock
 
+import pytest
 from django.urls import reverse
 
-from apps.account.forms.user_forgot_password_form import UserForgotPasswordForm
 from apps.account.messages.commands.send_forgot_password_email import SendForgotPasswordEmail
 from apps.account.views import LogInUserView, UserForgotPasswordView
-from apps.core.tests.setup import BaseTestSetUp
+
+pytestmark = pytest.mark.django_db
 
 
-class UserForgotPasswordViewTestCase(BaseTestSetUp):
-    def test_get_regular(self):
-        client = self.reauthenticate_user(self.user)
-        response = client.get(reverse("account:forgot-password"))
-        self.assertEqual(response.status_code, http.HTTPStatus.OK)
+def test_get_regular(authenticated_client):
+    response = authenticated_client.get(reverse("account:forgot-password"))
 
-        self.assertTrue(response.template_name[0], UserForgotPasswordView.template_name)
-        self.assertIn("Forgot password", str(response.content))
+    assert response.status_code == http.HTTPStatus.OK
+    assert response.template_name[0] == UserForgotPasswordView.template_name
+    assert "Forgot password" in response.content.decode()
 
-    def test_post_regular(self):
-        client = self.reauthenticate_user(self.user)
 
-        with mock.patch("apps.account.views.user_forgot_password_view.handle_message") as mocked_handle_message:
-            response = client.post(
-                reverse("account:forgot-password"),
-                data={"email": self.user.email},
-                follow=True,
-            )
-            self.assertEqual(response.status_code, http.HTTPStatus.OK)
+def test_post_regular(authenticated_client, user, monkeypatch):
+    recorded_messages = []
 
-            mocked_handle_message.assert_called_once()
-            self.assertIsInstance(mocked_handle_message.call_args[0][0], SendForgotPasswordEmail)
+    def handle_message(message):
+        recorded_messages.append(message)
+        return message
 
-        self.assertTrue(response.template_name[0], LogInUserView.template_name)
-        self.assertIn("Login", str(response.content))
+    monkeypatch.setattr("apps.account.views.user_forgot_password_view.handle_message", handle_message)
+    response = authenticated_client.post(
+        reverse("account:forgot-password"),
+        data={"email": user.email},
+        follow=True,
+    )
 
-    def test_post_email_invalid(self):
-        unknown_email = "unknown_email@local.local"
+    assert response.status_code == http.HTTPStatus.OK
+    assert len(recorded_messages) == 1
+    assert isinstance(recorded_messages[0], SendForgotPasswordEmail)
 
-        client = self.reauthenticate_user(self.user)
+    assert response.template_name[0] == LogInUserView.template_name
+    assert "Login" in response.content.decode()
 
-        response = client.post(
-            reverse("account:forgot-password"),
-            data={"email": unknown_email},
-            follow=True,
-        )
-        self.assertEqual(response.status_code, http.HTTPStatus.OK)
 
-        self.assertTrue(response.template_name[0], UserForgotPasswordForm.template_name)
-        self.assertIn("text-danger d-block mt-1", str(response.content), f"{response.content=!s}")
-        self.assertIn(unknown_email, str(response.content), f"{response.content=!s}")
-        self.assertIn("is not registered with yamsa", str(response.content), f"{response.content=!s}")
+def test_post_email_invalid(authenticated_client):
+    unknown_email = "unknown_email@local.local"
+    response = authenticated_client.post(
+        reverse("account:forgot-password"),
+        data={"email": unknown_email},
+        follow=True,
+    )
+
+    assert response.status_code == http.HTTPStatus.OK
+    assert response.template_name[0] == UserForgotPasswordView.template_name
+    content = response.content.decode()
+    assert "text-danger d-block mt-1" in content
+    assert unknown_email in content
+    assert "is not registered with yamsa" in content
