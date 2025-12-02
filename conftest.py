@@ -27,9 +27,12 @@ def authenticated_user(request, user, guest_user):
     param = request.param
     if param == "user":
         return user
+
     if param == "guest_user":
         return guest_user
-    raise ValueError(f"authenticated_user fixture does not support '{param}'.")
+
+    msg = f"authenticated_user fixture does not support '{param}'."
+    raise ValueError(msg)
 
 
 @pytest.fixture
