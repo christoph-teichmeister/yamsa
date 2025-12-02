@@ -8,7 +8,7 @@ from apps.room.messages.events.room_status_changed import RoomStatusChanged
 from apps.room.models import Room
 
 
-def _build_notification_stub(record: list[tuple["DummyNotification", Any]]) -> type["DummyNotification"]:
+def _build_notification_stub(record: list[tuple[Any, Any]]):
     class DummyNotification:
         class Payload:
             def __init__(self, head: str, body: str) -> None:
@@ -16,7 +16,7 @@ def _build_notification_stub(record: list[tuple["DummyNotification", Any]]) -> t
                 self.body = body
                 self.click_url = ""
 
-        def __init__(self, payload: "DummyNotification.Payload") -> None:
+        def __init__(self, payload) -> None:
             self.payload = payload
 
         def send_to_user(self, user: Any) -> None:

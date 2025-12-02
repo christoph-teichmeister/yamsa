@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from decimal import Decimal
 from http import HTTPStatus
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -27,7 +27,7 @@ def currency():
     return CurrencyFactory()
 
 
-def _transaction_payload(user, room, currency_id) -> Dict[str, Any]:
+def _transaction_payload(user, room, currency_id) -> dict[str, Any]:
     return {
         "description": "Receipt upload",
         "currency": currency_id,

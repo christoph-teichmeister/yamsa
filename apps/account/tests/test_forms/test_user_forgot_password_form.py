@@ -16,4 +16,6 @@ class TestUserForgotPasswordForm:
         form = self.form_class(data={"email": unknown_email})
         assert not form.is_valid()
 
-        assert form.errors["email"][0] == self.form_class.ExceptionMessage.UNKNOWN_EMAIL_ADDRESS.format(email=unknown_email)
+        assert form.errors["email"][0] == self.form_class.ExceptionMessage.UNKNOWN_EMAIL_ADDRESS.format(
+            email=unknown_email
+        )

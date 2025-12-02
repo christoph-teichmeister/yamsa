@@ -66,7 +66,7 @@ class TestSendNotificationOnTransactionCreate:
 
             assert mocked_send.call_count == 2
 
-    def test_send_notification_on_transaction_create_to_debitors_except_for_creator_and_creditor_if_someone_else_created(
+    def test_send_notification_on_transaction_create_to_debitors_except_for_creator_and_creditor_if_someone_else_created(  # noqa: E501
         self,
         room,
         user,
