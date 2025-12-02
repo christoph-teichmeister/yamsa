@@ -26,7 +26,7 @@ def test_get_regular(authenticated_client, guest_user, room, guest_send_invitati
     assert response.context_data["active_tab"] == "people"
 
 
-def test_post_regular(authenticated_client, room, guest_user, guest_send_invitation_url, monkeypatch):
+def test_post_regular(authenticated_client, guest_send_invitation_url, monkeypatch):
     recorded_messages = []
 
     def handle_message(message):

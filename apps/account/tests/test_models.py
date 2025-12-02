@@ -15,7 +15,7 @@ from apps.room.tests.factories import RoomFactory
 from apps.transaction.tests.factories import ParentTransactionFactory
 
 
-def _build_image_bytes(width=64, height=64):
+def _build_image_bytes(width=64, height=64) -> bytes:
     buffer = BytesIO()
     Image.new("RGB", (width, height), color=(255, 255, 255)).save(buffer, format="PNG")
     buffer.seek(0)
@@ -63,6 +63,7 @@ def test_room_qs_for_list_user(user, room):
 
 
 def test_room_qs_for_list_superuser(superuser, room):
+    _ = room  # ensure fixture creates first room for superuser
     RoomFactory()
 
     qs = superuser.room_qs_for_list

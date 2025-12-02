@@ -1,5 +1,10 @@
+import pytest
+
 from apps.account.forms.guest_send_invitation_form import GuestSendInvitationEmailForm
 from apps.account.models import User
+
+
+pytestmark = pytest.mark.django_db
 
 
 class TestGuestSendInvitationEmailForm:

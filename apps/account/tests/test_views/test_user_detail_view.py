@@ -107,7 +107,7 @@ def test_get_as_superuser_own_profile(client, superuser):
     assert "Your account overview" in content
     assert superuser.name in content
     assert superuser.email in content
-    assert "id=superuser-admin-link" in content
+    assert 'id="superuser-admin-link"' in content
 
 
 def test_get_as_superuser_other_profile(client, superuser, user):

@@ -9,20 +9,19 @@ from apps.account.views import LogInUserView
 pytestmark = pytest.mark.django_db
 
 
-def test_get_regular_as_user_and_guest_user(client, guest_user, user):
-    for authenticated_user in (user, guest_user):
-        client.defaults["HTTP_HX_REQUEST"] = "true"
-        client.force_login(authenticated_user)
+@pytest.mark.parametrize("authenticated_user", ("user", "guest_user"), indirect=True)
+def test_get_regular_as_user_and_guest_user(hx_client, authenticated_user):
+    client = hx_client(authenticated_user)
 
-        response = client.get(reverse("account:logout"), follow=True)
+    response = client.get(reverse("account:logout"), follow=True)
 
-        assert response.status_code == http.HTTPStatus.OK
-        assert response.template_name[0] == LogInUserView.template_name
-        assert isinstance(response.wsgi_request.user, AnonymousUser)
+    assert response.status_code == http.HTTPStatus.OK
+    assert response.templates[0].name == LogInUserView.template_name
+    assert isinstance(response.wsgi_request.user, AnonymousUser)
 
-        content = response.content.decode()
-        assert "Login" in content
-        assert "Forgot password?" in content
-        assert "Create an account" in content
+    content = response.content.decode()
+    assert "Login" in content
+    assert "Forgot password?" in content
+    assert "Create an account" in content
 
-        client.logout()
+    client.logout()

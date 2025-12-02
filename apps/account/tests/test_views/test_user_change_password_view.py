@@ -10,6 +10,8 @@ from apps.account.views import UserChangePasswordView, UserDetailView
 
 pytestmark = pytest.mark.django_db
 
+NEW_PASSWORD = "my_new_password"
+
 
 def test_get_regular(authenticated_client, user):
     response = authenticated_client.get(reverse("account:change-password", args=(user.id,)))
@@ -20,13 +22,12 @@ def test_get_regular(authenticated_client, user):
 
 
 def test_post_regular(authenticated_client, user):
-    new_password = "my_new_password"
     response = authenticated_client.post(
         reverse("account:change-password", args=(user.id,)),
         data={
             "old_password": DEFAULT_PASSWORD,
-            "new_password": new_password,
-            "new_password_confirmation": new_password,
+            "new_password": NEW_PASSWORD,
+            "new_password_confirmation": NEW_PASSWORD,
         },
         follow=True,
     )
@@ -36,4 +37,4 @@ def test_post_regular(authenticated_client, user):
     assert "Your account overview" in response.content.decode()
 
     request = RequestFactory().get("/")
-    assert authenticate(request=request, email=user.email, password=new_password) == user
+    assert authenticate(request=request, email=user.email, password=NEW_PASSWORD) == user
