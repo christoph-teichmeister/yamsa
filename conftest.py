@@ -23,6 +23,16 @@ def guest_user(db):
 
 
 @pytest.fixture
+def authenticated_user(request, user, guest_user):
+    param = request.param
+    if param == "user":
+        return user
+    if param == "guest_user":
+        return guest_user
+    raise ValueError(f"authenticated_user fixture does not support '{param}'.")
+
+
+@pytest.fixture
 def room(db, user, guest_user):
     room_instance = RoomFactory(created_by=user)
     room_instance.users.add(user, guest_user)

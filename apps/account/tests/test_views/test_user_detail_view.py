@@ -10,6 +10,10 @@ from apps.account.views import UserDetailView
 pytestmark = pytest.mark.django_db
 
 
+def has_superuser_admin_link(content: str) -> bool:
+    return any(identifier in content for identifier in ("id=superuser-admin-link", 'id="superuser-admin-link"'))
+
+
 def test_get_as_registered_user_own_profile(authenticated_client, user):
     user.paypal_me_username = "paypal_username"
     user.save()
@@ -24,7 +28,7 @@ def test_get_as_registered_user_own_profile(authenticated_client, user):
     assert user.name in content
     assert user.email in content
     assert f"@{user.paypal_me_username}" in content
-    assert 'id="superuser-admin-link"' not in content
+    assert not has_superuser_admin_link(content)
 
 
 def test_get_as_registered_user_other_profile_of_room(authenticated_client, room, superuser):
@@ -39,7 +43,7 @@ def test_get_as_registered_user_other_profile_of_room(authenticated_client, room
     assert "Member profile" in content
     assert superuser.name in content
     assert superuser.email in content
-    assert 'id="superuser-admin-link"' not in content
+    assert not has_superuser_admin_link(content)
 
 
 def test_get_as_registered_user_other_profile_who_is_not_in_room(authenticated_client, superuser):
@@ -63,7 +67,7 @@ def test_get_as_guest_own_profile(client, guest_user):
     assert "Guest Mode" in content
     assert "Hi" in content
     assert guest_user.name in content
-    assert 'id="superuser-admin-link"' not in content
+    assert not has_superuser_admin_link(content)
 
 
 def test_get_as_guest_other_profile(client, guest_user, user, room):
@@ -83,7 +87,7 @@ def test_get_as_guest_other_profile(client, guest_user, user, room):
     assert user.name in content
     assert user.email in content
     assert f"@{user.paypal_me_username}" in content
-    assert 'id="superuser-admin-link"' not in content
+    assert not has_superuser_admin_link(content)
 
 
 def test_get_as_superuser_own_profile(client, superuser):
@@ -99,7 +103,7 @@ def test_get_as_superuser_own_profile(client, superuser):
     assert "Your account overview" in content
     assert superuser.name in content
     assert superuser.email in content
-    assert 'id="superuser-admin-link"' in content
+    assert has_superuser_admin_link(content)
 
 
 def test_get_as_superuser_other_profile(client, superuser, user):
@@ -117,7 +121,7 @@ def test_get_as_superuser_other_profile(client, superuser, user):
     assert "Member profile" in content
     assert user.name in content
     assert user.email in content
-    assert 'id="superuser-admin-link"' not in content
+    assert not has_superuser_admin_link(content)
 
 
 def test_profile_picture_shows_in_detail(tmp_path, authenticated_client, settings, user):
