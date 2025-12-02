@@ -13,17 +13,37 @@ from apps.core.views import WelcomePartialView
 pytestmark = pytest.mark.django_db
 
 
-def test_post_user_can_not_be_removed_from_room(room, guest_user, user, hx_client, monkeypatch):
+recorded_messages: list[object] = []
+
+
+def handle_message(message):
+    recorded_messages.append(message)
+    return message
+
+
+def deny_removal(self, room_id):
+    return False
+
+
+def allow_removal(self, room_id):
+    return True
+
+
+@pytest.fixture
+def recorded_messages_recorder():
+    recorded_messages.clear()
+    return recorded_messages
+
+
+def test_post_user_can_not_be_removed_from_room(
+    room,
+    guest_user,
+    user,
+    hx_client,
+    monkeypatch,
+    recorded_messages_recorder,
+):
     room.users.add(guest_user)
-
-    recorded_messages = []
-
-    def handle_message(message):
-        recorded_messages.append(message)
-        return message
-
-    def deny_removal(self, room_id):
-        return False
 
     monkeypatch.setattr(
         "apps.account.views.user_remove_from_room_view.handle_message",
@@ -41,7 +61,7 @@ def test_post_user_can_not_be_removed_from_room(room, guest_user, user, hx_clien
     )
 
     assert response.status_code == http.HTTPStatus.OK
-    assert not recorded_messages
+    assert not recorded_messages_recorder
 
     assert response.template_name[0] == UserListForRoomView.template_name
     payload = json.loads(response.headers["HX-Trigger-After-Settle"])
@@ -54,17 +74,15 @@ def test_post_user_can_not_be_removed_from_room(room, guest_user, user, hx_clien
     assert toasts[0]["type"] == ERROR_TOAST_CLASS
 
 
-def test_post_user_can_be_removed_from_room(room, guest_user, user, hx_client, monkeypatch):
+def test_post_user_can_be_removed_from_room(
+    room,
+    guest_user,
+    user,
+    hx_client,
+    monkeypatch,
+    recorded_messages_recorder,
+):
     room.users.add(guest_user)
-
-    recorded_messages = []
-
-    def handle_message(message):
-        recorded_messages.append(message)
-        return message
-
-    def allow_removal(self, room_id):
-        return True
 
     monkeypatch.setattr(
         "apps.account.views.user_remove_from_room_view.handle_message",
@@ -82,22 +100,19 @@ def test_post_user_can_be_removed_from_room(room, guest_user, user, hx_client, m
     )
 
     assert response.status_code == http.HTTPStatus.OK
-    assert len(recorded_messages) == 1
-    assert isinstance(recorded_messages[0], RemoveUserFromRoom)
+    assert len(recorded_messages_recorder) == 1
+    assert isinstance(recorded_messages_recorder[0], RemoveUserFromRoom)
     assert response.template_name[0] == UserListForRoomView.template_name
 
 
-def test_post_user_removes_themselves_from_room(room, user, hx_client, monkeypatch):
+def test_post_user_removes_themselves_from_room(
+    room,
+    user,
+    hx_client,
+    monkeypatch,
+    recorded_messages_recorder,
+):
     room.users.add(user)
-
-    recorded_messages = []
-
-    def handle_message(message):
-        recorded_messages.append(message)
-        return message
-
-    def allow_removal(self, room_id):
-        return True
 
     monkeypatch.setattr(
         "apps.account.views.user_remove_from_room_view.handle_message",
@@ -115,6 +130,6 @@ def test_post_user_removes_themselves_from_room(room, user, hx_client, monkeypat
     )
 
     assert response.status_code == http.HTTPStatus.OK
-    assert len(recorded_messages) == 1
-    assert isinstance(recorded_messages[0], RemoveUserFromRoom)
+    assert len(recorded_messages_recorder) == 1
+    assert isinstance(recorded_messages_recorder[0], RemoveUserFromRoom)
     assert response.template_name[0] == WelcomePartialView.template_name

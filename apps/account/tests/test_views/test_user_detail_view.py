@@ -1,21 +1,13 @@
 import http
-from io import BytesIO
 
 import pytest
 from django.core.files.base import ContentFile
 from django.urls import reverse
-from PIL import Image
 
+from apps.account.tests.test_utils import build_image_bytes
 from apps.account.views import UserDetailView
 
 pytestmark = pytest.mark.django_db
-
-
-def build_image_bytes(width=100, height=100):
-    buffer = BytesIO()
-    Image.new("RGB", (width, height), color=(255, 255, 255)).save(buffer, format="PNG")
-    buffer.seek(0)
-    return buffer.getvalue()
 
 
 def test_get_as_registered_user_own_profile(authenticated_client, user):

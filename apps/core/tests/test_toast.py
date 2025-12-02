@@ -1,19 +1,12 @@
 import json
 
-import pytest
 from django.http import HttpResponse
 from django.template import Template
 from django.template.response import TemplateResponse
-from django.test import RequestFactory
 
 from apps.core.middleware.toast_middleware import ToastMiddleware
 from apps.core.toast import ToastQueue
 from apps.core.toast_constants import SUCCESS_TOAST_CLASS
-
-
-@pytest.fixture
-def request_factory():
-    return RequestFactory()
 
 
 def test_toast_queue_consumption_order_and_clears_entries():
@@ -33,13 +26,13 @@ def test_toast_queue_consumption_order_and_clears_entries():
     assert not queue.has_entries()
 
 
-def test_middleware_injects_toasts_into_template_context(request_factory):
-    def get_response(request):
+def test_middleware_injects_toasts_into_template_context(rf):
+    def get_response(request) -> TemplateResponse:
         request.toast_queue.success("Context toast")
         return TemplateResponse(request, Template("<div></div>"), {})
 
     middleware = ToastMiddleware(get_response)
-    request = request_factory.get("/")
+    request = rf.get("/")
     response = middleware(request)
 
     assert "queued_toasts" in response.context_data
@@ -47,15 +40,15 @@ def test_middleware_injects_toasts_into_template_context(request_factory):
     assert queued_toasts[0]["message"] == "Context toast"
 
 
-def test_middleware_merges_toasts_into_htmx_headers(request_factory):
-    def get_response(request):
+def test_middleware_merges_toasts_into_htmx_headers(rf):
+    def get_response(request) -> HttpResponse:
         request.toast_queue.success("Header toast")
         response = HttpResponse()
         response["HX-Trigger"] = json.dumps({"existing": "value"})
         return response
 
     middleware = ToastMiddleware(get_response)
-    request = request_factory.post("/", HTTP_HX_REQUEST="true")
+    request = rf.post("/", HTTP_HX_REQUEST="true")
     response = middleware(request)
 
     trigger_payload = json.loads(response["HX-Trigger"])
