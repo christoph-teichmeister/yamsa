@@ -1,7 +1,12 @@
+import pytest
+
 from django.contrib.auth import authenticate
 
 from apps.account.forms.change_password_form import ChangePasswordForm
 from apps.account.tests.constants import DEFAULT_PASSWORD
+
+
+pytestmark = pytest.mark.django_db
 
 
 class TestChangePasswordForm:

@@ -8,7 +8,7 @@ from apps.webpush.tests.factories import WebpushInformationFactory
 
 
 @pytest.fixture
-def notification_send_service(db, user):
+def notification_send_service(user):
     WebpushInformationFactory(user=user)
     return NotificationSendService()
 

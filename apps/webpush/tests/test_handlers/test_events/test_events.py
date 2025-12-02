@@ -13,7 +13,7 @@ from apps.webpush.utils import Notification
 @pytest.mark.django_db
 class TestSendNotificationOnTransactionCreate:
     @pytest.fixture
-    def another_user(self, db):
+    def another_user(self):
         return UserFactory()
 
     def test_send_notification_on_transaction_create_to_debitor_if_creditor_is_creator(
@@ -66,7 +66,7 @@ class TestSendNotificationOnTransactionCreate:
 
             assert mocked_send.call_count == 2
 
-    def test_send_notification_on_transaction_create_to_debitors_except_for_creator_and_creditor_if_someone_else_created(  # noqa: E501
+    def test_send_notification_on_transaction_create_to_debitors_except_for_creator_and_creditor_if_someone_else_created(
         self,
         room,
         user,

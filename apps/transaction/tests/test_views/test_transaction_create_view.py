@@ -38,6 +38,8 @@ class TestTransactionCreateView:
         assert response.context_data["active_tab"] == "transaction"
 
         assert ParentTransaction.objects.filter(description="My description", room=room, paid_by=user).exists()
+        parent_transaction = ParentTransaction.objects.get(description="My description", room=room, paid_by=user)
+        assert parent_transaction.value == Decimal("10")
 
         child_transaction_value = Decimal("10") / room.users.count()
         for member in room.users.all():

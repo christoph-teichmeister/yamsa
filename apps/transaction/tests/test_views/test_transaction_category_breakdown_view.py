@@ -11,8 +11,8 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 pytestmark = pytest.mark.django_db
 
 
-def _make_child(parent_transaction, paid_for, value):
-    ChildTransaction.objects.create(parent_transaction=parent_transaction, paid_for=paid_for, value=value)
+def _make_child(parent_transaction, paid_for, value) -> ChildTransaction:
+    return ChildTransaction.objects.create(parent_transaction=parent_transaction, paid_for=paid_for, value=value)
 
 
 class TestTransactionCategoryBreakdownView:
