@@ -4,7 +4,7 @@ from django.urls import reverse
 from apps.account.models import UserFriendship
 from apps.account.tests.factories import UserFactory
 from apps.currency.tests.factories import CurrencyFactory
-from apps.room.models import Room, UserConnectionToRoom
+from apps.room.tests.factories import RoomFactory, UserConnectionToRoomFactory
 
 
 @pytest.mark.django_db
@@ -23,14 +23,14 @@ class TestSuggestedGuestViews:
 
     @pytest.fixture
     def room(self, creator, collaborator, currency):
-        room_instance = Room.objects.create(
+        room_instance = RoomFactory(
             name="Group Trip",
             description="Desc",
             preferred_currency=currency,
             created_by=creator,
         )
-        UserConnectionToRoom.objects.create(user=creator, room=room_instance)
-        UserConnectionToRoom.objects.create(user=collaborator, room=room_instance)
+        UserConnectionToRoomFactory(user=creator, room=room_instance)
+        UserConnectionToRoomFactory(user=collaborator, room=room_instance)
         return room_instance
 
     @pytest.fixture

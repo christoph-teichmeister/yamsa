@@ -3,7 +3,8 @@ from django.urls import reverse
 
 from apps.account.tests.factories import GuestUserFactory, UserFactory
 from apps.currency.tests.factories import CurrencyFactory
-from apps.room.models import Room, UserConnectionToRoom
+from apps.room.models import Room
+from apps.room.tests.factories import RoomFactory, UserConnectionToRoomFactory
 
 
 @pytest.mark.django_db
@@ -18,13 +19,13 @@ class TestRoomShareButton:
 
     @pytest.fixture
     def room(self, owner, currency):
-        room = Room.objects.create(
+        room = RoomFactory(
             name="Trip Space",
             description="Group",
             preferred_currency=currency,
             created_by=owner,
         )
-        UserConnectionToRoom.objects.create(user=owner, room=room)
+        UserConnectionToRoomFactory(user=owner, room=room)
         return room
 
     @pytest.fixture
@@ -40,7 +41,7 @@ class TestRoomShareButton:
 
     def test_share_button_shows_for_open_room_with_guests(self, owner_client, room):
         guest = GuestUserFactory()
-        UserConnectionToRoom.objects.create(user=guest, room=room)
+        UserConnectionToRoomFactory(user=guest, room=room)
 
         response = owner_client.get(reverse("room:dashboard", kwargs={"room_slug": room.slug}))
 
@@ -61,7 +62,7 @@ class TestRoomShareButton:
     def test_who_are_you_partial_calls_out_registration_cta(self, owner_client, room):
         owner_client.logout()
         guest = GuestUserFactory()
-        UserConnectionToRoom.objects.create(user=guest, room=room)
+        UserConnectionToRoomFactory(user=guest, room=room)
 
         response = owner_client.get(reverse("room:detail", kwargs={"room_slug": room.slug}))
 

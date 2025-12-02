@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
 from decimal import Decimal
 from http import HTTPStatus
+from typing import Any, Dict
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -22,11 +23,11 @@ def enforce_media_root(tmp_path, settings):
 
 
 @pytest.fixture
-def currency(db):
+def currency():
     return CurrencyFactory()
 
 
-def _transaction_payload(user, room, currency_id):
+def _transaction_payload(user, room, currency_id) -> Dict[str, Any]:
     return {
         "description": "Receipt upload",
         "currency": currency_id,

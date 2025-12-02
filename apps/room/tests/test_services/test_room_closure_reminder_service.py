@@ -24,7 +24,7 @@ class TestRoomClosureReminderService:
         assert candidates[0].pk == room_with_stale_activity.pk
         assert mocked_process.called
 
-        log = ReminderLog.objects.get(reminder_type=service.REMINDER_TYPE)
+        log = ReminderLog.objects.filter(reminder_type=service.REMINDER_TYPE).latest("created_at")
         assert log.recipients == [room_with_stale_activity.created_by.email]
 
     def test_respects_creator_opt_out(self, room_with_stale_activity):
@@ -39,7 +39,7 @@ class TestRoomClosureReminderService:
         assert candidates == []
         assert not mocked_process.called
 
-        log = ReminderLog.objects.get(reminder_type=service.REMINDER_TYPE)
+        log = ReminderLog.objects.filter(reminder_type=service.REMINDER_TYPE).latest("created_at")
         assert log.recipients == []
 
     def test_closed_rooms_are_skipped(self, room_with_stale_activity):
@@ -54,7 +54,7 @@ class TestRoomClosureReminderService:
         assert candidates == []
         assert not mocked_process.called
 
-        log = ReminderLog.objects.get(reminder_type=service.REMINDER_TYPE)
+        log = ReminderLog.objects.filter(reminder_type=service.REMINDER_TYPE).latest("created_at")
         assert log.recipients == []
 
     @override_settings(INACTIVITY_REMINDER_ENABLED=False)

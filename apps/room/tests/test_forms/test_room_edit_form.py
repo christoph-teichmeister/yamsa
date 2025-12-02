@@ -3,6 +3,7 @@ from unittest import mock
 
 from django.utils import timezone
 
+from apps.account.tests.factories import UserFactory
 from apps.debt.models import Debt
 from apps.room.forms.room_edit_form import RoomEditForm
 from apps.room.messages.events.room_status_changed import RoomStatusChanged
@@ -10,10 +11,15 @@ from apps.room.models import Room
 
 
 def _create_open_debt(room: Room) -> Debt:
+    if room.users.count() < 2:
+        while room.users.count() < 2:
+            room.users.add(UserFactory())
+
+    users = list(room.users.all()[:2])
     return Debt.objects.create(
         room=room,
-        debitor=room.users.first(),
-        creditor=room.users.last(),
+        debitor=users[0],
+        creditor=users[1],
         value=Decimal("10.00"),
         currency=room.preferred_currency,
     )

@@ -1,12 +1,9 @@
-from decimal import Decimal
-
 import pytest
 from django.urls import reverse
 
 from apps.news.handlers.events.create_news_on_transaction_create import create_news_on_transaction_create
 from apps.news.models import News
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
-from apps.transaction.models import ChildTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 
 
@@ -14,11 +11,6 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 class TestCreateNewsOnTransactionCreate:
     def test_handler_creates_news_entry_with_expected_payload(self):
         parent_transaction = ParentTransactionFactory()
-        ChildTransaction.objects.create(
-            parent_transaction=parent_transaction,
-            paid_for=parent_transaction.paid_by,
-            value=Decimal("12.34"),
-        )
 
         context = ParentTransactionCreated.Context(parent_transaction=parent_transaction, room=parent_transaction.room)
 

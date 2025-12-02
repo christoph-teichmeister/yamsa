@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import Any, Dict
 
 import pytest
 
@@ -43,7 +44,7 @@ def parent_transaction_with_children(room, guest_user, user):
     return parent_transaction, [first_child, second_child]
 
 
-def _base_form_data(parent_transaction, total_value):
+def _base_form_data(parent_transaction, total_value) -> Dict[str, Any]:
     child_transactions = list(parent_transaction.child_transactions.order_by("-id"))
     return {
         "description": parent_transaction.description,
