@@ -11,11 +11,14 @@ from apps.room.models import Room
 
 
 def _create_open_debt(room: Room) -> Debt:
-    if room.users.count() < 2:
-        while room.users.count() < 2:
-            room.users.add(UserFactory())
+    missing_users = 2 - room.users.count()
+    if missing_users > 0:
+        room.users.add(*[UserFactory() for _ in range(missing_users)])
 
     users = list(room.users.all()[:2])
+    if len(users) < 2:
+        msg = "Room requires at least two users to create an open debt"
+        raise AssertionError(msg)
     return Debt.objects.create(
         room=room,
         debitor=users[0],

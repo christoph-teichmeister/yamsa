@@ -54,6 +54,13 @@ def _cleanup_registry_entry(mapping: dict, key: type, handler) -> None:
         mapping.pop(key, None)
 
 
+def _latest_error_record(handler: _CaptureHandler, level: int) -> logging.LogRecord | None:
+    for record in reversed(handler.records):
+        if record.levelno >= level:
+            return record
+    return None
+
+
 @pytest.fixture
 def capture_handler():
     handler = _CaptureHandler()
@@ -85,13 +92,6 @@ class TestRunnerLogging:
         handlers = message_registry.event_dict.setdefault(_DummyEvent, [])
         handlers.append(_failing_event_handler)
 
-    @staticmethod
-    def _latest_error_record(handler: _CaptureHandler, level: int) -> logging.LogRecord | None:
-        for record in reversed(handler.records):
-            if record.levelno >= level:
-                return record
-        return None
-
     def test_handle_command_exception_logs_context(self, capture_handler):
         self._register_command_handler()
         capture_handler.records.clear()
@@ -100,7 +100,7 @@ class TestRunnerLogging:
         with pytest.raises(RuntimeError):
             handle_command(command, [])
 
-        record = self._latest_error_record(capture_handler, logging.ERROR)
+        record = _latest_error_record(capture_handler, logging.ERROR)
         assert record is not None, "Expected an ERROR record when the handler raises"
         assert "Exception handling command" in record.getMessage()
         assert command.__class__.__name__ in record.getMessage()
@@ -115,7 +115,7 @@ class TestRunnerLogging:
         with pytest.raises(RuntimeError):
             handle_event(event, [])
 
-        record = self._latest_error_record(capture_handler, logging.ERROR)
+        record = _latest_error_record(capture_handler, logging.ERROR)
         assert record is not None, "Expected an ERROR record when the handler raises"
         assert "Exception handling event" in record.getMessage()
         assert event.__class__.__name__ in record.getMessage()
