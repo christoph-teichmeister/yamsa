@@ -32,7 +32,7 @@ jobs:
       - name: Run Tests
         run: |-
           uv run python manage.py collectstatic --no-input
-          uv run coverage run -m pytest -v3
+          uv run coverage run -m pytest
         env:
           DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
 
