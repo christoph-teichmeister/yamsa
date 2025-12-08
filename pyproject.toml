@@ -38,7 +38,7 @@ dev = [
     "ruff",
     "factory-boy==3.*",
     "pytest-django==4.*",
-    "pytest-env==0.7.*",
+    "pytest-env==1.2.*",
     "pytest-factoryboy==2.*",
 ]
 
