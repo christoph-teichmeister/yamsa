@@ -63,7 +63,7 @@
                                             {% endfor %}
                                         </div>
                                         <div class="d-flex flex-wrap align-items-center gap-2">
-                                            <small class="text-muted small mb-0">{% trans "PNG / JPEG up to 3 MB and 2048×2048 px." %}</small>
+                                            <small class="text-muted small mb-0">{% trans "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB." %}</small>
                                             <button type="button"
                                                     class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
                                                     hx-post="{% url 'account:profile-picture-delete' %}"

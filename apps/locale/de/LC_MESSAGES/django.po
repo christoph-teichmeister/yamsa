@@ -26,6 +26,9 @@ msgstr "Dein neues Passwort"
 msgid "Confirm your new password"
 msgstr "Bestätige dein neues Passwort"
 
+msgid "We could not read that file. Please upload a valid image."
+msgstr "Wir konnten diese Datei nicht lesen. Bitte lade ein gültiges Bild hoch."
+
 msgid "Receive push notifications"
 msgstr "Push-Benachrichtigungen erhalten"
 
@@ -226,8 +229,8 @@ msgstr "Vorschau des Profilbilds"
 msgid "Profile photo"
 msgstr "Profilfoto"
 
-msgid "PNG / JPEG up to 3 MB and 2048×2048 px."
-msgstr "PNG / JPEG bis 3 MB und 2048x2048 px."
+msgid "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB."
+msgstr "Wir ändern automatisch die Größe und komprimieren PNG-/JPEG-Uploads, damit sie unter 3 MB bleiben."
 
 msgid "Remove your profile picture?"
 msgstr "Profilbild entfernen?"
