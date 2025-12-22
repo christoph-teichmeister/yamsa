@@ -1,0 +1,1 @@
+from apps.core.services.compress_picture_service import CompressPictureService
