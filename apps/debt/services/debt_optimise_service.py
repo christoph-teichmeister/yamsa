@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, deque
 from decimal import Decimal
 
 from django.db.models import F, Sum
@@ -12,7 +12,7 @@ class DebtOptimiseService:
     """Service responsible for refreshing unsettled debts for a room from current transactions."""
 
     @staticmethod
-    def process(room_id):
+    def process(room_id) -> None:
         """
         Rebuild the unsettled squad of debts for the requested room.
 
@@ -75,11 +75,12 @@ class DebtOptimiseService:
         for entry in settled_creditor_annotations:
             balances_by_currency[entry["currency_id"]][entry["creditor_id"]] -= entry["total_settled"]
 
-        currencies_qs = Currency.objects.all()
+        currencies_qs = Currency.objects.filter(id__in=balances_by_currency.keys())
 
         # Iterate through every currency to keep currency-specific debts separate.
         for currency in currencies_qs:
-            currency_balances = balances_by_currency.get(currency.id, {})
+            currency_id = currency.id
+            currency_balances = balances_by_currency.get(currency_id, {})
             # Drop users whose net balance is zero after aggregations.
             balances = {person: balance for person, balance in currency_balances.items() if balance != Decimal(0)}
             if not balances:
@@ -99,9 +100,12 @@ class DebtOptimiseService:
             creditors.sort(key=lambda x: x[1], reverse=True)
             transactions_list = []
 
-            while debtors and creditors:
-                debtor, debt = debtors.pop(0)
-                creditor, credit = creditors.pop(0)
+            debtors_queue = deque(debtors)
+            creditors_queue = deque(creditors)
+
+            while debtors_queue and creditors_queue:
+                debtor, debt = debtors_queue.popleft()
+                creditor, credit = creditors_queue.popleft()
 
                 transfer_amount = min(-debt, credit)
                 balances[debtor] += transfer_amount
@@ -114,23 +118,22 @@ class DebtOptimiseService:
 
                 # If a participant still has a residual balance, put them back into the queue.
                 if balances[debtor] != 0:
-                    debtors.append((debtor, debt))
+                    debtors_queue.append((debtor, debt))
                 if balances[creditor] != 0:
-                    creditors.append((creditor, credit))
+                    creditors_queue.append((creditor, credit))
 
-            # Bulk-create new Debt rows for every pairwise transfer left after the pairing loop.
-            created_debt_tuple = ()
+            debts_to_create = []
             for debtor, creditor, transfer_amount in transactions_list:
                 # Skip zero transfers that can occur from rounding or exact cancellations.
                 if transfer_amount != Decimal(0):
-                    created_debt_tuple += (
+                    debts_to_create.append(
                         Debt(
                             debitor_id=debtor,
                             creditor_id=creditor,
                             room_id=room_id,
                             value=transfer_amount,
-                            currency_id=currency.id,
+                            currency_id=currency_id,
                         ),
                     )
 
-            Debt.objects.bulk_create(created_debt_tuple)
+            Debt.objects.bulk_create(debts_to_create)

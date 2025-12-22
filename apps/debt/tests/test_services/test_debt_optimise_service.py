@@ -77,9 +77,11 @@ class TestDebtOptimiseService:
         sorted_expected = sorted(expected_debts, key=ordering_key)
         assert unsettled_snapshot == sorted_expected
         assert reprocessed_snapshot == sorted_expected
-        assert room.debts.filter(settled=True).filter(
-            debitor_id=guest_user.id, creditor_id=user.id, value=Decimal("10")
-        ).exists()
+        assert (
+            room.debts.filter(settled=True)
+            .filter(debitor_id=guest_user.id, creditor_id=user.id, value=Decimal("10"))
+            .exists()
+        )
         assert len({currency_id for _, _, currency_id, _ in unsettled_snapshot}) == len(currency_ids)
 
         assert Debt.objects.filter(creditor=user, debitor=guest_user, currency=currency_1, settled=True).exists()
