@@ -6,11 +6,9 @@ from django.test import override_settings
 from PIL import Image
 
 from apps.account.forms import EditUserForm
-from apps.account.forms.edit_user_form import (
+from apps.core.services.compress_picture_service import (
     MAX_PROFILE_PICTURE_DIMENSION,
     MAX_PROFILE_PICTURE_FILE_SIZE,
-    PROFILE_PICTURE_DIMENSION_ERROR,
-    PROFILE_PICTURE_SIZE_ERROR,
 )
 from apps.webpush.models import WebpushInformation
 
@@ -114,22 +112,23 @@ class TestEditUserForm:
             stored_name = user.profile_picture.name
             assert user.profile_picture.storage.exists(stored_name)
 
-    def test_profile_picture_size_validation(self, user):
-        form_data = self._base_form_data(user)
-        image_file = self._build_image_file()
-        image_file.size = MAX_PROFILE_PICTURE_FILE_SIZE + 1
-
-        form = self.form_class(instance=user, data=form_data, files={"profile_picture": image_file})
-        assert not form.is_valid()
-        assert form.errors["profile_picture"][0] == PROFILE_PICTURE_SIZE_ERROR
-
-    def test_profile_picture_dimension_validation(self, user):
+    def test_profile_picture_resizes_to_maximum_dimensions(self, user):
         form_data = self._base_form_data(user)
         image_file = self._build_image_file(
-            width=MAX_PROFILE_PICTURE_DIMENSION + 300,
-            height=MAX_PROFILE_PICTURE_DIMENSION + 300,
+            width=MAX_PROFILE_PICTURE_DIMENSION * 2,
+            height=MAX_PROFILE_PICTURE_DIMENSION * 2,
         )
 
-        form = self.form_class(instance=user, data=form_data, files={"profile_picture": image_file})
-        assert not form.is_valid()
-        assert form.errors["profile_picture"][0] == PROFILE_PICTURE_DIMENSION_ERROR
+        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
+            form = self.form_class(instance=user, data=form_data, files={"profile_picture": image_file})
+            assert form.is_valid()
+            form.save()
+
+            user.refresh_from_db()
+            stored_name = user.profile_picture.name
+            assert user.profile_picture.storage.exists(stored_name)
+            with user.profile_picture.storage.open(stored_name) as stored_file, Image.open(stored_file) as saved_image:
+                assert saved_image.width <= MAX_PROFILE_PICTURE_DIMENSION
+                assert saved_image.height <= MAX_PROFILE_PICTURE_DIMENSION
+
+            assert user.profile_picture.storage.size(stored_name) <= MAX_PROFILE_PICTURE_FILE_SIZE
