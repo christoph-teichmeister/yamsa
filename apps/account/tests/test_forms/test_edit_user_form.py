@@ -1,7 +1,7 @@
 import tempfile
 from io import BytesIO
 
-from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.files.uploadedfile import InMemoryUploadedFile, SimpleUploadedFile
 from django.test import override_settings
 from PIL import Image
 
@@ -9,6 +9,7 @@ from apps.account.forms import EditUserForm
 from apps.core.services.compress_picture_service import (
     MAX_PROFILE_PICTURE_DIMENSION,
     MAX_PROFILE_PICTURE_FILE_SIZE,
+    CompressPictureService,
 )
 from apps.webpush.models import WebpushInformation
 
@@ -132,3 +133,68 @@ class TestEditUserForm:
                 assert saved_image.height <= MAX_PROFILE_PICTURE_DIMENSION
 
             assert user.profile_picture.storage.size(stored_name) <= MAX_PROFILE_PICTURE_FILE_SIZE
+
+    def test_profile_picture_rejects_invalid_uploads(self, user):
+        form_data = self._base_form_data(user)
+        corrupted_file = SimpleUploadedFile(
+            "avatar.bin",
+            b"not-an-image",
+            content_type="application/octet-stream",
+        )
+
+        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
+            form = self.form_class(
+                instance=user,
+                data=form_data,
+                files={"profile_picture": corrupted_file},
+            )
+
+            assert not form.is_valid()
+            assert "profile_picture" in form.errors
+
+    def test_profile_picture_surface_compressor_errors(self, user, monkeypatch):
+        form_data = self._base_form_data(user)
+        image_file = self._build_image_file()
+
+        def fail(self) -> None:
+            raise RuntimeError("failed")  # noqa: EM101
+
+        monkeypatch.setattr(CompressPictureService, "process", fail)
+
+        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
+            form = self.form_class(
+                instance=user,
+                data=form_data,
+                files={"profile_picture": image_file},
+            )
+
+            assert not form.is_valid()
+            assert form.errors.get("profile_picture") or form.non_field_errors()
+
+    def test_profile_picture_rejects_uncompressed_oversized_images(self, user, monkeypatch):
+        form_data = self._base_form_data(user)
+        image_file = self._build_image_file()
+
+        def return_large_file(self):
+            oversized_buffer = BytesIO(b"\x00" * (MAX_PROFILE_PICTURE_FILE_SIZE + 1024))
+            oversized_buffer.seek(0)
+            return InMemoryUploadedFile(
+                oversized_buffer,
+                "profile_picture",
+                "oversized.jpg",
+                "image/jpeg",
+                oversized_buffer.getbuffer().nbytes,
+                None,
+            )
+
+        monkeypatch.setattr(CompressPictureService, "process", return_large_file)
+
+        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
+            form = self.form_class(
+                instance=user,
+                data=form_data,
+                files={"profile_picture": image_file},
+            )
+
+            assert not form.is_valid()
+            assert form.errors.get("profile_picture") or form.non_field_errors()

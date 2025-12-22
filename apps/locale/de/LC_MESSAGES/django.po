@@ -29,6 +29,9 @@ msgstr "Bestätige dein neues Passwort"
 msgid "We could not read that file. Please upload a valid image."
 msgstr "Wir konnten diese Datei nicht lesen. Bitte lade ein gültiges Bild hoch."
 
+msgid "The profile picture could not be reduced enough. Try a smaller file."
+msgstr "Das Profilbild konnte nicht ausreichend verkleinert werden. Versuche es mit einer kleineren Datei."
+
 msgid "Receive push notifications"
 msgstr "Push-Benachrichtigungen erhalten"
 

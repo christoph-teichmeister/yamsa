@@ -7,8 +7,10 @@ from PIL import Image, UnidentifiedImageError
 
 from apps.account.models import User
 from apps.core.services import CompressPictureService
+from apps.core.services.compress_picture_service import MAX_PROFILE_PICTURE_FILE_SIZE
 
 PROFILE_PICTURE_INVALID_IMAGE_ERROR = _("We could not read that file. Please upload a valid image.")
+PROFILE_PICTURE_TOO_LARGE_ERROR = _("The profile picture could not be reduced enough. Try a smaller file.")
 
 
 class EditUserForm(ModelForm):
@@ -38,7 +40,9 @@ class EditUserForm(ModelForm):
 
         picture = self.cleaned_data.get("profile_picture")
         if picture:
-            compressed_picture = CompressPictureService(picture).process()
+            compressed_picture = getattr(self, "_compressed_profile_picture", None)
+            if compressed_picture is None or compressed_picture is not picture:
+                compressed_picture = CompressPictureService(picture).process()
             self.cleaned_data["profile_picture"] = compressed_picture
             self.instance.profile_picture = compressed_picture
 
@@ -61,4 +65,13 @@ class EditUserForm(ModelForm):
             raise ValidationError(PROFILE_PICTURE_INVALID_IMAGE_ERROR) from exc
 
         picture.seek(0)
-        return picture
+        try:
+            compressed_picture = CompressPictureService(picture).process()
+        except Exception as exc:
+            raise ValidationError(PROFILE_PICTURE_INVALID_IMAGE_ERROR) from exc
+
+        if compressed_picture.size > MAX_PROFILE_PICTURE_FILE_SIZE:
+            raise ValidationError(PROFILE_PICTURE_TOO_LARGE_ERROR)
+
+        self._compressed_profile_picture = compressed_picture
+        return compressed_picture
