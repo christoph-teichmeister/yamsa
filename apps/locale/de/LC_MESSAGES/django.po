@@ -756,6 +756,9 @@ msgstr "Räume"
 msgid "{user} belongs to {room}"
 msgstr "{user} gehört zu {room}"
 
+msgid "Back to dashboard"
+msgstr "Zurück zum Dashboard"
+
 msgid "Create Room"
 msgstr "Raum erstellen"
 

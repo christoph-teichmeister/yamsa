@@ -15,16 +15,16 @@ class TestRoomCreateView:
         client.force_login(owner)
         return client
 
-    def test_back_button_targets_room_list(self, owner_client):
+    def test_back_button_targets_dashboard(self, owner_client):
         response = owner_client.get(reverse("room:create"))
 
         assert response.status_code == 200
         content = response.content.decode()
-        room_list_url = reverse("room:list")
-        href_fragment = f"href={room_list_url}"
-        hx_get_fragment = f"hx-get={room_list_url}"
+        dashboard_url = reverse("core:welcome")
+        href_fragment = f"href={dashboard_url}"
+        hx_get_fragment = f"hx-get={dashboard_url}"
 
         assert href_fragment in content
         assert hx_get_fragment in content
-        assert 'bi-arrow-left' in content
-        assert 'Back to rooms' in content
+        assert "bi-arrow-left" in content
+        assert "Back to dashboard" in content
