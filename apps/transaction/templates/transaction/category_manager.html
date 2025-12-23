@@ -19,9 +19,10 @@
                     <div class="card-body p-4">
                         <div class="mb-3">
                             <p class="text-muted small mb-1">{% trans "Create new category" %}</p>
-                            <h5 class="fw-semibold mb-0">{% trans "Room-only tags" %}</h5>
+                            <h5 class="fw-semibold mb-0">{% trans "Room-only categories" %}</h5>
                         </div>
-                        <form hx-post="{% room_url 'transaction:category-manager' %}"
+                        <form id="room-category-creation-form"
+                              hx-post="{% room_url 'transaction:category-manager' %}"
                               hx-target="#room-category-list"
                               hx-indicator="#body-loading-spinner"
                               hx-swap="outerHTML"
@@ -104,6 +105,56 @@
                                 </div>
                             {% endif %}
                         </form>
+                        {% if category_creation_success_message %}
+                            <script type="module">
+                                (function () {
+                                    const form = document.getElementById("room-category-creation-form")
+                                    const successMessage = "{{ category_creation_success_message|escapejs }}"
+
+                                    if (!form || !successMessage) {
+                                        return
+                                    }
+
+                                    const normalizeToastPayloads = (payload) => {
+                                        if (!payload) {
+                                            return []
+                                        }
+                                        if (Array.isArray(payload)) {
+                                            return payload.flatMap(normalizeToastPayloads)
+                                        }
+                                        if (payload.triggerToast) {
+                                            return normalizeToastPayloads(payload.triggerToast)
+                                        }
+                                        if (payload.value !== undefined) {
+                                            return normalizeToastPayloads(payload.value)
+                                        }
+                                        if (payload.message) {
+                                            return [payload]
+                                        }
+                                        return []
+                                    }
+
+                                    const hasMatchingToast = (payloads) =>
+                                        payloads.some((entry) => entry?.message === successMessage)
+
+                                    const handleToast = (event) => {
+                                        const payloads = normalizeToastPayloads(event.detail)
+                                        if (!hasMatchingToast(payloads)) {
+                                            return
+                                        }
+                                        form.reset()
+                                        form.querySelectorAll(".is-invalid").forEach((element) =>
+                                            element.classList.remove("is-invalid")
+                                        )
+                                        form.querySelectorAll(".invalid-feedback").forEach((element) =>
+                                            element.remove()
+                                        )
+                                    }
+
+                                    document.body.addEventListener("triggerToast", handleToast)
+                                })()
+                            </script>
+                        {% endif %}
                     </div>
                 </div>
             </div>
