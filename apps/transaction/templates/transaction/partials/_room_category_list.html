@@ -38,12 +38,28 @@
                                     <input type="hidden" name="room_category_id" value="{{ room_category.id }}" />
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text" id="order-label">{% trans "Order" %}</span>
-                                        <input type="number"
-                                               name="order_index"
-                                               class="form-control"
-                                               aria-describedby="order-label"
-                                               min="0"
-                                               value="{{ room_category.order_index }}" />
+                                        {% with failed_id=failed_room_category_id|stringformat:"s" %}
+                                            {% if room_category_update_form and failed_id == room_category.id|stringformat:"s" %}
+                                                {% with update_for_category=room_category_update_form %}
+                                                    <input type="number"
+                                                           name="order_index"
+                                                           class="form-control{% if update_for_category.order_index.errors %} is-invalid{% endif %}"
+                                                           aria-describedby="order-label"
+                                                           min="0"
+                                                           value="{{ update_for_category.order_index.value|default:room_category.order_index }}" />
+                                                    {% if update_for_category.order_index.errors %}
+                                                        <div class="invalid-feedback d-block">{{ update_for_category.order_index.errors.0 }}</div>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% else %}
+                                                <input type="number"
+                                                       name="order_index"
+                                                       class="form-control"
+                                                       aria-describedby="order-label"
+                                                       min="0"
+                                                       value="{{ room_category.order_index }}" />
+                                            {% endif %}
+                                        {% endwith %}
                                     </div>
                                     <div class="form-check form-switch m-0">
                                         <input class="form-check-input"
@@ -51,7 +67,10 @@
                                                role="switch"
                                                id="default-switch-{{ room_category.id }}"
                                                name="make_default"
-                                               {% if room_category.is_default %}checked{% endif %}
+                                               {% if room_category_update_form and failed_room_category_id|stringformat:"s" == room_category.id|stringformat:"s" %} {% if room_category_update_form.make_default.value %}checked{% endif %}
+                                               {% elif room_category.is_default %}
+                                               checked
+                                               {% endif %}
                                                value="true" />
                                         <label class="form-check-label small"
                                                for="default-switch-{{ room_category.id }}">

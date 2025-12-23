@@ -36,7 +36,7 @@ class TestRoomCategoryManagerView:
         response = authenticated_client.post(url, data=payload, HTTP_HX_REQUEST="true")
 
         assert response.status_code == http.HTTPStatus.OK
-        RoomCategory.objects.filter(room=room).exists()
+        assert RoomCategory.objects.filter(room=room).exists()
         category = Category.objects.get(name="Room Tag")
         assert RoomCategory.objects.filter(room=room, category=category).exists()
         assert RoomCategory.objects.get(room=room, category=category).is_default

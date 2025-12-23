@@ -41,17 +41,17 @@ class RoomCategoryService:
         make_default: bool = False,
     ) -> RoomCategory:
         self._ensure_defaults()
-        desired_index = order_index if order_index is not None else self._next_order_index()
-        category = Category.objects.create(
-            slug=self._build_unique_slug(name),
-            name=name,
-            emoji=emoji,
-            color=color,
-            order_index=desired_index,
-        )
         with transaction.atomic():
+            desired_index = order_index if order_index is not None else self._next_order_index()
             if make_default:
                 self._clear_default_marker()
+            category = Category.objects.create(
+                slug=self._build_unique_slug(name),
+                name=name,
+                emoji=emoji,
+                color=color,
+                order_index=desired_index,
+            )
             room_category = RoomCategory.objects.create(
                 room=self.room,
                 category=category,
@@ -77,28 +77,32 @@ class RoomCategoryService:
 
     def delete_room_category(self, room_category_id: int) -> None:
         self._ensure_defaults()
-        target = self.room.room_categories.filter(id=room_category_id).first()
-        if not target:
-            return
-        was_default = target.is_default
-        target.delete()
-        if was_default:
-            self._ensure_default_exists()
+        with transaction.atomic():
+            target = self.room.room_categories.select_for_update().filter(id=room_category_id).first()
+            if not target:
+                return
+            was_default = target.is_default
+            target.delete()
+            if was_default:
+                self._ensure_default_exists()
 
     def _ensure_defaults(self) -> None:
         if self.room.room_categories.exists():
             return
-        defaults = [
-            RoomCategory(
-                room=self.room,
-                category=category,
-                order_index=index,
-                is_default=category.slug == DEFAULT_CATEGORY_SLUG,
-            )
-            for index, category in enumerate(Category.objects.order_by("order_index", "id"))
-        ]
-        if defaults:
-            RoomCategory.objects.bulk_create(defaults)
+        with transaction.atomic():
+            if self.room.room_categories.exists():
+                return
+            defaults = [
+                RoomCategory(
+                    room=self.room,
+                    category=category,
+                    order_index=index,
+                    is_default=category.slug == DEFAULT_CATEGORY_SLUG,
+                )
+                for index, category in enumerate(Category.objects.order_by("order_index", "id"))
+            ]
+            if defaults:
+                RoomCategory.objects.bulk_create(defaults, ignore_conflicts=True)
         self._ensure_default_exists()
 
     def _get_default_room_category(self) -> RoomCategory | None:

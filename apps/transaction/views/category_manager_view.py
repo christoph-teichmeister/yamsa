@@ -1,3 +1,5 @@
+import logging
+
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
@@ -7,6 +9,8 @@ from apps.room.models import Room
 from apps.room.views.mixins.room_base_context import RoomBaseContext
 from apps.transaction.forms.room_category_forms import RoomCategoryCreateForm, RoomCategoryUpdateForm
 from apps.transaction.services.room_category_service import RoomCategoryService
+
+logger = logging.getLogger(__name__)
 
 
 class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
@@ -21,13 +25,16 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(self._build_context(category_creation_form=kwargs.get("category_creation_form")))
+        context.update(
+            self._build_context(
+                category_creation_form=kwargs.get("category_creation_form"),
+                category_update_form=kwargs.get("category_update_form"),
+                failed_room_category_id=kwargs.get("failed_room_category_id"),
+            )
+        )
         return context
 
     def post(self, request, *args, **kwargs):
-        if not getattr(self, "object", None):
-            self.object = self.get_object()
-        self._ensure_room_member()
         action = request.POST.get("action")
         service = self._get_service()
 
@@ -43,7 +50,22 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
             if form.is_valid():
                 self._handle_update(service, form.cleaned_data)
                 return self._return_after_action()
-            return self._return_after_action()
+            failed_room_category_id = form.data.get("room_category_id")
+            logger.warning(
+                "RoomCategoryUpdateForm invalid for room %s: %s",
+                self.object.pk,
+                form.errors.as_json(),
+            )
+            self.request.toast_queue.error(_("Unable to update that category. Please correct the highlighted fields."))
+            if request.headers.get("HX-Request") == "true":
+                return self._render_category_list(update_form=form, failed_room_category_id=failed_room_category_id)
+            return self.render_to_response(
+                self._build_context(
+                    category_creation_form=RoomCategoryCreateForm(),
+                    category_update_form=form,
+                    failed_room_category_id=failed_room_category_id,
+                )
+            )
 
         if action == "delete":
             room_category_id = request.POST.get("room_category_id")
@@ -58,20 +80,26 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
             return self._render_category_list()
         return redirect(self.request.path)
 
-    def _render_category_list(self):
+    def _render_category_list(self, update_form=None, failed_room_category_id=None):
         service = self._get_service()
         return render(
             self.request,
             "transaction/partials/_room_category_list.html",
-            {"room_categories": service.get_categories()},
+            {
+                "room_categories": service.get_categories(),
+                "room_category_update_form": update_form,
+                "failed_room_category_id": failed_room_category_id,
+            },
         )
 
-    def _build_context(self, *, category_creation_form=None):
+    def _build_context(self, *, category_creation_form=None, category_update_form=None, failed_room_category_id=None):
         service = self._get_service()
         return {
             "category_creation_form": category_creation_form or RoomCategoryCreateForm(),
             "room_categories": service.get_categories(),
             "category_creation_success_message": self._get_category_creation_success_message(),
+            "room_category_update_form": category_update_form,
+            "failed_room_category_id": failed_room_category_id,
         }
 
     def _handle_create(self, service: RoomCategoryService, cleaned_data: dict):
@@ -95,8 +123,6 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
         )
 
     def _get_service(self) -> RoomCategoryService:
-        if not getattr(self, "object", None):
-            self.object = self.get_object()
         return RoomCategoryService(room=self.object)
 
     def _ensure_room_member(self) -> None:

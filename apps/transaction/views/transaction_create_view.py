@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.views import generic
 
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
@@ -20,7 +21,7 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
     def get_initial(self):
         initial = super().get_initial()
         if not initial.get("category"):
-            default_category = RoomCategoryService(room=self.request.room).get_default_category()
+            default_category = self._room_category_service.get_default_category()
             if default_category:
                 initial["category"] = default_category.pk
         return initial
@@ -132,7 +133,11 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
             value = form["category"].value()
             if value:
                 return str(value)
-        default_category = RoomCategoryService(room=self.request.room).get_default_category()
+        default_category = self._room_category_service.get_default_category()
         if default_category:
             return str(default_category.id)
         return ""
+
+    @cached_property
+    def _room_category_service(self):
+        return RoomCategoryService(room=self.request.room)

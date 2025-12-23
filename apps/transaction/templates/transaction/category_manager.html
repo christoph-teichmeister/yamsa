@@ -158,7 +158,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-xl-7">{% include "transaction/partials/_room_category_list.html" %}</div>
+            <div class="col-12 col-xl-7">
+                {% include "transaction/partials/_room_category_list.html" with room_category_update_form=room_category_update_form failed_room_category_id=failed_room_category_id %}
+            </div>
         </div>
     </section>
 {% endblock tab_content %}
