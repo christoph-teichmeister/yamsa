@@ -1,12 +1,10 @@
-from __future__ import annotations
-
 from collections.abc import Iterable
 
 from django.db import transaction
 from django.utils.text import slugify
 
 from apps.room.models import Room
-from apps.transaction.models import DEFAULT_CATEGORY_SLUG, Category, RoomCategory
+from apps.transaction.models import BASE_CATEGORY_SLUGS, DEFAULT_CATEGORY_SLUG, Category, RoomCategory
 
 
 class RoomCategoryService:
@@ -92,6 +90,7 @@ class RoomCategoryService:
         with transaction.atomic():
             if self.room.room_categories.exists():
                 return
+            base_categories = Category.objects.filter(slug__in=BASE_CATEGORY_SLUGS).order_by("order_index", "id")
             defaults = [
                 RoomCategory(
                     room=self.room,
@@ -99,7 +98,7 @@ class RoomCategoryService:
                     order_index=index,
                     is_default=category.slug == DEFAULT_CATEGORY_SLUG,
                 )
-                for index, category in enumerate(Category.objects.order_by("order_index", "id"))
+                for index, category in enumerate(base_categories)
             ]
             if defaults:
                 RoomCategory.objects.bulk_create(defaults, ignore_conflicts=True)

@@ -1,7 +1,9 @@
 import logging
 
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect, render
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 from django.views import generic
 
@@ -43,6 +45,10 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
             if form.is_valid():
                 self._handle_create(service, form.cleaned_data)
                 return self._return_after_action()
+            if request.headers.get("HX-Request") == "true":
+                list_fragment = self._render_category_list_fragment()
+                creation_form_fragment = self._render_category_creation_form_fragment(form, is_oob=True)
+                return HttpResponse(list_fragment + creation_form_fragment)
             return self.render_to_response(self._build_context(category_creation_form=form))
 
         if action == "update":
@@ -77,19 +83,37 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
 
     def _return_after_action(self):
         if self.request.headers.get("HX-Request") == "true":
-            return self._render_category_list()
+            list_fragment = self._render_category_list_fragment()
+            creation_form_fragment = self._render_category_creation_form_fragment(RoomCategoryCreateForm(), is_oob=True)
+            return HttpResponse(list_fragment + creation_form_fragment)
         return redirect(self.request.path)
 
     def _render_category_list(self, update_form=None, failed_room_category_id=None):
+        return HttpResponse(self._render_category_list_fragment(update_form, failed_room_category_id))
+
+    def _render_category_list_fragment(self, update_form=None, failed_room_category_id=None):
         service = self._get_service()
-        return render(
-            self.request,
+        return render_to_string(
             "transaction/partials/_room_category_list.html",
             {
                 "room_categories": service.get_categories(),
                 "room_category_update_form": update_form,
                 "failed_room_category_id": failed_room_category_id,
             },
+            request=self.request,
+        )
+
+    def _render_category_creation_form_fragment(self, form, *, is_oob=False, success_message=None):
+        if success_message is None:
+            success_message = self._get_category_creation_success_message()
+        return render_to_string(
+            "transaction/partials/_room_category_creation_form.html",
+            {
+                "category_creation_form": form,
+                "category_creation_success_message": success_message,
+                "is_oob": is_oob,
+            },
+            request=self.request,
         )
 
     def _build_context(self, *, category_creation_form=None, category_update_form=None, failed_room_category_id=None):
