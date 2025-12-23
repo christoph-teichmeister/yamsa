@@ -7,7 +7,21 @@
             <div class="col-12 col-lg-7">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
-                        <h1 class="h3 fw-semibold mb-4">{% trans "Create Room" %}</h1>
+                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4">
+                            <a class="btn btn-outline-secondary gap-2 d-flex align-items-center justify-content-center px-3 py-2 shadow-sm w-100 w-md-auto text-decoration-none"
+                               href="{{ room_list_url }}"
+                               role="button"
+                               aria-label="{% trans 'Back to rooms' %}"
+                               hx-get="{{ room_list_url }}"
+                               hx-target="#body"
+                               hx-indicator="#body-loading-spinner"
+                               hx-swap="innerHTML"
+                               hx-push-url="true">
+                                <i class="bi bi-arrow-left fs-5" aria-hidden="true"></i>
+                                {% trans "Back to rooms" %}
+                            </a>
+                            <h1 class="h3 fw-semibold mb-0">{% trans "Create Room" %}</h1>
+                        </div>
                         <form action="{% url 'room:create' %}" method="post">
                             {% csrf_token %}
                             <div class="mb-3">

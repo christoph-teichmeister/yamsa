@@ -20,6 +20,7 @@ class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["suggested_guests"] = SuggestedGuestService(user=self.request.user).get_suggested_guests()
+        context["room_list_url"] = self._build_room_list_url()
         return context
 
     def form_valid(self, form):
@@ -46,3 +47,10 @@ class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
 
             if form.is_valid():
                 form.save()
+
+    def _build_room_list_url(self) -> str:
+        base_url = reverse(viewname="room:list")
+        query_string = self.request.GET.urlencode()
+        if query_string:
+            return f"{base_url}?{query_string}"
+        return base_url
