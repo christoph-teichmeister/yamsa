@@ -22,9 +22,11 @@ class TestRoomCreateView:
         content = response.content.decode()
         dashboard_url = reverse("core:welcome")
         href_fragment = f'href="{dashboard_url}"'
+        href_fragment_unquoted = f"href={dashboard_url}"
         hx_get_fragment = f'hx-get="{dashboard_url}"'
+        hx_get_fragment_unquoted = f"hx-get={dashboard_url}"
 
-        assert href_fragment in content
-        assert hx_get_fragment in content
+        assert href_fragment in content or href_fragment_unquoted in content
+        assert hx_get_fragment in content or hx_get_fragment_unquoted in content
         assert "bi-arrow-left" in content
         assert "Back to dashboard" in content
