@@ -21,8 +21,8 @@ class TestRoomCreateView:
         assert response.status_code == 200
         content = response.content.decode()
         dashboard_url = reverse("core:welcome")
-        href_fragment = f"href={dashboard_url}"
-        hx_get_fragment = f"hx-get={dashboard_url}"
+        href_fragment = f'href="{dashboard_url}"'
+        hx_get_fragment = f'hx-get="{dashboard_url}"'
 
         assert href_fragment in content
         assert hx_get_fragment in content
