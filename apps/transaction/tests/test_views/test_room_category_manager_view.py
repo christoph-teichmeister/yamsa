@@ -14,8 +14,13 @@ class TestRoomCategoryManagerView:
         assert response.status_code == http.HTTPStatus.OK
         assert "Manage categories" in response.content.decode()
 
-    def test_guest_cannot_access_manager(self, client, guest_user, room):
+    def test_guest_member_can_access_manager(self, client, guest_user, room):
         client.force_login(guest_user)
+        response = client.get(reverse("transaction:category-manager", kwargs={"room_slug": room.slug}))
+        assert response.status_code == http.HTTPStatus.OK
+        assert "Manage categories" in response.content.decode()
+
+    def test_non_member_cannot_access_manager(self, client, room):
         response = client.get(reverse("transaction:category-manager", kwargs={"room_slug": room.slug}))
         assert response.status_code == http.HTTPStatus.FORBIDDEN
 
