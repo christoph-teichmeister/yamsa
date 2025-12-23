@@ -1055,6 +1055,12 @@ msgstr "Registrierter Mitbewohner"
 msgid "Joined as a full member of this room."
 msgstr "Als volles Mitglied dieses Raums beigetreten."
 
+msgid "Enter a single emoji character."
+msgstr "Gib ein einzelnes Emoji-Zeichen ein."
+
+msgid "Enter a color in #RRGGBB format."
+msgstr "Gib eine Farbe im Format #RRGGBB ein."
+
 #, python-brace-format
 msgid "{paid_by} paid {value}{currency} for {paid_for}"
 msgstr "{paid_by} hat {value}{currency} für {paid_for} bezahlt"
@@ -1655,6 +1661,9 @@ msgstr "Noch keine Transaktionen anzuzeigen."
 
 msgid "You're all caught up."
 msgstr "Du bist auf dem Laufenden."
+
+msgid "Unable to update that category. Please correct the highlighted fields."
+msgstr "Diese Kategorie kann nicht aktualisiert werden. Bitte korrigiere die markierten Felder."
 
 msgid "Category added."
 msgstr "Kategorie hinzugefügt."
