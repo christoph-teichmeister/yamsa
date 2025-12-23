@@ -5,7 +5,8 @@ from django.utils import timezone
 from django.views import generic
 
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
-from apps.transaction.models import Category, ParentTransaction
+from apps.transaction.models import ParentTransaction
+from apps.transaction.services.room_category_service import RoomCategoryService
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -19,7 +20,7 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
     def get_initial(self):
         initial = super().get_initial()
         if not initial.get("category"):
-            default_category = Category.get_default_category()
+            default_category = RoomCategoryService(room=self.request.room).get_default_category()
             if default_category:
                 initial["category"] = default_category.pk
         return initial
@@ -30,6 +31,7 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.setdefault("request", self.request)
+        kwargs.setdefault("room", self.request.room)
         return kwargs
 
     def form_invalid(self, form):
@@ -130,7 +132,7 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
             value = form["category"].value()
             if value:
                 return str(value)
-        default_category = Category.get_default_category()
+        default_category = RoomCategoryService(room=self.request.room).get_default_category()
         if default_category:
             return str(default_category.id)
         return ""

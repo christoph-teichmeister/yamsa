@@ -1,3 +1,4 @@
+from apps.transaction.views.category_manager_view import RoomCategoryManagerView
 from apps.transaction.views.child_transaction_create_view import ChildTransactionCreateView
 from apps.transaction.views.child_transaction_delete_view import ChildTransactionDeleteView
 from apps.transaction.views.parent_transaction_delete_view import ParentTransactionDeleteView

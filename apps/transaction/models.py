@@ -40,6 +40,22 @@ class Category(FullCleanOnSaveMixin, CommonInfo):
         return cls.objects.filter(is_default=True).order_by("order_index").first()
 
 
+class RoomCategory(FullCleanOnSaveMixin, CommonInfo):
+    room = models.ForeignKey("room.Room", related_name="room_categories", on_delete=models.CASCADE)
+    category = models.ForeignKey("Category", related_name="room_category_map", on_delete=models.CASCADE)
+    order_index = models.PositiveIntegerField(default=0)
+    is_default = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ("order_index", "id")
+        constraints = [
+            models.UniqueConstraint(fields=("room", "category"), name="unique_room_category"),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.room} - {self.category}"
+
+
 class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
     description = models.TextField(max_length=50)
     further_notes = models.TextField(max_length=5000, blank=True, null=True)
@@ -71,8 +87,10 @@ class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
         return self.child_transactions.aggregate(Sum("value"))["value__sum"]
 
     def save(self, *args, **kwargs):
-        if not getattr(self, "category_id", None):
-            default_category = Category.get_default_category()
+        if not getattr(self, "category_id", None) and getattr(self, "room", None):
+            from apps.transaction.services.room_category_service import RoomCategoryService
+
+            default_category = RoomCategoryService(room=self.room).get_default_category()
             if default_category:
                 self.category = default_category
         super().save(*args, **kwargs)

@@ -1,0 +1,113 @@
+{% extends "room/dashboard.html" %}
+{% load static room_tags i18n %}
+{% block tab_content %}
+    <section class="container px-2 px-md-4 px-lg-5 py-4">
+        <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
+            <div>
+                <p class="text-uppercase text-muted small fw-semibold mb-1">{% trans "Room settings" %}</p>
+                <h2 class="fw-semibold mb-0">
+                    {% blocktrans trimmed with room_name=current_room.name %}
+                        Manage categories for "{{ room_name }}"
+                    {% endblocktrans %}
+                </h2>
+            </div>
+            <p class="text-muted small mb-0">{% trans "Add or reorder tags that match how your household tracks spending." %}</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-12 col-xl-5">
+                <div class="card border-0 rounded-4 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <p class="text-muted small mb-1">{% trans "Create new category" %}</p>
+                            <h5 class="fw-semibold mb-0">{% trans "Room-only tags" %}</h5>
+                        </div>
+                        <form hx-post="{% room_url 'transaction:category-manager' %}"
+                              hx-target="#room-category-list"
+                              hx-indicator="#body-loading-spinner"
+                              hx-swap="outerHTML"
+                              class="d-flex flex-column gap-3">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="create" />
+                            <div>
+                                <label class="form-label fw-semibold" for="category-name">{% trans "Name" %}</label>
+                                <input id="category-name"
+                                       name="name"
+                                       type="text"
+                                       maxlength="100"
+                                       class="form-control{% if category_creation_form.name.errors %} is-invalid{% endif %}"
+                                       value="{{ category_creation_form.name.value|default_if_none:'' }}"
+                                       required />
+                                {% if category_creation_form.name.errors %}
+                                    <div class="invalid-feedback d-block">{{ category_creation_form.name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <label class="form-label fw-semibold" for="category-emoji">{% trans "Emoji" %}</label>
+                                    <input id="category-emoji"
+                                           name="emoji"
+                                           type="text"
+                                           maxlength="10"
+                                           class="form-control{% if category_creation_form.emoji.errors %} is-invalid{% endif %}"
+                                           value="{{ category_creation_form.emoji.value|default_if_none:'' }}"
+                                           required />
+                                    {% if category_creation_form.emoji.errors %}
+                                        <div class="invalid-feedback d-block">{{ category_creation_form.emoji.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label fw-semibold" for="category-color">{% trans "Color" %}</label>
+                                    <input id="category-color"
+                                           name="color"
+                                           type="text"
+                                           maxlength="7"
+                                           class="form-control{% if category_creation_form.color.errors %} is-invalid{% endif %}"
+                                           placeholder="#RRGGBB"
+                                           value="{{ category_creation_form.color.value|default_if_none:'' }}" />
+                                    {% if category_creation_form.color.errors %}
+                                        <div class="invalid-feedback d-block">{{ category_creation_form.color.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap gap-3 align-items-center">
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-semibold" for="category-order">{% trans "Order index" %}</label>
+                                    <input id="category-order"
+                                           name="order_index"
+                                           type="number"
+                                           min="0"
+                                           class="form-control{% if category_creation_form.order_index.errors %} is-invalid{% endif %}"
+                                           value="{{ category_creation_form.order_index.value|default_if_none:'' }}" />
+                                    {% if category_creation_form.order_index.errors %}
+                                        <div class="invalid-feedback d-block">{{ category_creation_form.order_index.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           role="switch"
+                                           id="category-default"
+                                           name="make_default"
+                                           {% if category_creation_form.make_default.value %}checked{% endif %}
+                                           value="true" />
+                                    <label class="form-check-label small" for="category-default">{% trans "Set as default" %}</label>
+                                </div>
+                            </div>
+                            <button type="submit"
+                                    class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-plus-circle"></i>
+                                {% trans "Add category" %}
+                            </button>
+                            {% if category_creation_form.non_field_errors %}
+                                <div class="alert alert-danger rounded-4 px-3 py-2 mb-0">
+                                    {% for error in category_creation_form.non_field_errors %}<p class="mb-0 small">{{ error }}</p>{% endfor %}
+                                </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-7">{% include "transaction/partials/_room_category_list.html" %}</div>
+        </div>
+    </section>
+{% endblock tab_content %}
