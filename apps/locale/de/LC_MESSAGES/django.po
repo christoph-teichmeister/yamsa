@@ -877,8 +877,8 @@ msgstr "Raum wieder öffnen"
 msgid "Category manager"
 msgstr "Kategorie-Manager"
 
-msgid "Customize tracking tags"
-msgstr "Tracking-Tags anpassen"
+msgid "Customize tracking categories"
+msgstr "Tracking-Kategorien anpassen"
 
 msgid "Add room-specific categories and control their order without touching the global defaults."
 msgstr "Füge raumspezifische Kategorien hinzu und steuere deren Reihenfolge, ohne die globalen Standardeinstellungen zu verändern."
@@ -1109,14 +1109,14 @@ msgstr "Füge Ausgaben hinzu, um die Aufschlüsselung freizuschalten."
 msgid "Manage categories for \"%(room_name)s\""
 msgstr "Kategorien für „%(room_name)s“ verwalten"
 
-msgid "Add or reorder tags that match how your group tracks spending."
-msgstr "Füge Tags hinzu oder ordne sie neu, die der Art und Weise entsprechen, wie deine Gruppe Ausgaben erfasst."
+msgid "Add or reorder categories that match how your group tracks spending."
+msgstr "Füge Kategorien hinzu oder ordne sie neu, die der Art und Weise entsprechen, wie deine Gruppe Ausgaben erfasst."
 
 msgid "Create new category"
 msgstr "Neue Kategorie erstellen"
 
-msgid "Room-only tags"
-msgstr "Raumspezifische Tags"
+msgid "Room-only categories"
+msgstr "Raumspezifische Kategorien"
 
 msgid "Emoji"
 msgstr "Emoji"
@@ -1655,6 +1655,9 @@ msgstr "Noch keine Transaktionen anzuzeigen."
 
 msgid "You're all caught up."
 msgstr "Du bist auf dem Laufenden."
+
+msgid "Category added."
+msgstr "Kategorie hinzugefügt."
 
 #, python-brace-format
 msgid "Webpush Information for {user}"
