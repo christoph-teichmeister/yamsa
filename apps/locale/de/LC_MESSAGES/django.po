@@ -874,6 +874,18 @@ msgstr "Raum schließen"
 msgid "Reopen room"
 msgstr "Raum wieder öffnen"
 
+msgid "Category manager"
+msgstr "Kategorie-Manager"
+
+msgid "Customize tracking tags"
+msgstr "Tracking-Tags anpassen"
+
+msgid "Add room-specific categories and control their order without touching the global defaults."
+msgstr "Füge raumspezifische Kategorien hinzu und steuere deren Reihenfolge, ohne die globalen Standardeinstellungen zu verändern."
+
+msgid "Open manager"
+msgstr "Manager öffnen"
+
 msgid "Outstanding debts"
 msgstr "Ausstehende Schulden"
 
@@ -1092,6 +1104,34 @@ msgstr "Noch keine erfassten Ausgaben. Füge eine Transaktion hinzu, um die Aufs
 
 msgid "Add expenses to unlock the breakdown."
 msgstr "Füge Ausgaben hinzu, um die Aufschlüsselung freizuschalten."
+
+#, python-format
+msgid "Manage categories for \"%(room_name)s\""
+msgstr "Kategorien für „%(room_name)s“ verwalten"
+
+msgid "Add or reorder tags that match how your group tracks spending."
+msgstr "Füge Tags hinzu oder ordne sie neu, die der Art und Weise entsprechen, wie deine Gruppe Ausgaben erfasst."
+
+msgid "Create new category"
+msgstr "Neue Kategorie erstellen"
+
+msgid "Room-only tags"
+msgstr "Raumspezifische Tags"
+
+msgid "Emoji"
+msgstr "Emoji"
+
+msgid "Color"
+msgstr "Farbe"
+
+msgid "Order index"
+msgstr "Sortierungsindex"
+
+msgid "Set as default"
+msgstr "Als Standard festlegen"
+
+msgid "Add category"
+msgstr "Kategorie hinzufügen"
 
 msgid "Amount"
 msgstr "Betrag"
@@ -1556,6 +1596,36 @@ msgstr "Beleg hochladen"
 
 msgid "PDF or PNG/JPEG/WebP/GIF (max 5 MB)."
 msgstr "PDF oder PNG/JPEG/WebP/GIF (max. 5 MB)."
+
+msgid "Available categories"
+msgstr "Verfügbare Kategorien"
+
+msgid "Room catalog"
+msgstr "Raum Katalog"
+
+msgid "Global defaults"
+msgstr "Globale Standards"
+
+msgid "Customized"
+msgstr "Angepasst"
+
+msgid "Auto assigned"
+msgstr "Automatisch zugewiesen"
+
+msgid "Default"
+msgstr "Standard"
+
+msgid "Order"
+msgstr "Sortierung"
+
+msgid "Set default"
+msgstr "Als Standard festlegen"
+
+msgid "Remove"
+msgstr "Entfernen"
+
+msgid "No room-specific categories yet. Create one to override the shared baseline."
+msgstr "Noch keine raumspezifischen Kategorien vorhanden. Erstelle eine, um die gemeinsame Basislinie zu überschreiben."
 
 msgid "Paid on"
 msgstr "Bezahlt am"
