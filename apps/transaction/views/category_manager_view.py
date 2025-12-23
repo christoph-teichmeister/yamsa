@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.room.models import Room
@@ -15,7 +16,7 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
-        self._ensure_room_owner()
+        self._ensure_room_member()
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -26,7 +27,7 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
     def post(self, request, *args, **kwargs):
         if not getattr(self, "object", None):
             self.object = self.get_object()
-        self._ensure_room_owner()
+        self._ensure_room_member()
         action = request.POST.get("action")
         service = self._get_service()
 
@@ -70,6 +71,7 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
         return {
             "category_creation_form": category_creation_form or RoomCategoryCreateForm(),
             "room_categories": service.get_categories(),
+            "category_creation_success_message": self._get_category_creation_success_message(),
         }
 
     def _handle_create(self, service: RoomCategoryService, cleaned_data: dict):
@@ -83,6 +85,7 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
             order_index=order_index,
             make_default=cleaned_data.get("make_default", False),
         )
+        self.request.toast_queue.success(self._get_category_creation_success_message())
 
     def _handle_update(self, service: RoomCategoryService, cleaned_data: dict):
         service.update_room_category(
@@ -96,6 +99,14 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
             self.object = self.get_object()
         return RoomCategoryService(room=self.object)
 
-    def _ensure_room_owner(self) -> None:
-        if self.request.user != self.object.created_by:
+    def _ensure_room_member(self) -> None:
+        user = self.request.user
+        if user.is_anonymous:
             raise PermissionDenied
+        if user == self.object.created_by or user.is_superuser:
+            return
+        if not self.object.users.filter(pk=user.pk).exists():
+            raise PermissionDenied
+
+    def _get_category_creation_success_message(self) -> str:
+        return str(_("Category added."))
