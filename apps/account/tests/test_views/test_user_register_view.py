@@ -47,7 +47,7 @@ def test_post_regular(client, monkeypatch):
 
     recorded_messages = []
 
-    def handle_message(message):
+    def handle_message(message: SendPostRegisterEmail) -> SendPostRegisterEmail:
         recorded_messages.append(message)
         return message
 
@@ -75,7 +75,7 @@ def test_post_from_invitation_email(client, guest_user, monkeypatch):
 
     recorded_messages = []
 
-    def handle_message(message):
+    def handle_message(message: SendPostRegisterEmail) -> SendPostRegisterEmail:
         recorded_messages.append(message)
         return message
 
@@ -111,7 +111,7 @@ def test_post_from_invitation_email_preserves_room_membership(client, room, gues
 
     recorded_messages = []
 
-    def handle_message(message):
+    def handle_message(message: SendPostRegisterEmail) -> SendPostRegisterEmail:
         recorded_messages.append(message)
         return message
 
@@ -147,7 +147,7 @@ def test_post_from_share_link_adds_user_to_room(client, room, monkeypatch):
 
     recorded_messages = []
 
-    def handle_message(message):
+    def handle_message(message: SendPostRegisterEmail) -> SendPostRegisterEmail:
         recorded_messages.append(message)
         return message
 
