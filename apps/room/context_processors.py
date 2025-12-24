@@ -18,6 +18,11 @@ def room_context(request):
     if room.share_hash:
         share_url = request.build_absolute_uri(reverse("room:share", kwargs={"share_hash": room.share_hash}))
 
+    user_connection = None
+    if request.user.is_authenticated:
+        connection, _ = request.user.has_seen_room(room.id)
+        user_connection = connection
+
     return {
         **base_context,
         "current_room": {
@@ -38,5 +43,6 @@ def room_context(request):
             # Processed info
             "guest_users": room.room_users.filter(is_guest=True),
             "share_url": share_url,
+            "user_is_member": user_connection is not None,
         },
     }

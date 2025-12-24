@@ -32,7 +32,7 @@
                         </p>
                         <div class="d-flex flex-wrap gap-2 justify-content-center">
                             <a class="btn btn-sm btn-outline-light px-3"
-                               href="{% url 'account:register' %}">{% trans "Create a free account" %}</a>
+                               href="{% url 'account:register' %}?room_slug={{ current_room.slug }}">{% trans "Create a free account" %}</a>
                             <a class="btn btn-sm btn-link px-3" href="{% url 'account:login' %}">{% trans "Already have an account?" %}</a>
                         </div>
                     </div>

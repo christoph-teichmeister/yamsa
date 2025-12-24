@@ -5,7 +5,7 @@
     yamsa | {{ current_room.name }}
 {% endblock title %}
 {% block content %}
-    {% if request.user.is_authenticated %}
+    {% if current_room.user_is_member %}
         {% with reminder_heartbeat as reminder_check %}{% endwith %}
         {% block tab_content %}
         {% endblock tab_content %}

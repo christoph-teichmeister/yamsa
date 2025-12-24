@@ -76,6 +76,10 @@
                                             <label for="is_guest" class="form-label">{% trans "Is Guest" %}</label>
                                             <input id="is_guest" name="is_guest" type="checkbox" class="form-control" />
                                         </div>
+                                        <input id="room_slug"
+                                               name="room_slug"
+                                               type="hidden"
+                                               value="{{ shared_room_slug|default:'' }}" />
                                     </div>
                                     <div>
                                         <button type="submit" class="btn btn-primary w-100 fw-semibold py-2">{% trans "Register now" %}</button>
