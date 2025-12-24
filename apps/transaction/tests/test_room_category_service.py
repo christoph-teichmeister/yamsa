@@ -24,14 +24,36 @@ class TestRoomCategoryService:
         assert default.category.slug.startswith("private")
         assert service.get_default_category().pk == default.category.pk
 
-    def test_update_room_category_changes_order_without_changing_default(self, room):
+    def test_create_room_category_shifts_existing_categories(self, room):
         service = RoomCategoryService(room=room)
-        target = service.get_categories()[0]
-        service.update_room_category(room_category_id=target.id, order_index=55, make_default=False)
+        initial_first = service.get_categories()[0]
+        created = service.create_room_category(name="Room Tag", emoji="🚀", color="#FEDCBA", order_index=0)
 
-        target.refresh_from_db()
-        assert target.order_index == 55
-        assert not target.is_default
+        categories = list(service.get_categories())
+        assert categories[0].id == created.id
+        assert categories[1].category.slug == initial_first.category.slug
+        assert [rc.order_index for rc in categories] == list(range(len(categories)))
+
+    def test_update_room_category_reorders_without_changing_default(self, room):
+        service = RoomCategoryService(room=room)
+        categories_before = list(service.get_categories())
+        target = categories_before[2]
+        default_before = RoomCategory.objects.get(room=room, is_default=True)
+        service.update_room_category(room_category_id=target.id, order_index=0, make_default=False)
+
+        updated_categories = list(service.get_categories())
+        assert updated_categories[0].id == target.id
+        assert [rc.order_index for rc in updated_categories] == list(range(len(updated_categories)))
+        assert RoomCategory.objects.get(room=room, is_default=True).id == default_before.id
+
+    def test_delete_room_category_compacts_order(self, room):
+        service = RoomCategoryService(room=room)
+        categories = list(service.get_categories())
+        target = categories[1]
+        service.delete_room_category(target.id)
+
+        remaining = list(service.get_categories())
+        assert [rc.order_index for rc in remaining] == list(range(len(remaining)))
 
     def test_delete_default_promotes_next_category(self, room):
         service = RoomCategoryService(room=room)

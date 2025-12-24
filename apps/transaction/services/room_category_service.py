@@ -1,6 +1,7 @@
 from collections.abc import Iterable
 
 from django.db import transaction
+from django.db.models import F
 from django.utils.text import slugify
 
 from apps.room.models import Room
@@ -73,11 +74,14 @@ class RoomCategoryService:
             make_default: Whether to mark the new category as the room's default.
         """
         self._ensure_defaults()
+        desired_index = order_index if order_index is not None else self._next_order_index()
+        desired_index = self._clamp_create_index(desired_index)
         with transaction.atomic():
-            desired_index = order_index if order_index is not None else self._next_order_index()
-            # Determine the position in the ordering; defaults to appending after the last element.
             if make_default:
                 self._clear_default_marker()
+            RoomCategory.objects.filter(room=self.room, order_index__gte=desired_index).update(
+                order_index=F("order_index") + 1
+            )
             category = Category.objects.create(
                 slug=self._build_unique_slug(name),
                 name=name,
@@ -103,14 +107,29 @@ class RoomCategoryService:
         this category is being promoted.
         """
         self._ensure_defaults()
-        room_category = self.room.room_categories.filter(id=room_category_id).first()
-        if not room_category:
-            return None
-        room_category.order_index = order_index
         with transaction.atomic():
-            # Promote this category to default by stripping the previous flag first.
+            room_category = self.room.room_categories.select_for_update().filter(id=room_category_id).first()
+            if not room_category:
+                return None
+            total_categories = self.room.room_categories.count()
+            max_index = max(total_categories - 1, 0)
+            desired_index = max(0, min(order_index, max_index))
+            current_index = room_category.order_index
+            if desired_index < current_index:
+                (
+                    self.room.room_categories.filter(order_index__gte=desired_index, order_index__lt=current_index)
+                    .exclude(id=room_category.id)
+                    .update(order_index=F("order_index") + 1)
+                )
+            elif desired_index > current_index:
+                (
+                    self.room.room_categories.filter(order_index__gt=current_index, order_index__lte=desired_index)
+                    .exclude(id=room_category.id)
+                    .update(order_index=F("order_index") - 1)
+                )
             if make_default:
                 self._clear_default_marker()
+            room_category.order_index = desired_index
             room_category.is_default = make_default
             room_category.save(update_fields=("order_index", "is_default"))
         return room_category
@@ -126,7 +145,9 @@ class RoomCategoryService:
             if not target:
                 return
             was_default = target.is_default
+            shift_index = target.order_index
             target.delete()
+            self.room.room_categories.filter(order_index__gt=shift_index).update(order_index=F("order_index") - 1)
             if was_default:
                 self._ensure_default_exists()
 
@@ -183,6 +204,10 @@ class RoomCategoryService:
         """
         self._ensure_defaults()
         return self._next_order_index()
+
+    def _clamp_create_index(self, desired_index: int) -> int:
+        total = self.room.room_categories.count()
+        return max(0, min(desired_index, total))
 
     def _clear_default_marker(self) -> None:
         """
