@@ -90,11 +90,8 @@ def test_get_as_guest_other_profile(client, guest_user, user, room):
     assert not has_superuser_admin_link(content)
 
 
-def test_get_as_superuser_own_profile(client, superuser):
-    client.defaults["HTTP_HX_REQUEST"] = "true"
-    client.force_login(superuser)
-
-    response = client.get(reverse("account:detail", args=(superuser.id,)))
+def test_get_as_superuser_own_profile(superuser_htmx_client, superuser):
+    response = superuser_htmx_client.get(reverse("account:detail", args=(superuser.id,)))
 
     assert response.status_code == http.HTTPStatus.OK
     assert response.template_name[0] == UserDetailView.template_name
@@ -106,13 +103,10 @@ def test_get_as_superuser_own_profile(client, superuser):
     assert has_superuser_admin_link(content)
 
 
-def test_get_as_superuser_other_profile(client, superuser, user):
-    client.defaults["HTTP_HX_REQUEST"] = "true"
-    client.force_login(superuser)
-
+def test_get_as_superuser_other_profile(superuser_htmx_client, superuser, user):
     assert not superuser.rooms.all().exists()
 
-    response = client.get(reverse("account:detail", args=(user.id,)))
+    response = superuser_htmx_client.get(reverse("account:detail", args=(user.id,)))
 
     assert response.status_code == http.HTTPStatus.OK
     assert response.template_name[0] == UserDetailView.template_name

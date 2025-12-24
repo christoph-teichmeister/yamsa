@@ -1,7 +1,6 @@
 import http
 
 import pytest
-from django.test import Client
 from django.urls import reverse
 
 from apps.account.models import User
@@ -11,18 +10,19 @@ from apps.room.tests.factories import RoomFactory, UserConnectionToRoomFactory
 pytestmark = pytest.mark.django_db
 
 
-def test_get_for_user_of_room_and_for_superuser_not_of_room(authenticated_client, room, superuser, user):
+def test_get_for_user_of_room_and_for_superuser_not_of_room(
+    authenticated_client,
+    room,
+    user,
+    superuser_htmx_client,
+):
     user_connection = user.userconnectiontoroom_set.get(room=room)
     user_connection.user_has_seen_this_room = True
     user_connection.save()
 
-    superuser_client = Client()
-    superuser_client.defaults["HTTP_HX_REQUEST"] = "true"
-    superuser_client.force_login(superuser)
-
     expectations = (
         (authenticated_client, True),
-        (superuser_client, False),
+        (superuser_htmx_client, False),
     )
 
     for client_instance, should_show_room_roster in expectations:
