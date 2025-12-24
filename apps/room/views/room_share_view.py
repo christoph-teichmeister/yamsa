@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
 from apps.room.constants import SHARED_ROOM_SLUG_SESSION_KEY
@@ -16,7 +16,7 @@ class RoomShareView(RoomDashboardView):
         self.request.session[SHARED_ROOM_SLUG_SESSION_KEY] = str(room.slug)
         return room
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         room = self.get_object()
 
         if request.user.is_authenticated:
