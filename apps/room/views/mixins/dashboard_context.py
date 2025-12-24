@@ -9,7 +9,7 @@ from apps.room.services.dashboard_tab_service import DashboardTabService
 class DashboardBaseContext:
     """Provide dashboard tabs, active tab tracking, and heartbeat-driven reminder checks."""
 
-    _active_tab: str = ""
+    _active_tab: str = "transaction"
 
     @context
     @cached_property

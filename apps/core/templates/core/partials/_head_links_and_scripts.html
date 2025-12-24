@@ -32,6 +32,10 @@ TODO CT: Still needed?
       as="style"
       onload="this.onload=null;this.rel='stylesheet'">
 <link rel="preload"
+      href="{% static 'components/navbar/navbar.css' %}"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'">
+<link rel="preload"
       href="{% static 'customClasses.css' %}"
       as="style"
       onload="this.onload=null;this.rel='stylesheet'">
@@ -41,6 +45,7 @@ TODO CT: Still needed?
       onload="this.onload=null;this.rel='stylesheet'">
 <noscript>
     <link rel="stylesheet" href="{% static 'base.css' %}">
+    <link rel="stylesheet" href="{% static 'components/navbar/navbar.css' %}">
     <link rel="stylesheet" href="{% static 'customClasses.css' %}">
     <link rel="stylesheet" href="{% static 'htmxIndicatorRequest.css' %}">
 </noscript>

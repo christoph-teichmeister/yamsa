@@ -726,39 +726,6 @@ wheels = [
 ]
 
 [[package]]
-name = "kolo"
-version = "2.42.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "asgiref" },
-    { name = "cerberus" },
-    { name = "click" },
-    { name = "httpx" },
-    { name = "mocket" },
-    { name = "more-itertools" },
-    { name = "msgpack" },
-    { name = "platformdirs" },
-    { name = "sqlglot" },
-    { name = "tabulate" },
-    { name = "toolz" },
-    { name = "typing-extensions" },
-    { name = "ulid-py" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/13/17/7a11b2e761f9f0cb3ba3109557c330d75acb8966dec3c67e4b00b77e0fe0/kolo-2.42.1.tar.gz", hash = "sha256:2cb7891371ab5d83c86a556c936e3a953d33109957ef00b16e5a64737965bc4c", size = 3486410, upload-time = "2025-12-02T21:38:31.564Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/22/32/3ba9806144f29e9bbc328f3cea6ea33e66f1399d63a3f035840d65030482/kolo-2.42.1-cp313-cp313-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:a81114242e862f8a21e8d15db95c22dfcf2402eb05ae4eab9398f18fb9c5a4e3", size = 4238990, upload-time = "2025-12-02T21:37:10.996Z" },
-    { url = "https://files.pythonhosted.org/packages/ef/05/9894786bfb607d6daee51064fab9de27f0bf6c73f4f01c875f0e130b6a9b/kolo-2.42.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:82099d267add568c2c5e179b928643178413e285045233fe060b57c9cb0752e6", size = 3864609, upload-time = "2025-12-02T21:37:12.437Z" },
-    { url = "https://files.pythonhosted.org/packages/19/23/1a8eda67f1e2310472adaa6bfe128045e75532bc1af1f53e703b42ffc89a/kolo-2.42.1-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ebb2952c9d53f88a74ee9e2426188f4a38346bb38ef7a5ccc0e3b231e3b9c002", size = 3893714, upload-time = "2025-12-02T21:37:13.845Z" },
-    { url = "https://files.pythonhosted.org/packages/75/27/fa36af256fe0526dccbdc7b988a2ccdc16c49778f9834546a37d7e240fd7/kolo-2.42.1-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:badabb6337edd7facfa1358a7ff52ed4abfa8b0fae5928dc2b3cc891a6cfa0f2", size = 3940610, upload-time = "2025-12-02T21:37:15.645Z" },
-    { url = "https://files.pythonhosted.org/packages/f7/56/915b3d9d675aaa36b140a4d8813f636e617e0b2812fd46270583e2a2a24a/kolo-2.42.1-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:55526d87a7ec719b6b9dc3beed00152dc519a4feb8a8b43ff8f71f84deb6e362", size = 3947140, upload-time = "2025-12-02T21:37:17.119Z" },
-    { url = "https://files.pythonhosted.org/packages/e9/ed/99d76a91f9dfb230d5ee51d1d0389dbabcec98b3db1db9e631e12718318e/kolo-2.42.1-cp313-cp313-manylinux_2_34_x86_64.whl", hash = "sha256:3cbcf0319be94ead2405ed570a0ecee1375a5b892790311efd79556905a2d2ed", size = 3908134, upload-time = "2025-12-02T21:37:18.624Z" },
-    { url = "https://files.pythonhosted.org/packages/3d/73/67e6b3e9cde18a3959e27006c4e0b6674451e217f375e7245390ed9260d8/kolo-2.42.1-cp313-cp313-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:c78f1948ef4b60d7b176306c120cf085eedcb7a9f1ea9b692064324c7139f170", size = 3930749, upload-time = "2025-12-02T21:37:19.999Z" },
-    { url = "https://files.pythonhosted.org/packages/c8/a0/2bfaa8d8eecb5ddfd92f6f1cfef02360897fa94d3c83e8107f687b7ca4bd/kolo-2.42.1-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:345008dbe9eddecf65b7b53cd220810c16b84aca8902d37c899337df82538cd6", size = 4078998, upload-time = "2025-12-02T21:37:21.383Z" },
-    { url = "https://files.pythonhosted.org/packages/5d/9a/8031f0fea5f5d5b715b7081cfc5e1cd76a3ec428d191bef85febd5c30f8a/kolo-2.42.1-cp313-cp313-win32.whl", hash = "sha256:6cce1e11a814522dfd90fe59de3b354bdae979ee130d008ae960d570c7fb7b06", size = 3774695, upload-time = "2025-12-02T21:37:22.809Z" },
-    { url = "https://files.pythonhosted.org/packages/06/ec/3dadf838f09950c441e8cb7c455dc33dc73069670c581f784208d773567b/kolo-2.42.1-cp313-cp313-win_amd64.whl", hash = "sha256:3c56ee8cdb27d2b6aef0d92aa2fd08a6558b5941c519d970eec1c9316cd49935", size = 3790032, upload-time = "2025-12-02T21:37:24.234Z" },
-]
-
-[[package]]
 name = "minify-html"
 version = "0.18.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1391,7 +1358,6 @@ dev = [
     { name = "djlint" },
     { name = "factory-boy" },
     { name = "freezegun" },
-    { name = "kolo" },
     { name = "pytest-django" },
     { name = "pytest-env" },
     { name = "pytest-factoryboy" },
@@ -1419,7 +1385,6 @@ requires-dist = [
     { name = "factory-boy", marker = "extra == 'dev'", specifier = "==3.*" },
     { name = "freezegun", marker = "extra == 'dev'" },
     { name = "gunicorn", specifier = "==23.*" },
-    { name = "kolo", marker = "extra == 'dev'" },
     { name = "minify-html", specifier = "==0.18.*" },
     { name = "model-bakery", specifier = "==1.*" },
     { name = "pillow", specifier = "==12.*" },

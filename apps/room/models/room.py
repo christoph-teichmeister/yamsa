@@ -1,3 +1,5 @@
+import secrets
+import string
 import uuid
 from functools import cached_property
 
@@ -15,7 +17,11 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
         OPEN = 1, _("Open")
         CLOSED = 2, _("Closed")
 
+    SHARE_HASH_LENGTH = 8
+    SHARE_HASH_CHARACTERS = string.ascii_letters + string.digits
+
     slug = models.UUIDField(unique=True)
+    share_hash = models.CharField(max_length=16, unique=True, blank=True, editable=False, db_index=True)
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=50)
     status = models.SmallIntegerField(choices=StatusChoices.choices, default=StatusChoices.OPEN)
@@ -36,7 +42,19 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = uuid.uuid4()
+
+        if not self.share_hash:
+            self.share_hash = self.generate_share_hash()
+
         super().save(*args, **kwargs)
+
+    @classmethod
+    def generate_share_hash(cls) -> str:
+        alphabet = cls.SHARE_HASH_CHARACTERS
+        while True:
+            candidate = "".join(secrets.choice(alphabet) for _ in range(cls.SHARE_HASH_LENGTH))
+            if not cls.objects.filter(share_hash=candidate).exists():
+                return candidate
 
     @cached_property
     def room_users(self):

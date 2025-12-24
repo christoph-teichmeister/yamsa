@@ -75,7 +75,10 @@ const networkFirst = async (request) => {
     }
 
     if (request.mode === "navigate" || request.destination === "document") {
-      return cache.match(OFFLINE_URL);
+      const offlineResponse = await cache.match(OFFLINE_URL);
+      if (offlineResponse) {
+        return offlineResponse;
+      }
     }
 
     throw error;
@@ -107,7 +110,7 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(request)
       .then((response) => response)
-      .catch(() => caches.match(request).then((cached) => cached || Promise.reject()))
+      .catch((error) => caches.match(request).then((cached) => cached || Promise.reject(error)))
   );
 });
 

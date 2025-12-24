@@ -16,3 +16,14 @@ class UserListForRoomView(AccountBaseContext, generic.ListView):
             .annotate_invitation_email_can_be_sent()
             .order_by("user_has_seen_this_room", "name")
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        request = self.request
+        room = getattr(request, "room", None)
+        is_member = False
+        if room and request.user.is_authenticated:
+            is_member = room.users.filter(pk=request.user.pk).exists()
+
+        context["is_member"] = is_member
+        return context

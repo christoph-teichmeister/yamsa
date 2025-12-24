@@ -1,3 +1,5 @@
+from django.urls import reverse
+
 from apps.room.models import Room
 
 
@@ -11,6 +13,15 @@ def room_context(request):
 
     if room is None:
         return base_context
+
+    share_url = None
+    if room.share_hash:
+        share_url = request.build_absolute_uri(reverse("room:share", kwargs={"share_hash": room.share_hash}))
+
+    user_connection = None
+    if request.user.is_authenticated:
+        connection, _ = request.user.has_seen_room(room.id)
+        user_connection = connection
 
     return {
         **base_context,
@@ -31,5 +42,7 @@ def room_context(request):
             "can_be_closed": room.can_be_closed,
             # Processed info
             "guest_users": room.room_users.filter(is_guest=True),
+            "share_url": share_url,
+            "user_is_member": user_connection is not None,
         },
     }

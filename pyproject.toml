@@ -35,7 +35,6 @@ dev = [
     "django-upgrade",
     "djlint",
     "freezegun",
-    "kolo",
     "ruff",
     "factory-boy==3.*",
     "pytest-django==4.*",
@@ -113,9 +112,6 @@ directory = "coverage_html_report"
 
 [tool.djlint]
 profile = "django"
-
-[tool.kolo.filters]
-ignore_request_paths = ["favicon", "serviceworker", "manifest", "__reload__", "favicon"]
 
 [tool.ruff]
 exclude = [

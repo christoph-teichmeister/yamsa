@@ -448,10 +448,6 @@ LOGGING = {
             "handlers": ("console",),
             "propagate": False,
         },
-        "kolo": {
-            "level": logging.WARNING,
-            "handlers": ("console",),
-        },
     },
 }
 
@@ -885,7 +881,6 @@ if DEBUG:
     INSTALLED_APPS += ("django_browser_reload",)
 
     MIDDLEWARE = (
-        "kolo.middleware.KoloMiddleware",
         *MIDDLEWARE,
         "django_browser_reload.middleware.BrowserReloadMiddleware",
     )

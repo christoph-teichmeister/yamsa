@@ -138,76 +138,100 @@
             font-weight: 600;
         }
     </style>
-    <div class="people-wrap">
-        <div class="people-hero">
-            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
-                <div>
-                    <p class="text-uppercase text-muted small mb-1">{% trans "Room roster" %}</p>
-                    <h3 class="mb-1">
-                        {% with current_room.name as room_name %}
-                            {% blocktrans %}Everyone in {{ room_name }}{% endblocktrans %}
-                        {% endwith %}
-                    </h3>
-                    <p class="mb-0">{% trans "Invite roommates, add guests, and keep tabs on who has already viewed the room." %}</p>
-                </div>
-                <div class="text-md-end">
-                    <p class="mb-1 small text-muted">{% trans "Status" %}</p>
-                    <span class="badge {% if current_room.is_closed %}bg-secondary{% else %}bg-success{% endif %}">
-                        {% if current_room.is_closed %}
-                            {% trans "Room closed" %}
-                        {% else %}
-                            {% trans "Room open" %}
-                        {% endif %}
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="row people-actions g-3">
-            <div class="col-12 col-md-6">
-                <button class="w-100 people-action-btn d-flex align-items-center justify-content-between {% if current_room.is_closed %}disabled{% endif %}"
-                        type="button"
-                        hx-get="{% room_url 'room:userconnectiontoroom-create' %}"
-                        hx-target="#body"
-                        hx-indicator="#body-loading-spinner"
-                        hx-swap="morph:innerHTML"
-                        hx-push-url="true">
-                    <span class="d-flex align-items-center gap-2">
-                        <i class="bi bi-person-plus-fill"></i>
-                        {% trans "Add existing user" %}
-                    </span>
-                    <i class="bi bi-arrow-up-right"></i>
-                </button>
-            </div>
-            <div class="col-12 col-md-6">
-                <button class="w-100 people-action-btn d-flex align-items-center justify-content-between {% if current_room.is_closed %}disabled{% endif %}"
-                        type="button"
-                        hx-get="{% room_url 'account:guest-create' %}"
-                        hx-target="#body"
-                        hx-indicator="#body-loading-spinner"
-                        hx-swap="morph:innerHTML"
-                        hx-push-url="true">
-                    <span class="d-flex align-items-center gap-2">
-                        <i class="bi bi-person-plus"></i>
-                        {% trans "Add guest" %}
-                    </span>
-                    <i class="bi bi-arrow-up-right"></i>
-                </button>
-            </div>
-        </div>
-        <div class="people-grid row row-cols-1 row-cols-md-2 g-3">
-            {% csrf_token %}
-            {% if user_qs_for_room %}
-                {% for user in user_qs_for_room %}
-                    {% include "shared_partials/user_card.html" with user=user %}
-                {% endfor %}
-            {% else %}
-                <div class="col">
-                    <div class="people-empty">
-                        <p class="fw-semibold mb-1">{% trans "No one here yet" %}</p>
-                        <p class="mb-0 small">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
+    {% if is_member %}
+        <div class="people-wrap">
+            <div class="people-hero">
+                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+                    <div>
+                        <p class="text-uppercase text-muted small mb-1">{% trans "Room roster" %}</p>
+                        <h3 class="mb-1">
+                            {% with current_room.name as room_name %}
+                                {% blocktrans %}Everyone in {{ room_name }}{% endblocktrans %}
+                            {% endwith %}
+                        </h3>
+                        <p class="mb-0">{% trans "Invite roommates, add guests, and keep tabs on who has already viewed the room." %}</p>
+                    </div>
+                    <div class="text-md-end">
+                        <p class="mb-1 small text-muted">{% trans "Status" %}</p>
+                        <span class="badge {% if current_room.is_closed %}bg-secondary{% else %}bg-success{% endif %}">
+                            {% if current_room.is_closed %}
+                                {% trans "Room closed" %}
+                            {% else %}
+                                {% trans "Room open" %}
+                            {% endif %}
+                        </span>
                     </div>
                 </div>
-            {% endif %}
+            </div>
+            <div class="row people-actions g-3">
+                <div class="col-12 col-md-6">
+                    <button class="w-100 people-action-btn d-flex align-items-center justify-content-between {% if current_room.is_closed %}disabled{% endif %}"
+                            type="button"
+                            hx-get="{% room_url 'room:userconnectiontoroom-create' %}"
+                            hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true">
+                        <span class="d-flex align-items-center gap-2">
+                            <i class="bi bi-person-plus-fill"></i>
+                            {% trans "Add existing user" %}
+                        </span>
+                        <i class="bi bi-arrow-up-right"></i>
+                    </button>
+                </div>
+                <div class="col-12 col-md-6">
+                    <button class="w-100 people-action-btn d-flex align-items-center justify-content-between {% if current_room.is_closed %}disabled{% endif %}"
+                            type="button"
+                            hx-get="{% room_url 'account:guest-create' %}"
+                            hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true">
+                        <span class="d-flex align-items-center gap-2">
+                            <i class="bi bi-person-plus"></i>
+                            {% trans "Add guest" %}
+                        </span>
+                        <i class="bi bi-arrow-up-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="people-grid row row-cols-1 row-cols-md-2 g-3">
+                {% csrf_token %}
+                {% if user_qs_for_room %}
+                    {% for user in user_qs_for_room %}
+                        {% include "shared_partials/user_card.html" with user=user %}
+                    {% endfor %}
+                {% else %}
+                    <div class="col">
+                        <div class="people-empty">
+                            <p class="fw-semibold mb-1">{% trans "No one here yet" %}</p>
+                            <p class="mb-0 small">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    </div>
+    {% else %}
+        <div class="people-wrap text-center">
+            <div class="people-hero">
+                <div class="d-flex flex-column align-items-center gap-2">
+                    <p class="text-uppercase text-muted small mb-1">{% trans "Guest access" %}</p>
+                    <h3 class="mb-1">
+                        {% with current_room.name as room_name %}
+                            {% blocktrans %}Limited view of {{ room_name }}{% endblocktrans %}
+                        {% endwith %}
+                    </h3>
+                    <p class="mb-0">{% trans "Room members keep the roster private. Join the room to see who helps run this space." %}</p>
+                </div>
+            </div>
+            <div class="people-grid row row-cols-1 g-3">
+                <div class="col">
+                    <div class="people-empty">
+                        <p class="fw-semibold mb-1">{% trans "Guest access" %}</p>
+                        <p class="mb-0 small">{% trans "Request access or register to interact with this room." %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock tab_content %}

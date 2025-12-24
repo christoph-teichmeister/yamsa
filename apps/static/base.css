@@ -15,24 +15,22 @@
     --list-group-border-color: #c9d2e3;
 
     --yamsa-room-circle-color: #4d5669;
+}
 
-    .navbar-nav {
-        .p-e-color {
-            color: var(--offcanvas-and-nav-color);
-        }
+[data-bs-theme=light] .navbar-nav .p-e-color {
+    color: var(--offcanvas-and-nav-color);
+}
 
-        .p-e-color:hover {
-            color: var(--nav-active-color);
-        }
-    }
+[data-bs-theme=light] .navbar-nav .p-e-color:hover {
+    color: var(--nav-active-color);
+}
 
-    .btn-primary {
-        --bs-btn-bg: #6ea8fe;
-        --bs-btn-border-color: #6ea8fe;
-        --bs-btn-hover-bg: #5797fb;
-        --bs-btn-hover-border-color: #5797fb;
-        --bs-btn-color: #0b1b33;
-    }
+[data-bs-theme=light] .btn-primary {
+    --bs-btn-bg: #6ea8fe;
+    --bs-btn-border-color: #6ea8fe;
+    --bs-btn-hover-bg: #5797fb;
+    --bs-btn-hover-border-color: #5797fb;
+    --bs-btn-color: #0b1b33;
 }
 
 [data-bs-theme=dark] {
@@ -52,26 +50,19 @@
     --list-group-border-color: #4c4a4f;
 
     --yamsa-room-circle-color: #f4f6fb;
+}
 
-    .btn-primary {
-        --bs-btn-bg: #6ea8fe;
-        --bs-btn-border-color: #6ea8fe;
-        --bs-btn-hover-bg: #8ebcfe;
-        --bs-btn-hover-border-color: #8ebcfe;
-        --bs-btn-color: #0b1b33;
-    }
+[data-bs-theme=dark] .btn-primary {
+    --bs-btn-bg: #6ea8fe;
+    --bs-btn-border-color: #6ea8fe;
+    --bs-btn-hover-bg: #8ebcfe;
+    --bs-btn-hover-border-color: #8ebcfe;
+    --bs-btn-color: #0b1b33;
 }
 
 :root {
     --bs-nav-link-font-size: 1.3rem;
-
-    .navbar {
-        --bs-navbar-toggler-font-size: 1.7rem;
-
-        .btn-sm {
-            --bs-btn-font-size: 1.1rem;
-        }
-    }
+    --bs-tooltip-zindex: 10000;
 }
 
 /* Breakpoint px values:
@@ -109,16 +100,6 @@ body {
 
     .container-fluid {
         width: 50%;
-    }
-}
-
-.navbar {
-    --bs-navbar-active-color: var(--nav-active-color);
-    background-color: var(--offcanvas-and-nav-bg);
-    color: var(--offcanvas-and-nav-color);
-
-    .text-muted {
-        color: var(--offcanvas-and-nav-text-muted) !important;
     }
 }
 

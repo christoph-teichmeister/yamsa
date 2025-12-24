@@ -16,3 +16,11 @@ def hx_client(client):
         return client
 
     return _hx_client
+
+
+@pytest.fixture
+def superuser_htmx_client(superuser) -> Client:
+    client = Client()
+    client.defaults["HTTP_HX_REQUEST"] = "true"
+    client.force_login(superuser)
+    return client

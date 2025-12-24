@@ -312,6 +312,16 @@ msgstr "Noch niemand hier"
 msgid "Invite a roommate or add a guest to start splitting expenses."
 msgstr "Lade einen Mitbewohner ein oder füge einen Gast hinzu, um mit dem Aufteilen der Ausgaben zu beginnen."
 
+#, python-format
+msgid "Limited view of %(room_name)s"
+msgstr "Eingeschränkte Ansicht von %(room_name)s"
+
+msgid "Room members keep the roster private. Join the room to see who helps run this space."
+msgstr "Die Mitglieder des Raums halten die Mitgliederliste geheim. Tritt dem Raum bei, um zu sehen, wer diesen Raum mitbetreut."
+
+msgid "Request access or register to interact with this room."
+msgstr "Frage Zugang an oder registriere dich, um mit diesem Raum zu interagieren."
+
 msgid "Welcome back"
 msgstr "Willkommen zurück"
 

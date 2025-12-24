@@ -47,7 +47,7 @@ def test_post_regular(client, monkeypatch):
 
     recorded_messages = []
 
-    def handle_message(message):
+    def handle_message(message: SendPostRegisterEmail) -> SendPostRegisterEmail:
         recorded_messages.append(message)
         return message
 
@@ -75,7 +75,7 @@ def test_post_from_invitation_email(client, guest_user, monkeypatch):
 
     recorded_messages = []
 
-    def handle_message(message):
+    def handle_message(message: SendPostRegisterEmail) -> SendPostRegisterEmail:
         recorded_messages.append(message)
         return message
 
@@ -111,7 +111,7 @@ def test_post_from_invitation_email_preserves_room_membership(client, room, gues
 
     recorded_messages = []
 
-    def handle_message(message):
+    def handle_message(message: SendPostRegisterEmail) -> SendPostRegisterEmail:
         recorded_messages.append(message)
         return message
 
@@ -134,6 +134,36 @@ def test_post_from_invitation_email_preserves_room_membership(client, room, gues
     guest_user.refresh_from_db()
     assert not guest_user.is_guest
     assert room.users.filter(id=guest_user.id).exists()
+    assert response.wsgi_request.user.rooms.filter(id=room.id).exists()
+
+
+def test_post_from_share_link_adds_user_to_room(client, room, monkeypatch):
+    share_url = reverse("room:share", kwargs={"share_hash": room.share_hash})
+    client.get(share_url)
+
+    new_name = "share_user"
+    new_email = "share_user@local.local"
+    new_password = "new_password"
+
+    recorded_messages = []
+
+    def handle_message(message: SendPostRegisterEmail) -> SendPostRegisterEmail:
+        recorded_messages.append(message)
+        return message
+
+    monkeypatch.setattr("apps.account.views.user_register_view.handle_message", handle_message)
+
+    response = client.post(
+        reverse("account:register"),
+        data={"name": new_name, "email": new_email, "password": new_password},
+        follow=True,
+    )
+
+    assert response.status_code == http.HTTPStatus.OK
+    assert len(recorded_messages) == 1
+    assert isinstance(recorded_messages[0], SendPostRegisterEmail)
+
+    assert response.template_name[0] == WelcomePartialView.template_name
     assert response.wsgi_request.user.rooms.filter(id=room.id).exists()
 
 
