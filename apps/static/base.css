@@ -64,6 +64,7 @@
 
 :root {
     --bs-nav-link-font-size: 1.3rem;
+    --bs-tooltip-zindex: 1350;
 
     .navbar {
         --bs-navbar-toggler-font-size: 1.7rem;
