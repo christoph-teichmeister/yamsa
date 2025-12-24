@@ -7,9 +7,10 @@ class UserQuerySet(QuerySet):
     def get_for_room_slug(self, room_slug: str) -> QuerySet:
         return self.filter(rooms__slug=room_slug)
 
-    def annotate_user_has_seen_this_room(self) -> QuerySet:
-        # TODO CT: Test this. How does this know, _which_ room to look at?
-        return self.annotate(user_has_seen_this_room=F("userconnectiontoroom__user_has_seen_this_room"))
+    def annotate_user_has_seen_this_room(self, room_id: int) -> QuerySet:
+        return self.filter(userconnectiontoroom__room_id=room_id).annotate(
+            user_has_seen_this_room=F("userconnectiontoroom__user_has_seen_this_room")
+        )
 
     def annotate_invitation_email_can_be_sent(self) -> QuerySet:
         return self.annotate(

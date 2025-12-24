@@ -3,7 +3,9 @@ import http
 import pytest
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.account.views import UserListForRoomView
+from apps.room.tests.factories import RoomFactory, UserConnectionToRoomFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -26,3 +28,18 @@ def test_get_for_user_of_room_and_for_superuser_not_of_room(authenticated_client
         assert user.name in content
         assert "Registered roommate" in content
         assert "Seen room" in content
+
+
+def test_user_has_seen_annotation_scopes_to_requested_room(user):
+    room_one = RoomFactory(created_by=user)
+    room_two = RoomFactory(created_by=user)
+
+    UserConnectionToRoomFactory(user=user, room=room_one, user_has_seen_this_room=True)
+    UserConnectionToRoomFactory(user=user, room=room_two, user_has_seen_this_room=False)
+
+    for current_room, expected_flag in ((room_one, True), (room_two, False)):
+        queryset = User.objects.get_for_room_slug(room_slug=current_room.slug).annotate_user_has_seen_this_room(
+            room_id=current_room.id
+        )
+
+        assert queryset.get(id=user.id).user_has_seen_this_room is expected_flag

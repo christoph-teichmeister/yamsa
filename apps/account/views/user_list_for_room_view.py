@@ -12,7 +12,7 @@ class UserListForRoomView(AccountBaseContext, generic.ListView):
     def get_queryset(self):
         return (
             self.model.objects.get_for_room_slug(room_slug=self.request.room.slug)
-            .annotate_user_has_seen_this_room()
+            .annotate_user_has_seen_this_room(room_id=self.request.room.id)
             .annotate_invitation_email_can_be_sent()
             .order_by("user_has_seen_this_room", "name")
         )
