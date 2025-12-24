@@ -76,7 +76,9 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
         if action == "delete":
             room_category_id = request.POST.get("room_category_id")
             if room_category_id:
-                service.delete_room_category(int(room_category_id))
+                deleted_category = service.delete_room_category(int(room_category_id))
+                if deleted_category:
+                    self.request.toast_queue.success(self._get_category_deletion_success_message(deleted_category.name))
             return self._return_after_action()
 
         return self.get(request, *args, **kwargs)
@@ -160,3 +162,6 @@ class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
 
     def _get_category_creation_success_message(self) -> str:
         return str(_("Category added."))
+
+    def _get_category_deletion_success_message(self, category_name: str) -> str:
+        return str(_('Category "%(category)s" deleted.') % {"category": category_name})
