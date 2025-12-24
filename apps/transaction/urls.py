@@ -43,6 +43,11 @@ urlpatterns = [
                 name="category-breakdown",
             ),
             path(
+                "categories/",
+                views.RoomCategoryManagerView.as_view(),
+                name="category-manager",
+            ),
+            path(
                 "edit/<int:pk>",
                 views.TransactionEditView.as_view(),
                 name="edit",

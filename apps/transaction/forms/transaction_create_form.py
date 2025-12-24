@@ -3,11 +3,13 @@ from decimal import Decimal
 
 from django import forms
 from django.db import transaction
+from django.db.models import QuerySet
 
 from apps.account.models import User
 from apps.core.event_loop.runner import handle_message
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
 from apps.transaction.models import Category, ChildTransaction, ParentTransaction, Receipt
+from apps.transaction.services.room_category_service import RoomCategoryService
 from apps.transaction.utils import split_total_across_paid_for
 
 RECEIPT_ACCEPTED_CONTENT_TYPES = (
@@ -51,9 +53,11 @@ class TransactionCreateForm(forms.ModelForm):
             "category",
         )
 
-    def __init__(self, *args, request=None, **kwargs):
+    def __init__(self, *args, request=None, room=None, **kwargs):
         self._request = request
+        self._room = room
         super().__init__(*args, **kwargs)
+        self.fields["category"].queryset = self._build_category_queryset()
 
     def clean_receipts(self):
         field_name = self.add_prefix("receipts")
@@ -132,3 +136,8 @@ class TransactionCreateForm(forms.ModelForm):
                 size=uploaded_file.size,
                 uploaded_by=getattr(self._request, "user", None),
             )
+
+    def _build_category_queryset(self) -> QuerySet:
+        if self._room:
+            return RoomCategoryService(room=self._room).get_category_queryset()
+        return Category.objects.order_by("order_index", "id")

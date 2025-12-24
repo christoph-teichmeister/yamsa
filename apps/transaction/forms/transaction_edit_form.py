@@ -1,15 +1,19 @@
 from decimal import Decimal
+from typing import Any
 
 from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
 from django.db import transaction
+from django.db.models import QuerySet
 from django.utils import timezone
 
 from apps.account.models import User
 from apps.core.event_loop.runner import handle_message
+from apps.room.models import Room
 from apps.transaction.messages.events.transaction import ParentTransactionUpdated
 from apps.transaction.models import Category, ChildTransaction, ParentTransaction
+from apps.transaction.services.room_category_service import RoomCategoryService
 from apps.transaction.utils import split_total_across_paid_for
 
 
@@ -43,8 +47,10 @@ class TransactionEditForm(forms.ModelForm):
             "child_transaction_id",
         )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, room: Room | None = None, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self._room: Room | None = room or getattr(self.instance, "room", None)
+        self.fields["category"].queryset = self._build_category_queryset()
         room_users_qs = User.objects.filter(room=self.instance.room)
 
         self.fields["paid_by"].queryset = room_users_qs
@@ -151,3 +157,8 @@ class TransactionEditForm(forms.ModelForm):
         if raw_value is None:
             return Decimal("0.00")
         return Decimal(raw_value)
+
+    def _build_category_queryset(self) -> QuerySet[Category]:
+        if self._room:
+            return RoomCategoryService(room=self._room).get_category_queryset()
+        return Category.objects.order_by("order_index", "id")

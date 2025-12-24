@@ -13,6 +13,18 @@ from apps.account.models import User
 from apps.core.models.mixins import FullCleanOnSaveMixin
 
 DEFAULT_CATEGORY_SLUG = "misc"
+BASE_CATEGORY_SLUGS = (
+    "accommodation",
+    "groceries",
+    "restaurants-and-bars",
+    "transport",
+    "activities",
+    "household",
+    "shopping",
+    "health",
+    "celebrations",
+    DEFAULT_CATEGORY_SLUG,
+)
 DEFAULT_CATEGORY_PK = 10  # Matches the seeded "misc" category (last of the ten defaults)
 
 
@@ -38,6 +50,22 @@ class Category(FullCleanOnSaveMixin, CommonInfo):
         if default:
             return default
         return cls.objects.filter(is_default=True).order_by("order_index").first()
+
+
+class RoomCategory(FullCleanOnSaveMixin, CommonInfo):
+    room = models.ForeignKey("room.Room", related_name="room_categories", on_delete=models.CASCADE)
+    category = models.ForeignKey("Category", related_name="room_category_map", on_delete=models.CASCADE)
+    order_index = models.PositiveIntegerField(default=0)
+    is_default = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ("order_index", "id")
+        constraints = [
+            models.UniqueConstraint(fields=("room", "category"), name="unique_room_category"),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.room} - {self.category}"
 
 
 class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
@@ -71,8 +99,10 @@ class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
         return self.child_transactions.aggregate(Sum("value"))["value__sum"]
 
     def save(self, *args, **kwargs):
-        if not getattr(self, "category_id", None):
-            default_category = Category.get_default_category()
+        if not getattr(self, "category_id", None) and getattr(self, "room", None):
+            from apps.transaction.services.room_category_service import RoomCategoryService
+
+            default_category = RoomCategoryService(room=self.room).get_default_category()
             if default_category:
                 self.category = default_category
         super().save(*args, **kwargs)

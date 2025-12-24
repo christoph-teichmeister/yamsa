@@ -874,6 +874,18 @@ msgstr "Raum schließen"
 msgid "Reopen room"
 msgstr "Raum wieder öffnen"
 
+msgid "Category manager"
+msgstr "Kategorie-Manager"
+
+msgid "Customize tracking categories"
+msgstr "Tracking-Kategorien anpassen"
+
+msgid "Add room-specific categories and control their order without touching the global defaults."
+msgstr "Füge raumspezifische Kategorien hinzu und steuere deren Reihenfolge, ohne die globalen Standardeinstellungen zu verändern."
+
+msgid "Open manager"
+msgstr "Manager öffnen"
+
 msgid "Outstanding debts"
 msgstr "Ausstehende Schulden"
 
@@ -1043,6 +1055,12 @@ msgstr "Registrierter Mitbewohner"
 msgid "Joined as a full member of this room."
 msgstr "Als volles Mitglied dieses Raums beigetreten."
 
+msgid "Enter a single emoji character."
+msgstr "Gib ein einzelnes Emoji-Zeichen ein."
+
+msgid "Enter a color in #RRGGBB format."
+msgstr "Gib eine Farbe im Format #RRGGBB ein."
+
 #, python-brace-format
 msgid "{paid_by} paid {value}{currency} for {paid_for}"
 msgstr "{paid_by} hat {value}{currency} für {paid_for} bezahlt"
@@ -1092,6 +1110,13 @@ msgstr "Noch keine erfassten Ausgaben. Füge eine Transaktion hinzu, um die Aufs
 
 msgid "Add expenses to unlock the breakdown."
 msgstr "Füge Ausgaben hinzu, um die Aufschlüsselung freizuschalten."
+
+#, python-format
+msgid "Manage categories for \"%(room_name)s\""
+msgstr "Kategorien für „%(room_name)s“ verwalten"
+
+msgid "Add or reorder categories that match how your group tracks spending."
+msgstr "Füge Kategorien hinzu oder ordne sie neu, die der Art und Weise entsprechen, wie deine Gruppe Ausgaben erfasst."
 
 msgid "Amount"
 msgstr "Betrag"
@@ -1557,6 +1582,57 @@ msgstr "Beleg hochladen"
 msgid "PDF or PNG/JPEG/WebP/GIF (max 5 MB)."
 msgstr "PDF oder PNG/JPEG/WebP/GIF (max. 5 MB)."
 
+msgid "Create new category"
+msgstr "Neue Kategorie erstellen"
+
+msgid "Room-only categories"
+msgstr "Raumspezifische Kategorien"
+
+msgid "Emoji"
+msgstr "Emoji"
+
+msgid "Color"
+msgstr "Farbe"
+
+msgid "Order index"
+msgstr "Sortierungsindex"
+
+msgid "Set as default"
+msgstr "Als Standard festlegen"
+
+msgid "Add category"
+msgstr "Kategorie hinzufügen"
+
+msgid "Available categories"
+msgstr "Verfügbare Kategorien"
+
+msgid "Room catalog"
+msgstr "Raum Katalog"
+
+msgid "Global defaults"
+msgstr "Globale Standards"
+
+msgid "Customized"
+msgstr "Angepasst"
+
+msgid "Remove"
+msgstr "Entfernen"
+
+msgid "Default"
+msgstr "Standard"
+
+msgid "Auto assigned"
+msgstr "Automatisch zugewiesen"
+
+msgid "Order"
+msgstr "Sortierung"
+
+msgid "Save order for this category"
+msgstr "Reihenfolge für diese Kategorie speichern"
+
+msgid "No room-specific categories yet. Create one to override the shared baseline."
+msgstr "Noch keine raumspezifischen Kategorien vorhanden. Erstelle eine, um die gemeinsame Basislinie zu überschreiben."
+
 msgid "Paid on"
 msgstr "Bezahlt am"
 
@@ -1585,6 +1661,16 @@ msgstr "Noch keine Transaktionen anzuzeigen."
 
 msgid "You're all caught up."
 msgstr "Du bist auf dem Laufenden."
+
+msgid "Unable to update that category. Please correct the highlighted fields."
+msgstr "Diese Kategorie kann nicht aktualisiert werden. Bitte korrigiere die markierten Felder."
+
+msgid "Category added."
+msgstr "Kategorie hinzugefügt."
+
+#, python-format
+msgid "Category \"%(category)s\" deleted."
+msgstr "Kategorie \"%(category)s\" gelöscht."
 
 #, python-brace-format
 msgid "Webpush Information for {user}"

@@ -1,0 +1,115 @@
+{% load room_tags i18n %}
+<div id="room-category-list">
+    <div class="card border-0 rounded-4 shadow-sm">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-start justify-content-between mb-3">
+                <div>
+                    <p class="text-muted small mb-1">{% trans "Available categories" %}</p>
+                    <h5 class="fw-semibold mb-0">{% trans "Room catalog" %}</h5>
+                </div>
+                {% if room_categories|length == 0 %}
+                    <span class="badge bg-secondary text-white">{% trans "Global defaults" %}</span>
+                {% else %}
+                    <span class="badge bg-primary text-white">{% trans "Customized" %}</span>
+                {% endif %}
+            </div>
+            {% if room_categories %}
+                <div class="row row-cols-1 row-cols-md-2 g-3" role="list">
+                    {% for room_category in room_categories %}
+                        <div class="col">
+                            <div class="card rounded-4 shadow-sm border-0 position-relative h-100">
+                                <form hx-post="{% room_url 'transaction:category-manager' %}"
+                                      hx-target="#room-category-list"
+                                      hx-indicator="#body-loading-spinner"
+                                      hx-swap="outerHTML"
+                                      class="position-absolute top-0 end-0 me-3 mt-3">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="delete" />
+                                    <input type="hidden" name="room_category_id" value="{{ room_category.id }}" />
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1">
+                                        <i class="bi bi-trash"></i>
+                                        {% trans "Remove" %}
+                                    </button>
+                                </form>
+                                <div class="card-body pt-5 px-4 pb-4">
+                                    <div class="d-flex flex-wrap align-items-center gap-3">
+                                        <div class="fs-3" aria-hidden="true">{{ room_category.category.emoji }}</div>
+                                        <div>
+                                            {% if room_category.is_default %}
+                                                <span class="badge text-bg-dark d-inline-flex mb-1">{% trans "Default" %}</span>
+                                            {% endif %}
+                                            <p class="mb-1 fw-semibold">{{ room_category.category.name }}</p>
+                                            <small class="text-muted">{{ room_category.category.color|default:_("Auto assigned") }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <form hx-post="{% room_url 'transaction:category-manager' %}"
+                                              hx-target="#room-category-list"
+                                              hx-indicator="#body-loading-spinner"
+                                              hx-swap="outerHTML"
+                                              class="d-flex flex-column gap-3">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="update" />
+                                            <input type="hidden" name="room_category_id" value="{{ room_category.id }}" />
+                                            <div class="input-group input-group-sm align-items-center">
+                                                <span class="input-group-text" id="order-label-{{ room_category.id }}">{% trans "Order" %}</span>
+                                                {% with failed_id=failed_room_category_id|stringformat:"s" %}
+                                                    {% if room_category_update_form and failed_id == room_category.id|stringformat:"s" %}
+                                                        {% with update_for_category=room_category_update_form %}
+                                                            <input type="number"
+                                                                   name="order_index"
+                                                                   class="form-control{% if update_for_category.order_index.errors %} is-invalid{% endif %}"
+                                                                   aria-describedby="order-label-{{ room_category.id }}"
+                                                                   min="0"
+                                                                   value="{{ update_for_category.order_index.value|default:room_category.order_index }}" />
+                                                            {% if update_for_category.order_index.errors %}
+                                                                <div class="invalid-feedback d-block">{{ update_for_category.order_index.errors.0 }}</div>
+                                                            {% endif %}
+                                                        {% endwith %}
+                                                    {% else %}
+                                                        <input type="number"
+                                                               name="order_index"
+                                                               class="form-control"
+                                                               aria-describedby="order-label-{{ room_category.id }}"
+                                                               min="0"
+                                                               value="{{ room_category.order_index }}" />
+                                                    {% endif %}
+                                                {% endwith %}
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                                                        aria-label='{% trans "Save order for this category" %}'>
+                                                    <i class="bi bi-arrow-repeat"></i>
+                                                </button>
+                                            </div>
+                                            <div class="form-check form-switch m-0">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       role="switch"
+                                                       id="default-switch-{{ room_category.id }}"
+                                                       name="make_default"
+                                                       {% if room_category_update_form and failed_room_category_id|stringformat:"s" == room_category.id|stringformat:"s" %} {% if room_category_update_form.make_default.value %}checked{% endif %}
+                                                       {% elif room_category.is_default %}
+                                                       checked
+                                                       {% endif %}
+                                                       value="true" />
+                                                <label class="form-check-label small"
+                                                       for="default-switch-{{ room_category.id }}">
+                                                    {% trans "Default" %}
+                                                </label>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted small mb-0">
+                    {% trans "No room-specific categories yet. Create one to override the shared baseline." %}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -20,6 +20,8 @@ class TransactionEditView(TransactionBaseContext, generic.UpdateView):
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
 
+        form_kwargs.setdefault("room", self.request.room)
+
         if self.request.method == "POST":
             # Only allow editing the form values, when a form is posted
             form_kwargs["data"]._mutable = True
