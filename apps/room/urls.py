@@ -12,6 +12,7 @@ app_name = "room"
 urlpatterns = [
     path("list/", views.RoomListView.as_view(), name="list"),
     path("create/", views.RoomCreateView.as_view(), name="create"),
+    path("share/<str:share_hash>/", views.RoomShareView.as_view(), name="share"),
     path(
         "htmx/checked-clipboard",
         views.CheckedClipboardHTMXView.as_view(),

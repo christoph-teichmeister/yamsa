@@ -30,7 +30,7 @@
                     {% if current_room.is_open %}
                         <button class="btn btn-light btn-sm"
                                 data-copy-share-url="true"
-                                data-share-url="{{ request.build_absolute_uri }}"
+                                data-share-url="{{ current_room.share_url }}"
                                 data-bs-toggle="tooltip"
                                 data-bs-title="{{ copy_rooms_url_tooltip }}"
                                 hx-get="{% url 'room:htmx-checked-clipboard' %}"

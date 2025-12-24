@@ -13,6 +13,7 @@ class RoomFactory(factory.django.DjangoModelFactory):
         model = Room
 
     slug = LazyFunction(uuid.uuid4)
+    share_hash = LazyFunction(Room.generate_share_hash)
     name = Faker("company")
     description = Faker("paragraph")
     created_by = SubFactory(UserFactory)

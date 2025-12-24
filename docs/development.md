@@ -46,6 +46,14 @@
 - Once the configured window elapses without requests, Django still expires the session and the next protected
   view routes to `account:login`, proving the sliding window only works while activity is maintained.
 
+## Room sharing
+
+- Invite links now live at `/room/share/<share_hash>/`; the route resolves through `RoomShareView` and reuses the
+  dashboard template so the view renders cleanly even for anonymous visitors (or shows a 404 when the room no longer
+  exists).
+- Each room stores a persistent, unique `share_hash` that is never a database ID, keeping the shared URL short and
+  stable across sessions.
+
 ## Troubleshooting
 
 - Lockfile mismatches? Run `uv lock`, then `uv sync --no-install-project --locked` to ensure the environment matches the

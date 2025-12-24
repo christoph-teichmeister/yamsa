@@ -1,6 +1,7 @@
 from django.urls import get_resolver
 
 from apps.room.models import Room
+from apps.room.services.request_room_service import assign_room_to_request
 
 
 class RoomToRequestMiddleware:
@@ -17,16 +18,7 @@ class RoomToRequestMiddleware:
         if (room_slug := resolver_match.kwargs.get("room_slug")) is not None:
             # ...add room to the request
             room = Room.objects.get(slug=room_slug)
-            request.room = room
-
-            if not request.user.is_anonymous:
-                # ...check whether the DB knows that the user has seen the room
-                connection, has_seen_room = request.user.has_seen_room(room.id)
-
-                request_user_is_superuser_and_does_not_belong_to_room = connection is None and request.user.is_superuser
-                if not request_user_is_superuser_and_does_not_belong_to_room and not has_seen_room:
-                    connection.user_has_seen_this_room = True
-                    connection.save()
+            assign_room_to_request(request, room)
 
         response = self.get_response(request)
 

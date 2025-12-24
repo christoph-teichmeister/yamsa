@@ -38,6 +38,7 @@ class TestRoomShareButton:
 
         assert response.status_code == 200
         assert "data-copy-share-url" in response.content.decode()
+        assert reverse("room:share", kwargs={"share_hash": room.share_hash}) in response.content.decode()
 
     def test_share_button_shows_for_open_room_with_guests(self, owner_client, room):
         guest = GuestUserFactory()
@@ -47,6 +48,7 @@ class TestRoomShareButton:
 
         assert response.status_code == 200
         assert "data-copy-share-url" in response.content.decode()
+        assert reverse("room:share", kwargs={"share_hash": room.share_hash}) in response.content.decode()
 
     def test_share_button_hides_when_room_closed(self, owner_client, room):
         room.status = Room.StatusChoices.CLOSED
