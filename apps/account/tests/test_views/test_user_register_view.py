@@ -104,6 +104,39 @@ def test_post_from_invitation_email(client, guest_user, monkeypatch):
     assert not guest_user.is_guest
 
 
+def test_post_from_invitation_email_preserves_room_membership(client, room, guest_user, monkeypatch):
+    guest_name = "guest_room"
+    guest_email = "guest_room@local.local"
+    guest_password = "guest_password"
+
+    recorded_messages = []
+
+    def handle_message(message):
+        recorded_messages.append(message)
+        return message
+
+    monkeypatch.setattr("apps.account.views.user_register_view.handle_message", handle_message)
+    response = client.post(
+        reverse("account:register"),
+        data={
+            "id": guest_user.id,
+            "name": guest_name,
+            "email": guest_email,
+            "password": guest_password,
+        },
+        follow=True,
+    )
+
+    assert response.status_code == http.HTTPStatus.OK
+    assert len(recorded_messages) == 1
+    assert response.template_name[0] == WelcomePartialView.template_name
+
+    guest_user.refresh_from_db()
+    assert not guest_user.is_guest
+    assert room.users.filter(id=guest_user.id).exists()
+    assert response.wsgi_request.user.rooms.filter(id=room.id).exists()
+
+
 def test_post_email_invalid(client):
     response = client.post(reverse("account:register"))
 
