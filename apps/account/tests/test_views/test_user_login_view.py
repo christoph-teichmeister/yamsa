@@ -1,6 +1,7 @@
 import http
 
 import pytest
+from axes.models import AccessAttempt
 from django.conf import settings
 from django.urls import reverse
 
@@ -77,3 +78,33 @@ def test_post_email_and_password_do_not_match(client, user):
     assert response.status_code == http.HTTPStatus.OK
     assert response.template_name[0] == LogInUserView.template_name
     assert str(LogInUserView.ExceptionMessage.AUTH_FAILED) in response.content.decode()
+
+
+def test_axes_tracks_email_as_username(client, user):
+    client.defaults["HTTP_HOST"] = "127.0.0.1"
+    login_url = reverse("account:login")
+    AccessAttempt.objects.all().delete()
+
+    response = client.post(login_url, data={"email": user.email, "password": "wrong_password"})
+
+    assert response.status_code == http.HTTPStatus.OK
+    attempt = AccessAttempt.objects.filter(username=user.email).first()
+
+    assert attempt is not None
+    assert attempt.username == user.email
+
+
+def test_axes_blocks_after_failure_limit(client, user):
+    client.defaults["HTTP_HOST"] = "127.0.0.1"
+    login_url = reverse("account:login")
+    AccessAttempt.objects.all().delete()
+
+    failure_limit = max(settings.AXES_FAILURE_LIMIT - 1, 0)
+    for _ in range(failure_limit):
+        response = client.post(login_url, data={"email": user.email, "password": "wrong_password"})
+
+        assert response.status_code == http.HTTPStatus.OK
+
+    locked_response = client.post(login_url, data={"email": user.email, "password": "wrong_password"})
+
+    assert locked_response.status_code == http.HTTPStatus.TOO_MANY_REQUESTS

@@ -514,10 +514,10 @@ LOGIN_TIMEDELTA = 15 * 60
 LOGIN_COUNT = 3
 AXES_COOLOFF_TIME = axes_cooloff_time
 AXES_LOGIN_FAILURE_LIMIT = LOGIN_COUNT
-AXES_USERNAME_FORM_FIELD = "username"  # TODO CT: "email" or "username"?
+AXES_USERNAME_FORM_FIELD = "email"  # use the email field from the login form
 AXES_CLEANUP_DAYS = 30
-# Block by Username only (i.e.: Same user different IP is still blocked, but different user same IP is not)
-AXES_LOCKOUT_PARAMETERS = ["username"]  # TODO CT: "email" or "username"?
+# Lockouts are still keyed on the 'username' slot, which now carries the supplied email
+AXES_LOCKOUT_PARAMETERS = ["username"]
 # Disable logging the IP-Address of failed login attempts by returning None for attempts to get the IP
 # Ignore assigning a lambda function to a variable for brevity
 AXES_CLIENT_IP_CALLABLE = lambda x: None  # noqa: E731
