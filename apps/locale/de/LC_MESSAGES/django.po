@@ -1615,20 +1615,20 @@ msgstr "Globale Standards"
 msgid "Customized"
 msgstr "Angepasst"
 
-msgid "Auto assigned"
-msgstr "Automatisch zugewiesen"
+msgid "Remove"
+msgstr "Entfernen"
 
 msgid "Default"
 msgstr "Standard"
 
+msgid "Auto assigned"
+msgstr "Automatisch zugewiesen"
+
 msgid "Order"
 msgstr "Sortierung"
 
-msgid "Set default"
-msgstr "Als Standard festlegen"
-
-msgid "Remove"
-msgstr "Entfernen"
+msgid "Save order for this category"
+msgstr "Reihenfolge für diese Kategorie speichern"
 
 msgid "No room-specific categories yet. Create one to override the shared baseline."
 msgstr "Noch keine raumspezifischen Kategorien vorhanden. Erstelle eine, um die gemeinsame Basislinie zu überschreiben."
@@ -1667,6 +1667,10 @@ msgstr "Diese Kategorie kann nicht aktualisiert werden. Bitte korrigiere die mar
 
 msgid "Category added."
 msgstr "Kategorie hinzugefügt."
+
+#, python-format
+msgid "Category \"%(category)s\" deleted."
+msgstr "Kategorie \"%(category)s\" gelöscht."
 
 #, python-brace-format
 msgid "Webpush Information for {user}"
