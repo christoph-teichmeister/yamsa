@@ -50,6 +50,10 @@ def parent_transaction_with_children(room, guest_user, user):
         paid_for=guest_user,
         value=Decimal("20.00"),
     )
+    default_category = RoomCategoryService(room=room).get_default_category()
+    if default_category:
+        parent_transaction.category = default_category
+        parent_transaction.save(update_fields=("category",))
     return parent_transaction, [first_child, second_child]
 
 
