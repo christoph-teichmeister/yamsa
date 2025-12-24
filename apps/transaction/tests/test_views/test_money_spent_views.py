@@ -23,12 +23,16 @@ class TestMoneySpentViews:
         assert response.status_code == http.HTTPStatus.OK
         context = response.context_data
 
+        assert context["total_money_spent"], "expected total_money_spent entries"
         total_entry = context["total_money_spent"][0]
         assert total_entry["total_spent"] == expected_total
         assert total_entry["currency_sign"] == room.preferred_currency.sign
 
         spent_per_person = list(context["money_spent_per_person_qs"])
         owed_per_person = list(context["money_owed_per_person_qs"])
+
+        assert spent_per_person, "expected money_spent_per_person results"
+        assert owed_per_person, "expected money_owed_per_person results"
 
         assert spent_per_person[0]["paid_by_name"] == user.name
         assert spent_per_person[0]["total_spent_per_person"] == expected_total
@@ -50,12 +54,16 @@ class TestMoneySpentViews:
         assert response.status_code == http.HTTPStatus.OK
         context = response.context_data
 
-        active_period = next(filter(lambda option: option["key"] == "last-activity", context["period_options"]))
+        active_period = next(
+            (option for option in context["period_options"] if option["key"] == "last-activity"),
+            None,
+        )
+        assert active_period is not None, "expected period option 'last-activity' to be present"
         assert active_period["active"] is True
 
         assert context["trend_currency_sign"] == room.preferred_currency.sign
         assert context["timeseries"]
-        assert context["trend_chart_points"]
+        assert context["trend_chart_points"], "expected non-empty trend_chart_points"
         assert float(context["timeseries_max_value"]) == float(expected_total)
         assert context["trend_chart_points"][-1]["value"] == float(context["timeseries_max_value"])
         assert context["trend_range_start"] <= context["trend_range_end"]
