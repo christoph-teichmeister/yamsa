@@ -5,7 +5,13 @@ from django.db.models import F
 from django.utils.text import slugify
 
 from apps.room.models import Room
-from apps.transaction.models import BASE_CATEGORY_SLUGS, DEFAULT_CATEGORY_SLUG, Category, RoomCategory
+from apps.transaction.models import (
+    BASE_CATEGORY_SLUGS,
+    DEFAULT_CATEGORY_SLUG,
+    Category,
+    ParentTransaction,
+    RoomCategory,
+)
 
 
 class RoomCategoryService:
@@ -134,7 +140,7 @@ class RoomCategoryService:
             room_category.save(update_fields=("order_index", "is_default"))
         return room_category
 
-    def delete_room_category(self, room_category_id: int) -> None:
+    def delete_room_category(self, room_category_id: int) -> Category | None:
         """
         Remove a RoomCategory and, if it was the default, promote another category.
         """
@@ -143,13 +149,19 @@ class RoomCategoryService:
             # Lock the row before deleting so we can safely check if it was the default.
             target = self.room.room_categories.select_for_update().filter(id=room_category_id).first()
             if not target:
-                return
+                return None
             was_default = target.is_default
             shift_index = target.order_index
+            deleted_category = target.category
             target.delete()
             self.room.room_categories.filter(order_index__gt=shift_index).update(order_index=F("order_index") - 1)
             if was_default:
-                self._ensure_default_exists()
+                replacement = self._ensure_default_exists()
+                replacement_category = replacement.category if replacement else Category.get_default_category()
+                ParentTransaction.objects.filter(room=self.room, category=deleted_category).update(
+                    category=replacement_category
+                )
+            return deleted_category
 
     def _ensure_defaults(self) -> None:
         """
@@ -215,7 +227,7 @@ class RoomCategoryService:
         """
         self.room.room_categories.filter(is_default=True).update(is_default=False)
 
-    def _ensure_default_exists(self) -> None:
+    def _ensure_default_exists(self) -> RoomCategory | None:
         """
         Guarantee there is always a default RoomCategory by promoting the first item if needed.
         """
@@ -226,6 +238,8 @@ class RoomCategoryService:
         if first:
             first.is_default = True
             first.save(update_fields=("is_default",))
+            return first
+        return None
 
     def _build_unique_slug(self, name: str) -> str:
         """
