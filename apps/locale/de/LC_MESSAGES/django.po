@@ -1118,27 +1118,6 @@ msgstr "Kategorien für „%(room_name)s“ verwalten"
 msgid "Add or reorder categories that match how your group tracks spending."
 msgstr "Füge Kategorien hinzu oder ordne sie neu, die der Art und Weise entsprechen, wie deine Gruppe Ausgaben erfasst."
 
-msgid "Create new category"
-msgstr "Neue Kategorie erstellen"
-
-msgid "Room-only categories"
-msgstr "Raumspezifische Kategorien"
-
-msgid "Emoji"
-msgstr "Emoji"
-
-msgid "Color"
-msgstr "Farbe"
-
-msgid "Order index"
-msgstr "Sortierungsindex"
-
-msgid "Set as default"
-msgstr "Als Standard festlegen"
-
-msgid "Add category"
-msgstr "Kategorie hinzufügen"
-
 msgid "Amount"
 msgstr "Betrag"
 
@@ -1602,6 +1581,27 @@ msgstr "Beleg hochladen"
 
 msgid "PDF or PNG/JPEG/WebP/GIF (max 5 MB)."
 msgstr "PDF oder PNG/JPEG/WebP/GIF (max. 5 MB)."
+
+msgid "Create new category"
+msgstr "Neue Kategorie erstellen"
+
+msgid "Room-only categories"
+msgstr "Raumspezifische Kategorien"
+
+msgid "Emoji"
+msgstr "Emoji"
+
+msgid "Color"
+msgstr "Farbe"
+
+msgid "Order index"
+msgstr "Sortierungsindex"
+
+msgid "Set as default"
+msgstr "Als Standard festlegen"
+
+msgid "Add category"
+msgstr "Kategorie hinzufügen"
 
 msgid "Available categories"
 msgstr "Verfügbare Kategorien"
