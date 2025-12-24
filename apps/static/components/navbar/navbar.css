@@ -1,0 +1,14 @@
+.navbar {
+    --bs-navbar-active-color: var(--nav-active-color);
+    background-color: var(--offcanvas-and-nav-bg);
+    color: var(--offcanvas-and-nav-color);
+    --bs-navbar-toggler-font-size: 1.7rem;
+}
+
+.navbar .text-muted {
+    color: var(--offcanvas-and-nav-text-muted) !important;
+}
+
+.navbar .btn-sm {
+    --bs-btn-font-size: 1.1rem;
+}
