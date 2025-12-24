@@ -99,8 +99,8 @@ def test_axes_blocks_after_failure_limit(client, user):
     login_url = reverse("account:login")
     AccessAttempt.objects.all().delete()
 
-    failure_limit = max(settings.AXES_FAILURE_LIMIT - 1, 0)
-    for _ in range(failure_limit):
+    attempts_before_lockout = max(settings.AXES_LOGIN_FAILURE_LIMIT - 1, 0)
+    for _ in range(attempts_before_lockout):
         response = client.post(login_url, data={"email": user.email, "password": "wrong_password"})
 
         assert response.status_code == http.HTTPStatus.OK
