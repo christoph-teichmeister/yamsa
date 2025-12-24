@@ -41,10 +41,8 @@ class TestRoomShareView:
         assert response.status_code == 302
         assert response.url == reverse("transaction:list", kwargs={"room_slug": room_with_owner.slug})
 
-    def test_authenticated_non_member_sees_dashboard(self, client, room_with_owner, django_user_model):
-        non_member = django_user_model.objects.create_user(
-            email="nonmember@example.com", password="password", name="Non Member"
-        )
+    def test_authenticated_non_member_sees_dashboard(self, client, room_with_owner):
+        non_member = UserFactory(email="nonmember@example.com", name="Non Member")
         client.force_login(non_member)
 
         response = client.get(reverse("room:share", kwargs={"share_hash": room_with_owner.share_hash}))
