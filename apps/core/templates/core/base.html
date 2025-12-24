@@ -74,6 +74,21 @@
         <!-- Idomorph for cool HTMX morph swapping -->
         <script src="https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js" defer></script>
         <script src="{% static 'js/navigation.js' %}" defer></script>
-        <script src="{% static 'js/bootstrap-components-init.js' %}" defer></script>
+        <!-- Activate various Bootstrap components -->
+        <script type="text/javascript">
+  {# TODO CT: I think all of this is really unnecessary #}
+
+  // Enable all Tooltips
+  var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  var tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+  // Enable Toasts
+  var toastElList = document.querySelectorAll('.toast')
+  var toastList = [...toastElList].map(toastEl => new bootstrap.Toast(toastEl))
+
+  // Enable Popovers
+  var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+  var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+        </script>
     </body>
 </html>
