@@ -1,6 +1,7 @@
 import http
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
 from apps.account.models import User
@@ -10,24 +11,34 @@ from apps.room.tests.factories import RoomFactory, UserConnectionToRoomFactory
 pytestmark = pytest.mark.django_db
 
 
-def test_get_for_user_of_room_and_for_superuser_not_of_room(authenticated_client, hx_client, room, superuser, user):
+def test_get_for_user_of_room_and_for_superuser_not_of_room(authenticated_client, room, superuser, user):
     user_connection = user.userconnectiontoroom_set.get(room=room)
     user_connection.user_has_seen_this_room = True
     user_connection.save()
 
-    superuser_client = hx_client(superuser)
+    superuser_client = Client()
+    superuser_client.defaults["HTTP_HX_REQUEST"] = "true"
+    superuser_client.force_login(superuser)
 
-    for client_instance in (authenticated_client, superuser_client):
+    expectations = (
+        (authenticated_client, True),
+        (superuser_client, False),
+    )
+
+    for client_instance, should_show_room_roster in expectations:
         response = client_instance.get(reverse("account:list", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == http.HTTPStatus.OK
         assert response.template_name[0] == UserListForRoomView.template_name
 
         content = response.content.decode()
-        assert "Room roster" in content
-        assert user.name in content
-        assert "Registered roommate" in content
-        assert "Seen room" in content
+        if should_show_room_roster:
+            assert "Room roster" in content
+            assert user.name in content
+            assert "Registered roommate" in content
+            assert "Seen room" in content
+        else:
+            assert "Guest access" in content
 
 
 def test_user_has_seen_annotation_scopes_to_requested_room(user):
