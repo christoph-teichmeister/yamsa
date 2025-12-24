@@ -919,6 +919,9 @@ msgstr "Trotzdem schließen"
 msgid "Open to guests"
 msgstr "Für Gäste offen"
 
+msgid "Maybe register? A free account keeps your rooms, reminders, and history together."
+msgstr "Vielleicht registrieren? Ein kostenloses Konto hält deine Räume, Erinnerungen und Historie zusammen."
+
 msgid "Claim your invitation"
 msgstr "Einladung annehmen"
 
