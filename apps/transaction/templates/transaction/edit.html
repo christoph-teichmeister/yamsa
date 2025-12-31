@@ -101,15 +101,17 @@
                             <div class="input-group">
                                 <span class="input-group-text">{{ parent_transaction.currency.sign }}</span>
                                 {% with normalized_total=form.initial.total_value|default_if_none:parent_transaction.value|default_if_none:0 %}
-                                    {% with formatted_total=normalized_total|stringformat:"0.2f" %}
-                                        <input id="total_value_input"
-                                               name="total_value"
-                                               data-initial-total="{{ formatted_total }}"
-                                               class="form-control {% if form.total_value.errors %}is-invalid{% endif %}"
-                                               type="number"
-                                               step="0.01"
-                                               required
-                                               value="{{ formatted_total }}" />
+                                    {% with safe_total=normalized_total|default:0 %}
+                                        {% with formatted_total=safe_total|stringformat:"0.2f" %}
+                                            <input id="total_value_input"
+                                                   name="total_value"
+                                                   data-initial-total="{{ formatted_total }}"
+                                                   class="form-control {% if form.total_value.errors %}is-invalid{% endif %}"
+                                                   type="number"
+                                                   step="0.01"
+                                                   required
+                                                   value="{{ formatted_total }}" />
+                                        {% endwith %}
                                     {% endwith %}
                                 {% endwith %}
                             </div>
