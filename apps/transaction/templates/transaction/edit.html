@@ -66,12 +66,14 @@
                     class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-2"
                     hx-trigger="click"
                     hx-post="{% room_url 'transaction:parent-transaction-delete' pk=parent_transaction.id %}"
+                    hx-include="[name='csrfmiddlewaretoken']"
                     hx-confirm="{% trans "Are you sure you wish to delete this transaction?" %}"
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
                 <i class="bi bi-trash"></i>
+                {% csrf_token %}
                 {% trans "Delete" %}
             </button>
         </div>
@@ -247,12 +249,14 @@
                                             class="btn btn-outline-danger w-100"
                                             hx-trigger="click"
                                             hx-post="{% room_url 'transaction:child-transaction-delete' pk=child_transaction.id %}"
+                                            hx-include="[name='csrfmiddlewaretoken']"
                                             hx-confirm="{% trans "Are you sure you wish to delete this transaction?" %}"
                                             hx-target="#body"
                                             hx-indicator="#body-loading-spinner"
                                             hx-swap="morph:innerHTML"
                                             hx-push-url="true">
                                         <i class="bi bi-trash"></i>
+                                        {% csrf_token %}
                                     </button>
                                 </div>
                             </div>
