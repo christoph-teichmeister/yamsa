@@ -4,4 +4,5 @@ from apps.core.views.maintenance_view import MaintenanceView
 from apps.core.views.manifest_view import ManifestView
 from apps.core.views.offline_view import OfflineView
 from apps.core.views.service_worker_view import ServiceWorkerView
+from apps.core.views.toast_htmx_view import ToastHTMXView
 from apps.core.views.welcome_partial_view import WelcomePartialView
