@@ -100,14 +100,18 @@
                             <label class="form-label transaction-label" for="total_value_input">{% trans "Total" %}</label>
                             <div class="input-group">
                                 <span class="input-group-text">{{ parent_transaction.currency.sign }}</span>
-                                <input id="total_value_input"
-                                       name="total_value"
-                                       data-initial-total="{{ form.initial.total_value|default:parent_transaction.value|floatformat:2 }}"
-                                       class="form-control {% if form.total_value.errors %}is-invalid{% endif %}"
-                                       type="number"
-                                       step="0.01"
-                                       required
-                                       value="{{ form.initial.total_value|default:parent_transaction.value|floatformat:2 }}" />
+                                {% with normalized_total=form.initial.total_value|default_if_none:parent_transaction.value|default_if_none:0 %}
+                                    {% with formatted_total=normalized_total|stringformat:"0.2f" %}
+                                        <input id="total_value_input"
+                                               name="total_value"
+                                               data-initial-total="{{ formatted_total }}"
+                                               class="form-control {% if form.total_value.errors %}is-invalid{% endif %}"
+                                               type="number"
+                                               step="0.01"
+                                               required
+                                               value="{{ formatted_total }}" />
+                                    {% endwith %}
+                                {% endwith %}
                             </div>
                             {% if form.total_value.errors %}
                                 <div class="invalid-feedback d-block">{{ form.total_value.errors|join:" " }}</div>
