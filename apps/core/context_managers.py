@@ -1,7 +1,9 @@
 import time
+import types
 from collections.abc import Callable
 from contextlib import AbstractContextManager, ContextDecorator
-from typing import Any
+from functools import wraps
+from typing import ParamSpec, Self, TypeVar
 
 from django.conf import settings
 from django.db import connection
@@ -15,14 +17,18 @@ class _QueryExecutionCounter:
 
     def __call__(
         self,
-        execute: Callable[..., Any],
-        sql: Any,
-        params: Any,
+        execute: Callable[..., object],
+        sql: object,
+        params: object,
         many: bool,
-        context: Any,
-    ) -> Any:
+        context: object,
+    ) -> object:
         self.count += 1
         return execute(sql, params, many, context)
+
+
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
 class MeasureTimeAndQueriesContextManager(ContextDecorator):
@@ -34,13 +40,13 @@ class MeasureTimeAndQueriesContextManager(ContextDecorator):
         self.last_query_count: int | None = None
         self.last_duration: float | None = None
         self._query_counter: _QueryExecutionCounter | None = None
-        self._wrapper_cm: AbstractContextManager[Any] | None = None
+        self._wrapper_cm: AbstractContextManager[None] | None = None
         self._queries_before: int = 0
         self._start_time: float = 0.0
 
         super().__init__()
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         execute_wrapper = getattr(connection, "execute_wrapper", None)
 
         if execute_wrapper:
@@ -56,7 +62,12 @@ class MeasureTimeAndQueriesContextManager(ContextDecorator):
         self.last_duration = None
         return self
 
-    def __exit__(self, *exc):
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc: BaseException | None,
+        tb: types.TracebackType | None,
+    ) -> bool | None:
         end = time.time()
         if self._wrapper_cm:
             self._wrapper_cm.__exit__(*exc)
@@ -75,10 +86,11 @@ class MeasureTimeAndQueriesContextManager(ContextDecorator):
         return False
 
 
-def measure_time_and_queries_decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+def measure_time_and_queries_decorator(func: Callable[P, R]) -> Callable[P, R]:  # noqa: UP047
     """Wrap a callable so it reports timing queries via the context manager."""
 
-    def wrapper_func(*args: Any, **kwargs: Any) -> Any:
+    @wraps(func)
+    def wrapper_func(*args: P.args, **kwargs: P.kwargs) -> R:
         with MeasureTimeAndQueriesContextManager(func.__name__):
             return func(*args, **kwargs)
 

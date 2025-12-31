@@ -21,7 +21,8 @@ class TestMeasureTimeAndQueriesContextManager:
 
         output = buffer.getvalue()
 
-        assert manager.last_query_count and manager.last_query_count >= 1
+        assert manager.last_query_count is not None
+        assert manager.last_query_count >= 1
         assert "context-manager took" in output
         assert "and made" in output
 
