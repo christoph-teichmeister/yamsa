@@ -11,4 +11,5 @@ urlpatterns = [
     path("offline/", views.OfflineView.as_view(), name="offline"),
     path("serviceworker.js", views.ServiceWorkerView.as_view(), name="serviceworker"),
     path("welcome/", views.WelcomePartialView.as_view(), name="welcome"),
+    path("toast/", views.ToastHTMXView.as_view(), name="toast"),
 ]
