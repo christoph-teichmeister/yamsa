@@ -8,6 +8,8 @@ from django.db import connection
 
 
 class _QueryExecutionCounter:
+    """Tracks how many SQL executions occur via Django's execute_wrapper."""
+
     def __init__(self) -> None:
         self.count = 0
 
@@ -24,6 +26,8 @@ class _QueryExecutionCounter:
 
 
 class MeasureTimeAndQueriesContextManager(ContextDecorator):
+    """Context manager that measures execution time and query count for a block."""
+
     def __init__(self, function_name: str, *, print_when_debug: bool | None = None) -> None:
         self.function_name = function_name
         self._print_when_debug = settings.DEBUG if print_when_debug is None else print_when_debug
@@ -44,6 +48,7 @@ class MeasureTimeAndQueriesContextManager(ContextDecorator):
             self._wrapper_cm = execute_wrapper(self._query_counter)
             self._wrapper_cm.__enter__()
         else:
+            # Fall back to the legacy query log when execute_wrapper is unavailable.
             self._queries_before = len(connection.queries)
 
         self._start_time = time.time()
@@ -71,6 +76,8 @@ class MeasureTimeAndQueriesContextManager(ContextDecorator):
 
 
 def measure_time_and_queries_decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+    """Wrap a callable so it reports timing queries via the context manager."""
+
     def wrapper_func(*args: Any, **kwargs: Any) -> Any:
         with MeasureTimeAndQueriesContextManager(func.__name__):
             return func(*args, **kwargs)
