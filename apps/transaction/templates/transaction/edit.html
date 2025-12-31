@@ -225,15 +225,21 @@
                                     <label class="form-label transaction-label"
                                            for="value_input_{{ forloop.counter }}">{% trans "Amount" %}</label>
                                     <div class="input-group">
-                                        <input id="value_input_{{ forloop.counter }}"
-                                               name="value"
-                                               type="number"
-                                               class="form-control"
-                                               min="0.01"
-                                               step="0.01"
-                                               max="99999999"
-                                               required
-                                               value="{{ child_transaction.value }}" />
+                                        {% with normalized_value=child_transaction.value|default_if_none:0 %}
+                                            {% with safe_value=normalized_value|default:0 %}
+                                                {% with formatted_value=safe_value|stringformat:"0.2f" %}
+                                                    <input id="value_input_{{ forloop.counter }}"
+                                                           name="value"
+                                                           type="number"
+                                                           class="form-control"
+                                                           min="0.01"
+                                                           step="0.01"
+                                                           max="99999999"
+                                                           required
+                                                           value="{{ formatted_value }}" />
+                                                {% endwith %}
+                                            {% endwith %}
+                                        {% endwith %}
                                         <span class="input-group-text">{{ parent_transaction.currency.sign }}</span>
                                     </div>
                                 </div>
