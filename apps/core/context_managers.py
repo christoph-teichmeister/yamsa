@@ -70,7 +70,7 @@ class MeasureTimeAndQueriesContextManager(ContextDecorator):
     ) -> bool | None:
         end = time.time()
         if self._wrapper_cm:
-            self._wrapper_cm.__exit__(*exc)
+            self._wrapper_cm.__exit__(exc_type, exc, tb)
 
         if self._query_counter:
             self.last_query_count = self._query_counter.count
