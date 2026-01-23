@@ -47,6 +47,7 @@ class MoneySpentOnRoomView(RoomChildTransactionQuerysetMixin, DebtBaseContext, g
     def money_owed_per_person_qs(self):
         return (
             self.get_base_queryset()
+            .exclude(paid_for=F("parent_transaction__paid_by"))
             .values("paid_for__name", "parent_transaction__currency__sign")
             .annotate(currency_sign=F("parent_transaction__currency__sign"), total_owed_per_person=Sum("value"))
             .order_by("paid_for__name")

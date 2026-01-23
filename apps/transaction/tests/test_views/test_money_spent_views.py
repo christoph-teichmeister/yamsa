@@ -67,3 +67,21 @@ class TestMoneySpentViews:
         assert float(context["timeseries_max_value"]) == float(expected_total)
         assert context["trend_chart_points"][-1]["value"] == float(context["timeseries_max_value"])
         assert context["trend_range_start"] <= context["trend_range_end"]
+
+    def test_money_spent_on_room_omits_self_owed_entries(self, client, room, user, guest_user):
+        _, child_transactions = create_parent_transaction_with_optimisation(
+            room=room,
+            paid_by=user,
+            paid_for_tuple=(user, guest_user),
+        )
+
+        response = client.get(reverse("debt:money-spent-on-room", kwargs={"room_slug": room.slug}))
+        assert response.status_code == http.HTTPStatus.OK
+        owed_per_person = list(response.context_data["money_owed_per_person_qs"])
+
+        assert owed_per_person, "expected money_owed_per_person results"
+        assert len(owed_per_person) == 1
+        assert owed_per_person[0]["paid_for__name"] == guest_user.name
+        assert owed_per_person[0]["total_owed_per_person"] == sum(
+            transaction.value for transaction in child_transactions if transaction.paid_for == guest_user
+        )
