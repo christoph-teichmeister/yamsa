@@ -1097,9 +1097,6 @@ msgstr "Alle erfassten Ausgaben"
 msgid "Showing %(period)s."
 msgstr "Zeigt %(period)s."
 
-msgid "Add transaction"
-msgstr "Transaktion hinzufügen"
-
 msgid "Currency breakdown"
 msgstr "Währungsaufteilung"
 
@@ -1261,6 +1258,9 @@ msgstr "Belege"
 
 msgid "Upload receipts as PDF or image (max 5 MB each)."
 msgstr "Lade Belege als PDF oder Bild hoch (maximal 5 MB pro Datei)."
+
+msgid "Add transaction"
+msgstr "Transaktion hinzufügen"
 
 msgid "Room Slug"
 msgstr "Raum-Slug"
