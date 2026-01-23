@@ -135,8 +135,9 @@ THIRD_PARTY_APPS = (
     "cloudinary",
     "cloudinary_storage",
     "django_extensions",
-    "django_pony_express",
     "django_minify_html",
+    "django_pony_express",
+    "webpack_loader",
 )
 
 LOCAL_APPS = (
@@ -249,6 +250,16 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
+
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "BUNDLE_DIR_NAME": "bundles/",
+        "STATS_FILE": os.path.join(APPS_DIR, "static", "bundles", "webpack-stats.json"),
+        "POLL_INTERVAL": 0.1,
+        "IGNORE": [r".+\.hot-update.js"],
+        "LOADER_CLASS": "apps.config.custom_webpack_loader.NormalizedWebpackLoader",
+    }
+}
 
 # MEDIA
 # ------------------------------------------------------------------------------
