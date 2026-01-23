@@ -1,4 +1,5 @@
-{% load room_tags i18n %}
+{% load static room_tags i18n %}
+{% load render_bundle from webpack_loader %}
 <div id="spending-trend">
     <style>
         .timeline-card {
@@ -123,6 +124,7 @@
                          data-currency="{{ trend_currency_sign }}"></div>
                 </div>
                 {{ trend_chart_points|json_script:"trend-chart-data" }}
+                {% render_bundle "d3" %}
                 <script>
                     (function () {
                         const container = document.getElementById("trend-line-chart");
@@ -270,24 +272,7 @@
                                 .text(d => `${currency}${d.value.toFixed(2)} – week of ${d.label}`);
                         };
 
-                        const ensureD3 = () => {
-                            if (window.d3) {
-                                renderChart();
-                                return;
-                            }
-                            const existing = document.getElementById("d3-lib");
-                            if (existing) {
-                                existing.addEventListener("load", renderChart, { once: true });
-                            } else {
-                                const script = document.createElement("script");
-                                script.id = "d3-lib";
-                                script.src = "https://cdn.jsdelivr.net/npm/d3@7";
-                                script.onload = renderChart;
-                                document.head.appendChild(script);
-                            }
-                        };
-
-                        ensureD3();
+                        renderChart();
                     })();
                 </script>
             {% else %}

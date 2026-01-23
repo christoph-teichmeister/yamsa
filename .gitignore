@@ -12,10 +12,12 @@ yamsa_db_test
 /.venv/
 /apps/locale/de/LC_MESSAGES/django.mo
 /media/
-/static/
-/staticfiles/
+/node_modules/
 /tmp/
 /yamsa.egg-info/
+
+apps/static/bundles/
+/static/
 
 apps/staticfiles
 staticfiles

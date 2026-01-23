@@ -1,6 +1,7 @@
 {% load static %}
 {% load pwa_tags %}
 {% load i18n %}
+{% load render_bundle from webpack_loader %}
 {% trans "yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications." as yamsa_meta_description %}
 {% trans "yamsa, shared expenses, roommate app, bill splitting, dashboards" as yamsa_meta_keywords %}
 <!DOCTYPE html>
@@ -73,7 +74,7 @@
                 defer></script>
         <!-- Idomorph for cool HTMX morph swapping -->
         <script src="https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js" defer></script>
-        <script src="{% static 'js/navigation.js' %}" defer></script>
+        {% render_bundle "navigation" attrs="defer" %}
         <!-- Activate various Bootstrap components -->
         <script type="text/javascript">
           // Enable all Tooltips
