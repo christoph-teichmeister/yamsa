@@ -486,12 +486,12 @@ msgstr "Verfolge, was in diesem Raum noch ausgeglichen werden muss. Klicke auf d
 #, python-format
 msgid ""
 "\n"
-"                        %(active_debt_count)s pending debt\n"
-"                    "
+"                            %(active_debt_count)s pending debt\n"
+"                        "
 msgid_plural ""
 "\n"
-"                        %(active_debt_count)s pending debts\n"
-"                    "
+"                            %(active_debt_count)s pending debts\n"
+"                        "
 msgstr[0] ""
 "\n"
 "                        %(active_debt_count)s ausstehende Schuld\n"
@@ -500,6 +500,12 @@ msgstr[1] ""
 "\n"
 "                        %(active_debt_count)s ausstehende Schulden\n"
 "                    "
+
+msgid "View category breakdown"
+msgstr "Kategorienaufteilung anzeigen"
+
+msgid "Break down spend"
+msgstr "Ausgaben aufschlüsseln"
 
 msgid "Money overview"
 msgstr "Geldübersicht"
@@ -1423,12 +1429,6 @@ msgstr "Klicke eine Zeile, um die vollständige Aufschlüsselung zu sehen."
 
 msgid "Record your first expense to see the running history here."
 msgstr "Erfasse deine erste Ausgabe, um den Verlauf hier anzuzeigen."
-
-msgid "View category breakdown"
-msgstr "Kategorienaufteilung anzeigen"
-
-msgid "Break down spend"
-msgstr "Ausgaben aufschlüsseln"
 
 msgid "This room is closed, so transactions are read-only."
 msgstr "Dieser Raum ist geschlossen, daher sind Transaktionen nur lesbar."
