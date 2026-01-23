@@ -35,22 +35,37 @@
         }
     </style>
     <div class="container-fluid px-0 px-md-2 mt-3">
-        <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
             <div>
                 <h4 class="mb-1">{% trans "Optimised debts" %}</h4>
                 <p class="text-muted small mb-0">
                     {% trans "Track what is left to settle inside this room. Click the piggy-bank to mark a debt as paid." %}
                 </p>
             </div>
-            {% if debts %}
-                <span class="badge text-bg-light align-self-center">
-                    {% blocktrans count active_debt_count=active_debt_count %}
-                        {{ active_debt_count }} pending debt
-                    {% plural %}
-                        {{ active_debt_count }} pending debts
-                    {% endblocktrans %}
-                </span>
-            {% endif %}
+            <div class="d-flex flex-row w-100 align-items-center justify-content-between gap-2">
+                {% if debts %}
+                    <span class="badge text-bg-light">
+                        {% blocktrans count active_debt_count=active_debt_count %}
+                            {{ active_debt_count }} pending debt
+                        {% plural %}
+                            {{ active_debt_count }} pending debts
+                        {% endblocktrans %}
+                    </span>
+                {% endif %}
+                {% if has_transactions %}
+                    <button type="button"
+                            class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
+                            title="{% trans "View category breakdown" %}"
+                            hx-get="{% room_url 'transaction:category-breakdown' %}"
+                            hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true">
+                        <i class="bi bi-pie-chart-fill"></i>
+                        {% trans "Break down spend" %}
+                    </button>
+                {% endif %}
+            </div>
         </div>
         {% if has_transactions %}
             <div class="action-card mt-4 d-flex align-items-center justify-content-between"
