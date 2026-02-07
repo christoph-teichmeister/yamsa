@@ -171,6 +171,12 @@
                     {% endif %}
                 </div>
                 <div class="d-flex align-items-center justify-content-end gap-2">
+                    <a href="{% room_url 'transaction:export' %}"
+                       class="btn btn-outline-secondary d-inline-flex align-items-center gap-1"
+                       title="{% trans "Export CSV" %}">
+                        <i class="bi bi-download"></i>
+                        {% trans "Export CSV" %}
+                    </a>
                     <button type="button"
                             class="btn btn-primary btn-icon d-inline-flex align-items-center justify-content-center {% if current_room.is_closed %}disabled{% endif %}"
                             aria-label="{% trans "Add transaction" %}"
