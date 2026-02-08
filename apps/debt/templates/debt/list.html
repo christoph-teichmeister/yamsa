@@ -53,6 +53,12 @@
                     </span>
                 {% endif %}
                 {% if has_transactions %}
+                    <a href="{% room_url 'debt:export' %}"
+                       class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
+                       title="{% trans "Export CSV" %}">
+                        <i class="bi bi-download"></i>
+                        {% trans "Export CSV" %}
+                    </a>
                     <button type="button"
                             class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
                             title="{% trans "View category breakdown" %}"

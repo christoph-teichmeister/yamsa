@@ -18,6 +18,11 @@ urlpatterns = [
                 name="list",
             ),
             path(
+                "export",
+                views.TransactionExportView.as_view(),
+                name="export",
+            ),
+            path(
                 "feed/",
                 views.TransactionFeedView.as_view(),
                 name="feed",
