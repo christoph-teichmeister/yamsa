@@ -1,3 +1,5 @@
+"""Streaming exports for room transactions."""
+
 import csv
 import io
 
@@ -12,9 +14,12 @@ from apps.transaction.views.mixins.transaction_base_context import TransactionBa
 
 
 class TransactionExportView(RoomMembershipRequiredMixin, TransactionBaseContext, View):
+    """Return CSV rows for each transaction paid inside the room."""
+
     HEADER = ["paid_by", "paid_for", "description", "amount", "currency", "category", "paid_at"]
 
     def get(self, request, *args, **kwargs):
+        """Stream room transactions while respecting prefetching and metadata."""
         room = request.room
         parents = (
             ParentTransaction.objects.filter(room=room)
@@ -35,6 +40,7 @@ class TransactionExportView(RoomMembershipRequiredMixin, TransactionBaseContext,
         return response
 
     def _iter_rows(self, room, parents, timestamp):
+        """Yield CSV metadata, header, and transaction rows in streaming chunks."""
         buffer = io.StringIO()
         writer = csv.writer(buffer)
 
@@ -71,6 +77,7 @@ class TransactionExportView(RoomMembershipRequiredMixin, TransactionBaseContext,
                 yield self._pop_buffer(buffer)
 
     def _pop_buffer(self, buffer):
+        """Return and reset the accumulated CSV buffer."""
         value = buffer.getvalue()
         buffer.seek(0)
         buffer.truncate(0)

@@ -1,3 +1,5 @@
+"""Streaming exports for room debts."""
+
 import csv
 import io
 
@@ -11,9 +13,12 @@ from apps.room.views.mixins import RoomMembershipRequiredMixin
 
 
 class DebtExportView(RoomMembershipRequiredMixin, DebtBaseContext, View):
+    """Return CSV exports of unsettled debts for the user's room."""
+
     HEADER = ["debitor", "creditor", "amount", "currency", "settled", "settled_at"]
 
     def get(self, request, *args, **kwargs):
+        """Build a streaming response containing metadata and unsettled debt rows."""
         room = request.room
         debts = (
             Debt.objects.filter(room=room, settled=False)
@@ -28,6 +33,7 @@ class DebtExportView(RoomMembershipRequiredMixin, DebtBaseContext, View):
         return response
 
     def _iter_rows(self, room, debts, timestamp):
+        """Yield CSV chunks for the metadata, header, and debt rows."""
         buffer = io.StringIO()
         writer = csv.writer(buffer)
 
@@ -60,6 +66,7 @@ class DebtExportView(RoomMembershipRequiredMixin, DebtBaseContext, View):
             yield self._pop_buffer(buffer)
 
     def _pop_buffer(self, buffer):
+        """Clear the writer buffer and return its contents."""
         value = buffer.getvalue()
         buffer.seek(0)
         buffer.truncate(0)

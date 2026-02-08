@@ -1,11 +1,14 @@
+"""Mixins related to room membership enforcement."""
+
 from django.contrib.auth.mixins import AccessMixin
 from django.http import HttpResponseForbidden
 
 
 class RoomMembershipRequiredMixin(AccessMixin):
-    """Ensure the requesting user belongs to the room (or is a superuser)."""
+    """Prevent access to room resources for non-members."""
 
     def dispatch(self, request, *args, **kwargs):
+        """Allow only authenticated users who have seen the room."""
         user = request.user
         if not user.is_authenticated:
             return self.handle_no_permission()
@@ -17,4 +20,5 @@ class RoomMembershipRequiredMixin(AccessMixin):
         return super().dispatch(request, *args, **kwargs)
 
     def handle_no_permission(self):
+        """Signal a forbidden response when membership checks fail."""
         return HttpResponseForbidden()
