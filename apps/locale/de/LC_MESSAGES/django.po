@@ -501,6 +501,9 @@ msgstr[1] ""
 "                        %(active_debt_count)s ausstehende Schulden\n"
 "                    "
 
+msgid "Export CSV"
+msgstr "CSV exportieren"
+
 msgid "View category breakdown"
 msgstr "Kategorienaufteilung anzeigen"
 
