@@ -109,7 +109,7 @@
             }
 
         }
-        
+
         .transaction-row::after {
             content: "";
             position: absolute;
@@ -171,14 +171,6 @@
                     {% endif %}
                 </div>
                 <div class="d-flex align-items-center justify-content-end gap-2">
-                    {% if transactions_available %}
-                        <a href="{% room_url 'transaction:export' %}"
-                           class="btn btn-outline-secondary d-inline-flex align-items-center gap-1"
-                           title="{% trans "Export CSV" %}">
-                            <i class="bi bi-download"></i>
-                            {% trans "Export CSV" %}
-                        </a>
-                    {% endif %}
                     <button type="button"
                             class="btn btn-primary btn-icon d-inline-flex align-items-center justify-content-center {% if current_room.is_closed %}disabled{% endif %}"
                             aria-label="{% trans "Add transaction" %}"
@@ -199,7 +191,8 @@
             {% endif %}
             <div class="card border-0 shadow-sm">
                 <div class="card-body pb-0">
-                    <label for="transaction-search" class="form-label text-muted small mb-1">{% trans "Search" %}</label>
+                    <label for="transaction-search"
+                           class="form-label text-muted small mb-1">{% trans "Search" %}</label>
                     <input type="search"
                            id="transaction-search"
                            class="form-control form-control-sm mb-3"
@@ -218,13 +211,13 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0 transaction-table">
                             <thead class="text-muted text-uppercase small d-none d-md-table-header-group">
-                                <tr>
-                                    <th scope="col">{% trans "Details" %}</th>
-                                    <th scope="col" class="text-end">{% trans "Actions" %}</th>
-                                </tr>
+                            <tr>
+                                <th scope="col">{% trans "Details" %}</th>
+                                <th scope="col" class="text-end">{% trans "Actions" %}</th>
+                            </tr>
                             </thead>
                             <tbody id="transaction-table-body">
-                                {% include "transaction/partials/_transaction_batch.html" with parent_transactions=parent_transactions transaction_next_cursor=transaction_next_cursor transaction_initial_render=transaction_initial_render transaction_search_query=transaction_search_query %}
+                            {% include "transaction/partials/_transaction_batch.html" with parent_transactions=parent_transactions transaction_next_cursor=transaction_next_cursor transaction_initial_render=transaction_initial_render transaction_search_query=transaction_search_query %}
                             </tbody>
                         </table>
                     </div>
@@ -293,68 +286,78 @@
                     </ul>
                 </div>
             </div>
+            {% if transactions_available %}
+                <div class="w-full d-flex justify-content-center">
+                    <a href="{% room_url 'transaction:export' %}"
+                       class="btn btn-outline-secondary d-inline-flex align-items-center gap-1"
+                       title="{% trans "Export CSV" %}">
+                        <i class="bi bi-download"></i>
+                        {% trans "Export CSV" %}
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
     <!-- Observer to scroll to correct element when anchor tags are in url -->
     <script type="text/javascript">
-        function highlightTransactionRow(target) {
-            if (!target) {
-                return;
-            }
-
-            target.classList.remove('transaction-highlight');
-            // force reflow
-            void target.offsetWidth;
-            target.classList.add('transaction-highlight');
-
-            window.setTimeout(function () {
-                target.classList.remove('transaction-highlight');
-            }, 2400);
+      function highlightTransactionRow(target) {
+        if (!target) {
+          return;
         }
 
-        function getScrollOffset() {
-            var fixedHeader = document.querySelector('nav.navbar.fixed-top');
-            var headerHeight = fixedHeader ? fixedHeader.offsetHeight : 0;
-            var safetyGap = 16;
+        target.classList.remove('transaction-highlight');
+        // force reflow
+        void target.offsetWidth;
+        target.classList.add('transaction-highlight');
 
-            return headerHeight + safetyGap;
+        window.setTimeout(function () {
+          target.classList.remove('transaction-highlight');
+        }, 2400);
+      }
+
+      function getScrollOffset() {
+        var fixedHeader = document.querySelector('nav.navbar.fixed-top');
+        var headerHeight = fixedHeader ? fixedHeader.offsetHeight : 0;
+        var safetyGap = 16;
+
+        return headerHeight + safetyGap;
+      }
+
+      function focusTransactionFromHash() {
+        var hash = window.location.hash;
+
+        if (!hash || hash === '#') {
+          return;
         }
 
-        function focusTransactionFromHash() {
-            var hash = window.location.hash;
+        var target = document.querySelector(hash) || document.querySelector('[name="' + hash.slice(1) + '"]');
 
-            if (!hash || hash === '#') {
-                return;
-            }
+        if (target) {
+          var offset = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
 
-            var target = document.querySelector(hash) || document.querySelector('[name="' + hash.slice(1) + '"]');
+          window.scrollTo({
+            top: Math.max(offset, 0),
+            behavior: 'smooth'
+          });
 
-            if (target) {
-                var offset = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
-
-                window.scrollTo({
-                    top: Math.max(offset, 0),
-                    behavior: 'smooth'
-                });
-
-                highlightTransactionRow(target);
-            }
+          highlightTransactionRow(target);
         }
+      }
 
-        function triggerTransactionFocus() {
-            window.requestAnimationFrame(focusTransactionFromHash);
-        }
+      function triggerTransactionFocus() {
+        window.requestAnimationFrame(focusTransactionFromHash);
+      }
 
-        if (!window.__transactionFocusEventsBound) {
-            document.addEventListener('htmx:afterSwap', triggerTransactionFocus);
-            document.addEventListener('htmx:historyRestore', triggerTransactionFocus);
-            window.__transactionFocusEventsBound = true;
-        }
+      if (!window.__transactionFocusEventsBound) {
+        document.addEventListener('htmx:afterSwap', triggerTransactionFocus);
+        document.addEventListener('htmx:historyRestore', triggerTransactionFocus);
+        window.__transactionFocusEventsBound = true;
+      }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', triggerTransactionFocus);
-        } else {
-            triggerTransactionFocus();
-        }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', triggerTransactionFocus);
+      } else {
+        triggerTransactionFocus();
+      }
     </script>
 {% endblock tab_content %}
