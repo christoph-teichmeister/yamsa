@@ -52,7 +52,15 @@
                         {% endblocktrans %}
                     </span>
                 {% endif %}
-                {% if has_transactions %}
+            </div>
+            {% if has_transactions %}
+                <div class="w-100 d-flex justify-content-around">
+                    <a href="{% room_url 'debt:export' %}"
+                       class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
+                       title="{% trans "Export CSV" %}">
+                        <i class="bi bi-download"></i>
+                        {% trans "Export CSV" %}
+                    </a>
                     <button type="button"
                             class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
                             title="{% trans "View category breakdown" %}"
@@ -64,8 +72,8 @@
                         <i class="bi bi-pie-chart-fill"></i>
                         {% trans "Break down spend" %}
                     </button>
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
         </div>
         {% if has_transactions %}
             <div class="action-card mt-4 d-flex align-items-center justify-content-between"
@@ -95,7 +103,8 @@
                                         {% parse_user_text debt.debitor.name True as debitor_display %}
                                         {% parse_user_text debt.creditor.name as creditor_display %}
                                         {% blocktrans with debitor_display=debitor_display creditor_display=creditor_display value=debt.value currency=debt.currency.sign trimmed %}
-                                            {{ debitor_display }} owes {{ value }}{{ currency }} to {{ creditor_display }}
+                                            {{ debitor_display }} owes {{ value }}{{ currency }} to
+                                            {{ creditor_display }}
                                         {% endblocktrans %}
                                     </p>
                                     {% if debt.settled %}
