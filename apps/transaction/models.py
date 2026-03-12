@@ -33,6 +33,7 @@ class Category(FullCleanOnSaveMixin, CommonInfo):
     name = models.CharField(max_length=100)
     emoji = models.CharField(max_length=10)
     color = models.CharField(max_length=7, blank=True, null=True)
+
     order_index = models.PositiveIntegerField(default=0)
     is_default = models.BooleanField(default=False)
 
