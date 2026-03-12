@@ -3,6 +3,7 @@ import re
 from decimal import Decimal
 
 import pytest
+from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
@@ -145,10 +146,13 @@ class TestTransactionEditView:
         )
         assert response.status_code == http.HTTPStatus.OK
 
-        html = response.content.decode()
-        amount_values = re.findall(r'id="value_input_\d+"[^>]*value="([^"]+)"', html)
+        soup = BeautifulSoup(response.content, "html.parser")
+        value_inputs = soup.find_all("input", id=re.compile(r"^value_input_\d+$"))
+        amount_values = [input_tag.get("value") for input_tag in value_inputs]
+
         ordered_children = list(parent_transaction.child_transactions.order_by("-id"))
         expected_values = [f"{child.value:.2f}" for child in ordered_children]
+
         assert amount_values == expected_values
 
     @pytest.mark.parametrize(
