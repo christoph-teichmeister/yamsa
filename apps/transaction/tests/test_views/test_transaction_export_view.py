@@ -40,7 +40,7 @@ class TestTransactionExportView:
         assert lines[1].startswith("Room Name,")
         assert lines[2].startswith("Export Timestamp,")
         assert lines[3] == ""
-        assert lines[4] == "paid_by,paid_for,description,amount,currency,category,paid_at"
+        assert lines[4] == "Paid by,Paid for,Description,Amount,Currency,Category,Paid at"
 
         data_rows = [line for line in lines[5:] if line]
         assert len(data_rows) == 1

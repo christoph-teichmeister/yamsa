@@ -40,7 +40,7 @@ class TestDebtExportView:
         assert lines[1].startswith("Room Name,")
         assert lines[2].startswith("Export Timestamp,")
         assert lines[3] == ""
-        assert lines[4] == "debitor,creditor,amount,currency"
+        assert lines[4] == "Debitor,Creditor,Amount,Currency"
 
         data_rows = [line for line in lines[5:] if line]
         assert data_rows
