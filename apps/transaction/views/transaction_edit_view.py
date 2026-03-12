@@ -42,4 +42,4 @@ class TransactionEditView(TransactionBaseContext, generic.UpdateView):
     @context
     @cached_property
     def child_transaction_qs(self):
-        return self.get_object().child_transactions.all()
+        return self.get_object().child_transactions.select_related("paid_for")

@@ -3,6 +3,7 @@ import re
 from decimal import Decimal
 
 import pytest
+from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
@@ -123,6 +124,36 @@ class TestTransactionEditView:
 
         parent_transaction.refresh_from_db()
         assert parent_transaction.value == Decimal("51.01")
+
+    def test_existing_child_values_render_in_edit_form(self, authenticated_client, room, user, guest_user):
+        parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
+        ChildTransaction.objects.create(
+            parent_transaction=parent_transaction,
+            paid_for=user,
+            value=Decimal("17.25"),
+        )
+        ChildTransaction.objects.create(
+            parent_transaction=parent_transaction,
+            paid_for=guest_user,
+            value=Decimal("8.75"),
+        )
+
+        response = authenticated_client.get(
+            reverse(
+                "transaction:edit",
+                kwargs={"room_slug": room.slug, "pk": parent_transaction.id},
+            )
+        )
+        assert response.status_code == http.HTTPStatus.OK
+
+        soup = BeautifulSoup(response.content, "html.parser")
+        value_inputs = soup.find_all("input", id=re.compile(r"^value_input_\d+$"))
+        amount_values = [input_tag.get("value") for input_tag in value_inputs]
+
+        ordered_children = list(parent_transaction.child_transactions.order_by("-id"))
+        expected_values = [f"{child.value:.2f}" for child in ordered_children]
+
+        assert amount_values == expected_values
 
     @pytest.mark.parametrize(
         "initial_total_override, child_total_value, expected_formatted",
