@@ -7,7 +7,7 @@ from django.db import transaction
 from apps.account.models import User
 from apps.currency.models import Currency
 from apps.room.models import Room, UserConnectionToRoom
-from apps.transaction.models import Category, DEFAULT_CATEGORY_PK, DEFAULT_CATEGORY_SLUG
+from apps.transaction.models import DEFAULT_CATEGORY_PK, DEFAULT_CATEGORY_SLUG, Category
 
 
 class Command(BaseCommand):

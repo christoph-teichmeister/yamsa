@@ -191,8 +191,7 @@
             {% endif %}
             <div class="card border-0 shadow-sm">
                 <div class="card-body pb-0">
-                    <label for="transaction-search"
-                           class="form-label text-muted small mb-1">{% trans "Search" %}</label>
+                    <label for="transaction-search" class="form-label text-muted small mb-1">{% trans "Search" %}</label>
                     <input type="search"
                            id="transaction-search"
                            class="form-control form-control-sm mb-3"
@@ -211,13 +210,13 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0 transaction-table">
                             <thead class="text-muted text-uppercase small d-none d-md-table-header-group">
-                            <tr>
-                                <th scope="col">{% trans "Details" %}</th>
-                                <th scope="col" class="text-end">{% trans "Actions" %}</th>
-                            </tr>
+                                <tr>
+                                    <th scope="col">{% trans "Details" %}</th>
+                                    <th scope="col" class="text-end">{% trans "Actions" %}</th>
+                                </tr>
                             </thead>
                             <tbody id="transaction-table-body">
-                            {% include "transaction/partials/_transaction_batch.html" with parent_transactions=parent_transactions transaction_next_cursor=transaction_next_cursor transaction_initial_render=transaction_initial_render transaction_search_query=transaction_search_query %}
+                                {% include "transaction/partials/_transaction_batch.html" with parent_transactions=parent_transactions transaction_next_cursor=transaction_next_cursor transaction_initial_render=transaction_initial_render transaction_search_query=transaction_search_query %}
                             </tbody>
                         </table>
                     </div>
