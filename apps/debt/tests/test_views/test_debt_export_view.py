@@ -40,11 +40,12 @@ class TestDebtExportView:
         assert lines[1].startswith("Room Name,")
         assert lines[2].startswith("Export Timestamp,")
         assert lines[3] == ""
-        assert lines[4] == "debitor,creditor,amount,currency,settled,settled_at"
+        assert lines[4] == "Debitor,Creditor,Amount,Currency"
 
         data_rows = [line for line in lines[5:] if line]
         assert data_rows
         assert user.name in data_rows[0] or guest_user.name in data_rows[0]
+        assert all(other_user.name not in row and other_guest.name not in row for row in data_rows)
 
     def test_debt_export_requires_membership(self, client, room):
         outsider = UserFactory()
