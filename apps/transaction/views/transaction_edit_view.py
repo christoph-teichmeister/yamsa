@@ -1,5 +1,7 @@
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.views import generic
+from django_context_decorator import context
 
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.models import ParentTransaction
@@ -37,7 +39,7 @@ class TransactionEditView(TransactionBaseContext, generic.UpdateView):
             kwargs={"room_slug": self.request.room.slug, "pk": self.object.id},
         )
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["child_transaction_qs"] = self.get_object().child_transactions.select_related("paid_for")
-        return context
+    @context
+    @cached_property
+    def child_transaction_qs(self):
+        return self.get_object().child_transactions.select_related("paid_for")
