@@ -434,7 +434,7 @@ msgid "Auto-updated feed"
 msgstr "Automatisch aktualisierter Feed"
 
 msgid "Events appear in chronological order with the newest at the top."
-msgstr "Ereignisse erscheinen in chronologischer Reihenfolge, die neuesten oben."
+msgstr "Ereignisse erscheinen in chronologischer Reihenfolge, die Neuesten oben."
 
 msgid "No updates yet"
 msgstr "Noch keine Aktualisierungen"
