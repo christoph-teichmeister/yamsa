@@ -43,7 +43,10 @@ class CsvExportMixin:
     def _safe(self, value):
         if value is None:
             return ""
+
         string_value = str(value)
+
         if string_value and string_value[0] in self._FORMULA_TRIGGERS:
             return f"'{string_value}"
+
         return string_value

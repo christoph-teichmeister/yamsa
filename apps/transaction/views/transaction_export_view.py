@@ -1,6 +1,8 @@
 from django.db.models import Prefetch
 from django.http import StreamingHttpResponse
 from django.utils import timezone
+from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 from django.views import View
 
 from apps.core.views.mixins import CsvExportMixin
@@ -12,7 +14,7 @@ from apps.transaction.views.mixins.transaction_base_context import TransactionBa
 class TransactionExportView(RoomMembershipRequiredMixin, TransactionBaseContext, CsvExportMixin, View):
     """Return CSV rows for each transaction paid inside the room."""
 
-    HEADER = ["paid_by", "paid_for", "description", "amount", "currency", "category", "paid_at"]
+    HEADER = [_("Paid by"), _("Paid for"), _("Description"), _("Amount"), _("Currency"), _("Category"), _("Paid at")]
 
     def get(self, request, *args, **kwargs):
         """Stream room transactions while respecting prefetching and metadata."""
@@ -30,9 +32,11 @@ class TransactionExportView(RoomMembershipRequiredMixin, TransactionBaseContext,
         )
 
         timestamp = timezone.now()
-        filename = f"transactions-{room.slug}-{timestamp.strftime('%Y%m%d%H%M%S')}.csv"
+        filename = _("transactions") + f"-{slugify(room.name)}-{timestamp.strftime('%Y-%m-%d-%H-%M-%S')}.csv"
+
         response = StreamingHttpResponse(self._iter_rows(room, parents, timestamp), content_type="text/csv")
         response["Content-Disposition"] = f'attachment; filename="{filename}"'
+
         return response
 
     def _write_rows(self, writer, buffer, parents, timestamp):
@@ -42,6 +46,7 @@ class TransactionExportView(RoomMembershipRequiredMixin, TransactionBaseContext,
             paid_by = self._safe(parent.paid_by.name)
             description = self._safe(parent.description)
             paid_at = parent.paid_at.isoformat()
+
             for child in parent.child_transactions.all():
                 row = [
                     paid_by,

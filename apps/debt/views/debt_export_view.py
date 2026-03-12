@@ -1,5 +1,7 @@
 from django.http import StreamingHttpResponse
 from django.utils import timezone
+from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 from django.views import View
 
 from apps.core.views.mixins import CsvExportMixin
@@ -11,7 +13,7 @@ from apps.room.views.mixins import RoomMembershipRequiredMixin
 class DebtExportView(RoomMembershipRequiredMixin, DebtBaseContext, CsvExportMixin, View):
     """Return CSV exports of unsettled debts for the user's room."""
 
-    HEADER = ["debitor", "creditor", "amount", "currency"]
+    HEADER = [_("Debitor"), _("Creditor"), _("Amount"), _("Currency")]
 
     def get(self, request, *args, **kwargs):
         """Build a streaming response containing metadata and unsettled debt rows."""
@@ -23,9 +25,11 @@ class DebtExportView(RoomMembershipRequiredMixin, DebtBaseContext, CsvExportMixi
         )
 
         timestamp = timezone.now()
-        filename = f"debts-{room.slug}-{timestamp.strftime('%Y%m%d%H%M%S')}.csv"
+        filename = _("debts") + f"-{slugify(room.name)}-{timestamp.strftime('%Y-%m-%d-%H-%M-%S')}.csv"
+
         response = StreamingHttpResponse(self._iter_rows(room, debts, timestamp), content_type="text/csv")
         response["Content-Disposition"] = f'attachment; filename="{filename}"'
+
         return response
 
     def _write_rows(self, writer, buffer, debts, timestamp):
