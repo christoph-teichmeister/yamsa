@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from apps.core.tests.test_utils.dummy_instance import DummyInstance
+from apps.core.tests.utils.dummy_instance import DummyInstance
 from apps.core.utils import determine_upload_to
 
 
