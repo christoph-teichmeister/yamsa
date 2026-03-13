@@ -6,10 +6,10 @@ import pytest
 
 from apps.core.event_loop.registry import message_registry
 from apps.core.event_loop.runner import handle_command, handle_event, logger
-from apps.core.tests.test_event_loop_runner.capture_handler import _CaptureHandler
-from apps.core.tests.test_event_loop_runner.test_dummy_command import _DummyCommand
-from apps.core.tests.test_event_loop_runner.test_dummy_context import _DummyContext
-from apps.core.tests.test_event_loop_runner.test_dummy_event import _DummyEvent
+from apps.core.tests.helpers.capture_handler import _CaptureHandler
+from apps.core.tests.helpers.dummy_command import _DummyCommand
+from apps.core.tests.helpers.dummy_context import _DummyContext
+from apps.core.tests.helpers.dummy_event import _DummyEvent
 
 
 def _failing_command_handler(context: _DummyContext) -> None:

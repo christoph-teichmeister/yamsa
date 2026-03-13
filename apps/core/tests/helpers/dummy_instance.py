@@ -1,4 +1,4 @@
-from apps.core.tests.test_helpers.dummy_meta import DummyMeta
+from apps.core.tests.helpers.dummy_meta import DummyMeta
 
 
 class DummyInstance:
