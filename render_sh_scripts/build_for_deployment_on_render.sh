@@ -16,6 +16,12 @@ echo "" && echo "pip install --no-cache-dir ."
 pip install --no-cache-dir .
 rm /tmp/requirements.txt
 
+echo "" && echo "yarn install --frozen-lockfile"
+yarn install --frozen-lockfile
+
+echo "" && echo "yarn build"
+yarn build
+
 echo "" && echo "python manage.py collectstatic --no-input"
 python manage.py collectstatic --no-input
 
