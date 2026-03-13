@@ -9,13 +9,11 @@ logger = logging.getLogger(__name__)
 
 
 def handle_message(message_list: Message | list[Message]):
-    queue = message_list if isinstance(message_list, list) else [message_list]
+    """Process commands/events once Django has populated the registry on startup."""
 
-    # TODO CT: I moved this to core.apps - idk if this is necessary here
-    # # Run auto-registry
-    # from apps.core.domain import message_registry
-    #
-    # message_registry.autodiscover()
+    # The message registry is populated when `apps.core.apps.CoreConfig.ready()` runs,
+    # so the runner never has to import or autodiscover handlers itself.
+    queue = message_list if isinstance(message_list, list) else [message_list]
 
     while queue:
         message = queue.pop(0)

@@ -5,7 +5,7 @@ import logging
 import pytest
 
 from apps.core.event_loop.registry import message_registry
-from apps.core.event_loop.runner import handle_command, handle_event, logger
+from apps.core.event_loop.runner import handle_command, handle_event, handle_message, logger
 from apps.core.tests.helpers.capture_handler import _CaptureHandler
 from apps.core.tests.helpers.dummy_command import _DummyCommand
 from apps.core.tests.helpers.dummy_context import _DummyContext
@@ -20,16 +20,6 @@ def _failing_command_handler(context: _DummyContext) -> None:
 def _failing_event_handler(context: _DummyContext) -> None:
     msg = "event handler boom"
     raise RuntimeError(msg)
-
-
-def _cleanup_registry_entry(mapping: dict, key: type, handler) -> None:
-    handlers = mapping.get(key)
-    if not handlers:
-        return
-    while handler in handlers:
-        handlers.remove(handler)
-    if not handlers:
-        mapping.pop(key, None)
 
 
 def _latest_error_record(handler: _CaptureHandler, level: int) -> logging.LogRecord | None:
@@ -55,12 +45,12 @@ def capture_handler():
 @pytest.fixture(autouse=True)
 def cleanup_registry():
     yield
-    _cleanup_registry_entry(message_registry.command_dict, _DummyCommand, _failing_command_handler)
-    _cleanup_registry_entry(message_registry.event_dict, _DummyEvent, _failing_event_handler)
+    message_registry.command_dict.pop(_DummyCommand, None)
+    message_registry.event_dict.pop(_DummyEvent, None)
 
 
-class TestRunnerLogging:
-    """Ensure the runner logs context while re-raising handler exceptions."""
+class TestEventLoopRunner:
+    """Ensure the runner logs context while re-raising handler exceptions and keeps dispatching."""
 
     def _register_command_handler(self):
         handlers = message_registry.command_dict.setdefault(_DummyCommand, [])
@@ -99,3 +89,20 @@ class TestRunnerLogging:
         assert event.__class__.__name__ in record.getMessage()
         assert event.uuid in record.getMessage()
         assert record.exc_info is not None
+
+    @pytest.mark.django_db
+    def test_handle_message_dispatches_command_and_event_handlers(self):
+        processed: list[str] = []
+
+        @message_registry.register_command(command=_DummyCommand)
+        def _recording_command_handler(context: _DummyContext) -> _DummyEvent:
+            processed.append("command")
+            return _DummyEvent(context)
+
+        @message_registry.register_event(event=_DummyEvent)
+        def _recording_event_handler(_context: _DummyContext) -> None:
+            processed.append("event")
+
+        handle_message(_DummyCommand({}))
+
+        assert processed == ["command", "event"]
