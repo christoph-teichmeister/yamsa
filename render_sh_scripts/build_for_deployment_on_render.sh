@@ -12,15 +12,17 @@ uv export --locked --format=requirements.txt --no-dev --no-emit-project --output
 
 echo "" && echo "pip install --no-cache-dir -r /tmp/requirements.txt"
 pip install --no-cache-dir -r /tmp/requirements.txt
+
 echo "" && echo "pip install --no-cache-dir ."
 pip install --no-cache-dir .
 rm /tmp/requirements.txt
 
-echo "" && echo "yarn install --frozen-lockfile"
-yarn install --frozen-lockfile
+echo "" && echo "npm install -D webpack-cli"
+npm install -D webpack-cli
 
-echo "" && echo "yarn build"
-yarn build
+# https://github.com/django-webpack/django-webpack-loader?tab=readme-ov-file#using-in-production
+echo "" && echo "npx webpack --progress --bail --mode=production --define-process-env-node-env=production"
+npx webpack --progress --bail --mode=production
 
 echo "" && echo "python manage.py collectstatic --no-input"
 python manage.py collectstatic --no-input
