@@ -6,7 +6,7 @@ from apps.transaction.views.transaction_list_view.mixin import TransactionFeedMi
 class TransactionListView(TransactionFeedMixin, generic.TemplateView):
     template_name = "transaction/list.html"
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object) -> dict[str, object]:
         context = super().get_context_data(**kwargs)
         base_queryset = self.get_base_queryset()
         total_count = base_queryset.count()
