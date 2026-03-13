@@ -34,8 +34,13 @@ The Django stack is managed through `uv` with a `.venv` stored beside the projec
 - `uv run pytest` runs the full Django suite through `pytest`, leveraging the shared fixtures in `conftest.py` and
   the per-app factories under `apps/*/tests/factories.py`.
 - `uv run coverage run -m pytest && uv run coverage report` generates coverage reports (see `pyproject.toml` for
-  configuration).
+  configuration.
 - Run `uv run ruff check --fix .` and `uv run djlint apps --reformat` to keep formatting consistent.
+
+## Exporting room data
+
+- Each room has an **Export CSV** action on the transaction and debt tabs. The transaction export emits paid-by/paid-for breakdowns (description, amount, currency, category, date) for the current room, while the debt export lists unsettled debts (debitor, creditor, amount, currency, settled flag, settled date).
+- Both endpoints stream `text/csv`, honor room membership, and prepend the room slug, name, and export timestamp so auditors always know which room produced the file.
 
 ## Front-end bundling
 
@@ -45,6 +50,7 @@ The Django stack is managed through `uv` with a `.venv` stored beside the projec
 - Start `yarn watch` during front-end development to keep the bundles in sync automatically while editing those entry files (the command runs Webpack in development mode, watches sources, and logs colored output).
 - Templates render the bundles with `django-webpack-loader` (`render_bundle "d3"`, `render_bundle "navigation"`, `render_bundle "suggested-guests"`), so run `yarn build` before hitting those pages locally or in production.
 - The transaction charts still try the local D3 bundle first and fall back to `https://cdn.jsdelivr.net/npm/d3@7` when the bundle is missing.
+
 
 ## Dependency & Lockfile Workflow
 

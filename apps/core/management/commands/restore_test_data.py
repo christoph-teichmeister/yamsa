@@ -7,6 +7,7 @@ from django.db import transaction
 from apps.account.models import User
 from apps.currency.models import Currency
 from apps.room.models import Room, UserConnectionToRoom
+from apps.transaction.models import DEFAULT_CATEGORY_SLUG, Category
 
 
 class Command(BaseCommand):
@@ -70,6 +71,21 @@ class Command(BaseCommand):
             print(f'User ID: {guest_user.id}, Name: "{guest_user.name}" created')
 
     @staticmethod
+    def _create_categories():
+        category, _ = Category.objects.get_or_create(
+            slug=DEFAULT_CATEGORY_SLUG,
+            defaults={
+                "name": "miscellaneous",
+                "emoji": "💫",
+                "color": "#8539db",
+                "order_index": 0,
+                "is_default": True,
+            },
+        )
+
+        print(f'Category: "{category.name}" created')
+
+    @staticmethod
     def _create_currencies():
         Currency.objects.create(name="Euro", sign="€", code="EUR")
         Currency.objects.create(name="Pound Sterling", sign="£", code="GBP")
@@ -106,6 +122,8 @@ class Command(BaseCommand):
 
         # Fake self for this method
         self = Command
+
+        self._create_categories()
 
         self._create_users()
 

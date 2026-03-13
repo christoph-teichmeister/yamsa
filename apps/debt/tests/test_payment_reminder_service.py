@@ -33,7 +33,7 @@ class TestPaymentReminderService:
         debt_factory(debitor=user, creditor=guest_user, value=Decimal("42.00"))
 
         with mock.patch(
-            "apps.debt.services.payment_reminder_service.PaymentReminderEmailService.process"
+            "apps.mail.services.payment_reminder_mail_service.PaymentReminderEmailService.process"
         ) as mocked_process:
             candidates = reminder_service.run()
 
@@ -48,7 +48,7 @@ class TestPaymentReminderService:
         user.save(update_fields=["wants_to_receive_payment_reminders"])
 
         with mock.patch(
-            "apps.debt.services.payment_reminder_service.PaymentReminderEmailService.process"
+            "apps.mail.services.payment_reminder_mail_service.PaymentReminderEmailService.process"
         ) as mocked_process:
             candidates = reminder_service.run()
 
@@ -62,7 +62,7 @@ class TestPaymentReminderService:
         debt_factory(debitor=guest_user, creditor=user, value=Decimal("13.37"))
 
         with mock.patch(
-            "apps.debt.services.payment_reminder_service.PaymentReminderEmailService.process"
+            "apps.mail.services.payment_reminder_mail_service.PaymentReminderEmailService.process"
         ) as mocked_process:
             candidates = reminder_service.run()
 
@@ -77,7 +77,7 @@ class TestPaymentReminderService:
         room_with_stale_activity.save(update_fields=["status"])
 
         with mock.patch(
-            "apps.debt.services.payment_reminder_service.PaymentReminderEmailService.process"
+            "apps.mail.services.payment_reminder_mail_service.PaymentReminderEmailService.process"
         ) as mocked_process:
             candidates = reminder_service.run()
 

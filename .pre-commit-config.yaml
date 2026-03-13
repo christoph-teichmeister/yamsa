@@ -1,7 +1,7 @@
 repos:
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     # https://github.com/astral-sh/ruff-pre-commit/releases
-    rev: v0.14.10
+    rev: v0.15.6
     hooks:
       # Run the formatter.
       - id: ruff-format
@@ -18,7 +18,7 @@ repos:
 
   - repo: https://github.com/compilerla/conventional-pre-commit
     # https://github.com/compilerla/conventional-pre-commit/releases
-    rev: v4.3.0
+    rev: v4.4.0
     hooks:
       - id: conventional-pre-commit
         stages: [ commit-msg ]
@@ -26,7 +26,7 @@ repos:
 
   - repo: https://github.com/adamchainz/django-upgrade
     # https://django-upgrade.readthedocs.io/en/latest/changelog.html
-    rev: 1.29.1
+    rev: 1.30.0
     hooks:
       - id: django-upgrade
         args: [ --target-version, "6.0", --all-files ]
@@ -44,3 +44,32 @@ repos:
             '^^(?!(?:dependabot-.*)|(?:feature|hotfix|bugfix|refactor|merge|maintenance)/[\w\d\-_#]+).*$',
           ]
         stages: [ pre-commit ]
+
+  - repo: local
+    hooks:
+      - id: remove-future-imports
+        name: remove __future__ imports
+        entry: scripts/remove_future_imports.py
+        language: python
+        language_version: python3.13
+        types: [python]
+
+      - id: remove-all-assignments
+        name: remove __all__ assignments
+        entry: scripts/remove_all_assignments.py
+        language: python
+        language_version: python3.13
+        types: [python]
+
+      - id: no-relative-imports
+        name: disallow relative imports
+        entry: scripts/check_no_relative_imports.py
+        language: python
+        language_version: python3.13
+        types: [python]
+
+      - id: one-class-per-file
+        name: one class per file audit
+        entry: python scripts/check_one_class_per_file.py --fail-on-multiple
+        language: system
+        pass_filenames: false

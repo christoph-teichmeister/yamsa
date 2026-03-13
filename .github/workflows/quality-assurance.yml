@@ -35,6 +35,9 @@ jobs:
       - name: Run djlint
         run: uv run djlint apps --check
 
+      - name: Enforce one class per file
+        run: uv run python scripts/check_one_class_per_file.py --fail-on-multiple
+
   verify-pre-commit-packages-are-up-to-date:
     runs-on: ubuntu-latest
     continue-on-error: true  # Equivalent to allow_failure

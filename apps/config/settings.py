@@ -48,7 +48,7 @@ env = environ.Env(
     CLOUDINARY_API_SECRET=(str, ""),
     # Email ENV
     DJANGO_EMAIL_DEFAULT_FROM_EMAIL=(str, ""),
-    DJANGO_EMAIL_BACKEND=(str, "django.core.mail.backends.smtp.EmailBackend"),
+    DJANGO_EMAIL_BACKEND=(str, "django.core.mail.backends.console.EmailBackend"),
     DJANGO_EMAIL_HOST=(str, "yamsa_mailhog"),
     DJANGO_EMAIL_HOST_PASSWORD=(str, ""),
     DJANGO_EMAIL_HOST_USER=(str, ""),
@@ -839,12 +839,33 @@ PWA_SERVICE_WORKER_DEBUG = DEBUG
 
 # Test structure validator allowlist
 # https://ambient-toolbox.readthedocs.io/en/latest/features/tests.html#test-structure-validator
-TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = ["factories", "conftest", "constants"]
+TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST_FUTURE_GLOB_PATTERNS = [
+    "user_factory",
+    "superuser_factory",
+    "guest_user_factory",
+    "capture_handler",
+    "dummy_command",
+    "dummy_event",
+    "dummy_instance",
+    "dummy_context",
+    "dummy_meta",
+    "room_factory",
+    "user_connection_to_room_factory",
+    "child_transaction_factory",
+    "parent_transaction_factory",
+]
+TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = [
+    "factories",
+    "conftest",
+    "constants",
+    *TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST_FUTURE_GLOB_PATTERNS,
+]
 
 # Directories skipped by validators such as `validate_test_structure`.
 TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST = [
     ".venv",
 ]
+
 
 # WEBPUSH
 # ------------------------------------------------------------------------------
