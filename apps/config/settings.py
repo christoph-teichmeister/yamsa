@@ -832,19 +832,19 @@ TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = ["factories", "conftest", "constants"]
 
 # Directories skipped by validators such as `validate_test_structure`.
 TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST_FUTURE_GLOB_PATTERNS = [
-    "apps/account/tests/factories/user_factory",
-    "apps/account/tests/factories/superuser_factory",
-    "apps/account/tests/factories/guest_user_factory",
-    "apps/core/tests/helpers/capture_handler",
-    "apps/core/tests/helpers/dummy_command",
-    "apps/core/tests/helpers/dummy_event",
-    "apps/core/tests/helpers/dummy_instance",
-    "apps/core/tests/helpers/dummy_context",
-    "apps/core/tests/helpers/dummy_meta",
-    "apps/room/tests/factories/room_factory",
-    "apps/room/tests/factories/user_connection_to_room_factory",
-    "apps/transaction/tests/factories/child_transaction_factory",
-    "apps/transaction/tests/factories/parent_transaction_factory",
+    "user_factory",
+    "superuser_factory",
+    "guest_user_factory",
+    "capture_handler",
+    "dummy_command",
+    "dummy_event",
+    "dummy_instance",
+    "dummy_context",
+    "dummy_meta",
+    "room_factory",
+    "user_connection_to_room_factory",
+    "child_transaction_factory",
+    "parent_transaction_factory",
 ]
 TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST = [
     ".venv",
