@@ -1,5 +1,6 @@
 {% extends "room/dashboard.html" %}
 {% load static room_tags i18n %}
+{% load render_bundle from webpack_loader %}
 {% block tab_content %}
     <section class="container px-2 px-md-4 px-lg-5 py-4">
         <style>
@@ -35,16 +36,6 @@
                     {% blocktrans with period=category_breakdown_period %}Showing {{ period }}.{% endblocktrans %}
                 </p>
             </div>
-            <button type="button"
-                    class="btn btn-outline-primary d-flex align-items-center gap-2"
-                    hx-get="{% room_url 'transaction:create' %}"
-                    hx-target="#body"
-                    hx-indicator="#body-loading-spinner"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true">
-                <i class="bi bi-plus-lg"></i>
-                {% trans "Add transaction" %}
-            </button>
         </div>
         <div class="card border-0 rounded-4 shadow-sm">
             <div class="card-body">
@@ -115,6 +106,7 @@
             </div>
         </div>
     </section>
+    {% render_bundle "d3" %}
     <script>
         (function () {
             const chartContainers = Array.from(
@@ -167,24 +159,7 @@
                 });
             };
 
-            const ensureD3 = () => {
-                if (window.d3) {
-                    renderAllCharts();
-                    return;
-                }
-                const existing = document.getElementById("d3-lib");
-                if (existing) {
-                    existing.addEventListener("load", renderAllCharts, { once: true });
-                    return;
-                }
-                const script = document.createElement("script");
-                script.id = "d3-lib";
-                script.src = "https://cdn.jsdelivr.net/npm/d3@7";
-                script.onload = renderAllCharts;
-                document.head.appendChild(script);
-            };
-
-            ensureD3();
+            renderAllCharts();
         })();
     </script>
 {% endblock tab_content %}

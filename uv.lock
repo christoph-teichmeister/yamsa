@@ -472,6 +472,15 @@ wheels = [
 ]
 
 [[package]]
+name = "django-webpack-loader"
+version = "3.2.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/cd/4a/83aa8a9729d5c85e928e96fe42b2cde5db8f636e05de57f5f0235a52a64b/django_webpack_loader-3.2.3.tar.gz", hash = "sha256:81092499af8e0c9b3a0bad21324aca6e2ad786133b19248dae213eb9661a17f7", size = 17991, upload-time = "2025-12-09T16:59:52.871Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6b/73/79ca8f2fa733a75e3feb21dc7bc67868d9a0156761ee99ac041aef268739/django_webpack_loader-3.2.3-py2.py3-none-any.whl", hash = "sha256:d070bfe8ea5bd6ed48810a8d247204bb7f672573bdb6a7b589f6b75998a45993", size = 20940, upload-time = "2025-12-09T16:59:51.313Z" },
+]
+
+[[package]]
 name = "djlint"
 version = "1.36.4"
 source = { registry = "https://pypi.org/simple" }
@@ -1179,6 +1188,7 @@ dependencies = [
     { name = "django-htmx" },
     { name = "django-minify-html" },
     { name = "django-pony-express" },
+    { name = "django-webpack-loader" },
     { name = "emoji" },
     { name = "gunicorn" },
     { name = "minify-html" },
@@ -1222,6 +1232,7 @@ requires-dist = [
     { name = "django-minify-html", specifier = "==1.*" },
     { name = "django-pony-express", specifier = "==2.*" },
     { name = "django-upgrade", marker = "extra == 'dev'" },
+    { name = "django-webpack-loader", specifier = "==3.*" },
     { name = "djlint", marker = "extra == 'dev'" },
     { name = "emoji", specifier = "==2.*" },
     { name = "factory-boy", marker = "extra == 'dev'", specifier = "==3.*" },

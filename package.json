@@ -1,0 +1,26 @@
+{
+  "name": "yamsa",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Frontend helper tooling for yamsa",
+  "main": "apps/static/js/vendor/d3-entry.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "watch": "webpack --config webpack.config.js --mode development --watch --color"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "d3": "^7.9.0",
+    "htmx.org": "^2.0.8",
+    "idiomorph": "^0.7.4"
+  },
+  "devDependencies": {
+    "css-loader": "^7.1.4",
+    "mini-css-extract-plugin": "^2.10.1",
+    "webpack": "^5.105.4",
+    "webpack-bundle-tracker": "^3.2.3",
+    "webpack-cli": "^7.0.0"
+  }
+}

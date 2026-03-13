@@ -42,6 +42,17 @@ The Django stack is managed through `uv` with a `.venv` stored beside the projec
 - Each room has an **Export CSV** action on the transaction and debt tabs. The transaction export emits paid-by/paid-for breakdowns (description, amount, currency, category, date) for the current room, while the debt export lists unsettled debts (debitor, creditor, amount, currency, settled flag, settled date).
 - Both endpoints stream `text/csv`, honor room membership, and prepend the room slug, name, and export timestamp so auditors always know which room produced the file.
 
+## Front-end bundling
+
+- `package.json`/`webpack.config.js` live in the repo so we can iterate on another local bundle (navigation helpers and the suggested-guest picker as well as D3).
+- Install Node dependencies once with `yarn install` (this also creates `yarn.lock` in your environment).
+- Run `yarn build` whenever any of `apps/static/js/vendor/d3-entry.js`, `navigation.js`, or `suggested-guests.js` changes; the build drops the `.bundle.js` files inside `apps/static/bundles/` and rewrites `webpack-stats.json`.
+- Start `yarn watch` during front-end development to keep the bundles in sync automatically while editing those entry files (the command runs Webpack in development mode, watches sources, and logs colored output).
+- Templates render the bundles with `django-webpack-loader` (`render_bundle "d3"`, `render_bundle "navigation"`, `render_bundle "suggested-guests"`), so run `yarn build` before hitting those pages locally or in production.
+- Bootstrap/Bootstrap Icons, HTMX, and Idiomorph are now bundled through Webpack (see `apps/static/js/styles.js` and `apps/static/js/htmx.js`), so rebuild after touching those entry files or their dependencies.
+- The transaction charts still try the local D3 bundle first and fall back to `https://cdn.jsdelivr.net/npm/d3@7` when the bundle is missing.
+
+
 ## Dependency & Lockfile Workflow
 
 - Dependencies live in `pyproject.toml` and lock metadata is captured in `uv.lock`. Always run `uv lock` after adding or
