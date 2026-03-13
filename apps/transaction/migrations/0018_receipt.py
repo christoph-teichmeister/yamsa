@@ -6,6 +6,8 @@ import django.utils.timezone
 from django.conf import settings
 from django.db import migrations, models
 
+import apps.transaction.utils
+
 
 class Migration(migrations.Migration):
     dependencies = [
@@ -28,7 +30,7 @@ class Migration(migrations.Migration):
                         db_index=True, default=django.utils.timezone.now, verbose_name="Last modified at"
                     ),
                 ),
-                ("file", models.FileField(upload_to=apps.transaction.models.receipt_upload_path)),
+                ("file", models.FileField(upload_to=apps.transaction.utils.receipt_upload_path)),
                 ("original_name", models.CharField(max_length=255)),
                 ("content_type", models.CharField(max_length=255)),
                 ("size", models.PositiveBigIntegerField()),
