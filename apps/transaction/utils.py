@@ -2,10 +2,12 @@ import os
 import uuid
 from collections.abc import Sequence
 from decimal import ROUND_HALF_UP, Decimal
+from typing import TYPE_CHECKING
 
 from django.utils.text import slugify
 
-from apps.transaction.models import Receipt
+if TYPE_CHECKING:
+    from apps.transaction.models import Receipt
 
 
 def split_amount_exact(total: Decimal, shares: int) -> list[Decimal]:
@@ -45,7 +47,7 @@ def split_total_across_paid_for(total: Decimal, paid_for_entries: Sequence) -> l
     return split_amount_exact(total=total, shares=count)
 
 
-def receipt_upload_path(instance: Receipt, filename: str) -> str:
+def receipt_upload_path(instance: "Receipt", filename: str) -> str:
     room_id = instance.parent_transaction.room_id
 
     base_name, extension = os.path.splitext(os.path.basename(filename))
