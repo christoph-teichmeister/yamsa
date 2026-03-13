@@ -60,20 +60,7 @@
                 </div>
             </nav>
         {% endif %}
-        <!-- jQuery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"
-                defer></script>
-        <!-- Bootstrap CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-                crossorigin="anonymous"></script>
-        <!-- HTMX -->
-        <script src="https://unpkg.com/htmx.org@1.8.5"
-                integrity="sha384-7aHh9lqPYGYZ7sTHvzP1t3BAfLhYSTy9ArHdP3Xsr9/3TlGurYgcPBoFmXX2TX/w"
-                crossorigin="anonymous"
-                defer></script>
-        <!-- Idomorph for cool HTMX morph swapping -->
-        <script src="https://unpkg.com/idiomorph/dist/idiomorph-ext.min.js" defer></script>
+        {% render_bundle "htmx" attrs="defer" %}
         {% render_bundle "navigation" attrs="defer" %}
         <!-- Activate various Bootstrap components -->
         <script type="text/javascript">

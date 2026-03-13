@@ -1,3 +1,7 @@
+import * as bootstrap from "bootstrap";
+
+window.bootstrap = bootstrap;
+
 (function () {
   if (window.__yamsaNavigationInitialized) {
     return;
