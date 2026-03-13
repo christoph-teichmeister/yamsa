@@ -841,8 +841,8 @@ msgstr "Ausstehende Salden"
 msgid "Settle open debts before closing."
 msgstr "Begleiche offene Schulden vor dem Schließen."
 
-msgid "Keep logging expenses and invite more roommates whenever you need to."
-msgstr "Erfasse weiterhin Ausgaben und lade bei Bedarf weitere Mitbewohner ein."
+msgid "Keep logging expenses and invite more people whenever you need to."
+msgstr "Erfasse weiterhin Ausgaben und lade bei Bedarf weitere Menschen ein."
 
 msgid "This room is locked for editing. Reopen it from the edit screen if you need to make changes."
 msgstr "Dieser Raum ist zur Bearbeitung gesperrt. Öffne ihn auf dem Bearbeitungsbildschirm, wenn du Änderungen brauchst."
