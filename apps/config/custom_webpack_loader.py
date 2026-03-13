@@ -1,5 +1,4 @@
-from collections.abc import Iterable
-from typing import Any
+from collections.abc import Iterable, Mapping
 
 from webpack_loader.loader import WebpackLoader
 
@@ -7,7 +6,7 @@ from webpack_loader.loader import WebpackLoader
 class NormalizedWebpackLoader(WebpackLoader):
     """Normalize stats files that expose chunk entries as dicts for compatibility."""
 
-    def load_assets(self) -> dict[str, Any]:
+    def load_assets(self) -> dict[str, object]:
         assets = super().load_assets()
         chunks = assets.get("chunks")
         if not self._needs_normalization(chunks):
@@ -21,15 +20,17 @@ class NormalizedWebpackLoader(WebpackLoader):
         return normalized_assets
 
     @staticmethod
-    def _needs_normalization(chunks: Any) -> bool:
-        if not isinstance(chunks, dict):
+    def _needs_normalization(chunks: object) -> bool:
+        if not isinstance(chunks, Mapping):
             return False
-        return any(any(isinstance(chunk, dict) for chunk in (chunk_list or [])) for chunk_list in chunks.values())
+        return any(any(isinstance(chunk, Mapping) for chunk in (chunk_list or [])) for chunk_list in chunks.values())
 
     @staticmethod
-    def _normalize_chunks(chunks: dict[str, Iterable[Any]]) -> tuple[dict[str, list[str]], dict[str, dict[str, Any]]]:
+    def _normalize_chunks(
+        chunks: Mapping[str, Iterable[str | Mapping[str, object]] | None],
+    ) -> tuple[dict[str, list[str]], dict[str, Mapping[str, object]]]:
         normalized = {}
-        metadata: dict[str, dict[str, Any]] = {}
+        metadata: dict[str, Mapping[str, object]] = {}
 
         for bundle_name, chunk_list in chunks.items():
             normalized_list: list[str] = []
@@ -38,9 +39,13 @@ class NormalizedWebpackLoader(WebpackLoader):
                     normalized_list.append(chunk)
                     continue
 
-                chunk_name = chunk.get("name")
-                if not chunk_name:
+                if not isinstance(chunk, Mapping):
                     continue
+
+                chunk_name = chunk.get("name")
+                if not isinstance(chunk_name, str):
+                    continue
+
                 normalized_list.append(chunk_name)
                 metadata.setdefault(chunk_name, chunk)
 
@@ -50,9 +55,9 @@ class NormalizedWebpackLoader(WebpackLoader):
 
     @staticmethod
     def _merge_asset_metadata(
-        existing: dict[str, dict[str, Any]] | None,
-        additions: dict[str, dict[str, Any]],
-    ) -> dict[str, dict[str, Any]]:
+        existing: Mapping[str, Mapping[str, object]] | None,
+        additions: Mapping[str, Mapping[str, object]],
+    ) -> dict[str, Mapping[str, object]]:
         merged = dict(existing) if existing else {}
         for name, chunk in additions.items():
             merged.setdefault(name, chunk)

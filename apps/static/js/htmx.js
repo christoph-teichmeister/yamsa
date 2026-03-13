@@ -2,4 +2,5 @@ import htmx from "htmx.org";
 
 window.htmx = htmx;
 
-void import("idiomorph/dist/idiomorph-ext.min.js");
+await import("idiomorph/dist/idiomorph-ext.min.js");
+htmx.process(document.body);

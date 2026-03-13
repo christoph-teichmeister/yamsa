@@ -1,5 +1,6 @@
 {% extends "room/dashboard.html" %}
 {% load static room_tags i18n %}
+{% load render_bundle from webpack_loader %}
 {% block tab_content %}
     <style>
         .overview-card {
@@ -188,18 +189,173 @@
                 </div>
             </div>
         </div>
-        <div class="mt-4"
-             id="spending-timeline"
-             hx-get="{% room_url 'debt:money-spent-trend' %}"
-             hx-trigger="load delay:200ms, revealed once"
-             hx-target="#spending-timeline"
-             hx-swap="outerHTML">
-            <div class="card overview-card shadow-sm">
-                <div class="card-body text-center py-4">
-                    <div class="spinner-border text-primary mb-2" role="status"></div>
-                    <p class="text-muted small mb-0">{% trans "Loading spending timeline…" %}</p>
+        <div class="mt-4">
+            <div id="spending-trend"
+                 hx-get="{% room_url 'debt:money-spent-trend' %}"
+                 hx-trigger="load delay:200ms, revealed once"
+                 hx-target="#spending-trend"
+                 hx-swap="innerHTML">
+                <div class="card overview-card shadow-sm">
+                    <div class="card-body text-center py-4">
+                        <div class="spinner-border text-primary mb-2" role="status"></div>
+                        <p class="text-muted small mb-0">{% trans "Loading spending timeline…" %}</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    {% render_bundle "d3" %}
+    <script>
+        const renderSpendingTrendChart = () => {
+            const container = document.getElementById("trend-line-chart")
+            const dataNode = document.getElementById("trend-chart-data")
+            if (!container || !dataNode || !window.d3) {
+                return
+            }
+
+            const dataset = JSON.parse(dataNode.textContent || "[]")
+            const currency = container.dataset.currency || ""
+            const notEnoughDataMessage = '{% trans "Not enough data to render the chart yet." %}'
+
+            if (!dataset.length) {
+                container.innerHTML = "<p class='text-muted small mb-0'>" + notEnoughDataMessage + "</p>"
+                return
+            }
+
+            const parseDate = d3.utcParse("%Y-%m-%d")
+            const data = dataset
+                .map(d => ({
+                    ...d,
+                    date: parseDate(d.date),
+                }))
+                .filter(d => d.date)
+                .sort((a, b) => d3.ascending(a.date, b.date))
+
+            if (!data.length) {
+                container.innerHTML = "<p class='text-muted small mb-0'>" + notEnoughDataMessage + "</p>"
+                return
+            }
+
+            const width = container.clientWidth || container.parentElement?.clientWidth || 640
+            const height = Math.max(180, Math.min(260, width * 0.45))
+            const margin = { top: 10, right: 20, bottom: 70, left: 48 }
+            const innerWidth = width - margin.left - margin.right
+            const innerHeight = height - margin.top - margin.bottom
+
+            container.innerHTML = ""
+
+            const svg = d3
+                .select(container)
+                .append("svg")
+                .attr("viewBox", `0 0 ${width} ${height}`)
+                .attr("preserveAspectRatio", "xMidYMid meet")
+
+            const defs = svg.append("defs")
+            const gradientId = "trend-area-gradient"
+            const gradient = defs
+                .append("linearGradient")
+                .attr("id", gradientId)
+                .attr("x1", "0%")
+                .attr("y1", "0%")
+                .attr("x2", "0%")
+                .attr("y2", "100%")
+            gradient.append("stop").attr("offset", "0%").attr("stop-color", "rgba(13, 110, 253, 0.4)")
+            gradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(13, 110, 253, 0)")
+
+            const chart = svg
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`)
+
+            if (data.length === 1) {
+                const date = data[0].date
+                data.unshift({ ...data[0], date: d3.utcDay.offset(date, -1) })
+                data.push({ ...data[data.length - 1], date: d3.utcDay.offset(date, 1) })
+            }
+
+            const x = d3
+                .scaleUtc()
+                .domain(d3.extent(data, d => d.date))
+                .range([0, innerWidth])
+
+            const y = d3
+                .scaleLinear()
+                .domain([0, d3.max(data, d => d.value) || 0])
+                .nice()
+                .range([innerHeight, 0])
+
+            const xAxis = g => {
+                g.attr("transform", `translate(0,${innerHeight})`)
+                    .call(
+                        d3
+                            .axisBottom(x)
+                            .ticks(Math.min(6, dataset.length))
+                            .tickFormat(d3.utcFormat("%d %b"))
+                    )
+                    .call(g => g.select(".domain").attr("stroke", "rgba(0,0,0,0.2)"))
+                    .call(g => g.selectAll(".tick line").attr("stroke", "rgba(0,0,0,0.15)"))
+                g.selectAll("text")
+                    .attr("text-anchor", "end")
+                    .attr("transform", "rotate(-90)")
+                    .attr("dx", "-0.8em")
+                    .attr("dy", "-0.35em")
+            }
+
+            const numberFormatter = new Intl.NumberFormat("de-DE", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 1,
+            })
+
+            const yAxis = g =>
+                g
+                    .call(
+                        d3
+                            .axisLeft(y)
+                            .ticks(5)
+                            .tickSize(-innerWidth)
+                            .tickFormat(value => `${currency}${numberFormatter.format(value)}`)
+                    )
+                    .call(g => g.select(".domain").attr("stroke", "rgba(0,0,0,0.2)"))
+                    .call(g => g.selectAll(".tick line").attr("stroke", "rgba(0,0,0,0.1)"))
+
+            chart.append("g").call(xAxis)
+            chart.append("g").call(yAxis)
+
+            const area = d3
+                .area()
+                .x(d => x(d.date))
+                .y0(innerHeight)
+                .y1(d => y(d.value))
+                .curve(d3.curveMonotoneX)
+
+            const line = d3
+                .line()
+                .x(d => x(d.date))
+                .y(d => y(d.value))
+                .curve(d3.curveMonotoneX)
+
+            chart.append("path").datum(data).attr("class", "trend-line-area").attr("fill", `url(#${gradientId})`).attr("d", area)
+
+            chart.append("path").datum(data).attr("class", "trend-line-path").attr("d", line)
+
+            chart
+                .selectAll(".trend-line-dot")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("class", "trend-line-dot")
+                .attr("r", 3)
+                .attr("cx", d => x(d.date))
+                .attr("cy", d => y(d.value))
+                .append("title")
+                .text(d => `${currency}${d.value.toFixed(2)} – week of ${d.label}`)
+        }
+
+        document.body.addEventListener("htmx:afterSwap", (evt) => {
+            if (evt.detail?.target?.id === "spending-trend") {
+                renderSpendingTrendChart()
+            }
+        })
+
+        renderSpendingTrendChart()
+    </script>
 {% endblock tab_content %}

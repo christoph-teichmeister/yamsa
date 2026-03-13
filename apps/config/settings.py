@@ -258,6 +258,7 @@ WEBPACK_LOADER = {
         "POLL_INTERVAL": 0.1,
         "IGNORE": [r".+\.hot-update.js"],
         "LOADER_CLASS": "apps.config.custom_webpack_loader.NormalizedWebpackLoader",
+        "CACHE": not DEBUG,
     }
 }
 
