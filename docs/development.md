@@ -23,6 +23,11 @@
    `uv export --locked --format=requirements.txt --no-dev --output-file /tmp/requirements.txt` produces a pip-friendly
    list.
 
+## File and class organization
+
+- Keep each exported class in its own module and consult `docs/one-class-per-file.md` for the reasoning, the
+  re-export guidance, and the audit script that CI runs before merging.
+
 ## Running the Django app
 
 - `uv run python manage.py migrate` applies migrations.
