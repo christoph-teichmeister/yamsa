@@ -64,29 +64,30 @@
         {% render_bundle "navigation" attrs="defer" %}
         <!-- Activate various Bootstrap components once the bundle has loaded -->
         <script type="text/javascript">
-          const initializeBootstrapComponents = () => {
-            if (!window.bootstrap) {
-              console.warn('Bootstrap JS not available yet; skipping component initialization.');
-              return;
+          if (!window.__yamsaBootstrapInitialized) {
+            window.__yamsaBootstrapInitialized = true;
+
+            const initializeBootstrapComponents = () => {
+              if (!window.bootstrap) {
+                console.warn('Bootstrap JS not available yet; skipping component initialization.');
+                return;
+              }
+
+              const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+              const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new window.bootstrap.Tooltip(tooltipTriggerEl))
+
+              const toastElList = document.querySelectorAll('.toast')
+              const toastList = [...toastElList].map(toastEl => new window.bootstrap.Toast(toastEl))
+
+              const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+              const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new window.bootstrap.Popover(popoverTriggerEl))
             }
 
-            // Enable all Tooltips
-            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new window.bootstrap.Tooltip(tooltipTriggerEl))
-
-            // Enable Toasts
-            const toastElList = document.querySelectorAll('.toast')
-            const toastList = [...toastElList].map(toastEl => new window.bootstrap.Toast(toastEl))
-
-            // Enable Popovers
-            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-            const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new window.bootstrap.Popover(popoverTriggerEl))
-          }
-
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeBootstrapComponents)
-          } else {
-            initializeBootstrapComponents()
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', initializeBootstrapComponents)
+            } else {
+              initializeBootstrapComponents()
+            }
           }
         </script>
     </body>
