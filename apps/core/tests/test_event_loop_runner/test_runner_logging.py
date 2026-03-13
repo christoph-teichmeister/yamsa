@@ -95,12 +95,12 @@ class TestEventLoopRunner:
         processed: list[str] = []
 
         @message_registry.register_command(command=_DummyCommand)
-        def _recording_command_handler(context: _DummyContext):
+        def _recording_command_handler(context: _DummyContext) -> _DummyEvent:
             processed.append("command")
             return _DummyEvent(context)
 
         @message_registry.register_event(event=_DummyEvent)
-        def _recording_event_handler(context: _DummyContext):
+        def _recording_event_handler(_context: _DummyContext) -> None:
             processed.append("event")
 
         handle_message(_DummyCommand({}))
