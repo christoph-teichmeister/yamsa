@@ -47,6 +47,13 @@ repos:
 
   - repo: local
     hooks:
+      - id: remove-future-imports
+        name: remove __future__ imports
+        entry: scripts/remove_future_imports.py
+        language: python
+        language_version: python3.13
+        types: [python]
+
       - id: remove-all-assignments
         name: remove __all__ assignments
         entry: scripts/remove_all_assignments.py
