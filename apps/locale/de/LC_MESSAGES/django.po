@@ -1542,6 +1542,9 @@ msgstr "Alle Teilnehmer sind für die erfassten Ausgaben ausgeglichen."
 msgid "Loading spending timeline…"
 msgstr "Verlauf wird geladen…"
 
+msgid "Not enough data to render the chart yet."
+msgstr "Noch nicht genug Daten, um das Diagramm darzustellen."
+
 msgid "Spending over time"
 msgstr "Ausgaben über die Zeit"
 
@@ -1563,9 +1566,6 @@ msgstr "Ausgabentrend-Intervalle"
 
 msgid "Updating..."
 msgstr "Wird aktualisiert..."
-
-msgid "Not enough data to render the chart yet."
-msgstr "Noch nicht genug Daten, um das Diagramm darzustellen."
 
 msgid "No data available"
 msgstr "Keine Daten verfügbar"
