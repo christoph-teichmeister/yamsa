@@ -7,7 +7,7 @@ from django.db import transaction
 from apps.account.models import User
 from apps.currency.models import Currency
 from apps.room.models import Room, UserConnectionToRoom
-from apps.transaction.models import DEFAULT_CATEGORY_PK, DEFAULT_CATEGORY_SLUG, Category
+from apps.transaction.models import DEFAULT_CATEGORY_SLUG, Category
 
 
 class Command(BaseCommand):
@@ -72,14 +72,15 @@ class Command(BaseCommand):
 
     @staticmethod
     def _create_categories():
-        category = Category.objects.create(
-            id=DEFAULT_CATEGORY_PK,
+        category, _ = Category.objects.get_or_create(
             slug=DEFAULT_CATEGORY_SLUG,
-            name="miscellaneous",
-            emoji="💫",
-            color="#8539db",
-            order_index=0,
-            is_default=True,
+            defaults={
+                "name": "miscellaneous",
+                "emoji": "💫",
+                "color": "#8539db",
+                "order_index": 0,
+                "is_default": True,
+            },
         )
 
         print(f'Category: "{category.name}" created')

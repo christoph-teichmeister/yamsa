@@ -30,6 +30,10 @@ possible. Keep static JS modular inside `static/js/` and co-locate SCSS/CSS with
 canonical static assets under `apps/static/…` (e.g., `apps/static/js/navigation.js`) and let hashed copies
 in `static/`/`staticfiles/` be generated artifacts.**
 
+Avoid module-level `__all__` exports; we prefer importers to rely on explicit names so tooling can track usage without
+additional declarations. Never use relative imports inside the apps—prefer absolute imports anchored at the project
+root (e.g., `from apps.transaction import models`).
+
 ## Design System & UI Concepts
 
 - Bootstrap 5 provides the base; lean on utility classes, cards, badges, and offcanvas components before reaching for

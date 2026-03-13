@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django.views import generic
 from django_context_decorator import context
 

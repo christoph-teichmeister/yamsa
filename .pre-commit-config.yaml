@@ -44,3 +44,32 @@ repos:
             '^^(?!(?:dependabot-.*)|(?:feature|hotfix|bugfix|refactor|merge|maintenance)/[\w\d\-_#]+).*$',
           ]
         stages: [ pre-commit ]
+
+  - repo: local
+    hooks:
+      - id: remove-future-imports
+        name: remove __future__ imports
+        entry: scripts/remove_future_imports.py
+        language: python
+        language_version: python3.13
+        types: [python]
+
+      - id: remove-all-assignments
+        name: remove __all__ assignments
+        entry: scripts/remove_all_assignments.py
+        language: python
+        language_version: python3.13
+        types: [python]
+
+      - id: no-relative-imports
+        name: disallow relative imports
+        entry: scripts/check_no_relative_imports.py
+        language: python
+        language_version: python3.13
+        types: [python]
+
+      - id: one-class-per-file
+        name: one class per file audit
+        entry: python scripts/check_one_class_per_file.py --fail-on-multiple
+        language: system
+        pass_filenames: false

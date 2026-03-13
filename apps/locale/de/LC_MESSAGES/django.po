@@ -1089,11 +1089,11 @@ msgstr "Registrierter Mitbewohner"
 msgid "Joined as a full member of this room."
 msgstr "Als volles Mitglied dieses Raums beigetreten."
 
-msgid "Enter a single emoji character."
-msgstr "Gib ein einzelnes Emoji-Zeichen ein."
-
 msgid "Enter a color in #RRGGBB format."
 msgstr "Gib eine Farbe im Format #RRGGBB ein."
+
+msgid "Enter a single emoji character."
+msgstr "Gib ein einzelnes Emoji-Zeichen ein."
 
 #, python-brace-format
 msgid "{paid_by} paid {value}{currency} for {paid_for}"

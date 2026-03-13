@@ -828,12 +828,33 @@ PWA_SERVICE_WORKER_DEBUG = DEBUG
 
 # Test structure validator allowlist
 # https://ambient-toolbox.readthedocs.io/en/latest/features/tests.html#test-structure-validator
-TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = ["factories", "conftest", "constants"]
+TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST_FUTURE_GLOB_PATTERNS = [
+    "user_factory",
+    "superuser_factory",
+    "guest_user_factory",
+    "capture_handler",
+    "dummy_command",
+    "dummy_event",
+    "dummy_instance",
+    "dummy_context",
+    "dummy_meta",
+    "room_factory",
+    "user_connection_to_room_factory",
+    "child_transaction_factory",
+    "parent_transaction_factory",
+]
+TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST = [
+    "factories",
+    "conftest",
+    "constants",
+    *TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST_FUTURE_GLOB_PATTERNS,
+]
 
 # Directories skipped by validators such as `validate_test_structure`.
 TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST = [
     ".venv",
 ]
+
 
 # WEBPUSH
 # ------------------------------------------------------------------------------

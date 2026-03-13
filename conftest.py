@@ -8,8 +8,9 @@ from django.utils import timezone
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.tests.factories import GuestUserFactory, SuperuserFactory, UserFactory
 from apps.room.tests.factories import RoomFactory
+from apps.transaction.factories import CategoryFactory
 from apps.transaction.models import ParentTransaction
-from apps.transaction.tests.factories import CategoryFactory, ParentTransactionFactory
+from apps.transaction.tests.factories import ParentTransactionFactory
 
 
 @pytest.fixture
