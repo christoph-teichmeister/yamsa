@@ -1,4 +1,5 @@
 from collections.abc import Iterable, Mapping
+from typing import Any
 
 from webpack_loader.loader import WebpackLoader
 
@@ -27,10 +28,10 @@ class NormalizedWebpackLoader(WebpackLoader):
 
     @staticmethod
     def _normalize_chunks(
-        chunks: Mapping[str, Iterable[str | Mapping[str, object]] | None],
-    ) -> tuple[dict[str, list[str]], dict[str, Mapping[str, object]]]:
+        chunks: Mapping[str, Iterable[str | Mapping[str, Any]] | None],
+    ) -> tuple[dict[str, list[str]], dict[str, Mapping[str, Any]]]:
         normalized = {}
-        metadata: dict[str, Mapping[str, object]] = {}
+        metadata: dict[str, Mapping[str, Any]] = {}
 
         for bundle_name, chunk_list in chunks.items():
             normalized_list: list[str] = []
@@ -55,9 +56,9 @@ class NormalizedWebpackLoader(WebpackLoader):
 
     @staticmethod
     def _merge_asset_metadata(
-        existing: Mapping[str, Mapping[str, object]] | None,
-        additions: Mapping[str, Mapping[str, object]],
-    ) -> dict[str, Mapping[str, object]]:
+        existing: Mapping[str, Mapping[str, Any]] | None,
+        additions: Mapping[str, Mapping[str, Any]],
+    ) -> dict[str, Mapping[str, Any]]:
         merged = dict(existing) if existing else {}
         for name, chunk in additions.items():
             merged.setdefault(name, chunk)

@@ -28,14 +28,7 @@
     const initializeToastHandler = () => {
         if (!window.bootstrap || typeof window.bootstrap.Toast === "undefined") {
             console.warn("Bootstrap Toast API not yet available; toast handler initialization postponed.")
-            if (!window.__yamsaToastInitScheduled) {
-                window.__yamsaToastInitScheduled = true
-                const retryHandler = () => {
-                    window.__yamsaToastInitScheduled = false
-                    initializeToastHandler()
-                }
-                window.addEventListener("load", retryHandler, { once: true })
-            }
+            scheduleToastHandlerRetry()
             return
         }
 
@@ -73,6 +66,11 @@
             toastQueue.push(toastDetail)
         }
 
+        const showToast = () => {
+            toastIsVisible = true
+            toastBootstrap.show()
+        }
+
         const showNextToast = () => {
             if (toastIsVisible || toastQueue.length === 0) {
                 return
@@ -81,8 +79,7 @@
             const toastDetail = toastQueue.shift()
             toastMessageSpan.innerText = toastDetail.message
             applyToastClasses(toastDetail.type)
-            toastIsVisible = true
-            toastBootstrap.show()
+            showToast()
         }
 
         const normalizeToastPayloads = (payload) => {
@@ -156,6 +153,19 @@
 
         dispatchQueuedToasts()
         showNextToast()
+    }
+
+    const scheduleToastHandlerRetry = () => {
+        if (window.__yamsaToastInitScheduled) {
+            return
+        }
+
+        window.__yamsaToastInitScheduled = true
+        const retryHandler = () => {
+            window.__yamsaToastInitScheduled = false
+            initializeToastHandler()
+        }
+        window.addEventListener("load", retryHandler, { once: true })
     }
 
     if (document.readyState === "loading") {
