@@ -8,7 +8,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestWebPushTemplateTagContext:
-    def test_webpush_save_url_is_current(self, user):
+    def test_returns_expected_context_data(self, user):
         request = RequestFactory().get("/")
         request.user = user
         context = {"request": request, "webpush": {"group": "alerts"}}

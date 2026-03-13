@@ -60,7 +60,7 @@ class MeasureTimeAndQueriesContextManager(ContextDecorator):
 
         if self._print_when_debug:
             print(
-                f"{self.function_name} took {self.last_duration} seconds and made {self.last_query_count} queries\n",
+                f"{self.function_name} took {self.last_duration} seconds and made {self.last_query_count} queries",
             )
 
         return False

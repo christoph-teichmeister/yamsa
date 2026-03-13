@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from apps.account.models import User
 from apps.webpush.dataclasses.notification import Notification
@@ -6,7 +6,8 @@ from apps.webpush.dataclasses.notification import Notification
 
 @dataclass
 class TestNotification(Notification):
-    recipient = None
+    recipient: User | None = None
+    text_list: list[str] = field(default_factory=list)
 
     def send_to_user(self, user: User):
         # If the user does not want to receive webpush notifications, do not send them

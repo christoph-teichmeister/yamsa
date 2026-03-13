@@ -15,7 +15,7 @@ class TestMeasureTimeAndQueriesDecorator:
         expected_count = User.objects.count()
 
         @measure_time_and_queries_decorator
-        def count_users():
+        def count_users() -> int:
             return User.objects.count()
 
         with redirect_stdout(buffer):
@@ -25,3 +25,18 @@ class TestMeasureTimeAndQueriesDecorator:
         output = buffer.getvalue()
         assert "count_users took" in output
         assert "and made" in output
+
+    def test_decorator_suppresses_output_when_debug_false(self, settings):
+        settings.DEBUG = False
+        buffer = io.StringIO()
+        expected_count = User.objects.count()
+
+        @measure_time_and_queries_decorator
+        def count_users() -> int:
+            return User.objects.count()
+
+        with redirect_stdout(buffer):
+            result = count_users()
+
+        assert result == expected_count
+        assert buffer.getvalue() == ""

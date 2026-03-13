@@ -11,4 +11,19 @@ BASE_CATEGORY_SLUGS = (
     "celebrations",
     DEFAULT_CATEGORY_SLUG,
 )
-DEFAULT_CATEGORY_PK = 10  # Matches the seeded "misc" category (last of the ten defaults)
+
+
+def resolve_default_category_pk() -> int:
+    from apps.transaction.models.category import Category
+
+    category, _ = Category.objects.get_or_create(
+        slug=DEFAULT_CATEGORY_SLUG,
+        defaults={
+            "name": "Miscellaneous",
+            "emoji": "🌀",
+            "color": "#ADB5BD",
+            "order_index": 9,
+            "is_default": True,
+        },
+    )
+    return category.pk

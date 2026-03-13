@@ -5,8 +5,8 @@ from faker import Faker as FakerGenerator
 from apps.account.tests.factories import UserFactory
 from apps.currency.tests.factories import CurrencyFactory
 from apps.room.tests.factories import RoomFactory
+from apps.transaction.factories import CategoryFactory
 from apps.transaction.models import ParentTransaction
-from apps.transaction.tests.factories.category_factory import CategoryFactory
 
 fake_generator = FakerGenerator()
 

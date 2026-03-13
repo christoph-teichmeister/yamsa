@@ -8,12 +8,12 @@ from apps.room.models import Room
 
 
 class _PaymentReminderBuilder:
-    def __init__(self, user: User, room: Room):
+    def __init__(self, user: User, room: Room) -> None:
         self.user = user
         self.room = room
         self._amounts: dict[int, PaymentReminderAmount] = {}
 
-    def add(self, debt: Debt):
+    def add(self, debt: Debt) -> None:
         currency_id = debt.currency_id
         current = self._amounts.get(currency_id)
         if current:

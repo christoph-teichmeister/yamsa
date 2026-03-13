@@ -1,2 +1,2 @@
 from apps.webpush.dataclasses.notification import Notification
-from apps.webpush.dataclasses.test_notification import TestNotification
+from apps.webpush.dataclasses.notification_for_testing import TestNotification

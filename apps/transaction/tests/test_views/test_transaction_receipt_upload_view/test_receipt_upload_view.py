@@ -11,8 +11,18 @@ from apps.transaction.models import Receipt
 pytestmark = pytest.mark.django_db
 
 
+@pytest.fixture
+def cleanup_receipts():
+    yield
+    for receipt in Receipt.objects.all():
+        receipt.file.delete(save=False)
+        receipt.delete()
+
+
 class TestTransactionReceiptUploadView:
-    def test_receipt_uploads_for_transaction_detail(self, authenticated_client, room, user, transaction_with_children):
+    def test_receipt_uploads_for_transaction_detail(
+        self, authenticated_client, room, user, transaction_with_children, cleanup_receipts
+    ):
         parent_transaction = transaction_with_children
         receipt_file = SimpleUploadedFile(
             "receipt.pdf",
@@ -42,7 +52,9 @@ class TestTransactionReceiptUploadView:
         assert receipt.original_name in response.content.decode()
         receipt.file.delete(save=False)
 
-    def test_receipt_upload_rejects_invalid_file(self, authenticated_client, room, transaction_with_children):
+    def test_receipt_upload_rejects_invalid_file(
+        self, authenticated_client, room, transaction_with_children, cleanup_receipts
+    ):
         parent_transaction = transaction_with_children
         invalid_file = SimpleUploadedFile(
             "receipt.txt",

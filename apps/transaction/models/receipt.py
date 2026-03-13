@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import uuid
 
@@ -9,7 +11,7 @@ from django.utils.translation import gettext_lazy as _lazy
 from apps.account.models import User
 
 
-def receipt_upload_path(instance, filename):
+def receipt_upload_path(instance: Receipt, filename: str) -> str:
     room_id = instance.parent_transaction.room_id
 
     base_name, extension = os.path.splitext(os.path.basename(filename))

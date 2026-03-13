@@ -1,3 +1,5 @@
+from typing import Optional
+
 from ambient_toolbox.models import CommonInfo
 from django.db import models
 from django.utils.translation import gettext_lazy as _lazy
@@ -10,7 +12,7 @@ class Category(FullCleanOnSaveMixin, CommonInfo):
     slug = models.SlugField(max_length=100, unique=True)
     name = models.CharField(max_length=100)
     emoji = models.CharField(max_length=10)
-    color = models.CharField(max_length=7, blank=True, null=True)
+    color = models.CharField(max_length=7, blank=True, default="")
 
     order_index = models.PositiveIntegerField(default=0)
     is_default = models.BooleanField(default=False)
@@ -24,7 +26,7 @@ class Category(FullCleanOnSaveMixin, CommonInfo):
         return f"{self.emoji} {self.name}"
 
     @classmethod
-    def get_default_category(cls):
+    def get_default_category(cls) -> Optional["Category"]:
         default = cls.objects.filter(slug=DEFAULT_CATEGORY_SLUG).first()
         if default:
             return default

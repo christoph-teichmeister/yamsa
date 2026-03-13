@@ -2,8 +2,7 @@ from decimal import Decimal
 
 import pytest
 
-from apps.transaction.models import ChildTransaction
-from apps.transaction.tests.factories import ParentTransactionFactory
+from apps.transaction.tests.factories import ChildTransactionFactory, ParentTransactionFactory
 
 
 @pytest.fixture(autouse=True)
@@ -21,7 +20,7 @@ def transaction_with_children(room, user):
     )
 
     for member in room.users.all():
-        ChildTransaction.objects.create(
+        ChildTransactionFactory.create(
             parent_transaction=parent_transaction,
             paid_for=member,
             value=Decimal("5"),

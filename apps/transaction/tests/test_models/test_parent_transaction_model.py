@@ -2,7 +2,7 @@ import pytest
 from django.utils import timezone
 
 from apps.currency.tests.factories import CurrencyFactory
-from apps.transaction.models import ParentTransaction
+from apps.transaction.models import DEFAULT_CATEGORY_SLUG, ParentTransaction
 
 pytestmark = pytest.mark.django_db
 
@@ -18,4 +18,4 @@ class TestParentTransactionModel:
             currency=currency,
         )
 
-        assert transaction.category.slug == "misc"
+        assert transaction.category.slug == DEFAULT_CATEGORY_SLUG

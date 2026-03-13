@@ -15,6 +15,7 @@ class ParentTransactionAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
 
     @staticmethod
     def shortened_description(obj: ParentTransaction) -> str:
-        if len(obj.description) > 40:
-            return f"{obj.description[:40]}..."
-        return obj.description
+        description = obj.description or ""
+        if len(description) > 40:
+            return f"{description[:40]}..."
+        return description

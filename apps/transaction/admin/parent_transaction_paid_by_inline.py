@@ -9,3 +9,10 @@ class ParentTransactionPaidByInline(admin.TabularInline):
     fk_name = "paid_by"
     fields = ("description", "room", "value")
     readonly_fields = fields
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False

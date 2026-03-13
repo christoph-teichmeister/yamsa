@@ -2,7 +2,7 @@ from collections.abc import Callable
 from functools import wraps
 from typing import ParamSpec, TypeVar
 
-from apps.core.context_managers import MeasureTimeAndQueriesContextManager
+from apps.core.context_managers.measure_time_and_queries_context_manager import MeasureTimeAndQueriesContextManager
 
 P = ParamSpec("P")
 R = TypeVar("R")

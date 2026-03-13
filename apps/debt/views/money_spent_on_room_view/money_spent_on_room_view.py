@@ -1,4 +1,4 @@
-from django.db.models import F, Sum
+from django.db.models import F, QuerySet, Sum
 from django.views import generic
 from django_context_decorator import context
 
@@ -13,7 +13,7 @@ class MoneySpentOnRoomView(RoomChildTransactionQuerysetMixin, DebtBaseContext, g
 
     @context
     @property
-    def money_spent_per_person_qs(self):
+    def money_spent_per_person_qs(self) -> QuerySet[dict[str, object]]:
         return (
             self.get_base_queryset()
             .values("parent_transaction__paid_by__name", "parent_transaction__currency__sign")
@@ -27,7 +27,7 @@ class MoneySpentOnRoomView(RoomChildTransactionQuerysetMixin, DebtBaseContext, g
 
     @context
     @property
-    def total_money_spent(self):
+    def total_money_spent(self) -> QuerySet[dict[str, object]]:
         return (
             self.get_base_queryset()
             .values("parent_transaction__currency__sign")
@@ -36,7 +36,7 @@ class MoneySpentOnRoomView(RoomChildTransactionQuerysetMixin, DebtBaseContext, g
 
     @context
     @property
-    def money_owed_per_person_qs(self):
+    def money_owed_per_person_qs(self) -> QuerySet[dict[str, object]]:
         return (
             self.get_base_queryset()
             .exclude(paid_for=F("parent_transaction__paid_by"))

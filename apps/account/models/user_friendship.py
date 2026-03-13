@@ -11,7 +11,13 @@ class UserFriendship(CommonInfo):
     class Meta:
         verbose_name = _("User friendship")
         verbose_name_plural = _("User friendships")
-        constraints = [models.UniqueConstraint(fields=["user", "friend"], name="unique_user_friendship")]
+        constraints = [
+            models.UniqueConstraint(fields=["user", "friend"], name="unique_user_friendship"),
+            models.CheckConstraint(
+                check=~models.Q(user_id=models.F("friend_id")),
+                name="user_cannot_friend_self",
+            ),
+        ]
         indexes = [
             models.Index(fields=["user", "friend"], name="acc_usrfrndshp_usr_frnd_idx"),
             models.Index(fields=["friend", "user"], name="acc_usrfrndshp_frnd_usr_idx"),
@@ -21,8 +27,9 @@ class UserFriendship(CommonInfo):
         return f"{self.user} ↔ {self.friend}"
 
     def clean(self):
+        super().clean()
+        if self.user_id is None or self.friend_id is None:
+            return
         if self.user_id == self.friend_id:
             error_msg = _("Users cannot be friends with themselves.")
             raise ValidationError(error_msg)
-
-        super().clean()

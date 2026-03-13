@@ -1,2 +1,3 @@
-from apps.transaction.tests.factories.category_factory import CategoryFactory
+from apps.transaction.factories import CategoryFactory
+from apps.transaction.tests.factories.child_transaction_factory import ChildTransactionFactory
 from apps.transaction.tests.factories.parent_transaction_factory import ParentTransactionFactory

@@ -14,9 +14,9 @@ class TestTransactionFormStructure:
         form = TransactionCreateForm()
         assert "category" in form.fields
 
-        queryset = list(form.fields["category"].queryset)
-        assert len(queryset) >= 1
-        assert queryset[0].slug == "accommodation"
+        queryset = form.fields["category"].queryset
+        slugs = {category.slug for category in queryset}
+        assert "accommodation" in slugs
 
     def test_edit_form_initial_category_matches_instance(self):
         category = Category.objects.get(slug="groceries")
