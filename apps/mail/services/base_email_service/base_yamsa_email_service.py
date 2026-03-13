@@ -1,0 +1,89 @@
+from django.conf import settings
+from django.utils import translation
+from django.utils.encoding import force_str
+from django.utils.functional import Promise
+from django_pony_express.services.base import BaseEmailService
+
+from apps.account.models import User
+
+from .email_base_text_context import EmailBaseTextContext
+from .email_extra_context import EmailExtraContext
+from .email_user_text_context import EmailUserTextContext
+
+
+class BaseYamsaEmailService(BaseEmailService):
+    FROM_EMAIL = "yamsa.hello@gmail.com"
+    REPLY_TO_ADDRESS = "yamsa.hello+reply@gmail.com"
+
+    recipient: User = None
+
+    email_base_text_context: EmailBaseTextContext = EmailBaseTextContext()
+    email_user_text_context: EmailUserTextContext = EmailUserTextContext()
+    email_extra_context: EmailExtraContext = EmailExtraContext()
+
+    template_name = "mail/email_text_base.html"
+
+    def __init__(
+        self, recipient: User, recipient_email_list: list | (tuple | str) | None = None, *args, **kwargs
+    ) -> None:
+        self.recipient = recipient
+
+        super().__init__(recipient_email_list or [recipient.email], *args, **kwargs)
+
+    def get_subject(self) -> str:
+        return self.email_base_text_context.SUBJECT_PREFIX + self.subject
+
+    def get_context_data(self) -> dict:
+        language_code = self.get_language_code()
+
+        def resolve_lazy_dict(raw_dict: dict) -> dict:
+            resolved = {}
+            for key, value in raw_dict.items():
+                if isinstance(value, Promise) or hasattr(value, "_proxy____cast"):
+                    resolved[key] = force_str(value)
+                else:
+                    resolved[key] = value
+            return resolved
+
+        with translation.override(language_code):
+            base_ctx = resolve_lazy_dict(self.get_email_base_text_context().__dict__)
+            user_ctx = resolve_lazy_dict(self.get_email_user_text_context().__dict__)
+            extra_ctx = resolve_lazy_dict(self.get_email_extra_context().__dict__)
+
+            context_payload = {
+                "context": {
+                    "subject": self.get_subject(),
+                    "greeting": self.get_greeting(),
+                    **base_ctx,
+                    **user_ctx,
+                    **extra_ctx,
+                }
+            }
+
+        context_payload["language_code"] = language_code
+        return context_payload
+
+    def get_language_code(self) -> str:
+        language_value = None
+        if self.recipient is not None:
+            language_value = self.recipient.language
+        valid_languages = dict(settings.LANGUAGES)
+        if language_value in valid_languages:
+            return language_value
+        return settings.LANGUAGE_CODE
+
+    def get_greeting(self):
+        context = self.email_user_text_context
+
+        if self.recipient is not None:
+            return f"{context.greeting_prefix} {self.recipient.name} {context.greeting_suffix}"
+        return f"{context.greeting_prefix} {context.greeting_suffix}"
+
+    def get_email_base_text_context(self):
+        return self.email_base_text_context
+
+    def get_email_user_text_context(self):
+        return self.email_user_text_context
+
+    def get_email_extra_context(self):
+        return self.email_extra_context
