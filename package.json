@@ -8,6 +8,9 @@
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --config webpack.config.js --mode development --watch --color"
   },
+  "engines": {
+    "node": ">=22.0.0 <24.0.0"
+  },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.8",
