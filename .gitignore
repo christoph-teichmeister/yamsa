@@ -25,3 +25,6 @@ staticfiles
 # Translations
 *.mo
 *.pot
+/.yarn/
+/.yarn_nobody/
+/node_modules_nobody/

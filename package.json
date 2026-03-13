@@ -9,11 +9,18 @@
     "watch": "webpack --config webpack.config.js --mode development --watch --color"
   },
   "dependencies": {
-    "d3": "^7.9.0"
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "d3": "^7.9.0",
+    "htmx.org": "^2.0.8",
+    "idiomorph": "^0.7.4"
   },
   "devDependencies": {
-    "webpack": "^5.88.2",
-    "webpack-bundle-tracker": "^1.0.0",
-    "webpack-cli": "^5.1.4"
+    "css-loader": "^7.1.4",
+    "mini-css-extract-plugin": "^2.10.1",
+    "webpack": "^5.105.4",
+    "webpack-bundle-tracker": "^3.2.3",
+    "webpack-cli": "^7.0.0"
   }
 }

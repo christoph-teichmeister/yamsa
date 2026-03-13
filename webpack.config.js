@@ -1,5 +1,6 @@
 const path = require("path");
 const BundleTracker = require("webpack-bundle-tracker");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const bundlesPath = path.resolve(__dirname, "apps/static/bundles");
 const staticJsPath = path.resolve(__dirname, "apps/static/js");
@@ -10,6 +11,8 @@ module.exports = {
     d3: path.resolve(staticJsPath, "vendor/d3-entry.js"),
     navigation: path.resolve(staticJsPath, "navigation.js"),
     "suggested-guests": path.resolve(staticJsPath, "suggested-guests.js"),
+    styles: path.resolve(staticJsPath, "styles.js"),
+    htmx: path.resolve(staticJsPath, "htmx.js"),
   },
   output: {
     filename: "[name].bundle.js",
@@ -17,9 +20,28 @@ module.exports = {
     publicPath: "/static/bundles/",
     clean: true,
   },
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
+      {
+        test: /\.(woff2?|eot|ttf|otf|svg)(\?.*)?$/i,
+        type: "asset/resource",
+        generator: {
+          filename: "fonts/[name][ext]",
+        },
+      },
+    ],
+  },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].bundle.css",
+    }),
     new BundleTracker({
-      filename: path.resolve(bundlesPath, "webpack-stats.json"),
+      path: bundlesPath,
+      filename: "webpack-stats.json",
     }),
   ],
   performance: {
