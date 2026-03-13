@@ -25,117 +25,133 @@
 {% trans "Something went wrong" as something_went_wrong %}
 <!-- Toast handler -->
 <script type="module">
-    const toastElement = document.getElementById("toast-id")
-    const toastTypeDiv = document.getElementById("toast-type-div")
-    const toastMessageSpan = document.getElementById("toast-message-span")
-    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastElement)
+    const initializeToastHandler = () => {
+        if (!window.bootstrap || typeof window.bootstrap.Toast === "undefined") {
+            console.warn("Bootstrap Toast API not yet available; toast handler initialization skipped.")
+            return
+        }
 
-    const baseToastClasses =
-        "toast-yamsa-inner w-100 d-flex align-items-center justify-content-between gap-3 rounded-4 shadow-sm px-4 py-3"
-    const defaultErrorToastClasses = "{{ toast_classes.error|escapejs }}"
-    const defaultErrorMessage = "⚠️ {{ something_went_wrong|escapejs }} 🥺"
+        const toastElement = document.getElementById("toast-id")
+        const toastTypeDiv = document.getElementById("toast-type-div")
+        const toastMessageSpan = document.getElementById("toast-message-span")
+        if (!toastElement || !toastTypeDiv || !toastMessageSpan) {
+            console.warn("Toast markup missing; skipping toast initialization.")
+            return
+        }
 
-    let toastIsVisible = false
-    const toastQueue = []
+        const toastBootstrap = window.bootstrap.Toast.getOrCreateInstance(toastElement)
+        const baseToastClasses =
+            "toast-yamsa-inner w-100 d-flex align-items-center justify-content-between gap-3 rounded-4 shadow-sm px-4 py-3"
+        const defaultErrorToastClasses = "{{ toast_classes.error|escapejs }}"
+        const defaultErrorMessage = "⚠️ {{ something_went_wrong|escapejs }} 🥺"
 
-    const applyToastClasses = (classString = "") => {
-        toastTypeDiv.className = baseToastClasses
-        classString.split(" ").forEach((typeString) => {
-            if (typeString.trim()) {
-                toastTypeDiv.classList.add(typeString)
+        let toastIsVisible = false
+        const toastQueue = []
+
+        const applyToastClasses = (classString = "") => {
+            toastTypeDiv.className = baseToastClasses
+            classString.split(" ").forEach((typeString) => {
+                if (typeString.trim()) {
+                    toastTypeDiv.classList.add(typeString)
+                }
+            })
+        }
+
+        const enqueueToast = (toastDetail) => {
+            if (!toastDetail || !toastDetail.message) {
+                return
             }
-        })
-    }
 
-    const enqueueToast = (toastDetail) => {
-
-        if (!toastDetail || !toastDetail.message) {
-            return
+            toastQueue.push(toastDetail)
         }
 
-        toastQueue.push(toastDetail)
-    }
+        const showNextToast = () => {
+            if (toastIsVisible || toastQueue.length === 0) {
+                return
+            }
 
-    const showNextToast = () => {
-        if (toastIsVisible || toastQueue.length === 0) {
-            return
+            const toastDetail = toastQueue.shift()
+            toastMessageSpan.innerText = toastDetail.message
+            applyToastClasses(toastDetail.type)
+            toastBootstrap.show()
         }
 
-        const toastDetail = toastQueue.shift()
-        toastMessageSpan.innerText = toastDetail.message
-        applyToastClasses(toastDetail.type)
-        toastBootstrap.show()
-    }
+        const normalizeToastPayloads = (payload) => {
+            if (!payload) {
+                return []
+            }
 
-    const normalizeToastPayloads = (payload) => {
-        if (!payload) {
+            if (Array.isArray(payload)) {
+                return payload.reduce((acc, entry) => {
+                    acc.push(...normalizeToastPayloads(entry))
+                    return acc
+                }, [])
+            }
+
+            if (typeof payload === "object") {
+                if ("value" in payload && payload.value !== undefined) {
+                    return normalizeToastPayloads(payload.value)
+                }
+                if (payload.triggerToast) {
+                    return normalizeToastPayloads(payload.triggerToast)
+                }
+                if (payload.message) {
+                    return [payload]
+                }
+            }
+
             return []
         }
 
-        if (Array.isArray(payload)) {
-            return payload.reduce((acc, entry) => {
-                acc.push(...normalizeToastPayloads(entry))
-                return acc
-            }, [])
-        }
+        const dispatchQueuedToasts = () => {
+            const queuedToastsElement = document.getElementById("queued-toasts-data")
+            if (!queuedToastsElement) {
+                return
+            }
 
-        if (typeof payload === "object") {
-            if ("value" in payload && payload.value !== undefined) {
-                return normalizeToastPayloads(payload.value)
-            }
-            if (payload.triggerToast) {
-                return normalizeToastPayloads(payload.triggerToast)
-            }
-            if (payload.message) {
-                return [payload]
+            try {
+                const initialToasts = JSON.parse(queuedToastsElement.textContent || "[]")
+                if (Array.isArray(initialToasts)) {
+                    initialToasts.forEach(enqueueToast)
+                }
+            } catch {
+                // swallow parsing errors
             }
         }
 
-        return []
-    }
-
-    const dispatchQueuedToasts = () => {
-        const queuedToastsElement = document.getElementById("queued-toasts-data")
-        if (!queuedToastsElement) {
-            return
-        }
-
-        try {
-            const initialToasts = JSON.parse(queuedToastsElement.textContent || "[]")
-            if (Array.isArray(initialToasts)) {
-                initialToasts.forEach(enqueueToast)
-            }
-        } catch {
-            // swallow parsing errors
-        }
-    }
-
-    toastElement.addEventListener("shown.bs.toast", () => {
-        toastIsVisible = true
-    })
-
-    toastElement.addEventListener("hidden.bs.toast", () => {
-        toastIsVisible = false
-        showNextToast()
-    })
-
-    document.body.addEventListener("triggerToast", (evt) => {
-        const payloads = normalizeToastPayloads(evt.detail)
-        payloads.forEach(enqueueToast)
-        showNextToast()
-    })
-
-    document.body.addEventListener("htmx:afterRequest", (evt) => {
-        if (evt.detail?.successful) {
-            return
-        }
-        enqueueToast({
-            message: defaultErrorMessage,
-            type: defaultErrorToastClasses,
+        toastElement.addEventListener("shown.bs.toast", () => {
+            toastIsVisible = true
         })
-        showNextToast()
-    })
 
-    dispatchQueuedToasts()
-    showNextToast()
+        toastElement.addEventListener("hidden.bs.toast", () => {
+            toastIsVisible = false
+            showNextToast()
+        })
+
+        document.body.addEventListener("triggerToast", (evt) => {
+            const payloads = normalizeToastPayloads(evt.detail)
+            payloads.forEach(enqueueToast)
+            showNextToast()
+        })
+
+        document.body.addEventListener("htmx:afterRequest", (evt) => {
+            if (evt.detail?.successful) {
+                return
+            }
+            enqueueToast({
+                message: defaultErrorMessage,
+                type: defaultErrorToastClasses,
+            })
+            showNextToast()
+        })
+
+        dispatchQueuedToasts()
+        showNextToast()
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializeToastHandler)
+    } else {
+        initializeToastHandler()
+    }
 </script>
