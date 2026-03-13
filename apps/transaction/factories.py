@@ -3,8 +3,6 @@ from factory import Faker, Sequence
 
 from apps.transaction.models import Category
 
-__all__ = ["CategoryFactory"]
-
 
 class CategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
