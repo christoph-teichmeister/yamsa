@@ -909,6 +909,13 @@ if env.bool("DJANGO_TESTING", False) or any(keyword in sys.argv for keyword in (
     # Enable whitenoise autscanning
     WHITENOISE_AUTOREFRESH = True
 
+    WEBPACK_LOADER["DEFAULT"].update(
+        {
+            "LOADER_CLASS": "webpack_loader.loaders.FakeWebpackLoader",
+            "CACHE": False,
+        }
+    )
+
 # DEBUG
 # ------------------------------------------------------------------------------
 if DEBUG:
