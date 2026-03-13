@@ -1,30 +1,44 @@
+# Python bytecode and reports
+__pycache__/
+*.py[cod]
+*$py.class
 .coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments & tooling caches
+.venv/
+venv/
+env/
+.local/
+
+# Build artifacts
+yamsa.egg-info/
+build/
+dist/
+
+# Django/data directories
 apps/config/.env
-yamsa.egg-info
+apps/locale/de/LC_MESSAGES/django.mo
+apps/static/bundles/
+apps/staticfiles/
+staticfiles/
+/static/
+/media/
+tmp/
 yamsa_db_test
 
+# Node/Yarn
+node_modules/
+node_modules_nobody/
+.yarn/
+.yarn_nobody/
+
+# GitHub metadata & other workspace helpers
+.github-issues/
+.github-pull-requests/
+.issues/
+.idea/
+
+# Toolchain leftovers
 /.cache/
-/.github-issues/
-/.github-pull-requests/
-/.idea/
-/.issues/
-/.local/
-/.venv/
-/apps/locale/de/LC_MESSAGES/django.mo
-/media/
-/node_modules/
-/tmp/
-/yamsa.egg-info/
-
-apps/static/bundles/
-/static/
-
-apps/staticfiles
-staticfiles
-
-# Translations
-*.mo
-*.pot
-/.yarn/
-/.yarn_nobody/
-/node_modules_nobody/
