@@ -1,78 +1,78 @@
 {% load room_tags i18n %}
-{% if parent_transactions %}
-    {% for parent_transaction in parent_transactions %}
-        <tr id="transaction-{{ parent_transaction.id }}"
-            class="cursor-pointer transaction-row px-1"
-            role="button"
-            tabindex="0"
-            hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
-            hx-target="#body"
-            hx-indicator="#body-loading-spinner"
-            hx-swap="morph:innerHTML"
-            hx-push-url="true"
-            hx-trigger="click keyup[key=='Enter']">
-            <td class="py-3">
-                <div class="d-flex flex-column gap-3">
-                    <div class="transaction-grid row row-cols-2 g-3">
-                        <div class="col">
-                            <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Amount" %}</div>
-                            <div class="transaction-amount fw-semibold text-primary fs-4 lh-sm">
-                                {{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Description" %}</div>
-                            {% with description_value=parent_transaction.description|default:_("No description") %}
-                                <div class="fw-semibold">{{ description_value|truncatechars:70 }}</div>
-                            {% endwith %}
+{% for parent_transaction in parent_transactions %}
+    <tr id="transaction-{{ parent_transaction.id }}"
+        class="cursor-pointer transaction-row px-1"
+        role="button"
+        tabindex="0"
+        hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
+        hx-target="#body"
+        hx-indicator="#body-loading-spinner"
+        hx-swap="morph:innerHTML"
+        hx-push-url="true"
+        hx-trigger="click keyup[key=='Enter']">
+        <td class="py-3">
+            <div class="d-flex flex-column gap-3">
+                <div class="transaction-grid row row-cols-2 g-3">
+                    <div class="col">
+                        <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Amount" %}</div>
+                        <div class="transaction-amount fw-semibold text-primary fs-4 lh-sm">
+                            {{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}
                         </div>
                     </div>
-                    <div class="transaction-grid row row-cols-2 g-3">
-                        <div class="col">
-                            <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Paid on" %}</div>
-                            <div class="fw-semibold">{{ parent_transaction.paid_at|date:'M j, Y' }}</div>
-                            <div class="transaction-meta mt-1">
-                                {% blocktrans with delta=parent_transaction.paid_at|timesince %}
-                                    {{ delta }} ago
-                                {% endblocktrans %}
-                            </div>
+                    <div class="col">
+                        <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Description" %}</div>
+                        {% with description_value=parent_transaction.description|default:_("No description") %}
+                            <div class="fw-semibold">{{ description_value|truncatechars:70 }}</div>
+                        {% endwith %}
+                    </div>
+                </div>
+                <div class="transaction-grid row row-cols-2 g-3">
+                    <div class="col">
+                        <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Paid on" %}</div>
+                        <div class="fw-semibold">{{ parent_transaction.paid_at|date:'M j, Y' }}</div>
+                        <div class="transaction-meta mt-1">
+                            {% blocktrans with delta=parent_transaction.paid_at|timesince %}
+                                {{ delta }} ago
+                            {% endblocktrans %}
                         </div>
-                        <div class="col text-md-end">
-                            <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Payer" %}</div>
-                            <div class="fw-semibold">
-                                {% autoescape off %}
-                                    {% parse_user_text parent_transaction.paid_by.name True %}
-                                {% endautoescape %}
-                            </div>
+                    </div>
+                    <div class="col text-md-end">
+                        <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Payer" %}</div>
+                        <div class="fw-semibold">
+                            {% autoescape off %}
+                                {% parse_user_text parent_transaction.paid_by.name True %}
+                            {% endautoescape %}
                         </div>
                     </div>
                 </div>
-            </td>
-            <td class="py-3 align-middle text-start text-md-end">
-                <div class="d-flex flex-column align-items-center gap-2">
-                    <button type="button"
-                            class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center"
-                            aria-label="{% trans "View split details" %}"
-                            title="{% trans "View split details" %}">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                    <span class="text-muted small"
-                          title="{{ parent_transaction.category.name }}">{{ parent_transaction.category.emoji }}</span>
-                </div>
-            </td>
-        </tr>
-    {% endfor %}
-{% elif not transaction_initial_render %}
-    <tr>
-        <td colspan="2" class="py-4 text-center text-muted">
-            {% if transaction_search_query %}
-                {% blocktrans with query=transaction_search_query %}No transactions match "{{ query }}".{% endblocktrans %}
-            {% else %}
-                {% trans "No transactions to show yet." %}
-            {% endif %}
+            </div>
+        </td>
+        <td class="py-3 align-middle text-start text-md-end">
+            <div class="d-flex flex-column align-items-center gap-2">
+                <button type="button"
+                        class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center"
+                        aria-label="{% trans "View split details" %}"
+                        title="{% trans "View split details" %}">
+                    <i class="bi bi-eye"></i>
+                </button>
+                <span class="text-muted small"
+                      title="{{ parent_transaction.category.name }}">{{ parent_transaction.category.emoji }}</span>
+            </div>
         </td>
     </tr>
-{% endif %}
+{% empty %}
+    {% if not transaction_initial_render %}
+        <tr>
+            <td colspan="2" class="py-4 text-center text-muted">
+                {% if transaction_search_query %}
+                    {% blocktrans with query=transaction_search_query %}No transactions match "{{ query }}".{% endblocktrans %}
+                {% else %}
+                    {% trans "No transactions to show yet." %}
+                {% endif %}
+            </td>
+        </tr>
+    {% endif %}
+{% endfor %}
 {% if transaction_next_cursor %}
     <tr class="transaction-load-row"
         hx-get="{% room_url 'transaction:feed' %}?cursor_id={{ transaction_next_cursor.id }}&cursor_paid_at={{ transaction_next_cursor.paid_at|date:'c'|urlencode }}{% if transaction_search_query %}&q={{ transaction_search_query|urlencode }}{% endif %}"

@@ -9,69 +9,69 @@
             <span class="badge text-bg-light">{{ receipts|length }}</span>
         </div>
         <div class="card-body">
-            {% if receipts %}
-                <div class="row row-cols-2 g-3 mb-3">
-                    {% for receipt in receipts %}
-                        <div class="col">
-                            <article class="card h-100 rounded-4 border-0 shadow-sm overflow-hidden position-relative">
-                                {% if receipt.uploaded_by_id == request.user.id %}
-                                    <form hx-post="{% room_url 'transaction:receipt-delete' receipt_pk=receipt.id %}"
-                                          hx-target="#transaction-receipts-section"
-                                          hx-swap="outerHTML"
-                                          hx-indicator="#body-loading-spinner"
-                                          hx-confirm="{% trans "Permanently delete this receipt?" %}"
-                                          class="position-absolute top-0 end-0 m-1 z-2">
-                                        {% csrf_token %}
-                                        <button type="submit"
-                                                class="btn btn-sm btn-danger shadow-sm rounded-circle d-flex align-items-center justify-content-center p-2 receipt-delete-button"
-                                                aria-label="{% trans "Delete receipt" %}"
-                                                title="{% trans "Delete receipt" %}">
-                                            <i class="bi bi-trash fs-6 receipt-delete-icon"></i>
-                                        </button>
-                                    </form>
-                                {% endif %}
-                                <a class="d-flex flex-column h-100 text-decoration-none text-body"
-                                   href="{{ receipt.file.url }}"
-                                   target="_blank"
-                                   rel="noreferrer noopener"
-                                   download="{{ receipt.original_name }}">
-                                    {% if receipt.content_type|slice:":5" == "image" %}
-                                        <div class="ratio ratio-4x3 bg-body-tertiary">
-                                            <img class="w-100 h-100 receipt-preview-img"
-                                                 src="{{ receipt.file.url }}"
-                                                 alt="{{ receipt.original_name }}"
-                                                 width="400"
-                                                 height="300" />
-                                        </div>
-                                    {% else %}
-                                        <div class="ratio ratio-4x3 bg-body-tertiary overflow-hidden">
-                                            <object class="w-100 h-100 border-0"
-                                                    data="{{ receipt.file.url }}#view=FitH&toolbar=0&navpanes=0"
-                                                    type="{{ receipt.content_type }}"
-                                                    aria-label="{% trans "PDF receipt preview" %}">
-                                                <div class="w-100 h-100 d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-file-earmark-pdf fs-1 text-muted" aria-hidden="true"></i>
-                                                </div>
-                                            </object>
-                                        </div>
-                                    {% endif %}
-                                    <div class="card-body d-flex flex-column gap-1 p-3">
-                                        <p class="fw-semibold mb-1 text-break">{{ receipt.original_name }}</p>
-                                        <p class="text-muted small mb-1">
-                                            {% blocktrans with uploader=receipt.uploaded_by.name %}
-                                                Uploaded by {{ uploader }}
-                                            {% endblocktrans %}
-                                        </p>
-                                        <p class="text-muted small mb-0">{{ receipt.size|filesizeformat }}</p>
+            <div class="row row-cols-2 g-3 mb-3">
+                {% for receipt in receipts %}
+                    <div class="col">
+                        <article class="card h-100 rounded-4 border-0 shadow-sm overflow-hidden position-relative">
+                            {% if receipt.uploaded_by_id == request.user.id %}
+                                <form hx-post="{% room_url 'transaction:receipt-delete' receipt_pk=receipt.id %}"
+                                      hx-target="#transaction-receipts-section"
+                                      hx-swap="outerHTML"
+                                      hx-indicator="#body-loading-spinner"
+                                      hx-confirm="{% trans "Permanently delete this receipt?" %}"
+                                      class="position-absolute top-0 end-0 m-1 z-2">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                            class="btn btn-sm btn-danger shadow-sm rounded-circle d-flex align-items-center justify-content-center p-2 receipt-delete-button"
+                                            aria-label="{% trans "Delete receipt" %}"
+                                            title="{% trans "Delete receipt" %}">
+                                        <i class="bi bi-trash fs-6 receipt-delete-icon"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
+                            <a class="d-flex flex-column h-100 text-decoration-none text-body"
+                               href="{{ receipt.file.url }}"
+                               target="_blank"
+                               rel="noreferrer noopener"
+                               download="{{ receipt.original_name }}">
+                                {% if receipt.content_type|slice:":5" == "image" %}
+                                    <div class="ratio ratio-4x3 bg-body-tertiary">
+                                        <img class="w-100 h-100 receipt-preview-img"
+                                             src="{{ receipt.file.url }}"
+                                             alt="{{ receipt.original_name }}"
+                                             width="400"
+                                             height="300" />
                                     </div>
-                                </a>
-                            </article>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="text-muted small mb-3">{% trans "No receipts have been attached to this transaction yet." %}</p>
-            {% endif %}
+                                {% else %}
+                                    <div class="ratio ratio-4x3 bg-body-tertiary overflow-hidden">
+                                        <object class="w-100 h-100 border-0"
+                                                data="{{ receipt.file.url }}#view=FitH&toolbar=0&navpanes=0"
+                                                type="{{ receipt.content_type }}"
+                                                aria-label="{% trans "PDF receipt preview" %}">
+                                            <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-file-earmark-pdf fs-1 text-muted" aria-hidden="true"></i>
+                                            </div>
+                                        </object>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body d-flex flex-column gap-1 p-3">
+                                    <p class="fw-semibold mb-1 text-break">{{ receipt.original_name }}</p>
+                                    <p class="text-muted small mb-1">
+                                        {% blocktrans with uploader=receipt.uploaded_by.name %}
+                                            Uploaded by {{ uploader }}
+                                        {% endblocktrans %}
+                                    </p>
+                                    <p class="text-muted small mb-0">{{ receipt.size|filesizeformat }}</p>
+                                </div>
+                            </a>
+                        </article>
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <p class="text-muted small mb-3">{% trans "No receipts have been attached to this transaction yet." %}</p>
+                    </div>
+                {% endfor %}
+            </div>
             {% if current_room.is_closed %}
                 <div class="alert alert-warning small" role="alert">
                     {% trans "Receipts cannot be uploaded after the room has been closed." %}

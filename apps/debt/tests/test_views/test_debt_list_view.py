@@ -69,3 +69,11 @@ class TestDebtListView:
         assert unsettled_debts
         assert any(debt.debitor_id == new_user.id for debt in unsettled_debts)
         assert any(debt.creditor_id == guest_user.id for debt in unsettled_debts)
+
+    def test_debt_list_shows_empty_state_without_transactions(self, client, room):
+        response = client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))
+        assert response.status_code == http.HTTPStatus.OK
+        context = response.context_data
+        assert list(context["debts"]) == []
+        assert context["active_debt_count"] == 0
+        assert context["has_transactions"] is False
