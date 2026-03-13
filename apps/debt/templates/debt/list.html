@@ -108,7 +108,7 @@
                                 </p>
                                 {% if debt.settled %}
                                     <p class="text-success small mb-0">
-                                        {% blocktrans with settled_at=debt.settled_at|date:"d.m.Y" %}
+                                        {% blocktrans with settled_at=debt.settled_at|date:"d.m.Y" trimmed %}
                                             Settled on {{ settled_at }}
                                         {% endblocktrans %}
                                     </p>
