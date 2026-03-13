@@ -108,3 +108,46 @@ def test_axes_blocks_after_failure_limit(client, user):
     locked_response = client.post(login_url, data={"email": user.email, "password": "wrong_password"})
 
     assert locked_response.status_code == http.HTTPStatus.TOO_MANY_REQUESTS
+
+
+def test_axes_lockout_tracks_username_and_ip_scope(client, user):
+    client.defaults["HTTP_HOST"] = "127.0.0.1"
+    login_url = reverse("account:login")
+    AccessAttempt.objects.all().delete()
+
+    # AXES_LOCKOUT_PARAMETERS pairs username and ip_address as the lockout tuple,
+    # so supply the headers Axes will inspect.
+    assert settings.AXES_LOCKOUT_PARAMETERS == [["username", "ip_address"]]
+
+    def wrong_password_post(ip_address):
+        meta = {"REMOTE_ADDR": ip_address, "HTTP_X_FORWARDED_FOR": ip_address}
+        return client.post(
+            login_url,
+            data={"email": user.email, "password": "wrong_password"},
+            **meta,
+        )
+
+    first_ip = "10.0.0.1"
+    second_ip = "10.0.0.2"
+    # AXES_CLIENT_IP_CALLABLE may prefer REMOTE_ADDR or HTTP_X_FORWARDED_FOR, so send both.
+    failure_limit = settings.AXES_LOGIN_FAILURE_LIMIT
+    attempts_before_lockout = max(failure_limit - 1, 0)
+
+    for _ in range(attempts_before_lockout):
+        attempt_response = wrong_password_post(first_ip)
+        assert attempt_response.status_code == http.HTTPStatus.OK
+
+    locked_response = wrong_password_post(first_ip)
+    assert locked_response.status_code == http.HTTPStatus.TOO_MANY_REQUESTS
+
+    # The same username is still allowed to authenticate from another IP.
+    successful_response = client.post(
+        login_url,
+        data={"email": user.email, "password": DEFAULT_PASSWORD},
+        REMOTE_ADDR=second_ip,
+        HTTP_X_FORWARDED_FOR=second_ip,
+        follow=True,
+    )
+
+    assert successful_response.status_code == http.HTTPStatus.OK
+    assert successful_response.template_name[0] == WelcomePartialView.template_name

@@ -1,11 +1,11 @@
 {% load i18n %}
-{% if news %}
-    {% for news_object in news %}
-        {% include "shared_partials/news_card.html" with news=news_object %}
-    {% endfor %}
-{% elif news_initial_render %}
-    <p class="text-center text-muted small py-3 mb-0">{% trans "No updates yet." %}</p>
-{% endif %}
+{% for news_object in news %}
+    {% include "shared_partials/news_card.html" with news=news_object %}
+{% empty %}
+    {% if news_initial_render %}
+        <p class="text-center text-muted small py-3 mb-0">{% trans "No updates yet." %}</p>
+    {% endif %}
+{% endfor %}
 {% if news_next_cursor %}
     <div class="news-load-trigger"
          hx-get="{% url 'news:feed' %}?cursor={{ news_next_cursor }}"

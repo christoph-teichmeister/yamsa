@@ -85,3 +85,12 @@ class TestMoneySpentViews:
         assert owed_per_person[0]["total_owed_per_person"] == sum(
             transaction.value for transaction in child_transactions if transaction.paid_for == guest_user
         )
+
+    def test_money_spent_on_room_shows_empty_state_without_transactions(self, client, room, user):
+        client.force_login(user)
+        response = client.get(reverse("debt:money-spent-on-room", kwargs={"room_slug": room.slug}))
+
+        assert response.status_code == http.HTTPStatus.OK
+        content = response.content.decode()
+        assert "No payments recorded yet" in content
+        assert "As soon as someone logs an expense, their share appears here." in content

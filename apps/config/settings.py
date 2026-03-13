@@ -528,12 +528,14 @@ AXES_COOLOFF_TIME = axes_cooloff_time
 AXES_LOGIN_FAILURE_LIMIT = LOGIN_COUNT
 AXES_USERNAME_FORM_FIELD = "email"  # use the email field from the login form
 AXES_CLEANUP_DAYS = 30
-# Axes reads the form field defined by AXES_USERNAME_FORM_FIELD (here the login form's "email"),
-# maps that value into the "username" slot used for lockouts, and keeps AXES_LOCKOUT_PARAMETERS = ["username"] unchanged
-AXES_LOCKOUT_PARAMETERS = ["username"]
-# Disable logging the IP-Address of failed login attempts by returning None for attempts to get the IP
-# Ignore assigning a lambda function to a variable for brevity
-AXES_CLIENT_IP_CALLABLE = lambda x: None  # noqa: E731
+# Axes maps the email login form field (AXES_USERNAME_FORM_FIELD) into the "username"
+# slot before applying lockouts, so AXES_LOCKOUT_PARAMETERS now contains a single entry that pairs
+# "username" and "ip_address" to key attempts per user/IP combination.
+AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
+# Allow Axes to resolve the client IP address normally so the ip_address entry tracked by
+# AXES_LOCKOUT_PARAMETERS stays aligned with the username/IP lockout tuple.
+# Keep sensitive parameters masked via AXES_SENSITIVE_PARAMETERS.
+AXES_CLIENT_IP_CALLABLE = None
 # Mask user-sensitive parameters in logging stream
 AXES_SENSITIVE_PARAMETERS = ["username", "email", "ip_address"]
 
