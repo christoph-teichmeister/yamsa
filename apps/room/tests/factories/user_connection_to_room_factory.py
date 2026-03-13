@@ -3,8 +3,7 @@ from factory import SubFactory
 
 from apps.account.tests.factories import UserFactory
 from apps.room.models import UserConnectionToRoom
-
-from .room_factory import RoomFactory
+from apps.room.tests.factories.room_factory import RoomFactory
 
 
 class UserConnectionToRoomFactory(factory.django.DjangoModelFactory):

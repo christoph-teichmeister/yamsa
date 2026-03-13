@@ -2,10 +2,9 @@ from django.contrib import admin
 from django.contrib.admin import register
 
 from apps.core.admin import YamsaCommonInfoAdminMixin
+from apps.debt.admin.debt_admin.closed_room_filter import ClosedRoomFilter
+from apps.debt.admin.debt_admin.open_room_filter import OpenRoomFilter
 from apps.debt.models import Debt
-
-from .closed_room_filter import ClosedRoomFilter
-from .open_room_filter import OpenRoomFilter
 
 
 @register(Debt)

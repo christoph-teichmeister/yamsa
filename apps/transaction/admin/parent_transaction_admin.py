@@ -2,9 +2,8 @@ from django.contrib import admin
 from django.contrib.admin import register
 
 from apps.core.admin import YamsaCommonInfoAdminMixin
+from apps.transaction.admin.child_transaction_inline import ChildTransactionInline
 from apps.transaction.models import ParentTransaction
-
-from .child_transaction_inline import ChildTransactionInline
 
 
 @register(ParentTransaction)

@@ -2,7 +2,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 
-from .validators import validate_single_emoji
+from apps.transaction.forms.room_category_forms.validators import validate_single_emoji
 
 
 class RoomCategoryCreateForm(forms.Form):

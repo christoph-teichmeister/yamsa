@@ -6,8 +6,7 @@ from django.urls import reverse
 
 from apps.core.toast_constants import SUCCESS_TOAST_CLASS
 from apps.transaction.models import Receipt
-
-from .helpers import create_receipt
+from apps.transaction.tests.test_views.test_transaction_receipt_upload_view.helpers import create_receipt
 
 pytestmark = pytest.mark.django_db
 

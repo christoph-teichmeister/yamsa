@@ -1,4 +1,4 @@
-from .user_factory import UserFactory
+from apps.account.tests.factories.user_factory import UserFactory
 
 
 class SuperuserFactory(UserFactory):

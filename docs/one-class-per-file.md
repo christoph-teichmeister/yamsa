@@ -9,7 +9,7 @@ modules as appropriate.
 
 - Move each class into `apps/<app>/<role>/<class>.py` (e.g., `apps/transaction/models/transaction.py`).
 - Create an `__init__.py` alongside the fragmented modules if you still need a package-level namespace; re-export
-  the individual classes via `from .transaction import Transaction` so callers keep writing
+  the individual classes via `from apps.transaction.models.transaction import Transaction` so callers keep writing
   `from apps.transaction.models import Transaction`.
 - Keep module-level decorators (like `@admin.register`, `@dataclass`, or `@shared_task`) on the same file as the class
   they decorate.

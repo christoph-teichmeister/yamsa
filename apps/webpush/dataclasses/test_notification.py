@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 
 from apps.account.models import User
-
-from .notification import Notification
+from apps.webpush.dataclasses.notification import Notification
 
 
 @dataclass

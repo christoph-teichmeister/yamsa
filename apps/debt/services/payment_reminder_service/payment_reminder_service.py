@@ -6,11 +6,10 @@ from django.urls import reverse
 from django.utils import timezone
 
 from apps.debt.models import Debt, ReminderLog
+from apps.debt.services.payment_reminder_service._payment_reminder_builder import _PaymentReminderBuilder
+from apps.debt.services.payment_reminder_service.payment_reminder_candidate import PaymentReminderCandidate
 from apps.mail.services.payment_reminder_mail_service import PaymentReminderEmailService
 from apps.room.models import Room
-
-from ._payment_reminder_builder import _PaymentReminderBuilder
-from .payment_reminder_candidate import PaymentReminderCandidate
 
 
 class PaymentReminderService:

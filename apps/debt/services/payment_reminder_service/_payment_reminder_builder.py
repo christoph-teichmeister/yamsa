@@ -2,10 +2,9 @@ from datetime import datetime
 
 from apps.account.models import User
 from apps.debt.models import Debt
+from apps.debt.services.payment_reminder_service.payment_reminder_amount import PaymentReminderAmount
+from apps.debt.services.payment_reminder_service.payment_reminder_candidate import PaymentReminderCandidate
 from apps.room.models import Room
-
-from .payment_reminder_amount import PaymentReminderAmount
-from .payment_reminder_candidate import PaymentReminderCandidate
 
 
 class _PaymentReminderBuilder:

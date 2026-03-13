@@ -8,8 +8,9 @@ from django.views import generic
 from django_context_decorator import context
 
 from apps.debt.views.mixins.debt_base_context import DebtBaseContext
-
-from .room_child_transaction_queryset_mixin import RoomChildTransactionQuerysetMixin
+from apps.debt.views.money_spent_on_room_view.room_child_transaction_queryset_mixin import (
+    RoomChildTransactionQuerysetMixin,
+)
 
 
 class MoneySpentTrendPartialView(RoomChildTransactionQuerysetMixin, DebtBaseContext, generic.TemplateView):

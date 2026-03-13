@@ -6,7 +6,7 @@ from typing import Self
 from django.conf import settings
 from django.db import connection
 
-from ._query_execution_counter import _QueryExecutionCounter
+from apps.core.context_managers._query_execution_counter import _QueryExecutionCounter
 
 
 class MeasureTimeAndQueriesContextManager(ContextDecorator):

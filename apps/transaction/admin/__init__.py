@@ -1,7 +1,7 @@
-from .category_admin import CategoryAdmin
-from .child_transaction_inline import ChildTransactionInline
-from .parent_transaction_admin import ParentTransactionAdmin
-from .parent_transaction_paid_by_inline import ParentTransactionPaidByInline
+from apps.transaction.admin.category_admin import CategoryAdmin
+from apps.transaction.admin.child_transaction_inline import ChildTransactionInline
+from apps.transaction.admin.parent_transaction_admin import ParentTransactionAdmin
+from apps.transaction.admin.parent_transaction_paid_by_inline import ParentTransactionPaidByInline
 
 __all__ = [
     "CategoryAdmin",

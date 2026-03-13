@@ -3,8 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _lazy
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
-
-from .constants import DEFAULT_CATEGORY_SLUG
+from apps.transaction.models.constants import DEFAULT_CATEGORY_SLUG
 
 
 class Category(FullCleanOnSaveMixin, CommonInfo):

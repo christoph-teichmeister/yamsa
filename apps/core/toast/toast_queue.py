@@ -1,11 +1,10 @@
+from apps.core.toast.toast_item import ToastItem
 from apps.core.toast_constants import (
     ERROR_TOAST_CLASS,
     INFO_TOAST_CLASS,
     SUCCESS_TOAST_CLASS,
     WARNING_TOAST_CLASS,
 )
-
-from .toast_item import ToastItem
 
 
 class ToastQueue:

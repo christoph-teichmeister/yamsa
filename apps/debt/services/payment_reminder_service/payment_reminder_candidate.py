@@ -4,9 +4,8 @@ from decimal import Decimal
 
 from apps.account.models import User
 from apps.currency.models import Currency
+from apps.debt.services.payment_reminder_service.payment_reminder_amount import PaymentReminderAmount
 from apps.room.models import Room
-
-from .payment_reminder_amount import PaymentReminderAmount
 
 
 @dataclass(frozen=True)
