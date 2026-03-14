@@ -14,7 +14,7 @@ class UserFriendship(CommonInfo):
         constraints = [
             models.UniqueConstraint(fields=["user", "friend"], name="unique_user_friendship"),
             models.CheckConstraint(
-                check=~models.Q(user_id=models.F("friend_id")),
+                condition=~models.Q(user_id=models.F("friend_id")),
                 name="user_cannot_friend_self",
             ),
         ]
