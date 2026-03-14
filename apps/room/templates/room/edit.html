@@ -242,7 +242,7 @@
             </div>
         {% endif %}
     </section>
-    <script>
+    <script nonce="{{ csp_nonce }}">
         (function () {
             var statusForm = document.getElementById("status-action-form");
             var forceCloseFlag = document.getElementById("force-close-flag");

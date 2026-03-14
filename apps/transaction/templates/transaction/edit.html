@@ -1,7 +1,7 @@
 {% extends "room/dashboard.html" %}
 {% load static room_tags i18n %}
 {% block tab_content %}
-    <style>
+    <style nonce="{{ csp_nonce }}">
         .transaction-label {
             font-size: 0.7rem;
             letter-spacing: 0.08em;
@@ -326,7 +326,7 @@
             </div>
         </form>
     </div>
-    <script>
+    <script nonce="{{ csp_nonce }}">
         (function () {
             const totalInput = document.getElementById("total_value_input");
             if (!totalInput) {

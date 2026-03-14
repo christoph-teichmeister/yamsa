@@ -52,7 +52,7 @@
                                     <div class="rounded-circle bg-primary-subtle text-primary-emphasis d-inline-flex align-items-center justify-content-center account-avatar-circle">
                                         {% if user.profile_picture %}
                                             <img src="{{ user.profile_picture_url }}"
-                                                 onerror="this.onerror=null;this.src='{{ user.profile_picture_fallback_url }}';"
+                                                 data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
                                                  alt="{{ user.name }}"
                                                  class="account-avatar-img rounded-circle w-100 h-100"
                                                  loading="lazy"

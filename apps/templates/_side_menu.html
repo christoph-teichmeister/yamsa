@@ -83,7 +83,7 @@
                             <div class="profile-avatar mb-2">
                                 {% if request.user.profile_picture %}
                                     <img src="{{ request.user.profile_picture_url }}"
-                                         onerror="this.onerror=null;this.src='{{ request.user.profile_picture_fallback_url }}';"
+                                         data-profile-picture-fallback-url="{{ request.user.profile_picture_fallback_url }}"
                                          alt="{{ request.user.name }}"
                                          class="rounded-4 w-100 h-100 object-fit-cover"
                                          width="64"

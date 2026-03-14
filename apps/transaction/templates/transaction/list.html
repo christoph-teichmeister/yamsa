@@ -1,7 +1,7 @@
 {% extends "room/dashboard.html" %}
 {% load static room_tags i18n %}
 {% block tab_content %}
-    <style>
+    <style nonce="{{ csp_nonce }}">
         .transaction-label {
             display: inline-block;
             font-size: 0.65rem;
@@ -298,7 +298,7 @@
         </div>
     </div>
     <!-- Observer to scroll to correct element when anchor tags are in url -->
-    <script type="text/javascript">
+    <script type="text/javascript" nonce="{{ csp_nonce }}">
       function highlightTransactionRow(target) {
         if (!target) {
           return;

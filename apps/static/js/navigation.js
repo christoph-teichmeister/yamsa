@@ -175,11 +175,81 @@ window.bootstrap = bootstrap;
     document.addEventListener('htmx:historyRestore', handleSwap);
   };
 
+  const PROFILE_PICTURE_FALLBACK_SELECTOR = '[data-profile-picture-fallback-url]';
+  const GRAPH_WIDTH_SELECTOR = '[data-graph-width]';
+  const CATEGORY_COLOR_SELECTOR = '[data-category-color]';
+
+  const initProfilePictureFallbacks = () => {
+    document.querySelectorAll(PROFILE_PICTURE_FALLBACK_SELECTOR).forEach((img) => {
+      if (img.dataset.profilePictureFallbackBound === 'true') {
+        return;
+      }
+
+      const fallbackUrl = img.dataset.profilePictureFallbackUrl;
+      if (!fallbackUrl) {
+        return;
+      }
+
+      const handleError = () => {
+        if (img.src !== fallbackUrl) {
+          img.src = fallbackUrl;
+        }
+        img.removeEventListener('error', handleError);
+      };
+
+      img.addEventListener('error', handleError);
+      img.dataset.profilePictureFallbackBound = 'true';
+    });
+  };
+
+  const applyDataStyleVars = () => {
+    document.querySelectorAll(GRAPH_WIDTH_SELECTOR).forEach((element) => {
+      const graphWidth = element.dataset.graphWidth;
+      if (graphWidth) {
+        element.style.setProperty('--graph-width', graphWidth);
+      }
+    });
+
+    document.querySelectorAll(CATEGORY_COLOR_SELECTOR).forEach((element) => {
+      const categoryColor = element.dataset.categoryColor;
+      if (categoryColor) {
+        element.style.setProperty('--category-color', categoryColor);
+      }
+    });
+  };
+
+  const refreshDynamicElements = () => {
+    initProfilePictureFallbacks();
+    applyDataStyleVars();
+  };
+
+  const handleNavigationClick = (event) => {
+    const stopPropagationEl = event.target.closest('[data-stop-propagation]');
+    if (stopPropagationEl) {
+      event.stopPropagation();
+    }
+
+    const removeButton = event.target.closest('[data-split-row-remove]');
+    if (removeButton) {
+      const splitRow = removeButton.closest('.split-row');
+      if (splitRow) {
+        splitRow.remove();
+      }
+    }
+  };
+
   const init = () => {
     initThemeToggle();
     initShareButtons();
     initOffcanvasCleanup();
     initRoomNavigationScrollReset();
+    refreshDynamicElements();
+    document.addEventListener('click', handleNavigationClick);
+
+    if (document.body) {
+      document.body.addEventListener('htmx:afterSwap', refreshDynamicElements);
+      document.body.addEventListener('htmx:historyRestore', refreshDynamicElements);
+    }
   };
 
   if (document.readyState === 'loading') {

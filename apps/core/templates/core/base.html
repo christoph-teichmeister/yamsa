@@ -63,7 +63,7 @@
         {% render_bundle "htmx" attrs="defer" %}
         {% render_bundle "navigation" attrs="defer" %}
         <!-- Activate various Bootstrap components once the bundle has loaded -->
-        <script type="text/javascript">
+        <script type="text/javascript" nonce="{{ csp_nonce }}">
           if (!window.__yamsaBootstrapInitialized) {
             window.__yamsaBootstrapInitialized = true;
 

@@ -2,7 +2,7 @@
 {% load i18n %}
 {% block content %}
     {% if request.user.is_authenticated %}
-        <style>
+        <style nonce="{{ csp_nonce }}">
             .news-wrap {
                 max-width: 960px;
                 margin: 0 auto;

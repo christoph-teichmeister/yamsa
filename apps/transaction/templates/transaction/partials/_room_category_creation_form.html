@@ -93,7 +93,7 @@
                 {% endif %}
             </form>
             {% if category_creation_success_message %}
-                <script type="module">
+                <script type="module" nonce="{{ csp_nonce }}">
                 (function () {
                     const form = document.getElementById("room-category-creation-form")
                     const successMessage = "{{ category_creation_success_message|escapejs }}"

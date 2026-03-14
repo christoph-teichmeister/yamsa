@@ -1,7 +1,7 @@
 {% extends "room/dashboard.html" %}
 {% load static room_tags i18n %}
 {% block tab_content %}
-    <style>
+    <style nonce="{{ csp_nonce }}">
         .transaction-detail-card {
             border: none;
             border-radius: 1rem;

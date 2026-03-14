@@ -1,7 +1,7 @@
 {% extends "room/dashboard.html" %}
 {% load static room_tags i18n %}
 {% block tab_content %}
-    <style>
+    <style nonce="{{ csp_nonce }}">
         .room-detail-wrap {
             max-width: 960px;
             margin: 0 auto;

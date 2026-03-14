@@ -20,11 +20,13 @@
 {% if queued_toasts %}
     {{ queued_toasts|json_script:"queued-toasts-data" }}
 {% else %}
-    <script id="queued-toasts-data" type="application/json">[]</script>
+    <script id="queued-toasts-data"
+            type="application/json"
+            nonce="{{ csp_nonce }}">[]</script>
 {% endif %}
 {% trans "Something went wrong" as something_went_wrong %}
 <!-- Toast handler -->
-<script type="module">
+<script type="module" nonce="{{ csp_nonce }}">
     const initializeToastHandler = () => {
         if (!window.bootstrap || typeof window.bootstrap.Toast === "undefined") {
             console.warn("Bootstrap Toast API not yet available; toast handler initialization postponed.")

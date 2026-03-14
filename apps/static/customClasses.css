@@ -25,6 +25,11 @@
     cursor: pointer;
 }
 
+.debt-piggy-tooltip {
+    opacity: 0.25;
+    cursor: help;
+}
+
 .room-entry {
     border-radius: 1rem;
     background-color: transparent;
