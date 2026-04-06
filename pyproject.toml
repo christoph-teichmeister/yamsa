@@ -15,7 +15,7 @@ dependencies = [
     "django-minify-html==1.*",
     "django-pony-express==2.*",
     "django-webpack-loader==3.*",
-    "django[argon2]==5.*",
+    "django[argon2]==6.*",
     "emoji==2.*",
     "gunicorn==23.*",
     "minify-html==0.18.*",
