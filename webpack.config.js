@@ -25,7 +25,15 @@ module.exports = {
     rules: [
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: false,
+            },
+          },
+        ],
       },
       {
         test: /\.(woff2?|eot|ttf|otf|svg)(\?.*)?$/i,
