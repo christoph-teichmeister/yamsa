@@ -369,7 +369,7 @@ if SECURE_HSTS_SECONDS > 0:
 SECURE_CSP = {
     "default-src": [CSP.SELF],
     "script-src": [CSP.SELF, CSP.NONCE, "https:"],
-    "style-src": [CSP.SELF, CSP.NONCE, "https:", "'unsafe-inline'"],
+    "style-src": [CSP.SELF, "https:", "'unsafe-inline'"],
     "img-src": [CSP.SELF, "data:", "https:"],
     "font-src": [CSP.SELF, "https:"],
     "connect-src": [CSP.SELF, "https:"],

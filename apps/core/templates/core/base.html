@@ -23,7 +23,8 @@
         {% load_serviceworker %}
         {% include "core/partials/_head_links_and_scripts.html" %}
         <!-- Disable default hx-indicator styling -->
-        <meta name="htmx-config" content='{"includeIndicatorStyles": false}'>
+        <meta name="htmx-config"
+              content='{"includeIndicatorStyles": false, "inlineScriptNonce": "{{ csp_nonce }}"}'>
     </head>
     <body hx-ext="idiomorph" id="body">
         {% if core.DEBUG %}

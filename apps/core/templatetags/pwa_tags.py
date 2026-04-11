@@ -25,4 +25,5 @@ def load_serviceworker(context):
         "manifest": settings.MANIFEST,
         "PWA_SERVICE_WORKER_DEBUG": settings.PWA_SERVICE_WORKER_DEBUG,
         "WEBPUSH_SETTINGS": settings.WEBPUSH_SETTINGS,
+        "csp_nonce": context.get("csp_nonce", ""),
     }

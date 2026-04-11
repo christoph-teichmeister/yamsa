@@ -6,7 +6,7 @@
   "main": "apps/static/js/vendor/d3-entry.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "watch": "webpack --config webpack.config.js --mode development --watch --color"
+    "watch": "webpack --config webpack.config.js --mode development --devtool=source-map --watch --color"
   },
   "engines": {
     "node": ">=22.0.0 <24.0.0"
