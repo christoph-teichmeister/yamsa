@@ -368,7 +368,7 @@ if SECURE_HSTS_SECONDS > 0:
 # Allow only nonce-backed inline scripts while keeping inline styles open for legacy attributes.
 SECURE_CSP = {
     "default-src": [CSP.SELF],
-    "script-src": [CSP.SELF, CSP.NONCE, "https:"],
+    "script-src": [CSP.SELF, CSP.NONCE],
     "style-src": [CSP.SELF, "https:", "'unsafe-inline'"],
     "img-src": [CSP.SELF, "data:", "https:"],
     "font-src": [CSP.SELF, "https:"],

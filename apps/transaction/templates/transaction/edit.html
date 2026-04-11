@@ -334,13 +334,14 @@
             }
 
             const initialTotal = totalInput.dataset.initialTotal || "0.00";
-            const childValueFields = Array.from(document.querySelectorAll(".split-row input[name='value']"));
-            const childPaidForFields = Array.from(document.querySelectorAll(".split-row select[name='paid_for']"));
-            const childRowButtons = Array.from(document.querySelectorAll(".split-row button"));
 
             const lockHint = document.getElementById("split-lock-hint");
 
             const setLockState = (locked) => {
+                const childValueFields = document.querySelectorAll(".split-row input[name='value']");
+                const childPaidForFields = document.querySelectorAll(".split-row select[name='paid_for']");
+                const childRowButtons = document.querySelectorAll(".split-row button");
+
                 childValueFields.forEach((input) => {
                     input.readOnly = locked;
                     input.setAttribute("aria-disabled", locked.toString());

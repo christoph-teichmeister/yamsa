@@ -199,6 +199,10 @@ window.bootstrap = bootstrap;
 
       img.addEventListener('error', handleError);
       img.dataset.profilePictureFallbackBound = 'true';
+
+      if (img.complete && img.naturalWidth === 0) {
+        handleError();
+      }
     });
   };
 

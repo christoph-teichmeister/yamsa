@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n core_tags %}
 {% trans "Close" as toast_close_label %}
 <div class="toast-container yamsa-toast-container position-fixed bottom-0 start-50 translate-middle-x px-1 pb-5 mb-5 w-100">
     <div class="toast yamsa-toast border-0 w-100"
@@ -18,7 +18,7 @@
     </div>
 </div>
 {% if queued_toasts %}
-    {{ queued_toasts|json_script:"queued-toasts-data" }}
+    {% json_script_nonce queued_toasts "queued-toasts-data" %}
 {% else %}
     <script id="queued-toasts-data"
             type="application/json"
