@@ -1,0 +1,81 @@
+.timeline-card {
+    border: none;
+    border-radius: 1rem;
+}
+
+.range-toggle {
+    display: inline-flex;
+    width: 100%;
+    border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.15);
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.03);
+}
+
+.range-toggle .range-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.4rem 0.9rem;
+    color: var(--bs-secondary-color, #6c757d);
+    transition: background-color 0.2s ease, color 0.2s ease;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.range-toggle .range-btn.active {
+    background: var(--bs-primary, #0d6efd);
+    color: #fff;
+}
+
+.range-toggle .range-btn.range-btn-wide {
+    flex: 3 1 0;
+    letter-spacing: 0.04em;
+    font-size: 0.6rem;
+}
+
+.timeline-chart {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 5;
+}
+
+.trend-line-chart {
+    width: 100%;
+    min-height: 220px;
+}
+
+.trend-line-chart svg {
+    width: 100%;
+    height: auto;
+}
+
+.trend-line-path {
+    fill: none;
+    stroke: rgba(13, 110, 253, 0.9);
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.trend-line-area {
+    opacity: 0.35;
+}
+
+.trend-line-dot {
+    fill: #fff;
+    stroke: rgba(13, 110, 253, 0.9);
+    stroke-width: 1.25;
+}
+
+.timeline-empty {
+    border: 1px dashed rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.25);
+    border-radius: 0.85rem;
+    padding: 1.25rem;
+    text-align: center;
+}
