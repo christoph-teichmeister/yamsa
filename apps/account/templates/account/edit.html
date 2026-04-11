@@ -43,8 +43,7 @@
                                              loading="lazy"
                                              width="68"
                                              height="68"
-                                             {% if user.profile_picture %}src="{{ user.profile_picture_url }}"{% endif %}
-                                             {% if user.profile_picture %}onerror="this.onerror=null;this.src='{{ user.profile_picture_fallback_url }}';"{% endif %}>
+                                             {% if user.profile_picture %}src="{{ user.profile_picture_url }}" data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"{% endif %}>
                                         <span id="profile-picture-preview-placeholder"
                                               class="profile-picture-preview-initial fs-3 fw-semibold text-primary-emphasis {% if user.profile_picture %}d-none{% endif %}">
                                             {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
@@ -205,7 +204,7 @@
                 </div>
             </div>
         </div>
-        <script>
+        <script nonce="{{ csp_nonce }}">
             (function () {
                 const fileInput = document.getElementById("profile_picture");
                 const previewImage = document.getElementById("profile-picture-preview-img");

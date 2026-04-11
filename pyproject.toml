@@ -15,9 +15,9 @@ dependencies = [
     "django-minify-html==1.*",
     "django-pony-express==2.*",
     "django-webpack-loader==3.*",
-    "django[argon2]==5.*",
+    "django[argon2]==6.*",
     "emoji==2.*",
-    "gunicorn==23.*",
+    "gunicorn==25.*",
     "minify-html==0.18.*",
     "model-bakery==1.*",
     "pillow==12.*",
@@ -37,10 +37,10 @@ dev = [
     "djlint",
     "freezegun",
     "ruff",
-    "factory-boy==3.*",
-    "pytest-django==4.*",
-    "pytest-env==0.7.*",
-    "pytest-factoryboy==2.*",
+    "factory-boy",
+    "pytest-django",
+    "pytest-env",
+    "pytest-factoryboy",
 ]
 
 [build-system]

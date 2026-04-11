@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require("webpack");
 const BundleTracker = require("webpack-bundle-tracker");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
@@ -24,7 +25,15 @@ module.exports = {
     rules: [
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: false,
+            },
+          },
+        ],
       },
       {
         test: /\.(woff2?|eot|ttf|otf|svg)(\?.*)?$/i,
@@ -36,6 +45,9 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      htmx: "htmx.org",
+    }),
     new MiniCssExtractPlugin({
       filename: "[name].bundle.css",
     }),

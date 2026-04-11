@@ -11,11 +11,18 @@ services:
     ports:
       - "5431:5432"
     restart: "always"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U yamsa-postgres-user -d yamsa_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   backend:
     depends_on:
-      - database
-      - mailhog
+      database:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
     build:
       context: .
       args:

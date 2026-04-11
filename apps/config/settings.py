@@ -20,6 +20,7 @@ from pathlib import Path
 
 import environ
 from django.urls import reverse_lazy
+from django.utils.csp import CSP
 from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -197,6 +198,7 @@ AUTH_PASSWORD_VALIDATORS = (
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
+    "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     # Minify HTML before GZipping for a clearer processing flow
     "django.middleware.gzip.GZipMiddleware",
@@ -300,6 +302,7 @@ TEMPLATES = (
                 "django.template.context_processors.i18n",
                 "django.template.context_processors.media",
                 "django.template.context_processors.static",
+                "django.template.context_processors.csp",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "apps.account.context_processors.user_context",
@@ -359,6 +362,21 @@ SECURE_HSTS_SECONDS = env("DJANGO_SECURE_HSTS_SECONDS")
 if SECURE_HSTS_SECONDS > 0:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+# Content Security Policy support was added in Django 6.0.
+# https://docs.djangoproject.com/en/6.0/releases/6.0/#content-security-policy-support
+# Allow only nonce-backed inline scripts while keeping inline styles open for legacy attributes.
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+    "script-src": [CSP.SELF, CSP.NONCE],
+    "style-src": [CSP.SELF, "https:", "'unsafe-inline'"],
+    "img-src": [CSP.SELF, "data:", "https:"],
+    "font-src": [CSP.SELF, "https:"],
+    "connect-src": [CSP.SELF, "https:"],
+    "frame-ancestors": [CSP.SELF],
+    "base-uri": [CSP.SELF],
+    "object-src": [CSP.NONE],
+}
 
 # Set URLs and URL-Protocol for CORS and CSRF settings
 FRONTEND_URL = env("DJANGO_FRONTEND_URL")

@@ -1,25 +1,7 @@
 {% load static %}
 {% load render_bundle from webpack_loader %}
 {% render_bundle "styles" %}
-<link rel="preload"
-      href="{% static 'base.css' %}"
-      as="style"
-      onload="this.onload=null;this.rel='stylesheet'">
-<link rel="preload"
-      href="{% static 'components/navbar/navbar.css' %}"
-      as="style"
-      onload="this.onload=null;this.rel='stylesheet'">
-<link rel="preload"
-      href="{% static 'customClasses.css' %}"
-      as="style"
-      onload="this.onload=null;this.rel='stylesheet'">
-<link rel="preload"
-      href="{% static 'htmxIndicatorRequest.css' %}"
-      as="style"
-      onload="this.onload=null;this.rel='stylesheet'">
-<noscript>
-    <link rel="stylesheet" href="{% static 'base.css' %}">
-    <link rel="stylesheet" href="{% static 'components/navbar/navbar.css' %}">
-    <link rel="stylesheet" href="{% static 'customClasses.css' %}">
-    <link rel="stylesheet" href="{% static 'htmxIndicatorRequest.css' %}">
-</noscript>
+<link rel="stylesheet" href="{% static 'base.css' %}">
+<link rel="stylesheet" href="{% static 'components/navbar/navbar.css' %}">
+<link rel="stylesheet" href="{% static 'customClasses.css' %}">
+<link rel="stylesheet" href="{% static 'htmxIndicatorRequest.css' %}">

@@ -1,0 +1,36 @@
+.transaction-detail-card {
+    border: none;
+    border-radius: 1rem;
+}
+
+.transaction-detail-card .card-body {
+    padding: 1.5rem;
+}
+
+.transaction-detail-card .transaction-amount {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.transaction-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bs-secondary-color, #6c757d);
+}
+
+.transaction-breakdown-item {
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.transaction-breakdown-item:hover {
+    background-color: rgba(var(--bs-body-color-rgb, 15, 15, 15), 0.03);
+}
+
+.transaction-breakdown-item.cursor-pointer:hover {
+    transform: translateX(4px);
+}
+
+.transaction-meta {
+    font-size: 0.8rem;
+    color: var(--bs-secondary-color, #6c757d);
+}

@@ -16,13 +16,10 @@
            hx-swap="morph:innerHTML"
            hx-push-url="true"></i>
     {% else %}
-        {# djlint:off H021 (inline style) #}
         {% trans "This transaction is not yours to settle!" as tooltip_title %}
-        <i class="bi bi-piggy-bank cursor-pointer"
-           style="opacity: 25%"
+        <i class="bi bi-piggy-bank cursor-pointer debt-piggy-tooltip"
            data-bs-toggle="tooltip"
            data-bs-placement="top"
            data-bs-title="{{ tooltip_title }}"></i>
-        {# djlint:on #}
     {% endif %}
 {% endif %}

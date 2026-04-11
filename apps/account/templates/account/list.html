@@ -2,7 +2,7 @@
 {% load static i18n %}
 {% load room_tags %}
 {% block tab_content %}
-    <style>
+    <style nonce="{{ csp_nonce }}">
         .people-wrap {
             max-width: 1100px;
             margin: 0 auto;
