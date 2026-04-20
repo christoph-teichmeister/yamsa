@@ -2,12 +2,9 @@ import mimetypes
 from decimal import Decimal
 
 from django import forms
-from django.db import transaction
 from django.db.models import QuerySet
 
 from apps.account.models import User
-from apps.core.event_loop.runner import handle_message
-from apps.transaction.messages.events.transaction import ParentTransactionCreated
 from apps.transaction.models import Category, ChildTransaction, ParentTransaction, Receipt
 from apps.transaction.services.room_category_service import RoomCategoryService
 from apps.transaction.utils import split_total_across_paid_for
@@ -106,7 +103,6 @@ class TransactionCreateForm(forms.ModelForm):
 
         return cleaned_files
 
-    @transaction.atomic
     def save(self, commit=True):
         instance: ParentTransaction = super().save(commit)
 
@@ -117,11 +113,6 @@ class TransactionCreateForm(forms.ModelForm):
             ChildTransaction.objects.create(parent_transaction=instance, paid_for=debtor, value=share)
 
         self._save_receipts(instance)
-
-        # Defer until after commit so downstream handlers (webpush, debt recalculation)
-        # don't hold the DB connection open inside the atomic block. See #333.
-        message = ParentTransactionCreated(context_data={"parent_transaction": instance, "room": instance.room})
-        transaction.on_commit(lambda: handle_message(message))
 
         return instance
 

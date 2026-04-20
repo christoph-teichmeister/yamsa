@@ -1,11 +1,16 @@
 import http
 from datetime import UTC, datetime
 from decimal import Decimal
+from unittest.mock import patch
 
 import pytest
 from django.urls import reverse
 from freezegun import freeze_time
 
+from apps.account.tests.factories import UserFactory
+from apps.currency.tests.factories import CurrencyFactory
+from apps.room.tests.factories import RoomFactory
+from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.models import ChildTransaction, ParentTransaction
 from apps.transaction.views import TransactionListView
 
@@ -45,3 +50,48 @@ class TestTransactionCreateView:
         for member in room.users.all():
             qs = ChildTransaction.objects.filter(paid_for=member, value=child_transaction_value)
             assert qs.exists()
+
+    def test_form_valid_fires_handle_message_outside_atomic(self):
+        """
+        Regression test for #333: handle_message must be called from form_valid,
+        not from inside form.save() (which runs inside transaction.atomic).
+        Calling it from within the atomic block held the DB connection open
+        during webpush HTTP requests, blocking consecutive saves.
+        """
+        from unittest.mock import MagicMock
+
+        from django.utils import timezone
+
+        from apps.transaction.views.transaction_create_view import TransactionCreateView
+
+        user = UserFactory()
+        other_user = UserFactory()
+        room = RoomFactory(created_by=user)
+        room.users.add(user, other_user)
+        currency = CurrencyFactory()
+
+        view = TransactionCreateView()
+        view.request = MagicMock(user=user, room=room, method="POST")
+        view.kwargs = {"room_slug": room.slug}
+        view.object = None
+
+        form = TransactionCreateForm(
+            data={
+                "description": "Test",
+                "currency": currency.id,
+                "paid_at": timezone.now(),
+                "paid_by": user.id,
+                "room": room.id,
+                "paid_for": [user.id, other_user.id],
+                "room_slug": room.slug,
+                "value": "10.00",
+            },
+            request=MagicMock(user=user),
+            room=room,
+        )
+        assert form.is_valid(), form.errors
+
+        with patch("apps.transaction.views.transaction_create_view.handle_message") as mock_handle:
+            view.form_valid(form)
+
+        mock_handle.assert_called_once()

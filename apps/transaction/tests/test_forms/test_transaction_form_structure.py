@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -52,38 +52,6 @@ class TestTransactionFormStructure:
             "room_slug": room.slug,
             "value": "12.00",
         }
-
-    def test_save_defers_handle_message_via_on_commit(self):
-        """
-        Regression test for #333: handle_message must NOT be called directly
-        inside @transaction.atomic — it must be deferred via transaction.on_commit().
-
-        Calling it directly held the DB connection open during the webpush HTTP
-        request, blocking the second consecutive transaction save.
-        """
-        user = UserFactory()
-        other_user = UserFactory()
-        room = RoomFactory(created_by=user)
-        room.users.add(user, other_user)
-        currency = CurrencyFactory()
-
-        def spy_on_commit(func, *args, **kwargs):
-            pass  # capture only — do not delegate to the real on_commit
-
-        form_data = self._build_create_form_data(room, user, currency, [user, other_user])
-        form = TransactionCreateForm(data=form_data, request=MagicMock(user=user), room=room)
-        assert form.is_valid(), form.errors
-
-        on_commit_path = "apps.transaction.forms.transaction_create_form.transaction.on_commit"
-        handle_message_path = "apps.transaction.forms.transaction_create_form.handle_message"
-        with (
-            patch(on_commit_path, side_effect=spy_on_commit) as mock_on_commit,
-            patch(handle_message_path) as mock_handle,
-        ):
-            form.save()
-
-        mock_handle.assert_not_called()   # must not fire inside the atomic block
-        mock_on_commit.assert_called_once()  # must be deferred
 
     def test_save_two_consecutive_transactions_both_persist(self):
         """
