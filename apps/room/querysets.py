@@ -41,6 +41,6 @@ class RoomQuerySet(models.QuerySet):
 
         return self.filter(status=Room.StatusChoices.CLOSED)
 
-    def without_members(self):
+    def filter_without_members(self):
         """Return rooms that currently have no users at all."""
         return self.filter(users__isnull=True)
