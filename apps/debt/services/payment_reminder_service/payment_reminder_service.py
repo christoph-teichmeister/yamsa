@@ -72,7 +72,7 @@ class PaymentReminderService:
         """Gather users who are behind on payments in rooms that have gone quiet."""
         rooms = (
             Room.objects.annotate_last_transaction_lastmodified_at_date()
-            .open()
+            .filter_status_open()
             .filter(debts__settled=False)
             .filter(
                 Q(last_transaction_created_at_date__lt=self.threshold)

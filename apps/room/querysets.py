@@ -29,13 +29,13 @@ class RoomQuerySet(models.QuerySet):
     def annotate_capitalised_initials(self):
         return self.annotate(capitalised_initials=Upper(Substr("name", 1, 2)))
 
-    def open(self):
+    def filter_status_open(self):
         """Return only open rooms."""
         from apps.room.models import Room
 
         return self.filter(status=Room.StatusChoices.OPEN)
 
-    def closed(self):
+    def filter_status_closed(self):
         """Return only closed rooms."""
         from apps.room.models import Room
 

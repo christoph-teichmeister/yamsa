@@ -80,7 +80,7 @@ class RoomClosureReminderService:
         """
         return (
             Room.objects.annotate_last_transaction_lastmodified_at_date()
-            .open()
+            .filter_status_open()
             .filter(
                 Q(last_transaction_created_at_date__lt=self.threshold)
                 | Q(last_transaction_created_at_date__isnull=True)
@@ -104,7 +104,7 @@ class RoomClosureReminderService:
 
         Returns the number of rooms closed.
         """
-        updated = Room.objects.open().without_members().update(
+        updated = Room.objects.filter_status_open().without_members().update(
             status=Room.StatusChoices.CLOSED
         )
         return updated
