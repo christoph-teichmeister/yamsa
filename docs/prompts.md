@@ -4,7 +4,30 @@ PyCharm has a built in AI Assistant which can be used to boost your DX.
 
 This is a collection of prompts to be used and extended when working on this project.
 
-## General > AI Assistant
+## Architecture Notes
+
+### Forms vs Views — separation of concerns
+
+`ModelForm.save()` must only validate and persist data to the database. It must not:
+
+- Own a `transaction.atomic()` boundary — that belongs in the view's `form_valid()`
+- Call `handle_message()` or trigger any other side effects
+
+Side effects (event dispatch, notifications, debt recalculation via `handle_message`) belong in
+the view's `form_valid()`, called **after** the `transaction.atomic()` block exits. This ensures
+downstream handlers (e.g. webpush HTTP calls) never hold the DB connection open inside an atomic
+block, which would cause consecutive requests to block or fail (see #333).
+
+```python
+# ✅ Correct pattern in form_valid()
+def form_valid(self, form):
+    with transaction.atomic():
+        self.object = form.save()
+    handle_message(SomeEvent(context_data={...}))  # after atomic, connection is free
+    return super().form_valid(form)
+```
+
+
 
 ### Parse from github issue
 
