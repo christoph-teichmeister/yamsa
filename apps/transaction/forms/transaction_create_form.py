@@ -118,7 +118,8 @@ class TransactionCreateForm(forms.ModelForm):
 
         self._save_receipts(instance)
 
-        handle_message(ParentTransactionCreated(context_data={"parent_transaction": instance, "room": instance.room}))
+        message = ParentTransactionCreated(context_data={"parent_transaction": instance, "room": instance.room})
+        transaction.on_commit(lambda: handle_message(message))
 
         return instance
 
