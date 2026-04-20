@@ -8,7 +8,7 @@ class OpenRoomFilter(SimpleListFilter):
     parameter_name = "open_room"
 
     def lookups(self, request, model_admin):
-        return [(room.name, room.name) for room in Room.objects.filter(status=Room.StatusChoices.OPEN)]
+        return [(room.name, room.name) for room in Room.objects.open()]
 
     def queryset(self, request, queryset):
         if self.value():

@@ -173,14 +173,14 @@ class TestRoomClosureReminderService:
         room.status = Room.StatusChoices.CLOSED
         room.save(update_fields=["status"])
 
-        closed_count_before = Room.objects.filter(status=Room.StatusChoices.CLOSED).count()
+        closed_count_before = Room.objects.closed().count()
 
         service = RoomClosureReminderService(now=timezone.now())
 
         with mock.patch(REMINDER_SERVICE_PATH):
             service.run()
 
-        closed_count_after = Room.objects.filter(status=Room.StatusChoices.CLOSED).count()
+        closed_count_after = Room.objects.closed().count()
         assert closed_count_after == closed_count_before  # no duplicate closes
 
 
