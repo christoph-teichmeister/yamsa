@@ -118,20 +118,8 @@ class TransactionCreateForm(forms.ModelForm):
 
         self._save_receipts(instance)
 
-        # Defer event dispatching until after the DB transaction commits.
-        #
-        # Previously handle_message() was called directly here, inside the
-        # @transaction.atomic block. That caused downstream handlers — in
-        # particular the webpush notification handler, which makes an outbound
-        # HTTP request via pywebpush — to run while the DB connection was still
-        # held open. On a slow or unreachable push service this blocked the next
-        # save() call (SQLite lock / broken connection), producing the
-        # "Etwas ist schiefgelaufen" error on the second consecutive transaction.
-        # Retrying worked only because the connection had been released by then.
-        #
-        # Using on_commit() guarantees that handle_message() — and all side-effects
-        # it triggers (debt recalculation, news creation, webpush) — only execute
-        # after the transaction has been committed and the connection is free.
+        # Defer until after commit so downstream handlers (webpush, debt recalculation)
+        # don't hold the DB connection open inside the atomic block. See #333.
         message = ParentTransactionCreated(context_data={"parent_transaction": instance, "room": instance.room})
         transaction.on_commit(lambda: handle_message(message))
 
