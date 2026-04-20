@@ -90,3 +90,130 @@ class TestRoomClosureReminderService:
         ):
             assert service.run_if_due() == []
             mocked_run.assert_not_called()
+
+    # ------------------------------------------------------------------
+    # Creator-membership guard
+    # ------------------------------------------------------------------
+
+    def test_creator_removed_from_room_is_not_notified(self, room_with_stale_activity):
+        """A creator who is no longer a room member must not receive a reminder."""
+        room = room_with_stale_activity
+        creator = room.created_by
+        # Remove creator from the room while keeping them as created_by.
+        room.users.remove(creator)
+
+        service = RoomClosureReminderService(now=timezone.now())
+
+        with mock.patch(REMINDER_SERVICE_PATH) as mocked_process:
+            candidates = service.run()
+
+        assert candidates == []
+        assert not mocked_process.called
+
+    def test_creator_still_in_room_is_notified(self, room_with_stale_activity):
+        """Sanity-check: creator who is still a member continues to be notified."""
+        room = room_with_stale_activity
+        assert room.users.filter(pk=room.created_by.pk).exists(), "pre-condition: creator must be a member"
+
+        service = RoomClosureReminderService(now=timezone.now())
+
+        with mock.patch(REMINDER_SERVICE_PATH) as mocked_process:
+            candidates = service.run()
+
+        assert any(r.pk == room.pk for r in candidates)
+        assert mocked_process.called
+
+    # ------------------------------------------------------------------
+    # Auto-close empty rooms
+    # ------------------------------------------------------------------
+
+    def test_empty_open_room_is_closed_on_run(self, room_with_stale_activity):
+        """An open room with no members must be auto-closed during run()."""
+        room = room_with_stale_activity
+        room.users.clear()
+
+        service = RoomClosureReminderService(now=timezone.now())
+
+        with mock.patch(REMINDER_SERVICE_PATH):
+            service.run()
+
+        room.refresh_from_db()
+        assert room.status == Room.StatusChoices.CLOSED
+
+    def test_empty_room_is_not_notified_after_autoclose(self, room_with_stale_activity):
+        """Auto-closed empty rooms must not trigger any notification emails."""
+        room = room_with_stale_activity
+        room.users.clear()
+
+        service = RoomClosureReminderService(now=timezone.now())
+
+        with mock.patch(REMINDER_SERVICE_PATH) as mocked_process:
+            candidates = service.run()
+
+        assert candidates == []
+        assert not mocked_process.called
+
+    def test_room_with_members_is_not_autoclosed(self, room_with_stale_activity):
+        """Rooms that still have members must not be auto-closed."""
+        room = room_with_stale_activity
+        assert room.users.exists(), "pre-condition: room must have members"
+
+        service = RoomClosureReminderService(now=timezone.now())
+
+        with mock.patch(REMINDER_SERVICE_PATH):
+            service.run()
+
+        room.refresh_from_db()
+        assert room.status == Room.StatusChoices.OPEN
+
+    def test_already_closed_empty_room_stays_closed(self, room_with_stale_activity):
+        """Already-closed rooms must not be touched by the auto-close logic."""
+        room = room_with_stale_activity
+        room.users.clear()
+        room.status = Room.StatusChoices.CLOSED
+        room.save(update_fields=["status"])
+
+        closed_count_before = Room.objects.filter(status=Room.StatusChoices.CLOSED).count()
+
+        service = RoomClosureReminderService(now=timezone.now())
+
+        with mock.patch(REMINDER_SERVICE_PATH):
+            service.run()
+
+        closed_count_after = Room.objects.filter(status=Room.StatusChoices.CLOSED).count()
+        assert closed_count_after == closed_count_before  # no duplicate closes
+
+
+# ------------------------------------------------------------------
+# RoomQuerySet.without_members
+# ------------------------------------------------------------------
+
+
+@pytest.mark.django_db
+class TestRoomQuerySetWithoutMembers:
+    def test_returns_room_with_no_users(self, db):
+        from apps.room.tests.factories import RoomFactory
+
+        empty_room = RoomFactory()
+        assert not empty_room.users.exists()
+
+        qs = Room.objects.without_members()
+        assert qs.filter(pk=empty_room.pk).exists()
+
+    def test_excludes_room_with_users(self, room):
+        assert room.users.exists()
+
+        qs = Room.objects.without_members()
+        assert not qs.filter(pk=room.pk).exists()
+
+    def test_mixed_rooms_only_returns_empty_ones(self, room, db):
+        from apps.room.tests.factories import RoomFactory
+
+        empty_room = RoomFactory()
+
+        qs = Room.objects.without_members()
+        pks = list(qs.values_list("pk", flat=True))
+
+        assert empty_room.pk in pks
+        assert room.pk not in pks
+

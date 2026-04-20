@@ -28,3 +28,7 @@ class RoomQuerySet(models.QuerySet):
 
     def annotate_capitalised_initials(self):
         return self.annotate(capitalised_initials=Upper(Substr("name", 1, 2)))
+
+    def without_members(self):
+        """Return rooms that currently have no users at all."""
+        return self.filter(users__isnull=True)
