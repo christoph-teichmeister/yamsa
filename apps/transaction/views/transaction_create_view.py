@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.db import transaction
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -51,7 +52,7 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
             handle_message(
                 ParentTransactionCreated(context_data={"parent_transaction": self.object, "room": self.object.room})
             )
-            return super(generic.CreateView, self).form_valid(form)
+            return HttpResponseRedirect(self.get_success_url())
         except forms.ValidationError as exc:
             if self._attach_validation_error(form, exc):
                 return self.form_invalid(form)
