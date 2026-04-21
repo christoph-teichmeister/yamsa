@@ -107,7 +107,6 @@ class RoomClosureReminderService:
         return Room.objects.filter_status_open().filter_without_members().update(
             status=Room.StatusChoices.CLOSED
         )
-        return updated
 
     @staticmethod
     def _should_notify_creator(creator):
