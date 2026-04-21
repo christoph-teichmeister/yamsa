@@ -104,7 +104,7 @@ class RoomClosureReminderService:
 
         Returns the number of rooms closed.
         """
-        updated = Room.objects.filter_status_open().filter_without_members().update(
+        return Room.objects.filter_status_open().filter_without_members().update(
             status=Room.StatusChoices.CLOSED
         )
         return updated
