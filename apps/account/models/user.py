@@ -107,9 +107,9 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
             Room.objects.visible_for(user=self)
             .prefetch_related("users")
             .annotate_user_is_in_room_for_user_id(user_id=self.id)
-            .annotate_last_transaction_lastmodified_at_date()
+            .annotate_last_activity()
             .annotate_capitalised_initials()
-            .order_by("-user_is_in_room", "status", "-last_transaction_created_at_date")
+            .order_by("-user_is_in_room", "status", "-last_activity", "pk")
             .values(
                 "capitalised_initials",
                 "created_by__name",

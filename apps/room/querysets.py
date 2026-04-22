@@ -1,6 +1,6 @@
 from django.db import models
-from django.db.models import BooleanField, Exists, ExpressionWrapper, Max, OuterRef
-from django.db.models.functions import Substr, Upper
+from django.db.models import BooleanField, Exists, ExpressionWrapper, F, Max, OuterRef
+from django.db.models.functions import Coalesce, Substr, Upper
 
 
 class RoomQuerySet(models.QuerySet):
@@ -25,6 +25,17 @@ class RoomQuerySet(models.QuerySet):
 
     def annotate_last_transaction_lastmodified_at_date(self):
         return self.annotate(last_transaction_created_at_date=Max("parent_transactions__lastmodified_at"))
+
+    def annotate_last_activity(self):
+        """Annotate each room with the timestamp of its most recent transaction,
+        falling back to the room's own lastmodified_at so rooms without transactions
+        still sort correctly (most-recently-active first)."""
+        return self.annotate(
+            last_activity=Coalesce(
+                Max("parent_transactions__lastmodified_at"),
+                F("lastmodified_at"),
+            )
+        )
 
     def annotate_capitalised_initials(self):
         return self.annotate(capitalised_initials=Upper(Substr("name", 1, 2)))

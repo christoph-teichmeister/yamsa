@@ -18,8 +18,10 @@ imperative and scoped to a single concern. Every PR should: describe the change 
 list validation commands (`uv run pytest`, linters), and attach before/after screenshots or GIFs for UI tweaks
 (especially mobile layouts). Request review only after CI passes locally to reduce churn.
 
-PR titles follow the pattern `#<issue>: <Short description>` in sentence case, e.g. `#333: Fix second transaction
-failing after first`.
+PR titles follow these patterns (sentence case, no conventional-commit prefix):
+
+- With a linked issue: `#<issue-number>: <Short description>` — e.g. `#336: Sort side nav rooms by most recent activity`
+- Without a linked issue: `<Short description>` — e.g. `Upgrade Django to 5.1`
 
 ## Pull Request Review Workflow
 
