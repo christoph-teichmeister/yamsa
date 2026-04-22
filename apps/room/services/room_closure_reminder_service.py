@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 from django.urls import reverse
 from django.utils import timezone
 
 from apps.debt.models import ReminderLog
 from apps.mail.services.room_closure_reminder_mail_service import RoomClosureReminderEmailService
-from apps.room.models import Room
+from apps.room.models import Room, UserConnectionToRoom
 
 
 class RoomClosureReminderService:
@@ -25,6 +25,9 @@ class RoomClosureReminderService:
         """Tell room owners to revisit rooms that have stayed open without activity."""
         if not settings.INACTIVITY_REMINDER_ENABLED:
             return []
+
+        # Auto-close rooms with no members before sending any reminders.
+        self._close_empty_rooms()
 
         rooms = self._collect_rooms()
         recipients: list[str] = []
@@ -70,16 +73,39 @@ class RoomClosureReminderService:
         return last_log.created_at + self.HEARTBEAT_INTERVAL <= self.now
 
     def _collect_rooms(self):
-        """Find open rooms that have been idle past the inactivity threshold."""
+        """Find open rooms that have been idle past the inactivity threshold.
+
+        Only includes rooms where the creator is still an active member, so
+        former creators who have left the room are never notified.
+        """
         return (
             Room.objects.annotate_last_transaction_lastmodified_at_date()
-            .filter(status=Room.StatusChoices.OPEN)
+            .filter_status_open()
             .filter(
                 Q(last_transaction_created_at_date__lt=self.threshold)
                 | Q(last_transaction_created_at_date__isnull=True)
             )
             .filter(created_by__isnull=False)
+            # Only notify creators who are still members of the room.
+            .filter(
+                Exists(
+                    UserConnectionToRoom.objects.filter(
+                        room=OuterRef("pk"),
+                        user=OuterRef("created_by"),
+                    )
+                )
+            )
             .select_related("created_by")
+        )
+
+    @staticmethod
+    def _close_empty_rooms() -> int:
+        """Close any open rooms that currently have no members.
+
+        Returns the number of rooms closed.
+        """
+        return Room.objects.filter_status_open().filter_without_members().update(
+            status=Room.StatusChoices.CLOSED
         )
 
     @staticmethod

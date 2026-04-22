@@ -11,8 +11,8 @@ def user_context(request):
     room_qs_of_user = base_room_qs_for_list.filter(users=user)
     other_rooms_qs = base_room_qs_for_list.exclude(users=user)
 
-    open_room_qs_for_list = room_qs_of_user.filter(status=Room.StatusChoices.OPEN)
-    closed_room_qs_for_list = room_qs_of_user.filter(status=Room.StatusChoices.CLOSED)
+    open_room_qs_for_list = room_qs_of_user.filter_status_open()
+    closed_room_qs_for_list = room_qs_of_user.filter_status_closed()
 
     return {
         "current_user": {
