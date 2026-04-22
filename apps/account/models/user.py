@@ -109,7 +109,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
             .annotate_user_is_in_room_for_user_id(user_id=self.id)
             .annotate_last_activity()
             .annotate_capitalised_initials()
-            .order_by("-user_is_in_room", "-last_activity", "status", "pk")
+            .order_by("-user_is_in_room", "status", "-last_activity", "pk")
             .values(
                 "capitalised_initials",
                 "created_by__name",
