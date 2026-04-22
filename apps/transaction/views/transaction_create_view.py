@@ -1,11 +1,15 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
+from django.db import transaction
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.views import generic
 
+from apps.core.event_loop.runner import handle_message
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
+from apps.transaction.messages.events.transaction import ParentTransactionCreated
 from apps.transaction.models import ParentTransaction
 from apps.transaction.services.room_category_service import RoomCategoryService
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
@@ -43,7 +47,12 @@ class TransactionCreateView(TransactionBaseContext, generic.CreateView):
 
     def form_valid(self, form):
         try:
-            return super().form_valid(form)
+            with transaction.atomic():
+                self.object = form.save()
+            handle_message(
+                ParentTransactionCreated(context_data={"parent_transaction": self.object, "room": self.object.room})
+            )
+            return HttpResponseRedirect(self.get_success_url())
         except forms.ValidationError as exc:
             if self._attach_validation_error(form, exc):
                 return self.form_invalid(form)
