@@ -159,7 +159,16 @@
                 });
             };
 
-            renderAllCharts();
+            if (window.d3) {
+                // d3 already available (cached after first load or full page reload)
+                renderAllCharts();
+            } else {
+                // d3 bundle script is still loading (first HTMX navigation) — wait for it
+                const d3Script = document.querySelector('script[src*="d3.bundle"]');
+                if (d3Script) {
+                    d3Script.addEventListener("load", renderAllCharts, { once: true });
+                }
+            }
         })();
     </script>
 {% endblock tab_content %}
