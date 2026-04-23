@@ -364,6 +364,13 @@
             }
         })
 
-        renderSpendingTrendChart()
+        if (window.d3) {
+            renderSpendingTrendChart()
+        } else {
+            const d3Script = document.querySelector('script[src*="d3.bundle"]')
+            if (d3Script) {
+                d3Script.addEventListener("load", renderSpendingTrendChart, { once: true })
+            }
+        }
     </script>
 {% endblock tab_content %}
