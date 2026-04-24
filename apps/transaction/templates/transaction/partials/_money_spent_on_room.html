@@ -1,5 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load static room_tags i18n %}
+{% load static room_tags i18n core_tags %}
 {% load render_bundle from webpack_loader %}
 {% block tab_content %}
     <style nonce="{{ csp_nonce }}">
@@ -52,6 +52,10 @@
 
         .graph-bar.graph-bar-secondary::after {
             background: linear-gradient(90deg, rgba(25, 135, 84, 0.9), rgba(32, 201, 151, 0.9));
+        }
+
+        .graph-bar.graph-bar-tertiary::after {
+            background: linear-gradient(90deg, rgba(255, 153, 0, 0.85), rgba(255, 205, 57, 0.85));
         }
 
         .empty-state {
@@ -114,41 +118,38 @@
                             <span class="overview-chip">
                                 <i class="bi bi-graph-up"></i>
                                 <span class="text-center">
-                                    {% with total_entry=total_money_spent|first %}
-                                        {% if total_entry %}
-                                            {{ total_entry.total_spent }} {{ total_entry.currency_sign }}
-                                        {% else %}
-                                            0
-                                        {% endif %}
-                                    {% endwith %}
+                                    {% for total_entry in total_money_spent %}
+                                        {{ total_entry.total_spent }}&nbsp;{{ total_entry.currency_sign }}
+                                        {% if not forloop.last %}&thinsp;/&thinsp;{% endif %}
+                                    {% empty %}
+                                        0
+                                    {% endfor %}
                                 </span>
                             </span>
                         </div>
-                        {% with total_entry=total_money_spent|first %}
-                            {% for money_spent in money_spent_per_person_qs %}
-                                <div class="graph-row">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <p class="graph-label mb-0">
-                                            {% autoescape off %}
-                                                {% parse_user_text money_spent.paid_by_name True %}
-                                            {% endautoescape %}
-                                        </p>
-                                        <p class="graph-value mb-0">{{ money_spent.total_spent_per_person }} {{ money_spent.currency_sign }}</p>
-                                    </div>
-                                    {% if total_entry %}
+                        {% for money_spent in money_spent_per_person_qs %}
+                            <div class="graph-row">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <p class="graph-label mb-0">
+                                        {% autoescape off %}
+                                            {% parse_user_text money_spent.paid_by_name True %}
+                                        {% endautoescape %}
+                                    </p>
+                                    <p class="graph-value mb-0">{{ money_spent.total_spent_per_person }} {{ money_spent.currency_sign }}</p>
+                                </div>
+                                {% for total_entry in total_money_spent %}
+                                    {% if total_entry.currency_sign == money_spent.currency_sign %}
                                         {% widthratio money_spent.total_spent_per_person total_entry.total_spent 100 as spent_percent %}
                                         <div class="graph-bar" data-graph-width="{{ spent_percent }}%"></div>
-                                    {% else %}
-                                        <div class="graph-bar" data-graph-width="0%"></div>
                                     {% endif %}
-                                </div>
-                            {% empty %}
-                                <div class="empty-state mt-3">
-                                    <p class="fw-semibold mb-1">{% trans "No payments recorded yet" %}</p>
-                                    <p class="text-muted small mb-0">{% trans "As soon as someone logs an expense, their share appears here." %}</p>
-                                </div>
-                            {% endfor %}
-                        {% endwith %}
+                                {% endfor %}
+                            </div>
+                        {% empty %}
+                            <div class="empty-state mt-3">
+                                <p class="fw-semibold mb-1">{% trans "No payments recorded yet" %}</p>
+                                <p class="text-muted small mb-0">{% trans "As soon as someone logs an expense, their share appears here." %}</p>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -165,34 +166,61 @@
                                 <span class="text-center">{% trans "Pending balances" %}</span>
                             </span>
                         </div>
-                        {% with total_entry=total_money_spent|first %}
-                            {% for money_owed in money_owed_per_person_qs %}
-                                {% if money_owed.total_owed_per_person > 0 %}
-                                    <div class="graph-row">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <p class="graph-label mb-0">
-                                                {% autoescape off %}
-                                                    {% parse_user_text money_owed.paid_for__name True %}
-                                                {% endautoescape %}
-                                            </p>
-                                            <p class="graph-value mb-0">{{ money_owed.total_owed_per_person }} {{ money_owed.currency_sign }}</p>
-                                        </div>
-                                        {% if total_entry %}
-                                            {% widthratio money_owed.total_owed_per_person total_entry.total_spent 100 as owed_percent %}
+                        {# ── Open debts (after optimisation) ── #}
+                        {% if open_debts_per_person_qs %}
+                            <p class="text-muted small mb-2 mt-1">{% trans "Open debt (after optimisation)" %}</p>
+                            {% for debt_row in open_debts_per_person_qs %}
+                                <div class="graph-row">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <p class="graph-label mb-0">
+                                            {% autoescape off %}
+                                                {% parse_user_text debt_row.debitor_name True %}
+                                            {% endautoescape %}
+                                        </p>
+                                        <p class="graph-value mb-0">{{ debt_row.total_open_debt }} {{ debt_row.currency_sign }}</p>
+                                    </div>
+                                    {% with max_val=max_open_debt_per_currency|get_item:debt_row.currency_sign %}
+                                        {% if max_val %}
+                                            {% widthratio debt_row.total_open_debt max_val 100 as open_debt_percent %}
                                             <div class="graph-bar graph-bar-secondary"
-                                                 data-graph-width="{{ owed_percent }}%"></div>
+                                                 data-graph-width="{{ open_debt_percent }}%"></div>
                                         {% else %}
                                             <div class="graph-bar graph-bar-secondary" data-graph-width="0%"></div>
                                         {% endif %}
-                                    </div>
-                                {% endif %}
-                            {% empty %}
-                                <div class="empty-state mt-3">
-                                    <p class="fw-semibold mb-1">{% trans "Nothing owed right now" %}</p>
-                                    <p class="text-muted small mb-0">{% trans "All participants are even for the tracked expenses." %}</p>
+                                    {% endwith %}
                                 </div>
                             {% endfor %}
-                        {% endwith %}
+                        {% else %}
+                            <div class="empty-state mt-3">
+                                <p class="fw-semibold mb-1">{% trans "Nothing owed right now" %}</p>
+                                <p class="text-muted small mb-0">{% trans "All participants are even for the tracked expenses." %}</p>
+                            </div>
+                        {% endif %}
+                        {# ── Gross amount covered by others per person ── #}
+                        {% if money_covered_for_person_qs %}
+                            <hr class="my-3">
+                            <p class="text-muted small mb-2">{% trans "Covered by others (gross)" %}</p>
+                            {% for covered in money_covered_for_person_qs %}
+                                <div class="graph-row">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <p class="graph-label mb-0">
+                                            {% autoescape off %}
+                                                {% parse_user_text covered.paid_for__name True %}
+                                            {% endautoescape %}
+                                        </p>
+                                        <p class="graph-value mb-0">{{ covered.total_covered_for_person }} {{ covered.currency_sign }}</p>
+                                    </div>
+                                    {# Scale covered bars relative to total spent for this currency #}
+                                    {% for total_entry in total_money_spent %}
+                                        {% if total_entry.currency_sign == covered.currency_sign %}
+                                            {% widthratio covered.total_covered_for_person total_entry.total_spent 100 as covered_percent %}
+                                            <div class="graph-bar graph-bar-tertiary"
+                                                 data-graph-width="{{ covered_percent }}%"></div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
             </div>

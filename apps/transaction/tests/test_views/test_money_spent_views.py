@@ -29,16 +29,16 @@ class TestMoneySpentViews:
         assert total_entry["currency_sign"] == room.preferred_currency.sign
 
         spent_per_person = list(context["money_spent_per_person_qs"])
-        owed_per_person = list(context["money_owed_per_person_qs"])
+        covered_per_person = list(context["money_covered_for_person_qs"])
 
         assert spent_per_person, "expected money_spent_per_person results"
-        assert owed_per_person, "expected money_owed_per_person results"
+        assert covered_per_person, "expected money_covered_for_person results"
 
         assert spent_per_person[0]["paid_by_name"] == user.name
         assert spent_per_person[0]["total_spent_per_person"] == expected_total
 
-        assert owed_per_person[0]["paid_for__name"] == guest_user.name
-        assert owed_per_person[0]["total_owed_per_person"] == expected_total
+        assert covered_per_person[0]["paid_for__name"] == guest_user.name
+        assert covered_per_person[0]["total_covered_for_person"] == expected_total
 
     def test_money_spent_trend_view_builds_chart_payload(self, client, room, user, guest_user):
         _, child_transactions = create_parent_transaction_with_optimisation(
@@ -77,12 +77,12 @@ class TestMoneySpentViews:
 
         response = client.get(reverse("debt:money-spent-on-room", kwargs={"room_slug": room.slug}))
         assert response.status_code == http.HTTPStatus.OK
-        owed_per_person = list(response.context_data["money_owed_per_person_qs"])
+        covered_per_person = list(response.context_data["money_covered_for_person_qs"])
 
-        assert owed_per_person, "expected money_owed_per_person results"
-        assert len(owed_per_person) == 1
-        assert owed_per_person[0]["paid_for__name"] == guest_user.name
-        assert owed_per_person[0]["total_owed_per_person"] == sum(
+        assert covered_per_person, "expected money_covered_for_person results"
+        assert len(covered_per_person) == 1
+        assert covered_per_person[0]["paid_for__name"] == guest_user.name
+        assert covered_per_person[0]["total_covered_for_person"] == sum(
             transaction.value for transaction in child_transactions if transaction.paid_for == guest_user
         )
 

@@ -1527,11 +1527,17 @@ msgstr "Wer muss noch ausgleichen"
 msgid "Pending balances"
 msgstr "Ausstehende Salden"
 
+msgid "Open debt (after optimisation)"
+msgstr "Offene Schulden (nach Optimierung)"
+
 msgid "Nothing owed right now"
 msgstr "Aktuell keine Schulden"
 
 msgid "All participants are even for the tracked expenses."
 msgstr "Alle Teilnehmer sind für die erfassten Ausgaben ausgeglichen."
+
+msgid "Covered by others (gross)"
+msgstr "Von anderen übernommen (brutto)"
 
 msgid "Loading spending timeline…"
 msgstr "Verlauf wird geladen…"

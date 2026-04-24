@@ -5,6 +5,7 @@ import pytest
 
 from apps.account.tests.factories import UserFactory
 from apps.currency.tests.factories import CurrencyFactory
+from apps.debt.models import Debt
 from apps.debt.views.money_spent_on_room_view.money_spent_on_room_view import MoneySpentOnRoomView
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.tests.factories import ChildTransactionFactory, ParentTransactionFactory
@@ -64,10 +65,75 @@ class TestMoneySpentOnRoomViewContext:
         assert total_spent[currency_a.sign] == Decimal("35")
         assert total_spent[currency_b.sign] == Decimal("10")
 
-        owed = list(view.money_owed_per_person_qs)
-        owed_map = {(entry["paid_for__name"], entry["currency_sign"]): entry["total_owed_per_person"] for entry in owed}
-        assert owed_map[(guest_user.name, currency_a.sign)] == Decimal("10")
-        assert owed_map[(guest_user.name, currency_b.sign)] == Decimal("7")
-        assert owed_map[(payee_third.name, currency_a.sign)] == Decimal("5")
-        assert owed_map[(payer_primary.name, currency_b.sign)] == Decimal("3")
-        assert (payer_primary.name, currency_a.sign) not in owed_map
+        covered = list(view.money_covered_for_person_qs)
+        covered_map = {
+            (entry["paid_for__name"], entry["currency_sign"]): entry["total_covered_for_person"] for entry in covered
+        }
+        assert covered_map[(guest_user.name, currency_a.sign)] == Decimal("10")
+        assert covered_map[(guest_user.name, currency_b.sign)] == Decimal("7")
+        assert covered_map[(payee_third.name, currency_a.sign)] == Decimal("5")
+        assert covered_map[(payer_primary.name, currency_b.sign)] == Decimal("3")
+        assert (payer_primary.name, currency_a.sign) not in covered_map
+
+    def test_open_debts_per_person_qs_only_returns_unsettled(self, room, user, guest_user):
+        currency = room.preferred_currency
+        open_debt = Debt.objects.create(
+            debitor=guest_user,
+            creditor=user,
+            room=room,
+            currency=currency,
+            value=Decimal("12.50"),
+            settled=False,
+        )
+        Debt.objects.create(
+            debitor=guest_user,
+            creditor=user,
+            room=room,
+            currency=currency,
+            value=Decimal("5.00"),
+            settled=True,
+        )
+
+        view = self._view_for_room(room)
+        open_debts = list(view.open_debts_per_person_qs)
+
+        assert len(open_debts) == 1
+        assert open_debts[0]["debitor_name"] == guest_user.name
+        assert open_debts[0]["total_open_debt"] == open_debt.value
+
+    def test_max_open_debt_per_currency_reflects_max_unsettled(self, room, user, guest_user):
+        currency_a = room.preferred_currency
+        currency_b = CurrencyFactory(sign="¤")
+        extra_user = UserFactory(name="Extra")
+        room.users.add(extra_user)
+
+        Debt.objects.create(
+            debitor=guest_user,
+            creditor=user,
+            room=room,
+            currency=currency_a,
+            value=Decimal("30"),
+            settled=False,
+        )
+        Debt.objects.create(
+            debitor=extra_user,
+            creditor=user,
+            room=room,
+            currency=currency_a,
+            value=Decimal("10"),
+            settled=False,
+        )
+        Debt.objects.create(
+            debitor=guest_user,
+            creditor=user,
+            room=room,
+            currency=currency_b,
+            value=Decimal("55"),
+            settled=False,
+        )
+
+        view = self._view_for_room(room)
+        max_map = view.max_open_debt_per_currency
+
+        assert max_map[currency_a.sign] == Decimal("30")
+        assert max_map[currency_b.sign] == Decimal("55")
