@@ -200,7 +200,6 @@
                             <hr class="my-3">
                             <p class="text-muted small mb-2">{% trans "Covered by others (gross)" %}</p>
                             {% for covered in money_covered_for_person_qs %}
-                                {% if covered.total_covered_for_person > 0 %}
                                     <div class="graph-row">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                             <p class="graph-label mb-0">
@@ -219,7 +218,6 @@
                                             {% endif %}
                                         {% endfor %}
                                     </div>
-                                {% endif %}
                             {% endfor %}
                         {% endif %}
                     </div>

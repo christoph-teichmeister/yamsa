@@ -102,14 +102,38 @@ class TestMoneySpentOnRoomViewContext:
         assert open_debts[0]["total_open_debt"] == open_debt.value
 
     def test_max_open_debt_per_currency_reflects_max_unsettled(self, room, user, guest_user):
-        currency = room.preferred_currency
+        currency_a = room.preferred_currency
+        currency_b = CurrencyFactory(sign="¤")
         extra_user = UserFactory(name="Extra")
         room.users.add(extra_user)
 
-        Debt.objects.create(debitor=guest_user, creditor=user, room=room, currency=currency, value=Decimal("30"), settled=False)
-        Debt.objects.create(debitor=extra_user, creditor=user, room=room, currency=currency, value=Decimal("10"), settled=False)
+        Debt.objects.create(
+            debitor=guest_user,
+            creditor=user,
+            room=room,
+            currency=currency_a,
+            value=Decimal("30"),
+            settled=False,
+        )
+        Debt.objects.create(
+            debitor=extra_user,
+            creditor=user,
+            room=room,
+            currency=currency_a,
+            value=Decimal("10"),
+            settled=False,
+        )
+        Debt.objects.create(
+            debitor=guest_user,
+            creditor=user,
+            room=room,
+            currency=currency_b,
+            value=Decimal("55"),
+            settled=False,
+        )
 
         view = self._view_for_room(room)
         max_map = view.max_open_debt_per_currency
 
-        assert max_map[currency.sign] == Decimal("30")
+        assert max_map[currency_a.sign] == Decimal("30")
+        assert max_map[currency_b.sign] == Decimal("55")

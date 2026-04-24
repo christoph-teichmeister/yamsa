@@ -47,6 +47,7 @@ class MoneySpentOnRoomView(RoomChildTransactionQuerysetMixin, DebtBaseContext, g
                 currency_sign=F("parent_transaction__currency__sign"),
                 total_covered_for_person=Sum("value"),
             )
+            .filter(total_covered_for_person__gt=0)
             .order_by("paid_for__name")
         )
 
@@ -68,7 +69,7 @@ class MoneySpentOnRoomView(RoomChildTransactionQuerysetMixin, DebtBaseContext, g
     @context
     @property
     def max_open_debt_per_currency(self) -> dict[str, object]:
-        """Max open debt value per currency – used for bar scaling in the template."""
+        """Max open debt value per currency - used for bar scaling in the template."""
         qs = (
             Debt.objects.filter(room_id=self.request.room.id, settled=False)
             .values("currency__sign")
