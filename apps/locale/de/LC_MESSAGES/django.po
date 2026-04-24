@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yamsa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-24 09:28+0200\n"
+"POT-Creation-Date: 2026-04-24 10:01+0200\n"
 "PO-Revision-Date: 2025-01-01 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2204,47 +2204,47 @@ msgstr "Von Mitgliedern ausgegebenes Geld"
 msgid "Who covered the bills"
 msgstr "Wer hat die Rechnungen bezahlt"
 
-#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:148
+#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:149
 msgid "No payments recorded yet"
 msgstr "Noch keine Zahlungen erfasst"
 
-#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:149
+#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:150
 msgid "As soon as someone logs an expense, their share appears here."
 msgstr "Sobald jemand eine Ausgabe erfasst, erscheint sein Anteil hier."
 
-#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:160
+#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:161
 msgid "Money still owed"
 msgstr "Noch geschuldetes Geld"
 
-#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:161
+#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:162
 msgid "Who needs to settle up"
 msgstr "Wer muss noch ausgleichen"
 
-#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:165
+#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:166
 msgid "Pending balances"
 msgstr "Ausstehende Salden"
 
-#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:170
+#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:171
 msgid "Open debt (after optimisation)"
 msgstr "Offene Schulden (nach Optimierung)"
 
-#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:194
+#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:195
 msgid "Nothing owed right now"
 msgstr "Aktuell keine Schulden"
 
-#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:195
+#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:196
 msgid "All participants are even for the tracked expenses."
 msgstr "Alle Teilnehmer sind für die erfassten Ausgaben ausgeglichen."
 
-#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:201
+#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:202
 msgid "Covered by others (gross)"
 msgstr "Von anderen übernommen (brutto)"
 
-#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:236
+#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:237
 msgid "Loading spending timeline…"
 msgstr "Verlauf wird geladen…"
 
-#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:253
+#: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:254
 msgid "Not enough data to render the chart yet."
 msgstr "Noch nicht genug Daten, um das Diagramm darzustellen."
 

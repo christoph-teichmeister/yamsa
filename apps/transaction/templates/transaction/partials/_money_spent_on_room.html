@@ -119,7 +119,8 @@
                                 <i class="bi bi-graph-up"></i>
                                 <span class="text-center">
                                     {% for total_entry in total_money_spent %}
-                                        {{ total_entry.total_spent }}&nbsp;{{ total_entry.currency_sign }}{% if not forloop.last %}&thinsp;/&thinsp;{% endif %}
+                                        {{ total_entry.total_spent }}&nbsp;{{ total_entry.currency_sign }}
+                                        {% if not forloop.last %}&thinsp;/&thinsp;{% endif %}
                                     {% empty %}
                                         0
                                     {% endfor %}
@@ -127,28 +128,28 @@
                             </span>
                         </div>
                         {% for money_spent in money_spent_per_person_qs %}
-                                <div class="graph-row">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <p class="graph-label mb-0">
-                                            {% autoescape off %}
-                                                {% parse_user_text money_spent.paid_by_name True %}
-                                            {% endautoescape %}
-                                        </p>
-                                        <p class="graph-value mb-0">{{ money_spent.total_spent_per_person }} {{ money_spent.currency_sign }}</p>
-                                    </div>
-                                    {% for total_entry in total_money_spent %}
-                                        {% if total_entry.currency_sign == money_spent.currency_sign %}
-                                            {% widthratio money_spent.total_spent_per_person total_entry.total_spent 100 as spent_percent %}
-                                            <div class="graph-bar" data-graph-width="{{ spent_percent }}%"></div>
-                                        {% endif %}
-                                    {% endfor %}
+                            <div class="graph-row">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <p class="graph-label mb-0">
+                                        {% autoescape off %}
+                                            {% parse_user_text money_spent.paid_by_name True %}
+                                        {% endautoescape %}
+                                    </p>
+                                    <p class="graph-value mb-0">{{ money_spent.total_spent_per_person }} {{ money_spent.currency_sign }}</p>
                                 </div>
-                            {% empty %}
-                                <div class="empty-state mt-3">
-                                    <p class="fw-semibold mb-1">{% trans "No payments recorded yet" %}</p>
-                                    <p class="text-muted small mb-0">{% trans "As soon as someone logs an expense, their share appears here." %}</p>
-                                </div>
-                            {% endfor %}
+                                {% for total_entry in total_money_spent %}
+                                    {% if total_entry.currency_sign == money_spent.currency_sign %}
+                                        {% widthratio money_spent.total_spent_per_person total_entry.total_spent 100 as spent_percent %}
+                                        <div class="graph-bar" data-graph-width="{{ spent_percent }}%"></div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% empty %}
+                            <div class="empty-state mt-3">
+                                <p class="fw-semibold mb-1">{% trans "No payments recorded yet" %}</p>
+                                <p class="text-muted small mb-0">{% trans "As soon as someone logs an expense, their share appears here." %}</p>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -200,24 +201,24 @@
                             <hr class="my-3">
                             <p class="text-muted small mb-2">{% trans "Covered by others (gross)" %}</p>
                             {% for covered in money_covered_for_person_qs %}
-                                    <div class="graph-row">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <p class="graph-label mb-0">
-                                                {% autoescape off %}
-                                                    {% parse_user_text covered.paid_for__name True %}
-                                                {% endautoescape %}
-                                            </p>
-                                            <p class="graph-value mb-0">{{ covered.total_covered_for_person }} {{ covered.currency_sign }}</p>
-                                        </div>
-                                        {# Scale covered bars relative to total spent for this currency #}
-                                        {% for total_entry in total_money_spent %}
-                                            {% if total_entry.currency_sign == covered.currency_sign %}
-                                                {% widthratio covered.total_covered_for_person total_entry.total_spent 100 as covered_percent %}
-                                                <div class="graph-bar graph-bar-tertiary"
-                                                     data-graph-width="{{ covered_percent }}%"></div>
-                                            {% endif %}
-                                        {% endfor %}
+                                <div class="graph-row">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <p class="graph-label mb-0">
+                                            {% autoescape off %}
+                                                {% parse_user_text covered.paid_for__name True %}
+                                            {% endautoescape %}
+                                        </p>
+                                        <p class="graph-value mb-0">{{ covered.total_covered_for_person }} {{ covered.currency_sign }}</p>
                                     </div>
+                                    {# Scale covered bars relative to total spent for this currency #}
+                                    {% for total_entry in total_money_spent %}
+                                        {% if total_entry.currency_sign == covered.currency_sign %}
+                                            {% widthratio covered.total_covered_for_person total_entry.total_spent 100 as covered_percent %}
+                                            <div class="graph-bar graph-bar-tertiary"
+                                                 data-graph-width="{{ covered_percent }}%"></div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             {% endfor %}
                         {% endif %}
                     </div>
