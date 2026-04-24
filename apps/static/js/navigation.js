@@ -176,7 +176,6 @@ window.bootstrap = bootstrap;
   };
 
   const PROFILE_PICTURE_FALLBACK_SELECTOR = '[data-profile-picture-fallback-url]';
-  const GRAPH_WIDTH_SELECTOR = '[data-graph-width]';
   const CATEGORY_COLOR_SELECTOR = '[data-category-color]';
 
   const initProfilePictureFallbacks = () => {
@@ -207,13 +206,6 @@ window.bootstrap = bootstrap;
   };
 
   const applyDataStyleVars = () => {
-    document.querySelectorAll(GRAPH_WIDTH_SELECTOR).forEach((element) => {
-      const graphWidth = element.dataset.graphWidth;
-      if (graphWidth) {
-        element.style.setProperty('--graph-width', graphWidth);
-      }
-    });
-
     document.querySelectorAll(CATEGORY_COLOR_SELECTOR).forEach((element) => {
       const categoryColor = element.dataset.categoryColor;
       if (categoryColor) {
