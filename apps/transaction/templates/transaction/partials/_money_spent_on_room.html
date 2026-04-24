@@ -140,7 +140,7 @@
                                 {% for total_entry in total_money_spent %}
                                     {% if total_entry.currency_sign == money_spent.currency_sign %}
                                         {% widthratio money_spent.total_spent_per_person total_entry.total_spent 100 as spent_percent %}
-                                        <div class="graph-bar" data-graph-width="{{ spent_percent }}%"></div>
+                                        <div class="graph-bar" style="--graph-width: {{ spent_percent }}%"></div>
                                     {% endif %}
                                 {% endfor %}
                             </div>
@@ -183,9 +183,9 @@
                                         {% if max_val %}
                                             {% widthratio debt_row.total_open_debt max_val 100 as open_debt_percent %}
                                             <div class="graph-bar graph-bar-secondary"
-                                                 data-graph-width="{{ open_debt_percent }}%"></div>
+                                                 style="--graph-width: {{ open_debt_percent }}%"></div>
                                         {% else %}
-                                            <div class="graph-bar graph-bar-secondary" data-graph-width="0%"></div>
+                                            <div class="graph-bar graph-bar-secondary" style="--graph-width: 0%"></div>
                                         {% endif %}
                                     {% endwith %}
                                 </div>
@@ -215,7 +215,7 @@
                                         {% if total_entry.currency_sign == covered.currency_sign %}
                                             {% widthratio covered.total_covered_for_person total_entry.total_spent 100 as covered_percent %}
                                             <div class="graph-bar graph-bar-tertiary"
-                                                 data-graph-width="{{ covered_percent }}%"></div>
+                                                 style="--graph-width: {{ covered_percent }}%"></div>
                                         {% endif %}
                                     {% endfor %}
                                 </div>
