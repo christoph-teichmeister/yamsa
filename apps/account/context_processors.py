@@ -1,6 +1,3 @@
-from apps.room.models import Room
-
-
 def user_context(request):
     user = request.user
     if not user.is_authenticated:

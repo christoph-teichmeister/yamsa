@@ -112,6 +112,7 @@ env = [
 directory = "coverage_html_report"
 
 [tool.djlint]
+ignore = ["H021"]
 profile = "django"
 
 [tool.ruff]

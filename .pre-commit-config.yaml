@@ -15,6 +15,7 @@ repos:
     hooks:
       - id: djlint-reformat-django
       - id: djlint-django
+        args: ["--ignore", "H021"]
 
   - repo: https://github.com/compilerla/conventional-pre-commit
     # https://github.com/compilerla/conventional-pre-commit/releases

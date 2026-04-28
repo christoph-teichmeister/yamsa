@@ -29,9 +29,7 @@ class TestRoomQsForListOrdering:
             del user.__dict__["room_qs_for_list"]
 
         slugs = [
-            str(r["slug"])
-            for r in user.room_qs_for_list
-            if str(r["slug"]) in {str(old_room.slug), str(new_room.slug)}
+            str(r["slug"]) for r in user.room_qs_for_list if str(r["slug"]) in {str(old_room.slug), str(new_room.slug)}
         ]
 
         assert slugs.index(str(new_room.slug)) < slugs.index(str(old_room.slug)), (
@@ -55,9 +53,7 @@ class TestRoomQsForListOrdering:
             del user.__dict__["room_qs_for_list"]
 
         slugs = [
-            str(r["slug"])
-            for r in user.room_qs_for_list
-            if str(r["slug"]) in {str(no_tx_room.slug), str(tx_room.slug)}
+            str(r["slug"]) for r in user.room_qs_for_list if str(r["slug"]) in {str(no_tx_room.slug), str(tx_room.slug)}
         ]
 
         assert slugs.index(str(tx_room.slug)) < slugs.index(str(no_tx_room.slug)), (

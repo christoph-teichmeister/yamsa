@@ -182,5 +182,3 @@ class TestRoomClosureReminderService:
 
         closed_count_after = Room.objects.filter_status_closed().count()
         assert closed_count_after == closed_count_before  # no duplicate closes
-
-

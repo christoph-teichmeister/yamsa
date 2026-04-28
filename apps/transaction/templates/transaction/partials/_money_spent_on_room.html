@@ -135,7 +135,9 @@
                                             {% parse_user_text money_spent.paid_by_name True %}
                                         {% endautoescape %}
                                     </p>
-                                    <p class="graph-value mb-0">{{ money_spent.total_spent_per_person|format_with_thousands }} {{ money_spent.currency_sign }}</p>
+                                    <p class="graph-value mb-0">
+                                        {{ money_spent.total_spent_per_person|format_with_thousands }} {{ money_spent.currency_sign }}
+                                    </p>
                                 </div>
                                 {% for total_entry in total_money_spent %}
                                     {% if total_entry.currency_sign == money_spent.currency_sign %}

@@ -2,8 +2,8 @@ from decimal import Decimal
 
 from django import template
 from django.template.defaulttags import url
-from django.utils.safestring import mark_safe
 from django.utils.formats import number_format
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -61,12 +61,7 @@ def format_with_thousands(value):
 
         # Use Django's built-in locale-aware formatting
         # With use_l10n=True and force_grouping=True, it respects the current locale
-        formatted = number_format(
-            numeric_value,
-            decimal_pos=2,
-            use_l10n=True,
-            force_grouping=True
-        )
+        formatted = number_format(numeric_value, decimal_pos=2, use_l10n=True, force_grouping=True)
         return mark_safe(formatted)
     except Exception:
         # Fallback: return original value if formatting fails
