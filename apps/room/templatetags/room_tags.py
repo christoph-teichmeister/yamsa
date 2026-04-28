@@ -1,6 +1,9 @@
+from decimal import Decimal
+
 from django import template
 from django.template.defaulttags import url
 from django.utils.safestring import mark_safe
+from django.utils.formats import number_format
 
 register = template.Library()
 
@@ -33,24 +36,20 @@ def room_url(parser, token):
 
 
 @register.filter
-def format_with_thousands(value, locale_code=None):
+def format_with_thousands(value):
     """
     Formats a number with thousands separator using Django's locale-aware number_format.
     
     Uses django.utils.formats.number_format which respects i18n settings.
-    If locale_code is not provided, uses the current language code.
     
-    Usage: {{ total_spent|format_with_thousands }} or {{ total_spent|format_with_thousands:"de-DE" }}
+    Usage: {{ total_spent|format_with_thousands }}
     
-    Examples with default locale (de-DE):
-    - 1234.56 → 1.234,56
-    - 1000 → 1.000
-    - 999 → 999
+    Examples:
+    - de-DE: 1234.56 → 1.234,56
+    - en-US: 1234.56 → 1,234.56
+    - fr-FR: 1234.56 → 1 234,56
     """
     try:
-        from decimal import Decimal
-        from django.utils.formats import number_format
-        
         # Ensure value is numeric
         if isinstance(value, (int, float, Decimal)):
             numeric_value = value
@@ -61,7 +60,6 @@ def format_with_thousands(value, locale_code=None):
                 return mark_safe(str(value))
         
         # Use Django's built-in locale-aware formatting
-        # number_format(value, decimal_pos, use_l10n, force_grouping, thousand_sep, decimal_sep)
         # With use_l10n=True and force_grouping=True, it respects the current locale
         formatted = number_format(
             numeric_value,
