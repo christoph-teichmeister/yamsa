@@ -23,7 +23,7 @@
                         {% parse_user_text parent_transaction.paid_by.name True %}
                     {% endautoescape %}
                     {% trans "paid" %}
-                    <strong>{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</strong>
+                    <strong>{{ parent_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}</strong>
                 </p>
             </div>
             <button type="button"
@@ -45,7 +45,9 @@
                 <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
                     <div>
                         <p class="transaction-label mb-1">{% trans "Total amount" %}</p>
-                        <p class="transaction-amount fw-semibold mb-2">{{ parent_transaction.value }}{{ parent_transaction.currency.sign }}</p>
+                        <p class="transaction-amount fw-semibold mb-2">
+                            {{ parent_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}
+                        </p>
                         <p class="transaction-meta mb-2 text-muted small">
                             <span class="me-1">{{ parent_transaction.category.emoji }}</span>
                             {{ parent_transaction.category.name }}
@@ -111,7 +113,7 @@
                         </div>
                         <div class="text-end">
                             <span class="badge text-bg-primary-subtle text-primary-emphasis px-3 py-2">
-                                {{ child_transaction.value }}{{ parent_transaction.currency.sign }}
+                                {{ child_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}
                             </span>
                         </div>
                     </li>

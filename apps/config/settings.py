@@ -310,6 +310,9 @@ TEMPLATES = (
                 "apps.currency.context_processors.currency_context",
                 "apps.room.context_processors.room_context",
             ),
+            "builtins": [
+                "apps.room.templatetags.room_tags",
+            ],
         },
     },
 )
