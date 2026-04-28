@@ -79,12 +79,12 @@ class FormatWithThousandsFilterTestCase(TestCase):
             self.assertEqual(result, "-1.234,56")
 
     def test_invalid_string_input(self):
-        """Test with invalid string input – should return original value."""
+        """Test with invalid string input - should return original value."""
         result = format_with_thousands("not a number")
         self.assertEqual(result, "not a number")
 
     def test_none_input(self):
-        """Test with None input – should return 'None'."""
+        """Test with None input - should return 'None'."""
         result = format_with_thousands(None)
         self.assertEqual(result, "None")
 

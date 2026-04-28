@@ -39,11 +39,11 @@ def room_url(parser, token):
 def format_with_thousands(value):
     """
     Formats a number with thousands separator using Django's locale-aware number_format.
-    
+
     Uses django.utils.formats.number_format which respects i18n settings.
-    
+
     Usage: {{ total_spent|format_with_thousands }}
-    
+
     Examples:
     - de-DE: 1234.56 → 1.234,56
     - en-US: 1234.56 → 1,234.56
@@ -58,7 +58,7 @@ def format_with_thousands(value):
                 numeric_value = Decimal(str(value))
             except (ValueError, TypeError):
                 return mark_safe(str(value))
-        
+
         # Use Django's built-in locale-aware formatting
         # With use_l10n=True and force_grouping=True, it respects the current locale
         formatted = number_format(
