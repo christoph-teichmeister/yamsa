@@ -90,7 +90,7 @@
                                                     <p class="text-muted small mb-0">{{ category.slug|title }}</p>
                                                 </div>
                                             </div>
-                                            <span class="fw-semibold">{{ category.total_amount|floatformat:2 }}{{ breakdown.currency.sign }}</span>
+                                            <span class="fw-semibold">{{ category.total_amount|format_with_thousands }}|{{ category.total_amount|format_with_thousands }}{{ breakdown.currency.sign }}</span>
                                         </div>
                                     {% endfor %}
                                 </div>

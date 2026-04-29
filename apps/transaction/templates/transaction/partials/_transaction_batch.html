@@ -16,7 +16,7 @@
                     <div class="col">
                         <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Amount" %}</div>
                         <div class="transaction-amount fw-semibold text-primary fs-4 lh-sm">
-                            {{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value }}
+                            {{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value|format_with_thousands }}
                         </div>
                     </div>
                     <div class="col">
