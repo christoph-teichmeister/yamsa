@@ -1707,5 +1707,6 @@ msgstr "transaktionen"
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
 
-msgid "Das dauert länger als erwartet!"
+
+msgid "This is taking longer than expected!"
 msgstr "Das dauert länger als erwartet!"

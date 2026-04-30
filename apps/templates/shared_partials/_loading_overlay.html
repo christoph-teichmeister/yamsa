@@ -1,13 +1,3 @@
-{% comment %}
-Loading Overlay Partial
-Shows a semi-transparent overlay with spinner and message when requests take >800ms.
-
-Usage:
-  {% include "shared_partials/_loading_overlay.html" with loader_id="list-loader-123" %}
-
-Args:
-  loader_id: Unique ID for this loader (required for JS targeting)
-{% endcomment %}
 {% load i18n %}
 <div id="{{ loader_id }}-overlay"
      class="loading-overlay-message"
@@ -17,6 +7,6 @@ Args:
              role="status">
             <span class="visually-hidden">{% trans "Loading..." %}</span>
         </div>
-        <div class="small">{% trans "Das dauert länger als erwartet!" %}</div>
+        <div class="small">{% trans "This is taking longer than expected!" %}</div>
     </div>
 </div>
