@@ -1706,4 +1706,3 @@ msgstr "transaktionen"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
-
