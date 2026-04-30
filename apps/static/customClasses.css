@@ -263,3 +263,10 @@
 .receipt-preview-img {
     object-fit: cover;
 }
+
+/* Skeleton container for list loader */
+.skeleton-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

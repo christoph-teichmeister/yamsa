@@ -12,7 +12,7 @@ class TestListLoaderComponent:
     def test_skeleton_renders(self):
         """Skeleton screen should render with configurable item count."""
         template = Template(
-            '{% load %}{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=3 %}'
+            '{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=3 %}'
         )
         output = template.render(Context({}))
 
@@ -23,7 +23,7 @@ class TestListLoaderComponent:
     def test_overlay_renders(self):
         """Overlay should render with localized message."""
         template = Template(
-            '{% load %}{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=5 %}'
+            '{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=5 %}'
         )
         output = template.render(Context({}))
 
@@ -34,7 +34,7 @@ class TestListLoaderComponent:
     def test_javascript_event_handlers(self):
         """JavaScript should set up HTMX event listeners."""
         template = Template(
-            '{% load %}{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=5 %}'
+            '{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=5 %}'
         )
         output = template.render(Context({}))
 

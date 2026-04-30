@@ -8,7 +8,6 @@ Usage:
 Args:
   item_count: Number of skeleton items to display (default: 5)
 {% endcomment %}
-{% load i18n %}
 <div class="skeleton-container">
     {% for _ in "x"|rjust:item_count %}<div class="skeleton-item"></div>{% endfor %}
 </div>
