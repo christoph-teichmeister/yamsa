@@ -8,8 +8,10 @@ class TransactionListView(TransactionFeedMixin, generic.TemplateView):
 
     def get_context_data(self, **kwargs: object) -> dict[str, object]:
         context = super().get_context_data(**kwargs)
-        total_count = self.get_base_queryset().count()
+        base_queryset = self.get_base_queryset()
+        total_count = base_queryset.count()
         context["transactions_available"] = total_count > 0
         context["transactions_total_count"] = total_count
         context["transaction_search_query"] = self.get_search_query()
+        context["latest_transaction"] = base_queryset.first()
         return context

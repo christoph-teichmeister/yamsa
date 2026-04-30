@@ -274,13 +274,11 @@
                         <span class="text-muted small">{% trans "Transactions logged" %}</span>
                         <span class="fw-semibold">{{ transactions_total_count }}</span>
                     </div>
-                    {% if parent_transactions %}
-                        {% with parent_transactions|first as latest_transaction %}
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted small">{% trans "Last transaction" %}</span>
-                                <span class="fw-semibold">{{ latest_transaction.paid_at|date:'M j, Y' }}</span>
-                            </div>
-                        {% endwith %}
+                    {% if latest_transaction %}
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">{% trans "Last transaction" %}</span>
+                            <span class="fw-semibold">{{ latest_transaction.paid_at|date:'M j, Y' }}</span>
+                        </div>
                     {% else %}
                         <p class="text-muted small mb-0">{% trans "Invite your roommates to start sharing expenses." %}</p>
                     {% endif %}

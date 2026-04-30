@@ -2,8 +2,10 @@ import uuid
 from datetime import timedelta
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.core.management import BaseCommand
+from django.core.management.base import CommandError
 from django.db import transaction
 from django.utils.timezone import now
 
@@ -61,7 +63,20 @@ class Command(BaseCommand):
 
     help = "Creates an intensive set of test data (same users as restore_test_data, many more rooms/transactions/debts)"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--force',
+            action='store_true',
+            help='Force creation of intensive test data even in production environments',
+        )
+
     def handle(self, *args, **options):
+        # Check if we're in a safe environment
+        if not settings.DEBUG and not options.get('force'):
+            raise CommandError(
+                "This command can only be run in development/test environments (DEBUG=True) "
+                "or with the --force flag. Use --force to override this safety check."
+            )
         self.create_intensive_test_data()
 
     @staticmethod
@@ -84,6 +99,7 @@ class Command(BaseCommand):
         )
         print(f'User ID: {superuser.id}, Name: "{superuser.name}" {"created" if created else "found"}')
 
+        registered_users = []
         for i in range(1, 6):
             registered_user, created = User.objects.get_or_create(
                 email=f"registered_user_{i}@yamsa.local",
@@ -95,8 +111,10 @@ class Command(BaseCommand):
                     "is_guest": False,
                 },
             )
+            registered_users.append(registered_user)
             print(f'User ID: {registered_user.id}, Name: "{registered_user.name}" {"created" if created else "found"}')
 
+        guest_users = []
         for i in range(1, 6):
             guest_user, created = User.objects.get_or_create(
                 name=f"guest_{i}",
@@ -107,7 +125,14 @@ class Command(BaseCommand):
                     "is_staff": False,
                 },
             )
+            guest_users.append(guest_user)
             print(f'User ID: {guest_user.id}, Name: "{guest_user.name}" {"created" if created else "found"}')
+
+        return {
+            "admin": superuser,
+            "registered_users": registered_users,
+            "guest_users": guest_users,
+        }
 
     @staticmethod
     def _create_categories():
@@ -138,11 +163,10 @@ class Command(BaseCommand):
         return {"EUR": eur, "GBP": gbp, "USD": usd, "CHF": chf}
 
     @staticmethod
-    def _create_rooms(currencies, categories):
-        users = list(User.objects.all())
-        registered_users = [u for u in users if not u.is_guest and not u.is_superuser]
-        guest_users = [u for u in users if u.is_guest]
-        admin = next(u for u in users if u.is_superuser)
+    def _create_rooms(currencies, categories, users_dict):
+        registered_users = users_dict["registered_users"]
+        guest_users = users_dict["guest_users"]
+        admin = users_dict["admin"]
 
         room_configs = [
             {
@@ -226,7 +250,8 @@ class Command(BaseCommand):
         base_date = now() - timedelta(days=90)
 
         for room, config in rooms:
-            member_ids = list(UserConnectionToRoom.objects.filter(room=room).values_list("user_id", flat=True))
+            # Use member_ids from config to ensure deterministic ordering
+            member_ids = [user.id for user in config["members"]]
             if len(member_ids) < 2:
                 continue
 
@@ -256,12 +281,20 @@ class Command(BaseCommand):
                     created_by_id=creator.id,
                 )
 
-                per_person = (total_amount / len(unique_split_ids)).quantize(Decimal("0.01"))
-                for uid in unique_split_ids:
+                # Convert to cents to avoid rounding issues
+                total_cents = int(total_amount * 100)
+                num_split = len(unique_split_ids)
+                base_share_cents, remainder_cents = divmod(total_cents, num_split)
+
+                for idx, uid in enumerate(unique_split_ids):
+                    # Add one extra cent to the first 'remainder_cents' children
+                    share_cents = base_share_cents + (1 if idx < remainder_cents else 0)
+                    share_value = Decimal(share_cents) / Decimal(100)
+
                     ChildTransaction.objects.create(
                         parent_transaction=parent,
                         paid_for_id=uid,
-                        value=per_person,
+                        value=share_value,
                         created_by_id=creator.id,
                     )
 
@@ -270,7 +303,8 @@ class Command(BaseCommand):
     @staticmethod
     def _create_debts(rooms):
         for room, config in rooms:
-            member_ids = list(UserConnectionToRoom.objects.filter(room=room).values_list("user_id", flat=True))
+            # Use member_ids from config to ensure deterministic ordering
+            member_ids = [user.id for user in config["members"]]
             if len(member_ids) < 2:
                 continue
 
@@ -303,8 +337,8 @@ class Command(BaseCommand):
         self = Command
 
         categories = self._create_categories()
-        self._create_users()
+        users_dict = self._create_users()
         currencies = self._create_currencies()
-        rooms = self._create_rooms(currencies, categories)
+        rooms = self._create_rooms(currencies, categories, users_dict)
         self._create_transactions(rooms, categories)
         self._create_debts(rooms)

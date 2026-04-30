@@ -35,8 +35,8 @@ The loader auto-manages:
 </div>
 <script type="text/javascript" nonce="{{ csp_nonce }}">
 (function() {
-    const loaderId = '{{ loader_id }}';
-    const targetId = '{{ target_id|default:loader_id }}';
+    const loaderId = '{{ loader_id|escapejs }}';
+    const targetId = '{{ target_id|default:loader_id|escapejs }}';
     const skeletonId = loaderId + '-skeleton';
     const overlayId = loaderId + '-overlay';
     
