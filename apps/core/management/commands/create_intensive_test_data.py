@@ -65,18 +65,19 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--force',
-            action='store_true',
-            help='Force creation of intensive test data even in production environments',
+            "--force",
+            action="store_true",
+            help="Force creation of intensive test data even in production environments",
         )
 
     def handle(self, *args, **options):
         # Check if we're in a safe environment
-        if not settings.DEBUG and not options.get('force'):
-            raise CommandError(
-                "This command can only be run in development/test environments (DEBUG=True) "
-                "or with the --force flag. Use --force to override this safety check."
+        if not settings.DEBUG and not options.get("force"):
+            msg = (
+                "This command can only be run in development/test environments (DEBUG=True) or with the --force flag. "
+                "Use --force to override this safety check."
             )
+            raise CommandError(msg)
         self.create_intensive_test_data()
 
     @staticmethod
