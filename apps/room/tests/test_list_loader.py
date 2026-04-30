@@ -3,6 +3,7 @@ Tests for ListLoader component (Issue #144)
 
 Tests the skeleton screen → overlay switching mechanism with 800ms threshold.
 """
+
 from django.template import Context, Template
 
 
@@ -17,8 +18,8 @@ class TestListLoaderComponent:
         output = template.render(Context({}))
 
         # Should contain skeleton items
-        assert 'skeleton-item' in output
-        assert 'test-loader-skeleton' in output
+        assert "skeleton-item" in output
+        assert "test-loader-skeleton" in output
 
     def test_overlay_renders(self):
         """Overlay should render with localized message."""
@@ -28,8 +29,8 @@ class TestListLoaderComponent:
         output = template.render(Context({}))
 
         # Should contain overlay
-        assert 'test-loader-overlay' in output
-        assert 'loading-overlay-message' in output
+        assert "test-loader-overlay" in output
+        assert "loading-overlay-message" in output
 
     def test_javascript_event_handlers(self):
         """JavaScript should set up HTMX event listeners."""
@@ -39,6 +40,6 @@ class TestListLoaderComponent:
         output = template.render(Context({}))
 
         # Should contain HTMX event handler setup
-        assert 'htmx:beforeRequest' in output
-        assert 'htmx:afterSwap' in output
-        assert '800' in output  # 800ms threshold
+        assert "htmx:beforeRequest" in output
+        assert "htmx:afterSwap" in output
+        assert "800" in output  # 800ms threshold

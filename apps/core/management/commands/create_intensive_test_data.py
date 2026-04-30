@@ -177,7 +177,7 @@ class Command(BaseCommand):
                 "name": "New York Business Trip",
                 "description": "Business trip expenses",
                 "currency": currencies["USD"],
-                "members": [admin] + registered_users[:3],
+                "members": [admin, *registered_users[:3]],
                 "creator": admin,
             },
             {
