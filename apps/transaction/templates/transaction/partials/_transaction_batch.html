@@ -61,17 +61,15 @@
         </td>
     </tr>
 {% empty %}
-    {% if not transaction_initial_render %}
-        <tr>
-            <td colspan="2" class="py-4 text-center text-muted">
-                {% if transaction_search_query %}
-                    {% blocktrans with query=transaction_search_query %}No transactions match "{{ query }}".{% endblocktrans %}
-                {% else %}
-                    {% trans "No transactions to show yet." %}
-                {% endif %}
-            </td>
-        </tr>
-    {% endif %}
+    <tr>
+        <td colspan="2" class="py-4 text-center text-muted">
+            {% if transaction_search_query %}
+                {% blocktrans with query=transaction_search_query %}No transactions match "{{ query }}".{% endblocktrans %}
+            {% else %}
+                {% trans "No transactions to show yet." %}
+            {% endif %}
+        </td>
+    </tr>
 {% endfor %}
 {% if transaction_next_cursor %}
     <tr id="transaction-batch-trigger"
@@ -83,7 +81,7 @@
             {% include "shared_partials/_list_loader.html" with loader_id="transaction-batch-loader" skeleton_count=3 target_id="transaction-batch-trigger" %}
         </td>
     </tr>
-{% elif parent_transactions and not transaction_initial_render %}
+{% elif parent_transactions %}
     <tr>
         <td colspan="2" class="text-center text-muted small py-3">{% trans "You're all caught up." %}</td>
     </tr>
