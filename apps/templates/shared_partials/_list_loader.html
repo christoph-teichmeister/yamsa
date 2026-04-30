@@ -5,10 +5,7 @@ Unified loading experience for list views with skeleton screens + delayed overla
 Shows skeleton immediately, switches to overlay after 800ms if loading persists.
 
 Usage in a list container:
-  <div id="transaction-list"
-       hx-get="{% url 'transaction:api_list' %}"
-       hx-trigger="load"
-       hx-swap="innerHTML">
+  <div id="transaction-list" hx-get="{% url 'transaction:api_list' %}" hx-trigger="load" hx-swap="innerHTML">
     {% include "shared_partials/_list_loader.html" with 
        loader_id="transaction-list"
        skeleton_count=5 
@@ -25,21 +22,17 @@ The loader auto-manages:
   - Switch to overlay after 800ms
   - Hide overlay on request complete
 {% endcomment %}
-
 {% load i18n %}
-
 <div id="{{ loader_id }}-loader-container" class="position-relative w-100">
     <!-- Skeleton Screen (shown 0-800ms) -->
-    <div id="{{ loader_id }}-skeleton" class="skeleton-container" style="display: none;">
-        {% for _ in "x"|rjust:skeleton_count %}
-            <div class="skeleton-item"></div>
-        {% endfor %}
+    <div id="{{ loader_id }}-skeleton"
+         class="skeleton-container"
+         style="display: none">
+        {% for _ in "x"|rjust:skeleton_count %}<div class="skeleton-item"></div>{% endfor %}
     </div>
-    
     <!-- Delayed Overlay (shown >800ms) -->
     {% include "shared_partials/_loading_overlay.html" with loader_id=loader_id %}
 </div>
-
 <script type="text/javascript" nonce="{{ csp_nonce }}">
 (function() {
     const loaderId = '{{ loader_id }}';

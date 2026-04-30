@@ -8,16 +8,15 @@ Usage:
 Args:
   loader_id: Unique ID for this loader (required for JS targeting)
 {% endcomment %}
-
 {% load i18n %}
-
-<div id="{{ loader_id }}-overlay" class="loading-overlay-message" style="display: none;">
+<div id="{{ loader_id }}-overlay"
+     class="loading-overlay-message"
+     style="display: none">
     <div class="loading-overlay-message-content">
-        <div class="spinner-grow spinner-grow-sm text-primary-emphasis" role="status">
+        <div class="spinner-grow spinner-grow-sm text-primary-emphasis"
+             role="status">
             <span class="visually-hidden">{% trans "Loading..." %}</span>
         </div>
-        <div class="small">
-            {% trans "Das dauert länger als erwartet!" %}
-        </div>
+        <div class="small">{% trans "Das dauert länger als erwartet!" %}</div>
     </div>
 </div>
