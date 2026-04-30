@@ -10,5 +10,5 @@ class TransactionFeedView(TransactionFeedMixin, generic.TemplateView):
 
     def get_context_data(self, **kwargs: object) -> MutableMapping[str, object]:
         context = super().get_context_data(**kwargs)
-        context.update(self.build_feed_context(initial_render=False))
+        context.update(self.build_feed_context())
         return context

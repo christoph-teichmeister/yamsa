@@ -12,5 +12,6 @@ class TransactionListView(TransactionFeedMixin, generic.TemplateView):
         total_count = base_queryset.count()
         context["transactions_available"] = total_count > 0
         context["transactions_total_count"] = total_count
-        context.update(self.build_feed_context(initial_render=True, queryset=base_queryset))
+        context["transaction_search_query"] = self.get_search_query()
+        context["latest_transaction"] = base_queryset.first()
         return context

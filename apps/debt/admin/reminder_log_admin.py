@@ -24,7 +24,6 @@ class ReminderLogAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
         ),
     )
 
+    @admin.display(description="Recipients")
     def recipients_summary(self, obj: ReminderLog) -> str:
         return f"{len(obj.recipients)} recipients"
-
-    recipients_summary.short_description = "Recipients"

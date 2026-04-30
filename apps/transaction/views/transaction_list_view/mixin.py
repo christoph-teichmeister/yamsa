@@ -67,11 +67,10 @@ class TransactionFeedMixin(TransactionBaseContext):
 
         return transactions, next_cursor
 
-    def build_feed_context(self, *, initial_render: bool, queryset=None):
+    def build_feed_context(self, *, queryset=None):
         transactions, next_cursor = self.get_feed_batch(queryset=queryset)
         return {
             "parent_transactions": transactions,
             "transaction_next_cursor": next_cursor,
-            "transaction_initial_render": initial_render,
             "transaction_search_query": self.get_search_query(),
         }

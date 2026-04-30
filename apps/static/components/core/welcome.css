@@ -149,23 +149,6 @@
     margin-bottom: 0.25rem;
 }
 
-.timeline-card-placeholder {
-    background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.05);
-    border: 1px dashed rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.25);
-}
-
-.news-loading-indicator {
-    display: none;
-    margin-top: 1.5rem;
-}
-
-.news-loading-indicator.htmx-request {
-    display: block;
-}
-
-.news-loading-indicator .placeholder {
-    background-color: rgba(255, 255, 255, 0.15);
-}
 
 .news-load-trigger {
     min-height: 1px;

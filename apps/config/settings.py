@@ -109,7 +109,6 @@ DATABASES = {"default": env.db("DJANGO_DATABASE_URL")}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # URLS
 # ------------------------------------------------------------------------------
@@ -325,7 +324,7 @@ FORM_RENDERER = "django.forms.renderers.DjangoTemplates"
 # Django Admin URL.
 ADMIN_URL = env("DJANGO_ADMIN_URL")
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = (("christoph-teichmeister", "christoph.teichmeister@gmail.com"),)
+ADMINS = ("christoph.teichmeister@gmail.com",)
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 # https://cookiecutter-django.readthedocs.io/en/latest/settings.html#other-environment-settings

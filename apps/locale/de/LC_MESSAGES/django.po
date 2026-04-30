@@ -1016,6 +1016,9 @@ msgstr "Andere"
 msgid "Loading..."
 msgstr "Wird geladen..."
 
+msgid "This is taking longer than expected!"
+msgstr "Das dauert länger als geplant!"
+
 msgid "Back"
 msgstr "Zurück"
 
