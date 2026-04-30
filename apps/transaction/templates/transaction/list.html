@@ -218,8 +218,16 @@
                                     <th scope="col" class="text-end">{% trans "Actions" %}</th>
                                 </tr>
                             </thead>
-                            <tbody id="transaction-table-body">
-                                {% include "transaction/partials/_transaction_batch.html" with parent_transactions=parent_transactions transaction_next_cursor=transaction_next_cursor transaction_initial_render=transaction_initial_render transaction_search_query=transaction_search_query %}
+                            <tbody id="transaction-table-body"
+                                   hx-get="{% room_url 'transaction:feed' %}"
+                                   hx-trigger="load"
+                                   hx-swap="innerHTML"
+                                   hx-include="#transaction-search">
+                                <tr>
+                                    <td colspan="2" class="p-0 border-0">
+                                        {% include "shared_partials/_list_loader.html" with loader_id="transaction-table-body" skeleton_count=5 %}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
