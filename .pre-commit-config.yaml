@@ -15,7 +15,7 @@ repos:
     hooks:
       - id: djlint-reformat-django
       - id: djlint-django
-        args: ["--ignore", "H021"]
+        args: [ "--ignore", "H021" ]
 
   - repo: https://github.com/compilerla/conventional-pre-commit
     # https://github.com/compilerla/conventional-pre-commit/releases
@@ -30,9 +30,8 @@ repos:
     rev: 1.30.0
     hooks:
       - id: django-upgrade
-        args: [ --target-version, "6.0", --all-files ]
+        args: [ --target-version, "6.0" ]
         language_version: python3.13
-        stages: [ pre-push ]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     # https://github.com/pre-commit/pre-commit-hooks/releases
@@ -53,21 +52,21 @@ repos:
         entry: scripts/remove_future_imports.py
         language: python
         language_version: python3.13
-        types: [python]
+        types: [ python ]
 
       - id: remove-all-assignments
         name: remove __all__ assignments
         entry: scripts/remove_all_assignments.py
         language: python
         language_version: python3.13
-        types: [python]
+        types: [ python ]
 
       - id: no-relative-imports
         name: disallow relative imports
         entry: scripts/check_no_relative_imports.py
         language: python
         language_version: python3.13
-        types: [python]
+        types: [ python ]
 
       - id: one-class-per-file
         name: one class per file audit
