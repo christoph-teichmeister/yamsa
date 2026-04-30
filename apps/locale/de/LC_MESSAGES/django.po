@@ -1706,3 +1706,6 @@ msgstr "transaktionen"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
+
+msgid "Das dauert länger als erwartet!"
+msgstr "Das dauert länger als erwartet!"
