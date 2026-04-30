@@ -13,6 +13,17 @@ from apps.core.views import WelcomePartialView
 pytestmark = pytest.mark.django_db
 
 
+def test_post_with_empty_passkeys_field_still_authenticates_with_password(client, user):
+    response = client.post(
+        reverse("account:login"),
+        data={"email": user.email, "password": DEFAULT_PASSWORD, "passkeys": ""},
+        follow=True,
+    )
+
+    assert response.status_code == http.HTTPStatus.OK
+    assert response.template_name[0] == WelcomePartialView.template_name
+
+
 def test_get_regular(client):
     response = client.get(reverse("account:login"))
 

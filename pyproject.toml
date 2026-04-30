@@ -13,6 +13,7 @@ dependencies = [
     "django-extensions==4.*",
     "django-htmx==1.*",
     "django-minify-html==1.*",
+    "django-passkeys>=2.0",
     "django-pony-express==2.*",
     "django-webpack-loader==3.*",
     "django[argon2]==6.*",

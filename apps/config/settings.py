@@ -137,6 +137,7 @@ THIRD_PARTY_APPS = (
     "django_extensions",
     "django_minify_html",
     "django_pony_express",
+    "passkeys",
     "webpack_loader",
 )
 
@@ -162,6 +163,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 AUTHENTICATION_BACKENDS = (
     # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
     "axes.backends.AxesBackend",
+    "apps.account.backends.YamsaPasskeyBackend",
     "django.contrib.auth.backends.ModelBackend",
 )
 
@@ -866,6 +868,7 @@ TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST_FUTURE_GLOB_PATTERNS = [
     "user_factory",
     "superuser_factory",
     "guest_user_factory",
+    "user_passkey_factory",
     "capture_handler",
     "dummy_command",
     "dummy_event",
@@ -889,6 +892,18 @@ TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST = [
     ".venv",
 ]
 
+
+# PASSKEYS
+# ------------------------------------------------------------------------------
+def _passkey_rp_id(request=None) -> str:
+    from urllib.parse import urlparse
+
+    return urlparse(BACKEND_URL).hostname or "localhost"
+
+
+FIDO_SERVER_ID = _passkey_rp_id
+FIDO_SERVER_NAME = "yamsa"
+KEY_ATTACHMENT = None
 
 # WEBPUSH
 # ------------------------------------------------------------------------------
@@ -930,6 +945,10 @@ if env.bool("DJANGO_TESTING", False) or any(keyword in sys.argv for keyword in (
 
     # Enable whitenoise autscanning
     WHITENOISE_AUTOREFRESH = True
+
+    # Use simple storage in tests — no manifest required, avoids issues with
+    # newly added app static files that haven't been collected yet.
+    STORAGES["staticfiles"]["BACKEND"] = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
     WEBPACK_LOADER["DEFAULT"].update(
         {

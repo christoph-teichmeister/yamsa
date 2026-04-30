@@ -2,6 +2,9 @@ from apps.account.views.account_root_redirect_view import AccountRootRedirectVie
 from apps.account.views.guest_authenticate_view import AuthenticateGuestUserView
 from apps.account.views.guest_create_view import GuestCreateView
 from apps.account.views.guest_send_invitation_email_view import GuestSendInvitationEmailView
+from apps.account.views.passkey_delete_view import PasskeyDeleteView
+from apps.account.views.passkey_login_view import PasskeyLoginView
+from apps.account.views.passkey_reg_begin_view import PasskeyRegBeginView
 from apps.account.views.payment_reminder_unsubscribe_view import PaymentReminderUnsubscribeView
 from apps.account.views.user_change_password_view import UserChangePasswordView
 from apps.account.views.user_detail_view import UserDetailView
@@ -12,5 +15,6 @@ from apps.account.views.user_logout_view import LogOutUserView
 from apps.account.views.user_profile_picture_delete_view import UserProfilePictureDeleteView
 from apps.account.views.user_register_view import RegisterUserView
 from apps.account.views.user_remove_from_room_view import UserRemoveFromRoomView
+from apps.account.views.user_security_view import UserSecurityView
 from apps.account.views.user_set_language_view import SetLanguageView
 from apps.account.views.user_update_view import UserUpdateView

@@ -21,6 +21,7 @@ urlpatterns = [
     path("", include("apps.core.urls")),
     # Django Admin, use {% url 'admin:index' %}
     path(f"{settings.ADMIN_URL}/", admin.site.urls),
+    path("account/passkeys/", include("passkeys.urls")),
     path("account/", include("apps.account.urls")),
     path("debt/", include("apps.debt.urls")),
     path("news/", include("apps.news.urls")),
