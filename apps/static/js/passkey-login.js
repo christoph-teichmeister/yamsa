@@ -13,16 +13,18 @@ function getCsrfToken() {
     return null;
 }
 
+const msg = window.passkeyMessages || {};
+
 async function startPasskeyLogin() {
     if (!window.PublicKeyCredential) {
-        showPasskeyLoginError("Dein Browser unterstützt keine Passkeys.");
+        showPasskeyLoginError(msg.browserUnsupported ?? "Your browser does not support passkeys.");
         return;
     }
 
     try {
         const beginResp = await fetch(window.passkeyAuthBeginUrl, { method: "GET" });
         if (!beginResp.ok) {
-            showPasskeyLoginError("Fehler beim Starten der Passkey-Anmeldung.");
+            showPasskeyLoginError(msg.startFailed ?? "Error starting passkey login.");
             return;
         }
         const options = await beginResp.json();
@@ -32,11 +34,11 @@ async function startPasskeyLogin() {
             assertionData = await get_credential(options);
         } catch (e) {
             if (e.name === "NotAllowedError") {
-                showPasskeyLoginError("Anmeldung abgebrochen.");
+                showPasskeyLoginError(msg.userCanceled ?? "Login cancelled.");
             } else if (e.name === "TimeoutError") {
-                showPasskeyLoginError("Zeitüberschreitung. Bitte versuche es erneut.");
+                showPasskeyLoginError(msg.timeout ?? "Timed out. Please try again.");
             } else {
-                showPasskeyLoginError("Passkey nicht erkannt.");
+                showPasskeyLoginError(msg.notRecognized ?? "Passkey not recognised.");
             }
             return;
         }
@@ -54,10 +56,10 @@ async function startPasskeyLogin() {
         if (result.status === "OK") {
             window.location.href = result.redirect;
         } else {
-            showPasskeyLoginError(result.message || "Anmeldung fehlgeschlagen.");
+            showPasskeyLoginError(result.message || msg.authFailed || "Login failed.");
         }
     } catch (e) {
-        showPasskeyLoginError("Ein unerwarteter Fehler ist aufgetreten.");
+        showPasskeyLoginError(msg.unexpected ?? "An unexpected error occurred.");
     }
 }
 

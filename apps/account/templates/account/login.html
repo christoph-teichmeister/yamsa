@@ -102,6 +102,15 @@
         window.csrfToken = "{{ csrf_token }}";
         window.passkeyAuthBeginUrl = "{% url 'passkeys:auth_begin' %}";
         window.passkeyAuthCompleteUrl = "{% url 'account:passkey-auth-complete' %}";
+        window.passkeyMessages = {
+            browserUnsupported: "{% trans 'Your browser does not support passkeys.' %}",
+            startFailed: "{% trans 'Error starting passkey login.' %}",
+            userCanceled: "{% trans 'Login cancelled.' %}",
+            timeout: "{% trans 'Timed out. Please try again.' %}",
+            notRecognized: "{% trans 'Passkey not recognised.' %}",
+            authFailed: "{% trans 'Login failed.' %}",
+            unexpected: "{% trans 'An unexpected error occurred.' %}",
+        };
         document.getElementById("passkey-login-btn").addEventListener("click", startPasskeyLogin);
     </script>
 {% endblock content %}

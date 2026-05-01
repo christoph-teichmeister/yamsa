@@ -94,6 +94,15 @@
         window.csrfToken = "{{ csrf_token }}";
         window.passkeyRegBeginUrl = "{% url 'account:passkey-reg-begin' %}";
         window.passkeyRegCompleteUrl = "{% url 'passkeys:reg_complete' %}";
+        window.passkeyMessages = {
+            browserUnsupported: "{% trans 'Your browser does not support passkeys.' %}",
+            nameRequired: "{% trans 'Please enter a name for your passkey.' %}",
+            startFailed: "{% trans 'Error starting registration.' %}",
+            userCanceled: "{% trans 'Registration cancelled.' %}",
+            createFailed: "{% trans 'Passkey could not be created.' %}",
+            registrationFailed: "{% trans 'Registration failed.' %}",
+            unexpected: "{% trans 'An unexpected error occurred.' %}",
+        };
         var regBtn = document.getElementById("passkey-reg-btn");
         if (regBtn) {
             regBtn.addEventListener("click", function () {

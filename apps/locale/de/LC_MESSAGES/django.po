@@ -1754,3 +1754,39 @@ msgstr "transaktionen"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
+
+msgid "Your browser does not support passkeys."
+msgstr "Dein Browser unterstützt keine Passkeys."
+
+msgid "Please enter a name for your passkey."
+msgstr "Bitte gib einen Namen für deinen Passkey ein."
+
+msgid "Error starting registration."
+msgstr "Fehler beim Starten der Registrierung."
+
+msgid "Registration cancelled."
+msgstr "Registrierung abgebrochen."
+
+msgid "Passkey could not be created."
+msgstr "Passkey konnte nicht erstellt werden."
+
+msgid "Registration failed."
+msgstr "Registrierung fehlgeschlagen."
+
+msgid "An unexpected error occurred."
+msgstr "Ein unerwarteter Fehler ist aufgetreten."
+
+msgid "Error starting passkey login."
+msgstr "Fehler beim Starten der Passkey-Anmeldung."
+
+msgid "Login cancelled."
+msgstr "Anmeldung abgebrochen."
+
+msgid "Timed out. Please try again."
+msgstr "Zeitüberschreitung. Bitte versuche es erneut."
+
+msgid "Passkey not recognised."
+msgstr "Passkey nicht erkannt."
+
+msgid "Login failed."
+msgstr "Anmeldung fehlgeschlagen."

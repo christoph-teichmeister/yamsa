@@ -13,14 +13,16 @@ function getCsrfToken() {
     return null;
 }
 
+const msg = window.passkeyMessages || {};
+
 async function beginPasskeyRegistration(keyName) {
     if (!window.PublicKeyCredential) {
-        showPasskeyRegError("Dein Browser unterstützt keine Passkeys.");
+        showPasskeyRegError(msg.browserUnsupported ?? "Your browser does not support passkeys.");
         return;
     }
 
     if (!keyName || keyName.trim() === "") {
-        showPasskeyRegError("Bitte gib einen Namen für deinen Passkey ein.");
+        showPasskeyRegError(msg.nameRequired ?? "Please enter a name for your passkey.");
         return;
     }
 
@@ -28,7 +30,7 @@ async function beginPasskeyRegistration(keyName) {
         const beginResp = await fetch(window.passkeyRegBeginUrl, { method: "GET" });
         if (!beginResp.ok) {
             const data = await beginResp.json();
-            showPasskeyRegError(data.message || "Fehler beim Starten der Registrierung.");
+            showPasskeyRegError(data.message || msg.startFailed || "Error starting registration.");
             return;
         }
         const options = await beginResp.json();
@@ -38,9 +40,9 @@ async function beginPasskeyRegistration(keyName) {
             credential = await get_new_credentials(options);
         } catch (e) {
             if (e.name === "NotAllowedError") {
-                showPasskeyRegError("Registrierung abgebrochen.");
+                showPasskeyRegError(msg.userCanceled ?? "Registration cancelled.");
             } else {
-                showPasskeyRegError("Passkey konnte nicht erstellt werden.");
+                showPasskeyRegError(msg.createFailed ?? "Passkey could not be created.");
             }
             return;
         }
@@ -60,10 +62,10 @@ async function beginPasskeyRegistration(keyName) {
         if (result.status === "OK") {
             window.location.reload();
         } else {
-            showPasskeyRegError(result.message || "Registrierung fehlgeschlagen.");
+            showPasskeyRegError(result.message || msg.registrationFailed || "Registration failed.");
         }
     } catch (e) {
-        showPasskeyRegError("Ein unerwarteter Fehler ist aufgetreten.");
+        showPasskeyRegError(msg.unexpected ?? "An unexpected error occurred.");
     }
 }
 
