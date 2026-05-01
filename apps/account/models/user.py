@@ -91,6 +91,9 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.name
 
+    def get_full_name(self) -> str:
+        return self.name
+
     def clean(self):
         if self.is_guest and not self.is_superuser:
             # If a user has been added and is a guest, give them unique email and password

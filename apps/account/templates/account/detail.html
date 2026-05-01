@@ -187,10 +187,10 @@
                                 <div class="border rounded-4 h-100 p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
                                     <div>
                                         <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
-                                        <p class="fw-semibold mb-1">{% trans "Change your password" %}</p>
-                                        <p class="text-muted small mb-0">{% trans "Choose a unique password to keep your rooms safe." %}</p>
+                                        <p class="fw-semibold mb-1">{% trans "Manage your login methods" %}</p>
+                                        <p class="text-muted small mb-0">{% trans "Change your password or add a passkey for biometric login." %}</p>
                                     </div>
-                                    <div class="ms-md-auto">
+                                    <div class="ms-md-auto d-flex gap-2 flex-wrap">
                                         <button type="button"
                                                 class="btn btn-outline-primary"
                                                 hx-get="{% url 'account:change-password' pk=user.id %}"
@@ -198,6 +198,13 @@
                                                 hx-indicator="#body-loading-spinner"
                                                 hx-swap="morph:innerHTML"
                                                 hx-push-url="true">{% trans "Change password" %}</button>
+                                        <button type="button"
+                                                class="btn btn-outline-secondary"
+                                                hx-get="{% url 'account:security' pk=user.id %}"
+                                                hx-target="#body"
+                                                hx-indicator="#body-loading-spinner"
+                                                hx-swap="morph:innerHTML"
+                                                hx-push-url="true">{% trans "Security settings" %}</button>
                                     </div>
                                 </div>
                             </div>
