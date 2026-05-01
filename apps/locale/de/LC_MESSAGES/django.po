@@ -367,6 +367,27 @@ msgstr "Mit Passkey anmelden"
 msgid "We renew your cookie while you stay active so normal usage does not log you out, and checking \"Stay signed in\" keeps you signed in for 30 days."
 msgstr "Wir erneuern dein Cookie, solange du aktiv bleibst, damit dich normale Nutzung nicht abmeldet, und mit aktivierter Option \"Angemeldet bleiben\" bleibst du 30 Tage angemeldet."
 
+msgid "Your browser does not support passkeys."
+msgstr "Dein Browser unterstützt keine Passkeys."
+
+msgid "Error starting passkey login."
+msgstr "Fehler beim Starten der Passkey-Anmeldung."
+
+msgid "Login cancelled."
+msgstr "Anmeldung abgebrochen."
+
+msgid "Timed out. Please try again."
+msgstr "Zeitüberschreitung. Bitte versuche es erneut."
+
+msgid "Passkey not recognised."
+msgstr "Passkey nicht erkannt."
+
+msgid "Login failed."
+msgstr "Anmeldung fehlgeschlagen."
+
+msgid "An unexpected error occurred."
+msgstr "Ein unerwarteter Fehler ist aufgetreten."
+
 msgid "Unsubscribed"
 msgstr "Abgemeldet"
 
@@ -456,6 +477,21 @@ msgstr "Ändere dein Passwort"
 
 msgid "Choose a unique password to keep your rooms safe."
 msgstr "Wähle ein einzigartiges Passwort, um deine Räume zu schützen."
+
+msgid "Please enter a name for your passkey."
+msgstr "Bitte gib einen Namen für deinen Passkey ein."
+
+msgid "Error starting registration."
+msgstr "Fehler beim Starten der Registrierung."
+
+msgid "Registration cancelled."
+msgstr "Registrierung abgebrochen."
+
+msgid "Passkey could not be created."
+msgstr "Passkey konnte nicht erstellt werden."
+
+msgid "Registration failed."
+msgstr "Registrierung fehlgeschlagen."
 
 msgid "Delete this passkey?"
 msgstr "Diesen Passkey löschen?"
@@ -1754,39 +1790,3 @@ msgstr "transaktionen"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
-
-msgid "Your browser does not support passkeys."
-msgstr "Dein Browser unterstützt keine Passkeys."
-
-msgid "Please enter a name for your passkey."
-msgstr "Bitte gib einen Namen für deinen Passkey ein."
-
-msgid "Error starting registration."
-msgstr "Fehler beim Starten der Registrierung."
-
-msgid "Registration cancelled."
-msgstr "Registrierung abgebrochen."
-
-msgid "Passkey could not be created."
-msgstr "Passkey konnte nicht erstellt werden."
-
-msgid "Registration failed."
-msgstr "Registrierung fehlgeschlagen."
-
-msgid "An unexpected error occurred."
-msgstr "Ein unerwarteter Fehler ist aufgetreten."
-
-msgid "Error starting passkey login."
-msgstr "Fehler beim Starten der Passkey-Anmeldung."
-
-msgid "Login cancelled."
-msgstr "Anmeldung abgebrochen."
-
-msgid "Timed out. Please try again."
-msgstr "Zeitüberschreitung. Bitte versuche es erneut."
-
-msgid "Passkey not recognised."
-msgstr "Passkey nicht erkannt."
-
-msgid "Login failed."
-msgstr "Anmeldung fehlgeschlagen."
