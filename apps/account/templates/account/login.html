@@ -78,8 +78,8 @@
                                         </div>
                                         <div id="passkey-login-error" class="text-danger small mb-2 d-none"></div>
                                         <button type="button"
-                                                class="btn btn-outline-secondary w-100 fw-semibold py-2"
-                                                onclick="startPasskeyLogin()">
+                                                id="passkey-login-btn"
+                                                class="btn btn-outline-secondary w-100 fw-semibold py-2">
                                             {% trans "Sign in with passkey" %}
                                         </button>
                                         <p class="mt-3 small text-muted">
@@ -99,7 +99,9 @@
     <script src="{% static 'passkeys/js/login.js' %}" nonce="{{ csp_nonce }}"></script>
     <script src="{% static 'js/passkey-login.js' %}" nonce="{{ csp_nonce }}"></script>
     <script nonce="{{ csp_nonce }}">
+        window.csrfToken = "{{ csrf_token }}";
         window.passkeyAuthBeginUrl = "{% url 'passkeys:auth_begin' %}";
         window.passkeyAuthCompleteUrl = "{% url 'account:passkey-auth-complete' %}";
+        document.getElementById("passkey-login-btn").addEventListener("click", startPasskeyLogin);
     </script>
 {% endblock content %}

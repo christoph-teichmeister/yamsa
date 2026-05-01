@@ -39,9 +39,9 @@
                                                 </small>
                                             </div>
                                             <div class="ms-md-auto">
-                                                <form method="post"
-                                                      action="{% url 'account:passkey-delete' %}"
-                                                      onsubmit="return confirm('{% trans "Delete this passkey?" %}')">
+                                                <form id="passkey-delete-form"
+                                                      method="post"
+                                                      action="{% url 'account:passkey-delete' %}">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="id" value="{{ passkey.id }}">
                                                     <button type="submit" class="btn btn-outline-danger btn-sm">{% trans "Delete" %}</button>
@@ -58,11 +58,7 @@
                                                    maxlength="255">
                                         </div>
                                         <div id="passkey-reg-result" class="text-danger small mb-2 d-none"></div>
-                                        <button type="button"
-                                                class="btn btn-primary"
-                                                onclick="beginPasskeyRegistration(document.getElementById('passkey-name').value)">
-                                            {% trans "Register passkey" %}
-                                        </button>
+                                        <button type="button" id="passkey-reg-btn" class="btn btn-primary">{% trans "Register passkey" %}</button>
                                     {% endif %}
                                 </div>
                             </div>
@@ -95,7 +91,22 @@
     <script src="{% static 'passkeys/js/reg.js' %}" nonce="{{ csp_nonce }}"></script>
     <script src="{% static 'js/passkey-register.js' %}" nonce="{{ csp_nonce }}"></script>
     <script nonce="{{ csp_nonce }}">
+        window.csrfToken = "{{ csrf_token }}";
         window.passkeyRegBeginUrl = "{% url 'account:passkey-reg-begin' %}";
         window.passkeyRegCompleteUrl = "{% url 'passkeys:reg_complete' %}";
+        var regBtn = document.getElementById("passkey-reg-btn");
+        if (regBtn) {
+            regBtn.addEventListener("click", function () {
+                beginPasskeyRegistration(document.getElementById("passkey-name").value);
+            });
+        }
+        var deleteForm = document.getElementById("passkey-delete-form");
+        if (deleteForm) {
+            deleteForm.addEventListener("submit", function (e) {
+                if (!confirm("{% trans 'Delete this passkey?' %}")) {
+                    e.preventDefault();
+                }
+            });
+        }
     </script>
 {% endblock content %}

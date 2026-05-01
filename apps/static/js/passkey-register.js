@@ -1,4 +1,7 @@
 function getCsrfToken() {
+    if (window.csrfToken) {
+        return window.csrfToken;
+    }
     const name = "csrftoken";
     const cookies = document.cookie.split(";");
     for (let cookie of cookies) {
