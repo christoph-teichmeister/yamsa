@@ -1297,7 +1297,7 @@ requires-dist = [
     { name = "django-extensions", specifier = "==4.*" },
     { name = "django-htmx", specifier = "==1.*" },
     { name = "django-minify-html", specifier = "==1.*" },
-    { name = "django-passkeys", specifier = ">=2.0" },
+    { name = "django-passkeys", specifier = "==2.*" },
     { name = "django-pony-express", specifier = "==2.*" },
     { name = "django-upgrade", marker = "extra == 'dev'" },
     { name = "django-webpack-loader", specifier = "==3.*" },
