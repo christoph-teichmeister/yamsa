@@ -8,10 +8,10 @@ class ManifestStaticFilesStorage(CompressedManifestStaticFilesStorage):
     # TODO CT: Check if django-passkeys has fixed the missing bootstrap-toggle.min.js.map
     #       and remove this class + revert settings.py to CompressedManifestStaticFilesStorage.
     #       Tracking issue: https://github.com/mkalioby/django-passkeys/issues
-    def _stored_name(self, name, hashed_files):
+    def _stored_name(self, name, hashed_files) -> str:
         try:
             return super()._stored_name(name, hashed_files)
         except ValueError:
-            if name.endswith(".map"):
+            if name.endswith("bootstrap-toggle.min.js.map"):
                 return name
             raise
