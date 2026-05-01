@@ -229,7 +229,9 @@ STORAGES = {
     "staticfiles": {
         # Turn on WhiteNoise storage backend that takes care of compressing static files
         # and creating unique names for each version, so they can safely be cached forever.
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        # TODO CT: Workaround for missing bootstrap-toggle.min.js.map in django-passkeys — revert to
+        #       "whitenoise.storage.CompressedManifestStaticFilesStorage" once fixed upstream.
+        "BACKEND": "apps.config.storage.ManifestStaticFilesStorage",
     },
 }
 
