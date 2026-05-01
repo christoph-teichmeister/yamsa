@@ -28,7 +28,7 @@ class TestPasskeyLoginView:
         assert "redirect" in data
 
     def test_post_with_invalid_passkey_returns_401(self, client, monkeypatch):
-        monkeypatch.setattr("passkeys.backend.auth_complete", lambda request: None)
+        monkeypatch.setattr("apps.account.backends.auth_complete", lambda request: None)
 
         session = client.session
         session["fido2_state"] = {"challenge": "fake"}

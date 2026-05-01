@@ -41,3 +41,5 @@ class TestPasskeyRegBeginView:
 
         assert response.status_code == http.HTTPStatus.OK
         assert isinstance(response, JsonResponse)
+        data = response.json()
+        assert data["publicKey"]["challenge"] == "abc"
