@@ -208,14 +208,17 @@ msgstr "Schalte dies im Benachrichtigungszentrum oder über die Fußzeile der E-
 msgid "Security"
 msgstr "Sicherheit"
 
-msgid "Change your password"
-msgstr "Ändere dein Passwort"
+msgid "Manage your login methods"
+msgstr "Deine Anmeldemethoden verwalten"
 
-msgid "Choose a unique password to keep your rooms safe."
-msgstr "Wähle ein einzigartiges Passwort, um deine Räume zu schützen."
+msgid "Change your password or add a passkey for biometric login."
+msgstr "Ändere dein Passwort oder füge einen Passkey für biometrische Anmeldung hinzu."
 
 msgid "Change password"
 msgstr "Passwort ändern"
+
+msgid "Security settings"
+msgstr "Sicherheitseinstellungen"
 
 msgid "Keep your details up to date"
 msgstr "Halte deine Daten aktuell"
@@ -355,6 +358,12 @@ msgstr "Passwort vergessen?"
 msgid "Log in"
 msgstr "Anmelden"
 
+msgid "or"
+msgstr "oder"
+
+msgid "Sign in with passkey"
+msgstr "Mit Passkey anmelden"
+
 msgid "We renew your cookie while you stay active so normal usage does not log you out, and checking \"Stay signed in\" keeps you signed in for 30 days."
 msgstr "Wir erneuern dein Cookie, solange du aktiv bleibst, damit dich normale Nutzung nicht abmeldet, und mit aktivierter Option \"Angemeldet bleiben\" bleibst du 30 Tage angemeldet."
 
@@ -411,6 +420,45 @@ msgstr "Ist Gast"
 
 msgid "Register now"
 msgstr "Jetzt registrieren"
+
+msgid "Back to profile"
+msgstr "Zurück zum Profil"
+
+msgid "Passkeys"
+msgstr "Passkeys"
+
+msgid "Biometric login"
+msgstr "Biometrische Anmeldung"
+
+msgid "Log in with your fingerprint, face ID, or a hardware security key — no password required."
+msgstr "Melde dich mit deinem Fingerabdruck, Face ID oder einem Hardware-Sicherheitsschlüssel an – ganz ohne Passwort."
+
+msgid "Added:"
+msgstr "Hinzugefügt:"
+
+msgid "Last used:"
+msgstr "Zuletzt verwendet:"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Passkey name"
+msgstr "Passkey-Name"
+
+msgid "e.g. MacBook Touch ID"
+msgstr "z. B. MacBook Touch ID"
+
+msgid "Register passkey"
+msgstr "Passkey anlegen"
+
+msgid "Change your password"
+msgstr "Ändere dein Passwort"
+
+msgid "Choose a unique password to keep your rooms safe."
+msgstr "Wähle ein einzigartiges Passwort, um deine Räume zu schützen."
+
+msgid "Delete this passkey?"
+msgstr "Diesen Passkey löschen?"
 
 msgid "The combination of email and password does not match"
 msgstr "Die Kombination aus E-Mail und Passwort ist nicht korrekt"
@@ -1368,9 +1416,6 @@ msgstr "Leg fest, wer bezahlt hat und wie geteilt wird."
 
 msgid "Are you sure you wish to delete this transaction?"
 msgstr "Bist du sicher, dass du diese Transaktion löschen möchtest?"
-
-msgid "Delete"
-msgstr "Löschen"
 
 msgid "Total"
 msgstr "Gesamt"
