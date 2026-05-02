@@ -18,12 +18,23 @@ class TestSendEmailOnUserConnectionToRoomCreated:
         ucr = UserConnectionToRoomFactory(user=another_user, room=room, created_by=user)
 
         with (
-            mock.patch.object(UserAddedToRoomEmailService, "__init__", return_value=None),
-            mock.patch.object(UserAddedToRoomEmailService, "process"),
+            mock.patch.object(UserAddedToRoomEmailService, "__init__", return_value=None) as mocked_init,
+            mock.patch.object(UserAddedToRoomEmailService, "process") as mocked_process,
         ):
             result = send_email_on_user_connection_to_room_created(
                 context=UserConnectionToRoomCreated.Context(instance=ucr)
             )
+
+        assert result is None
+        mocked_init.assert_called_once_with(recipient=another_user, new_room=room)
+        mocked_process.assert_called_once()
+
+    def test_returns_none_for_creator(self, room, user):
+        ucr = UserConnectionToRoomFactory(user=user, room=room, created_by=user)
+
+        result = send_email_on_user_connection_to_room_created(
+            context=UserConnectionToRoomCreated.Context(instance=ucr)
+        )
 
         assert result is None
 
