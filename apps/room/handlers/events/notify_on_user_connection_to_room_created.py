@@ -36,6 +36,3 @@ def send_email_on_user_connection_to_room_created(context: UserConnectionToRoomC
 
     service = UserAddedToRoomEmailService(recipient=user_connection_to_room.user, new_room=user_connection_to_room.room)
     service.process()
-
-    # TODO CT: Do this
-    # return PostRegisterEmailSent(context_data={"user": context.user})
