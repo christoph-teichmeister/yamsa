@@ -150,28 +150,28 @@ fix = true
 target-version = "py313"  # Fixed version from onrender.com (If you change this, also change it in the Dockerfile!)
 
 [tool.ruff.lint]
-# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 select = [
-    "E", # pycodestyle errors
-    "W", # pycodestyle warnings
-    "F", # Pyflakes
-    "N", # pep8-naming
-    "I", # isort
-    "B", # flake8-bugbear
     "A", # flake8-builtins
-    "DTZ", # flake8-datetimez
-    "DJ", # flake8-django
-    "EM", # flake8-errmsg
-    "RUF", # Removes unnecessary "#noqa" comments
-    "YTT", # Avoid non-future-prove usages of "sys"
-    # "FBT",     # Protects you from the "boolean trap bug"
+    "B", # flake8-bugbear
     "C4", # Checks for unnecessary comprehensions
-    "PIE", # Bunch of useful rules
-    "SIM", # Simplifies your code
+    "DJ", # flake8-django
+    "DTZ", # flake8-datetimez
+    "E", # pycodestyle errors
+    "EM", # flake8-errmsg
+    "F", # Pyflakes
+    "I", # isort
     "INT", # Validates your gettext translation strings
+    "N", # pep8-naming
     "PERF", # Perflint
     "PGH", # No all-purpose "# noqa" and eval validation
+    "PIE", # Bunch of useful rules
+    "RUF", # Removes unnecessary "#noqa" comments
+    "SIM", # Simplifies your code
+    "TID", # flake8-tidy-imports
     "UP", # PyUpgrade
+    "W", # pycodestyle warnings
+    "YTT", # Avoid non-future-prove usages of "sys"
+    # "FBT",     # Protects you from the "boolean trap bug"
 ]
 ignore = [
     'N999', # Project name contains underscore, not fixable
@@ -212,10 +212,13 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.lint.per-file-ignores]
 "**/__init__.py" = [
-  # Allows "imported but unused" in init files
-  "F401",
+    # Allows "imported but unused" in init files
+    "F401",
 ]
 "**/apps.py" = [
-  # Allows "imported but unused" in init files
-  "F401",
+    # Allows "imported but unused" in init files
+    "F401",
 ]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
