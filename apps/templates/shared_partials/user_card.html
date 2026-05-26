@@ -4,27 +4,27 @@
 <div class="col">
     <article class="people-card {% if not user.is_guest %}people-card--interactive{% endif %}"
              {% if not user.is_guest %} hx-trigger="click" hx-get="{% url 'account:detail' pk=user.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" hx-sync=".people-remove-action:abort" {% endif %}>
-        <div class="d-flex align-items-start gap-3">
+        <div class="flex items-start gap-3">
             <div class="people-avatar">
                 {% with avatar_source=user.name|default:user.email %}
                     {% if user.profile_picture %}
                         <img src="{{ user.profile_picture_url }}"
                              data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
                              alt="{{ user.name }}"
-                             class="w-100 h-100 object-fit-cover rounded-3"
+                             class="w-full h-full object-cover rounded-lg"
                              loading="lazy"
                              width="48"
                              height="48">
                     {% else %}
-                        <span class="text-uppercase small fw-semibold">{{ avatar_source|slice:':1'|upper }}</span>
+                        <span class="uppercase text-sm font-semibold">{{ avatar_source|slice:':1'|upper }}</span>
                     {% endif %}
                 {% endwith %}
             </div>
-            <div class="flex-grow-1">
-                <div class="d-flex justify-content-between gap-2">
+            <div class="flex-1">
+                <div class="flex justify-between gap-2">
                     <div>
                         <h5 class="mb-1">{{ user.name }}</h5>
-                        <div class="d-flex flex-wrap gap-2 mb-2">
+                        <div class="flex flex-wrap gap-2 mb-2">
                             <span class="people-pill {% if user.is_guest %}people-pill-guest{% endif %}">
                                 {% if user.is_guest %}
                                     {% trans "Guest" %}
@@ -67,7 +67,7 @@
                     {% endif %}
                 </p>
                 {% if user.is_guest %}
-                    <div class="people-meta small" id="invitation-email-div">
+                    <div class="people-meta text-sm" id="invitation-email-div">
                         {% if request.user.id != user.id %}
                             {% if user.invitation_email_can_be_sent %}
                                 {% include "shared_partials/invitation_email_not_yet_sent.html" %}
@@ -77,7 +77,7 @@
                         {% endif %}
                     </div>
                 {% else %}
-                    <div class="people-meta small">
+                    <div class="people-meta text-sm">
                         <i class="bi bi-person-check"></i>
                         {% trans "Joined as a full member of this room." %}
                     </div>

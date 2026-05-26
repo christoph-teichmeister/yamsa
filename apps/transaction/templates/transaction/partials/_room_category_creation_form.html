@@ -1,94 +1,94 @@
 {% load room_tags i18n %}
 <div id="room-category-creation"
      {% if is_oob %}hx-swap-oob="true"{% endif %}>
-    <div class="card border-0 rounded-4 shadow-sm">
-        <div class="card-body p-4">
-            <div class="mb-3">
-                <p class="text-muted small mb-1">{% trans "Create new category" %}</p>
-                <h5 class="fw-semibold mb-0">{% trans "Room-only categories" %}</h5>
+    <div class="bg-white dark:bg-dark-surface border-0 rounded-2xl shadow-sm">
+        <div class="p-6">
+            <div class="mb-4">
+                <p class="text-text-secondary text-sm mb-1">{% trans "Create new category" %}</p>
+                <h5 class="font-semibold mb-0">{% trans "Room-only categories" %}</h5>
             </div>
             <form id="room-category-creation-form"
                   hx-post="{% room_url 'transaction:category-manager' %}"
                   hx-target="#room-category-list"
                   hx-indicator="#body-loading-spinner"
                   hx-swap="outerHTML"
-                  class="d-flex flex-column gap-3"
+                  class="flex flex-col gap-3"
                   {% if is_oob %}hx-swap-oob="true"{% endif %}>
                 {% csrf_token %}
                 <input type="hidden" name="action" value="create" />
                 <div>
-                    <label class="form-label fw-semibold" for="category-name">{% trans "Name" %}</label>
+                    <label class="form-label font-semibold" for="category-name">{% trans "Name" %}</label>
                     <input id="category-name"
                            name="name"
                            type="text"
                            maxlength="100"
-                           class="form-control{% if category_creation_form.name.errors %} is-invalid{% endif %}"
+                           class="ym-input{% if category_creation_form.name.errors %} ym-invalid{% endif %}"
                            value="{{ category_creation_form.name.value|default_if_none:'' }}"
                            required />
                     {% if category_creation_form.name.errors %}
-                        <div class="invalid-feedback d-block">{{ category_creation_form.name.errors.0 }}</div>
+                        <div class="ym-field-error block">{{ category_creation_form.name.errors.0 }}</div>
                     {% endif %}
                 </div>
-                <div class="row g-3">
-                    <div class="col-6">
-                        <label class="form-label fw-semibold" for="category-emoji">{% trans "Emoji" %}</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label font-semibold" for="category-emoji">{% trans "Emoji" %}</label>
                         <input id="category-emoji"
                                name="emoji"
                                type="text"
                                maxlength="10"
-                               class="form-control{% if category_creation_form.emoji.errors %} is-invalid{% endif %}"
+                               class="ym-input{% if category_creation_form.emoji.errors %} ym-invalid{% endif %}"
                                value="{{ category_creation_form.emoji.value|default_if_none:'' }}"
                                required />
                         {% if category_creation_form.emoji.errors %}
-                            <div class="invalid-feedback d-block">{{ category_creation_form.emoji.errors.0 }}</div>
+                            <div class="ym-field-error block">{{ category_creation_form.emoji.errors.0 }}</div>
                         {% endif %}
                     </div>
-                    <div class="col-6">
-                        <label class="form-label fw-semibold" for="category-color">{% trans "Color" %}</label>
+                    <div>
+                        <label class="form-label font-semibold" for="category-color">{% trans "Color" %}</label>
                         <input id="category-color"
                                name="color"
                                type="text"
                                maxlength="7"
-                               class="form-control{% if category_creation_form.color.errors %} is-invalid{% endif %}"
+                               class="ym-input{% if category_creation_form.color.errors %} ym-invalid{% endif %}"
                                placeholder="#RRGGBB"
                                value="{{ category_creation_form.color.value|default_if_none:'' }}" />
                         {% if category_creation_form.color.errors %}
-                            <div class="invalid-feedback d-block">{{ category_creation_form.color.errors.0 }}</div>
+                            <div class="ym-field-error block">{{ category_creation_form.color.errors.0 }}</div>
                         {% endif %}
                     </div>
                 </div>
-                <div class="d-flex flex-wrap gap-3 align-items-center">
-                    <div class="flex-grow-1">
-                        <label class="form-label fw-semibold" for="category-order">{% trans "Order index" %}</label>
+                <div class="flex flex-wrap gap-3 items-center">
+                    <div class="flex-1">
+                        <label class="form-label font-semibold" for="category-order">{% trans "Order index" %}</label>
                         <input id="category-order"
                                name="order_index"
                                type="number"
                                min="0"
-                               class="form-control{% if category_creation_form.order_index.errors %} is-invalid{% endif %}"
+                               class="ym-input{% if category_creation_form.order_index.errors %} ym-invalid{% endif %}"
                                value="{{ category_creation_form.order_index.value|default_if_none:'' }}" />
                         {% if category_creation_form.order_index.errors %}
-                            <div class="invalid-feedback d-block">{{ category_creation_form.order_index.errors.0 }}</div>
+                            <div class="ym-field-error block">{{ category_creation_form.order_index.errors.0 }}</div>
                         {% endif %}
                     </div>
-                    <div class="form-check form-switch mb-0">
-                        <input class="form-check-input"
+                    <div class="ym-check ym-switch mb-0">
+                        <input class="ym-check-input"
                                type="checkbox"
                                role="switch"
                                id="category-default"
                                name="make_default"
                                {% if category_creation_form.make_default.value %}checked{% endif %}
                                value="true" />
-                        <label class="form-check-label small" for="category-default">{% trans "Set as default" %}</label>
+                        <label class="ym-check-label text-sm" for="category-default">{% trans "Set as default" %}</label>
                     </div>
                 </div>
                 <button type="submit"
-                        class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
+                        class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all gap-2">
                     <i class="bi bi-plus-circle"></i>
                     {% trans "Add category" %}
                 </button>
                 {% if category_creation_form.non_field_errors %}
-                    <div class="alert alert-danger rounded-4 px-3 py-2 mb-0">
-                        {% for error in category_creation_form.non_field_errors %}<p class="mb-0 small">{{ error }}</p>{% endfor %}
+                    <div class="bg-danger-50 border border-danger-200 text-danger-700 rounded-2xl px-4 py-2 mb-0">
+                        {% for error in category_creation_form.non_field_errors %}<p class="mb-0 text-sm">{{ error }}</p>{% endfor %}
                     </div>
                 {% endif %}
             </form>
@@ -130,10 +130,10 @@
                             return
                         }
                         form.reset()
-                        form.querySelectorAll(".is-invalid").forEach((element) =>
-                            element.classList.remove("is-invalid")
+                        form.querySelectorAll(".ym-invalid").forEach((element) =>
+                            element.classList.remove("ym-invalid")
                         )
-                        form.querySelectorAll(".invalid-feedback").forEach((element) =>
+                        form.querySelectorAll(".ym-field-error").forEach((element) =>
                             element.remove()
                         )
                     }

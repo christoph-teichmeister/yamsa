@@ -1,15 +1,27 @@
 .me-involved {
     font-weight: bold;
-    color: var(--bs-primary-text-emphasis);
+    color: #2f5e97;
+}
+
+.dark .me-involved {
+    color: #9ec0ff;
 }
 
 .htmx-a {
-    color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+    color: #3d79db;
     text-decoration: underline;
 }
 
+.dark .htmx-a {
+    color: #9ec0ff;
+}
+
 .p-e-color {
-    color: var(--bs-body-color);
+    color: #1f232a;
+}
+
+.dark .p-e-color {
+    color: #f4f6fb;
 }
 
 .w-90 {
@@ -17,8 +29,12 @@
 }
 
 .debt-list-debt-settled {
-    color: var(--bs-primary-text-emphasis);
+    color: #2f5e97;
     opacity: 50%;
+}
+
+.dark .debt-list-debt-settled {
+    color: #9ec0ff;
 }
 
 .cursor-pointer {
@@ -39,11 +55,15 @@
 }
 
 .room-entry:hover {
-    background-color: rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.08);
+    background-color: rgba(31, 35, 42, 0.08);
+}
+
+.dark .room-entry:hover {
+    background-color: rgba(244, 246, 251, 0.08);
 }
 
 .room-entry.active {
-    background-color: rgba(var(--bs-primary-rgb, 110, 168, 254), 0.15);
+    background-color: rgba(110, 168, 254, 0.15);
 }
 
 .room-entry-ghost {
@@ -52,7 +72,7 @@
 }
 
 .room-entry-callout {
-    border: 1px dashed rgba(var(--bs-primary-rgb, 110, 168, 254), 0.35);
+    border: 1px dashed rgba(110, 168, 254, 0.35);
 }
 
 .room-group {
@@ -67,8 +87,12 @@
 
 .room-entry .room-description {
     font-size: 0.75rem;
-    color: rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.65);
+    color: rgba(31, 35, 42, 0.65);
     display: block;
+}
+
+.dark .room-entry .room-description {
+    color: rgba(244, 246, 251, 0.65);
 }
 
 .room-status-badge {
@@ -82,7 +106,11 @@
 }
 
 .room-list-divider hr {
-    border-color: rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.15);
+    border-color: rgba(31, 35, 42, 0.15);
+}
+
+.dark .room-list-divider hr {
+    border-color: rgba(244, 246, 251, 0.15);
 }
 
 .room-circle {
@@ -190,14 +218,10 @@
     pointer-events: none;
 }
 
-/* Loading Indicators (Issue #144) */
+/* Loading Indicators */
 .loading-indicator-overlay {
-    /* Removed position: fixed — now used as local/relative overlay */
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
     background-color: rgba(0, 0, 0, 0.4);
     z-index: 50;
     pointer-events: none;
@@ -210,7 +234,7 @@
     justify-content: center;
 }
 
-/* Skeleton Screen (placeholder animation) */
+/* Skeleton Screen */
 .skeleton-item {
     background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.1), rgba(255,255,255,0.05));
     background-size: 200% 100%;
@@ -225,13 +249,9 @@
     100% { background-position: -200% 0; }
 }
 
-/* Loading Overlay Message Container */
 .loading-overlay-message {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
     background-color: rgba(0, 0, 0, 0.4);
     z-index: 50;
     display: flex;
@@ -264,7 +284,6 @@
     object-fit: cover;
 }
 
-/* Skeleton container for list loader */
 .skeleton-container {
     display: flex;
     flex-direction: column;

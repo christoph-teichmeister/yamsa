@@ -4,12 +4,12 @@
     <link rel="stylesheet" href="{% static 'components/room/detail.css' %}">
     <div class="room-detail-wrap">
         <div class="room-hero">
-            <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-start">
+            <div class="flex flex-col md:flex-row gap-4 justify-between items-start">
                 <div>
-                    <p class="text-uppercase text-muted small mb-1">{% trans "Room overview" %}</p>
+                    <p class="uppercase text-text-secondary text-sm mb-1">{% trans "Room overview" %}</p>
                     <h2>{{ room.name }}</h2>
-                    <p class="mb-3">{{ room.description|default:_("No description added yet.") }}</p>
-                    <div class="d-flex flex-wrap gap-2">
+                    <p class="mb-4">{{ room.description|default:_("No description added yet.") }}</p>
+                    <div class="flex flex-wrap gap-2">
                         <span class="room-status-pill {% if current_room.is_closed %}room-status-pill-closed{% endif %}">
                             {% if current_room.is_closed %}
                                 <i class="bi bi-lock-fill"></i> {% trans "Closed" %}
@@ -17,51 +17,51 @@
                                 <i class="bi bi-unlock"></i> {% trans "Open" %}
                             {% endif %}
                         </span>
-                        <span class="badge rounded-pill bg-light text-dark d-flex align-items-center">{% trans "Preferred currency" %}: {{ room.preferred_currency }}</span>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full whitespace-nowrap text-sm bg-gray-100 text-gray-800 dark:bg-dark-hover dark:text-gray-200">{% trans "Preferred currency" %}: {{ room.preferred_currency }}</span>
                     </div>
                 </div>
                 <div>
-                    <button class="btn btn-primary room-edit-btn"
+                    <button class="room-edit-btn inline-flex items-center gap-2 px-6 py-2 bg-blue-500 text-white font-semibold rounded-full whitespace-nowrap hover:bg-blue-600 active:scale-95 transition-all"
                             type="button"
                             hx-get="{% room_url 'room:edit' %}"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"
                             hx-push-url="true">
-                        <i class="bi bi-pencil-square me-2"></i>{% trans "Edit room" %}
+                        <i class="bi bi-pencil-square"></i>{% trans "Edit room" %}
                     </button>
                 </div>
             </div>
         </div>
-        <div class="row room-meta-grid g-3">
-            <div class="col-12 col-md-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 room-meta-grid">
+            <div>
                 <div class="room-info-card">
-                    <p class="text-uppercase small">{% trans "Preferred currency" %}</p>
-                    <h5 class="mb-1">{{ room.preferred_currency }}</h5>
+                    <p class="uppercase text-sm">{% trans "Preferred currency" %}</p>
+                    <h5 class="mb-1 font-semibold">{{ room.preferred_currency }}</h5>
                     <p class="mb-0">{% trans "Used as the default for new transactions." %}</p>
                 </div>
             </div>
-            <div class="col-12 col-md-4">
+            <div>
                 <div class="room-info-card">
-                    <p class="text-uppercase small">{% trans "Members" %}</p>
-                    <h3 class="mb-1">{{ room.users.count }}</h3>
+                    <p class="uppercase text-sm">{% trans "Members" %}</p>
+                    <h3 class="mb-1 font-semibold">{{ room.users.count }}</h3>
                     <p class="mb-0">{% trans "Roommates and guests currently connected." %}</p>
                 </div>
             </div>
-            <div class="col-12 col-md-4">
+            <div>
                 <div class="room-info-card">
-                    <p class="text-uppercase small">{% trans "Closing readiness" %}</p>
+                    <p class="uppercase text-sm">{% trans "Closing readiness" %}</p>
                     {% if room.can_be_closed %}
-                        <h5 class="text-success mb-1">{% trans "Ready to close" %}</h5>
+                        <h5 class="text-success-700 dark:text-success-500 mb-1 font-semibold">{% trans "Ready to close" %}</h5>
                         <p class="mb-0">{% trans "No unsettled debts remain." %}</p>
                     {% else %}
-                        <h5 class="text-warning mb-1">{% trans "Outstanding balances" %}</h5>
+                        <h5 class="text-warning-700 dark:text-warning-500 mb-1 font-semibold">{% trans "Outstanding balances" %}</h5>
                         <p class="mb-0">{% trans "Settle open debts before closing." %}</p>
                     {% endif %}
                 </div>
             </div>
-            <div class="col-12 col-md-4">
-                <div class="room-state-banner mt-4">
+            <div class="col-span-1 md:col-span-3">
+                <div class="room-state-banner">
                     {% if current_room.is_open %}
                         {% trans "Keep logging expenses and invite more people whenever you need to." %}
                     {% else %}

@@ -10,10 +10,9 @@
     .member-hero-card {
         border-radius: 1.25rem;
         padding: 1.75rem;
-        background: linear-gradient(145deg, rgba(13, 110, 253, 0.18), rgba(99, 102, 241, 0.22));
-        border: 1px solid rgba(var(--bs-primary-rgb, 13, 110, 253), 0.2);
+        background: linear-gradient(145deg, rgba(110, 168, 254, 0.18), rgba(99, 102, 241, 0.22));
+        border: 1px solid rgba(110, 168, 254, 0.2);
         box-shadow: 0 20px 45px rgba(15, 23, 42, 0.15);
-        color: var(--bs-body-color);
     }
 
     .member-hero-card h2 {
@@ -23,7 +22,7 @@
 
     .member-hero-card p {
         margin-bottom: 0;
-        color: var(--bs-secondary-color, #6c757d);
+        color: #7c879b;
     }
 
     .member-badge {
@@ -42,9 +41,9 @@
     .member-form-card {
         margin-top: 1.5rem;
         border-radius: 1.25rem;
-        border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.15);
+        border: 1px solid rgba(31, 35, 42, 0.15);
         padding: 2rem;
-        background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.02);
+        background: rgba(31, 35, 42, 0.02);
         box-shadow: 0 25px 45px rgba(15, 23, 42, 0.08);
     }
 
@@ -56,32 +55,31 @@
 
     .member-input {
         border-radius: 0.85rem;
-        border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.2);
+        border: 1px solid rgba(31, 35, 42, 0.2);
         color: #0b1b33;
-
         padding: 0.85rem 1rem;
         width: 100%;
         background: rgba(255, 255, 255, 0.9);
     }
 
     .member-input:focus {
-        border-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.65);
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+        border-color: rgba(110, 168, 254, 0.65);
+        box-shadow: 0 0 0 0.2rem rgba(110, 168, 254, 0.15);
         outline: none;
     }
 
     .member-helper {
         font-size: 0.85rem;
         margin-top: 0.35rem;
-        color: var(--bs-secondary-color, #6c757d);
+        color: #7c879b;
     }
 
     .member-errors {
         margin-bottom: 1rem;
         border-radius: 0.85rem;
         padding: 0.85rem 1rem;
-        background: rgba(var(--bs-danger-rgb, 220, 53, 69), 0.12);
-        border: 1px solid rgba(var(--bs-danger-rgb, 220, 53, 69), 0.4);
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid rgba(239, 68, 68, 0.4);
         color: #842029;
     }
 
@@ -99,13 +97,18 @@
     .member-tip {
         margin-top: 1rem;
         font-size: 0.85rem;
-        color: var(--bs-secondary-color, #6c757d);
+        color: #7c879b;
+    }
+
+    .dark .member-form-card {
+        border-color: var(--color-dark-border, #4C4A4F);
+        background: rgba(255, 255, 255, 0.03);
     }
 </style>
 <div class="member-form-wrap">
     {% if back_url %}
         <button type="button"
-                class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1"
+                class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 transition-all gap-2"
                 hx-get="{{ back_url }}"
                 hx-target="#body"
                 hx-indicator="#body-loading-spinner"
@@ -119,10 +122,10 @@
             {% endif %}
         </button>
     {% endif %}
-    <div class="member-hero-card mb-4">
-        <div class="d-flex justify-content-between flex-wrap gap-3">
+    <div class="member-hero-card my-4">
+        <div class="flex justify-between flex-wrap gap-3">
             <div>
-                <p class="text-uppercase text-muted small mb-1">
+                <p class="uppercase text-text-secondary text-sm mb-1">
                     {% if hero_context %}
                         {{ hero_context }}
                     {% else %}
@@ -132,7 +135,7 @@
                 <h2>{{ hero_title }}</h2>
                 <p>{{ hero_subtitle }}</p>
             </div>
-            <div class="text-end">
+            <div class="text-right">
                 <div class="member-badge">
                     <i class="bi {{ hero_badge_icon|default:'bi-people' }}"></i>
                     {% if hero_badge_label %}
@@ -157,7 +160,7 @@
                 {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
             </div>
         {% endif %}
-        <div class="mb-3">
+        <div class="mb-4">
             <label class="member-field-label" for="{{ field.id_for_label }}">{{ field_label }}</label>
             <input id="{{ field.id_for_label }}"
                    name="{{ field.name }}"
@@ -174,7 +177,7 @@
             {% endif %}
             {% if helper_text %}<div class="member-helper">{{ helper_text }}</div>{% endif %}
         </div>
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div class="flex justify-between items-center flex-wrap gap-3">
             <p class="member-tip mb-0">
                 {% if tip_text %}
                     {{ tip_text }}
@@ -183,7 +186,7 @@
                 {% endif %}
             </p>
             <button type="submit"
-                    class="btn btn-primary member-submit {% if submit_disabled %}disabled{% endif %}"
+                    class="inline-flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all member-submit {% if submit_disabled %}opacity-50 cursor-not-allowed{% endif %}"
                     {% if submit_disabled %}disabled aria-disabled="true"{% endif %}>
                 <i class="bi {{ submit_icon|default:'bi-check-lg' }}"></i>
                 {% if submit_label %}
@@ -194,7 +197,7 @@
             </button>
         </div>
         {% if submit_disabled %}
-            <div class="member-helper text-danger fw-semibold mt-2">
+            <div class="member-helper text-danger-500 font-semibold mt-2">
                 {% trans "This room is closed, so new members cannot be added." %}
             </div>
         {% endif %}

@@ -2,84 +2,82 @@
 {% load static room_tags i18n %}
 {% now "Y-m-d\TH:i" as current_datetime %}
 {% block tab_content %}
-    <section class="container px-2 px-md-4 px-lg-5 py-4">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <section class="mx-auto w-full px-4 md:px-8 lg:px-12 py-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div>
-                <p class="text-uppercase text-muted small fw-semibold mb-1">{% trans "New transaction" %}</p>
-                <h2 class="fs-4 fw-semibold mb-0">
+                <p class="uppercase text-text-secondary text-sm font-semibold mb-1">{% trans "New transaction" %}</p>
+                <h2 class="text-xl font-semibold mb-0">
                     {% blocktrans with room_name=current_room.name %}
                         Add transaction for "{{ room_name }}"
                     {% endblocktrans %}
                 </h2>
             </div>
-            <div class="d-flex flex-wrap gap-2">
-                <span class="badge text-bg-dark rounded-pill px-3 py-2">
-                    <i class="bi bi-people me-1"></i>
+            <div class="flex flex-wrap gap-2">
+                <span class="inline-flex items-center px-3 py-2 text-xs font-medium rounded-full whitespace-nowrap bg-gray-800 text-white">
+                    <i class="bi bi-people mr-1"></i>
                     {% blocktrans count member_count=current_room.users|length %}
                         {{ member_count }} member
                     {% plural %}
                         {{ member_count }} members
                     {% endblocktrans %}
                 </span>
-                <span class="badge bg-body-secondary rounded-pill px-3 py-2">
-                    <i class="bi bi-currency-exchange me-1"></i>
+                <span class="inline-flex items-center px-3 py-2 text-xs font-medium rounded-full whitespace-nowrap bg-gray-100 dark:bg-dark-hover text-gray-800 dark:text-gray-200">
+                    <i class="bi bi-currency-exchange mr-1"></i>
                     {% blocktrans with currency_sign=current_room.preferred_currency.sign %}
                         {{ currency_sign }} preferred
                     {% endblocktrans %}
                 </span>
             </div>
         </div>
-        <div class="card border-0 rounded-4 shadow-sm">
-            <div class="card-body p-4 p-lg-5">
+        <div class="bg-white dark:bg-dark-surface border-0 rounded-2xl shadow-sm">
+            <div class="p-6 lg:p-12">
                 <form hx-post="{% room_url 'transaction:create' %}"
                       hx-target="#body"
                       hx-indicator="#body-loading-spinner"
                       hx-swap="morph:innerHTML"
                       hx-push-url="true"
                       enctype="multipart/form-data"
-                      class="d-flex flex-column gap-5 fs-6">
+                      class="flex flex-col gap-12 text-base">
                     {% csrf_token %}
                     {% if form.errors %}
-                        <div class="alert alert-danger rounded-4 shadow-sm border-0 px-4 py-3">
-                            <p class="fw-semibold mb-2">{% trans "Unable to add transaction" %}</p>
-                            <ul class="mb-0 small">
+                        <div class="bg-danger-50 border border-danger-200 text-danger-700 rounded-2xl shadow-sm px-6 py-4">
+                            <p class="font-semibold mb-2">{% trans "Unable to add transaction" %}</p>
+                            <ul class="mb-0 text-sm">
                                 {% for field_errors in form.errors.values %}
                                     {% for error in field_errors %}<li>{{ error }}</li>{% endfor %}
                                 {% endfor %}
                             </ul>
                         </div>
                     {% endif %}
-                    <fieldset class="d-flex flex-column gap-4">
-                        <legend class="fw-semibold h6 text-muted mb-0">{% trans "Required details" %}</legend>
-                        <div class="row g-4">
-                            <div class="col-12 col-lg-8">
-                                <label for="description" class="form-label fw-semibold">{% trans "What was this?" %}</label>
+                    <fieldset class="flex flex-col gap-6">
+                        <legend class="font-semibold text-sm text-text-secondary mb-0">{% trans "Required details" %}</legend>
+                        <div class="grid lg:grid-cols-12 gap-6">
+                            <div class="lg:col-span-8">
+                                <label for="description" class="form-label font-semibold">{% trans "What was this?" %}</label>
                                 {% with description_field=form.description %}
                                     <input id="description"
                                            name="description"
                                            type="text"
-                                           class="form-control{% if description_field.errors %} is-invalid{% endif %}"
+                                           class="ym-input{% if description_field.errors %} ym-invalid{% endif %}"
                                            maxlength="50"
                                            minlength="1"
                                            list="descriptionSuggestions"
                                            placeholder="{% trans "e.g., Grocery run" %}"
                                            value="{{ description_field.value|default:'' }}"
                                            required />
-                                    {% if description_field.errors %}
-                                        <div class="invalid-feedback d-block">{{ description_field.errors.0 }}</div>
-                                    {% endif %}
+                                    {% if description_field.errors %}<div class="ym-field-error block">{{ description_field.errors.0 }}</div>{% endif %}
                                 {% endwith %}
                                 <div class="form-text">{% trans "Maximum 50 characters." %}</div>
                             </div>
-                            <div class="col-12 col-lg-4">
-                                <label for="value" class="form-label fw-semibold">{% trans "Amount paid" %}</label>
+                            <div class="lg:col-span-4">
+                                <label for="value" class="form-label font-semibold">{% trans "Amount paid" %}</label>
                                 {% with value_field=form.value %}
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-body-secondary text-muted">{{ current_room.preferred_currency.sign }}</span>
+                                    <div class="ym-input-group">
+                                        <span class="ym-input-addon bg-gray-100 dark:bg-dark-hover text-text-secondary">{{ current_room.preferred_currency.sign }}</span>
                                         <input id="value"
                                                name="value"
                                                type="number"
-                                               class="form-control{% if value_field.errors %} is-invalid{% endif %}"
+                                               class="ym-input{% if value_field.errors %} ym-invalid{% endif %}"
                                                min="0"
                                                step="0.01"
                                                max="99999999"
@@ -87,17 +85,17 @@
                                                placeholder="0.00"
                                                value="{{ value_field.value|default:'' }}" />
                                     </div>
-                                    {% if value_field.errors %}<div class="invalid-feedback d-block">{{ value_field.errors.0 }}</div>{% endif %}
+                                    {% if value_field.errors %}<div class="ym-field-error block">{{ value_field.errors.0 }}</div>{% endif %}
                                 {% endwith %}
-                                <small class="text-muted">{% trans "Total paid in the selected currency." %}</small>
+                                <small class="text-text-secondary">{% trans "Total paid in the selected currency." %}</small>
                             </div>
                         </div>
-                        <div class="row g-4">
-                            <div class="col-12 col-lg-6">
-                                <label for="paidBySelect" class="form-label fw-semibold">{% trans "Who paid?" %}</label>
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <div>
+                                <label for="paidBySelect" class="form-label font-semibold">{% trans "Who paid?" %}</label>
                                 {% with paid_by_field=form.paid_by %}
                                     <select name="paid_by"
-                                            class="form-select{% if paid_by_field.errors %} is-invalid{% endif %}"
+                                            class="ym-select{% if paid_by_field.errors %} ym-invalid{% endif %}"
                                             id="paidBySelect"
                                             required>
                                         <option value="{{ request.user.id }}"
@@ -113,16 +111,16 @@
                                             {% endif %}
                                         {% endfor %}
                                     </select>
-                                    {% if paid_by_field.errors %}<div class="invalid-feedback d-block">{{ paid_by_field.errors.0 }}</div>{% endif %}
+                                    {% if paid_by_field.errors %}<div class="ym-field-error block">{{ paid_by_field.errors.0 }}</div>{% endif %}
                                 {% endwith %}
-                                <small class="text-muted">{% trans "Person covering this expense." %}</small>
+                                <small class="text-text-secondary">{% trans "Person covering this expense." %}</small>
                             </div>
-                            <div class="col-12 col-lg-6">
-                                <label for="paidForSelect" class="form-label fw-semibold">{% trans "Split between" %}</label>
+                            <div>
+                                <label for="paidForSelect" class="form-label font-semibold">{% trans "Split between" %}</label>
                                 {% with paid_for_field=form.paid_for %}
                                     <select name="paid_for"
                                             multiple
-                                            class="form-select{% if paid_for_field.errors %} is-invalid{% endif %}"
+                                            class="ym-select{% if paid_for_field.errors %} ym-invalid{% endif %}"
                                             id="paidForSelect"
                                             required>
                                         {% for room_user in current_room.users %}
@@ -132,51 +130,51 @@
                                             </option>
                                         {% endfor %}
                                     </select>
-                                    {% if paid_for_field.errors %}<div class="invalid-feedback d-block">{{ paid_for_field.errors.0 }}</div>{% endif %}
+                                    {% if paid_for_field.errors %}<div class="ym-field-error block">{{ paid_for_field.errors.0 }}</div>{% endif %}
                                 {% endwith %}
-                                <small class="text-muted">{% trans "Hold Cmd/Ctrl to adjust beneficiaries." %}</small>
+                                <small class="text-text-secondary">{% trans "Hold Cmd/Ctrl to adjust beneficiaries." %}</small>
                             </div>
                         </div>
                     </fieldset>
-                    <div class="d-flex flex-column gap-3">
-                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
                             <div>
-                                <span class="badge text-bg-light text-dark me-2">{% trans "Optional" %}</span>
-                                <span class="fw-semibold">{% trans "More details" %}</span>
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap bg-gray-100 text-gray-800 dark:bg-dark-hover dark:text-gray-200 mr-2">{% trans "Optional" %}</span>
+                                <span class="font-semibold">{% trans "More details" %}</span>
                             </div>
-                            <button class="btn btn-link text-decoration-none px-0 d-flex align-items-center gap-2"
+                            <button class="text-blue-500 hover:underline bg-transparent border-0 px-0 flex items-center gap-2"
                                     type="button"
-                                    data-bs-toggle="collapse"
-                                    data-bs-target="#optionalDetails"
+                                    data-ym-toggle="collapse"
+                                    data-ym-target="#optionalDetails"
                                     aria-expanded="false"
                                     aria-controls="optionalDetails">
-                                <span class="fw-semibold">{% trans "Show fields" %}</span>
+                                <span class="font-semibold">{% trans "Show fields" %}</span>
                                 <i class="bi bi-chevron-down"></i>
                             </button>
                         </div>
-                        <div class="collapse" id="optionalDetails">
-                            <div class="row g-4">
-                                <div class="col-12 col-lg-4">
-                                    <label for="paid_at_input" class="form-label fw-semibold">{% trans "Paid at" %}</label>
+                        <div class="ym-collapse hidden" id="optionalDetails">
+                            <div class="grid lg:grid-cols-3 gap-6">
+                                <div>
+                                    <label for="paid_at_input" class="form-label font-semibold">{% trans "Paid at" %}</label>
                                     {% with paid_at_field=form.paid_at %}
                                         {% with paid_at_value=paid_at_field.value %}
                                             <input id="paid_at_input"
                                                    name="paid_at"
-                                                   class="form-control{% if paid_at_field.errors %} is-invalid{% endif %}"
+                                                   class="ym-input{% if paid_at_field.errors %} ym-invalid{% endif %}"
                                                    type="datetime-local"
                                                    value="{% if paid_at_value %}{{ paid_at_value|date:'Y-m-d\\TH:i' }}{% else %}{{ current_datetime }}{% endif %}"
                                                    min="2018-04-04T00:00"
                                                    max="2099-12-31T00:00" />
                                         {% endwith %}
-                                        {% if paid_at_field.errors %}<div class="invalid-feedback d-block">{{ paid_at_field.errors.0 }}</div>{% endif %}
+                                        {% if paid_at_field.errors %}<div class="ym-field-error block">{{ paid_at_field.errors.0 }}</div>{% endif %}
                                     {% endwith %}
-                                    <small class="text-muted">{% trans "Use if the expense occurred earlier." %}</small>
+                                    <small class="text-text-secondary">{% trans "Use if the expense occurred earlier." %}</small>
                                 </div>
-                                <div class="col-12 col-lg-4">
-                                    <label for="currencySelect" class="form-label fw-semibold">{% trans "Currency" %}</label>
+                                <div>
+                                    <label for="currencySelect" class="form-label font-semibold">{% trans "Currency" %}</label>
                                     {% with currency_field=form.currency %}
                                         <select name="currency"
-                                                class="form-select{% if currency_field.errors %} is-invalid{% endif %}"
+                                                class="ym-select{% if currency_field.errors %} ym-invalid{% endif %}"
                                                 id="currencySelect"
                                                 required>
                                             <option value="{{ current_room.preferred_currency.id }}"
@@ -192,15 +190,15 @@
                                                 {% endif %}
                                             {% endfor %}
                                         </select>
-                                        {% if currency_field.errors %}<div class="invalid-feedback d-block">{{ currency_field.errors.0 }}</div>{% endif %}
+                                        {% if currency_field.errors %}<div class="ym-field-error block">{{ currency_field.errors.0 }}</div>{% endif %}
                                     {% endwith %}
-                                    <small class="text-muted">{% trans "Defaults to the room preference." %}</small>
+                                    <small class="text-text-secondary">{% trans "Defaults to the room preference." %}</small>
                                 </div>
-                                <div class="col-12 col-lg-4">
-                                    <label for="categorySelect" class="form-label fw-semibold">{% trans "Category" %}</label>
+                                <div>
+                                    <label for="categorySelect" class="form-label font-semibold">{% trans "Category" %}</label>
                                     {% with category_field=form.category %}
                                         <select name="category"
-                                                class="form-select{% if category_field.errors %} is-invalid{% endif %}"
+                                                class="ym-select{% if category_field.errors %} ym-invalid{% endif %}"
                                                 id="categorySelect"
                                                 required>
                                             {% for category in form.fields.category.queryset %}
@@ -210,49 +208,49 @@
                                                 </option>
                                             {% endfor %}
                                         </select>
-                                        {% if category_field.errors %}<div class="invalid-feedback d-block">{{ category_field.errors.0 }}</div>{% endif %}
+                                        {% if category_field.errors %}<div class="ym-field-error block">{{ category_field.errors.0 }}</div>{% endif %}
                                     {% endwith %}
-                                    <small class="text-muted">{% trans "Tag this expense for dashboards and charts." %}</small>
+                                    <small class="text-text-secondary">{% trans "Tag this expense for dashboards and charts." %}</small>
                                 </div>
                             </div>
-                            <div class="mt-4">
-                                <label for="further_notes" class="form-label fw-semibold">{% trans "Notes" %}</label>
+                            <div class="mt-6">
+                                <label for="further_notes" class="form-label font-semibold">{% trans "Notes" %}</label>
                                 {% with notes_field=form.further_notes %}
                                     <textarea id="further_notes"
                                               name="further_notes"
-                                              class="form-control{% if notes_field.errors %} is-invalid{% endif %}"
+                                              class="ym-input{% if notes_field.errors %} ym-invalid{% endif %}"
                                               rows="3"
                                               maxlength="5000"
                                               minlength="1"
                                               placeholder="{% trans "Add split details, receipts, or reminders" %}">{{ notes_field.value|default:'' }}</textarea>
-                                    {% if notes_field.errors %}<div class="invalid-feedback d-block">{{ notes_field.errors.0 }}</div>{% endif %}
+                                    {% if notes_field.errors %}<div class="ym-field-error block">{{ notes_field.errors.0 }}</div>{% endif %}
                                 {% endwith %}
                                 <div class="form-text">{% trans "Up to 5000 characters." %}</div>
                             </div>
-                            <div class="mt-3">
-                                <label for="receipts" class="form-label fw-semibold">{% trans "Receipts" %}</label>
+                            <div class="mt-4">
+                                <label for="receipts" class="form-label font-semibold">{% trans "Receipts" %}</label>
                                 {% with receipts_field=form.receipts %}
                                     <input id="receipts"
                                            name="receipts"
                                            type="file"
-                                           class="form-control{% if receipts_field.errors %} is-invalid{% endif %}"
+                                           class="ym-input{% if receipts_field.errors %} ym-invalid{% endif %}"
                                            multiple
                                            accept="image/png,image/jpeg,image/webp,image/gif,application/pdf" />
                                     {% if receipts_field.errors %}
-                                        <div class="invalid-feedback d-block">{{ receipts_field.errors.0 }}</div>
+                                        <div class="ym-field-error block">{{ receipts_field.errors.0 }}</div>
                                     {% endif %}
                                 {% endwith %}
                                 <div class="form-text">{% trans "Upload receipts as PDF or image (max 5 MB each)." %}</div>
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex flex-column flex-md-row gap-2 pt-2">
+                    <div class="flex flex-col md:flex-row gap-2 pt-2">
                         <button type="submit"
-                                class="btn btn-primary d-flex align-items-center justify-content-center gap-2 w-100 w-md-auto">
+                                class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all gap-2 w-full md:w-auto">
                             <i class="bi bi-plus-circle"></i>
                             {% trans "Add transaction" %}
                         </button>
-                        <a class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 w-100 w-md-auto"
+                        <a class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 transition-all gap-2 w-full md:w-auto"
                            href="{% room_url 'transaction:list' %}"
                            hx-boost="true">
                             <i class="bi bi-arrow-left"></i>
@@ -264,7 +262,7 @@
                         <input id="room_slug"
                                name="room_slug"
                                type="text"
-                               class="form-control"
+                               class="ym-input"
                                required
                                value="{{ current_room.slug }}" />
                     </div>
@@ -273,7 +271,7 @@
                         <input id="room"
                                name="room"
                                type="number"
-                               class="form-control"
+                               class="ym-input"
                                required
                                value="{{ current_room.id }}" />
                     </div>

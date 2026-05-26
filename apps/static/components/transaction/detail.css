@@ -3,9 +3,7 @@
     border-radius: 1rem;
 }
 
-.transaction-detail-card .card-body {
-    padding: 1.5rem;
-}
+/* .card-body removed — Bootstrap class, no longer used */
 
 .transaction-detail-card .transaction-amount {
     font-size: clamp(1.75rem, 4vw, 2.5rem);
@@ -15,7 +13,11 @@
     font-size: 0.7rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--bs-secondary-color, #6c757d);
+    color: #6c757d;
+}
+
+.dark .transaction-label {
+    color: #9ca3af;
 }
 
 .transaction-breakdown-item {
@@ -23,7 +25,11 @@
 }
 
 .transaction-breakdown-item:hover {
-    background-color: rgba(var(--bs-body-color-rgb, 15, 15, 15), 0.03);
+    background-color: rgba(15, 15, 15, 0.03);
+}
+
+.dark .transaction-breakdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .transaction-breakdown-item.cursor-pointer:hover {
@@ -32,5 +38,9 @@
 
 .transaction-meta {
     font-size: 0.8rem;
-    color: var(--bs-secondary-color, #6c757d);
+    color: #6c757d;
+}
+
+.dark .transaction-meta {
+    color: #9ca3af;
 }

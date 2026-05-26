@@ -1,6 +1,7 @@
 {% load static %}
 {% load render_bundle from webpack_loader %}
 {% render_bundle "styles" %}
+{% render_bundle "tailwind" %}
 <link rel="stylesheet" href="{% static 'base.css' %}">
 <link rel="stylesheet" href="{% static 'components/navbar/navbar.css' %}">
 <link rel="stylesheet" href="{% static 'customClasses.css' %}">

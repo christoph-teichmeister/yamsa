@@ -1,31 +1,33 @@
 {% extends "core/base.html" %}
 {% load i18n %}
 {% block content %}
-    <section class="container px-2 px-md-4 px-lg-5 account-detail">
+    <section class="w-full px-2 md:px-4 lg:px-5">
         {% if user.is_guest %}
-            <div class="row justify-content-center">
-                <div class="col-12 col-lg-8">
-                    <div class="card shadow-sm border-0 rounded-4">
-                        <div class="card-body text-center py-5 px-4 px-md-5">
-                            <div class="mb-4">
-                                <span class="badge bg-warning-subtle text-warning-emphasis text-uppercase fw-semibold">{% trans "Guest Mode" %}</span>
+            <div class="flex justify-center">
+                <div class="w-full lg:w-8/12">
+                    <div class="bg-white dark:bg-dark-surface shadow-sm border border-light-border dark:border-dark-border rounded-2xl">
+                        <div class="p-6 md:p-8 text-center">
+                            <div class="mb-6">
+                                <span class="inline-flex items-center px-3 py-1 text-xs font-semibold uppercase rounded-full whitespace-nowrap bg-warning-50 text-warning-700 dark:bg-warning-500/20 dark:text-warning-500">{% trans "Guest Mode" %}</span>
                             </div>
-                            <h2 class="fw-semibold mb-2">
+                            <h2 class="font-semibold mb-2">
                                 {% blocktrans trimmed %}
                                     Hi {{ user.name }}
                                 {% endblocktrans %}
                                 👋
                             </h2>
-                            <p class="text-muted mb-4">
+                            <p class="text-text-secondary mb-6">
                                 {% trans "Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account." %}
                             </p>
-                            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
-                                <a class="btn btn-primary px-4" href="{% url 'account:register' %}">{% trans "Create a free account" %}</a>
-                                <a class="btn btn-outline-secondary px-4"
+                            <div class="flex flex-col md:flex-row justify-center gap-4">
+                                <a class="inline-flex items-center justify-center px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-all"
+                                   href="{% url 'account:register' %}">{% trans "Create a free account" %}</a>
+                                <a class="inline-flex items-center justify-center px-6 py-2 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover transition-all"
                                    href="{% url 'account:login' %}">{% trans "I already have an account" %}</a>
                             </div>
-                            <p class="small text-muted mt-4 mb-0">
-                                {% trans "Not you?" %} <a href="{% url 'account:logout' %}" class="link-secondary">{% trans "Log out instead" %}</a>.
+                            <p class="text-sm text-text-secondary mt-6 mb-0">
+                                {% trans "Not you?" %} <a href="{% url 'account:logout' %}"
+    class="text-blue-500 hover:underline">{% trans "Log out instead" %}</a>.
                             </p>
                         </div>
                     </div>
@@ -33,9 +35,9 @@
             </div>
         {% else %}
             {% if request.user.is_superuser and user.is_superuser %}
-                <div class="d-flex justify-content-end mb-3">
+                <div class="flex justify-end mb-4">
                     <a id="superuser-admin-link"
-                       class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
+                       class="inline-flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover transition-all"
                        href="{{ core.BACKEND_URL }}/{{ core.ADMIN_URL }}/login"
                        target="_blank">
                         <i class="bi bi-terminal"></i>
@@ -43,48 +45,48 @@
                     </a>
                 </div>
             {% endif %}
-            <div class="row justify-content-center gy-4">
-                <div class="col-12 col-xl-9">
-                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                        <div class="card-body p-4 p-md-5">
-                            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-4">
+            <div class="flex flex-col gap-6 items-center">
+                <div class="w-full xl:w-9/12">
+                    <div class="bg-white dark:bg-dark-surface border-0 shadow-sm rounded-2xl overflow-hidden">
+                        <div class="p-6 md:p-8">
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
                                 {% with avatar_source=user.name|default:user.email %}
-                                    <div class="rounded-circle bg-primary-subtle text-primary-emphasis d-inline-flex align-items-center justify-content-center account-avatar-circle">
+                                    <div class="rounded-full whitespace-nowrap bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 inline-flex items-center justify-center account-avatar-circle">
                                         {% if user.profile_picture %}
                                             <img src="{{ user.profile_picture_url }}"
                                                  data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
                                                  alt="{{ user.name }}"
-                                                 class="account-avatar-img rounded-circle w-100 h-100"
+                                                 class="account-avatar-img rounded-full whitespace-nowrap w-full h-full"
                                                  loading="lazy"
                                                  width="72"
                                                  height="72">
                                         {% else %}
-                                            <span class="fs-3 fw-semibold">{{ avatar_source|slice:':1'|upper }}</span>
+                                            <span class="text-2xl font-semibold">{{ avatar_source|slice:':1'|upper }}</span>
                                         {% endif %}
                                     </div>
                                 {% endwith %}
-                                <div class="flex-grow-1">
-                                    <p class="text-uppercase small fw-semibold text-muted mb-1">
+                                <div class="flex-1">
+                                    <p class="uppercase text-xs font-semibold text-text-secondary mb-1">
                                         {% if request.user.id == user.id %}
                                             {% trans "Your account overview" %}
                                         {% else %}
                                             {% trans "Member profile" %}
                                         {% endif %}
                                     </p>
-                                    <h1 class="h3 fw-semibold mb-2">{{ user.name }}</h1>
-                                    <p class="text-muted mb-3">{{ user.email }}</p>
-                                    <p class="text-muted small mb-3">
+                                    <h1 class="text-xl font-semibold mb-2">{{ user.name }}</h1>
+                                    <p class="text-text-secondary mb-4">{{ user.email }}</p>
+                                    <p class="text-text-secondary text-sm mb-4">
                                         {% trans "Preferred language" %}:
                                         {{ user.get_language_display|default:_("Not set") }}
                                     </p>
-                                    <div class="d-flex flex-wrap gap-2">
+                                    <div class="flex flex-wrap gap-2">
                                         {% if user.is_superuser %}
-                                            <span class="badge text-bg-dark">{% trans "Superuser" %}</span>
+                                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap bg-gray-900 text-white">{% trans "Superuser" %}</span>
                                         {% endif %}
                                         {% if user.is_staff %}
-                                            <span class="badge text-bg-info">{% trans "Staff" %}</span>
+                                            <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">{% trans "Staff" %}</span>
                                         {% endif %}
-                                        <span class="badge text-bg-secondary">
+                                        <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap bg-gray-100 text-gray-600 dark:bg-dark-hover dark:text-gray-400">
                                             {% if user.paypal_me_username %}
                                                 {% trans "PayPal linked" %}
                                             {% else %}
@@ -94,8 +96,8 @@
                                     </div>
                                 </div>
                                 {% if request.user.id == user.id %}
-                                    <div class="ms-auto">
-                                        <button class="btn btn-primary d-flex align-items-center gap-2"
+                                    <div class="ml-auto">
+                                        <button class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all"
                                                 hx-get="{% url 'account:update' pk=user.id %}"
                                                 hx-target="#body"
                                                 hx-indicator="#body-loading-spinner"
@@ -110,102 +112,94 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-xl-9">
-                    <div class="row g-4">
-                        <div class="col-12 col-md-6">
-                            <div class="border rounded-4 h-100 p-4 bg-body-secondary-subtle">
-                                <p class="text-uppercase small text-muted mb-1">{% trans "Display name" %}</p>
-                                <p class="fw-semibold mb-0">{{ user.name }}</p>
-                            </div>
+                <div class="w-full xl:w-9/12">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="border border-light-border dark:border-dark-border rounded-2xl h-full p-6 bg-light-bg dark:bg-dark-surface">
+                            <p class="uppercase text-xs text-text-secondary mb-1">{% trans "Display name" %}</p>
+                            <p class="font-semibold mb-0">{{ user.name }}</p>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <div class="border rounded-4 h-100 p-4">
-                                <p class="text-uppercase small text-muted mb-1">{% trans "Email address" %}</p>
-                                <p class="fw-semibold text-break mb-0">{{ user.email }}</p>
-                            </div>
+                        <div class="border border-light-border dark:border-dark-border rounded-2xl h-full p-6 bg-white dark:bg-dark-surface">
+                            <p class="uppercase text-xs text-text-secondary mb-1">{% trans "Email address" %}</p>
+                            <p class="font-semibold break-all mb-0">{{ user.email }}</p>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <div class="border rounded-4 h-100 p-4">
-                                <p class="text-uppercase small text-muted mb-1">{% trans "PayPal.me username" %}</p>
-                                {% if user.paypal_me_username %}
-                                    <p class="fw-semibold mb-0">@{{ user.paypal_me_username }}</p>
-                                {% else %}
-                                    <p class="text-muted mb-0">{% trans "No PayPal link yet" %}</p>
-                                {% endif %}
-                            </div>
+                        <div class="border border-light-border dark:border-dark-border rounded-2xl h-full p-6 bg-white dark:bg-dark-surface">
+                            <p class="uppercase text-xs text-text-secondary mb-1">{% trans "PayPal.me username" %}</p>
+                            {% if user.paypal_me_username %}
+                                <p class="font-semibold mb-0">@{{ user.paypal_me_username }}</p>
+                            {% else %}
+                                <p class="text-text-secondary mb-0">{% trans "No PayPal link yet" %}</p>
+                            {% endif %}
                         </div>
                         {% if request.user == user %}
-                            <div class="col-12 col-md-6">
-                                <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
-                                    <div>
-                                        <p class="text-uppercase small text-muted mb-1">{% trans "Push notifications" %}</p>
-                                        <p class="fw-semibold mb-0">
-                                            {% if user.wants_to_receive_webpush_notifications %}
-                                                {% trans "Enabled" %}
-                                            {% else %}
-                                                {% trans "Disabled" %}
-                                            {% endif %}
-                                        </p>
-                                        <p class="text-muted small mb-0">{% trans "Manage this toggle from the edit screen." %}</p>
-                                    </div>
-                                    <div class="form-check form-switch m-0">
-                                        <input class="form-check-input"
-                                               type="checkbox"
-                                               role="switch"
-                                               id="wants_to_receive_webpush_notifications"
-                                               {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}
-                                               disabled>
-                                    </div>
+                            <div class="border border-light-border dark:border-dark-border rounded-2xl h-full p-6 flex items-center justify-between gap-4 bg-white dark:bg-dark-surface">
+                                <div>
+                                    <p class="uppercase text-xs text-text-secondary mb-1">{% trans "Push notifications" %}</p>
+                                    <p class="font-semibold mb-0">
+                                        {% if user.wants_to_receive_webpush_notifications %}
+                                            {% trans "Enabled" %}
+                                        {% else %}
+                                            {% trans "Disabled" %}
+                                        {% endif %}
+                                    </p>
+                                    <p class="text-text-secondary text-sm mb-0">{% trans "Manage this toggle from the edit screen." %}</p>
+                                </div>
+                                <div class="ym-check ym-switch m-0">
+                                    <input class="ym-check-input"
+                                           type="checkbox"
+                                           role="switch"
+                                           id="wants_to_receive_webpush_notifications"
+                                           {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}
+                                           disabled>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6">
-                                <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
-                                    <div>
-                                        <p class="text-uppercase small text-muted mb-1">{% trans "Payment reminders" %}</p>
-                                        <p class="fw-semibold mb-0">
-                                            {% if user.wants_to_receive_payment_reminders %}
-                                                {% trans "Enabled" %}
-                                            {% else %}
-                                                {% trans "Disabled" %}
-                                            {% endif %}
-                                        </p>
-                                        <p class="text-muted small mb-0">{% trans "Toggle this in the notifications center or via the email footer." %}</p>
-                                    </div>
-                                    <div class="form-check form-switch m-0">
-                                        <input class="form-check-input"
-                                               type="checkbox"
-                                               role="switch"
-                                               id="wants_to_receive_payment_reminders"
-                                               {% if user.wants_to_receive_payment_reminders %}checked{% endif %}
-                                               disabled>
-                                    </div>
+                            <div class="border border-light-border dark:border-dark-border rounded-2xl h-full p-6 flex items-center justify-between gap-4 bg-white dark:bg-dark-surface">
+                                <div>
+                                    <p class="uppercase text-xs text-text-secondary mb-1">{% trans "Payment reminders" %}</p>
+                                    <p class="font-semibold mb-0">
+                                        {% if user.wants_to_receive_payment_reminders %}
+                                            {% trans "Enabled" %}
+                                        {% else %}
+                                            {% trans "Disabled" %}
+                                        {% endif %}
+                                    </p>
+                                    <p class="text-text-secondary text-sm mb-0">
+                                        {% trans "Toggle this in the notifications center or via the email footer." %}
+                                    </p>
+                                </div>
+                                <div class="ym-check ym-switch m-0">
+                                    <input class="ym-check-input"
+                                           type="checkbox"
+                                           role="switch"
+                                           id="wants_to_receive_payment_reminders"
+                                           {% if user.wants_to_receive_payment_reminders %}checked{% endif %}
+                                           disabled>
                                 </div>
                             </div>
                         {% endif %}
                         {% if request.user == user %}
-                            <div class="col-12">
-                                <div class="border rounded-4 h-100 p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
-                                    <div>
-                                        <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
-                                        <p class="fw-semibold mb-1">{% trans "Manage your login methods" %}</p>
-                                        <p class="text-muted small mb-0">{% trans "Change your password or add a passkey for biometric login." %}</p>
-                                    </div>
-                                    <div class="ms-md-auto d-flex gap-2 flex-wrap">
-                                        <button type="button"
-                                                class="btn btn-outline-primary"
-                                                hx-get="{% url 'account:change-password' pk=user.id %}"
-                                                hx-target="#body"
-                                                hx-indicator="#body-loading-spinner"
-                                                hx-swap="morph:innerHTML"
-                                                hx-push-url="true">{% trans "Change password" %}</button>
-                                        <button type="button"
-                                                class="btn btn-outline-secondary"
-                                                hx-get="{% url 'account:security' pk=user.id %}"
-                                                hx-target="#body"
-                                                hx-indicator="#body-loading-spinner"
-                                                hx-swap="morph:innerHTML"
-                                                hx-push-url="true">{% trans "Security settings" %}</button>
-                                    </div>
+                            <div class="col-span-1 md:col-span-2 border border-light-border dark:border-dark-border rounded-2xl h-full p-6 flex flex-col md:flex-row items-start md:items-center gap-4 bg-white dark:bg-dark-surface">
+                                <div>
+                                    <p class="uppercase text-xs text-text-secondary mb-1">{% trans "Security" %}</p>
+                                    <p class="font-semibold mb-1">{% trans "Manage your login methods" %}</p>
+                                    <p class="text-text-secondary text-sm mb-0">
+                                        {% trans "Change your password or add a passkey for biometric login." %}
+                                    </p>
+                                </div>
+                                <div class="md:ml-auto flex gap-2 flex-wrap">
+                                    <button type="button"
+                                            class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 active:scale-95 transition-all"
+                                            hx-get="{% url 'account:change-password' pk=user.id %}"
+                                            hx-target="#body"
+                                            hx-indicator="#body-loading-spinner"
+                                            hx-swap="morph:innerHTML"
+                                            hx-push-url="true">{% trans "Change password" %}</button>
+                                    <button type="button"
+                                            class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 transition-all"
+                                            hx-get="{% url 'account:security' pk=user.id %}"
+                                            hx-target="#body"
+                                            hx-indicator="#body-loading-spinner"
+                                            hx-swap="morph:innerHTML"
+                                            hx-push-url="true">{% trans "Security settings" %}</button>
                                 </div>
                             </div>
                         {% endif %}

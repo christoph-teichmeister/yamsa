@@ -1,7 +1,3 @@
-import * as bootstrap from "bootstrap";
-
-window.bootstrap = bootstrap;
-
 (function () {
   if (window.__yamsaNavigationInitialized) {
     return;
@@ -35,10 +31,8 @@ window.bootstrap = bootstrap;
       if (!prefersDark) {
         return 'dark';
       }
-
       return prefersDark.matches ? 'dark' : 'light';
     }
-
     return theme;
   };
 
@@ -46,8 +40,12 @@ window.bootstrap = bootstrap;
     if (!theme) {
       return;
     }
-
-    document.documentElement.setAttribute('data-bs-theme', resolveTheme(theme));
+    const resolved = resolveTheme(theme);
+    if (resolved === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   };
 
   const initThemeToggle = () => {
@@ -58,12 +56,10 @@ window.bootstrap = bootstrap;
       if (!button) {
         return;
       }
-
       const value = button.dataset.themeValue;
       if (!value) {
         return;
       }
-
       setStoredTheme(value);
       applyTheme(value);
     });
@@ -88,13 +84,11 @@ window.bootstrap = bootstrap;
     if (!navigator.clipboard) {
       return;
     }
-
     document.addEventListener('click', (event) => {
       const button = event.target.closest('[data-copy-share-url]');
       if (!button) {
         return;
       }
-
       const shareUrl = (button.dataset.shareUrl || window.location.href).trim();
       navigator.clipboard.writeText(shareUrl).catch((error) => {
         console.error('Failed to copy share URL', error);
@@ -102,42 +96,167 @@ window.bootstrap = bootstrap;
     });
   };
 
-  const initOffcanvasCleanup = () => {
-    const removeExcessBackdrops = () => {
-      const backdrops = document.getElementsByClassName('offcanvas-backdrop');
-      while (backdrops.length > 1) {
-        const target = backdrops[0];
-        if (target && target.parentNode) {
-          target.parentNode.removeChild(target);
-        } else {
-          break;
-        }
-      }
-    };
+  // --- Custom Drawer ---
 
-    document.addEventListener('shown.bs.offcanvas', (event) => {
-      if (event.target.id === 'offcanvasNavbar') {
-        removeExcessBackdrops();
+  const openDrawer = (el) => {
+    el.classList.add('show');
+    el.removeAttribute('aria-hidden');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('role', 'dialog');
+
+    let backdrop = document.getElementById('yamsa-offcanvas-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.className = 'ym-drawer-backdrop';
+      backdrop.id = 'yamsa-offcanvas-backdrop';
+      backdrop.addEventListener('click', () => closeDrawer(el));
+      document.body.appendChild(backdrop);
+    }
+
+    document.body.style.overflow = 'hidden';
+    el.dispatchEvent(new CustomEvent('ym:drawer:shown', { bubbles: true }));
+  };
+
+  const closeDrawer = (el) => {
+    el.classList.remove('show');
+    el.setAttribute('aria-hidden', 'true');
+    el.removeAttribute('aria-modal');
+
+    const backdrop = document.getElementById('yamsa-offcanvas-backdrop');
+    if (backdrop) {
+      backdrop.remove();
+    }
+
+    document.body.style.overflow = '';
+    el.dispatchEvent(new CustomEvent('ym:drawer:hidden', { bubbles: true }));
+  };
+
+  const initDrawer = () => {
+    document.addEventListener('click', (event) => {
+      const trigger = event.target.closest('[data-ym-toggle="drawer"]');
+      if (!trigger) {
+        return;
+      }
+      const targetId = trigger.getAttribute('data-ym-target');
+      if (!targetId) {
+        return;
+      }
+      const drawer = document.querySelector(targetId);
+      if (!drawer) {
+        return;
+      }
+      openDrawer(drawer);
+    });
+
+    document.addEventListener('click', (event) => {
+      const trigger = event.target.closest('[data-ym-dismiss="drawer"]');
+      if (!trigger) {
+        return;
+      }
+      const targetId = trigger.getAttribute('data-ym-target');
+      const drawer = targetId
+        ? document.querySelector(targetId)
+        : trigger.closest('.ym-drawer');
+      if (drawer) {
+        closeDrawer(drawer);
       }
     });
 
-    document.addEventListener('hidden.bs.offcanvas', (event) => {
-      if (event.target.id === 'offcanvasNavbar') {
-        removeExcessBackdrops();
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+      const openDrawerEl = document.querySelector('.ym-drawer.show');
+      if (openDrawerEl) {
+        closeDrawer(openDrawerEl);
       }
     });
   };
+
+  // --- Custom Modal ---
+
+  const openModal = (el) => {
+    el.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    el.dispatchEvent(new CustomEvent('ym:dialog:shown', { bubbles: true }));
+  };
+
+  const closeModal = (el) => {
+    el.classList.remove('show');
+    document.body.style.overflow = '';
+    el.dispatchEvent(new CustomEvent('ym:dialog:hidden', { bubbles: true }));
+  };
+
+  const initModal = () => {
+    document.addEventListener('click', (event) => {
+      const trigger = event.target.closest('[data-ym-toggle="dialog"]');
+      if (!trigger) {
+        return;
+      }
+      const targetId = trigger.getAttribute('data-ym-target');
+      if (!targetId) {
+        return;
+      }
+      const modal = document.querySelector(targetId);
+      if (!modal) {
+        return;
+      }
+      openModal(modal);
+    });
+
+    document.addEventListener('click', (event) => {
+      const trigger = event.target.closest('[data-ym-dismiss="dialog"]');
+      if (!trigger) {
+        return;
+      }
+      const modal = trigger.closest('.ym-dialog');
+      if (modal) {
+        closeModal(modal);
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+      const openModalEl = document.querySelector('.ym-dialog.show');
+      if (openModalEl) {
+        closeModal(openModalEl);
+      }
+    });
+  };
+
+  // --- Collapse ---
+
+  const initCollapse = () => {
+    document.addEventListener('click', (event) => {
+      const trigger = event.target.closest('[data-ym-toggle="collapse"]');
+      if (!trigger) return;
+      const targetId = trigger.getAttribute('data-ym-target');
+      if (!targetId) return;
+      const target = document.querySelector(targetId);
+      if (!target) return;
+      target.classList.toggle('hidden');
+      // Update aria-expanded
+      const isExpanded = !target.classList.contains('hidden');
+      trigger.setAttribute('aria-expanded', isExpanded);
+    });
+  };
+
+  // Expose for inline scripts that need to close modals
+  window.yamsa = window.yamsa || {};
+  window.yamsa.closeModal = closeModal;
+
+  // ---
 
   const scrollDocumentToTop = () => {
     if (typeof window.scrollTo === 'function') {
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       return;
     }
-
     if (document.documentElement) {
       document.documentElement.scrollTop = 0;
     }
-
     if (document.body) {
       document.body.scrollTop = 0;
     }
@@ -148,11 +267,9 @@ window.bootstrap = bootstrap;
       if (!target) {
         return false;
       }
-
       if (target === document.body) {
         return true;
       }
-
       const targetId = typeof target.id === 'string' ? target.id.toLowerCase() : '';
       return targetId === 'body';
     };
@@ -163,7 +280,6 @@ window.bootstrap = bootstrap;
       if (!isBodyTarget(target)) {
         return;
       }
-
       if (typeof window.requestAnimationFrame === 'function') {
         window.requestAnimationFrame(scrollDocumentToTop);
       } else {
@@ -183,22 +299,18 @@ window.bootstrap = bootstrap;
       if (img.dataset.profilePictureFallbackBound === 'true') {
         return;
       }
-
       const fallbackUrl = img.dataset.profilePictureFallbackUrl;
       if (!fallbackUrl) {
         return;
       }
-
       const handleError = () => {
         if (img.src !== fallbackUrl) {
           img.src = fallbackUrl;
         }
         img.removeEventListener('error', handleError);
       };
-
       img.addEventListener('error', handleError);
       img.dataset.profilePictureFallbackBound = 'true';
-
       if (img.complete && img.naturalWidth === 0) {
         handleError();
       }
@@ -237,7 +349,9 @@ window.bootstrap = bootstrap;
   const init = () => {
     initThemeToggle();
     initShareButtons();
-    initOffcanvasCleanup();
+    initDrawer();
+    initModal();
+    initCollapse();
     initRoomNavigationScrollReset();
     refreshDynamicElements();
     document.addEventListener('click', handleNavigationClick);

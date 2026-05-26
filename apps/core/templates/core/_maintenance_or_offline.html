@@ -1,6 +1,6 @@
 {% extends "core/base.html" %}
 {% block content %}
-    <div class="position-absolute top-50 start-50 translate-middle">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <h1 class="text-center">
             {% if is_in_maintenance %}
                 yamsa is in Maintenance
@@ -13,14 +13,14 @@
         <hr>
         <p class="text-center">Please check back later!</p>
         {% if is_in_maintenance %}
-            <p class="text-center text-muted">We are sorry for any inconveniences</p>
+            <p class="text-center text-text-secondary">We are sorry for any inconveniences</p>
         {% elif called_by_offline_view %}
-            <p class="text-center text-muted">yamsa needs internet to work</p>
+            <p class="text-center text-text-secondary">yamsa needs internet to work</p>
         {% endif %}
     </div>
     {% if called_by_offline_view %}
-        <div class="fixed-bottom z-0 d-flex justify-content-center mb-5">
-            <button class="btn btn-primary"
+        <div class="fixed bottom-0 left-0 right-0 z-0 flex justify-center mb-12">
+            <button class="inline-flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all"
                     hx-trigger="click"
                     hx-get="{% url 'core:welcome' %}"
                     hx-target="#body"

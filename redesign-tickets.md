@@ -1,4 +1,5 @@
 [//]: # (TODO CT: Delete this file)
+[//]: # (TODO CT: Resume at claude --resume a4c48b4a-9782-4425-bf93-83f025963c6d)
 
 # yamsa Redesign – Implementation Tickets
 

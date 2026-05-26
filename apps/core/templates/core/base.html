@@ -5,7 +5,7 @@
 {% trans "yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications." as yamsa_meta_description %}
 {% trans "yamsa, shared expenses, roommate app, bill splitting, dashboards" as yamsa_meta_keywords %}
 <!DOCTYPE html>
-<html lang="{{ request.LANGUAGE_CODE|default:'en' }}" data-bs-theme="dark">
+<html lang="{{ request.LANGUAGE_CODE|default:'en' }}" class="dark">
     <head>
         <meta charset="utf-8">
         <meta name="viewport"
@@ -26,7 +26,7 @@
         <meta name="htmx-config"
               content='{"includeIndicatorStyles": false, "inlineScriptNonce": "{{ csp_nonce }}"}'>
     </head>
-    <body hx-ext="idiomorph" id="body">
+    <body hx-ext="idiomorph" id="body" class="bg-light-bg dark:bg-dark-bg">
         {% if core.DEBUG %}
             <div class="debug-banner">
                 <h1 class="mb-0">💀 Deadzone 💀</h1>
@@ -37,7 +37,7 @@
         {% if not is_in_maintenance and not called_by_offline_view and not request.user.is_anonymous %}
             {% include "_side_menu.html" %}
         {% endif %}
-        <div class="container-fluid my-5 py-5 px-2" id="base-content">
+        <div class="w-full md:w-1/2 md:mx-auto my-12 py-12 px-2" id="base-content">
             {% block content %}
             {% endblock content %}
         </div>
@@ -46,50 +46,20 @@
         {% endif %}
         {% if not dashboard_tabs %}
             {% load room_tags %}
-            <nav class="navbar fixed-bottom z-0 pb-4">
-                <div class="container-fluid">
-                    <div class="navbar-nav w-100 d-flex flex-row justify-content-around">
-                        <div class="nav-link">
-                            <a href='https://ko-fi.com/K3K01EDQN8' target='_blank'>
-                                <img height="36"
-                                     width="141"
-                                     src="{% static 'images/ko-fi.png' %}"
-                                     alt="Buy Me a Coffee at ko-fi.com" />
-                            </a>
-                        </div>
+            <nav class="ym-navbar ym-fixed-bottom z-0 pb-4">
+                <div class="flex w-full justify-around px-4">
+                    <div class="px-2 py-1">
+                        <a href='https://ko-fi.com/K3K01EDQN8' target='_blank'>
+                            <img height="36"
+                                 width="141"
+                                 src="{% static 'images/ko-fi.png' %}"
+                                 alt="Buy Me a Coffee at ko-fi.com" />
+                        </a>
                     </div>
                 </div>
             </nav>
         {% endif %}
         {% render_bundle "htmx" attrs="defer" %}
         {% render_bundle "navigation" attrs="defer" %}
-        <!-- Activate various Bootstrap components once the bundle has loaded -->
-        <script type="text/javascript" nonce="{{ csp_nonce }}">
-          if (!window.__yamsaBootstrapInitialized) {
-            window.__yamsaBootstrapInitialized = true;
-
-            const initializeBootstrapComponents = () => {
-              if (!window.bootstrap) {
-                console.warn('Bootstrap JS not available yet; skipping component initialization.');
-                return;
-              }
-
-              const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-              const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new window.bootstrap.Tooltip(tooltipTriggerEl))
-
-              const toastElList = document.querySelectorAll('.toast')
-              const toastList = [...toastElList].map(toastEl => new window.bootstrap.Toast(toastEl))
-
-              const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-              const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new window.bootstrap.Popover(popoverTriggerEl))
-            }
-
-            if (document.readyState === 'loading') {
-              document.addEventListener('DOMContentLoaded', initializeBootstrapComponents)
-            } else {
-              initializeBootstrapComponents()
-            }
-          }
-        </script>
     </body>
 </html>
