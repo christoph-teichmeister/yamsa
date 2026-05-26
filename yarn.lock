@@ -1531,10 +1531,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-bundle-tracker@npm:^3.2.3":
-  version: 3.2.3
-  resolution: "webpack-bundle-tracker@npm:3.2.3"
-  checksum: 10c0/7cf0620b7ade9f782fa17432e8aca2e06cdf9eccfcbbd6e02ba47b5f80ac70d557afb1ff35c5bbfd66770db84fa355556fc523f6ff65bd8d28a210679bf3e3c1
+"webpack-bundle-tracker@npm:^3.2.4":
+  version: 3.2.4
+  resolution: "webpack-bundle-tracker@npm:3.2.4"
+  checksum: 10c0/9c1136bd8c31cac85a28677c6d92fe8ae25c166aaba01f5a2cfe2caf87f0b3065a0853b3436270edbae82369b66f5a8fa2685f7bbe9aefd3da57d1e162964e29
   languageName: node
   linkType: hard
 
@@ -1653,7 +1653,7 @@ __metadata:
     idiomorph: "npm:^0.7.4"
     mini-css-extract-plugin: "npm:^2.10.2"
     webpack: "npm:^5.106.1"
-    webpack-bundle-tracker: "npm:^3.2.3"
+    webpack-bundle-tracker: "npm:^3.2.4"
     webpack-cli: "npm:^7.0.2"
   languageName: unknown
   linkType: soft
