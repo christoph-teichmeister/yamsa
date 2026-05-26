@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: yamsa-postgres-user
       POSTGRES_PASSWORD: yamsa-password
     volumes:
-      - yamsa_postgres_data:/var/lib/postgresql/data/
+      - yamsa_postgres_data:/var/lib/postgresql/
     ports:
       - "5431:5432"
     restart: "always"
