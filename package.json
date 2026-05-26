@@ -8,6 +8,7 @@
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --config webpack.config.js --mode development --devtool=source-map --watch --color"
   },
+  "packageManager": "yarn@4.15.0",
   "engines": {
     "node": ">=22.0.0 <24.0.0"
   },
