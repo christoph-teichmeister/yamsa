@@ -17,6 +17,9 @@ echo "" && echo "pip install --no-cache-dir ."
 pip install --no-cache-dir .
 rm /tmp/requirements.txt
 
+echo "" && echo "corepack enable"
+corepack enable
+
 echo "" && echo "yarn install --immutable"
 yarn install --immutable
 
