@@ -13,6 +13,7 @@ module.exports = {
     navigation: path.resolve(staticJsPath, "navigation.js"),
     "suggested-guests": path.resolve(staticJsPath, "suggested-guests.js"),
     styles: path.resolve(staticJsPath, "styles.js"),
+    tailwind: path.resolve(staticJsPath, "tailwind.js"),
     htmx: path.resolve(staticJsPath, "htmx.js"),
   },
   output: {
@@ -33,6 +34,7 @@ module.exports = {
               sourceMap: false,
             },
           },
+          "postcss-loader",
         ],
       },
       {
@@ -56,6 +58,9 @@ module.exports = {
       filename: "webpack-stats.json",
     }),
   ],
+  watchOptions: {
+    ignored: ["**/node_modules/**", path.join(bundlesPath, "**")],
+  },
   performance: {
     hints: false,
   },
