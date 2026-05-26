@@ -956,10 +956,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"htmx.org@npm:^2.0.8":
-  version: 2.0.8
-  resolution: "htmx.org@npm:2.0.8"
-  checksum: 10c0/7f866a705d2f1d8bf8a1e0743cb2d6f2d8bb7635d6de85165ef6cc4d87d7210ee6cdf9b411497d1fc58aadae99a69f11266013f68092764cfffde23a44e9681f
+"htmx.org@npm:^2.0.10":
+  version: 2.0.10
+  resolution: "htmx.org@npm:2.0.10"
+  checksum: 10c0/cff6824820446a29e3b3e81f4e98704a0e2a5e60106ab3d1e0f4b1e4770a489de45c4032d6da87519d833d1d4c282e08f6163b3fc29012833b2c6a3ddebbee30
   languageName: node
   linkType: hard
 
@@ -1649,7 +1649,7 @@ __metadata:
     bootstrap-icons: "npm:^1.13.1"
     css-loader: "npm:^7.1.4"
     d3: "npm:^7.9.0"
-    htmx.org: "npm:^2.0.8"
+    htmx.org: "npm:^2.0.10"
     idiomorph: "npm:^0.7.4"
     mini-css-extract-plugin: "npm:^2.10.2"
     webpack: "npm:^5.106.1"
