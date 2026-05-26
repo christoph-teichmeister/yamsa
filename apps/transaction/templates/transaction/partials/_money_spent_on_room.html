@@ -14,8 +14,8 @@
             gap: 0.4rem;
             padding: 0.35rem 0.75rem;
             border-radius: 999px;
-            background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.08);
-            color: var(--bs-primary, #0d6efd);
+            background: rgba(110, 168, 254, 0.08);
+            color: #6ea8fe;
             font-size: 0.8rem;
         }
 
@@ -35,7 +35,7 @@
             position: relative;
             height: 0.55rem;
             border-radius: 999px;
-            background-color: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.12);
+            background-color: rgba(31, 35, 42, 0.12);
             overflow: hidden;
         }
 
@@ -46,12 +46,12 @@
             right: 0;
             bottom: 0;
             left: 0;
-            background: linear-gradient(90deg, rgba(13, 110, 253, 0.9), rgba(111, 66, 193, 0.9));
+            background: linear-gradient(90deg, rgba(110, 168, 254, 0.9), rgba(111, 66, 193, 0.9));
             width: var(--graph-width, 0%);
         }
 
         .graph-bar.graph-bar-secondary::after {
-            background: linear-gradient(90deg, rgba(25, 135, 84, 0.9), rgba(32, 201, 151, 0.9));
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.9), rgba(32, 201, 151, 0.9));
         }
 
         .graph-bar.graph-bar-tertiary::after {
@@ -59,16 +59,16 @@
         }
 
         .empty-state {
-            border: 1px dashed rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.25);
+            border: 1px dashed rgba(31, 35, 42, 0.25);
             border-radius: 0.85rem;
             padding: 1.5rem;
             text-align: center;
         }
     </style>
-    <div class="container-fluid px-0 px-md-2 mt-3">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div class="w-full px-0 md:px-2 mt-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
             <button type="button"
-                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2"
+                    class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 transition-all gap-2"
                     hx-trigger="click"
                     hx-get="{% room_url 'debt:list' %}"
                     hx-target="#body"
@@ -78,41 +78,41 @@
                 <i class="bi bi-arrow-left"></i>
                 {% trans "Back to debts" %}
             </button>
-            <div class="text-center flex-grow-1">
-                <p class="text-muted small mb-0">{% trans "Room spending overview" %}</p>
+            <div class="text-center flex-1">
+                <p class="text-text-secondary text-sm mb-0">{% trans "Room spending overview" %}</p>
                 <h4 class="mb-0">{% trans "Who paid what" %}</h4>
             </div>
         </div>
-        <div class="row g-3 mt-4">
+        <div class="grid md:grid-cols-3 gap-3 mt-6">
             {% for total_money_spent_entry in total_money_spent %}
-                <div class="col-12 col-md-4">
-                    <div class="card overview-card shadow-sm">
-                        <div class="card-body">
-                            <p class="text-muted small mb-1">
+                <div>
+                    <div class="overview-card bg-white dark:bg-dark-surface shadow-sm rounded-xl">
+                        <div class="p-6">
+                            <p class="text-text-secondary text-sm mb-1">
                                 {% blocktrans with currency_sign=total_money_spent_entry.currency_sign %}
                                     Total spent ({{ currency_sign }})
                                 {% endblocktrans %}
                             </p>
-                            <p class="fs-3 fw-semibold mb-0">{{ total_money_spent_entry.total_spent|format_with_thousands }}</p>
+                            <p class="text-2xl font-semibold mb-0">{{ total_money_spent_entry.total_spent|format_with_thousands }}</p>
                         </div>
                     </div>
                 </div>
             {% empty %}
-                <div class="col-12">
+                <div class="col-span-full">
                     <div class="empty-state">
-                        <p class="fw-semibold mb-1">{% trans "No spending yet" %}</p>
-                        <p class="text-muted small mb-0">{% trans "Add expenses to populate this dashboard." %}</p>
+                        <p class="font-semibold mb-1">{% trans "No spending yet" %}</p>
+                        <p class="text-text-secondary text-sm mb-0">{% trans "Add expenses to populate this dashboard." %}</p>
                     </div>
                 </div>
             {% endfor %}
         </div>
-        <div class="row g-4 mt-2">
-            <div class="col-12 col-lg-6">
-                <div class="card overview-card shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="grid lg:grid-cols-2 gap-6 mt-4">
+            <div>
+                <div class="overview-card bg-white dark:bg-dark-surface shadow-sm h-full rounded-xl">
+                    <div class="p-6 h-full">
+                        <div class="flex justify-between items-start mb-4">
                             <div>
-                                <p class="text-muted small mb-0">{% trans "Money spent by members" %}</p>
+                                <p class="text-text-secondary text-sm mb-0">{% trans "Money spent by members" %}</p>
                                 <h5 class="mb-0">{% trans "Who covered the bills" %}</h5>
                             </div>
                             <span class="overview-chip">
@@ -129,7 +129,7 @@
                         </div>
                         {% for money_spent in money_spent_per_person_qs %}
                             <div class="graph-row">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                <div class="flex justify-between items-center mb-1">
                                     <p class="graph-label mb-0">
                                         {% autoescape off %}
                                             {% parse_user_text money_spent.paid_by_name True %}
@@ -147,20 +147,22 @@
                                 {% endfor %}
                             </div>
                         {% empty %}
-                            <div class="empty-state mt-3">
-                                <p class="fw-semibold mb-1">{% trans "No payments recorded yet" %}</p>
-                                <p class="text-muted small mb-0">{% trans "As soon as someone logs an expense, their share appears here." %}</p>
+                            <div class="empty-state mt-4">
+                                <p class="font-semibold mb-1">{% trans "No payments recorded yet" %}</p>
+                                <p class="text-text-secondary text-sm mb-0">
+                                    {% trans "As soon as someone logs an expense, their share appears here." %}
+                                </p>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-6">
-                <div class="card overview-card shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+                <div class="overview-card bg-white dark:bg-dark-surface shadow-sm h-full rounded-xl">
+                    <div class="p-6 h-full">
+                        <div class="flex justify-between items-start mb-4">
                             <div>
-                                <p class="text-muted small mb-0">{% trans "Money still owed" %}</p>
+                                <p class="text-text-secondary text-sm mb-0">{% trans "Money still owed" %}</p>
                                 <h5 class="mb-0">{% trans "Who needs to settle up" %}</h5>
                             </div>
                             <span class="overview-chip">
@@ -170,10 +172,10 @@
                         </div>
                         {# ── Open debts (after optimisation) ── #}
                         {% if open_debts_per_person_qs %}
-                            <p class="text-muted small mb-2 mt-1">{% trans "Open debt (after optimisation)" %}</p>
+                            <p class="text-text-secondary text-sm mb-2 mt-1">{% trans "Open debt (after optimisation)" %}</p>
                             {% for debt_row in open_debts_per_person_qs %}
                                 <div class="graph-row">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <div class="flex justify-between items-center mb-1">
                                         <p class="graph-label mb-0">
                                             {% autoescape off %}
                                                 {% parse_user_text debt_row.debitor_name True %}
@@ -193,18 +195,18 @@
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <div class="empty-state mt-3">
-                                <p class="fw-semibold mb-1">{% trans "Nothing owed right now" %}</p>
-                                <p class="text-muted small mb-0">{% trans "All participants are even for the tracked expenses." %}</p>
+                            <div class="empty-state mt-4">
+                                <p class="font-semibold mb-1">{% trans "Nothing owed right now" %}</p>
+                                <p class="text-text-secondary text-sm mb-0">{% trans "All participants are even for the tracked expenses." %}</p>
                             </div>
                         {% endif %}
                         {# ── Gross amount covered by others per person ── #}
                         {% if money_covered_for_person_qs %}
-                            <hr class="my-3">
-                            <p class="text-muted small mb-2">{% trans "Covered by others (gross)" %}</p>
+                            <hr class="my-4">
+                            <p class="text-text-secondary text-sm mb-2">{% trans "Covered by others (gross)" %}</p>
                             {% for covered in money_covered_for_person_qs %}
                                 <div class="graph-row">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <div class="flex justify-between items-center mb-1">
                                         <p class="graph-label mb-0">
                                             {% autoescape off %}
                                                 {% parse_user_text covered.paid_for__name True %}
@@ -227,16 +229,16 @@
                 </div>
             </div>
         </div>
-        <div class="mt-4">
+        <div class="mt-6">
             <div id="spending-trend"
                  hx-get="{% room_url 'debt:money-spent-trend' %}"
                  hx-trigger="load delay:200ms, revealed once"
                  hx-target="#spending-trend"
                  hx-swap="innerHTML">
-                <div class="card overview-card shadow-sm">
-                    <div class="card-body text-center py-4">
+                <div class="overview-card bg-white dark:bg-dark-surface shadow-sm rounded-xl">
+                    <div class="p-6 text-center py-8">
                         <div class="spinner-border text-primary mb-2" role="status"></div>
-                        <p class="text-muted small mb-0">{% trans "Loading spending timeline…" %}</p>
+                        <p class="text-text-secondary text-sm mb-0">{% trans "Loading spending timeline…" %}</p>
                     </div>
                 </div>
             </div>
@@ -256,7 +258,7 @@
             const notEnoughDataMessage = '{% trans "Not enough data to render the chart yet." %}'
 
             if (!dataset.length) {
-                container.innerHTML = "<p class='text-muted small mb-0'>" + notEnoughDataMessage + "</p>"
+                container.innerHTML = "<p class='text-text-secondary text-sm mb-0'>" + notEnoughDataMessage + "</p>"
                 return
             }
 
@@ -270,7 +272,7 @@
                 .sort((a, b) => d3.ascending(a.date, b.date))
 
             if (!data.length) {
-                container.innerHTML = "<p class='text-muted small mb-0'>" + notEnoughDataMessage + "</p>"
+                container.innerHTML = "<p class='text-text-secondary text-sm mb-0'>" + notEnoughDataMessage + "</p>"
                 return
             }
 
@@ -297,8 +299,8 @@
                 .attr("y1", "0%")
                 .attr("x2", "0%")
                 .attr("y2", "100%")
-            gradient.append("stop").attr("offset", "0%").attr("stop-color", "rgba(13, 110, 253, 0.4)")
-            gradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(13, 110, 253, 0)")
+            gradient.append("stop").attr("offset", "0%").attr("stop-color", "rgba(110, 168, 254, 0.4)")
+            gradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(110, 168, 254, 0)")
 
             const chart = svg
                 .append("g")

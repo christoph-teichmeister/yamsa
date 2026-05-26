@@ -1,8 +1,8 @@
 {% load i18n %}
 {% if title %}
-    <div class="room-group-label text-uppercase small fw-semibold text-muted">{% trans title %}</div>
+    <div class="room-group-label uppercase text-xs font-semibold text-text-secondary">{% trans title %}</div>
 {% else %}
-    <div class="room-list-divider my-3">
-        <hr class="m-0">
+    <div class="room-list-divider my-4">
+        <hr class="m-0 border-light-border dark:border-dark-border">
     </div>
 {% endif %}

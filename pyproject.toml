@@ -170,8 +170,8 @@ select = [
     "TID", # flake8-tidy-imports
     "UP", # PyUpgrade
     "W", # pycodestyle warnings
-    "YTT", # Avoid non-future-prove usages of "sys"
-    # "FBT",     # Protects you from the "boolean trap bug"
+    "YTT", # Avoid non-future-proof usages of "sys"
+    # "FBT", # Protects you from the "boolean trap bug"
 ]
 ignore = [
     'N999', # Project name contains underscore, not fixable
@@ -195,8 +195,8 @@ fixable = [
     "DJ", # flake8-django
     "EM", # flake8-errmsg
     "RUF", # Removes unnecessary "#noqa" comments
-    "YTT", # Avoid non-future-prove usages of "sys"
-    # "FBT",     # Protects you from the "boolean trap bug"
+    "YTT", # Avoid non-future-proof usages of "sys"
+    # "FBT", # Protects you from the "boolean trap bug"
     "C4", # Checks for unnecessary comprehensions
     "PIE", # Bunch of useful rules
     "SIM", # Simplifies your code

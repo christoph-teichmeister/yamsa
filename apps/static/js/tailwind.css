@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@source "../../../apps/templates/**/*.html";
+@source "../../../apps/*/templates/**/*.html";
+@source "./**/*.js";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Blue — Yamsa Brand */
+  --color-blue-50: #E6F1FB;
+  --color-blue-100: #CCE3F7;
+  --color-blue-200: #99C7EF;
+  --color-blue-300: #66ABE7;
+  --color-blue-400: #338FDF;
+  --color-blue-500: #6EA8FE;
+  --color-blue-600: #4A7FCC;
+  --color-blue-700: #0F4FA0;
+  --color-blue-800: #0A367E;
+  --color-blue-900: #051D5C;
+
+  /* Semantic */
+  --color-success-50: #F0FDF4;
+  --color-success-500: #10B981;
+  --color-success-700: #059669;
+  --color-warning-50: #FFFBEB;
+  --color-warning-500: #FF8C42;
+  --color-warning-700: #E05A1F;
+  --color-danger-50: #FEF2F2;
+  --color-danger-500: #EF4444;
+  --color-danger-700: #DC2626;
+
+  /* Neutral Light */
+  --color-light-bg: #F6F8FB;
+  --color-light-surface: #FFFFFF;
+  --color-light-hover: #F0F2F7;
+  --color-light-muted: #D6DCE8;
+  --color-light-border: #D6DCE8;
+
+  /* Neutral Dark */
+  --color-dark-bg: #2D2A2E;
+  --color-dark-surface: #3A3740;
+  --color-dark-hover: #4A4650;
+  --color-dark-muted: #5A5660;
+  --color-dark-border: #4C4A4F;
+
+  /* Semantic text/bg/border aliases */
+  --color-bg-light: #F6F8FB;
+  --color-bg-hover-light: #F0F2F7;
+  --color-text-primary: #1F232A;
+  --color-text-secondary: #7C879B;
+  --color-text-muted: #9CA3AF;
+  --color-text-light-primary: #F4F6FB;
+  --color-text-light-secondary: #CBD5E1;
+  --color-border-light: #D6DCE8;
+  --color-border-dark: #4C4A4F;
+
+  /* Font sizes */
+  --text-display: 36px;
+  --text-display--line-height: 1.2;
+  --text-3xl: 30px;
+  --text-3xl--line-height: 1.2;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 1.2;
+  --text-xl: 20px;
+  --text-xl--line-height: 1.2;
+  --text-base: 16px;
+  --text-base--line-height: 1.6;
+  --text-sm: 14px;
+  --text-sm--line-height: 1.5;
+  --text-xs: 12px;
+  --text-xs--line-height: 1.3;
+
+  /* Border radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-base: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-base: 0 4px 12px rgba(110, 168, 254, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+  /* Animations */
+  --animate-fade-in: fadeIn 300ms ease-out;
+  --animate-slide-up: slideUp 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(4px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideUp {
+    0% { transform: translateY(100%); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* Extra z-index steps */
+  --z-15: 15;
+  --z-25: 25;
+}
+
+/* Safe-area utilities */
+@utility pt-safe {
+  padding-top: max(1rem, env(safe-area-inset-top));
+}
+
+@utility pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+@utility px-safe {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+@utility mt-safe {
+  margin-top: max(1rem, env(safe-area-inset-top));
+}
+
+@utility mb-safe {
+  margin-bottom: max(1rem, env(safe-area-inset-bottom));
+}

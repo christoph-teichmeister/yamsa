@@ -1,75 +1,90 @@
 {% load i18n %}
-<div class="row justify-content-center">
-    <div class="col-12 col-lg-10 col-xl-8">
-        <div class="card shadow-sm border-0 rounded-4 px-3 px-md-5 py-5">
-            <div class="card-body">
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
+<div class="flex justify-center">
+    <div class="w-full lg:w-10/12 xl:w-8/12">
+        <div class="bg-white dark:bg-dark-surface shadow-sm border-0 rounded-2xl px-4 md:px-12 py-12">
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row justify-between items-start gap-3 mb-6">
                     <div>
-                        <p class="text-uppercase text-muted small mb-1">{% trans "Guest access" %}</p>
-                        <h2 class="fw-semibold mb-1">{{ current_room.name }}</h2>
+                        <p class="uppercase text-text-secondary text-sm mb-1">{% trans "Guest access" %}</p>
+                        <h2 class="font-semibold mb-1">{{ current_room.name }}</h2>
                     </div>
-                    <span class="badge rounded-pill {{ current_room.is_closed|yesno:'text-bg-danger,text-bg-success' }} py-2 px-3">
+                    <span class="inline-flex items-center px-3 py-2 text-xs font-medium rounded-full whitespace-nowrap {{ current_room.is_closed|yesno:'bg-danger-500 text-white,bg-success-50 text-success-700' }}">
                         {% if current_room.is_closed %}
-                            <i class="bi bi-lock-fill me-1"></i>{% trans "Closed" %}
+                            <i class="bi bi-lock-fill mr-1"></i>{% trans "Closed" %}
                         {% else %}
-                            <i class="bi bi-share-fill me-1"></i>{% trans "Open to guests" %}
+                            <i class="bi bi-share-fill mr-1"></i>{% trans "Open to guests" %}
                         {% endif %}
                     </span>
                 </div>
-                <p class="text-muted small mb-3">
+                <p class="text-text-secondary text-sm mb-4">
                     {% blocktrans trimmed %}
                         Maybe register? A free account keeps your rooms, reminders, and history together.
                     {% endblocktrans %}
                 </p>
-                <div class="alert alert-primary rounded-4 px-4 py-3 mb-4 d-flex flex-column flex-md-row align-items-start gap-3">
-                    <div class="fs-3 text-primary-emphasis">
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl px-6 py-4 mb-6 flex flex-col md:flex-row items-start gap-3">
+                    <div class="text-2xl text-blue-500">
                         <i class="bi bi-person-plus-fill"></i>
                     </div>
-                    <div class="flex-grow-1">
-                        <p class="fw-semibold mb-1">{% trans "Claim your invitation" %}</p>
-                        <p class="mb-2 small text-muted">
+                    <div class="flex-1">
+                        <p class="font-semibold mb-1">{% trans "Claim your invitation" %}</p>
+                        <p class="mb-2 text-sm text-text-secondary">
                             {% trans "Guests who arrive via the shared link can register or log in here to confirm their spot." %}
                         </p>
-                        <div class="d-flex flex-wrap gap-2 justify-content-center">
-                            <a class="btn btn-sm btn-outline-light px-3"
+                        <div class="flex flex-wrap gap-2 justify-center">
+                            <a class="inline-flex items-center px-3 py-1.5 border border-blue-300 text-blue-600 font-semibold text-sm rounded-lg hover:bg-blue-100 active:scale-95 transition-all"
                                href="{% url 'account:register' %}?room_slug={{ current_room.slug }}">{% trans "Create a free account" %}</a>
-                            <a class="btn btn-sm btn-link px-3" href="{% url 'account:login' %}">{% trans "Already have an account?" %}</a>
+                            <a class="text-blue-500 hover:underline bg-transparent border-0 px-3 py-1.5 text-sm"
+                               href="{% url 'account:login' %}">{% trans "Already have an account?" %}</a>
                         </div>
                     </div>
                 </div>
                 {% if current_room.has_guests %}
                     <form action="{% url 'account:guest-login' %}" method="post">
                         {% csrf_token %}
-                        <div class="mb-4 form-group">
-                            <div class="row px-2 mt-2 align-items-center">
-                                <div class="col">
+                        <div class="mb-6 form-group">
+                            <div class="flex px-2 mt-2 items-center">
+                                <div class="flex-1">
                                     <h5 class="mb-0">
                                         <label for="userSelect" class="form-label">{% trans "Who are you?" %}</label>
                                     </h5>
                                 </div>
                             </div>
                             <select name="user_id"
-                                    class="form-control form-select mb-1"
+                                    class="ym-input ym-select mb-1"
                                     id="userSelect"
                                     required>
                                 {% for guest_user in current_room.guest_users %}
                                     <option value="{{ guest_user.id }}">{{ guest_user.name }}</option>
                                 {% endfor %}
                             </select>
-                            <div class="text-muted small d-flex justify-content-start px-2 mb-3">
-                                <button type="button"
-                                        class="cursor-pointer border-0 bg-transparent p-0 small text-muted d-inline-flex align-items-center gap-1"
-                                        data-bs-toggle="popover"
-                                        data-bs-placement="top"
-                                        data-bs-content="{% blocktrans trimmed %}Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in.{% endblocktrans %}"
-                                        aria-describedby="guest-access-popover-desc">
-                                    {% trans "Not seeing your name?" %} <i class="bi bi-question-circle"></i>
-                                </button>
-                                <span id="guest-access-popover-desc" class="visually-hidden">
-                                    {% blocktrans trimmed %}
-                                        Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in.
-                                    {% endblocktrans %}
-                                </span>
+                            <div class="px-2 mb-4 text-sm text-text-secondary">
+                                <div class="relative inline-block">
+                                    <button type="button"
+                                            class="cursor-pointer border-0 bg-transparent p-0 text-sm text-text-secondary inline-flex items-center gap-1"
+                                            id="guest-access-popover-btn">
+                                        {% trans "Not seeing your name?" %} <i class="bi bi-question-circle"></i>
+                                    </button>
+                                    <div id="guest-access-popover"
+                                         class="hidden absolute bottom-full left-0 mb-2 w-72 p-4 rounded-xl shadow-lg border border-light-border dark:border-dark-border bg-white dark:bg-dark-surface text-sm text-text-primary dark:text-gray-100 z-50">
+                                        {% blocktrans trimmed %}
+                                            Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in.
+                                        {% endblocktrans %}
+                                    </div>
+                                </div>
+                                <script nonce="{{ csp_nonce }}">
+                                    (function () {
+                                        var btn = document.getElementById("guest-access-popover-btn");
+                                        var panel = document.getElementById("guest-access-popover");
+                                        if (!btn || !panel) { return; }
+                                        btn.addEventListener("click", function (e) {
+                                            e.stopPropagation();
+                                            panel.classList.toggle("hidden");
+                                        });
+                                        document.addEventListener("click", function () {
+                                            panel.classList.add("hidden");
+                                        });
+                                    })();
+                                </script>
                             </div>
                         </div>
                         <div class="form-group" hidden>
@@ -77,16 +92,19 @@
                             <input id="room_slug"
                                    name="room_slug"
                                    type="text"
-                                   class="form-control"
+                                   class="ym-input"
                                    required
                                    value="{{ current_room.slug }}" />
                         </div>
-                        <div class="d-flex justify-content-center">
-                            <button type="submit" class="btn btn-primary px-4 py-2">{% trans "That's me!" %}</button>
+                        <div class="flex justify-center">
+                            <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all">
+                                {% trans "That's me!" %}
+                            </button>
                         </div>
                     </form>
                 {% else %}
-                    <div class="alert alert-info rounded-4 px-4 py-3 mb-3 text-muted small">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl px-6 py-4 mb-4 text-text-secondary text-sm">
                         {% trans "No guests have been invited yet. Create an account to add yourself to the room." %}
                     </div>
                 {% endif %}

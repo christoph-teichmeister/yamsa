@@ -3,20 +3,30 @@
 {% block tab_content %}
     <link rel="stylesheet"
           href="{% static 'components/transaction/detail.css' %}">
-    <div class="container-fluid px-0 px-md-2 mt-3">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-            <button type="button"
-                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2"
-                    hx-trigger="click"
-                    hx-get="{% room_url 'transaction:list' %}#transaction-{{ parent_transaction.id }}"
-                    hx-target="#body"
-                    hx-indicator="#body-loading-spinner"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true">
-                <i class="bi bi-arrow-left"></i>
-                {% trans "Back to list" %}
-            </button>
-            <div class="text-center flex-grow-1">
+    <div class="w-full px-0 md:px-2 mt-4">
+        <div class="flex flex-col gap-2 mb-4">
+            <div class="flex items-center justify-between gap-2">
+                <button type="button"
+                        class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 transition-all gap-2"
+                        hx-trigger="click"
+                        hx-get="{% room_url 'transaction:list' %}#transaction-{{ parent_transaction.id }}"
+                        hx-target="#body"
+                        hx-indicator="#body-loading-spinner"
+                        hx-swap="morph:innerHTML"
+                        hx-push-url="true">
+                    <i class="bi bi-arrow-left"></i>
+                    {% trans "Back to list" %}
+                </button>
+                <button type="button"
+                        class="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white font-semibold text-sm rounded-lg hover:bg-blue-600 active:scale-95 transition-all gap-2 {% if current_room.is_closed %}opacity-50 cursor-not-allowed{% endif %}"
+                        title="{% trans "Edit transaction" %}"
+                        aria-disabled="{% if current_room.is_closed %}true{% else %}false{% endif %}"
+                        {% if current_room.is_open %} hx-trigger="click" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
+                    <i class="bi bi-pencil-square"></i>
+                    {% trans "Edit expense" %}
+                </button>
+            </div>
+            <div class="text-center">
                 <p class="transaction-label mb-1">{% trans "Expense" %}</p>
                 <p class="mb-0">
                     {% autoescape off %}
@@ -26,30 +36,21 @@
                     <strong>{{ parent_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}</strong>
                 </p>
             </div>
-            <button type="button"
-                    class="btn btn-primary btn-sm d-inline-flex align-items-center gap-2 {% if current_room.is_closed %}disabled{% endif %}"
-                    title="{% trans "Edit transaction" %}"
-                    aria-disabled="{% if current_room.is_closed %}true{% else %}false{% endif %}"
-                    {% if current_room.is_open %} hx-trigger="click" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
-                <i class="bi bi-pencil-square"></i>
-                {% trans "Edit expense" %}
-            </button>
         </div>
         {% if current_room.is_closed %}
-            <div class="alert alert-warning small mb-3" role="alert">
-                {% trans "This room is closed, so the breakdown is read-only." %}
-            </div>
+            <div class="bg-warning-50 border border-warning-200 text-warning-700 rounded-lg px-4 py-3 text-sm mb-4"
+                 role="alert">{% trans "This room is closed, so the breakdown is read-only." %}</div>
         {% endif %}
-        <div class="card shadow-sm transaction-detail-card mb-3">
-            <div class="card-body">
-                <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+        <div class="bg-white dark:bg-dark-surface shadow-sm transaction-detail-card rounded-xl mb-4">
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row justify-between gap-3">
                     <div>
                         <p class="transaction-label mb-1">{% trans "Total amount" %}</p>
-                        <p class="transaction-amount fw-semibold mb-2">
+                        <p class="transaction-amount font-semibold mb-2">
                             {{ parent_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}
                         </p>
-                        <p class="transaction-meta mb-2 text-muted small">
-                            <span class="me-1">{{ parent_transaction.category.emoji }}</span>
+                        <p class="transaction-meta mb-2 text-text-secondary text-sm">
+                            <span class="mr-1">{{ parent_transaction.category.emoji }}</span>
                             {{ parent_transaction.category.name }}
                         </p>
                         <p class="transaction-meta mb-0">
@@ -63,31 +64,31 @@
                             {% blocktrans with recorded_time=parent_transaction.paid_at|date:'G:i' %}Recorded at {{ recorded_time }}{% endblocktrans %}
                         </p>
                     </div>
-                    <div class="text-md-end">
+                    <div class="md:text-right">
                         {% if parent_transaction.description %}
                             <p class="transaction-label mb-1">{% trans "Description" %}</p>
-                            <p class="fst-italic mb-0 text-break">"{{ parent_transaction.description }}"</p>
+                            <p class="italic mb-0 break-words">"{{ parent_transaction.description }}"</p>
                         {% else %}
                             <p class="transaction-label mb-0">{% trans "No description" %}</p>
                         {% endif %}
                     </div>
                 </div>
                 {% if parent_transaction.further_notes %}
-                    <hr class="my-4">
+                    <hr class="my-6">
                     <div>
                         <p class="transaction-label mb-1">{% trans "Notes" %}</p>
-                        <p class="text-break fst-italic mb-0">"{{ parent_transaction.further_notes }}"</p>
+                        <p class="break-words italic mb-0">"{{ parent_transaction.further_notes }}"</p>
                     </div>
                 {% endif %}
             </div>
         </div>
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between">
+        <div class="bg-white dark:bg-dark-surface shadow-sm border-0 rounded-xl">
+            <div class="px-6 pt-6 border-b-0 flex items-center justify-between">
                 <div>
                     <p class="transaction-label mb-0">{% trans "Split between" %}</p>
-                    <p class="mb-0 text-muted small">{% trans "Tap a row to edit the breakdown." %}</p>
+                    <p class="mb-0 text-text-secondary text-sm">{% trans "Tap a row to edit the breakdown." %}</p>
                 </div>
-                <span class="badge text-bg-light">
+                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap bg-gray-100 text-gray-800 dark:bg-dark-hover dark:text-gray-200">
                     {% blocktrans count member_count=child_transactions|length %}
                         {{ member_count }} person
                     {% plural %}
@@ -95,12 +96,12 @@
                     {% endblocktrans %}
                 </span>
             </div>
-            <ul class="list-group list-group-flush">
+            <ul class="divide-y divide-gray-100 dark:divide-dark-border px-0 list-none">
                 {% for child_transaction in child_transactions %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2 transaction-breakdown-item {% if current_room.is_open %}cursor-pointer{% endif %}"
+                    <li class="px-6 py-4 flex justify-between items-center flex-wrap gap-2 transaction-breakdown-item {% if current_room.is_open %}cursor-pointer{% endif %}"
                         {% if current_room.is_open %} role="button" tabindex="0" hx-trigger="click keyup[key=='Enter']" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
                         <div>
-                            <p class="fw-semibold mb-1">
+                            <p class="font-semibold mb-1">
                                 {% autoescape off %}
                                     {% parse_user_text child_transaction.paid_for.name True %}
                                 {% endautoescape %}
@@ -111,14 +112,14 @@
                                 {% endblocktrans %}
                             </p>
                         </div>
-                        <div class="text-end">
-                            <span class="badge text-bg-primary-subtle text-primary-emphasis px-3 py-2">
+                        <div class="text-right">
+                            <span class="inline-flex items-center px-3 py-2 text-xs font-medium rounded-full whitespace-nowrap bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300">
                                 {{ child_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}
                             </span>
                         </div>
                     </li>
                 {% empty %}
-                    <li class="list-group-item text-muted small">{% trans "No split data available for this transaction yet." %}</li>
+                    <li class="px-6 py-4 text-text-secondary text-sm">{% trans "No split data available for this transaction yet." %}</li>
                 {% endfor %}
             </ul>
         </div>

@@ -12,9 +12,9 @@
         .people-hero {
             border-radius: 1.25rem;
             padding: 1.75rem;
-            background: linear-gradient(135deg, rgba(13, 110, 253, 0.16), rgba(50, 205, 153, 0.25));
-            border: 1px solid rgba(var(--bs-primary-rgb, 13, 110, 253), 0.15);
-            box-shadow: 0 25px 45px rgba(13, 110, 253, 0.12);
+            background: linear-gradient(135deg, rgba(110, 168, 254, 0.16), rgba(50, 205, 153, 0.25));
+            border: 1px solid rgba(110, 168, 254, 0.15);
+            box-shadow: 0 25px 45px rgba(110, 168, 254, 0.12);
         }
 
         .people-hero h3 {
@@ -22,7 +22,7 @@
         }
 
         .people-hero p {
-            color: var(--bs-secondary-color, #6c757d);
+            color: #7c879b;
         }
 
         .people-actions {
@@ -33,15 +33,24 @@
             border-radius: 1rem;
             padding: 1rem 1.25rem;
             font-weight: 600;
-            border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.12);
-            background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.02);
+            border: 1px solid rgba(31, 35, 42, 0.12);
+            background: rgba(31, 35, 42, 0.02);
             transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
         .people-action-btn:hover:not(.disabled) {
             transform: translateY(-2px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-            background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.08);
+            background: rgba(110, 168, 254, 0.08);
+        }
+
+        .dark .people-action-btn {
+            border-color: var(--color-dark-border, #4C4A4F);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .dark .people-action-btn:hover:not(.disabled) {
+            background: rgba(110, 168, 254, 0.08);
         }
 
         .people-grid {
@@ -49,17 +58,17 @@
         }
 
         .people-empty {
-            border: 1px dashed rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.2);
+            border: 1px dashed rgba(31, 35, 42, 0.2);
             border-radius: 1rem;
             padding: 2rem;
             text-align: center;
-            color: var(--bs-secondary-color, #6c757d);
+            color: #7c879b;
         }
 
         .people-card {
             border-radius: 1.1rem;
-            border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.12);
-            background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.03);
+            border: 1px solid rgba(31, 35, 42, 0.12);
+            background: rgba(31, 35, 42, 0.03);
             padding: 1.25rem 1.35rem;
             height: 100%;
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -67,9 +76,14 @@
 
         .people-card--interactive:hover {
             transform: translateY(-4px);
-            border-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.35);
-            box-shadow: 0 20px 45px rgba(13, 110, 253, 0.15);
+            border-color: rgba(110, 168, 254, 0.35);
+            box-shadow: 0 20px 45px rgba(110, 168, 254, 0.15);
             cursor: pointer;
+        }
+
+        .dark .people-card {
+            border-color: var(--color-dark-border, #4C4A4F);
+            background: rgba(255, 255, 255, 0.03);
         }
 
         .people-card h5 {
@@ -78,7 +92,7 @@
 
         .people-meta {
             font-size: 0.85rem;
-            color: var(--bs-secondary-color, #6c757d);
+            color: #7c879b;
         }
 
         .people-pill {
@@ -90,8 +104,8 @@
             text-transform: uppercase;
             border-radius: 999px;
             padding: 0.2rem 0.65rem;
-            background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.15);
-            color: var(--bs-primary, #0d6efd);
+            background: rgba(110, 168, 254, 0.15);
+            color: #6ea8fe;
         }
 
         .people-pill-guest {
@@ -100,14 +114,14 @@
         }
 
         .people-pill-muted {
-            background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.08);
-            color: var(--bs-secondary-color, #6c757d);
+            background: rgba(31, 35, 42, 0.08);
+            color: #7c879b;
         }
 
         .people-remove-btn {
             border: none;
             background: transparent;
-            color: var(--bs-danger, #dc3545);
+            color: #ef4444;
             padding: 0.25rem;
         }
 
@@ -119,12 +133,12 @@
             width: 3rem;
             height: 3rem;
             border-radius: 0.85rem;
-            background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.1);
+            background: rgba(110, 168, 254, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.3rem;
-            color: var(--bs-primary, #0d6efd);
+            color: #6ea8fe;
         }
 
         .people-avatar img {
@@ -141,9 +155,9 @@
     {% if is_member %}
         <div class="people-wrap">
             <div class="people-hero">
-                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
                     <div>
-                        <p class="text-uppercase text-muted small mb-1">{% trans "Room roster" %}</p>
+                        <p class="uppercase text-text-secondary text-sm mb-1">{% trans "Room roster" %}</p>
                         <h3 class="mb-1">
                             {% with current_room.name as room_name %}
                                 {% blocktrans %}Everyone in {{ room_name }}{% endblocktrans %}
@@ -151,9 +165,9 @@
                         </h3>
                         <p class="mb-0">{% trans "Invite roommates, add guests, and keep tabs on who has already viewed the room." %}</p>
                     </div>
-                    <div class="text-md-end">
-                        <p class="mb-1 small text-muted">{% trans "Status" %}</p>
-                        <span class="badge {% if current_room.is_closed %}bg-secondary{% else %}bg-success{% endif %}">
+                    <div class="md:text-right">
+                        <p class="mb-1 text-sm text-text-secondary">{% trans "Status" %}</p>
+                        <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap {% if current_room.is_closed %}bg-gray-500 text-white{% else %}bg-success-50 text-success-700{% endif %}">
                             {% if current_room.is_closed %}
                                 {% trans "Room closed" %}
                             {% else %}
@@ -163,31 +177,31 @@
                     </div>
                 </div>
             </div>
-            <div class="row people-actions g-3">
-                <div class="col-12 col-md-6">
-                    <button class="w-100 people-action-btn d-flex align-items-center justify-content-between {% if current_room.is_closed %}disabled{% endif %}"
+            <div class="grid md:grid-cols-2 people-actions gap-3">
+                <div>
+                    <button class="w-full people-action-btn flex items-center justify-between {% if current_room.is_closed %}disabled{% endif %}"
                             type="button"
                             hx-get="{% room_url 'room:userconnectiontoroom-create' %}"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"
                             hx-push-url="true">
-                        <span class="d-flex align-items-center gap-2">
+                        <span class="flex items-center gap-2">
                             <i class="bi bi-person-plus-fill"></i>
                             {% trans "Add existing user" %}
                         </span>
                         <i class="bi bi-arrow-up-right"></i>
                     </button>
                 </div>
-                <div class="col-12 col-md-6">
-                    <button class="w-100 people-action-btn d-flex align-items-center justify-content-between {% if current_room.is_closed %}disabled{% endif %}"
+                <div>
+                    <button class="w-full people-action-btn flex items-center justify-between {% if current_room.is_closed %}disabled{% endif %}"
                             type="button"
                             hx-get="{% room_url 'account:guest-create' %}"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"
                             hx-push-url="true">
-                        <span class="d-flex align-items-center gap-2">
+                        <span class="flex items-center gap-2">
                             <i class="bi bi-person-plus"></i>
                             {% trans "Add guest" %}
                         </span>
@@ -195,17 +209,17 @@
                     </button>
                 </div>
             </div>
-            <div class="people-grid row row-cols-1 row-cols-md-2 g-3">
+            <div class="people-grid grid md:grid-cols-2 gap-3">
                 {% csrf_token %}
                 {% if user_qs_for_room %}
                     {% for user in user_qs_for_room %}
                         {% include "shared_partials/user_card.html" with user=user %}
                     {% endfor %}
                 {% else %}
-                    <div class="col">
+                    <div>
                         <div class="people-empty">
-                            <p class="fw-semibold mb-1">{% trans "No one here yet" %}</p>
-                            <p class="mb-0 small">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
+                            <p class="font-semibold mb-1">{% trans "No one here yet" %}</p>
+                            <p class="mb-0 text-sm">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
                         </div>
                     </div>
                 {% endif %}
@@ -214,8 +228,8 @@
     {% else %}
         <div class="people-wrap text-center">
             <div class="people-hero">
-                <div class="d-flex flex-column align-items-center gap-2">
-                    <p class="text-uppercase text-muted small mb-1">{% trans "Guest access" %}</p>
+                <div class="flex flex-col items-center gap-2">
+                    <p class="uppercase text-text-secondary text-sm mb-1">{% trans "Guest access" %}</p>
                     <h3 class="mb-1">
                         {% with current_room.name as room_name %}
                             {% blocktrans %}Limited view of {{ room_name }}{% endblocktrans %}
@@ -224,11 +238,11 @@
                     <p class="mb-0">{% trans "Room members keep the roster private. Join the room to see who helps run this space." %}</p>
                 </div>
             </div>
-            <div class="people-grid row row-cols-1 g-3">
-                <div class="col">
+            <div class="people-grid grid grid-cols-1 gap-3">
+                <div>
                     <div class="people-empty">
-                        <p class="fw-semibold mb-1">{% trans "Guest access" %}</p>
-                        <p class="mb-0 small">{% trans "Request access or register to interact with this room." %}</p>
+                        <p class="font-semibold mb-1">{% trans "Guest access" %}</p>
+                        <p class="mb-0 text-sm">{% trans "Request access or register to interact with this room." %}</p>
                     </div>
                 </div>
             </div>

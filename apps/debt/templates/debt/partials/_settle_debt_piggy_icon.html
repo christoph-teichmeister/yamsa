@@ -3,23 +3,10 @@
     <i class="bi bi-piggy-bank-fill debt-list-debt-settled"></i>
 {% else %}
     {% if debt.debitor.name == request.user.name %}
-        {% if debt.creditor.paypal_me_username %}
-            <a class="text-reset"
-               href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value }}{{ debt.currency.code }}"
-               target="_blank"><i class="bi bi-paypal"></i></a>
-            &nbsp&nbsp&nbsp
-        {% endif %}
-        <i class="bi bi-piggy-bank"
-           hx-get="{% room_url 'debt:settle' pk=debt.id %}"
-           hx-target="#body"
-           hx-indicator="#body-loading-spinner"
-           hx-swap="morph:innerHTML"
-           hx-push-url="true"></i>
+        <i class="bi bi-piggy-bank"></i>
     {% else %}
         {% trans "This transaction is not yours to settle!" as tooltip_title %}
         <i class="bi bi-piggy-bank cursor-pointer debt-piggy-tooltip"
-           data-bs-toggle="tooltip"
-           data-bs-placement="top"
-           data-bs-title="{{ tooltip_title }}"></i>
+           title="{{ tooltip_title }}"></i>
     {% endif %}
 {% endif %}

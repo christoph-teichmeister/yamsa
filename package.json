@@ -14,15 +14,18 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "d3": "^7.9.0",
     "htmx.org": "^2.0.10",
     "idiomorph": "^0.7.4"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.0",
     "css-loader": "^7.1.4",
     "mini-css-extract-plugin": "^2.10.2",
+    "postcss": "^8.5.15",
+    "postcss-loader": "^8.2.1",
+    "tailwindcss": "^4.3.0",
     "webpack": "^5.107.2",
     "webpack-bundle-tracker": "^3.2.4",
     "webpack-cli": "^7.0.2"

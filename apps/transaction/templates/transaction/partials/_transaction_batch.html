@@ -1,7 +1,7 @@
 {% load room_tags i18n %}
 {% for parent_transaction in parent_transactions %}
     <tr id="transaction-{{ parent_transaction.id }}"
-        class="cursor-pointer transaction-row px-1"
+        class="cursor-pointer transaction-row px-2 {% if forloop.first %}border-t{% endif %} border-b border-gray-200 dark:border-dark-border"
         role="button"
         tabindex="0"
         hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
@@ -10,35 +10,35 @@
         hx-swap="morph:innerHTML"
         hx-push-url="true"
         hx-trigger="click keyup[key=='Enter']">
-        <td class="py-3">
-            <div class="d-flex flex-column gap-3">
-                <div class="transaction-grid row row-cols-2 g-3">
-                    <div class="col">
-                        <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Amount" %}</div>
-                        <div class="transaction-amount fw-semibold text-primary fs-4 lh-sm">
+        <td class="py-4">
+            <div class="flex flex-col gap-3">
+                <div class="transaction-grid grid grid-cols-2 gap-3">
+                    <div>
+                        <div class="transaction-label text-text-secondary uppercase text-sm mb-1">{% trans "Amount" %}</div>
+                        <div class="transaction-amount font-semibold text-blue-500 text-xl leading-tight">
                             {{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value|format_with_thousands }}
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Description" %}</div>
+                    <div>
+                        <div class="transaction-label text-text-secondary uppercase text-sm mb-1">{% trans "Description" %}</div>
                         {% with description_value=parent_transaction.description|default:_("No description") %}
-                            <div class="fw-semibold">{{ description_value|truncatechars:70 }}</div>
+                            <div class="font-semibold">{{ description_value|truncatechars:70 }}</div>
                         {% endwith %}
                     </div>
                 </div>
-                <div class="transaction-grid row row-cols-2 g-3">
-                    <div class="col">
-                        <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Paid on" %}</div>
-                        <div class="fw-semibold">{{ parent_transaction.paid_at|date:'M j, Y' }}</div>
+                <div class="transaction-grid grid grid-cols-2 gap-3">
+                    <div>
+                        <div class="transaction-label text-text-secondary uppercase text-sm mb-1">{% trans "Paid on" %}</div>
+                        <div class="font-semibold">{{ parent_transaction.paid_at|date:'M j, Y' }}</div>
                         <div class="transaction-meta mt-1">
                             {% blocktrans with delta=parent_transaction.paid_at|timesince %}
                                 {{ delta }} ago
                             {% endblocktrans %}
                         </div>
                     </div>
-                    <div class="col text-md-end">
-                        <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Payer" %}</div>
-                        <div class="fw-semibold">
+                    <div class="md:text-right">
+                        <div class="transaction-label text-text-secondary uppercase text-sm mb-1">{% trans "Payer" %}</div>
+                        <div class="font-semibold">
                             {% autoescape off %}
                                 {% parse_user_text parent_transaction.paid_by.name True %}
                             {% endautoescape %}
@@ -47,22 +47,22 @@
                 </div>
             </div>
         </td>
-        <td class="py-3 align-middle text-start text-md-end">
-            <div class="d-flex flex-column align-items-center gap-2">
+        <td class="py-4 align-middle text-left md:text-right">
+            <div class="flex flex-col items-center gap-2">
                 <button type="button"
-                        class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center"
+                        class="inline-flex items-center justify-center px-3 py-1.5 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 transition-all"
                         aria-label="{% trans "View split details" %}"
                         title="{% trans "View split details" %}">
                     <i class="bi bi-eye"></i>
                 </button>
-                <span class="text-muted small"
+                <span class="text-text-secondary text-sm"
                       title="{{ parent_transaction.category.name }}">{{ parent_transaction.category.emoji }}</span>
             </div>
         </td>
     </tr>
 {% empty %}
     <tr>
-        <td colspan="2" class="py-4 text-center text-muted">
+        <td colspan="2" class="py-6 text-center text-text-secondary">
             {% if transaction_search_query %}
                 {% blocktrans with query=transaction_search_query %}No transactions match "{{ query }}".{% endblocktrans %}
             {% else %}
@@ -83,6 +83,9 @@
     </tr>
 {% elif parent_transactions %}
     <tr>
-        <td colspan="2" class="text-center text-muted small py-3">{% trans "You're all caught up." %}</td>
+        <td colspan="2"
+            class="transaction-row px-2 text-center text-text-secondary text-sm py-4">
+            {% trans "You're all caught up." %}
+        </td>
     </tr>
 {% endif %}

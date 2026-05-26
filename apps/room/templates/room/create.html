@@ -3,13 +3,13 @@
 {% load i18n %}
 {% load render_bundle from webpack_loader %}
 {% block content %}
-    <div class="container-fluid py-4 px-2 px-md-4 px-lg-5">
-        <div class="row g-4">
-            <div class="col-12 col-lg-7">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4">
-                            <a class="btn btn-outline-secondary gap-2 d-flex align-items-center justify-content-center px-3 py-2 shadow-sm w-100 text-decoration-none"
+    <div class="w-full py-6 px-2 md:px-4 lg:px-5">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-7">
+                <div class="bg-white dark:bg-dark-surface border-0 shadow-sm rounded-xl">
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
+                            <a class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 no-underline transition-all gap-2"
                                href="{{ dashboard_url }}"
                                role="button"
                                aria-label='{% trans "Back to dashboard" %}'
@@ -18,24 +18,24 @@
                                hx-indicator="#body-loading-spinner"
                                hx-swap="innerHTML"
                                hx-push-url="true">
-                                <i class="bi bi-arrow-left fs-5" aria-hidden="true"></i>
+                                <i class="bi bi-arrow-left" aria-hidden="true"></i>
                                 {% trans "Back to dashboard" %}
                             </a>
-                            <h1 class="h3 fw-semibold mb-0">{% trans "Create Room" %}</h1>
+                            <h1 class="text-xl font-semibold mb-0 whitespace-nowrap">{% trans "Create Room" %}</h1>
                         </div>
                         <form action="{% url 'room:create' %}" method="post">
                             {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="name" class="form-label">{{ form.fields.name.label }}</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                            <div class="mb-4">
+                                <label for="name" class="block text-sm font-medium mb-1">{{ form.fields.name.label }}</label>
+                                <input type="text" class="ym-input" id="name" name="name" required>
                                 {% for error_message in form.errors.name.data %}
-                                    <small class="error" id="nameError">{{ error_message.message }}</small>
+                                    <small class="text-danger-500 block mt-1" id="nameError">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
-                            <div class="mb-3">
-                                <label for="preferred_currency">Preferred Currency</label>
+                            <div class="mb-4">
+                                <label for="preferred_currency" class="block text-sm font-medium mb-1">{% trans "Preferred Currency" %}</label>
                                 <select name="preferred_currency"
-                                        class="form-control form-select"
+                                        class="ym-input ym-select"
                                         id="preferred_currency"
                                         required>
                                     {% for currency in all_currencies %}
@@ -43,9 +43,9 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label for="description" class="form-label">{{ form.fields.description.label }}</label>
-                                <textarea class="form-control"
+                            <div class="mb-6">
+                                <label for="description" class="block text-sm font-medium mb-1">{{ form.fields.description.label }}</label>
+                                <textarea class="ym-input"
                                           id="description"
                                           name="description"
                                           required
@@ -53,24 +53,27 @@
                                           maxlength="50"
                                           minlength="1"></textarea>
                                 {% for error_message in form.errors.description.data %}
-                                    <small class="error" id="descriptionError">{{ error_message.message }}</small>
+                                    <small class="text-danger-500 block mt-1" id="descriptionError">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
                             <div id="suggested-guest-hidden-inputs" data-suggested-guest-inputs-target></div>
-                            <div class="d-flex justify-content-center">
-                                <button type="submit" class="btn btn-primary btn-lg">{% trans "Create" %}</button>
+                            <div class="flex justify-center">
+                                <button type="submit"
+                                        class="px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all text-lg">
+                                    {% trans "Create" %}
+                                </button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-5">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body d-flex flex-column gap-3">
+            <div class="lg:col-span-5">
+                <div class="bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border shadow-sm rounded-xl h-full">
+                    <div class="p-6 flex flex-col gap-4">
                         <div>
-                            <p class="text-uppercase text-muted small mb-2">{% trans "Suggested guests" %}</p>
-                            <h2 class="h5 fw-semibold mb-1">{% trans "Invite frequent collaborators" %}</h2>
-                            <p class="small text-muted mb-0">
+                            <p class="uppercase text-text-secondary text-sm mb-2">{% trans "Suggested guests" %}</p>
+                            <h2 class="text-lg font-semibold mb-1">{% trans "Invite frequent collaborators" %}</h2>
+                            <p class="text-sm text-text-secondary mb-0">
                                 {% trans "Add past roommates with one tap. Mark your go-to teammates as friends to pin them to the top." %}
                             </p>
                         </div>

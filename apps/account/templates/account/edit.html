@@ -1,70 +1,71 @@
 {% extends "core/base.html" %}
 {% load i18n %}
 {% block content %}
-    <section class="container px-2 px-md-4 px-lg-5 account-edit">
-        <div class="row justify-content-center gy-4">
-            <div class="col-12 col-xl-9">
+    <section class="mx-auto w-full px-4 px-2 md:px-4 lg:px-5 account-edit">
+        <div class="flex flex-wrap justify-center gap-6">
+            <div class="w-full xl:w-9/12">
                 <form method="post"
                       enctype="multipart/form-data"
-                      class="card border-0 shadow-sm rounded-4"
+                      class="bg-white dark:bg-dark-surface border-0 shadow-sm rounded-2xl"
                       hx-post="{% url 'account:update' pk=user.id %}"
                       hx-target="#body"
                       hx-indicator="#body-loading-spinner"
                       hx-swap="morph:innerHTML"
                       hx-push-url="true">
                     {% csrf_token %}
-                    <div class="card-body p-4 p-md-5">
-                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4">
+                    <div class="p-6 md:p-12">
+                        <div class="flex flex-col md:flex-row items-start md:items-center gap-3 mb-6">
                             <div>
-                                <p class="text-uppercase small fw-semibold text-muted mb-1">{% trans "Edit profile" %}</p>
-                                <h1 class="h4 fw-semibold mb-0">{% trans "Keep your details up to date" %}</h1>
+                                <p class="uppercase text-sm font-semibold text-text-secondary mb-1">{% trans "Edit profile" %}</p>
+                                <h1 class="text-xl font-semibold mb-0">{% trans "Keep your details up to date" %}</h1>
                             </div>
-                            <div class="ms-md-auto d-flex flex-wrap gap-2">
+                            <div class="md:ml-auto flex flex-wrap gap-2">
                                 <button type="button"
-                                        class="btn btn-outline-secondary"
+                                        class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 transition-all"
                                         hx-get="{% url 'account:detail' pk=user.id %}"
                                         hx-target="#body"
                                         hx-indicator="#body-loading-spinner"
                                         hx-swap="morph:innerHTML"
                                         hx-push-url="true">{% trans "Cancel" %}</button>
-                                <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
+                                <button type="submit"
+                                        class="inline-flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all gap-2">
                                     <i class="bi bi-check2-circle"></i>
                                     {% trans "Save changes" %}
                                 </button>
                             </div>
                         </div>
-                        <div class="row g-4">
-                            <div class="col-12">
-                                <div class="border rounded-4 p-4 d-flex flex-column flex-md-row align-items-center gap-4">
-                                    <div class="profile-avatar profile-avatar--expanded position-relative overflow-hidden d-inline-flex align-items-center justify-content-center">
+                        <div class="grid gap-6">
+                            <div class="w-full">
+                                <div class="border rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6">
+                                    <div class="profile-avatar profile-avatar--expanded relative overflow-hidden inline-flex items-center justify-center">
                                         <img id="profile-picture-preview-img"
-                                             class="profile-picture-preview-img w-100 h-100 object-fit-cover rounded-4 {% if not user.profile_picture %}d-none{% endif %}"
+                                             class="profile-picture-preview-img w-full h-full object-cover rounded-2xl {% if not user.profile_picture %}hidden{% endif %}"
                                              alt="{% trans "Profile picture preview" %}"
                                              loading="lazy"
                                              width="68"
                                              height="68"
                                              {% if user.profile_picture %}src="{{ user.profile_picture_url }}" data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"{% endif %}>
                                         <span id="profile-picture-preview-placeholder"
-                                              class="profile-picture-preview-initial fs-3 fw-semibold text-primary-emphasis {% if user.profile_picture %}d-none{% endif %}">
+                                              class="profile-picture-preview-initial text-2xl font-semibold text-blue-500 {% if user.profile_picture %}hidden{% endif %}">
                                             {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
                                         </span>
                                     </div>
-                                    <div class="flex-grow-1 d-flex flex-column gap-2">
-                                        <div class="d-flex flex-column gap-1">
-                                            <label for="profile_picture" class="form-label fw-semibold">{% trans "Profile photo" %}</label>
+                                    <div class="flex-1 flex flex-col gap-2">
+                                        <div class="flex flex-col gap-1">
+                                            <label for="profile_picture" class="form-label font-semibold">{% trans "Profile photo" %}</label>
                                             <input type="file"
                                                    id="profile_picture"
                                                    name="profile_picture"
                                                    accept="image/*"
-                                                   class="form-control form-control-sm">
+                                                   class="ym-input ym-input-sm">
                                             {% for error_message in form.errors.profile_picture.data %}
-                                                <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                                <small class="text-danger-500 block mt-1">{{ error_message.message }}</small>
                                             {% endfor %}
                                         </div>
-                                        <div class="d-flex flex-wrap align-items-center gap-2">
-                                            <small class="text-muted small mb-0">{% trans "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB." %}</small>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <small class="text-text-secondary text-sm mb-0">{% trans "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB." %}</small>
                                             <button type="button"
-                                                    class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                                                    class="inline-flex items-center px-3 py-1.5 border border-danger-500 text-danger-500 font-semibold text-sm rounded-lg hover:bg-danger-50 dark:hover:bg-danger-500/10 active:scale-95 transition-all gap-1"
                                                     hx-post="{% url 'account:profile-picture-delete' %}"
                                                     hx-target="#body"
                                                     hx-indicator="#body-loading-spinner"
@@ -79,50 +80,50 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6">
-                                <label for="name" class="form-label fw-semibold">{{ form.fields.name.label }}</label>
+                            <div class="w-full md:w-1/2">
+                                <label for="name" class="form-label font-semibold">{{ form.fields.name.label }}</label>
                                 <input type="text"
-                                       class="form-control"
+                                       class="ym-input"
                                        id="name"
                                        name="name"
                                        autocomplete="name"
                                        required
                                        value="{{ form.name.value|default:user.name }}">
                                 {% for error_message in form.errors.name.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                    <small class="text-danger-500 block mt-1">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
-                            <div class="col-12 col-md-6">
-                                <label for="email" class="form-label fw-semibold">{{ form.fields.email.label }}</label>
+                            <div class="w-full md:w-1/2">
+                                <label for="email" class="form-label font-semibold">{{ form.fields.email.label }}</label>
                                 <input type="email"
-                                       class="form-control"
+                                       class="ym-input"
                                        id="email"
                                        name="email"
                                        autocomplete="email"
                                        required
                                        value="{{ form.email.value|default:user.email }}">
                                 {% for error_message in form.errors.email.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                    <small class="text-danger-500 block mt-1">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
-                            <div class="col-12 col-md-6">
-                                <label for="paypal_me_username" class="form-label fw-semibold">{{ form.fields.paypal_me_username.label }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">@</span>
+                            <div class="w-full md:w-1/2">
+                                <label for="paypal_me_username" class="form-label font-semibold">{{ form.fields.paypal_me_username.label }}</label>
+                                <div class="ym-input-group">
+                                    <span class="ym-input-addon">@</span>
                                     <input type="text"
-                                           class="form-control"
+                                           class="ym-input"
                                            id="paypal_me_username"
                                            name="paypal_me_username"
                                            value="{{ form.paypal_me_username.value|default:user.paypal_me_username }}"
                                            placeholder="-">
                                 </div>
                                 {% for error_message in form.errors.paypal_me_username.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                    <small class="text-danger-500 block mt-1">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
-                            <div class="col-12 col-md-6">
-                                <label for="id_language" class="form-label fw-semibold">{{ form.fields.language.label }}</label>
-                                <select name="language" id="id_language" class="form-select">
+                            <div class="w-full md:w-1/2">
+                                <label for="id_language" class="form-label font-semibold">{{ form.fields.language.label }}</label>
+                                <select name="language" id="id_language" class="ym-select">
                                     {% for choice_value, choice_label in form.fields.language.choices %}
                                         <option value="{{ choice_value }}"
                                                 {% if form.language.value == choice_value %}selected{% endif %}>
@@ -131,69 +132,69 @@
                                     {% endfor %}
                                 </select>
                                 {% for error_message in form.errors.language.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                    <small class="text-danger-500 block mt-1">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
-                            <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold d-block mb-0">{% trans "Notification Center" %}</label>
-                                <p class="text-muted small mt-0">{% trans "Choose how you want to hear from us." %}</p>
-                                <div class="form-check form-switch">
+                            <div class="w-full md:w-1/2">
+                                <label class="form-label font-semibold block mb-0">{% trans "Notification Center" %}</label>
+                                <p class="text-text-secondary text-sm mt-0">{% trans "Choose how you want to hear from us." %}</p>
+                                <div class="ym-check ym-switch">
                                     <input type="checkbox"
-                                           class="form-check-input"
+                                           class="ym-check-input"
                                            id="wants_to_receive_webpush_notifications"
                                            name="wants_to_receive_webpush_notifications"
                                            {% if form.wants_to_receive_webpush_notifications.value|default:user.wants_to_receive_webpush_notifications %}checked{% endif %}>
-                                    <label for="wants_to_receive_webpush_notifications" class="form-check-label">
+                                    <label for="wants_to_receive_webpush_notifications" class="ym-check-label">
                                         {{ form.fields.wants_to_receive_webpush_notifications.label }}
                                     </label>
                                 </div>
                                 {% for error_message in form.errors.wants_to_receive_webpush_notifications.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                    <small class="text-danger-500 block mt-1">{{ error_message.message }}</small>
                                 {% endfor %}
-                                <div class="form-check form-switch mt-3">
+                                <div class="ym-check ym-switch mt-4">
                                     <input type="checkbox"
-                                           class="form-check-input"
+                                           class="ym-check-input"
                                            id="wants_to_receive_payment_reminders"
                                            name="wants_to_receive_payment_reminders"
                                            {% if form.wants_to_receive_payment_reminders.value|default:user.wants_to_receive_payment_reminders %}checked{% endif %}>
-                                    <label for="wants_to_receive_payment_reminders" class="form-check-label">
+                                    <label for="wants_to_receive_payment_reminders" class="ym-check-label">
                                         {{ form.fields.wants_to_receive_payment_reminders.label }}
                                     </label>
                                 </div>
                                 {% for error_message in form.errors.wants_to_receive_payment_reminders.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                    <small class="text-danger-500 block mt-1">{{ error_message.message }}</small>
                                 {% endfor %}
-                                <div class="form-check form-switch mt-3">
+                                <div class="ym-check ym-switch mt-4">
                                     <input type="checkbox"
-                                           class="form-check-input"
+                                           class="ym-check-input"
                                            id="wants_to_receive_room_reminders"
                                            name="wants_to_receive_room_reminders"
                                            {% if form.wants_to_receive_room_reminders.value|default:user.wants_to_receive_room_reminders %}checked{% endif %}>
-                                    <label for="wants_to_receive_room_reminders" class="form-check-label">
+                                    <label for="wants_to_receive_room_reminders" class="ym-check-label">
                                         {{ form.fields.wants_to_receive_room_reminders.label }}
                                     </label>
                                 </div>
                                 {% for error_message in form.errors.wants_to_receive_room_reminders.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                                    <small class="text-danger-500 block mt-1">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="col-12 col-xl-9">
-                <div class="card border-0 rounded-4 shadow-sm">
-                    <div class="card-body p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
+            <div class="w-full xl:w-9/12">
+                <div class="bg-white dark:bg-dark-surface border-0 rounded-2xl shadow-sm">
+                    <div class="p-6 flex flex-col md:flex-row items-start md:items-center gap-3">
                         <div>
-                            <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
-                            <h2 class="h5 fw-semibold mb-2">{% trans "Need a new password?" %}</h2>
-                            <p class="text-muted mb-0">
-                                {% trans "Set a fresh password any time. We’ll keep you logged in while you update it." %}
+                            <p class="uppercase text-sm text-text-secondary mb-1">{% trans "Security" %}</p>
+                            <h2 class="text-lg font-semibold mb-2">{% trans "Need a new password?" %}</h2>
+                            <p class="text-text-secondary mb-0">
+                                {% trans "Set a fresh password any time. We'll keep you logged in while you update it." %}
                             </p>
                         </div>
-                        <div class="ms-md-auto">
+                        <div class="md:ml-auto">
                             <button type="button"
-                                    class="btn btn-outline-primary"
+                                    class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-500 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 active:scale-95 transition-all"
                                     hx-get="{% url 'account:change-password' pk=user.id %}"
                                     hx-target="#body"
                                     hx-indicator="#body-loading-spinner"
@@ -217,10 +218,10 @@
                 fileInput.addEventListener("change", () => {
                     const file = fileInput.files && fileInput.files[0];
                     if (!file) {
-                        previewImage.classList.add("d-none");
+                        previewImage.classList.add("hidden");
                         previewImage.removeAttribute("src");
                         if (placeholder) {
-                            placeholder.classList.remove("d-none");
+                            placeholder.classList.remove("hidden");
                         }
                         return;
                     }
@@ -233,9 +234,9 @@
                         }
 
                         previewImage.src = newDataUrl;
-                        previewImage.classList.remove("d-none");
+                        previewImage.classList.remove("hidden");
                         if (placeholder) {
-                            placeholder.classList.add("d-none");
+                            placeholder.classList.add("hidden");
                         }
                     };
 

@@ -1,22 +1,22 @@
 {% extends "core/base.html" %}
 {% load room_tags %}
 {% block content %}
-    <div class="container text-center">
-        <div class="row g-1">
+    <div class="text-center">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-1">
             {% for room in room_qs %}
-                <div class="col-12 col-lg-6 cursor-pointer">
+                <div class="w-full cursor-pointer">
                     <div class="p-1">
-                        <div class="card container d-flex justify-content-center room-list-card"
+                        <div class="bg-[#181618] rounded-2xl h-32 min-h-32 flex justify-center items-center"
                              hx-trigger="click"
                              hx-get="{% room_url 'transaction:list' %}"
                              hx-target="#body"
                              hx-indicator="#body-loading-spinner"
                              hx-swap="innerHTML"
                              hx-push-url="true">
-                            <div class="row">
+                            <div class="flex w-full">
                                 {% if room.status == ROOM_STATUS_CLOSED %}
-                                    <div class="col-1 ms-5 p-0 d-flex justify-content-center align-items-center">
-                                        <h1 class="mb-0">
+                                    <div class="flex justify-center items-center ml-5 px-0">
+                                        <h1 class="mb-0 text-4xl">
                                             <i class="bi bi-dash-circle"
                                                hx-get="{% room_url 'room:edit' %}"
                                                hx-target="#body"
@@ -26,21 +26,21 @@
                                         </h1>
                                     </div>
                                 {% endif %}
-                                <div class="col p-0">
-                                    <div class="card-body container d-flex align-items-center justify-content-center flex-wrap {% if room.status == ROOM_STATUS_CLOSED %}text-start{% else %}{% endif %}">
+                                <div class="flex-1 px-0">
+                                    <div class="flex items-center justify-center flex-wrap px-4 {% if room.status == ROOM_STATUS_CLOSED %}text-left{% endif %}">
                                         {% if request.user.is_superuser and not room.user_is_in_room %}
-                                            <small class="fst-italic">{{ room.created_by__name }}</small>
+                                            <small class="italic">{{ room.created_by__name }}</small>
                                         {% endif %}
-                                        <div class="row w-100">
-                                            <div class="col">
-                                                <h5 class="card-title {% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-muted{% endif %}">
+                                        <div class="flex w-full">
+                                            <div class="flex-1">
+                                                <h5 class="font-semibold {% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-text-secondary{% endif %}">
                                                     {{ room.name }}
                                                 </h5>
                                             </div>
                                         </div>
-                                        <div class="row w-100">
-                                            <div class="col">
-                                                <p class="card-text {% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-muted{% endif %}">
+                                        <div class="flex w-full">
+                                            <div class="flex-1">
+                                                <p class="{% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-text-secondary{% endif %}">
                                                     {{ room.description }}
                                                 </p>
                                             </div>
@@ -52,17 +52,17 @@
                     </div>
                 </div>
             {% endfor %}
-            <div class="col-12 col-lg-6 cursor-pointer">
+            <div class="w-full cursor-pointer">
                 <div class="p-1">
-                    <div class="card room-list-card room-list-card-add"
+                    <div class="bg-[rgb(24,22,24)] rounded-2xl h-32 min-h-32"
                          hx-trigger="click"
                          hx-get="{% url 'room:create' %}"
                          hx-target="#body"
                          hx-indicator="#body-loading-spinner"
                          hx-swap="morph:innerHTML"
                          hx-push-url="true">
-                        <div class="card-body">
-                            <p class="card-text">
+                        <div class="flex justify-center items-center h-full">
+                            <p class="text-4xl mb-0">
                                 <i class="bi bi-plus-circle"></i>
                             </p>
                         </div>

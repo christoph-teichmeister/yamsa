@@ -564,8 +564,8 @@ msgstr "Erinnerungsprotokolle"
 msgid "Optimised debts"
 msgstr "Optimierte Schulden"
 
-msgid "Track what is left to settle inside this room. Click the piggy-bank to mark a debt as paid."
-msgstr "Verfolge, was in diesem Raum noch ausgeglichen werden muss. Klicke auf das Sparschwein, um eine Schuld als bezahlt zu markieren."
+msgid "Track what is left to settle inside this room."
+msgstr "Verfolge, was in diesem Raum noch ausgeglichen werden muss."
 
 #, python-format
 msgid ""
@@ -594,8 +594,8 @@ msgstr "Kategorienaufteilung anzeigen"
 msgid "Break down spend"
 msgstr "Ausgaben aufschlüsseln"
 
-msgid "Money overview"
-msgstr "Geldübersicht"
+msgid "Overview"
+msgstr "Übersicht"
 
 msgid "See how much each person has paid and who still owes what."
 msgstr "Sieh, wie viel jede Person bezahlt hat und wer noch was schuldet."
@@ -607,9 +607,6 @@ msgstr "%(debitor_display)s schuldet %(value)s%(currency)s an %(creditor_display
 #, python-format
 msgid "Settled on %(settled_at)s"
 msgstr "Am %(settled_at)s beglichen"
-
-msgid "Tap the piggy-bank when this debt is paid off."
-msgstr "Tippe auf das Sparschwein, wenn diese Schuld beglichen ist."
 
 msgid "Settled"
 msgstr "Beglichen"

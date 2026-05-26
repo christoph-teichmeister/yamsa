@@ -2,7 +2,7 @@
 {% load static room_tags i18n %}
 {% load render_bundle from webpack_loader %}
 {% block tab_content %}
-    <section class="container px-2 px-md-4 px-lg-5 py-4">
+    <section class="mx-auto w-full px-4 md:px-8 lg:px-12 py-6">
         <style nonce="{{ csp_nonce }}">
             #transaction-category-breakdown-chart {
                 min-height: 280px;
@@ -15,44 +15,46 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                background-color: var(--category-color, #6c757d);
+                background-color: var(--category-color, #7c879b);
             }
         </style>
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-            <button type="button"
-                    class="btn btn-link text-decoration-none ps-0 d-flex align-items-center gap-2"
-                    hx-get="{% room_url 'transaction:list' %}#transaction-section"
-                    hx-target="#body"
-                    hx-indicator="#body-loading-spinner"
-                    hx-swap="morph:innerHTML"
-                    hx-push-url="true">
-                <i class="bi bi-arrow-left"></i>
-                {% trans "Back to transactions" %}
-            </button>
-            <div class="text-center flex-grow-1">
-                <p class="text-uppercase text-muted small mb-1">{% trans "Category breakdown" %}</p>
-                <h2 class="fs-4 fw-semibold mb-1">{% trans "All recorded spend" %}</h2>
-                <p class="text-muted small mb-0">
+        <div class="flex flex-col gap-2 mb-6">
+            <div>
+                <button type="button"
+                        class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 transition-all gap-2"
+                        hx-get="{% room_url 'debt:list' %}"
+                        hx-target="#body"
+                        hx-indicator="#body-loading-spinner"
+                        hx-swap="morph:innerHTML"
+                        hx-push-url="true">
+                    <i class="bi bi-arrow-left"></i>
+                    {% trans "Back to debts" %}
+                </button>
+            </div>
+            <div class="text-center">
+                <p class="uppercase text-text-secondary text-sm mb-1">{% trans "Category breakdown" %}</p>
+                <h2 class="text-xl font-semibold mb-1">{% trans "All recorded spend" %}</h2>
+                <p class="text-text-secondary text-sm mb-0">
                     {% blocktrans with period=category_breakdown_period %}Showing {{ period }}.{% endblocktrans %}
                 </p>
             </div>
         </div>
-        <div class="card border-0 rounded-4 shadow-sm">
-            <div class="card-body">
+        <div class="bg-white dark:bg-dark-surface border-0 rounded-2xl shadow-sm">
+            <div class="p-6">
                 {% if category_breakdown_by_currency %}
                     {% for breakdown in category_breakdown_by_currency %}
-                        <div class="row g-4">
-                            <div class="col-12">
-                                <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+                        <div class="grid gap-6">
+                            <div class="w-full">
+                                <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
                                     <div>
-                                        <p class="text-uppercase text-muted small mb-1">{% trans "Currency breakdown" %}</p>
-                                        <h3 class="fs-5 fw-semibold mb-1">
+                                        <p class="uppercase text-text-secondary text-sm mb-1">{% trans "Currency breakdown" %}</p>
+                                        <h3 class="text-lg font-semibold mb-1">
                                             {{ breakdown.currency.name }}
-                                            <span class="text-muted small text-uppercase ms-2">{{ breakdown.currency.code }}</span>
+                                            <span class="text-text-secondary text-sm uppercase ml-2">{{ breakdown.currency.code }}</span>
                                         </h3>
-                                        <p class="text-muted small mb-0">{{ breakdown.currency.sign }}</p>
+                                        <p class="text-text-secondary text-sm mb-0">{{ breakdown.currency.sign }}</p>
                                     </div>
-                                    <span class="text-muted small">
+                                    <span class="text-text-secondary text-sm">
                                         {% blocktrans count category_count=breakdown.categories|length %}
                                             {{ category_count }} category
                                         {% plural %}
@@ -61,17 +63,17 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-7">
+                            <div class="lg:w-7/12">
                                 <div id="{{ breakdown.chart_container_id }}"
-                                     class="d-flex align-items-center justify-content-center"
+                                     class="flex items-center justify-center"
                                      data-transaction-category-chart
                                      data-transaction-category-chart-dataset-id="{{ breakdown.chart_data_id }}"></div>
                                 {{ breakdown.chart_data|json_script:breakdown.chart_data_id }}
                             </div>
-                            <div class="col-12 col-lg-5">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <p class="fw-semibold mb-0">{% trans "Legend" %}</p>
-                                    <span class="text-muted small">
+                            <div class="lg:w-5/12">
+                                <div class="flex justify-between items-center mb-4">
+                                    <p class="font-semibold mb-0">{% trans "Legend" %}</p>
+                                    <span class="text-text-secondary text-sm">
                                         {% blocktrans count category_count=breakdown.categories|length %}
                                             {{ category_count }} category
                                         {% plural %}
@@ -79,27 +81,27 @@
                                         {% endblocktrans %}
                                     </span>
                                 </div>
-                                <div class="list-group list-group-flush">
+                                <div class="divide-y divide-gray-100 dark:divide-dark-border">
                                     {% for category in breakdown.categories %}
-                                        <div class="list-group-item border-0 px-0 py-2 d-flex justify-content-between align-items-center">
-                                            <div class="d-flex align-items-center gap-3">
-                                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white category-swatch"
-                                                      data-category-color="{{ category.color|default:'#6c757d' }}">{{ category.emoji }}</span>
+                                        <div class="border-0 px-0 py-2 flex justify-between items-center">
+                                            <div class="flex items-center gap-3">
+                                                <span class="inline-flex items-center justify-center rounded-full text-white category-swatch"
+                                                      data-category-color="{{ category.color|default:'#7c879b' }}">{{ category.emoji }}</span>
                                                 <div>
-                                                    <p class="mb-0 fw-semibold">{{ category.name }}</p>
-                                                    <p class="text-muted small mb-0">{{ category.slug|title }}</p>
+                                                    <p class="mb-0 font-semibold">{{ category.name }}</p>
+                                                    <p class="text-text-secondary text-sm mb-0">{{ category.slug|title }}</p>
                                                 </div>
                                             </div>
-                                            <span class="fw-semibold">{{ category.total_amount|format_with_thousands }}|{{ category.total_amount|format_with_thousands }}{{ breakdown.currency.sign }}</span>
+                                            <span class="font-semibold">{{ category.total_amount|format_with_thousands }}|{{ category.total_amount|format_with_thousands }}{{ breakdown.currency.sign }}</span>
                                         </div>
                                     {% endfor %}
                                 </div>
                             </div>
                         </div>
-                        {% if not forloop.last %}<hr class="my-4">{% endif %}
+                        {% if not forloop.last %}<hr class="my-6">{% endif %}
                     {% endfor %}
                 {% else %}
-                    <div class="text-center text-muted small">
+                    <div class="text-center text-text-secondary text-sm">
                         {% trans "No tracked expenses yet. Add a transaction to populate the breakdown." %}
                     </div>
                 {% endif %}
@@ -120,7 +122,7 @@
             const renderSingleChart = (container, dataset) => {
                 container.innerHTML = "";
                 if (!dataset.length) {
-                    container.innerHTML = "<p class='text-muted small mb-0'>" + emptyBreakdownMessage + "</p>";
+                    container.innerHTML = "<p class='text-text-secondary text-sm mb-0'>" + emptyBreakdownMessage + "</p>";
                     return;
                 }
 

@@ -5,17 +5,17 @@
         <link rel="stylesheet" href="{% static 'components/core/welcome.css' %}">
         <div class="news-wrap">
             <div class="timeline-hero">
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+                <div class="flex flex-col md:flex-row justify-between items-start gap-3">
                     <div>
-                        <p class="text-uppercase small text-muted mb-1">{% trans "Room activity timeline" %}</p>
+                        <p class="uppercase text-sm text-text-secondary mb-1">{% trans "Room activity timeline" %}</p>
                         <h2 class="mb-2">{% trans "See transactions and changes at a glance" %}</h2>
                         <p class="mb-0">
                             {% trans "Every room update - expenses logged, settlements, highlights - lands here so you never miss a beat." %}
                         </p>
                     </div>
-                    <div class="text-md-end">
-                        <p class="mb-1 fw-semibold">{% trans "Auto-updated feed" %}</p>
-                        <p class="mb-0 small">{% trans "Events appear in chronological order with the newest at the top." %}</p>
+                    <div class="md:text-right">
+                        <p class="mb-1 font-semibold">{% trans "Auto-updated feed" %}</p>
+                        <p class="mb-0 text-sm">{% trans "Events appear in chronological order with the newest at the top." %}</p>
                     </div>
                 </div>
             </div>
@@ -28,8 +28,10 @@
                 </div>
             {% else %}
                 <div class="timeline-empty">
-                    <p class="fw-semibold">{% trans "No updates yet" %}</p>
-                    <p class="text-muted mb-0">{% trans "Once roommates start logging expenses or changes, they will appear here." %}</p>
+                    <p class="font-semibold">{% trans "No updates yet" %}</p>
+                    <p class="text-text-secondary mb-0">
+                        {% trans "Once roommates start logging expenses or changes, they will appear here." %}
+                    </p>
                 </div>
             {% endif %}
         </div>

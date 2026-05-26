@@ -1,8 +1,8 @@
 {% extends "room/dashboard.html" %}
 {% load static room_tags i18n %}
 {% block tab_content %}
-    <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
-        <div class="col">
+    <div class="flex w-full justify-between items-center py-1 mt-6">
+        <div class="flex-1">
             <h5>
                 {% blocktrans with creditor_name=debt.creditor.name %}
                     Your debt to {{ creditor_name }}
@@ -22,14 +22,14 @@
           hx-swap="morph:innerHTML"
           hx-push-url="true">
         {% csrf_token %}
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">
+        <ul class="flex flex-col">
+            <li class="px-4 py-3 border-b border-gray-200 dark:border-dark-border">
                 <div class="form-group" hidden>
                     <label for="debt_id">{% trans "Debt ID" %}</label>
                     <input id="debt_id"
                            type="number"
                            name="debt_id"
-                           class="form-control"
+                           class="ym-input"
                            required
                            value="{{ debt.id }}" />
                 </div>
@@ -39,32 +39,41 @@
                            name="settled"
                            type="checkbox"
                            checked
-                           class="form-control"
+                           class="ym-input"
                            required />
                 </div>
             </li>
         </ul>
-        <div class="row d-flex justify-content-end me-2">
+        <div class="flex justify-end mr-2 gap-2">
             {% if debt.creditor.paypal_me_username %}
-                <div class="col-9">
-                    <a href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/ {{ debt.value }}{{ debt.currency.code }}"
-                       target="_blank">
-                        <button type="button" class="btn btn-secondary w-100">{% trans "No, take me to their paypal" %}</button>
-                    </a>
+                <div class="w-9/12">
+                    <button type="button"
+                            class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 transition-all w-full"
+                            onclick="window.open('https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/{{ debt.value }}{{ debt.currency.code }}', '_blank')"
+                            hx-get="{% room_url 'debt:list' %}"
+                            hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true">{% trans "No, take me to their paypal" %}</button>
                 </div>
             {% else %}
-                <div class="col-3">
+                <div class="w-3/12">
                     <button type="button"
-                            class="btn btn-secondary w-100"
-                            disabled
-                            aria-disabled="true"
-                            aria-label="{% trans "No action available" %}">{% trans "No" %}</button>
+                            class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 transition-all w-full"
+                            hx-get="{% room_url 'debt:list' %}"
+                            hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true">{% trans "No" %}</button>
                 </div>
             {% endif %}
-            <div class="col-3">
-                <button type="submit" class="btn btn-primary w-100">{% trans "Yes" %}</button>
+            <div class="w-3/12">
+                <button type="submit"
+                        class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all w-full">
+                    {% trans "Yes" %}
+                </button>
             </div>
         </div>
-        <div class="modal-footer"></div>
+        <div class="ym-dialog-footer"></div>
     </form>
 {% endblock tab_content %}

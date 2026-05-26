@@ -1,18 +1,18 @@
 {% load i18n core_tags %}
 {% trans "Close" as toast_close_label %}
-<div class="toast-container yamsa-toast-container position-fixed bottom-0 start-50 translate-middle-x px-1 pb-5 mb-5 w-100">
-    <div class="toast yamsa-toast border-0 w-100"
+<div class="toast-container yamsa-toast-container fixed bottom-0 left-1/2 -translate-x-1/2 px-1 pb-12 w-full">
+    <div class="toast yamsa-toast w-full"
          id="toast-id"
          role="alert"
          aria-live="assertive"
          aria-atomic="true">
         <div id="toast-type-div"
-             class="toast-yamsa-inner w-100 d-flex align-items-center justify-content-between gap-3 rounded-2 shadow-sm px-4 py-3">
+             class="toast-yamsa-inner w-full flex items-center justify-between gap-3 rounded-xl shadow-sm px-4 py-3">
             <span id="toast-message-span"
-                  class="flex-grow-1 fw-semibold fs-6 text-truncate"></span>
+                  class="flex-grow font-semibold text-base truncate"></span>
             <button type="button"
-                    class="btn-close btn-close-white"
-                    data-bs-dismiss="toast"
+                    class="ym-close-btn ym-close-btn-white"
+                    id="toast-close-btn"
                     aria-label="{{ toast_close_label }}"></button>
         </div>
     </div>
@@ -25,154 +25,135 @@
             nonce="{{ csp_nonce }}">[]</script>
 {% endif %}
 {% trans "Something went wrong" as something_went_wrong %}
-<!-- Toast handler -->
-<script type="module" nonce="{{ csp_nonce }}">
-    const initializeToastHandler = () => {
-        if (!window.bootstrap || typeof window.bootstrap.Toast === "undefined") {
-            console.warn("Bootstrap Toast API not yet available; toast handler initialization postponed.")
-            scheduleToastHandlerRetry()
-            return
-        }
+<script type="text/javascript" nonce="{{ csp_nonce }}">
+    (function () {
+        if (!document.getElementById("toast-id")) { return; }
 
-        const toastElement = document.getElementById("toast-id")
-        const toastTypeDiv = document.getElementById("toast-type-div")
-        const toastMessageSpan = document.getElementById("toast-message-span")
-        if (!toastElement || !toastTypeDiv || !toastMessageSpan) {
-            console.warn("Toast markup missing; skipping toast initialization.")
-            return
-        }
+        // Global state survives every DOM swap (morph or innerHTML replace)
+        window.__yamsaToastState = window.__yamsaToastState || { queue: [], isVisible: false, timer: null, lastKey: null, lastKeyTime: 0 };
+        var state = window.__yamsaToastState;
 
-        const toastBootstrap = window.bootstrap.Toast.getOrCreateInstance(toastElement)
-        const baseToastClasses =
-            "toast-yamsa-inner w-100 d-flex align-items-center justify-content-between gap-3 rounded-4 shadow-sm px-4 py-3"
-        const defaultErrorToastClasses = "{{ toast_classes.error|escapejs }}"
-        const defaultErrorMessage = "⚠️ {{ something_went_wrong|escapejs }} 🥺"
+        var baseToastClasses = "toast-yamsa-inner w-full flex items-center justify-between gap-3 rounded-xl shadow-sm px-4 py-3";
+        var defaultErrorToastClasses = "{{ toast_classes.error|escapejs }}";
+        var defaultErrorMessage = "⚠️ {{ something_went_wrong|escapejs }} 🥺";
+        var TOAST_DURATION_MS = 5000;
+        var DEDUP_WINDOW_MS = 500;
 
-        let toastIsVisible = false
-        const toastQueue = []
+        // Always look up DOM elements fresh — safe after any swap type
+        var getById = function (id) { return document.getElementById(id); };
 
-        const applyToastClasses = (classString = "") => {
-            toastTypeDiv.className = baseToastClasses
-            classString.split(" ").forEach((typeString) => {
-                if (typeString.trim()) {
-                    toastTypeDiv.classList.add(typeString)
-                }
-            })
-        }
+        var applyToastClasses = function (classString) {
+            var el = getById("toast-type-div");
+            if (!el) { return; }
+            el.className = baseToastClasses;
+            (classString || "").split(" ").forEach(function (cls) {
+                if (cls.trim()) { el.classList.add(cls); }
+            });
+        };
 
-        const enqueueToast = (toastDetail) => {
-            if (!toastDetail || !toastDetail.message) {
-                return
-            }
+        var hideToast = function () {
+            clearTimeout(state.timer);
+            state.timer = null;
+            var el = getById("toast-id");
+            if (el) { el.classList.remove("show"); }
+            state.isVisible = false;
+            setTimeout(showNextToast, 300);
+        };
 
-            toastQueue.push(toastDetail)
-        }
+        var showToast = function () {
+            state.isVisible = true;
+            var el = getById("toast-id");
+            if (el) { el.classList.add("show"); }
+            state.timer = setTimeout(hideToast, TOAST_DURATION_MS);
+        };
 
-        const showToast = () => {
-            toastIsVisible = true
-            toastBootstrap.show()
-        }
+        var enqueueToast = function (toastDetail) {
+            if (!toastDetail || !toastDetail.message) { return; }
+            // Deduplicate: suppress the same toast within a short window.
+            // Prevents HX-Trigger (pre-swap) and HX-Trigger-After-Settle from both showing.
+            var key = toastDetail.message + "|" + (toastDetail.type || "");
+            var now = Date.now();
+            if (key === state.lastKey && now - state.lastKeyTime < DEDUP_WINDOW_MS) { return; }
+            state.lastKey = key;
+            state.lastKeyTime = now;
+            state.queue.push(toastDetail);
+        };
 
-        const showNextToast = () => {
-            if (toastIsVisible || toastQueue.length === 0) {
-                return
-            }
+        var showNextToast = function () {
+            if (state.isVisible || state.queue.length === 0) { return; }
+            var toastDetail = state.queue.shift();
+            var span = getById("toast-message-span");
+            if (!span) { return; }
+            span.innerText = toastDetail.message;
+            applyToastClasses(toastDetail.type);
+            showToast();
+        };
 
-            const toastDetail = toastQueue.shift()
-            toastMessageSpan.innerText = toastDetail.message
-            applyToastClasses(toastDetail.type)
-            showToast()
-        }
-
-        const normalizeToastPayloads = (payload) => {
-            if (!payload) {
-                return []
-            }
-
+        var normalizeToastPayloads = function (payload) {
+            if (!payload) { return []; }
             if (Array.isArray(payload)) {
-                return payload.reduce((acc, entry) => {
-                    acc.push(...normalizeToastPayloads(entry))
-                    return acc
-                }, [])
+                return payload.reduce(function (acc, entry) {
+                    acc.push.apply(acc, normalizeToastPayloads(entry));
+                    return acc;
+                }, []);
             }
-
             if (typeof payload === "object") {
                 if ("value" in payload && payload.value !== undefined) {
-                    return normalizeToastPayloads(payload.value)
+                    return normalizeToastPayloads(payload.value);
                 }
                 if (payload.triggerToast) {
-                    return normalizeToastPayloads(payload.triggerToast)
+                    return normalizeToastPayloads(payload.triggerToast);
                 }
-                if (payload.message) {
-                    return [payload]
-                }
+                if (payload.message) { return [payload]; }
             }
+            return [];
+        };
 
-            return []
-        }
-
-        const dispatchQueuedToasts = () => {
-            const queuedToastsElement = document.getElementById("queued-toasts-data")
-            if (!queuedToastsElement) {
-                return
-            }
-
+        var dispatchQueuedToasts = function () {
+            var el = getById("queued-toasts-data");
+            if (!el) { return; }
             try {
-                const initialToasts = JSON.parse(queuedToastsElement.textContent || "[]")
-                if (Array.isArray(initialToasts)) {
-                    initialToasts.forEach(enqueueToast)
+                var toasts = JSON.parse(el.textContent || "[]");
+                if (Array.isArray(toasts) && toasts.length > 0) {
+                    toasts.forEach(enqueueToast);
+                    el.textContent = "[]";
                 }
-            } catch {
-                // swallow parsing errors
-            }
+            } catch (e) { /* ignore parse errors */ }
+        };
+
+        // Bind close button once per DOM node (flag prevents duplicate on morph reuse)
+        var closeBtn = getById("toast-close-btn");
+        if (closeBtn && !closeBtn.__yamsaCloseBound) {
+            closeBtn.__yamsaCloseBound = true;
+            closeBtn.addEventListener("click", hideToast);
         }
 
-        toastElement.addEventListener("shown.bs.toast", () => {
-            toastIsVisible = true
-        })
+        if (!window.__yamsaToastListenersRegistered) {
+            window.__yamsaToastListenersRegistered = true;
 
-        toastElement.addEventListener("hidden.bs.toast", () => {
-            toastIsVisible = false
-            showNextToast()
-        })
+            // Only enqueue here — showNextToast runs in htmx:afterSettle so the
+            // toast is added to the DOM AFTER morph completes (preventing morph
+            // from removing the freshly-added "show" class).
+            document.body.addEventListener("triggerToast", function (evt) {
+                normalizeToastPayloads(evt.detail).forEach(enqueueToast);
+            });
 
-        document.body.addEventListener("triggerToast", (evt) => {
-            const payloads = normalizeToastPayloads(evt.detail)
-            payloads.forEach(enqueueToast)
-            showNextToast()
-        })
+            // For failed requests there is no settle event, so show immediately.
+            document.body.addEventListener("htmx:afterRequest", function (evt) {
+                if (evt.detail && evt.detail.successful) { return; }
+                enqueueToast({ message: defaultErrorMessage, type: defaultErrorToastClasses });
+                showNextToast();
+            });
 
-        document.body.addEventListener("htmx:afterRequest", (evt) => {
-            if (evt.detail?.successful) {
-                return
-            }
-            enqueueToast({
-                message: defaultErrorMessage,
-                type: defaultErrorToastClasses,
-            })
-            showNextToast()
-        })
-
-        dispatchQueuedToasts()
-        showNextToast()
-    }
-
-    const scheduleToastHandlerRetry = () => {
-        if (window.__yamsaToastInitScheduled) {
-            return
+            // After every swap (full-page or partial), flush queue and show.
+            document.body.addEventListener("htmx:afterSettle", function () {
+                dispatchQueuedToasts();
+                showNextToast();
+            });
         }
 
-        window.__yamsaToastInitScheduled = true
-        const retryHandler = () => {
-            window.__yamsaToastInitScheduled = false
-            initializeToastHandler()
-        }
-        window.addEventListener("load", retryHandler, { once: true })
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initializeToastHandler)
-    } else {
-        initializeToastHandler()
-    }
+        // Non-HTMX page loads: read context-injected toasts immediately.
+        dispatchQueuedToasts();
+        showNextToast();
+    })();
 </script>

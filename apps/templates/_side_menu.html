@@ -1,44 +1,42 @@
 {% load room_tags i18n %}
 {% trans "Toggle navigation" as offcanvas_toggle_label %}
 {% trans "Copy the rooms URL to your clipboard to send it to your friends" as copy_rooms_url_tooltip %}
-<nav class="navbar fixed-top pt-4">
-    <div class="container-fluid pt-4 justify-content-center"
-         id="offcanvasContainer">
-        <div class="row w-100 d-flex justify-content-between">
-            <div class="col-1 px-0 d-flex align-items-center">
-                <button class="navbar-toggler p-0 text-primary-emphasis border-0"
+<nav class="ym-navbar ym-fixed-top pt-4">
+    <div class="flex w-full pt-4 justify-center px-4" id="offcanvasContainer">
+        <div class="flex w-full justify-between items-center">
+            <div class="flex items-center">
+                <button class="p-0 text-blue-500 border-0 bg-transparent text-3xl leading-none"
                         type="button"
-                        data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasNavbar"
+                        data-ym-toggle="drawer"
+                        data-ym-target="#offcanvasNavbar"
                         aria-controls="offcanvasNavbar"
                         aria-label="{{ offcanvas_toggle_label }}">
                     <i class="bi bi-list"></i>
                 </button>
             </div>
             {% if current_room %}
-                <div class="col-10 p-0 text-center">
-                    <h6 class="mb-0">{{ current_room.name }}</h6>
-                    <span class="text-muted small">{{ current_room.description|truncatechars:50 }}</span>
+                <div class="flex-1 px-2 text-center">
+                    <h6 class="mb-0 font-semibold">{{ current_room.name }}</h6>
+                    <span class="text-text-secondary text-sm">{{ current_room.description|truncatechars:50 }}</span>
                 </div>
             {% else %}
-                <div class="col-11 d-flex align-items-center justify-content-end">
-                    <h3 class="mb-0">yamsa</h3>
+                <div class="flex flex-1 items-center justify-end">
+                    <h3 class="mb-0 font-semibold">yamsa</h3>
                 </div>
             {% endif %}
             {% if current_room %}
-                <div class="col-1 px-0 d-flex align-items-center justify-content-end">
+                <div class="flex items-center justify-end">
                     {% if current_room.is_open %}
-                        <button class="btn btn-light btn-sm"
+                        <button class="px-2 py-1 bg-white dark:bg-dark-surface text-gray-900 dark:text-gray-100 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-dark-hover transition-all border border-light-border dark:border-dark-border"
                                 data-copy-share-url="true"
                                 data-share-url="{{ current_room.share_url }}"
-                                data-bs-toggle="tooltip"
-                                data-bs-title="{{ copy_rooms_url_tooltip }}"
+                                title="{{ copy_rooms_url_tooltip }}"
                                 hx-get="{% url 'room:htmx-checked-clipboard' %}"
                                 hx-swap="morph:innerHTML">
                             {% include "shared_partials/clipboard_icon_unchecked.html" %}
                         </button>
                     {% elif current_room.is_closed %}
-                        <h1 class="mb-0">
+                        <h1 class="mb-0 text-4xl">
                             <i class="bi bi-dash-circle"
                                hx-get="{% room_url 'room:detail' %}"
                                hx-target="#body"
@@ -50,57 +48,57 @@
                 </div>
             {% endif %}
         </div>
-        <div class="offcanvas offcanvas-start"
-             data-bs-backdrop="true"
-             data-bs-scroll="true"
+        <div class="ym-drawer ym-drawer-start"
+             data-ym-backdrop="true"
+             data-ym-scroll="true"
              aria-labelledby="offcanvasNavbarLabel"
              tabindex="-1"
              id="offcanvasNavbar">
-            <div class="offcanvas-header mt-4 pt-4">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">{% trans "Menu" %}</h5>
+            <div class="ym-drawer-header mt-6 pt-6">
+                <h5 class="ym-drawer-title font-semibold" id="offcanvasNavbarLabel">{% trans "Menu" %}</h5>
                 <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="offcanvas"
-                        data-bs-target="#offcanvasNavbar"
+                        class="ym-close-btn"
+                        data-ym-dismiss="drawer"
+                        data-ym-target="#offcanvasNavbar"
                         aria-label="Close"></button>
             </div>
-            <div class="offcanvas-body d-flex flex-column gap-4 pt-3 pb-4">
-                <div class="d-flex justify-content-center gap-2">
+            <div class="ym-drawer-body flex flex-col gap-4 pt-4 pb-6">
+                <div class="flex justify-center gap-2">
                     <button type="button"
-                            class="btn btn-sm btn-outline-primary px-3 rounded-3"
+                            class="px-4 py-1.5 border border-blue-500 text-blue-500 text-lg rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
                             data-theme-value="light">
                         <i class="bi bi-sun-fill"></i>
                     </button>
                     <button type="button"
-                            class="btn btn-sm btn-outline-primary px-3 rounded-3"
+                            class="px-4 py-1.5 border border-blue-500 text-blue-500 text-lg rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
                             data-theme-value="dark">
                         <i class="bi bi-moon-fill"></i>
                     </button>
                 </div>
-                <div class="card shadow-sm border-0 room-card text-center">
-                    <div class="card-body py-3">
+                <div class="bg-white dark:bg-dark-surface border border-light-border dark:border-dark-border rounded-2xl shadow-sm text-center room-card">
+                    <div class="p-4">
                         {% with sidebar_avatar_source=request.user.name|default:request.user.email %}
                             <div class="profile-avatar mb-2">
                                 {% if request.user.profile_picture %}
                                     <img src="{{ request.user.profile_picture_url }}"
                                          data-profile-picture-fallback-url="{{ request.user.profile_picture_fallback_url }}"
                                          alt="{{ request.user.name }}"
-                                         class="rounded-4 w-100 h-100 object-fit-cover"
+                                         class="rounded-2xl w-full h-full object-cover"
                                          width="64"
                                          height="64">
                                 {% else %}
-                                    <span class="fs-3 fw-semibold text-primary-emphasis">{{ sidebar_avatar_source|slice:':1'|upper }}</span>
+                                    <span class="text-2xl font-semibold text-blue-600 dark:text-blue-400">{{ sidebar_avatar_source|slice:':1'|upper }}</span>
                                 {% endif %}
                             </div>
                         {% endwith %}
-                        <div class="fw-semibold">
+                        <div class="font-semibold">
                             {% if request.user.is_anonymous %}
                                 {% trans "Profile" %}
                             {% else %}
                                 {{ request.user.name }}
                             {% endif %}
                         </div>
-                        <div class="text-muted small">
+                        <div class="text-text-secondary text-sm">
                             {% if request.user.is_anonymous %}
                                 {% trans "Log in to access rooms" %}
                             {% else %}
@@ -108,9 +106,9 @@
                             {% endif %}
                         </div>
                         <button type="button"
-                                class="btn btn-link p-0 mt-2"
-                                data-bs-dismiss="offcanvas"
-                                data-bs-target="#offcanvasNavbar"
+                                class="text-blue-500 hover:underline p-0 mt-2 bg-transparent border-0 text-sm"
+                                data-ym-dismiss="drawer"
+                                data-ym-target="#offcanvasNavbar"
                                 tabindex="-1"
                                 hx-trigger="click delay:300ms"
                                 hx-get=" {% if request.user.is_authenticated %} {% url 'account:detail' pk=request.user.id %} {% else %} {% url 'account:login' %} {% endif %}"
@@ -126,9 +124,9 @@
                         </button>
                     </div>
                 </div>
-                <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm {% if request.path == "/welcome/" %}active{% endif %}"
-                     data-bs-dismiss="offcanvas"
-                     data-bs-target="#offcanvasNavbar"
+                <div class="room-entry flex items-center gap-4 px-4 py-2 rounded-2xl shadow-sm {% if request.path == "/welcome/" %}active{% endif %}"
+                     data-ym-dismiss="drawer"
+                     data-ym-target="#offcanvasNavbar"
                      hx-trigger="click delay:300ms"
                      hx-get="{% url 'core:welcome' %}"
                      hx-indicator="#body-loading-spinner"
@@ -138,16 +136,16 @@
                     <div class="room-circle{% if request.path == "/welcome/" %} selected{% endif %}">
                         <i class="bi bi-house"></i>
                     </div>
-                    <div class="flex-grow-1 text-start">
-                        <div class="room-name fw-semibold mb-0">{% trans "Home" %}</div>
-                        <small class="room-description text-muted">{% trans "Back to home" %}</small>
+                    <div class="flex-1 text-left">
+                        <div class="room-name font-semibold mb-0">{% trans "Home" %}</div>
+                        <small class="room-description text-text-secondary">{% trans "Back to home" %}</small>
                     </div>
-                    <span class="badge bg-light text-dark room-status-badge">{% trans "Start" %}</span>
+                    <span class="room-status-badge inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap bg-gray-100 text-gray-800 dark:bg-dark-hover dark:text-gray-200">{% trans "Start" %}</span>
                 </div>
                 {% include "_side_menu_room_list.html" %}
                 <div class="mt-auto">
                     <button type="button"
-                            class="btn btn-primary w-100"
+                            class="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all"
                             hx-trigger="click"
                             hx-get="{% url 'account:logout' %}"
                             hx-target="#body"

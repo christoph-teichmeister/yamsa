@@ -6,72 +6,65 @@
 {% trans "Save room details" as edit_save_label %}
 {% trans "Close" as edit_close_label %}
 {% block tab_content %}
-    <section class="container-fluid px-2 px-md-4 px-lg-5 py-4">
-        <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
-            <div class="d-flex align-items-center gap-3">
-                <i class="bi bi-arrow-left-circle fs-2 cursor-pointer text-primary"
-                   role="button"
-                   aria-label="{{ edit_back_label }}"
-                   hx-trigger="click"
-                   hx-get="{% room_url 'room:detail' %}"
-                   hx-target="#body"
-                   hx-indicator="#body-loading-spinner"
-                   hx-swap="morph:innerHTML"
-                   hx-push-url="true"></i>
+    <section class="w-full px-2 md:px-4 lg:px-5 py-6">
+        <div class="flex flex-col md:flex-row items-start justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+                <button type="button"
+                        class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover active:scale-95 transition-all gap-2"
+                        aria-label="{{ edit_back_label }}"
+                        hx-get="{% room_url 'room:detail' %}"
+                        hx-target="#body"
+                        hx-indicator="#body-loading-spinner"
+                        hx-swap="morph:innerHTML"
+                        hx-push-url="true">
+                    <i class="bi bi-arrow-left"></i>
+                    {{ edit_back_label }}
+                </button>
                 <div>
-                    <p class="text-muted small mb-1">{% trans "Room settings" %}</p>
-                    <h3 class="fw-semibold mb-0">
+                    <p class="text-text-secondary text-sm mb-1">{% trans "Room settings" %}</p>
+                    <h3 class="font-semibold mb-0">
                         {% blocktrans trimmed with room_name=current_room.name %}
                             Edit "{{ room_name }}"
                         {% endblocktrans %}
                     </h3>
                 </div>
             </div>
-            {% if current_room.is_open %}
-                <button type="submit"
-                        form="room-details-form"
-                        class="btn btn-primary btn-sm px-4 py-2 d-inline-flex align-items-center gap-1"
-                        aria-label="{{ edit_save_label }}">
-                    <i class="bi bi-save"></i>
-                    {% trans "Save" %}
-                </button>
-            {% endif %}
         </div>
-        <div class="row g-4">
-            <div class="col-12 col-lg-8">
-                <div class="card rounded-4 shadow-sm border-0 h-100">
-                    <div class="card-body">
-                        <div class="d-flex flex-column gap-1 mb-3">
-                            <p class="text-muted small mb-0">{% trans "Basics" %}</p>
-                            <h5 class="fw-semibold mb-0">{% trans "Name, description & currency" %}</h5>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-8">
+                <div class="bg-white dark:bg-dark-surface rounded-2xl shadow-sm border-0 h-full">
+                    <div class="p-6">
+                        <div class="flex flex-col gap-1 mb-4">
+                            <p class="text-text-secondary text-sm mb-0">{% trans "Basics" %}</p>
+                            <h5 class="font-semibold mb-0">{% trans "Name, description & currency" %}</h5>
                             {% if form.errors %}
-                                <small class="text-danger">{% trans "Please fix the highlighted errors in the form." %}</small>
+                                <small class="text-danger-500">{% trans "Please fix the highlighted errors in the form." %}</small>
                             {% endif %}
                         </div>
                         <form id="room-details-form"
-                              class="row g-3"
+                              class="flex flex-col gap-4"
                               hx-post="{% room_url 'room:edit' %}"
                               hx-target="#body"
                               hx-indicator="#body-loading-spinner"
                               hx-swap="morph:innerHTML">
                             {% csrf_token %}
-                            <div class="col-12">
-                                <label for="name" class="form-label fw-semibold">{{ form.fields.name.label }}</label>
+                            <div>
+                                <label for="name" class="block text-sm font-semibold mb-1">{{ form.fields.name.label }}</label>
                                 <input type="text"
-                                       class="form-control"
+                                       class="ym-input"
                                        id="name"
                                        name="name"
                                        required
                                        value="{{ current_room.name }}"
                                        {% if current_room.is_closed %}disabled{% endif %}>
                                 {% for error_message in form.errors.name.data %}
-                                    <small class="text-danger">{{ error_message.message }}</small>
+                                    <small class="text-danger-500">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
-                            <div class="col-12">
-                                <label for="description" class="form-label fw-semibold">{{ form.fields.description.label }}</label>
+                            <div>
+                                <label for="description" class="block text-sm font-semibold mb-1">{{ form.fields.description.label }}</label>
                                 <input type="text"
-                                       class="form-control"
+                                       class="ym-input"
                                        id="description"
                                        name="description"
                                        value="{{ current_room.description }}"
@@ -79,13 +72,15 @@
                                        maxlength="50"
                                        {% if current_room.is_closed %}disabled{% endif %}>
                                 {% for error_message in form.errors.description.data %}
-                                    <small class="text-danger">{{ error_message.message }}</small>
+                                    <small class="text-danger-500">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
-                            <div class="col-12">
-                                <label for="preferred_currency" class="form-label fw-semibold">{{ form.fields.preferred_currency.label }}</label>
+                            <div>
+                                <label for="preferred_currency" class="block text-sm font-semibold mb-1">
+                                    {{ form.fields.preferred_currency.label }}
+                                </label>
                                 <select name="preferred_currency"
-                                        class="form-select"
+                                        class="ym-select"
                                         id="preferred_currency"
                                         required
                                         {% if current_room.is_closed %}disabled{% endif %}>
@@ -97,25 +92,36 @@
                                     {% endfor %}
                                 </select>
                                 {% for error_message in form.errors.preferred_currency.data %}
-                                    <small class="text-danger">{{ error_message.message }}</small>
+                                    <small class="text-danger-500">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
                             <input type="hidden" name="status" value="{{ current_room.status }}">
                         </form>
+                        {% if current_room.is_open %}
+                            <div class="mt-4 flex justify-end">
+                                <button type="submit"
+                                        form="room-details-form"
+                                        class="inline-flex items-center gap-1 px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all"
+                                        aria-label="{{ edit_save_label }}">
+                                    <i class="bi bi-save"></i>
+                                    {% trans "Save" %}
+                                </button>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-4">
-                <div class="card rounded-4 shadow-sm border-0 h-100">
-                    <div class="card-body d-flex flex-column justify-content-between h-100">
-                        <div class="mb-3">
-                            <p class="text-muted small mb-1">{% trans "Room status" %}</p>
-                            <h5 class="fw-semibold mb-2">{{ current_room.get_status_display }}</h5>
+            <div class="lg:col-span-4">
+                <div class="bg-white dark:bg-dark-surface rounded-2xl shadow-sm border-0 h-full">
+                    <div class="p-6 flex flex-col justify-between h-full">
+                        <div class="mb-4">
+                            <p class="text-text-secondary text-sm mb-1">{% trans "Room status" %}</p>
+                            <h5 class="font-semibold mb-2">{{ current_room.get_status_display }}</h5>
                             {% if current_room.is_open %}
                                 {% if current_room.can_be_closed %}
-                                    <p class="small text-muted mb-0">{% trans "All debts are settled. You can close the room." %}</p>
+                                    <p class="text-sm text-text-secondary mb-0">{% trans "All debts are settled. You can close the room." %}</p>
                                 {% elif current_room.open_debt_count > 0 %}
-                                    <p class="small text-warning mb-0">
+                                    <p class="text-sm text-warning-700 dark:text-warning-500 mb-0">
                                         {% blocktrans count current_room.open_debt_count as debt_count %}
                                             There is still {{ debt_count }} open debt.
                                         {% plural %}
@@ -124,11 +130,11 @@
                                     </p>
                                 {% endif %}
                             {% else %}
-                                <p class="small text-muted mb-0">{% trans "The room is closed and can be reopened." %}</p>
+                                <p class="text-sm text-text-secondary mb-0">{% trans "The room is closed and can be reopened." %}</p>
                             {% endif %}
                         </div>
                         <form id="status-action-form"
-                              class="mt-3"
+                              class="mt-4"
                               hx-post="{% room_url 'room:edit' %}"
                               hx-target="#body"
                               hx-indicator="#body-loading-spinner"
@@ -143,34 +149,34 @@
                                    value="{{ current_room.preferred_currency.id }}">
                             <input type="hidden" name="status" value="{{ other_status }}">
                             {{ form.force_close }}
-                            <div class="d-grid">
+                            <div class="grid">
                                 {% if current_room.is_open %}
                                     {% if current_room.can_be_closed %}
                                         <button type="submit"
-                                                class="btn btn-danger btn-sm rounded-3"
+                                                class="w-full px-4 py-2 bg-danger-500 text-white font-semibold rounded-lg hover:bg-danger-700 active:scale-95 transition-all"
                                                 {% if form.errors.status.data %}disabled{% endif %}>
                                             {% trans "Close room" %}
                                         </button>
                                     {% elif current_room.open_debt_count > 0 %}
                                         <button type="button"
-                                                class="btn btn-outline-danger btn-sm rounded-3"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#forceCloseModal"
+                                                class="w-full px-4 py-2 border border-danger-500 text-danger-500 font-semibold rounded-lg hover:bg-danger-50 dark:hover:bg-danger-500/10 active:scale-95 transition-all"
+                                                data-ym-toggle="dialog"
+                                                data-ym-target="#forceCloseModal"
                                                 {% if form.errors.status.data %}disabled{% endif %}>
                                             {% trans "Close room" %}
                                         </button>
                                     {% endif %}
                                 {% elif current_room.is_closed %}
                                     <button type="submit"
-                                            class="btn btn-primary btn-sm rounded-3"
+                                            class="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 active:scale-95 transition-all"
                                             {% if form.errors.status.data %}disabled{% endif %}>
                                         {% trans "Reopen room" %}
                                     </button>
                                 {% endif %}
                             </div>
-                            <div class="mt-3 text-center">
+                            <div class="mt-4 text-center">
                                 {% for error_message in form.errors.status.data %}
-                                    <small class="text-danger">{{ error_message.message }}</small>
+                                    <small class="text-danger-500">{{ error_message.message }}</small>
                                 {% endfor %}
                             </div>
                         </form>
@@ -178,50 +184,48 @@
                 </div>
             </div>
         </div>
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card rounded-4 shadow-sm border-0">
-                    <div class="card-body d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
-                        <div>
-                            <p class="text-muted small mb-1">{% trans "Category manager" %}</p>
-                            <h5 class="fw-semibold mb-1">{% trans "Customize tracking categories" %}</h5>
-                            <p class="text-muted small mb-0">
-                                {% trans "Add room-specific categories and control their order without touching the global defaults." %}
-                            </p>
-                        </div>
-                        <button type="button"
-                                class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2 rounded-3 w-100"
-                                hx-get="{% room_url 'transaction:category-manager' %}"
-                                hx-target="#body"
-                                hx-indicator="#body-loading-spinner"
-                                hx-swap="morph:innerHTML"
-                                hx-push-url="true">
-                            <i class="bi bi-tags"></i>
-                            {% trans "Open manager" %}
-                        </button>
+        <div class="mt-6">
+            <div class="bg-white dark:bg-dark-surface rounded-2xl shadow-sm border-0">
+                <div class="p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                        <p class="text-text-secondary text-sm mb-1">{% trans "Category manager" %}</p>
+                        <h5 class="font-semibold mb-1">{% trans "Customize tracking categories" %}</h5>
+                        <p class="text-text-secondary text-sm mb-0">
+                            {% trans "Add room-specific categories and control their order without touching the global defaults." %}
+                        </p>
                     </div>
+                    <button type="button"
+                            class="inline-flex items-center justify-center gap-2 px-4 py-2 border border-blue-500 text-blue-500 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 active:scale-95 transition-all w-full md:w-auto"
+                            hx-get="{% room_url 'transaction:category-manager' %}"
+                            hx-target="#body"
+                            hx-indicator="#body-loading-spinner"
+                            hx-swap="morph:innerHTML"
+                            hx-push-url="true">
+                        <i class="bi bi-tags"></i>
+                        {% trans "Open manager" %}
+                    </button>
                 </div>
             </div>
         </div>
         {% if current_room.open_debt_count > 0 %}
-            <div class="modal fade"
+            <div class="ym-dialog"
                  id="forceCloseModal"
                  tabindex="-1"
                  aria-labelledby="forceCloseModalLabel"
                  aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content rounded-4 border-0 shadow">
-                        <div class="modal-header border-0">
+                <div class="ym-dialog-box ym-dialog-centered">
+                    <div class="ym-dialog-content rounded-2xl border-0 shadow-lg">
+                        <div class="ym-dialog-header border-0">
                             <div>
-                                <h5 class="modal-title fw-semibold" id="forceCloseModalLabel">{% trans "Outstanding debts" %}</h5>
-                                <p class="text-muted small mb-0">{% trans "This room still has outstanding payments." %}</p>
+                                <h5 class="ym-dialog-title font-semibold" id="forceCloseModalLabel">{% trans "Outstanding debts" %}</h5>
+                                <p class="text-text-secondary text-sm mb-0">{% trans "This room still has outstanding payments." %}</p>
                             </div>
                             <button type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="modal"
+                                    class="ym-close-btn"
+                                    data-ym-dismiss="dialog"
                                     aria-label="{{ edit_close_label }}"></button>
                         </div>
-                        <div class="modal-body">
+                        <div class="ym-dialog-body">
                             <p class="mb-2">
                                 {% blocktrans count current_room.open_debt_count as debt_count %}
                                     There is still {{ debt_count }} open debt. Closing the room anyway will mark it as settled.
@@ -229,13 +233,17 @@
                                     There are still {{ debt_count }} open debts. Closing the room anyway will mark them as settled.
                                 {% endblocktrans %}
                             </p>
-                            <p class="text-muted small mb-0">{% trans "Use this option only if you want to skip manual settlement." %}</p>
+                            <p class="text-text-secondary text-sm mb-0">
+                                {% trans "Use this option only if you want to skip manual settlement." %}
+                            </p>
                         </div>
-                        <div class="modal-footer border-0">
+                        <div class="ym-dialog-footer border-0">
                             <button type="button"
-                                    class="btn btn-outline-secondary"
-                                    data-bs-dismiss="modal">{% trans "Cancel" %}</button>
-                            <button type="button" class="btn btn-danger" id="forceCloseConfirm">{% trans "Close anyway" %}</button>
+                                    class="px-4 py-2 border border-gray-300 dark:border-dark-border text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-dark-hover transition-all"
+                                    data-ym-dismiss="dialog">{% trans "Cancel" %}</button>
+                            <button type="button"
+                                    class="px-4 py-2 bg-danger-500 text-white font-semibold rounded-lg hover:bg-danger-700 active:scale-95 transition-all"
+                                    id="forceCloseConfirm">{% trans "Close anyway" %}</button>
                         </div>
                     </div>
                 </div>
@@ -251,12 +259,7 @@
             var hasConfirmedForceClose = false;
 
             var cleanupModalState = function () {
-                document.body.classList.remove("modal-open");
                 document.body.style.removeProperty("overflow");
-                document.body.style.removeProperty("padding-right");
-                document.querySelectorAll(".modal-backdrop").forEach(function (el) {
-                    el.remove();
-                });
             };
 
             if (!statusForm || !forceCloseFlag || !confirmButton || !forceCloseModal) {
@@ -268,15 +271,16 @@
                 forceCloseFlag.value = "true";
                 confirmButton.blur();
 
-                if (window.bootstrap && window.bootstrap.Modal) {
-                    var modalInstance = window.bootstrap.Modal.getInstance(forceCloseModal);
-                    if (modalInstance) {
-                        modalInstance.hide();
-                    }
+                if (window.yamsa && window.yamsa.closeModal) {
+                    window.yamsa.closeModal(forceCloseModal);
+                } else {
+                    forceCloseModal.classList.remove("show");
+                    cleanupModalState();
+                    forceCloseModal.dispatchEvent(new Event("ym:dialog:hidden"));
                 }
             });
 
-            forceCloseModal.addEventListener("hidden.bs.modal", function () {
+            forceCloseModal.addEventListener("ym:dialog:hidden", function () {
                 cleanupModalState();
 
                 if (hasConfirmedForceClose) {
