@@ -17,12 +17,12 @@ echo "" && echo "pip install --no-cache-dir ."
 pip install --no-cache-dir .
 rm /tmp/requirements.txt
 
-echo "" && echo "npm install -D webpack-cli"
-npm install -D webpack-cli
+echo "" && echo "yarn install --immutable"
+yarn install --immutable
 
 # https://github.com/django-webpack/django-webpack-loader?tab=readme-ov-file#using-in-production
-echo "" && echo "npx webpack --progress --bail --mode=production --define-process-env-node-env=production"
-npx webpack --progress --bail --mode=production
+echo "" && echo "yarn webpack --progress --bail --mode=production"
+yarn webpack --progress --bail --mode=production
 
 echo "" && echo "python manage.py collectstatic --no-input"
 python manage.py collectstatic --no-input

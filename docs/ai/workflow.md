@@ -10,6 +10,9 @@
 - `uv run python manage.py runserver 0.0.0.0:8000` — local dev server with HTMX/Bootstrap UI.
 - `uv run pytest` — execute Django test suite via pytest under the default settings module.
 - `uv run coverage run -m pytest && uv run coverage report` — generate coverage (config in `pyproject.toml`).
+- `yarn install` — install JS/CSS frontend dependencies (webpack, Bootstrap, D3, htmx, etc.).
+- `yarn build` — one-shot production JS/CSS bundle via webpack.
+- `yarn watch` — watch mode for local frontend development with source maps.
 
 ## Commit & Pull Request Guidelines
 
