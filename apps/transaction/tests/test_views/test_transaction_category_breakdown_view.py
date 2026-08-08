@@ -1,8 +1,10 @@
 from decimal import Decimal
 
 import pytest
+from bs4 import BeautifulSoup
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.formats import number_format
 
 from apps.currency.tests.factories import CurrencyFactory
 from apps.transaction.models import Category, ChildTransaction
@@ -51,6 +53,52 @@ class TestTransactionCategoryBreakdownView:
         assert categories["groceries"]["total_amount"] == Decimal("34.25")
         assert chart_data["groceries"]["value"] == 34.25
         assert chart_data["transport"]["value"] == 12.75
+
+    def test_category_breakdown_legend_renders_amount_once_per_category(self, authenticated_client, room, user):
+        groceries = Category.objects.get(slug="groceries")
+        transport = Category.objects.get(slug="transport")
+
+        parent_groceries = ParentTransactionFactory(
+            room=room,
+            paid_by=user,
+            currency=room.preferred_currency,
+            category=groceries,
+            paid_at=timezone.now(),
+        )
+        _make_child(parent_groceries, user, Decimal("34.25"))
+
+        parent_transport = ParentTransactionFactory(
+            room=room,
+            paid_by=user,
+            currency=room.preferred_currency,
+            category=transport,
+            paid_at=timezone.now(),
+        )
+        _make_child(parent_transport, user, Decimal("12.75"))
+
+        response = authenticated_client.get(reverse("transaction:category-breakdown", kwargs={"room_slug": room.slug}))
+        assert response.status_code == 200
+
+        currency_sign = room.preferred_currency.sign
+        soup = BeautifulSoup(response.content.decode(), "html.parser")
+        legend_list = soup.select_one(".list-group.list-group-flush")
+        legend_items = legend_list.select(".list-group-item")
+        assert len(legend_items) == 2
+
+        rendered_amounts_by_slug = {}
+        for item in legend_items:
+            slug = item.select_one("p.text-muted.small").get_text(strip=True).lower()
+            amount_span = item.select_one("span.fw-semibold")
+            rendered_amounts_by_slug[slug] = amount_span.get_text(strip=True)
+
+        expected_amounts = {
+            "groceries": f"{number_format(Decimal('34.25'))}{currency_sign}",
+            "transport": f"{number_format(Decimal('12.75'))}{currency_sign}",
+        }
+        # Regression guard: the legend previously rendered the amount twice, joined by "|"
+        # (e.g. "34,25|34,25€"). Asserting the span's exact text catches that, unlike a
+        # substring-count check, which the doubled string still satisfies.
+        assert rendered_amounts_by_slug == expected_amounts
 
     def test_category_breakdown_view_splits_charts_per_currency(self, authenticated_client, room, user):
         groceries = Category.objects.get(slug="groceries")
