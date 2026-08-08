@@ -47,16 +47,17 @@
     </style>
     <div class="container-fluid px-0 px-md-2 mt-3">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+            {% trans "Back to list" as back_to_list_label %}
             <button type="button"
-                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2"
+                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center"
+                    aria-label="{{ back_to_list_label }}"
                     hx-trigger="click"
                     hx-get="{% room_url 'transaction:list' %}#transaction-{{ parent_transaction.id }}"
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
-                <i class="bi bi-arrow-left"></i>
-                {% trans "Back to list" %}
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
             </button>
             <div class="text-center flex-grow-1">
                 <p class="transaction-label mb-1">{% trans "Editing expense" %}</p>

@@ -41,15 +41,16 @@
             }
         </style>
         <div class="category-breakdown-header mb-4">
+            {% trans "Back to transactions" as back_to_transactions_label %}
             <button type="button"
-                    class="btn btn-link text-decoration-none ps-0 d-flex align-items-center gap-2"
+                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center"
+                    aria-label="{{ back_to_transactions_label }}"
                     hx-get="{% room_url 'transaction:list' %}#transaction-section"
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
-                <i class="bi bi-arrow-left"></i>
-                {% trans "Back to transactions" %}
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
             </button>
             <div class="text-center">
                 <p class="text-uppercase text-muted small mb-1">{% trans "Category breakdown" %}</p>
