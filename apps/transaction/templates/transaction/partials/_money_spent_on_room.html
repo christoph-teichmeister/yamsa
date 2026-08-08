@@ -67,16 +67,17 @@
     </style>
     <div class="container-fluid px-0 px-md-2 mt-3">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+            {% trans "Back to debts" as back_to_debts_label %}
             <button type="button"
-                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2"
+                    class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center"
+                    aria-label="{{ back_to_debts_label }}"
                     hx-trigger="click"
                     hx-get="{% room_url 'debt:list' %}"
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
-                <i class="bi bi-arrow-left"></i>
-                {% trans "Back to debts" %}
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
             </button>
             <div class="text-center flex-grow-1">
                 <p class="text-muted small mb-0">{% trans "Room spending overview" %}</p>

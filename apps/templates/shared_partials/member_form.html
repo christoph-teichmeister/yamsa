@@ -104,19 +104,16 @@
 </style>
 <div class="member-form-wrap">
     {% if back_url %}
+        {% trans "Back" as default_back_label %}
         <button type="button"
-                class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1"
+                class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center"
+                aria-label="{{ back_label|default:default_back_label }}"
                 hx-get="{{ back_url }}"
                 hx-target="#body"
                 hx-indicator="#body-loading-spinner"
                 hx-swap="morph:innerHTML"
                 hx-push-url="true">
-            <i class="bi bi-arrow-left"></i>
-            {% if back_label %}
-                {{ back_label }}
-            {% else %}
-                {% trans "Back" %}
-            {% endif %}
+            <i class="bi bi-arrow-left" aria-hidden="true"></i>
         </button>
     {% endif %}
     <div class="member-hero-card mb-4">
