@@ -1,210 +1,208 @@
 {% extends "core/base.html" %}
 {% load i18n %}
 {% block content %}
-    <section class="container px-2 px-md-4 px-lg-5 account-edit">
-        <div class="row justify-content-center gy-4">
-            <div class="col-12 col-xl-9">
-                <form method="post"
-                      enctype="multipart/form-data"
-                      class="card border-0 shadow-sm rounded-4"
-                      hx-post="{% url 'account:update' pk=user.id %}"
+  <section class="container px-2 px-md-4 px-lg-5 account-edit">
+    <div class="row justify-content-center gy-4">
+      <div class="col-12 col-xl-9">
+        <form method="post"
+              enctype="multipart/form-data"
+              class="card border-0 shadow-sm rounded-4"
+              hx-post="{% url 'account:update' pk=user.id %}"
+              hx-target="#body"
+              hx-indicator="#body-loading-spinner"
+              hx-swap="morph:innerHTML"
+              hx-push-url="true">
+          {% csrf_token %}
+          <div class="card-body p-4 p-md-5">
+            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4">
+              <div>
+                <p class="text-uppercase small fw-semibold text-muted mb-1">{% trans "Edit profile" %}</p>
+                <h1 class="h4 fw-semibold mb-0">{% trans "Keep your details up to date" %}</h1>
+              </div>
+              <div class="ms-md-auto d-flex flex-wrap gap-2">
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        hx-get="{% url 'account:detail' pk=user.id %}"
+                        hx-target="#body"
+                        hx-indicator="#body-loading-spinner"
+                        hx-swap="morph:innerHTML"
+                        hx-push-url="true">{% trans "Cancel" %}</button>
+                <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
+                  <i class="bi bi-check2-circle"></i>
+                  {% trans "Save changes" %}
+                </button>
+              </div>
+            </div>
+            <div class="row g-4">
+              <div class="col-12">
+                <div class="border rounded-4 p-4 d-flex flex-column flex-md-row align-items-center gap-4">
+                  <div class="profile-avatar profile-avatar--expanded position-relative overflow-hidden d-inline-flex align-items-center justify-content-center">
+                    <img id="profile-picture-preview-img"
+                         class="profile-picture-preview-img w-100 h-100 object-fit-cover rounded-4 {% if not user.profile_picture %}d-none{% endif %}"
+                         alt="{% trans "Profile picture preview" %}"
+                         loading="lazy"
+                         width="68"
+                         height="68"
+                         {% if user.profile_picture %}src="{{ user.profile_picture_url }}" data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"{% endif %}>
+                    <span id="profile-picture-preview-placeholder"
+                          class="profile-picture-preview-initial fs-3 fw-semibold text-primary-emphasis {% if user.profile_picture %}d-none{% endif %}">
+                      {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
+                    </span>
+                  </div>
+                  <div class="flex-grow-1 d-flex flex-column gap-2">
+                    <div class="d-flex flex-column gap-1">
+                      <label for="profile_picture" class="form-label fw-semibold">{% trans "Profile photo" %}</label>
+                      <input type="file"
+                             id="profile_picture"
+                             name="profile_picture"
+                             accept="image/*"
+                             class="form-control form-control-sm">
+                      {% for error_message in form.errors.profile_picture.data %}
+                        <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                      {% endfor %}
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                      <small class="text-muted small mb-0">{% trans "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB." %}</small>
+                      <button type="button"
+                              class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                              hx-post="{% url 'account:profile-picture-delete' %}"
+                              hx-target="#body"
+                              hx-indicator="#body-loading-spinner"
+                              hx-swap="morph:innerHTML"
+                              hx-push-url="true"
+                              hx-confirm="{% trans "Remove your profile picture?" %}"
+                              {% if not user.profile_picture %}disabled{% endif %}>
+                        <i class="bi bi-trash"></i>
+                        {% trans "Remove photo" %}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="name" class="form-label fw-semibold">{{ form.fields.name.label }}</label>
+                <input type="text"
+                       class="form-control"
+                       id="name"
+                       name="name"
+                       autocomplete="name"
+                       required
+                       value="{{ form.name.value|default:user.name }}">
+                {% for error_message in form.errors.name.data %}
+                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                {% endfor %}
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="email" class="form-label fw-semibold">{{ form.fields.email.label }}</label>
+                <input type="email"
+                       class="form-control"
+                       id="email"
+                       name="email"
+                       autocomplete="email"
+                       required
+                       value="{{ form.email.value|default:user.email }}">
+                {% for error_message in form.errors.email.data %}
+                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                {% endfor %}
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="paypal_me_username" class="form-label fw-semibold">{{ form.fields.paypal_me_username.label }}</label>
+                <div class="input-group">
+                  <span class="input-group-text">@</span>
+                  <input type="text"
+                         class="form-control"
+                         id="paypal_me_username"
+                         name="paypal_me_username"
+                         value="{{ form.paypal_me_username.value|default:user.paypal_me_username }}"
+                         placeholder="-">
+                </div>
+                {% for error_message in form.errors.paypal_me_username.data %}
+                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                {% endfor %}
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="id_language" class="form-label fw-semibold">{{ form.fields.language.label }}</label>
+                <select name="language" id="id_language" class="form-select">
+                  {% for choice_value, choice_label in form.fields.language.choices %}
+                    <option value="{{ choice_value }}"
+                            {% if form.language.value == choice_value %}selected{% endif %}>{{ choice_label }}</option>
+                  {% endfor %}
+                </select>
+                {% for error_message in form.errors.language.data %}
+                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                {% endfor %}
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold d-block mb-0">{% trans "Notification Center" %}</label>
+                <p class="text-muted small mt-0">{% trans "Choose how you want to hear from us." %}</p>
+                <div class="form-check form-switch">
+                  <input type="checkbox"
+                         class="form-check-input"
+                         id="wants_to_receive_webpush_notifications"
+                         name="wants_to_receive_webpush_notifications"
+                         {% if form.wants_to_receive_webpush_notifications.value|default:user.wants_to_receive_webpush_notifications %}checked{% endif %}>
+                  <label for="wants_to_receive_webpush_notifications" class="form-check-label">
+                    {{ form.fields.wants_to_receive_webpush_notifications.label }}
+                  </label>
+                </div>
+                {% for error_message in form.errors.wants_to_receive_webpush_notifications.data %}
+                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                {% endfor %}
+                <div class="form-check form-switch mt-3">
+                  <input type="checkbox"
+                         class="form-check-input"
+                         id="wants_to_receive_payment_reminders"
+                         name="wants_to_receive_payment_reminders"
+                         {% if form.wants_to_receive_payment_reminders.value|default:user.wants_to_receive_payment_reminders %}checked{% endif %}>
+                  <label for="wants_to_receive_payment_reminders" class="form-check-label">
+                    {{ form.fields.wants_to_receive_payment_reminders.label }}
+                  </label>
+                </div>
+                {% for error_message in form.errors.wants_to_receive_payment_reminders.data %}
+                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                {% endfor %}
+                <div class="form-check form-switch mt-3">
+                  <input type="checkbox"
+                         class="form-check-input"
+                         id="wants_to_receive_room_reminders"
+                         name="wants_to_receive_room_reminders"
+                         {% if form.wants_to_receive_room_reminders.value|default:user.wants_to_receive_room_reminders %}checked{% endif %}>
+                  <label for="wants_to_receive_room_reminders" class="form-check-label">
+                    {{ form.fields.wants_to_receive_room_reminders.label }}
+                  </label>
+                </div>
+                {% for error_message in form.errors.wants_to_receive_room_reminders.data %}
+                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col-12 col-xl-9">
+        <div class="card border-0 rounded-4 shadow-sm">
+          <div class="card-body p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
+            <div>
+              <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
+              <h2 class="h5 fw-semibold mb-2">{% trans "Need a new password?" %}</h2>
+              <p class="text-muted mb-0">
+                {% trans "Set a fresh password any time. We’ll keep you logged in while you update it." %}
+              </p>
+            </div>
+            <div class="ms-md-auto">
+              <button type="button"
+                      class="btn btn-outline-primary"
+                      hx-get="{% url 'account:change-password' pk=user.id %}"
                       hx-target="#body"
                       hx-indicator="#body-loading-spinner"
                       hx-swap="morph:innerHTML"
-                      hx-push-url="true">
-                    {% csrf_token %}
-                    <div class="card-body p-4 p-md-5">
-                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4">
-                            <div>
-                                <p class="text-uppercase small fw-semibold text-muted mb-1">{% trans "Edit profile" %}</p>
-                                <h1 class="h4 fw-semibold mb-0">{% trans "Keep your details up to date" %}</h1>
-                            </div>
-                            <div class="ms-md-auto d-flex flex-wrap gap-2">
-                                <button type="button"
-                                        class="btn btn-outline-secondary"
-                                        hx-get="{% url 'account:detail' pk=user.id %}"
-                                        hx-target="#body"
-                                        hx-indicator="#body-loading-spinner"
-                                        hx-swap="morph:innerHTML"
-                                        hx-push-url="true">{% trans "Cancel" %}</button>
-                                <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
-                                    <i class="bi bi-check2-circle"></i>
-                                    {% trans "Save changes" %}
-                                </button>
-                            </div>
-                        </div>
-                        <div class="row g-4">
-                            <div class="col-12">
-                                <div class="border rounded-4 p-4 d-flex flex-column flex-md-row align-items-center gap-4">
-                                    <div class="profile-avatar profile-avatar--expanded position-relative overflow-hidden d-inline-flex align-items-center justify-content-center">
-                                        <img id="profile-picture-preview-img"
-                                             class="profile-picture-preview-img w-100 h-100 object-fit-cover rounded-4 {% if not user.profile_picture %}d-none{% endif %}"
-                                             alt="{% trans "Profile picture preview" %}"
-                                             loading="lazy"
-                                             width="68"
-                                             height="68"
-                                             {% if user.profile_picture %}src="{{ user.profile_picture_url }}" data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"{% endif %}>
-                                        <span id="profile-picture-preview-placeholder"
-                                              class="profile-picture-preview-initial fs-3 fw-semibold text-primary-emphasis {% if user.profile_picture %}d-none{% endif %}">
-                                            {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
-                                        </span>
-                                    </div>
-                                    <div class="flex-grow-1 d-flex flex-column gap-2">
-                                        <div class="d-flex flex-column gap-1">
-                                            <label for="profile_picture" class="form-label fw-semibold">{% trans "Profile photo" %}</label>
-                                            <input type="file"
-                                                   id="profile_picture"
-                                                   name="profile_picture"
-                                                   accept="image/*"
-                                                   class="form-control form-control-sm">
-                                            {% for error_message in form.errors.profile_picture.data %}
-                                                <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                                            {% endfor %}
-                                        </div>
-                                        <div class="d-flex flex-wrap align-items-center gap-2">
-                                            <small class="text-muted small mb-0">{% trans "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB." %}</small>
-                                            <button type="button"
-                                                    class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
-                                                    hx-post="{% url 'account:profile-picture-delete' %}"
-                                                    hx-target="#body"
-                                                    hx-indicator="#body-loading-spinner"
-                                                    hx-swap="morph:innerHTML"
-                                                    hx-push-url="true"
-                                                    hx-confirm="{% trans "Remove your profile picture?" %}"
-                                                    {% if not user.profile_picture %}disabled{% endif %}>
-                                                <i class="bi bi-trash"></i>
-                                                {% trans "Remove photo" %}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label for="name" class="form-label fw-semibold">{{ form.fields.name.label }}</label>
-                                <input type="text"
-                                       class="form-control"
-                                       id="name"
-                                       name="name"
-                                       autocomplete="name"
-                                       required
-                                       value="{{ form.name.value|default:user.name }}">
-                                {% for error_message in form.errors.name.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                                {% endfor %}
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label for="email" class="form-label fw-semibold">{{ form.fields.email.label }}</label>
-                                <input type="email"
-                                       class="form-control"
-                                       id="email"
-                                       name="email"
-                                       autocomplete="email"
-                                       required
-                                       value="{{ form.email.value|default:user.email }}">
-                                {% for error_message in form.errors.email.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                                {% endfor %}
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label for="paypal_me_username" class="form-label fw-semibold">{{ form.fields.paypal_me_username.label }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">@</span>
-                                    <input type="text"
-                                           class="form-control"
-                                           id="paypal_me_username"
-                                           name="paypal_me_username"
-                                           value="{{ form.paypal_me_username.value|default:user.paypal_me_username }}"
-                                           placeholder="-">
-                                </div>
-                                {% for error_message in form.errors.paypal_me_username.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                                {% endfor %}
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label for="id_language" class="form-label fw-semibold">{{ form.fields.language.label }}</label>
-                                <select name="language" id="id_language" class="form-select">
-                                    {% for choice_value, choice_label in form.fields.language.choices %}
-                                        <option value="{{ choice_value }}"
-                                                {% if form.language.value == choice_value %}selected{% endif %}>
-                                            {{ choice_label }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                {% for error_message in form.errors.language.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                                {% endfor %}
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold d-block mb-0">{% trans "Notification Center" %}</label>
-                                <p class="text-muted small mt-0">{% trans "Choose how you want to hear from us." %}</p>
-                                <div class="form-check form-switch">
-                                    <input type="checkbox"
-                                           class="form-check-input"
-                                           id="wants_to_receive_webpush_notifications"
-                                           name="wants_to_receive_webpush_notifications"
-                                           {% if form.wants_to_receive_webpush_notifications.value|default:user.wants_to_receive_webpush_notifications %}checked{% endif %}>
-                                    <label for="wants_to_receive_webpush_notifications" class="form-check-label">
-                                        {{ form.fields.wants_to_receive_webpush_notifications.label }}
-                                    </label>
-                                </div>
-                                {% for error_message in form.errors.wants_to_receive_webpush_notifications.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                                {% endfor %}
-                                <div class="form-check form-switch mt-3">
-                                    <input type="checkbox"
-                                           class="form-check-input"
-                                           id="wants_to_receive_payment_reminders"
-                                           name="wants_to_receive_payment_reminders"
-                                           {% if form.wants_to_receive_payment_reminders.value|default:user.wants_to_receive_payment_reminders %}checked{% endif %}>
-                                    <label for="wants_to_receive_payment_reminders" class="form-check-label">
-                                        {{ form.fields.wants_to_receive_payment_reminders.label }}
-                                    </label>
-                                </div>
-                                {% for error_message in form.errors.wants_to_receive_payment_reminders.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                                {% endfor %}
-                                <div class="form-check form-switch mt-3">
-                                    <input type="checkbox"
-                                           class="form-check-input"
-                                           id="wants_to_receive_room_reminders"
-                                           name="wants_to_receive_room_reminders"
-                                           {% if form.wants_to_receive_room_reminders.value|default:user.wants_to_receive_room_reminders %}checked{% endif %}>
-                                    <label for="wants_to_receive_room_reminders" class="form-check-label">
-                                        {{ form.fields.wants_to_receive_room_reminders.label }}
-                                    </label>
-                                </div>
-                                {% for error_message in form.errors.wants_to_receive_room_reminders.data %}
-                                    <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                      hx-push-url="true">{% trans "Change password" %}</button>
             </div>
-            <div class="col-12 col-xl-9">
-                <div class="card border-0 rounded-4 shadow-sm">
-                    <div class="card-body p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
-                        <div>
-                            <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
-                            <h2 class="h5 fw-semibold mb-2">{% trans "Need a new password?" %}</h2>
-                            <p class="text-muted mb-0">
-                                {% trans "Set a fresh password any time. We’ll keep you logged in while you update it." %}
-                            </p>
-                        </div>
-                        <div class="ms-md-auto">
-                            <button type="button"
-                                    class="btn btn-outline-primary"
-                                    hx-get="{% url 'account:change-password' pk=user.id %}"
-                                    hx-target="#body"
-                                    hx-indicator="#body-loading-spinner"
-                                    hx-swap="morph:innerHTML"
-                                    hx-push-url="true">{% trans "Change password" %}</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-        <script nonce="{{ csp_nonce }}">
+      </div>
+    </div>
+    <script nonce="{{ csp_nonce }}">
             (function () {
                 const fileInput = document.getElementById("profile_picture");
                 const previewImage = document.getElementById("profile-picture-preview-img");
@@ -242,6 +240,6 @@
                     reader.readAsDataURL(file);
                 });
             })();
-        </script>
-    </section>
+    </script>
+  </section>
 {% endblock content %}

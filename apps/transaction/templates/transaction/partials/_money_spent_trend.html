@@ -2,50 +2,50 @@
 <link rel="stylesheet"
       href="{% static 'components/transaction/money-spent-trend.css' %}">
 <div class="card timeline-card shadow-sm mt-4">
-    <div class="card-body">
-        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
-            <div>
-                <p class="text-muted small mb-1">{% trans "Spending over time" %}</p>
-                <h5 class="mb-1">{% trans "Expense build-up" %}</h5>
-                <p class="text-muted small mb-0">
-                    {% blocktrans with period=trend_period_label|lower start=trend_range_start|date:"d M" end=trend_range_end|date:"d M" %}
+  <div class="card-body">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+      <div>
+        <p class="text-muted small mb-1">{% trans "Spending over time" %}</p>
+        <h5 class="mb-1">{% trans "Expense build-up" %}</h5>
+        <p class="text-muted small mb-0">
+          {% blocktrans with period=trend_period_label|lower start=trend_range_start|date:"d M" end=trend_range_end|date:"d M" %}
                                 Showing {{ period }} ({{ start }} – {{ end }}).
                             {% endblocktrans %}
-                </p>
-            </div>
-            <div class="d-flex flex-column align-items-start align-items-lg-end gap-2">
-                <div class="range-toggle"
-                     role="group"
-                     aria-label="{% trans "Spending trend ranges" %}">
-                    {% for option in period_options %}
-                        <button type="button"
-                                class="range-btn {% if option.is_wide %}range-btn-wide{% endif %} {% if option.active %}active{% endif %}"
-                                title="{{ option.label }}"
-                                hx-get="{% room_url 'debt:money-spent-trend' %}?period={{ option.key }}"
-                                hx-target="#spending-trend"
-                                hx-swap="innerHTML"
-                                hx-indicator="#spending-trend-indicator">{{ option.button_label }}</button>
-                    {% endfor %}
-                </div>
-                <div class="htmx-indicator d-flex align-items-center gap-2 text-muted small"
-                     id="spending-trend-indicator">
-                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                    {% trans "Updating..." %}
-                </div>
-            </div>
+        </p>
+      </div>
+      <div class="d-flex flex-column align-items-start align-items-lg-end gap-2">
+        <div class="range-toggle"
+             role="group"
+             aria-label="{% trans "Spending trend ranges" %}">
+          {% for option in period_options %}
+            <button type="button"
+                    class="range-btn {% if option.is_wide %}range-btn-wide{% endif %} {% if option.active %}active{% endif %}"
+                    title="{{ option.label }}"
+                    hx-get="{% room_url 'debt:money-spent-trend' %}?period={{ option.key }}"
+                    hx-target="#spending-trend"
+                    hx-swap="innerHTML"
+                    hx-indicator="#spending-trend-indicator">{{ option.button_label }}</button>
+          {% endfor %}
         </div>
-        {% if timeseries and timeseries_max_value %}
-            <div class="timeline-chart mt-4">
-                <div id="trend-line-chart"
-                     class="trend-line-chart"
-                     data-currency="{{ trend_currency_sign }}"></div>
-            </div>
-            {{ trend_chart_points|json_script:"trend-chart-data" }}
-        {% else %}
-            <div class="timeline-empty mt-3">
-                <p class="fw-semibold mb-1">{% trans "No data available" %}</p>
-                <p class="text-muted small mb-0">{% trans "Add a few expenses to unlock the timeline." %}</p>
-            </div>
-        {% endif %}
+        <div class="htmx-indicator d-flex align-items-center gap-2 text-muted small"
+             id="spending-trend-indicator">
+          <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+          {% trans "Updating..." %}
+        </div>
+      </div>
     </div>
+    {% if timeseries and timeseries_max_value %}
+      <div class="timeline-chart mt-4">
+        <div id="trend-line-chart"
+             class="trend-line-chart"
+             data-currency="{{ trend_currency_sign }}"></div>
+      </div>
+      {{ trend_chart_points|json_script:"trend-chart-data" }}
+    {% else %}
+      <div class="timeline-empty mt-3">
+        <p class="fw-semibold mb-1">{% trans "No data available" %}</p>
+        <p class="text-muted small mb-0">{% trans "Add a few expenses to unlock the timeline." %}</p>
+      </div>
+    {% endif %}
+  </div>
 </div>

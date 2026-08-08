@@ -1,7 +1,7 @@
 {% extends "room/dashboard.html" %}
 {% load static room_tags i18n %}
 {% block tab_content %}
-    <style nonce="{{ csp_nonce }}">
+  <style nonce="{{ csp_nonce }}">
         .transaction-label {
             display: inline-block;
             font-size: 0.65rem;
@@ -161,153 +161,153 @@
                 opacity: 0;
             }
         }
-    </style>
-    <div class="container-fluid px-0 px-md-2 mt-3">
-        <div class="col-12 col-lg-8">
-            <div class="d-flex align-items-md-start justify-content-between gap-3 mb-3">
-                <div>
-                    <h4 class="mb-1">{% trans "Room transactions" %}</h4>
-                    {% if transactions_available %}
-                        <p class="text-muted small mb-0">{% trans "Click a row to explore the full breakdown." %}</p>
-                    {% else %}
-                        <p class="text-muted small mb-0">{% trans "Record your first expense to see the running history here." %}</p>
-                    {% endif %}
-                </div>
-                <div class="d-flex align-items-center justify-content-end gap-2">
-                    <button type="button"
-                            class="btn btn-primary btn-icon d-inline-flex align-items-center justify-content-center {% if current_room.is_closed %}disabled{% endif %}"
-                            aria-label="{% trans "Add transaction" %}"
-                            title="{% trans "Add transaction" %}"
-                            hx-get="{% room_url 'transaction:create' %}"
-                            hx-target="#body"
-                            hx-indicator="#body-loading-spinner"
-                            hx-swap="morph:innerHTML"
-                            hx-push-url="true">
-                        <i class="bi bi-plus-lg d-flex align-items-center justify-content-center"></i>
-                    </button>
-                </div>
-            </div>
-            {% if current_room.is_closed %}
-                <div class="alert alert-warning small mb-3" role="alert">
-                    {% trans "This room is closed, so transactions are read-only." %}
-                </div>
-            {% endif %}
-            <div class="card border-0 shadow-sm">
-                <div class="card-body pb-0">
-                    <label for="transaction-search" class="form-label text-muted small mb-1">{% trans "Search" %}</label>
-                    <input type="search"
-                           id="transaction-search"
-                           class="form-control form-control-sm mb-3"
-                           name="q"
-                           value="{{ transaction_search_query }}"
-                           placeholder="{% trans "Filter by payer or description" %}"
-                           autocomplete="off"
-                           hx-get="{% room_url 'transaction:feed' %}"
-                           hx-trigger="input changed delay:400ms, search"
-                           hx-target="#transaction-table-body"
-                           hx-swap="innerHTML"
-                           hx-indicator="#transaction-search-indicator"
-                           {% if not transactions_available %}disabled{% endif %}>
-                </div>
-                {% if transactions_available %}
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0 transaction-table">
-                            <thead class="text-muted text-uppercase small d-none d-md-table-header-group">
-                                <tr>
-                                    <th scope="col">{% trans "Details" %}</th>
-                                    <th scope="col" class="text-end">{% trans "Actions" %}</th>
-                                </tr>
-                            </thead>
-                            <tbody id="transaction-table-body"
-                                   hx-get="{% room_url 'transaction:feed' %}"
-                                   hx-trigger="load"
-                                   hx-swap="innerHTML"
-                                   hx-include="#transaction-search">
-                                <tr>
-                                    <td colspan="2" class="p-0 border-0">
-                                        {% include "shared_partials/_list_loader.html" with loader_id="transaction-table-body" skeleton_count=5 %}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="transaction-search-indicator"
-                         class="transaction-loading-indicator htmx-indicator mt-3"
-                         aria-hidden="true">
-                        {% for _ in "123" %}
-                            <div class="placeholder-row mb-3">
-                                <div class="placeholder-glow mb-2">
-                                    <span class="placeholder col-4"></span>
-                                </div>
-                                <div class="placeholder-glow mb-1">
-                                    <span class="placeholder col-8"></span>
-                                </div>
-                                <div class="placeholder-glow">
-                                    <span class="placeholder col-6"></span>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="p-5 text-center text-muted" id="transaction-empty-placeholder">
-                        <p class="fw-semibold mb-1">{% trans "Nothing to show yet" %}</p>
-                        <p class="small mb-0">{% trans "Start by logging an expense to build your history." %}</p>
-                    </div>
-                {% endif %}
-            </div>
+  </style>
+  <div class="container-fluid px-0 px-md-2 mt-3">
+    <div class="col-12 col-lg-8">
+      <div class="d-flex align-items-md-start justify-content-between gap-3 mb-3">
+        <div>
+          <h4 class="mb-1">{% trans "Room transactions" %}</h4>
+          {% if transactions_available %}
+            <p class="text-muted small mb-0">{% trans "Click a row to explore the full breakdown." %}</p>
+          {% else %}
+            <p class="text-muted small mb-0">{% trans "Record your first expense to see the running history here." %}</p>
+          {% endif %}
         </div>
-        <div class="col-12 col-lg-4">
-            <div class="card border-0 shadow-sm mb-3">
-                <div class="card-body">
-                    <h6 class="text-uppercase text-muted small mb-3">{% trans "Room snapshot" %}</h6>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-muted small">{% trans "Status" %}</span>
-                        <span class="badge {% if current_room.is_closed %}bg-secondary{% else %}bg-success{% endif %}">
-                            {% if current_room.is_closed %}
-                                {% trans "Closed" %}
-                            {% else %}
-                                {% trans "Open" %}
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-muted small">{% trans "Transactions logged" %}</span>
-                        <span class="fw-semibold">{{ transactions_total_count }}</span>
-                    </div>
-                    {% if latest_transaction %}
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted small">{% trans "Last transaction" %}</span>
-                            <span class="fw-semibold">{{ latest_transaction.paid_at|date:'M j, Y' }}</span>
-                        </div>
-                    {% else %}
-                        <p class="text-muted small mb-0">{% trans "Invite your roommates to start sharing expenses." %}</p>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-uppercase text-muted small mb-3">{% trans "Tips" %}</h6>
-                    <ul class="list-unstyled mb-0 small text-muted">
-                        <li>{% trans "Use the search field to filter by payer or description." %}</li>
-                        <li>{% trans "Tap a row or the eye icon to review the split details." %}</li>
-                        <li>{% trans "The floating '+' button lets you capture a new transaction." %}</li>
-                    </ul>
-                </div>
-            </div>
-            {% if transactions_available %}
-                <div class="w-full d-flex justify-content-center">
-                    <a href="{% room_url 'transaction:export' %}"
-                       class="btn btn-outline-secondary d-inline-flex align-items-center gap-1"
-                       title="{% trans "Export CSV" %}">
-                        <i class="bi bi-download"></i>
-                        {% trans "Export CSV" %}
-                    </a>
-                </div>
-            {% endif %}
+        <div class="d-flex align-items-center justify-content-end gap-2">
+          <button type="button"
+                  class="btn btn-primary btn-icon d-inline-flex align-items-center justify-content-center {% if current_room.is_closed %}disabled{% endif %}"
+                  aria-label="{% trans "Add transaction" %}"
+                  title="{% trans "Add transaction" %}"
+                  hx-get="{% room_url 'transaction:create' %}"
+                  hx-target="#body"
+                  hx-indicator="#body-loading-spinner"
+                  hx-swap="morph:innerHTML"
+                  hx-push-url="true">
+            <i class="bi bi-plus-lg d-flex align-items-center justify-content-center"></i>
+          </button>
         </div>
+      </div>
+      {% if current_room.is_closed %}
+        <div class="alert alert-warning small mb-3" role="alert">
+          {% trans "This room is closed, so transactions are read-only." %}
+        </div>
+      {% endif %}
+      <div class="card border-0 shadow-sm">
+        <div class="card-body pb-0">
+          <label for="transaction-search" class="form-label text-muted small mb-1">{% trans "Search" %}</label>
+          <input type="search"
+                 id="transaction-search"
+                 class="form-control form-control-sm mb-3"
+                 name="q"
+                 value="{{ transaction_search_query }}"
+                 placeholder="{% trans "Filter by payer or description" %}"
+                 autocomplete="off"
+                 hx-get="{% room_url 'transaction:feed' %}"
+                 hx-trigger="input changed delay:400ms, search"
+                 hx-target="#transaction-table-body"
+                 hx-swap="innerHTML"
+                 hx-indicator="#transaction-search-indicator"
+                 {% if not transactions_available %}disabled{% endif %}>
+        </div>
+        {% if transactions_available %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 transaction-table">
+              <thead class="text-muted text-uppercase small d-none d-md-table-header-group">
+                <tr>
+                  <th scope="col">{% trans "Details" %}</th>
+                  <th scope="col" class="text-end">{% trans "Actions" %}</th>
+                </tr>
+              </thead>
+              <tbody id="transaction-table-body"
+                     hx-get="{% room_url 'transaction:feed' %}"
+                     hx-trigger="load"
+                     hx-swap="innerHTML"
+                     hx-include="#transaction-search">
+                <tr>
+                  <td colspan="2" class="p-0 border-0">
+                    {% include "shared_partials/_list_loader.html" with loader_id="transaction-table-body" skeleton_count=5 %}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="transaction-search-indicator"
+               class="transaction-loading-indicator htmx-indicator mt-3"
+               aria-hidden="true">
+            {% for _ in "123" %}
+              <div class="placeholder-row mb-3">
+                <div class="placeholder-glow mb-2">
+                  <span class="placeholder col-4"></span>
+                </div>
+                <div class="placeholder-glow mb-1">
+                  <span class="placeholder col-8"></span>
+                </div>
+                <div class="placeholder-glow">
+                  <span class="placeholder col-6"></span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="p-5 text-center text-muted" id="transaction-empty-placeholder">
+            <p class="fw-semibold mb-1">{% trans "Nothing to show yet" %}</p>
+            <p class="small mb-0">{% trans "Start by logging an expense to build your history." %}</p>
+          </div>
+        {% endif %}
+      </div>
     </div>
-    <!-- Observer to scroll to correct element when anchor tags are in url -->
-    <script type="text/javascript" nonce="{{ csp_nonce }}">
+    <div class="col-12 col-lg-4">
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+          <h6 class="text-uppercase text-muted small mb-3">{% trans "Room snapshot" %}</h6>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted small">{% trans "Status" %}</span>
+            <span class="badge {% if current_room.is_closed %}bg-secondary{% else %}bg-success{% endif %}">
+              {% if current_room.is_closed %}
+                {% trans "Closed" %}
+              {% else %}
+                {% trans "Open" %}
+              {% endif %}
+            </span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted small">{% trans "Transactions logged" %}</span>
+            <span class="fw-semibold">{{ transactions_total_count }}</span>
+          </div>
+          {% if latest_transaction %}
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="text-muted small">{% trans "Last transaction" %}</span>
+              <span class="fw-semibold">{{ latest_transaction.paid_at|date:'M j, Y' }}</span>
+            </div>
+          {% else %}
+            <p class="text-muted small mb-0">{% trans "Invite your roommates to start sharing expenses." %}</p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h6 class="text-uppercase text-muted small mb-3">{% trans "Tips" %}</h6>
+          <ul class="list-unstyled mb-0 small text-muted">
+            <li>{% trans "Use the search field to filter by payer or description." %}</li>
+            <li>{% trans "Tap a row or the eye icon to review the split details." %}</li>
+            <li>{% trans "The floating '+' button lets you capture a new transaction." %}</li>
+          </ul>
+        </div>
+      </div>
+      {% if transactions_available %}
+        <div class="w-full d-flex justify-content-center">
+          <a href="{% room_url 'transaction:export' %}"
+             class="btn btn-outline-secondary d-inline-flex align-items-center gap-1"
+             title="{% trans "Export CSV" %}">
+            <i class="bi bi-download"></i>
+            {% trans "Export CSV" %}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  <!-- Observer to scroll to correct element when anchor tags are in url -->
+  <script type="text/javascript" nonce="{{ csp_nonce }}">
       function highlightTransactionRow(target) {
         if (!target) {
           return;
@@ -367,5 +367,5 @@
       } else {
         triggerTransactionFocus();
       }
-    </script>
+  </script>
 {% endblock tab_content %}

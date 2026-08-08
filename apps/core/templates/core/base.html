@@ -6,65 +6,65 @@
 {% trans "yamsa, shared expenses, roommate app, bill splitting, dashboards" as yamsa_meta_keywords %}
 <!DOCTYPE html>
 <html lang="{{ request.LANGUAGE_CODE|default:'en' }}" data-bs-theme="dark">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1, viewport-fit=cover">
-        <meta name="description" content="{{ yamsa_meta_description }}">
-        <meta name="keywords" content="{{ yamsa_meta_keywords }}">
-        <title>
-            {% if core.DEBUG %}⚒️{% endif %}
-            {% block title %}
-                {% trans "yamsa" %}
-            {% endblock title %}
-        </title>
-        <link rel="icon" href="{% static 'images/favicon.ico' %}">
-        {% load_pwa_meta_data %}
-        {% load_serviceworker %}
-        {% include "core/partials/_head_links_and_scripts.html" %}
-        <!-- Disable default hx-indicator styling -->
-        <meta name="htmx-config"
-              content='{"includeIndicatorStyles": false, "inlineScriptNonce": "{{ csp_nonce }}"}'>
-    </head>
-    <body hx-ext="idiomorph" id="body">
-        {% if core.DEBUG %}
-            <div class="debug-banner">
-                <h1 class="mb-0">💀 Deadzone 💀</h1>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="{{ yamsa_meta_description }}">
+    <meta name="keywords" content="{{ yamsa_meta_keywords }}">
+    <title>
+      {% if core.DEBUG %}⚒️{% endif %}
+      {% block title %}
+        {% trans "yamsa" %}
+      {% endblock title %}
+    </title>
+    <link rel="icon" href="{% static 'images/favicon.ico' %}">
+    {% load_pwa_meta_data %}
+    {% load_serviceworker %}
+    {% include "core/partials/_head_links_and_scripts.html" %}
+    <!-- Disable default hx-indicator styling -->
+    <meta name="htmx-config"
+          content='{"includeIndicatorStyles": false, "inlineScriptNonce": "{{ csp_nonce }}"}'>
+  </head>
+  <body hx-ext="idiomorph" id="body">
+    {% if core.DEBUG %}
+      <div class="debug-banner">
+        <h1 class="mb-0">💀 Deadzone 💀</h1>
+      </div>
+    {% endif %}
+    {% include "shared_partials/toast.html" %}
+    {% include "shared_partials/loading_spinner.html" with spinner_id="body-loading-spinner" %}
+    {% if not is_in_maintenance and not called_by_offline_view and not request.user.is_anonymous %}
+      {% include "_side_menu.html" %}
+    {% endif %}
+    <div class="container-fluid my-5 py-5 px-2" id="base-content">
+      {% block content %}
+      {% endblock content %}
+    </div>
+    {% if dashboard_tabs and not request.user.is_anonymous %}
+      {% include "room/partials/_dashboard_nav.html" with dashboard_tabs=dashboard_tabs %}
+    {% endif %}
+    {% if not dashboard_tabs %}
+      {% load room_tags %}
+      <nav class="navbar fixed-bottom z-0 pb-4">
+        <div class="container-fluid">
+          <div class="navbar-nav w-100 d-flex flex-row justify-content-around">
+            <div class="nav-link">
+              <a href='https://ko-fi.com/K3K01EDQN8' target='_blank'>
+                <img height="36"
+                     width="141"
+                     src="{% static 'images/ko-fi.png' %}"
+                     alt="Buy Me a Coffee at ko-fi.com" />
+              </a>
             </div>
-        {% endif %}
-        {% include "shared_partials/toast.html" %}
-        {% include "shared_partials/loading_spinner.html" with spinner_id="body-loading-spinner" %}
-        {% if not is_in_maintenance and not called_by_offline_view and not request.user.is_anonymous %}
-            {% include "_side_menu.html" %}
-        {% endif %}
-        <div class="container-fluid my-5 py-5 px-2" id="base-content">
-            {% block content %}
-            {% endblock content %}
+          </div>
         </div>
-        {% if dashboard_tabs and not request.user.is_anonymous %}
-            {% include "room/partials/_dashboard_nav.html" with dashboard_tabs=dashboard_tabs %}
-        {% endif %}
-        {% if not dashboard_tabs %}
-            {% load room_tags %}
-            <nav class="navbar fixed-bottom z-0 pb-4">
-                <div class="container-fluid">
-                    <div class="navbar-nav w-100 d-flex flex-row justify-content-around">
-                        <div class="nav-link">
-                            <a href='https://ko-fi.com/K3K01EDQN8' target='_blank'>
-                                <img height="36"
-                                     width="141"
-                                     src="{% static 'images/ko-fi.png' %}"
-                                     alt="Buy Me a Coffee at ko-fi.com" />
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        {% endif %}
-        {% render_bundle "htmx" attrs="defer" %}
-        {% render_bundle "navigation" attrs="defer" %}
-        <!-- Activate various Bootstrap components once the bundle has loaded -->
-        <script type="text/javascript" nonce="{{ csp_nonce }}">
+      </nav>
+    {% endif %}
+    {% render_bundle "htmx" attrs="defer" %}
+    {% render_bundle "navigation" attrs="defer" %}
+    <!-- Activate various Bootstrap components once the bundle has loaded -->
+    <script type="text/javascript" nonce="{{ csp_nonce }}">
           if (!window.__yamsaBootstrapInitialized) {
             window.__yamsaBootstrapInitialized = true;
 
@@ -90,6 +90,6 @@
               initializeBootstrapComponents()
             }
           }
-        </script>
-    </body>
+    </script>
+  </body>
 </html>

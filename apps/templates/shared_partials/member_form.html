@@ -103,97 +103,97 @@
     }
 </style>
 <div class="member-form-wrap">
-    {% if back_url %}
-        {% trans "Back" as default_back_label %}
-        <button type="button"
-                class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center"
-                aria-label="{{ back_label|default:default_back_label }}"
-                hx-get="{{ back_url }}"
-                hx-target="#body"
-                hx-indicator="#body-loading-spinner"
-                hx-swap="morph:innerHTML"
-                hx-push-url="true">
-            <i class="bi bi-arrow-left" aria-hidden="true"></i>
-        </button>
-    {% endif %}
-    <div class="member-hero-card mb-4">
-        <div class="d-flex justify-content-between flex-wrap gap-3">
-            <div>
-                <p class="text-uppercase text-muted small mb-1">
-                    {% if hero_context %}
-                        {{ hero_context }}
-                    {% else %}
-                        {% trans "Room access" %}
-                    {% endif %}
-                </p>
-                <h2>{{ hero_title }}</h2>
-                <p>{{ hero_subtitle }}</p>
-            </div>
-            <div class="text-end">
-                <div class="member-badge">
-                    <i class="bi {{ hero_badge_icon|default:'bi-people' }}"></i>
-                    {% if hero_badge_label %}
-                        {{ hero_badge_label }}
-                    {% else %}
-                        {% trans "New member" %}
-                    {% endif %}
-                </div>
-            </div>
+  {% if back_url %}
+    {% trans "Back" as default_back_label %}
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center"
+            aria-label="{{ back_label|default:default_back_label }}"
+            hx-get="{{ back_url }}"
+            hx-target="#body"
+            hx-indicator="#body-loading-spinner"
+            hx-swap="morph:innerHTML"
+            hx-push-url="true">
+      <i class="bi bi-arrow-left" aria-hidden="true"></i>
+    </button>
+  {% endif %}
+  <div class="member-hero-card mb-4">
+    <div class="d-flex justify-content-between flex-wrap gap-3">
+      <div>
+        <p class="text-uppercase text-muted small mb-1">
+          {% if hero_context %}
+            {{ hero_context }}
+          {% else %}
+            {% trans "Room access" %}
+          {% endif %}
+        </p>
+        <h2>{{ hero_title }}</h2>
+        <p>{{ hero_subtitle }}</p>
+      </div>
+      <div class="text-end">
+        <div class="member-badge">
+          <i class="bi {{ hero_badge_icon|default:'bi-people' }}"></i>
+          {% if hero_badge_label %}
+            {{ hero_badge_label }}
+          {% else %}
+            {% trans "New member" %}
+          {% endif %}
         </div>
+      </div>
     </div>
-    <form class="member-form-card"
-          hx-post="{{ form_action }}"
-          hx-target="#body"
-          hx-indicator="#body-loading-spinner"
-          hx-swap="morph:innerHTML"
-          hx-push-url="true">
-        {% csrf_token %}
-        <input type="hidden" name="room_slug" value="{{ room_slug_value }}">
-        {% if form.non_field_errors %}
-            <div class="member-errors">
-                {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
-            </div>
-        {% endif %}
-        <div class="mb-3">
-            <label class="member-field-label" for="{{ field.id_for_label }}">{{ field_label }}</label>
-            <input id="{{ field.id_for_label }}"
-                   name="{{ field.name }}"
-                   type="{{ field_type|default:'text' }}"
-                   class="member-input"
-                   placeholder="{{ field_placeholder }}"
-                   value="{{ field.value|default_if_none:'' }}"
-                   {% if field.field.required %}required{% endif %}
-                   autocomplete="{{ field_autocomplete|default:'off' }}">
-            {% if field.errors %}
-                <div class="member-errors mt-2">
-                    {% for error in field.errors %}<div>{{ error }}</div>{% endfor %}
-                </div>
-            {% endif %}
-            {% if helper_text %}<div class="member-helper">{{ helper_text }}</div>{% endif %}
+  </div>
+  <form class="member-form-card"
+        hx-post="{{ form_action }}"
+        hx-target="#body"
+        hx-indicator="#body-loading-spinner"
+        hx-swap="morph:innerHTML"
+        hx-push-url="true">
+    {% csrf_token %}
+    <input type="hidden" name="room_slug" value="{{ room_slug_value }}">
+    {% if form.non_field_errors %}
+      <div class="member-errors">
+        {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+      </div>
+    {% endif %}
+    <div class="mb-3">
+      <label class="member-field-label" for="{{ field.id_for_label }}">{{ field_label }}</label>
+      <input id="{{ field.id_for_label }}"
+             name="{{ field.name }}"
+             type="{{ field_type|default:'text' }}"
+             class="member-input"
+             placeholder="{{ field_placeholder }}"
+             value="{{ field.value|default_if_none:'' }}"
+             {% if field.field.required %}required{% endif %}
+             autocomplete="{{ field_autocomplete|default:'off' }}">
+      {% if field.errors %}
+        <div class="member-errors mt-2">
+          {% for error in field.errors %}<div>{{ error }}</div>{% endfor %}
         </div>
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <p class="member-tip mb-0">
-                {% if tip_text %}
-                    {{ tip_text }}
-                {% else %}
-                    {% trans "We'll notify members automatically." %}
-                {% endif %}
-            </p>
-            <button type="submit"
-                    class="btn btn-primary member-submit {% if submit_disabled %}disabled{% endif %}"
-                    {% if submit_disabled %}disabled aria-disabled="true"{% endif %}>
-                <i class="bi {{ submit_icon|default:'bi-check-lg' }}"></i>
-                {% if submit_label %}
-                    {{ submit_label }}
-                {% else %}
-                    {% trans "Submit" %}
-                {% endif %}
-            </button>
-        </div>
-        {% if submit_disabled %}
-            <div class="member-helper text-danger fw-semibold mt-2">
-                {% trans "This room is closed, so new members cannot be added." %}
-            </div>
+      {% endif %}
+      {% if helper_text %}<div class="member-helper">{{ helper_text }}</div>{% endif %}
+    </div>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <p class="member-tip mb-0">
+        {% if tip_text %}
+          {{ tip_text }}
+        {% else %}
+          {% trans "We'll notify members automatically." %}
         {% endif %}
-    </form>
+      </p>
+      <button type="submit"
+              class="btn btn-primary member-submit {% if submit_disabled %}disabled{% endif %}"
+              {% if submit_disabled %}disabled aria-disabled="true"{% endif %}>
+        <i class="bi {{ submit_icon|default:'bi-check-lg' }}"></i>
+        {% if submit_label %}
+          {{ submit_label }}
+        {% else %}
+          {% trans "Submit" %}
+        {% endif %}
+      </button>
+    </div>
+    {% if submit_disabled %}
+      <div class="member-helper text-danger fw-semibold mt-2">
+        {% trans "This room is closed, so new members cannot be added." %}
+      </div>
+    {% endif %}
+  </form>
 </div>

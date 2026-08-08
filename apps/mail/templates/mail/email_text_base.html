@@ -1,20 +1,20 @@
 {% extends "mail/email_base.html" %}
 {% block header %}
-    {{ context.header }}
+  {{ context.header }}
 {% endblock header %}
 {% block greeting %}
-    {{ context.greeting }}
+  {{ context.greeting }}
 {% endblock greeting %}
 {% block text %}
-    <br />
-    {% for text in context.text_list %}
-        {{ text }}
-        {% if not forloop.last %}<br />{% endif %}
-    {% endfor %}
+  <br />
+  {% for text in context.text_list %}
+    {{ text }}
+    {% if not forloop.last %}<br />{% endif %}
+  {% endfor %}
 {% endblock text %}
 {% block footer_text %}
-    {{ context.footer }}
+  {{ context.footer }}
 {% endblock footer_text %}
 {% block sub_footer %}
-    {{ context.sub_footer }}
+  {{ context.sub_footer }}
 {% endblock sub_footer %}

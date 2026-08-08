@@ -2,87 +2,87 @@
 {% load i18n %}
 {% trans "Remove from room" as remove_from_room_label %}
 <div class="col">
-    <article class="people-card {% if not user.is_guest %}people-card--interactive{% endif %}"
-             {% if not user.is_guest %} hx-trigger="click" hx-get="{% url 'account:detail' pk=user.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" hx-sync=".people-remove-action:abort" {% endif %}>
-        <div class="d-flex align-items-start gap-3">
-            <div class="people-avatar">
-                {% with avatar_source=user.name|default:user.email %}
-                    {% if user.profile_picture %}
-                        <img src="{{ user.profile_picture_url }}"
-                             data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
-                             alt="{{ user.name }}"
-                             class="w-100 h-100 object-fit-cover rounded-3"
-                             loading="lazy"
-                             width="48"
-                             height="48">
-                    {% else %}
-                        <span class="text-uppercase small fw-semibold">{{ avatar_source|slice:':1'|upper }}</span>
-                    {% endif %}
-                {% endwith %}
-            </div>
-            <div class="flex-grow-1">
-                <div class="d-flex justify-content-between gap-2">
-                    <div>
-                        <h5 class="mb-1">{{ user.name }}</h5>
-                        <div class="d-flex flex-wrap gap-2 mb-2">
-                            <span class="people-pill {% if user.is_guest %}people-pill-guest{% endif %}">
-                                {% if user.is_guest %}
-                                    {% trans "Guest" %}
-                                {% else %}
-                                    {% trans "Member" %}
-                                {% endif %}
-                            </span>
-                            <span class="people-pill people-pill-muted">
-                                {% if user.user_has_seen_this_room %}
-                                    <i class="bi bi-check2"></i> {% trans "Seen room" %}
-                                {% else %}
-                                    <i class="bi bi-eye-slash"></i> {% trans "Not seen yet" %}
-                                {% endif %}
-                            </span>
-                        </div>
-                    </div>
-                    {% if user.id == request.user.id %}
-                        {% trans "Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!" as remove_confirm_message %}
-                    {% else %}
-                        {% trans "Are you sure you wish to remove this user from this room?" as remove_confirm_message %}
-                    {% endif %}
-                    <button class="people-remove-btn people-remove-action"
-                            type="button"
-                            title="{{ remove_from_room_label }}"
-                            data-stop-propagation="true"
-                            hx-post="{% room_url 'account:remove-from-room' pk=user.id %}"
-                            hx-include="[name='csrfmiddlewaretoken']"
-                            hx-target="#body"
-                            hx-indicator="#body-loading-spinner"
-                            hx-swap="innerHTML"
-                            hx-confirm="{{ remove_confirm_message }}">
-                        <i class="bi bi-x-octagon"></i>
-                    </button>
-                </div>
-                <p class="people-meta mb-2">
-                    {% if user.is_guest %}
-                        {% trans "Guest access with limited features" %}
-                    {% else %}
-                        {% trans "Registered roommate" %}
-                    {% endif %}
-                </p>
+  <article class="people-card {% if not user.is_guest %}people-card--interactive{% endif %}"
+           {% if not user.is_guest %} hx-trigger="click" hx-get="{% url 'account:detail' pk=user.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" hx-sync=".people-remove-action:abort" {% endif %}>
+    <div class="d-flex align-items-start gap-3">
+      <div class="people-avatar">
+        {% with avatar_source=user.name|default:user.email %}
+          {% if user.profile_picture %}
+            <img src="{{ user.profile_picture_url }}"
+                 data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
+                 alt="{{ user.name }}"
+                 class="w-100 h-100 object-fit-cover rounded-3"
+                 loading="lazy"
+                 width="48"
+                 height="48">
+          {% else %}
+            <span class="text-uppercase small fw-semibold">{{ avatar_source|slice:':1'|upper }}</span>
+          {% endif %}
+        {% endwith %}
+      </div>
+      <div class="flex-grow-1">
+        <div class="d-flex justify-content-between gap-2">
+          <div>
+            <h5 class="mb-1">{{ user.name }}</h5>
+            <div class="d-flex flex-wrap gap-2 mb-2">
+              <span class="people-pill {% if user.is_guest %}people-pill-guest{% endif %}">
                 {% if user.is_guest %}
-                    <div class="people-meta small" id="invitation-email-div">
-                        {% if request.user.id != user.id %}
-                            {% if user.invitation_email_can_be_sent %}
-                                {% include "shared_partials/invitation_email_not_yet_sent.html" %}
-                            {% else %}
-                                {% include "shared_partials/invitation_email_sent.html" %}
-                            {% endif %}
-                        {% endif %}
-                    </div>
+                  {% trans "Guest" %}
                 {% else %}
-                    <div class="people-meta small">
-                        <i class="bi bi-person-check"></i>
-                        {% trans "Joined as a full member of this room." %}
-                    </div>
+                  {% trans "Member" %}
                 {% endif %}
+              </span>
+              <span class="people-pill people-pill-muted">
+                {% if user.user_has_seen_this_room %}
+                  <i class="bi bi-check2"></i> {% trans "Seen room" %}
+                {% else %}
+                  <i class="bi bi-eye-slash"></i> {% trans "Not seen yet" %}
+                {% endif %}
+              </span>
             </div>
+          </div>
+          {% if user.id == request.user.id %}
+            {% trans "Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!" as remove_confirm_message %}
+          {% else %}
+            {% trans "Are you sure you wish to remove this user from this room?" as remove_confirm_message %}
+          {% endif %}
+          <button class="people-remove-btn people-remove-action"
+                  type="button"
+                  title="{{ remove_from_room_label }}"
+                  data-stop-propagation="true"
+                  hx-post="{% room_url 'account:remove-from-room' pk=user.id %}"
+                  hx-include="[name='csrfmiddlewaretoken']"
+                  hx-target="#body"
+                  hx-indicator="#body-loading-spinner"
+                  hx-swap="innerHTML"
+                  hx-confirm="{{ remove_confirm_message }}">
+            <i class="bi bi-x-octagon"></i>
+          </button>
         </div>
-    </article>
+        <p class="people-meta mb-2">
+          {% if user.is_guest %}
+            {% trans "Guest access with limited features" %}
+          {% else %}
+            {% trans "Registered roommate" %}
+          {% endif %}
+        </p>
+        {% if user.is_guest %}
+          <div class="people-meta small" id="invitation-email-div">
+            {% if request.user.id != user.id %}
+              {% if user.invitation_email_can_be_sent %}
+                {% include "shared_partials/invitation_email_not_yet_sent.html" %}
+              {% else %}
+                {% include "shared_partials/invitation_email_sent.html" %}
+              {% endif %}
+            {% endif %}
+          </div>
+        {% else %}
+          <div class="people-meta small">
+            <i class="bi bi-person-check"></i>
+            {% trans "Joined as a full member of this room." %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </article>
 </div>

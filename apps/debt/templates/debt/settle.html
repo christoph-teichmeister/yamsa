@@ -1,70 +1,70 @@
 {% extends "room/dashboard.html" %}
 {% load static room_tags i18n %}
 {% block tab_content %}
-    <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
-        <div class="col">
-            <h5>
-                {% blocktrans with creditor_name=debt.creditor.name %}
+  <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
+    <div class="col">
+      <h5>
+        {% blocktrans with creditor_name=debt.creditor.name %}
                     Your debt to {{ creditor_name }}
                 {% endblocktrans %}
-            </h5>
-            <small>
-                {% blocktrans with creditor_name=debt.creditor.name debt_value=debt.value debt_currency=debt.currency.sign %}
+      </h5>
+      <small>
+        {% blocktrans with creditor_name=debt.creditor.name debt_value=debt.value debt_currency=debt.currency.sign %}
                     Are you sure that you have settled your debt ({{ debt_value }}{{ debt_currency }})
                     to {{ creditor_name }}?
                 {% endblocktrans %}
-            </small>
-        </div>
+      </small>
     </div>
-    <form hx-post="{% room_url 'debt:settle' pk=debt.id %}"
-          hx-target="#body"
-          hx-indicator="#body-loading-spinner"
-          hx-swap="morph:innerHTML"
-          hx-push-url="true">
-        {% csrf_token %}
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-                <div class="form-group" hidden>
-                    <label for="debt_id">{% trans "Debt ID" %}</label>
-                    <input id="debt_id"
-                           type="number"
-                           name="debt_id"
-                           class="form-control"
-                           required
-                           value="{{ debt.id }}" />
-                </div>
-                <div class="form-group" hidden>
-                    <label for="settled" class="form-label">{% trans "Settled?" %}</label>
-                    <input id="settled"
-                           name="settled"
-                           type="checkbox"
-                           checked
-                           class="form-control"
-                           required />
-                </div>
-            </li>
-        </ul>
-        <div class="row d-flex justify-content-end me-2">
-            {% if debt.creditor.paypal_me_username %}
-                <div class="col-9">
-                    <a href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/ {{ debt.value }}{{ debt.currency.code }}"
-                       target="_blank">
-                        <button type="button" class="btn btn-secondary w-100">{% trans "No, take me to their paypal" %}</button>
-                    </a>
-                </div>
-            {% else %}
-                <div class="col-3">
-                    <button type="button"
-                            class="btn btn-secondary w-100"
-                            disabled
-                            aria-disabled="true"
-                            aria-label="{% trans "No action available" %}">{% trans "No" %}</button>
-                </div>
-            {% endif %}
-            <div class="col-3">
-                <button type="submit" class="btn btn-primary w-100">{% trans "Yes" %}</button>
-            </div>
+  </div>
+  <form hx-post="{% room_url 'debt:settle' pk=debt.id %}"
+        hx-target="#body"
+        hx-indicator="#body-loading-spinner"
+        hx-swap="morph:innerHTML"
+        hx-push-url="true">
+    {% csrf_token %}
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <div class="form-group" hidden>
+          <label for="debt_id">{% trans "Debt ID" %}</label>
+          <input id="debt_id"
+                 type="number"
+                 name="debt_id"
+                 class="form-control"
+                 required
+                 value="{{ debt.id }}" />
         </div>
-        <div class="modal-footer"></div>
-    </form>
+        <div class="form-group" hidden>
+          <label for="settled" class="form-label">{% trans "Settled?" %}</label>
+          <input id="settled"
+                 name="settled"
+                 type="checkbox"
+                 checked
+                 class="form-control"
+                 required />
+        </div>
+      </li>
+    </ul>
+    <div class="row d-flex justify-content-end me-2">
+      {% if debt.creditor.paypal_me_username %}
+        <div class="col-9">
+          <a href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/ {{ debt.value }}{{ debt.currency.code }}"
+             target="_blank">
+            <button type="button" class="btn btn-secondary w-100">{% trans "No, take me to their paypal" %}</button>
+          </a>
+        </div>
+      {% else %}
+        <div class="col-3">
+          <button type="button"
+                  class="btn btn-secondary w-100"
+                  disabled
+                  aria-disabled="true"
+                  aria-label="{% trans "No action available" %}">{% trans "No" %}</button>
+        </div>
+      {% endif %}
+      <div class="col-3">
+        <button type="submit" class="btn btn-primary w-100">{% trans "Yes" %}</button>
+      </div>
+    </div>
+    <div class="modal-footer"></div>
+  </form>
 {% endblock tab_content %}
