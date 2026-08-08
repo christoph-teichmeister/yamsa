@@ -617,6 +617,12 @@ msgstr "Noch keine Schulden"
 msgid "As expenses are added, we will surface who owes whom here."
 msgstr "Wenn Ausgaben hinzukommen, zeigen wir hier, wer wem etwas schuldet."
 
+msgid "Settle via PayPal"
+msgstr "Über PayPal begleichen"
+
+msgid "Settle this debt"
+msgstr "Diese Schuld begleichen"
+
 msgid "This transaction is not yours to settle!"
 msgstr "Diese Transaktion darfst du nicht ausgleichen!"
 
