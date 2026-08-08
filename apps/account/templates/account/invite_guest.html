@@ -5,9 +5,9 @@
   <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
     <div class="col">
       <h5 class="m-0">
-        {% blocktrans with invitee=user.name room=current_room.name %}
-                    Invite {{ invitee }} to "{{ room }}"
-                {% endblocktrans %}
+        {% blocktrans with invitee=user.name room=current_room.name trimmed %}
+          Invite {{ invitee }} to "{{ room }}"
+        {% endblocktrans %}
       </h5>
     </div>
   </div>

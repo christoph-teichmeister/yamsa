@@ -275,14 +275,8 @@ msgid "Request a new password"
 msgstr "Neues Passwort anfordern"
 
 #, python-format
-msgid ""
-"\n"
-"                    Invite %(invitee)s to \"%(room)s\"\n"
-"                "
-msgstr ""
-"\n"
-"                    Lade %(invitee)s zu \"%(room)s\" ein\n"
-"                "
+msgid "Invite %(invitee)s to \"%(room)s\""
+msgstr "Lade %(invitee)s zu \"%(room)s\" ein"
 
 msgid "Send invite"
 msgstr "Einladung senden"

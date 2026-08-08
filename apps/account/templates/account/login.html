@@ -60,6 +60,7 @@
                       </div>
                       <small class="text-muted">
                         <a class="htmx-a text-decoration-none"
+                           href="{% url 'account:forgot-password' %}"
                            hx-get="{% url 'account:forgot-password' %}"
                            hx-target="#body"
                            hx-indicator="#body-loading-spinner"

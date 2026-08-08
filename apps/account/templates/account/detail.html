@@ -95,7 +95,8 @@
                 </div>
                 {% if request.user.id == user.id %}
                   <div class="ms-auto">
-                    <button class="btn btn-primary d-flex align-items-center gap-2"
+                    <button type="button"
+                            class="btn btn-primary d-flex align-items-center gap-2"
                             hx-get="{% url 'account:update' pk=user.id %}"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
@@ -153,6 +154,7 @@
                            type="checkbox"
                            role="switch"
                            id="wants_to_receive_webpush_notifications"
+                           aria-label="{% trans "Push notifications" %}"
                            {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}
                            disabled>
                   </div>
@@ -176,6 +178,7 @@
                            type="checkbox"
                            role="switch"
                            id="wants_to_receive_payment_reminders"
+                           aria-label="{% trans "Payment reminders" %}"
                            {% if user.wants_to_receive_payment_reminders %}checked{% endif %}
                            disabled>
                   </div>

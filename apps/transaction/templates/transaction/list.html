@@ -178,6 +178,7 @@
                   class="btn btn-primary btn-icon d-inline-flex align-items-center justify-content-center {% if current_room.is_closed %}disabled{% endif %}"
                   aria-label="{% trans "Add transaction" %}"
                   title="{% trans "Add transaction" %}"
+                  {% if current_room.is_closed %}disabled aria-disabled="true"{% endif %}
                   hx-get="{% room_url 'transaction:create' %}"
                   hx-target="#body"
                   hx-indicator="#body-loading-spinner"

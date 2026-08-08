@@ -20,7 +20,8 @@
   </div>
   {% if called_by_offline_view %}
     <div class="fixed-bottom z-0 d-flex justify-content-center mb-5">
-      <button class="btn btn-primary"
+      <button type="button"
+              class="btn btn-primary"
               hx-trigger="click"
               hx-get="{% url 'core:welcome' %}"
               hx-target="#body"

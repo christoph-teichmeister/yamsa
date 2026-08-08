@@ -79,7 +79,7 @@
       <div class="action-card mt-4 d-flex align-items-center justify-content-between"
            role="button"
            tabindex="0"
-           hx-trigger="click keyup[key=='Enter']"
+           hx-trigger="click keyup[key=='Enter' || key==' ']"
            hx-get="{% room_url 'debt:money-spent-on-room' %}"
            hx-target="#body"
            hx-indicator="#body-loading-spinner"

@@ -18,6 +18,7 @@
                 <div class="mt-4">
                   <small class="text-white-50 d-block mb-2">{% trans "Already have an account?" %}</small>
                   <a class="btn btn-outline-light btn-sm fw-semibold hero-cta htmx-a w-100 text-center text-white"
+                     href="{% url 'account:login' %}"
                      hx-get="{% url 'account:login' %}"
                      hx-target="#body"
                      hx-indicator="#body-loading-spinner"

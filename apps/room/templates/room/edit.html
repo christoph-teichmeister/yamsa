@@ -11,8 +11,9 @@
       <div class="d-flex align-items-center gap-3">
         <i class="bi bi-arrow-left-circle fs-2 cursor-pointer text-primary"
            role="button"
+           tabindex="0"
            aria-label="{{ edit_back_label }}"
-           hx-trigger="click"
+           hx-trigger="click keyup[key=='Enter' || key==' ']"
            hx-get="{% room_url 'room:detail' %}"
            hx-target="#body"
            hx-indicator="#body-loading-spinner"

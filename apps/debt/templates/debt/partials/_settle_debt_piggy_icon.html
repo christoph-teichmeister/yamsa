@@ -4,12 +4,19 @@
 {% else %}
   {% if debt.debitor.name == request.user.name %}
     {% if debt.creditor.paypal_me_username %}
+      {% trans "Settle via PayPal" as paypal_label %}
       <a class="text-reset"
          href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value }}{{ debt.currency.code }}"
-         target="_blank"><i class="bi bi-paypal"></i></a>
+         target="_blank"
+         aria-label="{{ paypal_label }}"><i class="bi bi-paypal"></i></a>
       &nbsp&nbsp&nbsp
     {% endif %}
+    {% trans "Settle this debt" as settle_label %}
     <i class="bi bi-piggy-bank"
+       role="button"
+       tabindex="0"
+       aria-label="{{ settle_label }}"
+       hx-trigger="click keyup[key=='Enter' || key==' ']"
        hx-get="{% room_url 'debt:settle' pk=debt.id %}"
        hx-target="#body"
        hx-indicator="#body-loading-spinner"
@@ -18,8 +25,10 @@
   {% else %}
     {% trans "This transaction is not yours to settle!" as tooltip_title %}
     <i class="bi bi-piggy-bank cursor-pointer debt-piggy-tooltip"
+       tabindex="0"
        data-bs-toggle="tooltip"
        data-bs-placement="top"
-       data-bs-title="{{ tooltip_title }}"></i>
+       data-bs-title="{{ tooltip_title }}"
+       aria-label="{{ tooltip_title }}"></i>
   {% endif %}
 {% endif %}

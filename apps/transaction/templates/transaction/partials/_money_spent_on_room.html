@@ -231,7 +231,7 @@
     <div class="mt-4">
       <div id="spending-trend"
            hx-get="{% room_url 'debt:money-spent-trend' %}"
-           hx-trigger="load delay:200ms, revealed once"
+           hx-trigger="revealed once"
            hx-target="#spending-trend"
            hx-swap="innerHTML">
         <div class="card overview-card shadow-sm">

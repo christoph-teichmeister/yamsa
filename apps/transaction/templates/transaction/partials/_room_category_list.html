@@ -53,11 +53,14 @@
                       <input type="hidden" name="action" value="update" />
                       <input type="hidden" name="room_category_id" value="{{ room_category.id }}" />
                       <div class="input-group input-group-sm align-items-center">
-                        <span class="input-group-text" id="order-label-{{ room_category.id }}">{% trans "Order" %}</span>
+                        <label class="input-group-text"
+                               for="order-input-{{ room_category.id }}"
+                               id="order-label-{{ room_category.id }}">{% trans "Order" %}</label>
                         {% with failed_id=failed_room_category_id|stringformat:"s" %}
                           {% if room_category_update_form and failed_id == room_category.id|stringformat:"s" %}
                             {% with update_for_category=room_category_update_form %}
                               <input type="number"
+                                     id="order-input-{{ room_category.id }}"
                                      name="order_index"
                                      class="form-control{% if update_for_category.order_index.errors %} is-invalid{% endif %}"
                                      aria-describedby="order-label-{{ room_category.id }}"
@@ -69,6 +72,7 @@
                             {% endwith %}
                           {% else %}
                             <input type="number"
+                                   id="order-input-{{ room_category.id }}"
                                    name="order_index"
                                    class="form-control"
                                    aria-describedby="order-label-{{ room_category.id }}"

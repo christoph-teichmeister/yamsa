@@ -87,7 +87,7 @@
                        name="name"
                        autocomplete="name"
                        required
-                       value="{{ form.name.value|default:user.name }}">
+                       value="{{ form.name.value|default_if_none:user.name }}">
                 {% for error_message in form.errors.name.data %}
                   <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
                 {% endfor %}
@@ -100,7 +100,7 @@
                        name="email"
                        autocomplete="email"
                        required
-                       value="{{ form.email.value|default:user.email }}">
+                       value="{{ form.email.value|default_if_none:user.email }}">
                 {% for error_message in form.errors.email.data %}
                   <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
                 {% endfor %}
@@ -113,7 +113,7 @@
                          class="form-control"
                          id="paypal_me_username"
                          name="paypal_me_username"
-                         value="{{ form.paypal_me_username.value|default:user.paypal_me_username }}"
+                         value="{{ form.paypal_me_username.value|default_if_none:user.paypal_me_username }}"
                          placeholder="-">
                 </div>
                 {% for error_message in form.errors.paypal_me_username.data %}
@@ -140,7 +140,7 @@
                          class="form-check-input"
                          id="wants_to_receive_webpush_notifications"
                          name="wants_to_receive_webpush_notifications"
-                         {% if form.wants_to_receive_webpush_notifications.value|default:user.wants_to_receive_webpush_notifications %}checked{% endif %}>
+                         {% if form.wants_to_receive_webpush_notifications.value|default_if_none:user.wants_to_receive_webpush_notifications %}checked{% endif %}>
                   <label for="wants_to_receive_webpush_notifications" class="form-check-label">
                     {{ form.fields.wants_to_receive_webpush_notifications.label }}
                   </label>
@@ -153,7 +153,7 @@
                          class="form-check-input"
                          id="wants_to_receive_payment_reminders"
                          name="wants_to_receive_payment_reminders"
-                         {% if form.wants_to_receive_payment_reminders.value|default:user.wants_to_receive_payment_reminders %}checked{% endif %}>
+                         {% if form.wants_to_receive_payment_reminders.value|default_if_none:user.wants_to_receive_payment_reminders %}checked{% endif %}>
                   <label for="wants_to_receive_payment_reminders" class="form-check-label">
                     {{ form.fields.wants_to_receive_payment_reminders.label }}
                   </label>
@@ -166,7 +166,7 @@
                          class="form-check-input"
                          id="wants_to_receive_room_reminders"
                          name="wants_to_receive_room_reminders"
-                         {% if form.wants_to_receive_room_reminders.value|default:user.wants_to_receive_room_reminders %}checked{% endif %}>
+                         {% if form.wants_to_receive_room_reminders.value|default_if_none:user.wants_to_receive_room_reminders %}checked{% endif %}>
                   <label for="wants_to_receive_room_reminders" class="form-check-label">
                     {{ form.fields.wants_to_receive_room_reminders.label }}
                   </label>
