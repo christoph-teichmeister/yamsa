@@ -1,74 +1,84 @@
 {% extends "core/base.html" %}
 {% load room_tags %}
 {% block content %}
-    <div class="container text-center">
-        <div class="row g-1">
-            {% for room in room_qs %}
-                <div class="col-12 col-lg-6 cursor-pointer">
-                    <div class="p-1">
-                        <div class="card container d-flex justify-content-center room-list-card"
-                             hx-trigger="click"
-                             hx-get="{% room_url 'transaction:list' %}"
-                             hx-target="#body"
-                             hx-indicator="#body-loading-spinner"
-                             hx-swap="innerHTML"
-                             hx-push-url="true">
-                            <div class="row">
-                                {% if room.status == ROOM_STATUS_CLOSED %}
-                                    <div class="col-1 ms-5 p-0 d-flex justify-content-center align-items-center">
-                                        <h1 class="mb-0">
-                                            <i class="bi bi-dash-circle"
-                                               hx-get="{% room_url 'room:edit' %}"
-                                               hx-target="#body"
-                                               hx-indicator="#body-loading-spinner"
-                                               hx-swap="morph:innerHTML"
-                                               hx-push-url="true"></i>
-                                        </h1>
-                                    </div>
-                                {% endif %}
-                                <div class="col p-0">
-                                    <div class="card-body container d-flex align-items-center justify-content-center flex-wrap {% if room.status == ROOM_STATUS_CLOSED %}text-start{% else %}{% endif %}">
-                                        {% if request.user.is_superuser and not room.user_is_in_room %}
-                                            <small class="fst-italic">{{ room.created_by__name }}</small>
-                                        {% endif %}
-                                        <div class="row w-100">
-                                            <div class="col">
-                                                <h5 class="card-title {% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-muted{% endif %}">
-                                                    {{ room.name }}
-                                                </h5>
-                                            </div>
-                                        </div>
-                                        <div class="row w-100">
-                                            <div class="col">
-                                                <p class="card-text {% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-muted{% endif %}">
-                                                    {{ room.description }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-            <div class="col-12 col-lg-6 cursor-pointer">
-                <div class="p-1">
-                    <div class="card room-list-card room-list-card-add"
-                         hx-trigger="click"
-                         hx-get="{% url 'room:create' %}"
+  <div class="container text-center">
+    <div class="row g-1">
+      {% for room in room_qs %}
+        <div class="col-12 col-lg-6 cursor-pointer">
+          <div class="p-1">
+            <div class="card container d-flex justify-content-center room-list-card"
+                 role="button"
+                 tabindex="0"
+                 hx-trigger="click keyup[key=='Enter' || key==' ']"
+                 hx-on:keydown="if (event.key === ' ') { event.preventDefault(); }"
+                 hx-get="{% room_url 'transaction:list' %}"
+                 hx-target="#body"
+                 hx-indicator="#body-loading-spinner"
+                 hx-swap="innerHTML"
+                 hx-push-url="true">
+              <div class="row">
+                {% if room.status == ROOM_STATUS_CLOSED %}
+                  <div class="col-1 ms-5 p-0 d-flex justify-content-center align-items-center">
+                    <h1 class="mb-0">
+                      <i class="bi bi-dash-circle"
+                         role="button"
+                         tabindex="0"
+                         hx-trigger="click consume, keyup[key=='Enter' || key==' '] consume"
+                         hx-on:keydown="if (event.key === ' ') { event.preventDefault(); }"
+                         hx-get="{% room_url 'room:edit' %}"
                          hx-target="#body"
                          hx-indicator="#body-loading-spinner"
                          hx-swap="morph:innerHTML"
-                         hx-push-url="true">
-                        <div class="card-body">
-                            <p class="card-text">
-                                <i class="bi bi-plus-circle"></i>
-                            </p>
-                        </div>
+                         hx-push-url="true"></i>
+                    </h1>
+                  </div>
+                {% endif %}
+                <div class="col p-0">
+                  <div class="card-body container d-flex align-items-center justify-content-center flex-wrap {% if room.status == ROOM_STATUS_CLOSED %}text-start{% else %}{% endif %}">
+                    {% if request.user.is_superuser and not room.user_is_in_room %}
+                      <small class="fst-italic">{{ room.created_by__name }}</small>
+                    {% endif %}
+                    <div class="row w-100">
+                      <div class="col">
+                        <h5 class="card-title {% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-muted{% endif %}">
+                          {{ room.name }}
+                        </h5>
+                      </div>
                     </div>
+                    <div class="row w-100">
+                      <div class="col">
+                        <p class="card-text {% if request.user.is_superuser and request.user not in room.users.all or room.status == ROOM_STATUS_CLOSED %}text-muted{% endif %}">
+                          {{ room.description }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      {% endfor %}
+      <div class="col-12 col-lg-6 cursor-pointer">
+        <div class="p-1">
+          <div class="card room-list-card room-list-card-add"
+               role="button"
+               tabindex="0"
+               hx-trigger="click keyup[key=='Enter' || key==' ']"
+               hx-on:keydown="if (event.key === ' ') { event.preventDefault(); }"
+               hx-get="{% url 'room:create' %}"
+               hx-target="#body"
+               hx-indicator="#body-loading-spinner"
+               hx-swap="morph:innerHTML"
+               hx-push-url="true">
+            <div class="card-body">
+              <p class="card-text">
+                <i class="bi bi-plus-circle"></i>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 {% endblock content %}

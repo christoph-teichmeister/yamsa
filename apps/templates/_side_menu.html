@@ -2,160 +2,158 @@
 {% trans "Toggle navigation" as offcanvas_toggle_label %}
 {% trans "Copy the rooms URL to your clipboard to send it to your friends" as copy_rooms_url_tooltip %}
 <nav class="navbar fixed-top pt-4">
-    <div class="container-fluid pt-4 justify-content-center"
-         id="offcanvasContainer">
-        <div class="row w-100 d-flex justify-content-between">
-            <div class="col-1 px-0 d-flex align-items-center">
-                <button class="navbar-toggler p-0 text-primary-emphasis border-0"
-                        type="button"
-                        data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasNavbar"
-                        aria-controls="offcanvasNavbar"
-                        aria-label="{{ offcanvas_toggle_label }}">
-                    <i class="bi bi-list"></i>
-                </button>
-            </div>
-            {% if current_room %}
-                <div class="col-10 p-0 text-center">
-                    <h6 class="mb-0">{{ current_room.name }}</h6>
-                    <span class="text-muted small">{{ current_room.description|truncatechars:50 }}</span>
-                </div>
-            {% else %}
-                <div class="col-11 d-flex align-items-center justify-content-end">
-                    <h3 class="mb-0">yamsa</h3>
-                </div>
-            {% endif %}
-            {% if current_room %}
-                <div class="col-1 px-0 d-flex align-items-center justify-content-end">
-                    {% if current_room.is_open %}
-                        <button class="btn btn-light btn-sm"
-                                data-copy-share-url="true"
-                                data-share-url="{{ current_room.share_url }}"
-                                data-bs-toggle="tooltip"
-                                data-bs-title="{{ copy_rooms_url_tooltip }}"
-                                hx-get="{% url 'room:htmx-checked-clipboard' %}"
-                                hx-swap="morph:innerHTML">
-                            {% include "shared_partials/clipboard_icon_unchecked.html" %}
-                        </button>
-                    {% elif current_room.is_closed %}
-                        <h1 class="mb-0">
-                            <i class="bi bi-dash-circle"
-                               hx-get="{% room_url 'room:detail' %}"
-                               hx-target="#body"
-                               hx-indicator="#body-loading-spinner"
-                               hx-swap="morph:innerHTML"
-                               hx-push-url="true"></i>
-                        </h1>
-                    {% endif %}
-                </div>
-            {% endif %}
+  <div class="container-fluid pt-4 justify-content-center"
+       id="offcanvasContainer">
+    <div class="row w-100 d-flex justify-content-between">
+      <div class="col-1 px-0 d-flex align-items-center">
+        <button class="navbar-toggler p-0 text-primary-emphasis border-0"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar"
+                aria-controls="offcanvasNavbar"
+                aria-label="{{ offcanvas_toggle_label }}">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+      {% if current_room %}
+        <div class="col-10 p-0 text-center">
+          <h6 class="mb-0">{{ current_room.name }}</h6>
+          <span class="text-muted small">{{ current_room.description|truncatechars:50 }}</span>
         </div>
-        <div class="offcanvas offcanvas-start"
-             data-bs-backdrop="true"
-             data-bs-scroll="true"
-             aria-labelledby="offcanvasNavbarLabel"
-             tabindex="-1"
-             id="offcanvasNavbar">
-            <div class="offcanvas-header mt-4 pt-4">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">{% trans "Menu" %}</h5>
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="offcanvas"
-                        data-bs-target="#offcanvasNavbar"
-                        aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body d-flex flex-column gap-4 pt-3 pb-4">
-                <div class="d-flex justify-content-center gap-2">
-                    <button type="button"
-                            class="btn btn-sm btn-outline-primary px-3 rounded-3"
-                            data-theme-value="light">
-                        <i class="bi bi-sun-fill"></i>
-                    </button>
-                    <button type="button"
-                            class="btn btn-sm btn-outline-primary px-3 rounded-3"
-                            data-theme-value="dark">
-                        <i class="bi bi-moon-fill"></i>
-                    </button>
-                </div>
-                <div class="card shadow-sm border-0 room-card text-center">
-                    <div class="card-body py-3">
-                        {% with sidebar_avatar_source=request.user.name|default:request.user.email %}
-                            <div class="profile-avatar mb-2">
-                                {% if request.user.profile_picture %}
-                                    <img src="{{ request.user.profile_picture_url }}"
-                                         data-profile-picture-fallback-url="{{ request.user.profile_picture_fallback_url }}"
-                                         alt="{{ request.user.name }}"
-                                         class="rounded-4 w-100 h-100 object-fit-cover"
-                                         width="64"
-                                         height="64">
-                                {% else %}
-                                    <span class="fs-3 fw-semibold text-primary-emphasis">{{ sidebar_avatar_source|slice:':1'|upper }}</span>
-                                {% endif %}
-                            </div>
-                        {% endwith %}
-                        <div class="fw-semibold">
-                            {% if request.user.is_anonymous %}
-                                {% trans "Profile" %}
-                            {% else %}
-                                {{ request.user.name }}
-                            {% endif %}
-                        </div>
-                        <div class="text-muted small">
-                            {% if request.user.is_anonymous %}
-                                {% trans "Log in to access rooms" %}
-                            {% else %}
-                                {% trans "Manage rooms and transactions" %}
-                            {% endif %}
-                        </div>
-                        <button type="button"
-                                class="btn btn-link p-0 mt-2"
-                                data-bs-dismiss="offcanvas"
-                                data-bs-target="#offcanvasNavbar"
-                                tabindex="-1"
-                                hx-trigger="click delay:300ms"
-                                hx-get=" {% if request.user.is_authenticated %} {% url 'account:detail' pk=request.user.id %} {% else %} {% url 'account:login' %} {% endif %}"
-                                hx-target="#body"
-                                hx-indicator="#body-loading-spinner"
-                                hx-swap="innerHTML"
-                                hx-push-url="true">
-                            {% if request.user.is_anonymous %}
-                                {% trans "Sign in" %}
-                            {% else %}
-                                {% trans "View profile" %}
-                            {% endif %}
-                        </button>
-                    </div>
-                </div>
-                <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm {% if request.path == "/welcome/" %}active{% endif %}"
-                     data-bs-dismiss="offcanvas"
-                     data-bs-target="#offcanvasNavbar"
-                     hx-trigger="click delay:300ms"
-                     hx-get="{% url 'core:welcome' %}"
-                     hx-indicator="#body-loading-spinner"
-                     hx-target="#body"
-                     hx-swap="morph:innerHTML"
-                     hx-push-url="true">
-                    <div class="room-circle{% if request.path == "/welcome/" %} selected{% endif %}">
-                        <i class="bi bi-house"></i>
-                    </div>
-                    <div class="flex-grow-1 text-start">
-                        <div class="room-name fw-semibold mb-0">{% trans "Home" %}</div>
-                        <small class="room-description text-muted">{% trans "Back to home" %}</small>
-                    </div>
-                    <span class="badge bg-light text-dark room-status-badge">{% trans "Start" %}</span>
-                </div>
-                {% include "_side_menu_room_list.html" %}
-                <div class="mt-auto">
-                    <button type="button"
-                            class="btn btn-primary w-100"
-                            hx-trigger="click"
-                            hx-get="{% url 'account:logout' %}"
-                            hx-target="#body"
-                            hx-indicator="#body-loading-spinner"
-                            hx-swap="morph:innerHTML"
-                            hx-push-url="true">{% trans "Log out" %}</button>
-                </div>
-            </div>
+      {% else %}
+        <div class="col-11 d-flex align-items-center justify-content-end">
+          <h3 class="mb-0">yamsa</h3>
         </div>
+      {% endif %}
+      {% if current_room %}
+        <div class="col-1 px-0 d-flex align-items-center justify-content-end">
+          {% if current_room.is_open %}
+            <button class="btn btn-light btn-sm"
+                    data-copy-share-url="true"
+                    data-share-url="{{ current_room.share_url }}"
+                    data-bs-toggle="tooltip"
+                    data-bs-title="{{ copy_rooms_url_tooltip }}"
+                    hx-get="{% url 'room:htmx-checked-clipboard' %}"
+                    hx-swap="morph:innerHTML">{% include "shared_partials/clipboard_icon_unchecked.html" %}</button>
+          {% elif current_room.is_closed %}
+            <h1 class="mb-0">
+              <i class="bi bi-dash-circle"
+                 hx-get="{% room_url 'room:detail' %}"
+                 hx-target="#body"
+                 hx-indicator="#body-loading-spinner"
+                 hx-swap="morph:innerHTML"
+                 hx-push-url="true"></i>
+            </h1>
+          {% endif %}
+        </div>
+      {% endif %}
     </div>
+    <div class="offcanvas offcanvas-start"
+         data-bs-backdrop="true"
+         data-bs-scroll="true"
+         aria-labelledby="offcanvasNavbarLabel"
+         tabindex="-1"
+         id="offcanvasNavbar">
+      <div class="offcanvas-header mt-4 pt-4">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">{% trans "Menu" %}</h5>
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="offcanvas"
+                data-bs-target="#offcanvasNavbar"
+                aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body d-flex flex-column gap-4 pt-3 pb-4">
+        <div class="d-flex justify-content-center gap-2">
+          <button type="button"
+                  class="btn btn-sm btn-outline-primary px-3 rounded-3"
+                  data-theme-value="light">
+            <i class="bi bi-sun-fill"></i>
+          </button>
+          <button type="button"
+                  class="btn btn-sm btn-outline-primary px-3 rounded-3"
+                  data-theme-value="dark">
+            <i class="bi bi-moon-fill"></i>
+          </button>
+        </div>
+        <div class="card shadow-sm border-0 room-card text-center">
+          <div class="card-body py-3">
+            {% with sidebar_avatar_source=request.user.name|default:request.user.email %}
+              <div class="profile-avatar mb-2">
+                {% if request.user.profile_picture %}
+                  <img src="{{ request.user.profile_picture_url }}"
+                       data-profile-picture-fallback-url="{{ request.user.profile_picture_fallback_url }}"
+                       alt="{{ request.user.name }}"
+                       class="rounded-4 w-100 h-100 object-fit-cover"
+                       width="64"
+                       height="64">
+                {% else %}
+                  <span class="fs-3 fw-semibold text-primary-emphasis">{{ sidebar_avatar_source|slice:':1'|upper }}</span>
+                {% endif %}
+              </div>
+            {% endwith %}
+            <div class="fw-semibold">
+              {% if request.user.is_anonymous %}
+                {% trans "Profile" %}
+              {% else %}
+                {{ request.user.name }}
+              {% endif %}
+            </div>
+            <div class="text-muted small">
+              {% if request.user.is_anonymous %}
+                {% trans "Log in to access rooms" %}
+              {% else %}
+                {% trans "Manage rooms and transactions" %}
+              {% endif %}
+            </div>
+            <button type="button"
+                    class="btn btn-link p-0 mt-2"
+                    data-bs-dismiss="offcanvas"
+                    data-bs-target="#offcanvasNavbar"
+                    tabindex="-1"
+                    hx-trigger="click delay:300ms"
+                    hx-get=" {% if request.user.is_authenticated %} {% url 'account:detail' pk=request.user.id %} {% else %} {% url 'account:login' %} {% endif %}"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="innerHTML"
+                    hx-push-url="true">
+              {% if request.user.is_anonymous %}
+                {% trans "Sign in" %}
+              {% else %}
+                {% trans "View profile" %}
+              {% endif %}
+            </button>
+          </div>
+        </div>
+        <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm {% if request.path == "/welcome/" %}active{% endif %}"
+             data-bs-dismiss="offcanvas"
+             data-bs-target="#offcanvasNavbar"
+             hx-trigger="click delay:300ms"
+             hx-get="{% url 'core:welcome' %}"
+             hx-indicator="#body-loading-spinner"
+             hx-target="#body"
+             hx-swap="morph:innerHTML"
+             hx-push-url="true">
+          <div class="room-circle{% if request.path == "/welcome/" %} selected{% endif %}">
+            <i class="bi bi-house"></i>
+          </div>
+          <div class="flex-grow-1 text-start">
+            <div class="room-name fw-semibold mb-0">{% trans "Home" %}</div>
+            <small class="room-description text-muted">{% trans "Back to home" %}</small>
+          </div>
+          <span class="badge bg-light text-dark room-status-badge">{% trans "Start" %}</span>
+        </div>
+        {% include "_side_menu_room_list.html" %}
+        <div class="mt-auto">
+          <button type="button"
+                  class="btn btn-primary w-100"
+                  hx-trigger="click"
+                  hx-get="{% url 'account:logout' %}"
+                  hx-target="#body"
+                  hx-indicator="#body-loading-spinner"
+                  hx-swap="morph:innerHTML"
+                  hx-push-url="true">{% trans "Log out" %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </nav>

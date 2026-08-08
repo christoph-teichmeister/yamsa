@@ -1,96 +1,96 @@
 {% extends "core/base.html" %}
 {% load static i18n %}
 {% block content %}
-    <section class="container px-2 px-md-4 px-lg-5">
-        <div class="row justify-content-center gy-4">
-            <div class="col-12 col-xl-9">
-                <div class="mb-3">
+  <section class="container px-2 px-md-4 px-lg-5">
+    <div class="row justify-content-center gy-4">
+      <div class="col-12 col-xl-9">
+        <div class="mb-3">
+          <button type="button"
+                  class="btn btn-link text-decoration-none ps-0 text-muted small"
+                  hx-get="{% url 'account:detail' pk=user.id %}"
+                  hx-target="#body"
+                  hx-indicator="#body-loading-spinner"
+                  hx-swap="morph:innerHTML"
+                  hx-push-url="true">← {% trans "Back to profile" %}</button>
+        </div>
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-4 p-md-5">
+            <div class="mb-4">
+              <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
+              <h1 class="h3 fw-semibold mb-0">{% trans "Security settings" %}</h1>
+            </div>
+            <div class="row gy-4">
+              <div class="col-12">
+                <div class="border rounded-4 p-4">
+                  <p class="text-uppercase small text-muted mb-1">{% trans "Passkeys" %}</p>
+                  <p class="fw-semibold mb-1">{% trans "Biometric login" %}</p>
+                  <p class="text-muted small mb-3">
+                    {% trans "Log in with your fingerprint, face ID, or a hardware security key — no password required." %}
+                  </p>
+                  {% if has_passkey %}
+                    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 p-3 bg-body-secondary rounded-3 mb-3">
+                      <div>
+                        <p class="fw-semibold mb-0">{{ passkey.name }}</p>
+                        <small class="text-muted">
+                          {% trans "Added:" %} {{ passkey.added_on|date:"d.m.Y" }}
+                          {% if passkey.last_used %}
+                            · {% trans "Last used:" %} {{ passkey.last_used|date:"d.m.Y" }}
+                          {% endif %}
+                        </small>
+                      </div>
+                      <div class="ms-md-auto">
+                        <form id="passkey-delete-form"
+                              method="post"
+                              action="{% url 'account:passkey-delete' %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="id" value="{{ passkey.id }}">
+                          <button type="submit" class="btn btn-outline-danger btn-sm">{% trans "Delete" %}</button>
+                        </form>
+                      </div>
+                    </div>
+                  {% else %}
+                    <div class="mb-3">
+                      <label class="form-label" for="passkey-name">{% trans "Passkey name" %}</label>
+                      <input type="text"
+                             id="passkey-name"
+                             class="form-control"
+                             placeholder="{% trans "e.g. MacBook Touch ID" %}"
+                             maxlength="255">
+                    </div>
+                    <div id="passkey-reg-result" class="text-danger small mb-2 d-none"></div>
+                    <button type="button" id="passkey-reg-btn" class="btn btn-primary">{% trans "Register passkey" %}</button>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="border rounded-4 p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
+                  <div>
+                    <p class="text-uppercase small text-muted mb-1">{% trans "Password" %}</p>
+                    <p class="fw-semibold mb-1">{% trans "Change your password" %}</p>
+                    <p class="text-muted small mb-0">{% trans "Choose a unique password to keep your rooms safe." %}</p>
+                  </div>
+                  <div class="ms-md-auto">
                     <button type="button"
-                            class="btn btn-link text-decoration-none ps-0 text-muted small"
-                            hx-get="{% url 'account:detail' pk=user.id %}"
+                            class="btn btn-outline-primary"
+                            hx-get="{% url 'account:change-password' pk=user.id %}"
                             hx-target="#body"
                             hx-indicator="#body-loading-spinner"
                             hx-swap="morph:innerHTML"
-                            hx-push-url="true">← {% trans "Back to profile" %}</button>
+                            hx-push-url="true">{% trans "Change password" %}</button>
+                  </div>
                 </div>
-                <div class="card border-0 shadow-sm rounded-4">
-                    <div class="card-body p-4 p-md-5">
-                        <div class="mb-4">
-                            <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
-                            <h1 class="h3 fw-semibold mb-0">{% trans "Security settings" %}</h1>
-                        </div>
-                        <div class="row gy-4">
-                            <div class="col-12">
-                                <div class="border rounded-4 p-4">
-                                    <p class="text-uppercase small text-muted mb-1">{% trans "Passkeys" %}</p>
-                                    <p class="fw-semibold mb-1">{% trans "Biometric login" %}</p>
-                                    <p class="text-muted small mb-3">
-                                        {% trans "Log in with your fingerprint, face ID, or a hardware security key — no password required." %}
-                                    </p>
-                                    {% if has_passkey %}
-                                        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 p-3 bg-body-secondary rounded-3 mb-3">
-                                            <div>
-                                                <p class="fw-semibold mb-0">{{ passkey.name }}</p>
-                                                <small class="text-muted">
-                                                    {% trans "Added:" %} {{ passkey.added_on|date:"d.m.Y" }}
-                                                    {% if passkey.last_used %}
-                                                        · {% trans "Last used:" %} {{ passkey.last_used|date:"d.m.Y" }}
-                                                    {% endif %}
-                                                </small>
-                                            </div>
-                                            <div class="ms-md-auto">
-                                                <form id="passkey-delete-form"
-                                                      method="post"
-                                                      action="{% url 'account:passkey-delete' %}">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="id" value="{{ passkey.id }}">
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm">{% trans "Delete" %}</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    {% else %}
-                                        <div class="mb-3">
-                                            <label class="form-label" for="passkey-name">{% trans "Passkey name" %}</label>
-                                            <input type="text"
-                                                   id="passkey-name"
-                                                   class="form-control"
-                                                   placeholder="{% trans "e.g. MacBook Touch ID" %}"
-                                                   maxlength="255">
-                                        </div>
-                                        <div id="passkey-reg-result" class="text-danger small mb-2 d-none"></div>
-                                        <button type="button" id="passkey-reg-btn" class="btn btn-primary">{% trans "Register passkey" %}</button>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="border rounded-4 p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
-                                    <div>
-                                        <p class="text-uppercase small text-muted mb-1">{% trans "Password" %}</p>
-                                        <p class="fw-semibold mb-1">{% trans "Change your password" %}</p>
-                                        <p class="text-muted small mb-0">{% trans "Choose a unique password to keep your rooms safe." %}</p>
-                                    </div>
-                                    <div class="ms-md-auto">
-                                        <button type="button"
-                                                class="btn btn-outline-primary"
-                                                hx-get="{% url 'account:change-password' pk=user.id %}"
-                                                hx-target="#body"
-                                                hx-indicator="#body-loading-spinner"
-                                                hx-swap="morph:innerHTML"
-                                                hx-push-url="true">{% trans "Change password" %}</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
+          </div>
         </div>
-    </section>
-    <script src="{% static 'passkeys/js/base64url.js' %}" nonce="{{ csp_nonce }}"></script>
-    <script src="{% static 'passkeys/js/helpers.js' %}" nonce="{{ csp_nonce }}"></script>
-    <script src="{% static 'passkeys/js/reg.js' %}" nonce="{{ csp_nonce }}"></script>
-    <script src="{% static 'js/passkey-register.js' %}" nonce="{{ csp_nonce }}"></script>
-    <script nonce="{{ csp_nonce }}">
+      </div>
+    </div>
+  </section>
+  <script src="{% static 'passkeys/js/base64url.js' %}" nonce="{{ csp_nonce }}"></script>
+  <script src="{% static 'passkeys/js/helpers.js' %}" nonce="{{ csp_nonce }}"></script>
+  <script src="{% static 'passkeys/js/reg.js' %}" nonce="{{ csp_nonce }}"></script>
+  <script src="{% static 'js/passkey-register.js' %}" nonce="{{ csp_nonce }}"></script>
+  <script nonce="{{ csp_nonce }}">
         window.csrfToken = "{{ csrf_token }}";
         window.passkeyRegBeginUrl = "{% url 'account:passkey-reg-begin' %}";
         window.passkeyRegCompleteUrl = "{% url 'passkeys:reg_complete' %}";
@@ -117,5 +117,5 @@
                 }
             });
         }
-    </script>
+  </script>
 {% endblock content %}

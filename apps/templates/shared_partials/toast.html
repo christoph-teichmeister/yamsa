@@ -1,28 +1,28 @@
 {% load i18n core_tags %}
 {% trans "Close" as toast_close_label %}
 <div class="toast-container yamsa-toast-container position-fixed bottom-0 start-50 translate-middle-x px-1 pb-5 mb-5 w-100">
-    <div class="toast yamsa-toast border-0 w-100"
-         id="toast-id"
-         role="alert"
-         aria-live="assertive"
-         aria-atomic="true">
-        <div id="toast-type-div"
-             class="toast-yamsa-inner w-100 d-flex align-items-center justify-content-between gap-3 rounded-2 shadow-sm px-4 py-3">
-            <span id="toast-message-span"
-                  class="flex-grow-1 fw-semibold fs-6 text-truncate"></span>
-            <button type="button"
-                    class="btn-close btn-close-white"
-                    data-bs-dismiss="toast"
-                    aria-label="{{ toast_close_label }}"></button>
-        </div>
+  <div class="toast yamsa-toast border-0 w-100"
+       id="toast-id"
+       role="alert"
+       aria-live="assertive"
+       aria-atomic="true">
+    <div id="toast-type-div"
+         class="toast-yamsa-inner w-100 d-flex align-items-center justify-content-between gap-3 rounded-2 shadow-sm px-4 py-3">
+      <span id="toast-message-span"
+            class="flex-grow-1 fw-semibold fs-6 text-truncate"></span>
+      <button type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="toast"
+              aria-label="{{ toast_close_label }}"></button>
     </div>
+  </div>
 </div>
 {% if queued_toasts %}
-    {% json_script_nonce queued_toasts "queued-toasts-data" %}
+  {% json_script_nonce queued_toasts "queued-toasts-data" %}
 {% else %}
-    <script id="queued-toasts-data"
-            type="application/json"
-            nonce="{{ csp_nonce }}">[]</script>
+  <script id="queued-toasts-data"
+          type="application/json"
+          nonce="{{ csp_nonce }}">[]</script>
 {% endif %}
 {% trans "Something went wrong" as something_went_wrong %}
 <!-- Toast handler -->

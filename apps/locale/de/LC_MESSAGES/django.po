@@ -275,14 +275,8 @@ msgid "Request a new password"
 msgstr "Neues Passwort anfordern"
 
 #, python-format
-msgid ""
-"\n"
-"                    Invite %(invitee)s to \"%(room)s\"\n"
-"                "
-msgstr ""
-"\n"
-"                    Lade %(invitee)s zu \"%(room)s\" ein\n"
-"                "
+msgid "Invite %(invitee)s to \"%(room)s\""
+msgstr "Lade %(invitee)s zu \"%(room)s\" ein"
 
 msgid "Send invite"
 msgstr "Einladung senden"
@@ -622,6 +616,12 @@ msgstr "Noch keine Schulden"
 
 msgid "As expenses are added, we will surface who owes whom here."
 msgstr "Wenn Ausgaben hinzukommen, zeigen wir hier, wer wem etwas schuldet."
+
+msgid "Settle via PayPal"
+msgstr "Über PayPal begleichen"
+
+msgid "Settle this debt"
+msgstr "Diese Schuld begleichen"
 
 msgid "This transaction is not yours to settle!"
 msgstr "Diese Transaktion darfst du nicht ausgleichen!"

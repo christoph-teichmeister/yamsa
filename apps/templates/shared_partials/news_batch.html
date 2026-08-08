@@ -1,19 +1,19 @@
 {% load i18n %}
 {% for news_object in news %}
-    {% include "shared_partials/news_card.html" with news=news_object %}
+  {% include "shared_partials/news_card.html" with news=news_object %}
 {% empty %}
-    {% if news_initial_render %}
-        <p class="text-center text-muted small py-3 mb-0">{% trans "No updates yet." %}</p>
-    {% endif %}
+  {% if news_initial_render %}
+    <p class="text-center text-muted small py-3 mb-0">{% trans "No updates yet." %}</p>
+  {% endif %}
 {% endfor %}
 {% if news_next_cursor %}
-    <div id="news-batch-trigger"
-         class="news-load-trigger"
-         hx-get="{% url 'news:feed' %}?cursor={{ news_next_cursor }}"
-         hx-trigger="revealed"
-         hx-swap="outerHTML">
-        {% include "shared_partials/_list_loader.html" with loader_id="news-batch-loader" skeleton_count=3 target_id="news-batch-trigger" %}
-    </div>
+  <div id="news-batch-trigger"
+       class="news-load-trigger"
+       hx-get="{% url 'news:feed' %}?cursor={{ news_next_cursor }}"
+       hx-trigger="revealed"
+       hx-swap="outerHTML">
+    {% include "shared_partials/_list_loader.html" with loader_id="news-batch-loader" skeleton_count=3 target_id="news-batch-trigger" %}
+  </div>
 {% elif news or not news_initial_render %}
-    <div class="news-feed-end text-center text-muted small py-4">{% trans "You are all caught up." %}</div>
+  <div class="news-feed-end text-center text-muted small py-4">{% trans "You are all caught up." %}</div>
 {% endif %}
