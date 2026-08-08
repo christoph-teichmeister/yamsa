@@ -80,6 +80,7 @@
            role="button"
            tabindex="0"
            hx-trigger="click keyup[key=='Enter' || key==' ']"
+           hx-on:keydown="if (event.key === ' ') { event.preventDefault(); }"
            hx-get="{% room_url 'debt:money-spent-on-room' %}"
            hx-target="#body"
            hx-indicator="#body-loading-spinner"
