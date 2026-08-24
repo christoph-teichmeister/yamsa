@@ -92,3 +92,73 @@ class TestSendNotificationOnTransactionCreate:
             mocked_send.assert_any_call(user)
 
             assert mocked_send.call_count == 2, mocked_send.call_args_list
+
+    def test_send_notification_on_transaction_create_body_when_creator_is_payer(
+        self,
+        room,
+        user,
+        guest_user,
+        create_parent_transaction_with_optimisation,
+    ):
+        parent_transaction, _ = create_parent_transaction_with_optimisation(
+            room=room,
+            paid_by=user,
+            paid_for_tuple=(guest_user, user),
+            parent_transaction_kwargs={"created_by": user},
+            child_transaction_kwargs={"value": Decimal(10)},
+        )
+
+        with (
+            mock.patch.object(Notification, "send_to_user"),
+            mock.patch(
+                "apps.webpush.handlers.events.events.Notification",
+                wraps=Notification,
+            ) as mocked_notification,
+        ):
+            send_notification_on_transaction_create(
+                context=ParentTransactionCreated.Context(parent_transaction=parent_transaction, room=room)
+            )
+
+        body = mocked_notification.call_args.kwargs["payload"].body
+        assert body == (
+            f"{user.name} logged a payment of {parent_transaction.value}{parent_transaction.currency.sign} "
+            f'("{parent_transaction.description}")\n'
+            f"Have a look!"
+        )
+
+    def test_send_notification_on_transaction_create_body_when_creator_differs_from_payer(
+        self,
+        room,
+        user,
+        guest_user,
+        another_user,
+        create_parent_transaction_with_optimisation,
+    ):
+        room.users.add(another_user)
+        with mock.patch.object(CurrentRequestMiddleware, "get_current_user", return_value=another_user):
+            parent_transaction, _ = create_parent_transaction_with_optimisation(
+                room=room,
+                paid_by=user,
+                paid_for_tuple=(guest_user, user, another_user),
+                parent_transaction_kwargs={"created_by": another_user},
+                child_transaction_kwargs={"value": Decimal(10)},
+            )
+
+        with (
+            mock.patch.object(Notification, "send_to_user"),
+            mock.patch(
+                "apps.webpush.handlers.events.events.Notification",
+                wraps=Notification,
+            ) as mocked_notification,
+        ):
+            send_notification_on_transaction_create(
+                context=ParentTransactionCreated.Context(parent_transaction=parent_transaction, room=room)
+            )
+
+        body = mocked_notification.call_args.kwargs["payload"].body
+        assert body == (
+            f"{another_user.name} logged that {user.name} paid "
+            f"{parent_transaction.value}{parent_transaction.currency.sign} "
+            f'("{parent_transaction.description}")\n'
+            f"Have a look!"
+        )

@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.utils.translation import gettext as _
 
 from apps.account.messages.events.user_removed_from_room import UserRemovedFromRoom
 from apps.core.event_loop.registry import message_registry
@@ -17,13 +18,28 @@ from apps.webpush.utils import Notification
 def send_notification_on_transaction_create(context: ParentTransactionCreated.Context):
     parent_transaction = context.parent_transaction
 
+    if not parent_transaction.created_by or parent_transaction.created_by == parent_transaction.paid_by:
+        body = _('{payer} logged a payment of {amount}{currency} ("{description}")\nHave a look!').format(
+            payer=parent_transaction.paid_by.name,
+            amount=parent_transaction.value,
+            currency=parent_transaction.currency.sign,
+            description=parent_transaction.description,
+        )
+    else:
+        body = _(
+            '{creator} logged that {payer} paid {amount}{currency} ("{description}")\nHave a look!',
+        ).format(
+            creator=parent_transaction.created_by.name,
+            payer=parent_transaction.paid_by.name,
+            amount=parent_transaction.value,
+            currency=parent_transaction.currency.sign,
+            description=parent_transaction.description,
+        )
+
     notification = Notification(
         payload=Notification.Payload(
             head="Transaction created",
-            body=f"{parent_transaction.paid_by.name} just paid "
-            f"{parent_transaction.value}{parent_transaction.currency.sign} "
-            f'("{parent_transaction.description}")\n'
-            f"Have a look!",
+            body=body,
             click_url=reverse(
                 viewname="transaction:detail",
                 kwargs={"room_slug": parent_transaction.room.slug, "pk": parent_transaction.id},

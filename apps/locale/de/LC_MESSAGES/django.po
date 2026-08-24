@@ -810,8 +810,12 @@ msgid "{creator} created \"{room_name}\""
 msgstr "{creator} hat \"{room_name}\" erstellt"
 
 #, python-brace-format
-msgid "{payer} paid {amount}{currency} in \"{room}\""
-msgstr "{payer} hat {amount}{currency} in \"{room}\" bezahlt"
+msgid "{payer} logged a payment of {amount}{currency} in \"{room}\""
+msgstr "{payer} hat eine Zahlung über {amount}{currency} in \"{room}\" eingetragen"
+
+#, python-brace-format
+msgid "{creator} logged that {payer} paid {amount}{currency} in \"{room}\""
+msgstr "{creator} hat eingetragen, dass {payer} {amount}{currency} in \"{room}\" gezahlt hat"
 
 #, python-brace-format
 msgid "{actor} deleted the transaction \"{description}\" ({amount}{currency}) in \"{room}\""
@@ -1786,6 +1790,22 @@ msgstr "Bezahlt für"
 
 msgid "transactions"
 msgstr "transaktionen"
+
+#, python-brace-format
+msgid ""
+"{payer} logged a payment of {amount}{currency} (\"{description}\")\n"
+"Have a look!"
+msgstr ""
+"{payer} hat eine Zahlung über {amount}{currency} eingetragen (\"{description}\")\n"
+"Schau vorbei!"
+
+#, python-brace-format
+msgid ""
+"{creator} logged that {payer} paid {amount}{currency} (\"{description}\")\n"
+"Have a look!"
+msgstr ""
+"{creator} hat eingetragen, dass {payer} {amount}{currency} gezahlt hat (\"{description}\")\n"
+"Schau vorbei!"
 
 #, python-brace-format
 msgid "Webpush Information for {user}"
