@@ -19,6 +19,7 @@ dist/
 
 # Django/data directories
 apps/config/.env
+/.env
 apps/locale/de/LC_MESSAGES/django.mo
 apps/static/bundles/
 apps/staticfiles/

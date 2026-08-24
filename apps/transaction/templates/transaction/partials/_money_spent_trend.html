@@ -8,7 +8,7 @@
         <p class="text-muted small mb-1">{% trans "Spending over time" %}</p>
         <h5 class="mb-1">{% trans "Expense build-up" %}</h5>
         <p class="text-muted small mb-0">
-          {% blocktrans with period=trend_period_label|lower start=trend_range_start|date:"d M" end=trend_range_end|date:"d M" %}
+          {% blocktrans with period=trend_period_label|lower start=trend_range_start|date:"MONTH_DAY_FORMAT" end=trend_range_end|date:"MONTH_DAY_FORMAT" %}
                                 Showing {{ period }} ({{ start }} – {{ end }}).
                             {% endblocktrans %}
         </p>
