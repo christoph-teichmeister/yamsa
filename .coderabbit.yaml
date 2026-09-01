@@ -13,7 +13,7 @@ reviews:
     etc.), and keep bullet points actionable.
   collapse_walkthrough: true
   auto_review:
-    enabled: true
+    enabled: false  # disabled 2026-09-01 — superseded by the Beyonder mr-review skill (.claude/skills/mr-review), avoids duplicate reviews on every PR
     auto_incremental_review: false
     drafts: false
     ignore_title_keywords:

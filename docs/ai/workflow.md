@@ -29,11 +29,11 @@ PR titles follow these patterns (sentence case, no conventional-commit prefix):
 ## Pull Request Review Workflow
 
 When responding to a review you've left on a pull request, use the GitHub MCP APIs to enumerate the review comments and
-write them to a markdown file inside the top-level `.pull-requests` directory. Convert each comment into an actionable
+write them to a markdown file inside the top-level `.github-pull-requests` directory. Convert each comment into an actionable
 task description so it can later be fed back to you for implementation. After creating that file, perform the requested
 analysis or edits, then post replies to the original pull-request comments that explain what you did to address each
 comment — prefix every reply with `AI:`. Once the replies are posted and there is no further need for the intermediate
-notes, delete the markdown file from `.pull-requests`.
+notes, delete the markdown file from `.github-pull-requests`.
 
 ## Security & Configuration Tips
 

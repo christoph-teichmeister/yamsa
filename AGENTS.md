@@ -8,6 +8,8 @@ if they change an agent's behavior in THIS project. -->
 
 ## Hard rules
 
+- `ModelForm.save()` (any app under `apps/`) must only validate and persist data. It must not own a `transaction.atomic()` boundary or call `handle_message()`/trigger other side effects — both belong in the view's `form_valid()`, called after the atomic block exits. Violating this held a DB connection open inside an atomic block and made consecutive requests block or fail (see #333, docs/ai/architecture.md § Forms vs Views).
+
 <!-- TBD — collect with the team; do not invent. -->
 
 ## Temporary files
