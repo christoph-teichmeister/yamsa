@@ -17,21 +17,21 @@ name, one-writer rule, layer precedence). Every value not verified in step
 ## Commands
 
 - Validate/build: `uv run python manage.py check --deploy`
-  - baseline: `[ASSUMPTION] to be measured in ④`
+  - baseline: `clean (6 non-fatal security warnings, exit 0) @maintenance/beyonder-setup-2026-09-01@7f4bb92 @maintree, 2026-09-01`
 - Tests: `uv run coverage run -m pytest`
-  - baseline: `[ASSUMPTION] to be measured in ④ @maintree`
-  - baseline: `[ASSUMPTION] to be measured in ④ @worktree`
+  - baseline: `clean — 295 passed @maintenance/beyonder-setup-2026-09-01@7f4bb92 @maintree, 2026-09-01`
+  - baseline: `clean — 295 passed @origin/main@0193aab @worktree, 2026-09-01`
   - targeted: `uv run pytest <path>`
 - Lint/format: `uv run ruff check --fix .` (CI: `uv run ruff check --output-format=github .`, no `--fix`)
-  - baseline: `[ASSUMPTION] to be measured in ④`
+  - baseline: `clean @maintenance/beyonder-setup-2026-09-01@7f4bb92 @maintree, 2026-09-01`
   - scope: repo
 - Templates: `uv run djlint apps --reformat` (CI: `--check`)
-  - baseline: `[ASSUMPTION] to be measured in ④`
+  - baseline: `clean — 0/66 files would change @maintenance/beyonder-setup-2026-09-01@7f4bb92 @maintree, 2026-09-01`
   - scope: repo
 - One-class-per-file: `uv run python scripts/check_one_class_per_file.py --fail-on-multiple`
-  - baseline: `[ASSUMPTION] to be measured in ④`
+  - baseline: `clean @maintenance/beyonder-setup-2026-09-01@7f4bb92 @maintree, 2026-09-01`
 - Migrations check: `uv run python manage.py makemigrations --check --dry-run`
-  - baseline: `[ASSUMPTION] to be measured in ④`
+  - baseline: `clean — no changes detected @maintenance/beyonder-setup-2026-09-01@7f4bb92 @maintree, 2026-09-01`
   - heuristic: model changes in a diff with no matching file under `apps/*/migrations/`
 <!-- /owner: beyonder-setup -->
 

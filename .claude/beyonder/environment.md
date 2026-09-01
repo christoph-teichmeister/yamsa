@@ -7,10 +7,10 @@ wins over declared config; unverified values carry [ASSUMPTION]. -->
 <!-- owner: beyonder-setup -->
 ## App
 
-- Base URL: `http://localhost:8000` (local `uv shell` path, per docs/ai/workflow.md) | `http://localhost:${BACKEND_PORT:-8000}` (docker-compose path)
-- Start: `uv run python manage.py runserver 0.0.0.0:8000` (after `uv sync --all-extras --no-install-project` and `uv run python manage.py migrate`) | `docker compose up`
-- Stop: Ctrl-C | `docker compose down`
-- Ports in use: backend 8000 (compose: `${BACKEND_PORT:-8000}`→8000), database 5432 (compose: `${DATABASE_PORT:-5432}`→5432), mailhog UI 8025 (compose: `${MAILHOG_UI_PORT:-8025}`), mailhog SMTP 1025 (compose: `${MAILHOG_SMTP_PORT:-1025}`)
+- Base URL: `http://localhost:8002` (docker-compose path — verified in ④, this dev's committed `.env` sets `BACKEND_PORT=8002`) | `http://localhost:8000` (local `uv shell` path, per docs/ai/workflow.md — not verified in ④, see drift below: connecting `manage.py` directly to the compose Postgres fails, since `DJANGO_DATABASE_URL` in this dev's `.env` points at the docker-network hostname `yamsa_database`, unresolvable from the host)
+- Start: `docker compose up -d` (verified in ④) | `uv run python manage.py runserver 0.0.0.0:8000` (needs a `DJANGO_DATABASE_URL` reachable from the host, e.g. SQLite or `localhost:${DATABASE_PORT}` — not verified in ④)
+- Stop: `docker compose down`
+- Ports in use: backend `${BACKEND_PORT:-8000}`→8000 (verified: 8002), database `${DATABASE_PORT:-5432}`→5432, mailhog UI `${MAILHOG_UI_PORT:-8025}`, mailhog SMTP `${MAILHOG_SMTP_PORT:-1025}`
 - Container/compose project name: `yamsa` (containers: `yamsa_database`, `yamsa_backend`, `yamsa_mailhog`)
 <!-- /owner: beyonder-setup -->
 
@@ -18,7 +18,7 @@ wins over declared config; unverified values carry [ASSUMPTION]. -->
 ## Test login
 
 - Account: `admin@yamsa.local`, password `Admin123$` (hashed constant in `apps/core/management/commands/create_intensive_test_data.py`)
-- Click path: `[ASSUMPTION] not yet verified in ④ — log in at /accounts/login/ (or project's auth URL) with the account above`
+- Click path: verified in ④ — `/account/login/`, fill "Email address" + "Password", click "Log in" → redirects to `/welcome/`
 - Create-or-repair: `uv run python manage.py create_intensive_test_data` (idempotent — `get_or_create` on email)
 <!-- /owner: beyonder-setup -->
 
@@ -50,14 +50,14 @@ wins over declared config; unverified values carry [ASSUMPTION]. -->
 
 | Claim | Where claimed | Actual |
 |---|---|---|
-| No Docker-based workflow required, local `uv shell` is the path | docs/ai/workflow.md § Build, Test, and Development Commands | docker-compose.yml + .env.example (port overrides) also exist as a fully working alternative path — both are live, not contradictory, but a dev following only one doc half will miss the other |
-| Backend port 8000 | scripts/run_backend_local.sh | `.env.example` documents `BACKEND_PORT=8002` as a suggested override default for docker-compose, not 8000 — the two paths use different conventional ports in practice |
+| No Docker-based workflow required, local `uv shell` is the path | docs/ai/workflow.md § Build, Test, and Development Commands | Verified in ④: this dev's committed `.env` sets `DJANGO_DATABASE_URL` to the docker-network hostname `yamsa_database`, which does not resolve from the host — `uv run python manage.py migrate` fails outside `docker compose` with the current `.env`. The local-`uv`-only path only works with `DJANGO_DATABASE_URL` unset (SQLite fallback) or pointed at `localhost:${DATABASE_PORT}` |
+| Backend port 8000 | scripts/run_backend_local.sh | Verified in ④: this dev's `.env` sets `BACKEND_PORT=8002`, and the app is reachable at `http://localhost:8002/`, not 8000 |
 <!-- /owner: beyonder-setup -->
 
 <!-- owner: beyonder-setup -->
 ## Walkthrough environment
 
-- Server: `user-owned` — check: `curl -sf http://localhost:8000/ -o /dev/null` (or the docker-compose port in use)
+- Server: `user-owned` — check: `curl -sf http://localhost:8002/ -o /dev/null` (this dev's `BACKEND_PORT`; read the actual value from `.env` if overridden)
 - Data: current state — run `uv run python manage.py create_intensive_test_data` first if the account/rooms above are missing
 - Migrations rule: an MR's migrations never run against the dev's real database — scratch DB or schema, or the capability degrades and says so.
 <!-- /owner: beyonder-setup -->
