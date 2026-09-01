@@ -7,10 +7,10 @@ wins over declared config; unverified values carry [ASSUMPTION]. -->
 <!-- owner: beyonder-setup -->
 ## App
 
-- Base URL: `http://localhost:8002` (docker-compose path — verified in ④, this dev's committed `.env` sets `BACKEND_PORT=8002`) | `http://localhost:8000` (local `uv shell` path, per docs/ai/workflow.md — not verified in ④, see drift below: connecting `manage.py` directly to the compose Postgres fails, since `DJANGO_DATABASE_URL` in this dev's `.env` points at the docker-network hostname `yamsa_database`, unresolvable from the host)
-- Start: `docker compose up -d` (verified in ④) | `uv run python manage.py runserver 0.0.0.0:8000` (needs a `DJANGO_DATABASE_URL` reachable from the host, e.g. SQLite or `localhost:${DATABASE_PORT}` — not verified in ④)
+- Base URL: `http://localhost:8002` (docker-compose path, hardcoded host port on `main` — verified in ④) | `http://localhost:8000` (local `uv shell` path, per docs/ai/workflow.md — not verified in ④, see drift below: connecting `manage.py` directly to the compose Postgres fails, since this dev's committed `.env` — which predates `main`, see drift — points `DJANGO_DATABASE_URL` at the docker-network hostname `yamsa_database`, unresolvable from the host)
+- Start: `docker compose up -d` (verified in ④) | `uv run python manage.py runserver 0.0.0.0:8000` (needs a `DJANGO_DATABASE_URL` reachable from the host, e.g. SQLite — not verified in ④)
 - Stop: `docker compose down`
-- Ports in use: backend `${BACKEND_PORT:-8000}`→8000 (verified: 8002), database `${DATABASE_PORT:-5432}`→5432, mailhog UI `${MAILHOG_UI_PORT:-8025}`, mailhog SMTP `${MAILHOG_SMTP_PORT:-1025}`
+- Ports in use (as committed on `main`, host→container): backend `8002`→8000, database `5431`→5432, mailhog UI `8027`→8025, mailhog SMTP `1027`→1025. **Open PR #376 (branch `feature/some-feedback`) replaces these with `${BACKEND_PORT:-8000}` etc. env-var overrides plus a new `.env.example`** — re-run `beyonder-setup step 3` once that PR merges to pick up the new port scheme.
 - Container/compose project name: `yamsa` (containers: `yamsa_database`, `yamsa_backend`, `yamsa_mailhog`)
 <!-- /owner: beyonder-setup -->
 
@@ -50,8 +50,8 @@ wins over declared config; unverified values carry [ASSUMPTION]. -->
 
 | Claim | Where claimed | Actual |
 |---|---|---|
-| No Docker-based workflow required, local `uv shell` is the path | docs/ai/workflow.md § Build, Test, and Development Commands | Verified in ④: this dev's committed `.env` sets `DJANGO_DATABASE_URL` to the docker-network hostname `yamsa_database`, which does not resolve from the host — `uv run python manage.py migrate` fails outside `docker compose` with the current `.env`. The local-`uv`-only path only works with `DJANGO_DATABASE_URL` unset (SQLite fallback) or pointed at `localhost:${DATABASE_PORT}` |
-| Backend port 8000 | scripts/run_backend_local.sh | Verified in ④: this dev's `.env` sets `BACKEND_PORT=8002`, and the app is reachable at `http://localhost:8002/`, not 8000 |
+| No Docker-based workflow required, local `uv shell` is the path | docs/ai/workflow.md § Build, Test, and Development Commands | Verified in ④: this dev's committed `.env` sets `DJANGO_DATABASE_URL` to the docker-network hostname `yamsa_database`, which does not resolve from the host — `uv run python manage.py migrate` fails outside `docker compose` with the current `.env`. The local-`uv`-only path only works with `DJANGO_DATABASE_URL` unset (SQLite fallback) |
+| Backend port 8000 | scripts/run_backend_local.sh | Verified in ④: on `main`, `docker-compose.yml` hardcodes the host port to `8002:8000` — the app is reachable at `http://localhost:8002/`, not 8000. Open PR #376 (`feature/some-feedback`) would make this a `${BACKEND_PORT:-8000}` override with a new `.env.example` instead — not yet merged |
 <!-- /owner: beyonder-setup -->
 
 <!-- owner: beyonder-setup -->

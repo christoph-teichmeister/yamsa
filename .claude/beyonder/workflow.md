@@ -77,13 +77,62 @@ name, one-writer rule, layer precedence). Every value not verified in step
 <!-- owner: beyonder-setup -->
 ## Usage snapshot
 
-- Snapshot file: `-`
-- Installed: no — manual step pending; budget guards fail open
-- Written by: one line in the dev's status-line command — a manual step the dev performs themselves
+- Snapshot file: `~/.claude/usage-snapshot.json` (per account)
+- Installed: yes — appended to `~/.claude/statusline-command.sh` 2026-09-01; `five_hour_pct` uses `session.tokens_used`/`session.tokens_limit` as the closest proxy available in this payload (no direct `rate_limits.five_hour` field)
+- Written by: `~/.claude/statusline-command.sh`, renders only in interactive sessions
 <!-- /owner: beyonder-setup -->
 
 <!-- owner: beyonder-setup -->
 ## Parallel-run recipe
 
-deferred — opt-in module, fill via `beyonder-setup step 3 parallel`
+**Blocked on open PR #376 (`feature/some-feedback`).** On `main` (this
+repo's current state), `docker-compose.yml` hardcodes every host port
+(`8002:8000`, `5431:5432`, `8027:8025`, `1027:1025`) — two `docker compose
+-p yamsa_N up` runs would both try to bind the same host ports and
+collide. PR #376 introduces `${BACKEND_PORT:-8000}`-style env-var
+overrides plus a `.env.example`, which is what makes the formula below
+parameterisable at all. The recipe is written for that target state;
+until #376 merges, a second slot needs a hand-written
+`docker-compose.override.yml` with its own ports, or the module is
+effectively unusable. Re-run `beyonder-setup step 3 parallel`'s
+verification (④.4) once #376 lands to confirm the formula actually holds.
+
+An **isolated slot**, so implement sessions run side by side.
+
+- Duplicated services: `database`, `backend`, `mailhog` — each holds
+  request/response or persistent state scoped to one running app instance
+- Shared services: none — nothing in this compose file is stateless and
+  safely shared across slots
+- Slot values — `N = 0` is the dev's own environment (the bases below,
+  as committed on `main` today):
+
+  | Value | Base (slot 0) | Slot `N` |
+  |---|---|---|
+  | `BACKEND_PORT` | `8002` | base + N |
+  | `DATABASE_PORT` | `5431` | base + N |
+  | `MAILHOG_UI_PORT` | `8027` | base + N |
+  | `MAILHOG_SMTP_PORT` | `1027` | base + N |
+  | Compose project | `yamsa` | `yamsa_N` |
+
+- Start order: `database` (healthcheck) → `mailhog` → `backend`
+  (docker-compose's own `depends_on` already encodes this)
+- Start / teardown:
+  `BACKEND_PORT=$((8002+N)) DATABASE_PORT=$((5431+N)) MAILHOG_UI_PORT=$((8027+N)) MAILHOG_SMTP_PORT=$((1027+N)) docker compose -p yamsa_$N up -d`
+  / `docker compose -p yamsa_$N down` — never a bare `docker compose`
+  from a worktree; the `-p yamsa_$N` is what keeps it off the base
+  project's containers, volumes and ports.
+- Browser: `playwright-cli` named session per run (default:
+  `-s=<branch-slug|slot>`) — see `shared/browser-discipline.md` for the
+  singleton/CDP-attach alternative and its lock convention
+
+**Pinned to the base values.** Grepped once across the project (`8000`,
+`5432`, `8025`, `1025` and their host-side mappings `8002`, `5431`,
+`8027`, `1027`, plus `yamsa_database`) — 2026-09-01:
+
+| Script / config | Pinned to | Parameterised alternative | Decision |
+|---|---|---|---|
+| `docker-compose.yml:38` (`8002:8000`) | host port 8002 | `${BACKEND_PORT:-8000}:8000` | TBD — lands with PR #376, not yet merged as of 2026-09-01 |
+| `docker-compose.yml:12` (`5431:5432`) | host port 5431 | `${DATABASE_PORT:-5432}:5432` | TBD — lands with PR #376, not yet merged as of 2026-09-01 |
+| `docker-compose.yml:45-46` (`8027:8025`, `1027:1025`) | host ports 8027/1027 | `${MAILHOG_UI_PORT:-8025}:8025` / `${MAILHOG_SMTP_PORT:-1025}:1025` | TBD — lands with PR #376, not yet merged as of 2026-09-01 |
+| `scripts/run_backend.sh:9`, `scripts/run_backend_local.sh:15-16` | container-internal port `8000` | none needed — internal bind port, not host-exposed, safe as-is per slot | applied (no change needed) |
 <!-- /owner: beyonder-setup -->
