@@ -1,8 +1,119 @@
 {
+  "$comment": "Beyonder baseline settings, written by beyonder-setup into .claude/settings.json (committed). Merge, never overwrite. Rule grammar: ':*' means prefix matching and MUST be the last thing in the rule; anywhere else use a plain '*' wildcard — rules that break this are silently skipped at load time. Evaluation is deny → ask → allow, first match wins, specificity ignored, and a deny rule cannot carry an exception. Two consequences: (a) allowed readers like grep/python3 can read what the Read-deny rules protect — the deny list is a guardrail against accidents, not a sandbox; (b) because no exception is possible, env files are denied BY NAME. Don't try 'Read(**/.env.*)': it also swallows .env.example/.sample/.template/.dist — committed placeholder files setup and later sessions legitimately read — and no allow rule can ever win them back. Add new names here as they appear; never a '.env.*' wildcard.",
+  "$comment.hooks": "SessionEnd cleanup, two rules (E-0026). RULE 1 — WHAT THE CLI MANAGES, NO HOOK TOUCHES: the browser CLI owns '.claude/skills/playwright-cli/' (its docs) and '.playwright/' (its config); no hook here may name either — the rule is the rule, not the two names. What this hook cleans is '.playwright-cli/', the CLI's scratch OUTPUT (snapshots, traces/, the default state-save target): output is ours to age, configuration is not. RULE 2 — AGE, DON'T EMPTY: only files older than 7 days are deleted (the CLI's own recommendation). Don't try 'find .playwright-cli -mindepth 1 -delete': a report, MR note or ticket linking a trace then points into nothing the next morning. The other half of the rule lives in the skills: anything a report links is captured with an explicit --filename= into the run's artifact directory, which no hook ever empties (vendor/skills/shared/browser-discipline.md, 'Where artifacts go, and what may age'). '.playwright-cli/' must be gitignored (beyonder-setup step 1, item 6) — 'state-save' with no argument writes a live session's cookies and tokens into it.",
   "mcpServers": {
     "playwright": {
       "command": "npx",
-      "args": ["@playwright/mcp@latest"]
+      "args": [
+        "@playwright/mcp@latest"
+      ]
     }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(python3:*)",
+      "Bash(mkdir -p tmp:*)",
+      "Read(./tmp/**)",
+      "Write(./tmp/**)",
+      "Edit(./tmp/**)",
+      "Bash(rm -rf tmp/*)",
+      "Bash(gh auth status:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh api:*)",
+      "Bash(gh pr edit:*)",
+      "Bash(git fetch:*)",
+      "Bash(git worktree:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(uv run coverage:*)",
+      "Bash(uv run ruff check:*)",
+      "Bash(uv run python manage.py:*)",
+      "Bash(uv run djlint:*)",
+      "Bash(uv run python scripts/check_one_class_per_file.py:*)",
+      "Bash(yarn build:*)",
+      "Bash(yarn watch:*)",
+      "Bash(yarn install:*)",
+      "Bash(docker compose ps:*)",
+      "Bash(docker compose up:*)",
+      "Bash(docker compose down:*)",
+      "Bash(playwright-cli install --skills:*)",
+      "Bash(playwright-cli navigate:*)",
+      "Bash(playwright-cli snapshot:*)",
+      "Bash(playwright-cli click:*)",
+      "Bash(playwright-cli screenshot:*)",
+      "Bash(playwright-cli fill:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(**/.env)",
+      "Read(**/.env.local)",
+      "Read(**/.env.*.local)",
+      "Read(**/.env.production)",
+      "Read(**/.env.staging)",
+      "Read(**/secrets/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Bash(sed -i:*)",
+      "Bash(find * -delete*)",
+      "Bash(find * -exec rm*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/log-skill.sh"
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR:-.}\"/.claude/hooks/lint.sh"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "find .playwright-cli -mindepth 1 -mtime +7 -delete 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  },
+  "extraKnownMarketplaces": {
+    "beyonder": {
+      "source": {
+        "source": "url",
+        "url": "https://gitlab.beyonder.de/ai/beyonder-ai-plugin.git"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "beyonder-dev@beyonder": true
   }
 }

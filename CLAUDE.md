@@ -1,7 +1,6 @@
-# Claude
+<!-- Written by beyonder-setup. This file is a pure entry point (E-0030):
+AGENTS.md is the project's one knowledge file, and this import is all
+CLAUDE.md ever contains — a real symlink to AGENTS.md is equally valid.
+Do not add content here; add it to AGENTS.md. -->
 
-AI-specific documentation lives in [`docs/ai/`](docs/ai/):
-
-- [`architecture.md`](docs/ai/architecture.md) — project structure, coding conventions, design system, and architectural patterns
-- [`testing.md`](docs/ai/testing.md) — testing guidelines and conventions
-- [`workflow.md`](docs/ai/workflow.md) — build commands, commit/PR guidelines, and PR review workflow
+@AGENTS.md
