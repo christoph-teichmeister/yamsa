@@ -138,6 +138,6 @@ An **isolated slot**, so implement sessions run side by side.
 | `docker-compose.yml` ports | host ports 8002/5431/8027/1027 | `${BACKEND_PORT:-8000}:8000` etc. | applied 2026-09-01 — grep `\${BACKEND_PORT` docker-compose.yml |
 | `docker-compose.yml` `container_name` (×3) | global names `yamsa_database`/`yamsa_backend`/`yamsa_mailhog` | per-service `networks.default.aliases` (same hostnames, scoped to each project's own network) | applied 2026-09-01 — grep `aliases:` docker-compose.yml |
 | `apps/config/settings.py:53` (`DJANGO_EMAIL_HOST` default) | hostname `yamsa_mailhog` | unchanged — still resolves via the network alias above, per project | applied (no change needed) |
-| `apps/docs/notes.md:8` (`docker cp ... yamsa_database:...`) | literal container name `yamsa_database` | doesn't exist as a real container name once `-p` is used — needs `docker compose -p <project> exec database ...` or the project-qualified name (`<project>-database-1`) instead | TBD — doc example not yet updated |
+| `apps/docs/notes.md:8` (`docker cp ... yamsa_database:...`) | literal container name `yamsa_database` | `docker compose ps -q database` — resolves the running container id regardless of project name, works for the base env or any `-p` slot | applied 2026-09-01 — grep `docker compose ps -q database` apps/docs/notes.md |
 | `scripts/run_backend.sh:9`, `scripts/run_backend_local.sh:15-16` | container-internal port `8000` | none needed — internal bind port, not host-exposed, safe as-is per slot | applied (no change needed) |
 <!-- /owner: beyonder-setup -->

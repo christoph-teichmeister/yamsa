@@ -27,12 +27,16 @@ if they change an agent's behavior in THIS project. -->
 - The rule cuts both ways: a missing constraint comment is as much a
   finding as narrative noise.
 
-<!-- TBD (collect with the team — do not invent):
-- Host conventions: branch naming, MR/PR description format
-- Commit conventions: message format, granularity, push + draft-MR,
-  squash policy
-- Language rules: German or English in tickets/MRs/code comments
-beyonder-setup step ③ fills these sections only from real team answers. -->
+## Language
+
+- Code, code comments, commit messages: English.
+- Tickets and PR descriptions: German (team decision 2026-09-01).
+
+<!-- TBD (collect with the team — do not invent): none currently — branch
+naming, commit format/granularity/push-policy/squash-policy and PR
+description format are settled in .claude/beyonder/workflow.md and
+docs/ai/workflow.md § Commit & Pull Request Guidelines.
+beyonder-setup step ③ fills sections here only from real team answers. -->
 
 ## Project knowledge
 

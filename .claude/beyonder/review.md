@@ -40,4 +40,4 @@
 ## Review behavior
 - Confidence: threshold:80 (rest folded into summary)
 - Nitpick budget: 3
-- Language: en
+- Language: de (team decision 2026-09-01 — code/comments stay English, tickets and PR-facing text incl. review findings are German, see AGENTS.md § Language)
