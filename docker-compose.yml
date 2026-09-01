@@ -1,7 +1,10 @@
 services:
   database:
     image: postgres:18.3-alpine
-    container_name: yamsa_database
+    networks:
+      default:
+        aliases:
+          - yamsa_database
     environment:
       POSTGRES_DB: yamsa_db
       POSTGRES_USER: yamsa-postgres-user
@@ -27,7 +30,10 @@ services:
       context: .
       args:
         UV_EXPORT_ARGS: "--extra dev"
-    container_name: yamsa_backend
+    networks:
+      default:
+        aliases:
+          - yamsa_backend
     command: bash ./scripts/run_backend_local.sh
     volumes:
       - .:/src
@@ -40,7 +46,10 @@ services:
 
   mailhog:
     image: mailhog/mailhog:v1.0.1
-    container_name: yamsa_mailhog
+    networks:
+      default:
+        aliases:
+          - yamsa_mailhog
     ports:
       - "${MAILHOG_UI_PORT:-8025}:8025"  # email inbox interface
       - "${MAILHOG_SMTP_PORT:-1025}:1025"  # smtp
