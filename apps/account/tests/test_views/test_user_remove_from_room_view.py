@@ -105,6 +105,32 @@ def test_post_user_can_be_removed_from_room(
     assert response.template_name[0] == UserListForRoomView.template_name
 
 
+def test_post_closed_room_is_rejected(
+    closed_room,
+    guest_user,
+    user,
+    hx_client,
+    monkeypatch,
+    recorded_messages_recorder,
+):
+    monkeypatch.setattr(
+        "apps.account.views.user_remove_from_room_view.handle_message",
+        handle_message,
+    )
+    monkeypatch.setattr(User, "can_be_removed_from_room", allow_removal)
+
+    client = hx_client(user)
+    response = client.post(
+        reverse(
+            "account:remove-from-room",
+            kwargs={"room_slug": closed_room.slug, "pk": guest_user.id},
+        ),
+    )
+
+    assert response.status_code == http.HTTPStatus.FORBIDDEN
+    assert not recorded_messages_recorder
+
+
 def test_post_user_removes_themselves_from_room(
     room,
     user,

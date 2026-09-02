@@ -54,7 +54,6 @@ env = environ.Env(
     DJANGO_EMAIL_HOST_PASSWORD=(str, ""),
     DJANGO_EMAIL_HOST_USER=(str, ""),
     DJANGO_EMAIL_PORT=(int, 1027),
-    DJANGO_EMAIL_URL=(environ.Env.email_url_config, "consolemail://"),
     DJANGO_EMAIL_USE_TLS=(bool, False),
     DJANGO_EMAIL_USE_SSL=(bool, False),
     DJANGO_INACTIVITY_REMINDER_ENABLED=(bool, True),
@@ -98,9 +97,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = (f"{APPS_DIR}/locale",)
 # https://docs.djangoproject.com/en/dev/topics/i18n/formatting/#creating-custom-format-files
-# FORMAT_MODULE_PATH = [
-#     "apps.core.formats",
-# ]
+FORMAT_MODULE_PATH = [
+    "apps.core.formats",
+]
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -566,21 +565,33 @@ AXES_SENSITIVE_PARAMETERS = ["username", "email", "ip_address"]
 
 # EMAIL
 # ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-vars().update(env.email_url("DJANGO_EMAIL_URL"))
-EMAIL_BACKEND = env("DJANGO_EMAIL_BACKEND")
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
-EMAIL_TIMEOUT = 5
+# https://docs.djangoproject.com/en/dev/ref/settings/#mailers
+_email_backend = env("DJANGO_EMAIL_BACKEND")
+_email_host_user = env("DJANGO_EMAIL_HOST_USER")
 
-EMAIL_HOST = env("DJANGO_EMAIL_HOST")
-EMAIL_PORT = env("DJANGO_EMAIL_PORT")
-EMAIL_USE_TLS = env("DJANGO_EMAIL_USE_TLS")
-EMAIL_USE_SSL = env("DJANGO_EMAIL_USE_SSL")
+MAILERS = {
+    "default": {
+        "BACKEND": _email_backend,
+        # The console/locmem backends used for local dev and tests don't accept SMTP
+        # options, so only pass them along when actually talking to a real SMTP server.
+        "OPTIONS": (
+            {
+                "host": env("DJANGO_EMAIL_HOST"),
+                "port": env("DJANGO_EMAIL_PORT"),
+                "username": _email_host_user,
+                "password": env("DJANGO_EMAIL_HOST_PASSWORD"),
+                "use_tls": env("DJANGO_EMAIL_USE_TLS"),
+                "use_ssl": env("DJANGO_EMAIL_USE_SSL"),
+                # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
+                "timeout": 5,
+            }
+            if _email_backend == "django.core.mail.backends.smtp.EmailBackend"
+            else {}
+        ),
+    },
+}
 
-EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD")
-
-EMAIL_DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL = env("DJANGO_EMAIL_DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)
+EMAIL_DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL = env("DJANGO_EMAIL_DEFAULT_FROM_EMAIL", default=_email_host_user)
 EMAIL_DEFAULT_REPLY_TO_ADDRESS = env("DJANGO_EMAIL_DEFAULT_REPLY_TO_ADDRESS", default=EMAIL_DEFAULT_FROM_EMAIL)
 
 # PWA
@@ -938,7 +949,7 @@ if env.bool("DJANGO_TESTING", False) or any(keyword in sys.argv for keyword in (
     PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
 
     # Use in-memory cache and mail backend
-    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+    MAILERS = {"default": {"BACKEND": "django.core.mail.backends.locmem.EmailBackend"}}
     STORAGES["default"] = {
         "BACKEND": "django.core.files.storage.InMemoryStorage",
     }

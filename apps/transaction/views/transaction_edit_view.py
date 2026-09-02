@@ -3,12 +3,13 @@ from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.models import ParentTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class TransactionEditView(TransactionBaseContext, generic.UpdateView):
+class TransactionEditView(RoomNotClosedRequiredMixin, TransactionBaseContext, generic.UpdateView):
     model = ParentTransaction
     form_class = TransactionEditForm
     template_name = "transaction/edit.html"

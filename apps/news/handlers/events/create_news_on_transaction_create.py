@@ -10,12 +10,21 @@ from apps.transaction.messages.events.transaction import ParentTransactionCreate
 def create_news_on_transaction_create(context: ParentTransactionCreated.Context):
     parent_transaction = context.parent_transaction
 
-    message = _('{payer} paid {amount}{currency} in "{room}"').format(
-        payer=parent_transaction.paid_by.name,
-        amount=parent_transaction.value,
-        currency=parent_transaction.currency.sign,
-        room=parent_transaction.room.name,
-    )
+    if not parent_transaction.created_by or parent_transaction.created_by == parent_transaction.paid_by:
+        message = _('{payer} logged a payment of {amount}{currency} in "{room}"').format(
+            payer=parent_transaction.paid_by.name,
+            amount=parent_transaction.value,
+            currency=parent_transaction.currency.sign,
+            room=parent_transaction.room.name,
+        )
+    else:
+        message = _('{creator} logged that {payer} paid {amount}{currency} in "{room}"').format(
+            creator=parent_transaction.created_by.name,
+            payer=parent_transaction.paid_by.name,
+            amount=parent_transaction.value,
+            currency=parent_transaction.currency.sign,
+            room=parent_transaction.room.name,
+        )
 
     deeplink = reverse(
         "transaction:detail",

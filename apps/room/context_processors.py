@@ -35,7 +35,7 @@ def room_context(request):
             "preferred_currency": room.preferred_currency,
             "users": room.room_users,
             # Calculated info
-            "is_closed": room.status == room.StatusChoices.CLOSED,
+            "is_closed": room.is_closed,
             "is_open": room.status == room.StatusChoices.OPEN,
             "has_guests": room.has_guests,
             "open_debt_count": room.debts.filter(settled=False).count(),

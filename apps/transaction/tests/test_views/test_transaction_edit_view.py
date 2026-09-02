@@ -75,6 +75,34 @@ _INITIAL_TOTAL_VARIATIONS = [
 
 
 class TestTransactionEditView:
+    def test_post_closed_room_is_rejected(self, authenticated_client, closed_room, user):
+        parent_transaction = ParentTransactionFactory(room=closed_room, paid_by=user, description="Original")
+        ChildTransaction.objects.create(
+            parent_transaction=parent_transaction,
+            paid_for=user,
+            value=Decimal("10.00"),
+        )
+
+        response = authenticated_client.post(
+            reverse(
+                "transaction:edit",
+                kwargs={"room_slug": closed_room.slug, "pk": parent_transaction.id},
+            ),
+            data={
+                "description": "Changed",
+                "paid_by": user.id,
+                "paid_at": parent_transaction.paid_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "currency": parent_transaction.currency.id,
+                "paid_for": [user.id],
+                "value": ["10.00"],
+                "total_value": "10.00",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
+        parent_transaction.refresh_from_db()
+        assert parent_transaction.description == "Original"
+
     def test_post_rebalances_child_transactions_when_total_changes(self, authenticated_client, room, user, guest_user):
         parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
         default_category = RoomCategoryService(room=room).get_default_category()

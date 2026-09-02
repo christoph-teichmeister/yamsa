@@ -6,9 +6,10 @@ from apps.core.event_loop.runner import handle_message
 from apps.debt.messages.events.debt_settled import DebtSettled
 from apps.debt.models import Debt
 from apps.debt.views.mixins.debt_base_context import DebtBaseContext
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 
 
-class DebtSettleView(DebtBaseContext, generic.UpdateView):
+class DebtSettleView(RoomNotClosedRequiredMixin, DebtBaseContext, generic.UpdateView):
     model = Debt
     fields = ("id", "settled", "settled_at")
     template_name = "debt/settle.html"

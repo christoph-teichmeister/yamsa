@@ -49,3 +49,15 @@ class TestTransactionReceiptDeleteView:
 
         assert response.status_code == HTTPStatus.FORBIDDEN
         assert Receipt.objects.filter(pk=receipt.pk).exists()
+
+    def test_receipt_delete_rejected_for_closed_room(
+        self, authenticated_client, closed_room, user, transaction_with_children_in_closed_room
+    ):
+        receipt = create_receipt(transaction_with_children_in_closed_room, uploaded_by=user)
+
+        response = authenticated_client.post(
+            reverse("transaction:receipt-delete", kwargs={"room_slug": closed_room.slug, "receipt_pk": receipt.id})
+        )
+
+        assert response.status_code == HTTPStatus.FORBIDDEN
+        assert Receipt.objects.filter(pk=receipt.pk).exists()

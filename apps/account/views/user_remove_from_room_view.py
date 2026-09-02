@@ -5,9 +5,10 @@ from apps.account.messages.commands.remove_user_from_room import RemoveUserFromR
 from apps.account.models import User
 from apps.account.views import UserListForRoomView
 from apps.core.event_loop.runner import handle_message
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 
 
-class UserRemoveFromRoomView(UserListForRoomView):
+class UserRemoveFromRoomView(RoomNotClosedRequiredMixin, UserListForRoomView):
     def post(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
 

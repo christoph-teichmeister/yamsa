@@ -3,11 +3,12 @@ from django.views import generic
 from django_context_decorator import context
 
 from apps.account.models import User
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 from apps.transaction.models import ChildTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class ChildTransactionCreateView(TransactionBaseContext, generic.CreateView):
+class ChildTransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, generic.CreateView):
     template_name = "transaction/child_transaction_create.html"
 
     model = ChildTransaction

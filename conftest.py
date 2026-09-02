@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.tests.factories import GuestUserFactory, SuperuserFactory, UserFactory
+from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.factories import CategoryFactory
 from apps.transaction.models import ParentTransaction
@@ -39,6 +40,13 @@ def authenticated_user(request, user, guest_user):
 @pytest.fixture
 def room(db, user, guest_user):
     room_instance = RoomFactory(created_by=user)
+    room_instance.users.add(user, guest_user)
+    return room_instance
+
+
+@pytest.fixture
+def closed_room(db, user, guest_user):
+    room_instance = RoomFactory(created_by=user, status=Room.StatusChoices.CLOSED)
     room_instance.users.add(user, guest_user)
     return room_instance
 

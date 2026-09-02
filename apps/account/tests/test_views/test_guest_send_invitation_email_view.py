@@ -54,6 +54,17 @@ def test_post_regular(authenticated_client, guest_send_invitation_url, monkeypat
     assert response.context_data["active_tab"] == "people"
 
 
+def test_post_closed_room_is_rejected(authenticated_client, closed_room, guest_user):
+    url = reverse(
+        "account:guest-send-invitation-email",
+        kwargs={"room_slug": closed_room.slug, "pk": guest_user.id},
+    )
+
+    response = authenticated_client.post(url, data={"email": "some_email@local.local"})
+
+    assert response.status_code == http.HTTPStatus.FORBIDDEN
+
+
 def test_post_email_invalid(authenticated_client, guest_send_invitation_url):
     response = authenticated_client.post(
         guest_send_invitation_url,

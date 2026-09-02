@@ -30,7 +30,7 @@
         <div class="transaction-grid row row-cols-2 g-3">
           <div class="col">
             <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Paid on" %}</div>
-            <div class="fw-semibold">{{ parent_transaction.paid_at|date:'M j, Y' }}</div>
+            <div class="fw-semibold">{{ parent_transaction.paid_at|date }}</div>
             <div class="transaction-meta mt-1">
               {% blocktrans with delta=parent_transaction.paid_at|timesince %}
                                 {{ delta }} ago

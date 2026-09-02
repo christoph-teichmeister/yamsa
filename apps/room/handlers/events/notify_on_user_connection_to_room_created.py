@@ -1,5 +1,8 @@
 from django.urls import reverse
+from django.utils import translation
+from django.utils.translation import gettext as _
 
+from apps.account.utils.language import get_language_code_for_user
 from apps.core.event_loop.registry import message_registry
 from apps.mail.services.user_added_to_room_mail_service import UserAddedToRoomEmailService
 from apps.room.messages.events.user_connection_to_room_created import UserConnectionToRoomCreated
@@ -15,10 +18,14 @@ def send_notification_on_user_connection_to_room_created(context: UserConnection
         return
 
     # Notify users that they have been added to a room
+    with translation.override(get_language_code_for_user(user_connection_to_room.user)):
+        head = _("New Room")
+        body = _("You have been added to {room}!").format(room=user_connection_to_room.room.name)
+
     notification = Notification(
         payload=Notification.Payload(
-            head="New Room",
-            body=f"You have been added to {user_connection_to_room.room.name}!",
+            head=head,
+            body=body,
             click_url=reverse("room:detail", kwargs={"room_slug": user_connection_to_room.room.slug}),
         ),
     )

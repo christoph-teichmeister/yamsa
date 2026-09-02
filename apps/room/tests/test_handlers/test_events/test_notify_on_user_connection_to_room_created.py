@@ -37,3 +37,12 @@ class TestNotifyOnUserConnectionToRoomCreated:
 
         assert self.email_test_service.all().count() == 0
         assert len(self.notification_test_service.all()) == 0
+
+    def test_notification_body_is_localized_to_the_invited_users_language(self, room, user):
+        another_user = UserFactory(language="de")
+        UserConnectionToRoom.objects.create(user=another_user, room=room, created_by=user)
+
+        notifications = self.notification_test_service.filter(user=another_user)
+        assert len(notifications) == 1
+        assert notifications[0].payload.head == "Neuer Raum"
+        assert notifications[0].payload.body == f"Du wurdest zu {room.name} hinzugefügt!"

@@ -8,6 +8,7 @@ from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.room.models import Room
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 from apps.room.views.mixins.room_base_context import RoomBaseContext
 from apps.transaction.forms.room_category_forms import RoomCategoryCreateForm, RoomCategoryUpdateForm
 from apps.transaction.services.room_category_service import RoomCategoryService
@@ -15,7 +16,7 @@ from apps.transaction.services.room_category_service import RoomCategoryService
 logger = logging.getLogger(__name__)
 
 
-class RoomCategoryManagerView(RoomBaseContext, generic.DetailView):
+class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, generic.DetailView):
     model = Room
     slug_url_kwarg = "room_slug"
     template_name = "transaction/category_manager.html"

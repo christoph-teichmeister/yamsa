@@ -157,9 +157,6 @@ msgstr "Deine Kontenübersicht"
 msgid "Member profile"
 msgstr "Mitgliederprofil"
 
-msgid "Not set"
-msgstr "Nicht gesetzt"
-
 msgid "Superuser"
 msgstr "Superuser"
 
@@ -186,6 +183,9 @@ msgstr "PayPal.me-Benutzername"
 
 msgid "No PayPal link yet"
 msgstr "Noch kein PayPal-Link"
+
+msgid "Not set"
+msgstr "Nicht gesetzt"
 
 msgid "Push notifications"
 msgstr "Push-Benachrichtigungen"
@@ -810,8 +810,12 @@ msgid "{creator} created \"{room_name}\""
 msgstr "{creator} hat \"{room_name}\" erstellt"
 
 #, python-brace-format
-msgid "{payer} paid {amount}{currency} in \"{room}\""
-msgstr "{payer} hat {amount}{currency} in \"{room}\" bezahlt"
+msgid "{payer} logged a payment of {amount}{currency} in \"{room}\""
+msgstr "{payer} hat eine Zahlung über {amount}{currency} in \"{room}\" eingetragen"
+
+#, python-brace-format
+msgid "{creator} logged that {payer} paid {amount}{currency} in \"{room}\""
+msgstr "{creator} hat eingetragen, dass {payer} {amount}{currency} in \"{room}\" gezahlt hat"
 
 #, python-brace-format
 msgid "{actor} deleted the transaction \"{description}\" ({amount}{currency}) in \"{room}\""
@@ -848,6 +852,24 @@ msgstr "News Update"
 
 msgid "News"
 msgstr "Neuigkeiten"
+
+#, python-brace-format
+msgid "{editor} closed \"{room}\""
+msgstr "{editor} hat \"{room}\" geschlossen"
+
+msgid "Room re-opened"
+msgstr "Raum wieder geöffnet"
+
+#, python-brace-format
+msgid "{editor} opened \"{room}\""
+msgstr "{editor} hat \"{room}\" geöffnet"
+
+msgid "New Room"
+msgstr "Neuer Raum"
+
+#, python-brace-format
+msgid "You have been added to {room}!"
+msgstr "Du wurdest zu {room} hinzugefügt!"
 
 msgid "Open"
 msgstr "Offen"
@@ -1051,6 +1073,9 @@ msgstr "Das bin ich!"
 
 msgid "No guests have been invited yet. Create an account to add yourself to the room."
 msgstr "Es wurden noch keine Gäste eingeladen. Erstelle ein Konto, um dich selbst zum Raum hinzuzufügen."
+
+msgid "This room is closed. No changes can be made."
+msgstr "Dieser Raum ist geschlossen. Es können keine Änderungen vorgenommen werden."
 
 msgid "Toggle navigation"
 msgstr "Navigation umschalten"
@@ -1786,6 +1811,55 @@ msgstr "Bezahlt für"
 
 msgid "transactions"
 msgstr "transaktionen"
+
+#, python-brace-format
+msgid ""
+"{payer} logged a payment of {amount}{currency} (\"{description}\")\n"
+"Have a look!"
+msgstr ""
+"{payer} hat eine Zahlung über {amount}{currency} eingetragen (\"{description}\")\n"
+"Schau vorbei!"
+
+#, python-brace-format
+msgid ""
+"{creator} logged that {payer} paid {amount}{currency} (\"{description}\")\n"
+"Have a look!"
+msgstr ""
+"{creator} hat eingetragen, dass {payer} {amount}{currency} gezahlt hat (\"{description}\")\n"
+"Schau vorbei!"
+
+#, python-brace-format
+msgid ""
+"{editor} just updated a transaction (\"{description}\")\n"
+"Have a look!"
+msgstr ""
+"{editor} hat eine Transaktion aktualisiert (\"{description}\")\n"
+"Schau vorbei!"
+
+msgid "Transaction updated"
+msgstr "Transaktion aktualisiert"
+
+#, python-brace-format
+msgid ""
+"{deleter} just deleted a transaction (\"{description}\")\n"
+"Have a look!"
+msgstr ""
+"{deleter} hat eine Transaktion gelöscht (\"{description}\")\n"
+"Schau vorbei!"
+
+#, python-brace-format
+msgid "{debitor} just settled their debt of {amount}{currency} to you"
+msgstr "{debitor} hat seine Schuld von {amount}{currency} bei dir beglichen"
+
+msgid "Debt settled"
+msgstr "Schuld beglichen"
+
+#, python-brace-format
+msgid "{remover} just removed {removed} from {room}"
+msgstr "{remover} hat {removed} aus {room} entfernt"
+
+msgid "User removed"
+msgstr "Nutzer:in entfernt"
 
 #, python-brace-format
 msgid "Webpush Information for {user}"

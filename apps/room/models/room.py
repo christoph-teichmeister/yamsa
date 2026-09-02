@@ -73,3 +73,7 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     @property
     def can_be_closed(self):
         return not self.debts.filter(settled=False).exists()
+
+    @property
+    def is_closed(self):
+        return self.status == self.StatusChoices.CLOSED
