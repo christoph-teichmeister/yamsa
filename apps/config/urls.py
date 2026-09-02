@@ -6,6 +6,9 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 
 from apps.account import views as account_views
+from apps.core.views import server_error_view
+
+handler500 = server_error_view
 
 
 class FaviconRedirectView(RedirectView):
