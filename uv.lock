@@ -469,15 +469,15 @@ sdist = { url = "https://files.pythonhosted.org/packages/49/cc/b92ed8b33fc62434a
 
 [[package]]
 name = "django-pony-express"
-version = "2.8.1"
+version = "3.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ba/5b/2a95c61581644e2975702c6d401bd6a2ce90a00418eb461e36866ccf1860/django_pony_express-2.8.1.tar.gz", hash = "sha256:f22006db82d8ec844e8bc10c7ed3cc4c68776828b487842a62d298063a519f9b", size = 105115, upload-time = "2026-07-03T13:49:21.436Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/17/36/b321575fb26be1943400fe94fbf5ae388a74808d3dd821dce4d8d44a954d/django_pony_express-3.2.0.tar.gz", hash = "sha256:a6bc7c6a05aba499214b4bee3391ec33ce70b3c71387b4ba5877a621148fde92", size = 119671, upload-time = "2026-08-27T09:08:09.238Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bf/43/bef4602a6c92a14a6388caad804cc73ef0a85edcc8e811e527735ec80c12/django_pony_express-2.8.1-py3-none-any.whl", hash = "sha256:c022c5f7441bca9003e12c2b345617564cd7b960cb280f0306a7fb8d6e9e60cd", size = 15022, upload-time = "2026-07-03T13:49:20.292Z" },
+    { url = "https://files.pythonhosted.org/packages/ad/37/903a3e7dc16609157ffca90c2cbdec8e2464fdcf34f6c0dd307eba364944/django_pony_express-3.2.0-py3-none-any.whl", hash = "sha256:8e199e29191c93b6a60fe8b9ded0dc3ff0fabcbf829d5ced877630ea98bf1f01", size = 16286, upload-time = "2026-08-27T09:08:07.87Z" },
 ]
 
 [[package]]
@@ -637,14 +637,11 @@ wheels = [
 
 [[package]]
 name = "gunicorn"
-version = "25.3.0"
+version = "26.2.0"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "packaging" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c4/f4/e78fa054248fab913e2eab0332c6c2cb07421fca1ce56d8fe43b6aef57a4/gunicorn-25.3.0.tar.gz", hash = "sha256:f74e1b2f9f76f6cd1ca01198968bd2dd65830edc24b6e8e4d78de8320e2fe889", size = 634883, upload-time = "2026-03-27T00:00:26.092Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d9/8a/e4ef6ee11701b6cd64702848415ffb69eeff85cb388a3c6c7fe86f22f3f8/gunicorn-26.2.0.tar.gz", hash = "sha256:62b864895d9ebff0b2f9867ba04fe811c93121596540830c9c916d0769668447", size = 787921, upload-time = "2026-08-24T15:05:59.3Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/43/c8/8aaf447698c4d59aa853fd318eed300b5c9e44459f242ab8ead6c9c09792/gunicorn-25.3.0-py3-none-any.whl", hash = "sha256:cacea387dab08cd6776501621c295a904fe8e3b7aae9a1a3cbb26f4e7ed54660", size = 208403, upload-time = "2026-03-27T00:00:27.386Z" },
+    { url = "https://files.pythonhosted.org/packages/fe/85/7522a52e5e2f42faf1a129113ab63e548c42e103e9af395b7bfe65e403e2/gunicorn-26.2.0-py3-none-any.whl", hash = "sha256:bd249d0b3f7972f7432f0a6b6ff3b3ee2d129f70cd1ff6c09a9dd9e29a2b88e3", size = 228389, upload-time = "2026-08-24T15:05:57.67Z" },
 ]
 
 [[package]]
@@ -1272,14 +1269,14 @@ requires-dist = [
     { name = "django-htmx", specifier = "==1.*" },
     { name = "django-minify-html", specifier = "==1.*" },
     { name = "django-passkeys", specifier = "==2.*" },
-    { name = "django-pony-express", specifier = "==2.*" },
+    { name = "django-pony-express", specifier = "==3.*" },
     { name = "django-upgrade", marker = "extra == 'dev'" },
     { name = "django-webpack-loader", specifier = "==3.*" },
     { name = "djlint", marker = "extra == 'dev'" },
     { name = "emoji", specifier = "==2.*" },
     { name = "factory-boy", marker = "extra == 'dev'" },
     { name = "freezegun", marker = "extra == 'dev'" },
-    { name = "gunicorn", specifier = "==25.*" },
+    { name = "gunicorn", specifier = "==26.*" },
     { name = "minify-html", specifier = "==0.18.*" },
     { name = "model-bakery", specifier = "==1.*" },
     { name = "pillow", specifier = "==12.*" },

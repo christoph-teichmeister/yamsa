@@ -15,10 +15,10 @@ jobs:
         python-version: [ "3.13.4" ]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
@@ -48,7 +48,7 @@ jobs:
           uv run coverage xml -o ./test-reports/python-coverage.xml
 
       - name: Upload python-coverage.xml
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: python-coverage
           path: test-reports/python-coverage.xml
@@ -61,7 +61,7 @@ jobs:
 
     steps:
       - name: Download python-coverage.xml
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: python-coverage
           path: artifacts
