@@ -75,3 +75,24 @@ class TestTransactionReceiptUploadView:
         assert not Receipt.objects.filter(parent_transaction=parent_transaction).exists()
         assert "HX-Trigger-After-Settle" not in response.headers
         assert "HX-Trigger" not in response.headers
+
+    def test_receipt_upload_rejected_for_closed_room(
+        self, authenticated_client, closed_room, transaction_with_children_in_closed_room, cleanup_receipts
+    ):
+        parent_transaction = transaction_with_children_in_closed_room
+        receipt_file = SimpleUploadedFile(
+            "receipt.pdf",
+            b"%PDF-1.4\n%%EOF",
+            content_type="application/pdf",
+        )
+
+        response = authenticated_client.post(
+            reverse(
+                "transaction:receipt-upload",
+                kwargs={"room_slug": closed_room.slug, "transaction_pk": parent_transaction.id},
+            ),
+            data={"receipt": receipt_file},
+        )
+
+        assert response.status_code == HTTPStatus.FORBIDDEN
+        assert not Receipt.objects.filter(parent_transaction=parent_transaction).exists()

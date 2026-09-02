@@ -51,6 +51,24 @@ class TestTransactionCreateView:
             qs = ChildTransaction.objects.filter(paid_for=member, value=child_transaction_value)
             assert qs.exists()
 
+    def test_post_closed_room_is_rejected(self, authenticated_client, closed_room, user):
+        response = authenticated_client.post(
+            reverse("transaction:create", kwargs={"room_slug": closed_room.slug}),
+            data={
+                "description": "My description",
+                "currency": closed_room.preferred_currency.id,
+                "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
+                "paid_by": user.id,
+                "room": closed_room.id,
+                "paid_for": [str(member.id) for member in closed_room.users.all()],
+                "room_slug": closed_room.slug,
+                "value": 10,
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
+        assert not ParentTransaction.objects.filter(description="My description", room=closed_room).exists()
+
     def test_form_valid_fires_handle_message_outside_atomic(self):
         """
         Regression test for #333: handle_message must be called from form_valid,

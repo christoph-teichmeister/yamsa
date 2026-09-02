@@ -5,9 +5,10 @@ from apps.account.views.mixins.account_base_context import AccountBaseContext
 from apps.room.forms.user_connection_to_room_create_form import UserConnectionToRoomCreateForm
 from apps.room.models import UserConnectionToRoom
 from apps.room.services.suggested_guest_service import SuggestedGuestService
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 
 
-class UserConnectionToRoomCreateView(AccountBaseContext, generic.CreateView):
+class UserConnectionToRoomCreateView(RoomNotClosedRequiredMixin, AccountBaseContext, generic.CreateView):
     model = UserConnectionToRoom
     form_class = UserConnectionToRoomCreateForm
     template_name = "room/userconnectiontoroom_create.html"

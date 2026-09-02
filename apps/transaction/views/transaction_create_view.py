@@ -8,6 +8,7 @@ from django.utils.functional import cached_property
 from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
 from apps.transaction.models import ParentTransaction
@@ -15,7 +16,7 @@ from apps.transaction.services.room_category_service import RoomCategoryService
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class TransactionCreateView(TransactionBaseContext, generic.CreateView):
+class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, generic.CreateView):
     model = ParentTransaction
     form_class = TransactionCreateForm
     template_name = "transaction/create.html"

@@ -5,10 +5,11 @@ from django.views import generic
 from apps.account.forms import GuestCreateForm
 from apps.account.models import User
 from apps.account.views.mixins.account_base_context import AccountBaseContext
-from apps.room.models import Room, UserConnectionToRoom
+from apps.room.models import UserConnectionToRoom
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 
 
-class GuestCreateView(AccountBaseContext, generic.CreateView):
+class GuestCreateView(RoomNotClosedRequiredMixin, AccountBaseContext, generic.CreateView):
     model = User
     form_class = GuestCreateForm
     template_name = "account/create_guest.html"
@@ -21,8 +22,7 @@ class GuestCreateView(AccountBaseContext, generic.CreateView):
 
         response = super().form_valid(form)
 
-        room_slug = self.request.POST.get("room_slug")
-        UserConnectionToRoom.objects.create(user=created_guest, room=Room.objects.get(slug=room_slug))
+        UserConnectionToRoom.objects.create(user=created_guest, room=self.request.room)
 
         return response
 

@@ -43,6 +43,19 @@ class TestRoomCategoryManagerView:
         assert RoomCategory.objects.filter(room=room, category=category).exists()
         assert RoomCategory.objects.get(room=room, category=category).is_default
 
+    def test_owner_cannot_create_category_in_closed_room(self, authenticated_client, closed_room):
+        url = reverse("transaction:category-manager", kwargs={"room_slug": closed_room.slug})
+        payload = {
+            "action": "create",
+            "name": "Room Tag",
+            "emoji": "🚀",
+            "color": "#ABCDEF",
+        }
+        response = authenticated_client.post(url, data=payload, HTTP_HX_REQUEST="true")
+
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
+        assert not RoomCategory.objects.filter(room=closed_room, category__name="Room Tag").exists()
+
     def test_create_invalid_form_returns_error_fragment(self, authenticated_client, room):
         url = reverse("transaction:category-manager", kwargs={"room_slug": room.slug})
         payload = {

@@ -2,12 +2,13 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.views import generic
 
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_receipt_upload_form import TransactionReceiptUploadForm
 from apps.transaction.models import Receipt
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class TransactionReceiptDeleteView(TransactionBaseContext, generic.TemplateView):
+class TransactionReceiptDeleteView(RoomNotClosedRequiredMixin, TransactionBaseContext, generic.TemplateView):
     template_name = "transaction/partials/_receipts_section.html"
 
     def post(self, request, room_slug, receipt_pk):

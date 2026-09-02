@@ -1074,6 +1074,9 @@ msgstr "Das bin ich!"
 msgid "No guests have been invited yet. Create an account to add yourself to the room."
 msgstr "Es wurden noch keine Gäste eingeladen. Erstelle ein Konto, um dich selbst zum Raum hinzuzufügen."
 
+msgid "This room is closed. No changes can be made."
+msgstr "Dieser Raum ist geschlossen. Es können keine Änderungen vorgenommen werden."
+
 msgid "Toggle navigation"
 msgstr "Navigation umschalten"
 
