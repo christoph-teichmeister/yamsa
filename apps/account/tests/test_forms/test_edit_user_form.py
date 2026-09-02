@@ -113,6 +113,25 @@ class TestEditUserForm:
             stored_name = user.profile_picture.name
             assert user.profile_picture.storage.exists(stored_name)
 
+    def test_profile_picture_upload_saves_file_with_long_filename(self, user):
+        """Regression test for #YAMSA-45: uuid4()-prefixed long Android filenames overflowed the
+        old ImageField max_length=100, raising a DataError on save()."""
+        form_data = self._base_form_data(user)
+        buffer = BytesIO()
+        Image.new("RGB", (200, 200), color=(255, 255, 255)).save(buffer, format="PNG")
+        buffer.seek(0)
+        long_filename = "IMG_20260902_142233857_HDR_from_google_photos_backup_edited_final_v2.png"
+        image_file = SimpleUploadedFile(long_filename, buffer.read(), content_type="image/png")
+
+        with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
+            form = self.form_class(instance=user, data=form_data, files={"profile_picture": image_file})
+            assert form.is_valid()
+            form.save()
+
+            user.refresh_from_db()
+            assert user.profile_picture
+            assert user.profile_picture.storage.exists(user.profile_picture.name)
+
     def test_profile_picture_resizes_to_maximum_dimensions(self, user):
         form_data = self._base_form_data(user)
         image_file = self._build_image_file(

@@ -63,7 +63,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
     paypal_me_username = models.CharField(max_length=100, null=True, blank=True)
-    profile_picture = models.ImageField(upload_to=determine_upload_to, null=True, blank=True)
+    profile_picture = models.ImageField(upload_to=determine_upload_to, max_length=255, null=True, blank=True)
     language = models.CharField(max_length=5, choices=settings.LANGUAGES, blank=True)
 
     is_guest = models.BooleanField(default=True)
