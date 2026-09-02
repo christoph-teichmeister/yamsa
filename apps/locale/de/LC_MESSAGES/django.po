@@ -1121,6 +1121,9 @@ msgstr "Absenden"
 msgid "This room is closed, so new members cannot be added."
 msgstr "Dieser Raum ist geschlossen, daher können keine neuen Mitglieder hinzugefügt werden."
 
+msgid "This room is closed. No changes can be made."
+msgstr "Dieser Raum ist geschlossen. Es können keine Änderungen vorgenommen werden."
+
 msgid "No updates yet."
 msgstr "Noch keine Updates."
 

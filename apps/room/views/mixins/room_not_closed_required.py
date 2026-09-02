@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import AccessMixin
 from django.http import HttpResponseForbidden
+from django.utils.translation import gettext_lazy as _
 
 SAFE_METHODS = ("GET", "HEAD", "OPTIONS")
 
@@ -7,7 +8,7 @@ SAFE_METHODS = ("GET", "HEAD", "OPTIONS")
 class RoomNotClosedRequiredMixin(AccessMixin):
     """Block unsafe (mutating) requests against a closed room."""
 
-    closed_room_message = "This room is closed. No changes can be made."
+    closed_room_message = _("This room is closed. No changes can be made.")
 
     def dispatch(self, request, *args, **kwargs):
         room = getattr(request, "room", None)
