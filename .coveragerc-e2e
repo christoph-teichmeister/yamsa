@@ -32,4 +32,9 @@ exclude_also =
     if __name__ == .__main__.:
     @(abc\.)?abstractmethod
 ignore_errors = true
-fail_under = 54
+# No fail_under here on purpose: with branch=true, coverage's own CLI gate (`report`/`xml`) blends
+# lines+branches into one number, while scripts/ci/generate_coverage_comment.py reads Cobertura's
+# `line-rate` (lines only) from the XML this produces — two different metrics. Setting fail_under
+# here made coverage.py fail the "Generate coverage XML" step on the blended number while the PR
+# comment showed a passing line-rate number for the exact same run. The line-rate-based threshold
+# in the workflow's --suite arg is the only gate now.
