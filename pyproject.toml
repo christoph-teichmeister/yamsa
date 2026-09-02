@@ -14,11 +14,11 @@ dependencies = [
     "django-htmx==1.*",
     "django-minify-html==1.*",
     "django-passkeys==2.*",
-    "django-pony-express>=2,<4",
+    "django-pony-express==3.*",
     "django-webpack-loader==3.*",
     "django[argon2]==6.*",
     "emoji==2.*",
-    "gunicorn>=25,<27",
+    "gunicorn==26.*",
     "minify-html==0.18.*",
     "model-bakery==1.*",
     "pillow==12.*",
@@ -46,7 +46,7 @@ dev = [
 
 [build-system]
 requires = [
-    "setuptools>=80,<85",
+    "setuptools==84.*",
     "wheel",
 ]
 build-backend = "setuptools.build_meta"
