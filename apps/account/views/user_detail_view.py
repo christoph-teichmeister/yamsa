@@ -12,6 +12,9 @@ class UserDetailView(mixins.LoginRequiredMixin, generic.DetailView):
     model = User
 
     def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+
         request_user_shares_room_with_profile_user = request.user.rooms.filter(
             id__in=self.get_object().rooms.values_list("id", flat=True)
         )
