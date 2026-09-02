@@ -27,3 +27,21 @@ def transaction_with_children(room, user):
         )
 
     return parent_transaction
+
+
+@pytest.fixture
+def transaction_with_children_in_closed_room(closed_room, user):
+    parent_transaction = ParentTransactionFactory(
+        room=closed_room,
+        paid_by=user,
+        currency=closed_room.preferred_currency,
+    )
+
+    for member in closed_room.users.all():
+        ChildTransactionFactory.create(
+            parent_transaction=parent_transaction,
+            paid_for=member,
+            value=Decimal("5"),
+        )
+
+    return parent_transaction

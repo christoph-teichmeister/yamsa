@@ -1,21 +1,17 @@
 from django import forms
-from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.views import generic
 
-from apps.room.models import Room
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_receipt_upload_form import TransactionReceiptUploadForm
 from apps.transaction.models import ParentTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class TransactionReceiptUploadView(TransactionBaseContext, generic.TemplateView):
+class TransactionReceiptUploadView(RoomNotClosedRequiredMixin, TransactionBaseContext, generic.TemplateView):
     template_name = "transaction/partials/_receipts_section.html"
 
     def post(self, request, room_slug, transaction_pk):
-        if request.room.status == Room.StatusChoices.CLOSED:
-            return HttpResponseForbidden("Cannot upload receipts to a closed room.")
-
         parent_transaction = get_object_or_404(
             ParentTransaction.objects.select_related("paid_by", "currency", "category"),
             pk=transaction_pk,

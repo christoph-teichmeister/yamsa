@@ -46,3 +46,15 @@ def test_post_regular(authenticated_client, room, user):
     assert new_guest.created_by == user
     assert new_guest.created_at == datetime(2020, 4, 4, 4, 20, tzinfo=UTC)
     assert UserConnectionToRoom.objects.filter(user=new_guest, room=room).exists()
+
+
+def test_post_closed_room_is_rejected(authenticated_client, closed_room):
+    guest_name = "Guest Name"
+
+    response = authenticated_client.post(
+        reverse("account:guest-create", kwargs={"room_slug": closed_room.slug}),
+        data={"room_slug": closed_room.slug, "name": guest_name},
+    )
+
+    assert response.status_code == http.HTTPStatus.FORBIDDEN
+    assert not User.objects.filter(name=guest_name).exists()
