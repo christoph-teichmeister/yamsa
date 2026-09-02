@@ -3,9 +3,9 @@
 ## Build, Test, and Development Commands
 
 - All Django/manage.py invocations must run inside the local `uv shell` (e.g. start it via `uv shell` and then run
-  `python manage.py <cmd>`) so you benefit from the pinned Python 3.11.11 environment. Agents are always allowed to
+  `python manage.py <cmd>`) so you benefit from the pinned Python 3.13 environment. Agents are always allowed to
   open the uv shell and run commands there without asking for extra permission; no Docker-based workflows are required.
-- `uv sync --all-extras --no-install-project` — install Python 3.11.11 dependencies including tooling.
+- `uv sync --all-extras --no-install-project` — install Python 3.13 dependencies including tooling.
 - `uv run python manage.py migrate` — apply schema changes before running the app.
 - `uv run python manage.py runserver 0.0.0.0:8000` — local dev server with HTMX/Bootstrap UI.
 - `uv run pytest` — execute Django test suite via pytest under the default settings module.
