@@ -30,7 +30,7 @@ repos:
     rev: 1.32.0
     hooks:
       - id: django-upgrade
-        args: [ --target-version, "6.0" ]
+        args: [ --target-version, "6.1" ]
         language_version: python3.13
 
   - repo: https://github.com/pre-commit/pre-commit-hooks

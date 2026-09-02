@@ -8,7 +8,7 @@
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --config webpack.config.js --mode development --devtool=source-map --watch --color"
   },
-  "packageManager": "yarn@4.15.0",
+  "packageManager": "yarn@4.18.0+sha512.fcb8716fe7cd0eece141ffc18b92193a9df9204c1ba83189c288835223fc0bbe64af473bab0d5e9927a7daeb5caf2bb07eb2787cc9338ca040ea125f2a1f2f7e",
   "engines": {
     "node": ">=22.0.0 <24.0.0"
   },
@@ -21,10 +21,10 @@
     "idiomorph": "^0.7.4"
   },
   "devDependencies": {
-    "css-loader": "^7.1.4",
+    "css-loader": "^7.1.5",
     "mini-css-extract-plugin": "^2.10.2",
-    "webpack": "^5.107.2",
+    "webpack": "^5.110.3",
     "webpack-bundle-tracker": "^3.2.4",
-    "webpack-cli": "^7.0.2"
+    "webpack-cli": "^7.2.3"
   }
 }

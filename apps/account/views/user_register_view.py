@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 from django.urls import reverse
 from django.views import generic
 from django_context_decorator import context
@@ -39,8 +39,7 @@ class RegisterUserView(generic.CreateView):
 
         # Immediately log the created user in
         self.request.user = self.object
-        user = authenticate(request=self.request, email=self.object.email, password=self.object.password)
-        login(request=self.request, user=user, backend="django.contrib.auth.backends.ModelBackend")
+        login(request=self.request, user=self.object, backend="django.contrib.auth.backends.ModelBackend")
 
         self._join_shared_room_if_needed()
 
