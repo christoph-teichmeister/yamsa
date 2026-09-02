@@ -53,36 +53,116 @@ jobs:
           name: python-coverage
           path: test-reports/python-coverage.xml
 
-  coverage:
-    needs: run-tests
+  playwright-e2e:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [ "3.13.4" ]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Enable corepack (yarn)
+        run: corepack enable
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.18.0"
+          cache: "yarn"
+
+      - name: Install uv runtime tooling
+        run: python -m pip install --upgrade pip uv
+
+      - name: Sync dependencies
+        run: uv sync --all-extras --no-install-project
+
+      - name: Install gettext
+        run: sudo apt-get install -y gettext  # Install gettext tools
+
+      - name: Run compilemessages
+        run: uv run python manage.py compilemessages
+        env:
+          DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
+
+      - name: Install Playwright browsers
+        run: uv run playwright install --with-deps chromium
+
+      - name: Install frontend dependencies
+        run: yarn install --immutable
+
+      - name: Build webpack bundle
+        run: yarn build
+
+      - name: Collect static files
+        run: uv run python manage.py collectstatic --noinput
+        env:
+          DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
+          E2E_TESTING: "true"
+
+      - name: Run E2E tests
+        run: uv run coverage run --rcfile=.coveragerc-e2e -m pytest e2e/ -v
+        env:
+          DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
+          E2E_TESTING: "true"
+
+      - name: Generate coverage XML
+        run: |-
+          mkdir -p test-reports
+          uv run coverage xml --rcfile=.coveragerc-e2e -o ./test-reports/e2e-coverage.xml
+
+      - name: Upload e2e-coverage.xml
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-coverage
+          path: test-reports/e2e-coverage.xml
+
+  coverage-report:
+    needs: [ run-tests, playwright-e2e ]
+    if: always()
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
 
     steps:
+      - uses: actions/checkout@v7
+
       - name: Download python-coverage.xml
         uses: actions/download-artifact@v8
         with:
           name: python-coverage
           path: artifacts
 
-      - name: Code Coverage Report
-        uses: irongut/CodeCoverageSummary@v1.3.0
+      - name: Download e2e-coverage.xml
+        uses: actions/download-artifact@v8
         with:
-          filename: artifacts/python-coverage.xml
-          badge: true
-          fail_below_min: true
-          format: markdown
-          hide_branch_rate: false
-          hide_complexity: true
-          indicators: true
-          output: both
-          thresholds: '85 95'
+          name: e2e-coverage
+          path: artifacts
+
+      - name: Generate combined coverage comment
+        id: coverage
+        run: |-
+          python3 scripts/ci/generate_coverage_comment.py \
+            --suite "Backend:artifacts/python-coverage.xml:90" \
+            --suite "E2E:artifacts/e2e-coverage.xml:54" \
+            --output code-coverage-results.md
 
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v3.0.5
-        if: github.event_name == 'pull_request' && ${{ always() }}
+        if: github.event_name == 'pull_request'
         with:
+          header: coverage-report
           hide_and_recreate: true
           hide_classify: "OUTDATED"
           path: code-coverage-results.md
+
+      - name: Fail if coverage thresholds not met
+        if: steps.coverage.outputs.passed != 'true'
+        run: exit 1

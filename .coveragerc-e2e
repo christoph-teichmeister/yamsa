@@ -1,0 +1,40 @@
+# Coverage config for the Playwright e2e suite (e2e/), run as a separate `coverage run` invocation
+# from the unit test suite (see [tool.coverage.*] in pyproject.toml) so the two never share one
+# combined number — e2e only exercises the request/response path Playwright actually clicks
+# through, not the whole app, so it needs its own (much lower) fail_under.
+[run]
+branch = true
+source = apps
+omit =
+    */config/*
+    */migrations/*
+    */templates/*
+    */tests/*
+    */apps.py
+    */__init__.py
+    */scripts/*.py
+    */management/commands/*.py
+    *.html
+    *.txt
+    *.json
+    *.env
+    *.sh
+
+[report]
+precision = 2
+show_missing = true
+skip_empty = true
+exclude_also =
+    if self\.debug
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    @(abc\.)?abstractmethod
+ignore_errors = true
+# No fail_under here on purpose: with branch=true, coverage's own CLI gate (`report`/`xml`) blends
+# lines+branches into one number, while scripts/ci/generate_coverage_comment.py reads Cobertura's
+# `line-rate` (lines only) from the XML this produces — two different metrics. Setting fail_under
+# here made coverage.py fail the "Generate coverage XML" step on the blended number while the PR
+# comment showed a passing line-rate number for the exact same run. The line-rate-based threshold
+# in the workflow's --suite arg is the only gate now.

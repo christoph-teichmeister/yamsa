@@ -3,7 +3,7 @@
 {% block content %}
   <section class="container px-2 px-md-4 px-lg-5 account-detail">
     {% if user.is_guest %}
-      <div class="row justify-content-center">
+      <div class="row justify-content-center" id="guest-mode-banner">
         <div class="col-12 col-lg-8">
           <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body text-center py-5 px-4 px-md-5">
@@ -71,8 +71,8 @@
                       {% trans "Member profile" %}
                     {% endif %}
                   </p>
-                  <h1 class="h3 fw-semibold mb-2">{{ user.name }}</h1>
-                  <p class="text-muted mb-3">{{ user.email }}</p>
+                  <h1 class="h3 fw-semibold mb-2" id="profile-name">{{ user.name }}</h1>
+                  <p class="text-muted mb-3" id="profile-email">{{ user.email }}</p>
                   <div class="d-flex flex-wrap gap-2">
                     {% if user.is_superuser %}
                       <span class="badge text-bg-dark">{% trans "Superuser" %}</span>
@@ -92,6 +92,7 @@
                 {% if request.user.id == user.id %}
                   <div class="ms-auto">
                     <button type="button"
+                            id="edit-profile-button"
                             class="btn btn-primary d-flex align-items-center gap-2"
                             hx-get="{% url 'account:update' pk=user.id %}"
                             hx-target="#body"
@@ -188,7 +189,7 @@
               </div>
             {% endif %}
             {% if request.user == user %}
-              <div class="col-12">
+              <div class="col-12" id="security-section">
                 <div class="border rounded-4 h-100 p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
                   <div>
                     <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>

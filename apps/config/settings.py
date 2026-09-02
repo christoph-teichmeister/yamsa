@@ -42,6 +42,7 @@ env = environ.Env(
     DJANGO_SESSION_COOKIE_SECURE=(bool, True),
     DJANGO_REMEMBER_ME_SESSION_AGE=(int, 60 * 60 * 24 * 30),  # 30 days
     DJANGO_USE_DEBUG_TOOLBAR=(bool, False),
+    E2E_TESTING=(bool, False),
     MAINTENANCE=(bool, False),
     # Cloudinary ENV
     CLOUDINARY_CLOUD_NAME=(str, ""),
@@ -628,7 +629,7 @@ MANIFEST = {
     "edge_side_panel": {},
     "features": [],
     "icons": [
-        {"src": "/static/images/favicons/favicon.ico", "sizes": "48x48", "type": "image/ico"},
+        {"src": "/static/images/favicon.ico", "sizes": "48x48", "type": "image/ico"},
         {"src": "/static/images/favicons/windows11/SmallTile.scale-100.png", "sizes": "71x71"},
         {"src": "/static/images/favicons/windows11/SmallTile.scale-125.png", "sizes": "89x89"},
         {"src": "/static/images/favicons/windows11/SmallTile.scale-150.png", "sizes": "107x107"},
@@ -935,6 +936,8 @@ MAINTENANCE = env("MAINTENANCE")
 # Exclude main app from database serialization, speeds up tests, but removes ability to simulate rollbacks in tests
 TEST_NON_SERIALIZED_APPS = ("apps",)
 
+E2E_TESTING = env.bool("E2E_TESTING", default=False)
+
 if env.bool("DJANGO_TESTING", False) or any(keyword in sys.argv for keyword in ("test", "test_coverage")):
     base = environ.Path(__file__) - 1
     environ.Env.read_env(env_file=base("unittest.env"))
@@ -959,16 +962,21 @@ if env.bool("DJANGO_TESTING", False) or any(keyword in sys.argv for keyword in (
     # Enable whitenoise autscanning
     WHITENOISE_AUTOREFRESH = True
 
-    # Use simple storage in tests — no manifest required, avoids issues with
-    # newly added app static files that haven't been collected yet.
+    # Use simple storage in tests — no manifest required, avoids issues with newly added app
+    # static files that haven't been collected yet. This also lets Playwright e2e tests resolve
+    # {% static %} URLs straight through STATICFILES_DIRS/finders (incl. the webpack bundle
+    # `yarn build` writes there) without a `collectstatic` run: live_server always serves static
+    # files via StaticFilesHandler+finders, which only know unhashed filenames, so a manifest
+    # storage here would 404 on every hashed URL it emits.
     STORAGES["staticfiles"]["BACKEND"] = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
-    WEBPACK_LOADER["DEFAULT"].update(
-        {
-            "LOADER_CLASS": "webpack_loader.loaders.FakeWebpackLoader",
-            "CACHE": False,
-        }
-    )
+    if not E2E_TESTING:
+        WEBPACK_LOADER["DEFAULT"].update(
+            {
+                "LOADER_CLASS": "webpack_loader.loaders.FakeWebpackLoader",
+                "CACHE": False,
+            }
+        )
 
 # DEBUG
 # ------------------------------------------------------------------------------
