@@ -30,6 +30,9 @@ jobs:
       - name: Run Django system checks
         env:
           DJANGO_SECRET_KEY: 'ci-insecure-key'
+          # mail.E001 requires a production-ready backend in MAILERS; CI has no real SMTP
+          # server to talk to, so simulate one here purely to satisfy the deploy check.
+          DJANGO_EMAIL_BACKEND: 'django.core.mail.backends.smtp.EmailBackend'
         run: uv run python manage.py check --deploy
 
       - name: Run djlint
