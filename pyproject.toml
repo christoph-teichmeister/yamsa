@@ -37,11 +37,13 @@ dev = [
     "django-upgrade",
     "djlint",
     "freezegun",
+    "playwright",
     "ruff",
     "factory-boy",
     "pytest-django",
     "pytest-env",
     "pytest-factoryboy",
+    "pytest-playwright",
 ]
 
 [build-system]
@@ -104,6 +106,9 @@ python_files = [
 ]
 testpaths = [
     "apps",
+]
+markers = [
+    "e2e: End-to-end tests via Playwright (run separately with `pytest e2e/`)",
 ]
 env = [
     "DJANGO_TESTING=1",

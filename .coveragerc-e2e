@@ -1,0 +1,39 @@
+# Coverage config for the Playwright e2e suite (e2e/), run as a separate `coverage run` invocation
+# from the unit test suite (see [tool.coverage.*] in pyproject.toml) so the two never share one
+# combined number — e2e only exercises the request/response path Playwright actually clicks
+# through, not the whole app, so it needs its own (much lower) fail_under.
+[run]
+branch = true
+source = apps
+omit =
+    */config/*
+    */migrations/*
+    */templates/*
+    */tests/*
+    */apps.py
+    */__init__.py
+    */scripts/*.py
+    */management/commands/*.py
+    *.html
+    *.txt
+    *.json
+    *.env
+    *.sh
+
+[report]
+precision = 2
+show_missing = true
+skip_empty = true
+exclude_also =
+    if self\.debug
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    @(abc\.)?abstractmethod
+ignore_errors = true
+# The initial profile-only suite already clears ~48% by walking through shared chrome (base.html,
+# navbar, context processors) on every page load — set comfortably under that so the suite has
+# room to fail on a real regression without every unrelated app addition dropping the number below
+# the gate.
+fail_under = 40
