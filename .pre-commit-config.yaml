@@ -1,7 +1,7 @@
 repos:
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     # https://github.com/astral-sh/ruff-pre-commit/releases
-    rev: v0.16.2
+    rev: v0.16.5
     hooks:
       # Run the formatter.
       - id: ruff-format
@@ -11,7 +11,7 @@ repos:
 
   - repo: https://github.com/djlint/djLint
     # https://github.com/djlint/djLint/releases
-    rev: v1.44.1
+    rev: v1.44.2
     hooks:
       - id: djlint-reformat-django
       - id: djlint-django
@@ -27,7 +27,7 @@ repos:
 
   - repo: https://github.com/adamchainz/django-upgrade
     # https://django-upgrade.readthedocs.io/en/latest/changelog.html
-    rev: 1.31.1
+    rev: 1.32.0
     hooks:
       - id: django-upgrade
         args: [ --target-version, "6.0" ]
