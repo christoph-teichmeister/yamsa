@@ -32,8 +32,4 @@ exclude_also =
     if __name__ == .__main__.:
     @(abc\.)?abstractmethod
 ignore_errors = true
-# The initial profile-only suite already clears ~48% by walking through shared chrome (base.html,
-# navbar, context processors) on every page load — set comfortably under that so the suite has
-# room to fail on a real regression without every unrelated app addition dropping the number below
-# the gate.
-fail_under = 40
+fail_under = 54

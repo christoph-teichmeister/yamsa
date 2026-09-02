@@ -150,8 +150,8 @@ jobs:
         id: coverage
         run: |-
           python3 scripts/ci/generate_coverage_comment.py \
-            --suite "Backend:artifacts/python-coverage.xml:85" \
-            --suite "E2E:artifacts/e2e-coverage.xml:40" \
+            --suite "Backend:artifacts/python-coverage.xml:90" \
+            --suite "E2E:artifacts/e2e-coverage.xml:54" \
             --output code-coverage-results.md
 
       - name: Add Coverage PR Comment
