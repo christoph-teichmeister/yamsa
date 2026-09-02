@@ -157,9 +157,6 @@ msgstr "Deine Kontenübersicht"
 msgid "Member profile"
 msgstr "Mitgliederprofil"
 
-msgid "Not set"
-msgstr "Nicht gesetzt"
-
 msgid "Superuser"
 msgstr "Superuser"
 
@@ -186,6 +183,9 @@ msgstr "PayPal.me-Benutzername"
 
 msgid "No PayPal link yet"
 msgstr "Noch kein PayPal-Link"
+
+msgid "Not set"
+msgstr "Nicht gesetzt"
 
 msgid "Push notifications"
 msgstr "Push-Benachrichtigungen"
@@ -852,6 +852,24 @@ msgstr "News Update"
 
 msgid "News"
 msgstr "Neuigkeiten"
+
+#, python-brace-format
+msgid "{editor} closed \"{room}\""
+msgstr "{editor} hat \"{room}\" geschlossen"
+
+msgid "Room re-opened"
+msgstr "Raum wieder geöffnet"
+
+#, python-brace-format
+msgid "{editor} opened \"{room}\""
+msgstr "{editor} hat \"{room}\" geöffnet"
+
+msgid "New Room"
+msgstr "Neuer Raum"
+
+#, python-brace-format
+msgid "You have been added to {room}!"
+msgstr "Du wurdest zu {room} hinzugefügt!"
 
 msgid "Open"
 msgstr "Offen"
@@ -1806,6 +1824,39 @@ msgid ""
 msgstr ""
 "{creator} hat eingetragen, dass {payer} {amount}{currency} gezahlt hat (\"{description}\")\n"
 "Schau vorbei!"
+
+#, python-brace-format
+msgid ""
+"{editor} just updated a transaction (\"{description}\")\n"
+"Have a look!"
+msgstr ""
+"{editor} hat eine Transaktion aktualisiert (\"{description}\")\n"
+"Schau vorbei!"
+
+msgid "Transaction updated"
+msgstr "Transaktion aktualisiert"
+
+#, python-brace-format
+msgid ""
+"{deleter} just deleted a transaction (\"{description}\")\n"
+"Have a look!"
+msgstr ""
+"{deleter} hat eine Transaktion gelöscht (\"{description}\")\n"
+"Schau vorbei!"
+
+#, python-brace-format
+msgid "{debitor} just settled their debt of {amount}{currency} to you"
+msgstr "{debitor} hat seine Schuld von {amount}{currency} bei dir beglichen"
+
+msgid "Debt settled"
+msgstr "Schuld beglichen"
+
+#, python-brace-format
+msgid "{remover} just removed {removed} from {room}"
+msgstr "{remover} hat {removed} aus {room} entfernt"
+
+msgid "User removed"
+msgstr "Nutzer:in entfernt"
 
 #, python-brace-format
 msgid "Webpush Information for {user}"
