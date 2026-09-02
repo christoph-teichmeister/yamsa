@@ -18,7 +18,7 @@ dependencies = [
     "django-webpack-loader==3.*",
     "django[argon2]==6.*",
     "emoji==2.*",
-    "gunicorn==25.*",
+    "gunicorn>=25,<27",
     "minify-html==0.18.*",
     "model-bakery==1.*",
     "pillow==12.*",
