@@ -44,5 +44,11 @@ node_modules_nobody/
 # Toolchain leftovers
 /.cache/
 
-# Per-worktree generated compose override (bootstrap-yamsa.sh)
+# Per-worktree generated compose override
 docker-compose.override.yml
+
+# Beyonder toolchain
+.playwright-cli/
+.claude/skill-usage.log
+.claude/beyonder/access.local.md
+.claude/beyonder/reviews/
