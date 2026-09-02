@@ -63,3 +63,15 @@ The Django stack is managed through `uv` with a `.venv` stored beside the projec
 - If a dependency mismatch is reported (`uv sync` urges `uv.lock` changes), rerun `uv lock`, verify
   `uv sync --no-install-project --locked` succeeds, and commit the updated `uv.lock`.
 - Run `uv lock --check` to verify that the lockfile is up to date and `uv lock --upgrade` to upgrade it.
+
+### Render runtime version pins
+
+`.python-version` and `.node-version` at the repo root pin the Python/Node versions for Render's
+native (non-Docker) runtime. Without them Render silently falls back to its account/service
+default, which drifts over time independently of this repo (e.g. Render bumped its default Python
+from 3.13 to 3.14 and its default Node from 22 to 24 during 2026) and can break a deploy with no
+local warning. Keep these files in sync with `pyproject.toml`'s Python constraint and
+`package.json`'s `engines.node` range. Prefer these files over setting `PYTHON_VERSION`/
+`NODE_VERSION` by hand in Render's dashboard — a dashboard override takes precedence over the repo
+file and silently pins an exact patch version that no longer moves as `uv.lock`/CI pick up new
+Python patch releases, so drop the dashboard variable once the repo file covers it.
