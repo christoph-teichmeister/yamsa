@@ -98,9 +98,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = (f"{APPS_DIR}/locale",)
 # https://docs.djangoproject.com/en/dev/topics/i18n/formatting/#creating-custom-format-files
-# FORMAT_MODULE_PATH = [
-#     "apps.core.formats",
-# ]
+FORMAT_MODULE_PATH = [
+    "apps.core.formats",
+]
 
 # DATABASES
 # ------------------------------------------------------------------------------

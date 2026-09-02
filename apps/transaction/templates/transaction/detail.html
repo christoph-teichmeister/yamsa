@@ -58,10 +58,10 @@
               {% autoescape off %}
                 {% parse_user_text parent_transaction.paid_by.name True %}
               {% endautoescape %}
-              {% trans "on" %} {{ parent_transaction.paid_at|date:'M d, Y' }}
+              {% trans "on" %} {{ parent_transaction.paid_at|date }}
             </p>
             <p class="transaction-meta mb-0">
-              {% blocktrans with recorded_time=parent_transaction.paid_at|date:'G:i' %}Recorded at {{ recorded_time }}{% endblocktrans %}
+              {% blocktrans with recorded_time=parent_transaction.paid_at|time %}Recorded at {{ recorded_time }}{% endblocktrans %}
             </p>
           </div>
           <div class="text-md-end">

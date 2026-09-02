@@ -32,9 +32,9 @@
                       <div>
                         <p class="fw-semibold mb-0">{{ passkey.name }}</p>
                         <small class="text-muted">
-                          {% trans "Added:" %} {{ passkey.added_on|date:"d.m.Y" }}
+                          {% trans "Added:" %} {{ passkey.added_on|date }}
                           {% if passkey.last_used %}
-                            · {% trans "Last used:" %} {{ passkey.last_used|date:"d.m.Y" }}
+                            · {% trans "Last used:" %} {{ passkey.last_used|date }}
                           {% endif %}
                         </small>
                       </div>
