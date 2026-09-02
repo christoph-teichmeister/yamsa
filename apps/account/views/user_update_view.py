@@ -14,6 +14,13 @@ class UserUpdateView(mixins.LoginRequiredMixin, generic.UpdateView):
     model = User
     form_class = EditUserForm
 
+    def dispatch(self, request, *args, **kwargs):
+        # A user may only ever edit their own account — the edit button in the UI is hidden for
+        # every other profile, but the URL itself had no server-side check to back that up.
+        if request.user.id != kwargs["pk"]:
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
     def get_success_url(self):
         return reverse(viewname="account:detail", kwargs={"pk": self.object.id})
 

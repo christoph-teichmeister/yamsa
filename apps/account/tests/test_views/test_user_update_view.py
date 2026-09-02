@@ -4,10 +4,33 @@ import pytest
 from django.core.files.base import ContentFile
 from django.urls import reverse
 
+from apps.account.tests.factories import UserFactory
 from apps.account.tests.test_utils import build_image_bytes
 from apps.account.views import UserDetailView, UserUpdateView
 
 pytestmark = pytest.mark.django_db
+
+
+def test_get_foreign_account_forbidden(authenticated_client, user):
+    other_user = UserFactory()
+
+    response = authenticated_client.get(reverse("account:update", kwargs={"pk": other_user.id}))
+
+    assert response.status_code == http.HTTPStatus.FORBIDDEN
+
+
+def test_post_foreign_account_forbidden(authenticated_client, user):
+    other_user = UserFactory()
+    original_name = other_user.name
+
+    response = authenticated_client.post(
+        reverse("account:update", kwargs={"pk": other_user.id}),
+        data={"name": "hijacked", "email": other_user.email},
+    )
+
+    assert response.status_code == http.HTTPStatus.FORBIDDEN
+    other_user.refresh_from_db()
+    assert other_user.name == original_name
 
 
 def test_get_regular(authenticated_client, user):
