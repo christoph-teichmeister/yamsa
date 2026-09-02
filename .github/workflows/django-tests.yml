@@ -29,6 +29,14 @@ jobs:
       - name: Sync dependencies
         run: uv sync --all-extras --no-install-project
 
+      - name: Install gettext
+        run: sudo apt-get install -y gettext  # Install gettext tools
+
+      - name: Run compilemessages
+        run: uv run python manage.py compilemessages
+        env:
+          DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
+
       - name: Run Tests
         run: uv run coverage run -m pytest
         env:

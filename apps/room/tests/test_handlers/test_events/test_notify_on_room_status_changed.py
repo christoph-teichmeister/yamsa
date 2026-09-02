@@ -3,6 +3,7 @@ from typing import Any
 import pytest
 from django.urls import reverse
 
+from apps.account.tests.factories import UserFactory
 from apps.room.handlers.events.notify_on_room_status_changed import send_notification_on_room_status_changed
 from apps.room.messages.events.room_status_changed import RoomStatusChanged
 from apps.room.models import Room
@@ -11,10 +12,10 @@ from apps.room.models import Room
 def _build_notification_stub(record: list[tuple[Any, Any]]):
     class DummyNotification:
         class Payload:
-            def __init__(self, head: str, body: str) -> None:
+            def __init__(self, head: str, body: str, click_url: str = "") -> None:
                 self.head = head
                 self.body = body
-                self.click_url = ""
+                self.click_url = click_url
 
         def __init__(self, payload) -> None:
             self.payload = payload
@@ -70,3 +71,25 @@ def test_notification_sent_when_room_reopens(room: Room, user, guest_user, monke
     expected_url = reverse("room:detail", kwargs={"room_slug": room.slug})
     assert notification.payload.click_url == expected_url
     assert notification.payload.body == f'{user.name} opened "{room.name}"'
+
+
+@pytest.mark.django_db
+def test_notification_localizes_body_per_recipient_language(room: Room, user, guest_user, monkeypatch):
+    another_user = UserFactory(language="de")
+    room.users.add(another_user)
+
+    notifications = []
+    monkeypatch.setattr(
+        "apps.room.handlers.events.notify_on_room_status_changed.Notification",
+        _build_notification_stub(notifications),
+    )
+
+    room.lastmodified_by = user
+    room.status = Room.StatusChoices.CLOSED
+    room.save()
+
+    send_notification_on_room_status_changed(RoomStatusChanged.Context(room=room))
+
+    body_by_recipient = {recipient: notification.payload.body for notification, recipient in notifications}
+    assert body_by_recipient[guest_user] == f'{user.name} closed "{room.name}"'
+    assert body_by_recipient[another_user] == f'{user.name} hat "{room.name}" geschlossen'

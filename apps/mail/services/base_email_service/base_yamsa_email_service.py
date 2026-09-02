@@ -1,10 +1,10 @@
-from django.conf import settings
 from django.utils import translation
 from django.utils.encoding import force_str
 from django.utils.functional import Promise
 from django_pony_express.services.base import BaseEmailService
 
 from apps.account.models import User
+from apps.account.utils.language import get_language_code_for_user
 from apps.mail.services.base_email_service.email_base_text_context import EmailBaseTextContext
 from apps.mail.services.base_email_service.email_extra_context import EmailExtraContext
 from apps.mail.services.base_email_service.email_user_text_context import EmailUserTextContext
@@ -63,13 +63,7 @@ class BaseYamsaEmailService(BaseEmailService):
         return context_payload
 
     def get_language_code(self) -> str:
-        language_value = None
-        if self.recipient is not None:
-            language_value = self.recipient.language
-        valid_languages = dict(settings.LANGUAGES)
-        if language_value in valid_languages:
-            return language_value
-        return settings.LANGUAGE_CODE
+        return get_language_code_for_user(self.recipient)
 
     def get_greeting(self):
         context = self.email_user_text_context
