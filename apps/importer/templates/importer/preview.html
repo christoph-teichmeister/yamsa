@@ -1,0 +1,241 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block content %}
+  <div class="container-fluid py-4 px-2 px-md-4 px-lg-5">
+    <form action="{% url 'importer:preview' %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="token" value="{{ import_token }}">
+      <div class="row g-4">
+        <div class="col-12 col-lg-7">
+          <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body">
+              <h1 class="h3 fw-semibold mb-1">{% trans "Check the import" %}</h1>
+              <p class="text-muted small mb-0">
+                {% blocktrans with source=source_label %}Read from your {{ source }} export.{% endblocktrans %}
+              </p>
+            </div>
+          </div>
+          <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body">
+              <h2 class="h6 fw-semibold mb-1">{% trans "Who is who?" %}</h2>
+              <p class="text-muted small">
+                {% trans "Mark exactly one row as yourself. People you already share a room with are preselected so nobody is created twice." %}
+              </p>
+              {% for person, choice_field, name_field in form.person_rows %}
+                <div class="row g-2 align-items-center mb-2">
+                  <div class="col-12 col-md-4">
+                    <span class="fw-semibold">{{ person }}</span>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <select name="{{ choice_field.html_name }}"
+                            id="{{ choice_field.id_for_label }}"
+                            aria-label="{% blocktrans with name=person %}Assignment for {{ name }}{% endblocktrans %}"
+                            class="form-select form-select-sm">
+                      {% for value, label in choice_field.field.choices %}
+                        <option value="{{ value }}"
+                                {% if choice_field.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
+                          {{ label }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <input type="text"
+                           name="{{ name_field.html_name }}"
+                           id="{{ name_field.id_for_label }}"
+                           aria-label="{% blocktrans with name=person %}Guest name for {{ name }}{% endblocktrans %}"
+                           class="form-control form-control-sm"
+                           value="{{ name_field.value|default_if_none:'' }}"
+                           placeholder="{% trans 'Guest name' %}">
+                    <div class="form-text">{% trans "Only used for a new guest." %}</div>
+                  </div>
+                  {% for error_message in choice_field.errors %}
+                    <div class="col-12">
+                      <small class="text-danger">{{ error_message }}</small>
+                    </div>
+                  {% endfor %}
+                  {% for error_message in name_field.errors %}
+                    <div class="col-12">
+                      <small class="text-danger">{{ error_message }}</small>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body">
+              <h2 class="h6 fw-semibold mb-1">{% trans "Categories" %}</h2>
+              <p class="text-muted small">
+                {% trans "Each category from the file is mapped onto one of yours — or created as a new category in this room." %}
+              </p>
+              {% for category, choice_field, name_field, emoji_field in form.category_rows %}
+                <div class="row g-2 align-items-center mb-2">
+                  <div class="col-12 col-md-4">
+                    <span class="fw-semibold">{{ category.label }}</span>
+                    <span class="text-muted small">({{ category.transaction_count }})</span>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <select name="{{ choice_field.html_name }}"
+                            id="{{ choice_field.id_for_label }}"
+                            aria-label="{% blocktrans with name=category.label %}Target category for {{ name }}{% endblocktrans %}"
+                            class="form-select form-select-sm">
+                      {% for value, label in choice_field.field.choices %}
+                        <option value="{{ value }}"
+                                {% if choice_field.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
+                          {{ label }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-8 col-md-3">
+                    <input type="text"
+                           name="{{ name_field.html_name }}"
+                           id="{{ name_field.id_for_label }}"
+                           aria-label="{% blocktrans with name=category.label %}New category name for {{ name }}{% endblocktrans %}"
+                           class="form-control form-control-sm"
+                           value="{{ name_field.value|default_if_none:'' }}"
+                           placeholder="{% trans 'Category name' %}">
+                  </div>
+                  <div class="col-4 col-md-1">
+                    <input type="text"
+                           name="{{ emoji_field.html_name }}"
+                           id="{{ emoji_field.id_for_label }}"
+                           aria-label="{% blocktrans with name=category.label %}Emoji for {{ name }}{% endblocktrans %}"
+                           class="form-control form-control-sm text-center"
+                           value="{{ emoji_field.value|default_if_none:'' }}"
+                           placeholder="🏷️"
+                           maxlength="10">
+                  </div>
+                  {% for error_message in choice_field.errors %}
+                    <div class="col-12">
+                      <small class="text-danger">{{ error_message }}</small>
+                    </div>
+                  {% endfor %}
+                  {% for error_message in name_field.errors %}
+                    <div class="col-12">
+                      <small class="text-danger">{{ error_message }}</small>
+                    </div>
+                  {% endfor %}
+                  {% for error_message in emoji_field.errors %}
+                    <div class="col-12">
+                      <small class="text-danger">{{ error_message }}</small>
+                    </div>
+                  {% endfor %}
+                  <div class="col-12">
+                    <div class="form-text">{% trans "Name and emoji are only used when creating a new category." %}</div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-5">
+          <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body">
+              <h2 class="h6 fw-semibold mb-3">{% trans "New room" %}</h2>
+              <div class="mb-3">
+                <label class="form-label" for="{{ form.room_name.id_for_label }}">{{ form.room_name.label }}</label>
+                <input type="text"
+                       name="{{ form.room_name.html_name }}"
+                       class="form-control{% if form.room_name.errors %} is-invalid{% endif %}"
+                       id="{{ form.room_name.id_for_label }}"
+                       value="{{ form.room_name.value|default_if_none:'' }}"
+                       maxlength="100"
+                       required>
+                {% for error_message in form.room_name.errors %}<div class="invalid-feedback d-block">{{ error_message }}</div>{% endfor %}
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="{{ form.room_description.id_for_label }}">{{ form.room_description.label }}</label>
+                <input type="text"
+                       name="{{ form.room_description.html_name }}"
+                       class="form-control{% if form.room_description.errors %} is-invalid{% endif %}"
+                       id="{{ form.room_description.id_for_label }}"
+                       value="{{ form.room_description.value|default_if_none:'' }}"
+                       maxlength="50"
+                       required>
+                {% for error_message in form.room_description.errors %}
+                  <div class="invalid-feedback d-block">{{ error_message }}</div>
+                {% endfor %}
+              </div>
+              <div class="mb-0">
+                <label class="form-label" for="{{ form.preferred_currency.id_for_label }}">{{ form.preferred_currency.label }}</label>
+                <select name="{{ form.preferred_currency.html_name }}"
+                        class="form-select"
+                        id="{{ form.preferred_currency.id_for_label }}"
+                        required>
+                  {% for value, label in form.fields.preferred_currency.choices %}
+                    {% if value %}
+                      <option value="{{ value }}"
+                              {% if form.preferred_currency.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
+                        {{ label }}
+                      </option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body">
+              <h2 class="h6 fw-semibold mb-3">{% trans "What will be imported" %}</h2>
+              <ul class="list-unstyled small mb-0">
+                <li class="d-flex justify-content-between">
+                  <span class="text-muted">{% trans "Transactions" %}</span>
+                  <span class="fw-semibold">{{ parsed.transactions|length }}</span>
+                </li>
+                <li class="d-flex justify-content-between">
+                  <span class="text-muted">{% trans "Settlements" %}</span>
+                  <span class="fw-semibold">{{ parsed.settlements|length }}</span>
+                </li>
+                <li class="d-flex justify-content-between">
+                  <span class="text-muted">{% trans "Skipped rows" %}</span>
+                  <span class="fw-semibold">{{ parsed.skipped_rows|length }}</span>
+                </li>
+                {% if date_range %}
+                  <li class="d-flex justify-content-between">
+                    <span class="text-muted">{% trans "Period" %}</span>
+                    <span class="fw-semibold">{{ date_range.0 }} – {{ date_range.1 }}</span>
+                  </li>
+                {% endif %}
+                {% for code, total in totals_by_currency.items %}
+                  <li class="d-flex justify-content-between">
+                    <span class="text-muted">{% trans "Total" %} {{ code }}</span>
+                    <span class="fw-semibold">{{ total }}</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          {% if parsed.skipped_rows %}
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body">
+                <h2 class="h6 fw-semibold mb-3">{% trans "Skipped rows" %}</h2>
+                <ul class="list-unstyled small mb-0">
+                  {% for row in parsed.skipped_rows %}
+                    <li class="mb-2">
+                      <span class="badge text-bg-light">{% trans "Row" %} {{ row.row_number }}</span>
+                      <span class="text-muted">{{ row.reason }}</span>
+                      <div class="text-muted opacity-75">{{ row.excerpt }}</div>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          {% endif %}
+          {% if unknown_currency_codes %}
+            <div class="alert alert-warning rounded-4 border-0 small" role="alert">
+              {% blocktrans with codes=unknown_currency_codes|join:", " %}These currencies are unknown here and will be booked in the room currency: {{ codes }}. Their amounts land in the same balance, so the resulting debts will be wrong.{% endblocktrans %}
+            </div>
+          {% endif %}
+          <button type="submit"
+                  data-disable-on-submit="true"
+                  class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-check2-circle" aria-hidden="true"></i>
+            {% trans "Import now" %}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endblock content %}

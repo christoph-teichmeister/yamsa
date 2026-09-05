@@ -1,6 +1,7 @@
 from django.views import generic
 
 from apps.currency.models import Currency
+from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY
 from apps.transaction.models import Category
 from apps.transaction.views.transaction_list_view.mixin import TransactionFeedMixin
 
@@ -16,8 +17,17 @@ class TransactionListView(TransactionFeedMixin, generic.TemplateView):
         context["transactions_total_count"] = total_count
         context["latest_transaction"] = base_queryset.first()
         context["transaction_search_query"] = self.get_search_query()
+        context["show_import_share_hint"] = self._pop_import_share_hint()
         context.update(self._build_filter_context())
         return context
+
+    def _pop_import_share_hint(self) -> bool:
+        """Show the "share instead of re-importing" hint once, right after an import."""
+        pending_slug = self.request.session.get(IMPORT_SHARE_HINT_SESSION_KEY)
+        if pending_slug and pending_slug == str(self.request.room.slug):
+            del self.request.session[IMPORT_SHARE_HINT_SESSION_KEY]
+            return True
+        return False
 
     def _build_filter_context(self) -> dict[str, object]:
         category_slug = self.get_category_slug()

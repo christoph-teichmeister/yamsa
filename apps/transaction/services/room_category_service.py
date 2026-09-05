@@ -92,7 +92,9 @@ class RoomCategoryService:
                 slug=self._build_unique_slug(name),
                 name=name,
                 emoji=emoji,
-                color=color,
+                # Category.color is NOT NULL with an empty default, so the optional argument
+                # must not reach the column as None.
+                color=color or "",
                 order_index=desired_index,
             )
             room_category = RoomCategory.objects.create(

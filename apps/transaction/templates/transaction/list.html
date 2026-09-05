@@ -1,6 +1,25 @@
 {% extends "room/dashboard.html" %}
 {% load static room_tags i18n %}
 {% block tab_content %}
+  {% if show_import_share_hint %}
+    <div class="alert alert-info alert-dismissible fade show rounded-4 border-0 shadow-sm d-flex align-items-start gap-2"
+         role="alert">
+      <i class="bi bi-people" aria-hidden="true"></i>
+      <div class="flex-grow-1 small">
+        {% trans "Import done. Share this room with the others instead of letting them import their own export — otherwise the same history ends up in two rooms." %}
+        {% if current_room.is_open %}
+          <button type="button"
+                  class="btn btn-sm btn-outline-primary mt-2 d-block"
+                  data-copy-share-url="true"
+                  data-share-url="{{ current_room.share_url }}">{% trans "Copy share link" %}</button>
+        {% endif %}
+      </div>
+      <button type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="{% trans 'Close' %}"></button>
+    </div>
+  {% endif %}
   <style nonce="{{ csp_nonce }}">
         .transaction-label {
             display: inline-block;

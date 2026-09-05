@@ -27,6 +27,7 @@ urlpatterns = [
     path("account/passkeys/", include("passkeys.urls")),
     path("account/", include("apps.account.urls")),
     path("debt/", include("apps.debt.urls")),
+    path("import/", include("apps.importer.urls")),
     path("news/", include("apps.news.urls")),
     path("room/", include("apps.room.urls")),
     path("transaction/", include("apps.transaction.urls")),
