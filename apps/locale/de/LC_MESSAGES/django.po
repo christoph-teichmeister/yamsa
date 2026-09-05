@@ -523,15 +523,6 @@ msgstr "Noch keine Räume"
 msgid "Create a room to start splitting expenses with your friends."
 msgstr "Erstelle einen Raum, um Ausgaben mit deinen Freunden zu teilen."
 
-msgid "New room"
-msgstr "Neuer Raum"
-
-msgid "Start a new group with friends"
-msgstr "Starte eine neue Gruppe mit Freunden"
-
-msgid "Create"
-msgstr "Erstellen"
-
 msgid "yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications."
 msgstr "yamsa hilft Wohngemeinschaften dabei, Ausgaben zu verfolgen, Schulden auszugleichen und mit kollaborativen Räumen, Dashboards und Benachrichtigungen organisiert zu bleiben."
 
@@ -843,6 +834,9 @@ msgstr "Emoji für %(name)s"
 msgid "Name and emoji are only used when creating a new category."
 msgstr "Name und Emoji werden nur beim Anlegen einer neuen Kategorie verwendet."
 
+msgid "New room"
+msgstr "Neuer Raum"
+
 msgid "What will be imported"
 msgstr "Was importiert wird"
 
@@ -1146,6 +1140,9 @@ msgstr "Zurück zum Dashboard"
 msgid "Create Room"
 msgstr "Raum erstellen"
 
+msgid "Create"
+msgstr "Erstellen"
+
 msgid "Suggested guests"
 msgstr "Vorgeschlagene Gäste"
 
@@ -1324,6 +1321,13 @@ msgstr "Das bin ich!"
 msgid "No guests have been invited yet. Create an account to add yourself to the room."
 msgstr "Es wurden noch keine Gäste eingeladen. Erstelle ein Konto, um dich selbst zum Raum hinzuzufügen."
 
+msgid "Start a new group with friends"
+msgstr "Starte eine neue Gruppe mit Freunden"
+
+#, python-format
+msgid "Open, but balanced (%(currency)s)"
+msgstr "Offen, aber ausgeglichen (%(currency)s)"
+
 #, python-format
 msgid "You owe %(amount)s%(currency)s"
 msgstr "Du schuldest %(amount)s%(currency)s"
@@ -1334,6 +1338,12 @@ msgstr "Du bekommst %(amount)s%(currency)s zurück"
 
 msgid "All settled"
 msgstr "Alles beglichen"
+
+#, python-format
+msgid "and %(counter)s more room"
+msgid_plural "and %(counter)s more rooms"
+msgstr[0] "und %(counter)s weiterer Raum"
+msgstr[1] "und %(counter)s weitere Räume"
 
 msgid "This room is closed. No changes can be made."
 msgstr "Dieser Raum ist geschlossen. Es können keine Änderungen vorgenommen werden."
