@@ -1,0 +1,10 @@
+{% if entries %}
+  <section class="room-overview-section">
+    <p class="room-group-label text-uppercase small text-muted mb-2">{{ title }}</p>
+    <div class="row g-3">
+      {% for entry in entries %}
+        <div class="col-12 col-lg-6">{% include "room/partials/_room_overview_card.html" with entry=entry %}</div>
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}

@@ -2,36 +2,43 @@
 {% load static i18n %}
 {% block content %}
   {% if request.user.is_authenticated %}
-    <link rel="stylesheet" href="{% static 'components/core/welcome.css' %}">
-    <div class="news-wrap">
-      <div class="timeline-hero">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
-          <div>
-            <p class="text-uppercase small text-muted mb-1">{% trans "Room activity timeline" %}</p>
-            <h2 class="mb-2">{% trans "See transactions and changes at a glance" %}</h2>
-            <p class="mb-0">
-              {% trans "Every room update - expenses logged, settlements, highlights - lands here so you never miss a beat." %}
-            </p>
-          </div>
-          <div class="text-md-end">
-            <p class="mb-1 fw-semibold">{% trans "Auto-updated feed" %}</p>
-            <p class="mb-0 small">{% trans "Events appear in chronological order with the newest at the top." %}</p>
-          </div>
-        </div>
+    <link rel="stylesheet" href="{% static 'components/room/overview.css' %}">
+    <div class="room-overview-wrap d-flex flex-column gap-4">
+      <div class="room-overview-hero">
+        <p class="text-uppercase small text-muted mb-1">{% trans "Your rooms" %}</p>
+        <h2 class="mb-2">{% trans "Where you stand right now" %}</h2>
+        <p class="mb-0">{% trans "Every room you are part of, with what you owe and what you get back." %}</p>
       </div>
-      {% if highlighted_news or news %}
-        <div class="timeline-stream" id="news-feed">
-          {% if highlighted_news %}
-            {% include "shared_partials/news_card.html" with news=highlighted_news %}
-          {% endif %}
-          {% include "shared_partials/news_batch.html" with news=news news_next_cursor=news_next_cursor news_initial_render=news_initial_render %}
-        </div>
+      {% if has_room_entries %}
+        {% include "room/partials/_room_overview_section.html" with entries=open_room_entries title=_("Open") %}
+        {% include "room/partials/_room_overview_section.html" with entries=closed_room_entries title=_("Closed") %}
+        {% include "room/partials/_room_overview_section.html" with entries=other_room_entries title=_("Other") %}
       {% else %}
-        <div class="timeline-empty">
-          <p class="fw-semibold">{% trans "No updates yet" %}</p>
-          <p class="text-muted mb-0">{% trans "Once roommates start logging expenses or changes, they will appear here." %}</p>
+        <div class="room-overview-empty">
+          <p class="fw-semibold">{% trans "No rooms yet" %}</p>
+          <p class="text-muted mb-0">{% trans "Create a room to start splitting expenses with your friends." %}</p>
         </div>
       {% endif %}
+      <div class="card room-overview-card room-overview-create shadow-sm border-0 rounded-4"
+           role="button"
+           tabindex="0"
+           data-keyboard-click
+           hx-get="{% url 'room:create' %}"
+           hx-target="#body"
+           hx-indicator="#body-loading-spinner"
+           hx-swap="morph:innerHTML"
+           hx-push-url="true">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="room-circle">
+            <i class="bi bi-plus-circle"></i>
+          </div>
+          <div class="flex-grow-1 text-start">
+            <div class="room-name fw-semibold mb-0">{% trans "New room" %}</div>
+            <small class="room-description text-muted">{% trans "Start a new group with friends" %}</small>
+          </div>
+          <span class="badge room-status-badge bg-primary text-white">{% trans "Create" %}</span>
+        </div>
+      </div>
     </div>
   {% endif %}
 {% endblock content %}
