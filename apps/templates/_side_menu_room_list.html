@@ -47,6 +47,24 @@
     </div>
     <span class="badge room-status-badge bg-primary text-white">{% trans "Create" %}</span>
   </div>
+  <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm room-entry-callout{% if request.path == "/import/upload/" %} active{% endif %}"
+       data-bs-dismiss="offcanvas"
+       data-bs-target="#offcanvasNavbar"
+       hx-trigger="click delay:300ms"
+       hx-get="{% url 'importer:upload' %}"
+       hx-indicator="#body-loading-spinner"
+       hx-target="#body"
+       hx-swap="innerHTML"
+       hx-push-url="true">
+    <div class="room-circle{% if request.path == "/import/upload/" %} selected{% endif %}">
+      <i class="bi bi-box-arrow-in-down"></i>
+    </div>
+    <div class="flex-grow-1 text-start">
+      <div class="room-name fw-semibold mb-0">{% trans "Import" %}</div>
+      <small class="room-description text-muted">{% trans "Bring your data from another app" %}</small>
+    </div>
+    <span class="badge room-status-badge bg-light text-dark">{% trans "New" %}</span>
+  </div>
 </section>
 {% if current_user.closed_room_qs_for_list %}
   {% include "side_menu_components/room_list_title.html" with title=_("Closed") %}

@@ -146,6 +146,7 @@ LOCAL_APPS = (
     "apps.currency",
     "apps.core",
     "apps.debt",
+    "apps.importer",
     "apps.mail",
     "apps.news",
     "apps.room",

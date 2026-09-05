@@ -12,6 +12,7 @@ from apps.transaction.messages.events.transaction import (
     ParentTransactionCreated,
     ParentTransactionDeleted,
     ParentTransactionUpdated,
+    TransactionsImported,
 )
 from apps.transaction.models import ChildTransaction
 from apps.webpush.utils import Notification
@@ -183,3 +184,30 @@ def send_notification_on_user_removed_from_room(context: UserRemovedFromRoom.Con
 
     for user in context.room.users.exclude(id=context.user_requesting_removal.id):
         build_notification_for_user(user).send_to_user(user)
+
+
+@message_registry.register_event(event=TransactionsImported)
+def send_notification_on_transactions_imported(context: TransactionsImported.Context):
+    """One summary notification for the whole import, never one per imported row."""
+    room = context.room
+    importer = context.triggered_by
+    total = context.imported_count + context.settled_count
+
+    for user in room.users.exclude(pk=importer.pk).exclude(is_guest=True):
+        with translation.override(get_language_code_for_user(user)):
+            head = _("Transactions imported")
+            body = _('{importer} imported {count} entries from {source} into "{room}"\nHave a look!').format(
+                importer=importer.name,
+                count=total,
+                source=context.source_label,
+                room=room.name,
+            )
+
+        notification = Notification(
+            payload=Notification.Payload(
+                head=head,
+                body=body,
+                click_url=reverse(viewname="transaction:list", kwargs={"room_slug": room.slug}),
+            ),
+        )
+        notification.send_to_user(user)

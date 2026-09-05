@@ -1,0 +1,67 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block content %}
+  <div class="container-fluid py-4 px-2 px-md-4 px-lg-5">
+    <div class="row g-4">
+      <div class="col-12 col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body">
+            <h1 class="h3 fw-semibold mb-1">{% trans "Import transactions" %}</h1>
+            <p class="text-muted small mb-4">
+              {% trans "Upload your export from another app. The import always creates a new room." %}
+            </p>
+            <form action="{% url 'importer:upload' %}"
+                  method="post"
+                  enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label class="form-label" for="{{ form.source.id_for_label }}">{{ form.source.label }}</label>
+                <select name="{{ form.source.html_name }}"
+                        class="form-select"
+                        id="{{ form.source.id_for_label }}"
+                        required>
+                  {% for value, label in form.fields.source.choices %}
+                    <option value="{{ value }}"
+                            {% if form.source.value == value %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+                {% for error_message in form.source.errors %}<small class="text-danger d-block mt-1">{{ error_message }}</small>{% endfor %}
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+                <input type="file"
+                       name="{{ form.file.html_name }}"
+                       class="form-control{% if form.file.errors %} is-invalid{% endif %}"
+                       id="{{ form.file.id_for_label }}"
+                       accept=".csv"
+                       required>
+                <div class="form-text">{% trans "CSV file, max. 2 MB." %}</div>
+                {% for error_message in form.file.errors %}<div class="invalid-feedback d-block">{{ error_message }}</div>{% endfor %}
+              </div>
+              {% for error_message in form.non_field_errors %}
+                <div class="alert alert-danger py-2">{{ error_message }}</div>
+              {% endfor %}
+              <button type="submit"
+                      class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-upload" aria-hidden="true"></i>
+                {% trans "Read file" %}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body">
+            <h2 class="h6 fw-semibold">{% trans "How it works" %}</h2>
+            <ol class="text-muted small mb-0 ps-3">
+              <li>{% trans "Upload your export file." %}</li>
+              <li>{% trans "Say which of the people in the file is you, and check the categories." %}</li>
+              <li>{% trans "Confirm — a new room is created with all transactions." %}</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
