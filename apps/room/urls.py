@@ -1,4 +1,5 @@
 from django.urls import include, path
+from django.views.generic import RedirectView
 
 from apps.room import views
 from apps.room.views.user_connection_to_room_create_view import UserConnectionToRoomCreateView
@@ -10,7 +11,8 @@ def build_room_specific_paths(list_of_url_paths: list):
 
 app_name = "room"
 urlpatterns = [
-    path("list/", views.RoomListView.as_view(), name="list"),
+    # Compatibility shim: post-register mails already in inboxes link here.
+    path("list/", RedirectView.as_view(pattern_name="core:welcome"), name="list"),
     path("create/", views.RoomCreateView.as_view(), name="create"),
     path("share/<str:share_hash>/", views.RoomShareView.as_view(), name="share"),
     path(

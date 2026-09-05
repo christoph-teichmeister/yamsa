@@ -16,8 +16,8 @@ class TestRoomNavigation:
         login_page.navigate()
         login_page.login(profile_user.email, DEFAULT_PASSWORD)
 
-        room_list = BasePage(page, base_url, reverse("room:list"))
-        room_list.navigate()
+        dashboard = BasePage(page, base_url, reverse("core:welcome"))
+        dashboard.navigate()
 
         card = page.locator("[data-keyboard-click]").first
         card.focus()
