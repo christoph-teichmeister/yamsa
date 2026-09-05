@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.utils.formats import number_format
 
 from apps.currency.tests.factories import CurrencyFactory
+from apps.transaction.constants import CHART_SMALL_SLICE_BUCKET_COLOR
 from apps.transaction.models import Category, ChildTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 
@@ -321,3 +322,59 @@ class TestTransactionCategoryBreakdownView:
 
         assert preferred_slugs == [big_category.slug, None]
         assert other_slugs == [first_small_category.slug, second_small_category.slug]
+
+    def test_category_breakdown_never_buckets_a_category_that_is_tappable_on_its_own(
+        self, authenticated_client, room, user
+    ):
+        # The three slivers add up to 0.7%, so the bucket stays under the threshold. It must not
+        # grow by swallowing the 22% category next to it - that would hide real spend.
+        amounts_by_slug = {
+            "restaurants-and-bars": Decimal("1000.00"),
+            "transport": Decimal("300.00"),
+            "groceries": Decimal("3.00"),
+            "household": Decimal("3.00"),
+            "shopping": Decimal("3.00"),
+        }
+        for slug, amount in amounts_by_slug.items():
+            parent_transaction = ParentTransactionFactory(
+                room=room,
+                paid_by=user,
+                currency=room.preferred_currency,
+                category=Category.objects.get(slug=slug),
+                paid_at=timezone.now(),
+            )
+            _make_child(parent_transaction, user, amount)
+
+        response = authenticated_client.get(reverse("transaction:category-breakdown", kwargs={"room_slug": room.slug}))
+        chart_data = response.context_data["category_breakdown_by_currency"][0]["chart_data"]
+
+        assert [point["slug"] for point in chart_data] == ["restaurants-and-bars", "transport", None]
+        bucket_point = chart_data[-1]
+        assert bucket_point["value"] == 9.0
+        assert "3" in bucket_point["label"]
+        assert bucket_point["color"] == CHART_SMALL_SLICE_BUCKET_COLOR
+
+    def test_category_breakdown_never_collapses_every_category_into_the_bucket(self, authenticated_client, room, user):
+        # Six equal categories are each below the threshold; collapsing all of them would leave a
+        # donut of one full ring that shows nothing.
+        slugs = ("restaurants-and-bars", "transport", "groceries", "household", "shopping", "health")
+        for slug in slugs:
+            parent_transaction = ParentTransactionFactory(
+                room=room,
+                paid_by=user,
+                currency=room.preferred_currency,
+                category=Category.objects.get(slug=slug),
+                paid_at=timezone.now(),
+            )
+            _make_child(parent_transaction, user, Decimal("10.00"))
+
+        response = authenticated_client.get(reverse("transaction:category-breakdown", kwargs={"room_slug": room.slug}))
+        chart_data = response.context_data["category_breakdown_by_currency"][0]["chart_data"]
+
+        assert len(chart_data) == len(slugs)
+        assert all(point["slug"] is not None for point in chart_data)
+
+    def test_category_breakdown_bucket_color_is_not_a_seeded_category_color(self, authenticated_client, room, user):
+        seeded_colors = {(category.color or "").lower() for category in Category.objects.exclude(color="")}
+        # Two adjacent slices in the exact same grey are indistinguishable.
+        assert CHART_SMALL_SLICE_BUCKET_COLOR.lower() not in seeded_colors

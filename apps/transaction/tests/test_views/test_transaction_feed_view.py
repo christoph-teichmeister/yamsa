@@ -12,23 +12,24 @@ from apps.transaction.tests.conftest import create_parent_transaction_with_optim
 pytestmark = pytest.mark.django_db
 
 
-def test_transaction_feed_displays_no_matches_message(client, room, user, guest_user):
-    create_parent_transaction_with_optimisation(
-        room=room,
-        paid_by=user,
-        paid_for_tuple=(guest_user,),
-    )
-    client.force_login(user)
+class TestTransactionFeed:
+    def test_transaction_feed_displays_no_matches_message(self, client, room, user, guest_user):
+        create_parent_transaction_with_optimisation(
+            room=room,
+            paid_by=user,
+            paid_for_tuple=(guest_user,),
+        )
+        client.force_login(user)
 
-    response = client.get(
-        reverse("transaction:feed", kwargs={"room_slug": room.slug}),
-        data={"q": "missing"},
-        HTTP_HX_REQUEST="true",
-    )
+        response = client.get(
+            reverse("transaction:feed", kwargs={"room_slug": room.slug}),
+            data={"q": "missing"},
+            HTTP_HX_REQUEST="true",
+        )
 
-    assert response.status_code == http.HTTPStatus.OK
-    content = response.content.decode()
-    assert 'No transactions match "missing".' in content
+        assert response.status_code == http.HTTPStatus.OK
+        content = response.content.decode()
+        assert 'No transactions match "missing".' in content
 
 
 class TestTransactionFeedFiltering:
@@ -152,3 +153,16 @@ class TestTransactionFeedFiltering:
         assert "Market groceries" in content
         assert "Market ticket" not in content
         assert "Corner shop groceries" not in content
+
+    def test_feed_ignores_an_absurdly_long_filter_value(self, authenticated_client, room, user, guest_user):
+        create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+
+        response = authenticated_client.get(
+            reverse("transaction:feed", kwargs={"room_slug": room.slug}),
+            data={"category": "x" * 5000},
+            HTTP_HX_REQUEST="true",
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        # Truncated to the slug column's own limit before it can be echoed back into the UI.
+        assert "x" * 200 not in response.content.decode()

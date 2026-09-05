@@ -5,10 +5,10 @@ from urllib.parse import urlencode
 from django.db.models import DecimalField, Sum, Value
 from django.db.models.functions import Coalesce
 from django.urls import reverse
-from django.utils.formats import number_format
 from django.utils.translation import ngettext
 from django.views import generic
 
+from apps.core.utils import format_number_with_thousands
 from apps.transaction.constants import (
     CHART_SMALL_SLICE_BUCKET_COLOR,
     CHART_SMALL_SLICE_MINIMUM_BUCKET_SIZE,
@@ -97,6 +97,7 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
             {
                 "category_breakdown_by_currency": formatted_breakdowns,
                 "category_breakdown_period": "All recorded transactions",
+                "chart_small_slice_bucket_color": CHART_SMALL_SLICE_BUCKET_COLOR,
             }
         )
         return context
@@ -106,37 +107,57 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
         return f"{list_url}?{urlencode({'category': category_slug, 'currency': currency_code})}"
 
     def _format_amount(self, amount: Decimal, currency_sign: str) -> str:
-        return f"{number_format(amount, decimal_pos=2, use_l10n=True, force_grouping=True)}{currency_sign}"
+        return f"{format_number_with_thousands(amount)}{currency_sign}"
+
+    def _collect_small_categories(self, sorted_categories: list[dict], total_amount: Decimal) -> list[dict]:
+        """
+        Pick the categories too thin to tap. They are the tail of the descending list.
+
+        The bucket itself can still land under the threshold - four categories at 0.3% add up to
+        1.2% - and that is left alone on purpose: growing it further would mean swallowing a
+        category that is perfectly tappable on its own, hiding real spend behind "n more
+        categories". One target instead of four is the win; a thick target is not on offer.
+        """
+        if total_amount <= 0:
+            return []
+
+        small_categories = [
+            category
+            for category in sorted_categories
+            if category["total_amount"] / total_amount < CHART_SMALL_SLICE_SHARE_THRESHOLD
+        ]
+
+        # Never all of them: a donut of a single full ring shows nothing, so the largest stays out.
+        if len(small_categories) == len(sorted_categories):
+            small_categories = small_categories[1:]
+
+        # Bucketing a single sliver only relabels it, so it stays a slice of its own.
+        if len(small_categories) < CHART_SMALL_SLICE_MINIMUM_BUCKET_SIZE:
+            return []
+        return small_categories
 
     def _build_chart_points(self, sorted_categories: list[dict], currency_sign: str) -> list[dict]:
         """
         Build the donut slices, collapsing slivers too thin to tap into one bucket.
 
-        The legend keeps every category, so nothing becomes unreachable — only the chart trades
+        The legend keeps every category, so nothing becomes unreachable - only the chart trades
         exact slices for hit targets.
         """
         total_amount = sum(category["total_amount"] for category in sorted_categories)
-        small_categories = [
-            category
-            for category in sorted_categories
-            if total_amount > 0 and category["total_amount"] / total_amount < CHART_SMALL_SLICE_SHARE_THRESHOLD
-        ]
+        small_categories = self._collect_small_categories(sorted_categories, total_amount)
+        # The bucket is always a tail of the descending list, so what stays is its prefix.
+        kept_categories = sorted_categories[: len(sorted_categories) - len(small_categories)]
 
-        # Bucketing a single sliver only relabels it, so it stays a slice of its own.
-        if len(small_categories) < CHART_SMALL_SLICE_MINIMUM_BUCKET_SIZE:
-            small_categories = []
-
-        small_category_slugs = {category["slug"] for category in small_categories}
         chart_points = [
             {
+                # The chart marks the bucket by a null slug; every other point carries its own.
                 "slug": category["slug"],
                 "label": f"{category['emoji']} {category['name']}",
                 "value": float(category["total_amount"]),
                 "color": category["color"],
                 "amount_label": self._format_amount(category["total_amount"], currency_sign),
             }
-            for category in sorted_categories
-            if category["slug"] not in small_category_slugs
+            for category in kept_categories
         ]
 
         if small_categories:

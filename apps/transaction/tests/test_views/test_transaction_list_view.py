@@ -4,7 +4,9 @@ import pytest
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
+from apps.room.tests.factories import RoomFactory
 from apps.transaction.models import Category
+from apps.transaction.services.room_category_service import RoomCategoryService
 from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 
 pytestmark = pytest.mark.django_db
@@ -13,7 +15,12 @@ pytestmark = pytest.mark.django_db
 class TestTransactionListViewFiltering:
     def test_list_view_exposes_active_filter(self, authenticated_client, room, user, guest_user):
         groceries = Category.objects.get(slug="groceries")
-        create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+        create_parent_transaction_with_optimisation(
+            room=room,
+            paid_by=user,
+            paid_for_tuple=(guest_user,),
+            parent_transaction_kwargs={"category": groceries},
+        )
 
         response = authenticated_client.get(
             reverse("transaction:list", kwargs={"room_slug": room.slug}),
@@ -22,8 +29,8 @@ class TestTransactionListViewFiltering:
 
         assert response.status_code == http.HTTPStatus.OK
         assert response.context_data["transaction_filter_active"] is True
-        assert response.context_data["transaction_filter_category"] == groceries
-        assert response.context_data["transaction_filter_currency"] == room.preferred_currency
+        assert response.context_data["transaction_filter_category_label"] == str(groceries)
+        assert response.context_data["transaction_filter_currency_label"] == room.preferred_currency.code
 
         soup = BeautifulSoup(response.content.decode(), "html.parser")
         assert soup.select_one("#transaction-active-filters") is not None
@@ -62,6 +69,34 @@ class TestTransactionListViewFiltering:
         soup = BeautifulSoup(response.content.decode(), "html.parser")
         assert soup.select_one("#transaction-active-filters") is None
 
+    def test_list_view_ignores_a_category_from_another_room(self, authenticated_client, room, user, guest_user):
+        create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+        other_room = RoomFactory(created_by=user)
+        other_room.users.add(user)
+        foreign_category = (
+            RoomCategoryService(room=other_room)
+            .create_room_category(name="Sauna evenings", emoji="🧖", color="#123456")
+            .category
+        )
+        # The foreign category needs a transaction of its own, otherwise it is out of every room's
+        # scope and the test would pass for the wrong reason.
+        create_parent_transaction_with_optimisation(
+            room=other_room,
+            paid_by=user,
+            paid_for_tuple=(user,),
+            parent_transaction_kwargs={"category": foreign_category},
+        )
+
+        response = authenticated_client.get(
+            reverse("transaction:list", kwargs={"room_slug": room.slug}),
+            data={"category": foreign_category.slug},
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        # The chip must not name a category this room cannot see - it falls back to the raw slug.
+        assert response.context_data["transaction_filter_category_label"] == foreign_category.slug
+        assert str(foreign_category) not in response.content.decode()
+
     def test_list_view_falls_back_to_raw_value_for_unknown_category(self, authenticated_client, room, user):
         response = authenticated_client.get(
             reverse("transaction:list", kwargs={"room_slug": room.slug}),
@@ -69,5 +104,4 @@ class TestTransactionListViewFiltering:
         )
 
         assert response.status_code == http.HTTPStatus.OK
-        assert response.context_data["transaction_filter_category"] is None
         assert response.context_data["transaction_filter_category_label"] == "does-not-exist"

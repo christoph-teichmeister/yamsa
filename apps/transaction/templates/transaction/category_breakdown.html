@@ -168,6 +168,7 @@
             }
             const emptyBreakdownMessage = '{% trans "Add expenses to unlock the breakdown." %}';
             const chartHintMessage = '{% trans "Tap a slice" %}';
+            const CHART_BUCKET_COLOR = "{{ chart_small_slice_bucket_color }}";
 
             // getComputedTextLength() returns 0 while the SVG is not laid out (e.g. inside a
             // hidden tab), which would collapse every label into a single overflowing line.
@@ -228,12 +229,33 @@
                 const arc = d3.arc().innerRadius(innerRadius).outerRadius(radius * 0.95);
                 const activeArc = d3.arc().innerRadius(innerRadius).outerRadius(radius);
 
+                const bucketPatternId = `${container.id}-small-slice-bucket`;
+                const bucketPattern = svg
+                    .append("defs")
+                    .append("pattern")
+                    .attr("id", bucketPatternId)
+                    .attr("patternUnits", "userSpaceOnUse")
+                    .attr("patternTransform", "rotate(45)")
+                    .attr("width", 6)
+                    .attr("height", 6);
+                bucketPattern.append("rect").attr("width", 6).attr("height", 6).attr("fill", CHART_BUCKET_COLOR);
+                bucketPattern
+                    .append("line")
+                    .attr("x1", 0)
+                    .attr("y1", 0)
+                    .attr("x2", 0)
+                    .attr("y2", 6)
+                    .attr("stroke", "#fff")
+                    .attr("stroke-width", 2);
+
                 const slices = chartGroup
                     .selectAll("path")
                     .data(pie(dataset))
                     .join("path")
                     .attr("d", arc)
-                    .attr("fill", d => d.data.color)
+                    // The bucket carries no slug; hatching keeps it apart from a category that
+                    // happens to be painted the same colour.
+                    .attr("fill", d => (d.data.slug === null ? `url(#${bucketPatternId})` : d.data.color))
                     .attr("stroke", "#fff")
                     .attr("stroke-width", 2)
                     .attr("cursor", "pointer")
@@ -247,8 +269,7 @@
                     .attr("text-anchor", "middle")
                     .attr("fill", "currentColor")
                     .attr("pointer-events", "none");
-                // Measuring happens on its own hidden node so the visible label can simply be
-                // cleared and repainted without losing the probe.
+                // Outside centerLabel: paintLabel wipes that node's children on every repaint.
                 const probe = chartGroup.append("text").attr("visibility", "hidden").attr("aria-hidden", "true");
                 // The label sits in the donut hole; lines away from the vertical center have a
                 // shorter chord available, so stay well inside the hole's diameter.
@@ -261,7 +282,13 @@
                     const lines = [];
                     if (point) {
                         splitIntoLines(probe, point.label, baseFontSize, maxLabelWidth).forEach(text => {
-                            lines.push({text: text, size: baseFontSize, weight: 600, opacity: 1});
+                            lines.push({
+                                text: text,
+                                // A category name can be one long word, which splitIntoLines cannot break.
+                                size: fitFontSize(probe, text, baseFontSize, maxLabelWidth),
+                                weight: 600,
+                                opacity: 1,
+                            });
                         });
                         lines.push({
                             text: point.amount_label,
