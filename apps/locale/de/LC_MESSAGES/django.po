@@ -1259,12 +1259,6 @@ msgid "Tap a slice"
 msgstr "Tippe auf ein Segment"
 
 #, python-format
-msgid "%(count)s more category"
-msgid_plural "%(count)s more categories"
-msgstr[0] "%(count)s weitere Kategorie"
-msgstr[1] "%(count)s weitere Kategorien"
-
-#, python-format
 msgid "Manage categories for \"%(room_name)s\""
 msgstr "Kategorien für „%(room_name)s“ verwalten"
 
@@ -1564,17 +1558,17 @@ msgstr "Erfasse deine erste Ausgabe, um den Verlauf hier anzuzeigen."
 msgid "This room is closed, so transactions are read-only."
 msgstr "Dieser Raum ist geschlossen, daher sind Transaktionen nur lesbar."
 
-msgid "Search"
-msgstr "Suche"
-
-msgid "Filter by payer or description"
-msgstr "Nach Zahler:in oder Beschreibung filtern"
-
 msgid "Filtered by"
 msgstr "Gefiltert nach"
 
 msgid "Clear filter"
 msgstr "Filter zurücksetzen"
+
+msgid "Search"
+msgstr "Suche"
+
+msgid "Filter by payer or description"
+msgstr "Nach Zahler:in oder Beschreibung filtern"
 
 msgid "Details"
 msgstr "Details"
@@ -1830,6 +1824,12 @@ msgstr "Kategorie hinzugefügt."
 #, python-format
 msgid "Category \"%(category)s\" deleted."
 msgstr "Kategorie \"%(category)s\" gelöscht."
+
+#, python-format
+msgid "%(count)s more category"
+msgid_plural "%(count)s more categories"
+msgstr[0] "%(count)s weitere Kategorie"
+msgstr[1] "%(count)s weitere Kategorien"
 
 msgid "Paid for"
 msgstr "Bezahlt für"
