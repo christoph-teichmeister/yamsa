@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yamsa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 20:54+0200\n"
+"POT-Creation-Date: 2026-09-05 22:28+0200\n"
 "PO-Revision-Date: 2025-01-01 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,11 +34,14 @@ msgstr "Bestätige dein neues Passwort"
 
 #: apps/account/forms/edit_user_form.py:12
 msgid "We could not read that file. Please upload a valid image."
-msgstr "Wir konnten diese Datei nicht lesen. Bitte lade ein gültiges Bild hoch."
+msgstr ""
+"Wir konnten diese Datei nicht lesen. Bitte lade ein gültiges Bild hoch."
 
 #: apps/account/forms/edit_user_form.py:13
 msgid "The profile picture could not be reduced enough. Try a smaller file."
-msgstr "Das Profilbild konnte nicht ausreichend verkleinert werden. Versuche es mit einer kleineren Datei."
+msgstr ""
+"Das Profilbild konnte nicht ausreichend verkleinert werden. Versuche es mit "
+"einer kleineren Datei."
 
 #: apps/account/forms/edit_user_form.py:32
 msgid "Receive push notifications"
@@ -123,8 +126,11 @@ msgid "Note:"
 msgstr "Achtung:"
 
 #: apps/account/templates/account/change_password.html:24
-msgid "After a successful password change, you will be prompted to login again."
-msgstr "Nach einer erfolgreichen Passwortänderung wirst du aufgefordert, dich erneut anzumelden."
+msgid ""
+"After a successful password change, you will be prompted to login again."
+msgstr ""
+"Nach einer erfolgreichen Passwortänderung wirst du aufgefordert, dich erneut "
+"anzumelden."
 
 #: apps/account/templates/account/create_guest.html:6
 #, python-format
@@ -159,7 +165,9 @@ msgstr "z. B. Alex aus der Küche"
 
 #: apps/account/templates/account/create_guest.html:13
 msgid "Guests can later convert to full accounts without losing history."
-msgstr "Gäste können später in vollständige Konten konvertieren, ohne ihre Historie zu verlieren."
+msgstr ""
+"Gäste können später in vollständige Konten konvertieren, ohne ihre Historie "
+"zu verlieren."
 
 #: apps/account/templates/account/create_guest.html:14
 msgid "We'll drop them right into this room."
@@ -184,8 +192,13 @@ msgid "Hi %(user.name)s"
 msgstr "Hallo %(user.name)s"
 
 #: apps/account/templates/account/detail.html:20
-msgid "Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account."
-msgstr "Danke, dass du als Gast einem Raum beigetreten bist. Schalte Erinnerungen, Push-Benachrichtigungen und ausführlichere Historie frei, sobald du ein vollständiges Konto erstellst."
+msgid ""
+"Thanks for hopping into a room as a guest. Unlock reminders, push "
+"notifications, and richer history once you create a full account."
+msgstr ""
+"Danke, dass du als Gast einem Raum beigetreten bist. Schalte Erinnerungen, "
+"Push-Benachrichtigungen und ausführlichere Historie frei, sobald du ein "
+"vollständiges Konto erstellst."
 
 #: apps/account/templates/account/detail.html:23
 #: apps/room/templates/room/partials/_detail_who_are_you.html:35
@@ -287,7 +300,9 @@ msgstr "Zahlungserinnerungen"
 
 #: apps/account/templates/account/detail.html:177
 msgid "Toggle this in the notifications center or via the email footer."
-msgstr "Schalte dies im Benachrichtigungszentrum oder über die Fußzeile der E-Mail um."
+msgstr ""
+"Schalte dies im Benachrichtigungszentrum oder über die Fußzeile der E-Mail "
+"um."
 
 #: apps/account/templates/account/detail.html:195
 #: apps/account/templates/account/edit.html:188
@@ -301,7 +316,9 @@ msgstr "Deine Anmeldemethoden verwalten"
 
 #: apps/account/templates/account/detail.html:197
 msgid "Change your password or add a passkey for biometric login."
-msgstr "Ändere dein Passwort oder füge einen Passkey für biometrische Anmeldung hinzu."
+msgstr ""
+"Ändere dein Passwort oder füge einen Passkey für biometrische Anmeldung "
+"hinzu."
 
 #: apps/account/templates/account/detail.html:206
 #: apps/account/templates/account/edit.html:201
@@ -338,8 +355,12 @@ msgid "Profile photo"
 msgstr "Profilfoto"
 
 #: apps/account/templates/account/edit.html:67
-msgid "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB."
-msgstr "Wir ändern automatisch die Größe und komprimieren PNG-/JPEG-Uploads, damit sie unter 3 MB bleiben."
+msgid ""
+"We automatically resize and compress PNG/JPEG uploads so they stay under 3 "
+"MB."
+msgstr ""
+"Wir ändern automatisch die Größe und komprimieren PNG-/JPEG-Uploads, damit "
+"sie unter 3 MB bleiben."
 
 #: apps/account/templates/account/edit.html:75
 msgid "Remove your profile picture?"
@@ -362,8 +383,11 @@ msgid "Need a new password?"
 msgstr "Neues Passwort benötigt?"
 
 #: apps/account/templates/account/edit.html:191
-msgid "Set a fresh password any time. We’ll keep you logged in while you update it."
-msgstr "Lege jederzeit ein neues Passwort fest. Wir halten dich während der Aktualisierung angemeldet."
+msgid ""
+"Set a fresh password any time. We’ll keep you logged in while you update it."
+msgstr ""
+"Lege jederzeit ein neues Passwort fest. Wir halten dich während der "
+"Aktualisierung angemeldet."
 
 #: apps/account/templates/account/forgot_password.html:12
 #: apps/account/templates/account/forgot_password.html:39
@@ -375,8 +399,11 @@ msgid "We'll send you a recovery link"
 msgstr "Wir senden dir einen Wiederherstellungslink"
 
 #: apps/account/templates/account/forgot_password.html:15
-msgid "Tell us which email address is linked to your account and we’ll do the rest."
-msgstr "Sag uns, welche E-Mail-Adresse mit deinem Konto verknüpft ist, und wir übernehmen den Rest."
+msgid ""
+"Tell us which email address is linked to your account and we’ll do the rest."
+msgstr ""
+"Sag uns, welche E-Mail-Adresse mit deinem Konto verknüpft ist, und wir "
+"übernehmen den Rest."
 
 #: apps/account/templates/account/forgot_password.html:25
 msgid "Back to login"
@@ -409,8 +436,12 @@ msgid "Everyone in %(room_name)s"
 msgstr "Alle in %(room_name)s"
 
 #: apps/account/templates/account/list.html:152
-msgid "Invite roommates, add guests, and keep tabs on who has already viewed the room."
-msgstr "Lade Mitbewohner ein, füge Gäste hinzu und behalte im Blick, wer den Raum bereits angesehen hat."
+msgid ""
+"Invite roommates, add guests, and keep tabs on who has already viewed the "
+"room."
+msgstr ""
+"Lade Mitbewohner ein, füge Gäste hinzu und behalte im Blick, wer den Raum "
+"bereits angesehen hat."
 
 #: apps/account/templates/account/list.html:155
 #: apps/transaction/templates/transaction/list.html:323
@@ -436,7 +467,9 @@ msgstr "Noch niemand hier"
 
 #: apps/account/templates/account/list.html:210
 msgid "Invite a roommate or add a guest to start splitting expenses."
-msgstr "Lade einen Mitbewohner ein oder füge einen Gast hinzu, um mit dem Aufteilen der Ausgaben zu beginnen."
+msgstr ""
+"Lade einen Mitbewohner ein oder füge einen Gast hinzu, um mit dem Aufteilen "
+"der Ausgaben zu beginnen."
 
 #: apps/account/templates/account/list.html:223
 #, python-format
@@ -444,12 +477,17 @@ msgid "Limited view of %(room_name)s"
 msgstr "Eingeschränkte Ansicht von %(room_name)s"
 
 #: apps/account/templates/account/list.html:226
-msgid "Room members keep the roster private. Join the room to see who helps run this space."
-msgstr "Die Mitglieder des Raums halten die Mitgliederliste geheim. Tritt dem Raum bei, um zu sehen, wer diesen Raum mitbetreut."
+msgid ""
+"Room members keep the roster private. Join the room to see who helps run "
+"this space."
+msgstr ""
+"Die Mitglieder des Raums halten die Mitgliederliste geheim. Tritt dem Raum "
+"bei, um zu sehen, wer diesen Raum mitbetreut."
 
 #: apps/account/templates/account/list.html:233
 msgid "Request access or register to interact with this room."
-msgstr "Frage Zugang an oder registriere dich, um mit diesem Raum zu interagieren."
+msgstr ""
+"Frage Zugang an oder registriere dich, um mit diesem Raum zu interagieren."
 
 #: apps/account/templates/account/login.html:12
 msgid "Welcome back"
@@ -460,8 +498,12 @@ msgid "Keep your shared finances moving"
 msgstr "Halte eure gemeinsamen Finanzen in Bewegung"
 
 #: apps/account/templates/account/login.html:15
-msgid "Stay in the flow: avoid surprising logouts and finish your next journal in one session."
-msgstr "Bleib im Fluss: Vermeide überraschende Abmeldungen und beende dein nächstes Journal in einer Sitzung."
+msgid ""
+"Stay in the flow: avoid surprising logouts and finish your next journal in "
+"one session."
+msgstr ""
+"Bleib im Fluss: Vermeide überraschende Abmeldungen und beende dein nächstes "
+"Journal in einer Sitzung."
 
 #: apps/account/templates/account/login.html:24
 msgid "Create an account"
@@ -505,8 +547,13 @@ msgid "Sign in with passkey"
 msgstr "Mit Passkey anmelden"
 
 #: apps/account/templates/account/login.html:89
-msgid "We renew your cookie while you stay active so normal usage does not log you out, and checking \"Stay signed in\" keeps you signed in for 30 days."
-msgstr "Wir erneuern dein Cookie, solange du aktiv bleibst, damit dich normale Nutzung nicht abmeldet, und mit aktivierter Option \"Angemeldet bleiben\" bleibst du 30 Tage angemeldet."
+msgid ""
+"We renew your cookie while you stay active so normal usage does not log you "
+"out, and checking \"Stay signed in\" keeps you signed in for 30 days."
+msgstr ""
+"Wir erneuern dein Cookie, solange du aktiv bleibst, damit dich normale "
+"Nutzung nicht abmeldet, und mit aktivierter Option \"Angemeldet bleiben\" "
+"bleibst du 30 Tage angemeldet."
 
 #: apps/account/templates/account/login.html:109
 #: apps/account/templates/account/security.html:98
@@ -565,7 +612,9 @@ msgstr "Kontoeinstellungen"
 
 #: apps/account/templates/account/payment_reminder_unsubscribe.html:30
 msgid "You can always re-enable reminders from your notification settings."
-msgstr "Du kannst Erinnerungen jederzeit über deine Benachrichtigungseinstellungen wieder aktivieren."
+msgstr ""
+"Du kannst Erinnerungen jederzeit über deine Benachrichtigungseinstellungen "
+"wieder aktivieren."
 
 #: apps/account/templates/account/register.html:12
 msgid "Join yamsa"
@@ -576,8 +625,12 @@ msgid "Create shared clarity in your rooms"
 msgstr "Schaffe gemeinsame Klarheit in deinen Räumen"
 
 #: apps/account/templates/account/register.html:15
-msgid "Registering takes a minute and keeps every room, bill, and settlement in sync."
-msgstr "Die Registrierung dauert eine Minute und hält jeden Raum, jede Rechnung und jede Abrechnung synchron."
+msgid ""
+"Registering takes a minute and keeps every room, bill, and settlement in "
+"sync."
+msgstr ""
+"Die Registrierung dauert eine Minute und hält jeden Raum, jede Rechnung und "
+"jede Abrechnung synchron."
 
 #: apps/account/templates/account/register.html:19
 #: apps/room/templates/room/partials/_detail_who_are_you.html:36
@@ -626,8 +679,12 @@ msgid "Biometric login"
 msgstr "Biometrische Anmeldung"
 
 #: apps/account/templates/account/security.html:28
-msgid "Log in with your fingerprint, face ID, or a hardware security key — no password required."
-msgstr "Melde dich mit deinem Fingerabdruck, Face ID oder einem Hardware-Sicherheitsschlüssel an – ganz ohne Passwort."
+msgid ""
+"Log in with your fingerprint, face ID, or a hardware security key — no "
+"password required."
+msgstr ""
+"Melde dich mit deinem Fingerabdruck, Face ID oder einem Hardware-"
+"Sicherheitsschlüssel an – ganz ohne Passwort."
 
 #: apps/account/templates/account/security.html:35
 msgid "Added:"
@@ -698,41 +755,76 @@ msgstr "Englisch"
 msgid "German"
 msgstr "Deutsch"
 
+#: apps/core/templates/core/_welcome.html:8
+msgid "Your rooms"
+msgstr "Deine Räume"
+
+#: apps/core/templates/core/_welcome.html:9
+msgid "Where you stand right now"
+msgstr "Wie du gerade dastehst"
+
 #: apps/core/templates/core/_welcome.html:10
-msgid "Room activity timeline"
-msgstr "Aktivitätsverlauf des Raums"
+msgid "Every room you are part of, with what you owe and what you get back."
+msgstr "Jeder Raum, in dem du bist – mit dem, was du schuldest und was du zurückbekommst."
 
-#: apps/core/templates/core/_welcome.html:11
-msgid "See transactions and changes at a glance"
-msgstr "Transaktionen und Änderungen auf einen Blick sehen"
+#: apps/core/templates/core/_welcome.html:13 apps/room/models/room.py:17
+#: apps/room/templates/room/detail.html:17
+#: apps/templates/_side_menu_room_list.html:4
+#: apps/transaction/templates/transaction/list.html:328
+msgid "Open"
+msgstr "Offen"
 
-#: apps/core/templates/core/_welcome.html:13
-msgid "Every room update - expenses logged, settlements, highlights - lands here so you never miss a beat."
-msgstr "Jedes Raum-Update – erfasste Ausgaben, Abrechnungen, Highlights – landet hier, damit du nichts verpasst."
+#: apps/core/templates/core/_welcome.html:14 apps/room/models/room.py:18
+#: apps/room/templates/room/detail.html:15
+#: apps/room/templates/room/partials/_detail_who_are_you.html:13
+#: apps/templates/_side_menu_room_list.html:70
+#: apps/transaction/templates/transaction/list.html:326
+msgid "Closed"
+msgstr "Geschlossen"
 
-#: apps/core/templates/core/_welcome.html:17
-msgid "Auto-updated feed"
-msgstr "Automatisch aktualisierter Feed"
+#: apps/core/templates/core/_welcome.html:15
+#: apps/templates/_side_menu_room_list.html:99
+msgid "Other"
+msgstr "Andere"
 
 #: apps/core/templates/core/_welcome.html:18
-msgid "Events appear in chronological order with the newest at the top."
-msgstr "Ereignisse erscheinen in chronologischer Reihenfolge, die Neuesten oben."
+msgid "No rooms yet"
+msgstr "Noch keine Räume"
 
-#: apps/core/templates/core/_welcome.html:31
-msgid "No updates yet"
-msgstr "Noch keine Aktualisierungen"
+#: apps/core/templates/core/_welcome.html:19
+msgid "Create a room to start splitting expenses with your friends."
+msgstr "Erstelle einen Raum, um Ausgaben mit deinen Freunden zu teilen."
 
-#: apps/core/templates/core/_welcome.html:32
-msgid "Once roommates start logging expenses or changes, they will appear here."
-msgstr "Sobald Mitbewohner Ausgaben oder Änderungen erfassen, erscheinen sie hier."
+#: apps/core/templates/core/_welcome.html:36
+#: apps/importer/templates/importer/preview.html:136
+#: apps/templates/_side_menu_room_list.html:45
+msgid "New room"
+msgstr "Neuer Raum"
+
+#: apps/core/templates/core/_welcome.html:37
+#: apps/templates/_side_menu_room_list.html:46
+msgid "Start a new group with friends"
+msgstr "Starte eine neue Gruppe mit Freunden"
+
+#: apps/core/templates/core/_welcome.html:39
+#: apps/room/templates/room/create.html:61
+#: apps/templates/_side_menu_room_list.html:48
+msgid "Create"
+msgstr "Erstellen"
 
 #: apps/core/templates/core/base.html:5
-msgid "yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications."
-msgstr "yamsa hilft Wohngemeinschaften dabei, Ausgaben zu verfolgen, Schulden auszugleichen und mit kollaborativen Räumen, Dashboards und Benachrichtigungen organisiert zu bleiben."
+msgid ""
+"yamsa helps shared households track expenses, settle debts, and stay "
+"organized with collaborative rooms, dashboards, and notifications."
+msgstr ""
+"yamsa hilft Wohngemeinschaften dabei, Ausgaben zu verfolgen, Schulden "
+"auszugleichen und mit kollaborativen Räumen, Dashboards und "
+"Benachrichtigungen organisiert zu bleiben."
 
 #: apps/core/templates/core/base.html:6
 msgid "yamsa, shared expenses, roommate app, bill splitting, dashboards"
-msgstr "yamsa, gemeinsame Ausgaben, Mitbewohner-App, Rechnungsteilung, Dashboards"
+msgstr ""
+"yamsa, gemeinsame Ausgaben, Mitbewohner-App, Rechnungsteilung, Dashboards"
 
 #: apps/core/templates/core/base.html:18
 msgid "yamsa"
@@ -781,8 +873,12 @@ msgid "Optimised debts"
 msgstr "Optimierte Schulden"
 
 #: apps/debt/templates/debt/list.html:42
-msgid "Track what is left to settle inside this room. Click the piggy-bank to mark a debt as paid."
-msgstr "Verfolge, was in diesem Raum noch ausgeglichen werden muss. Klicke auf das Sparschwein, um eine Schuld als bezahlt zu markieren."
+msgid ""
+"Track what is left to settle inside this room. Click the piggy-bank to mark "
+"a debt as paid."
+msgstr ""
+"Verfolge, was in diesem Raum noch ausgeglichen werden muss. Klicke auf das "
+"Sparschwein, um eine Schuld als bezahlt zu markieren."
 
 #: apps/debt/templates/debt/list.html:48
 #, python-format
@@ -828,7 +924,8 @@ msgstr "Sieh, wie viel jede Person bezahlt hat und wer noch was schuldet."
 #: apps/debt/templates/debt/list.html:104
 #, python-format
 msgid "%(debitor_display)s owes %(value)s%(currency)s to %(creditor_display)s"
-msgstr "%(debitor_display)s schuldet %(value)s%(currency)s an %(creditor_display)s"
+msgstr ""
+"%(debitor_display)s schuldet %(value)s%(currency)s an %(creditor_display)s"
 
 #: apps/debt/templates/debt/list.html:111
 #, python-format
@@ -883,12 +980,14 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"                    Are you sure that you have settled your debt (%(debt_value)s%(debt_currency)s)\n"
+"                    Are you sure that you have settled your debt "
+"(%(debt_value)s%(debt_currency)s)\n"
 "                    to %(creditor_name)s?\n"
 "                "
 msgstr ""
 "\n"
-"                    Bist du sicher, dass du deine Schuld (%(debt_value)s%(debt_currency)s)\n"
+"                    Bist du sicher, dass du deine Schuld "
+"(%(debt_value)s%(debt_currency)s)\n"
 "                    bei %(creditor_name)s beglichen hast?\n"
 "                "
 
@@ -1021,7 +1120,8 @@ msgstr "In dieser Datei sind keine importierbaren Zeilen."
 #: apps/importer/parsers/splitwise.py:111
 #, python-format
 msgid "The file has %(count)d rows, the import handles at most %(limit)d."
-msgstr "Die Datei hat %(count)d Zeilen, der Import verarbeitet höchstens %(limit)d."
+msgstr ""
+"Die Datei hat %(count)d Zeilen, der Import verarbeitet höchstens %(limit)d."
 
 #: apps/importer/parsers/splitwise.py:137
 msgid "The file is not valid UTF-8 text."
@@ -1032,8 +1132,12 @@ msgid "The file could not be read as CSV."
 msgstr "Die Datei konnte nicht als CSV gelesen werden."
 
 #: apps/importer/parsers/splitwise.py:167
-msgid "No person columns found. A Splitwise export has one column per person after the currency column."
-msgstr "Keine Personenspalten gefunden. Ein Splitwise-Export hat nach der Währungsspalte eine Spalte je Person."
+msgid ""
+"No person columns found. A Splitwise export has one column per person after "
+"the currency column."
+msgstr ""
+"Keine Personenspalten gefunden. Ein Splitwise-Export hat nach der "
+"Währungsspalte eine Spalte je Person."
 
 #: apps/importer/parsers/splitwise.py:191
 msgid "Row without a cost value (e.g. the balance summary line)"
@@ -1101,8 +1205,12 @@ msgid "Who is who?"
 msgstr "Wer ist wer?"
 
 #: apps/importer/templates/importer/preview.html:22
-msgid "Mark exactly one row as yourself. People you already share a room with are preselected so nobody is created twice."
-msgstr "Markiere genau eine Zeile als dich selbst. Personen, mit denen du schon einen Raum teilst, sind vorausgewählt, damit niemand doppelt angelegt wird."
+msgid ""
+"Mark exactly one row as yourself. People you already share a room with are "
+"preselected so nobody is created twice."
+msgstr ""
+"Markiere genau eine Zeile als dich selbst. Personen, mit denen du schon "
+"einen Raum teilst, sind vorausgewählt, damit niemand doppelt angelegt wird."
 
 #: apps/importer/templates/importer/preview.html:32
 #, python-format
@@ -1123,8 +1231,12 @@ msgid "Categories"
 msgstr "Kategorien"
 
 #: apps/importer/templates/importer/preview.html:70
-msgid "Each category from the file is mapped onto one of yours — or created as a new category in this room."
-msgstr "Jede Kategorie aus der Datei wird auf eine deiner Kategorien gemappt — oder als neue Kategorie in diesem Raum angelegt."
+msgid ""
+"Each category from the file is mapped onto one of yours — or created as a "
+"new category in this room."
+msgstr ""
+"Jede Kategorie aus der Datei wird auf eine deiner Kategorien gemappt — oder "
+"als neue Kategorie in diesem Raum angelegt."
 
 #: apps/importer/templates/importer/preview.html:81
 #, python-format
@@ -1143,12 +1255,8 @@ msgstr "Emoji für %(name)s"
 
 #: apps/importer/templates/importer/preview.html:126
 msgid "Name and emoji are only used when creating a new category."
-msgstr "Name und Emoji werden nur beim Anlegen einer neuen Kategorie verwendet."
-
-#: apps/importer/templates/importer/preview.html:136
-#: apps/templates/_side_menu_room_list.html:45
-msgid "New room"
-msgstr "Neuer Raum"
+msgstr ""
+"Name und Emoji werden nur beim Anlegen einer neuen Kategorie verwendet."
 
 #: apps/importer/templates/importer/preview.html:181
 msgid "What will be imported"
@@ -1182,8 +1290,14 @@ msgstr "Zeile"
 
 #: apps/importer/templates/importer/preview.html:228
 #, python-format
-msgid "These currencies are unknown here and will be booked in the room currency: %(codes)s. Their amounts land in the same balance, so the resulting debts will be wrong."
-msgstr "Diese Währungen sind hier unbekannt und werden in der Raumwährung gebucht: %(codes)s. Ihre Beträge landen in derselben Bilanz, die Schulden stimmen dann nicht."
+msgid ""
+"These currencies are unknown here and will be booked in the room currency: "
+"%(codes)s. Their amounts land in the same balance, so the resulting debts "
+"will be wrong."
+msgstr ""
+"Diese Währungen sind hier unbekannt und werden in der Raumwährung gebucht: "
+"%(codes)s. Ihre Beträge landen in derselben Bilanz, die Schulden stimmen "
+"dann nicht."
 
 #: apps/importer/templates/importer/preview.html:235
 msgid "Import now"
@@ -1194,8 +1308,11 @@ msgid "Import transactions"
 msgstr "Transaktionen importieren"
 
 #: apps/importer/templates/importer/upload.html:11
-msgid "Upload your export from another app. The import always creates a new room."
-msgstr "Lade deinen Export aus einer anderen App hoch. Der Import legt immer einen neuen Raum an."
+msgid ""
+"Upload your export from another app. The import always creates a new room."
+msgstr ""
+"Lade deinen Export aus einer anderen App hoch. Der Import legt immer einen "
+"neuen Raum an."
 
 #: apps/importer/templates/importer/upload.html:38
 #, python-format
@@ -1227,17 +1344,17 @@ msgstr "Bestätigen — es entsteht ein neuer Raum mit allen Transaktionen."
 msgid "Import from %(source)s"
 msgstr "Import aus %(source)s"
 
-#: apps/importer/views/import_preview_view.py:126
+#: apps/importer/views/import_preview_view.py:129
 #, python-format
 msgid "%(count)d transactions imported"
 msgstr "%(count)d Transaktionen importiert"
 
-#: apps/importer/views/import_preview_view.py:128
+#: apps/importer/views/import_preview_view.py:131
 #, python-format
 msgid ", %(count)d settlements"
 msgstr ", %(count)d Ausgleichszahlungen"
 
-#: apps/importer/views/import_preview_view.py:130
+#: apps/importer/views/import_preview_view.py:133
 #, python-format
 msgid ", %(count)d rows skipped"
 msgstr ", %(count)d Zeilen übersprungen"
@@ -1272,7 +1389,9 @@ msgstr "Dein neues Passwort lautet:"
 
 #: apps/mail/services/forgot_password_mail_service.py:27
 msgid "Log in with your new password, by clicking the button below"
-msgstr "Melde dich mit deinem neuen Passwort an, indem du auf den Button unten klickst"
+msgstr ""
+"Melde dich mit deinem neuen Passwort an, indem du auf den Button unten "
+"klickst"
 
 #: apps/mail/services/forgot_password_mail_service.py:28
 msgid "(And don't forget to change your password afterwards!)"
@@ -1285,7 +1404,9 @@ msgstr "Einladung"
 #: apps/mail/services/invitation_mail_service.py:21
 #, python-format
 msgid "You have been invited by %(inviter)s to join your friends on yamsa"
-msgstr "Du wurdest von %(inviter)s eingeladen, dich deinen Freunden auf yamsa anzuschließen"
+msgstr ""
+"Du wurdest von %(inviter)s eingeladen, dich deinen Freunden auf yamsa "
+"anzuschließen"
 
 #: apps/mail/services/invitation_mail_service.py:26
 msgid "Click the button below to register!"
@@ -1302,8 +1423,12 @@ msgstr "%(room_name)s | Zahlungserinnerung"
 
 #: apps/mail/services/payment_reminder_mail_service.py:30
 #, python-format
-msgid "Hey there! It has been %(inactivity_days)d days since any activity in %(room_name)s."
-msgstr "Hallo! Es sind %(inactivity_days)d Tage seit der letzten Aktivität in %(room_name)s vergangen."
+msgid ""
+"Hey there! It has been %(inactivity_days)d days since any activity in "
+"%(room_name)s."
+msgstr ""
+"Hallo! Es sind %(inactivity_days)d Tage seit der letzten Aktivität in "
+"%(room_name)s vergangen."
 
 #: apps/mail/services/payment_reminder_mail_service.py:35
 #, python-format
@@ -1311,8 +1436,12 @@ msgid "You currently owe %(amount_summary)s."
 msgstr "Du schuldest aktuell %(amount_summary)s."
 
 #: apps/mail/services/payment_reminder_mail_service.py:39
-msgid "Please follow the link below to review and settle the outstanding balance before it grows stale."
-msgstr "Bitte folge dem Link unten, um den offenen Betrag zu prüfen und zu begleichen, bevor er veraltet."
+msgid ""
+"Please follow the link below to review and settle the outstanding balance "
+"before it grows stale."
+msgstr ""
+"Bitte folge dem Link unten, um den offenen Betrag zu prüfen und zu "
+"begleichen, bevor er veraltet."
 
 #: apps/mail/services/payment_reminder_mail_service.py:46
 #, python-format
@@ -1320,12 +1449,18 @@ msgid "Payment reminder: %(room_name)s"
 msgstr "Zahlungserinnerung: %(room_name)s"
 
 #: apps/mail/services/payment_reminder_mail_service.py:47
-msgid "This reminder is generated automatically for overdue balances. We're cheering for you!"
-msgstr "Diese Erinnerung wird automatisch bei überfälligen Beträgen erzeugt. Wir drücken dir die Daumen!"
+msgid ""
+"This reminder is generated automatically for overdue balances. We're "
+"cheering for you!"
+msgstr ""
+"Diese Erinnerung wird automatisch bei überfälligen Beträgen erzeugt. Wir "
+"drücken dir die Daumen!"
 
 #: apps/mail/services/payment_reminder_mail_service.py:48
 msgid "Need a hand? Reach out to your room admin if the numbers look off."
-msgstr "Brauchst du Unterstützung? Wende dich an den Raum-Admin, wenn die Zahlen nicht stimmen."
+msgstr ""
+"Brauchst du Unterstützung? Wende dich an den Raum-Admin, wenn die Zahlen "
+"nicht stimmen."
 
 #: apps/mail/services/payment_reminder_mail_service.py:60
 msgid "Review pending debts"
@@ -1367,12 +1502,20 @@ msgid "%(room_name)s has been quiet for %(inactivity_days)d days."
 msgstr "%(room_name)s war seit %(inactivity_days)d Tagen inaktiv."
 
 #: apps/mail/services/room_closure_reminder_mail_service.py:36
-msgid "If everyone already settled up, please mark the debts as paid and close the room so it stops lingering."
-msgstr "Wenn alle bereits abgerechnet haben, markiere die Schulden bitte als bezahlt und schließe den Raum, damit er nicht weiter offen bleibt."
+msgid ""
+"If everyone already settled up, please mark the debts as paid and close the "
+"room so it stops lingering."
+msgstr ""
+"Wenn alle bereits abgerechnet haben, markiere die Schulden bitte als bezahlt "
+"und schließe den Raum, damit er nicht weiter offen bleibt."
 
 #: apps/mail/services/room_closure_reminder_mail_service.py:40
-msgid "If you still need the room, feel free to ignore this reminder and keep it open."
-msgstr "Wenn du den Raum noch brauchst, ignoriere diese Erinnerung und lasse ihn geöffnet."
+msgid ""
+"If you still need the room, feel free to ignore this reminder and keep it "
+"open."
+msgstr ""
+"Wenn du den Raum noch brauchst, ignoriere diese Erinnerung und lasse ihn "
+"geöffnet."
 
 #: apps/mail/services/room_closure_reminder_mail_service.py:46
 #, python-format
@@ -1380,8 +1523,12 @@ msgid "Room cleanup reminder: %(room_name)s"
 msgstr "Erinnerung zur Raumbereinigung: %(room_name)s"
 
 #: apps/mail/services/room_closure_reminder_mail_service.py:47
-msgid "This reminder is generated automatically when open rooms stay inactive. We're happy to help."
-msgstr "Diese Erinnerung wird automatisch erzeugt, wenn offene Räume inaktiv bleiben. Wir helfen gern."
+msgid ""
+"This reminder is generated automatically when open rooms stay inactive. "
+"We're happy to help."
+msgstr ""
+"Diese Erinnerung wird automatisch erzeugt, wenn offene Räume inaktiv "
+"bleiben. Wir helfen gern."
 
 #: apps/mail/services/room_closure_reminder_mail_service.py:48
 msgid "Give us a shout if the room history looks off."
@@ -1399,7 +1546,8 @@ msgstr "Willkommen bei %(room_name)s"
 #: apps/mail/services/user_added_to_room_mail_service.py:22
 #, python-format
 msgid "You have been invited to %(room_name)s to join your friends"
-msgstr "Du wurdest eingeladen, dich deinen Freunden in %(room_name)s anzuschließen"
+msgstr ""
+"Du wurdest eingeladen, dich deinen Freunden in %(room_name)s anzuschließen"
 
 #: apps/mail/services/user_added_to_room_mail_service.py:24
 msgid "Click the button below to view the room!"
@@ -1417,17 +1565,24 @@ msgstr "{creator} hat \"{room_name}\" erstellt"
 #: apps/news/handlers/events/create_news_on_transaction_create.py:14
 #, python-brace-format
 msgid "{payer} logged a payment of {amount}{currency} in \"{room}\""
-msgstr "{payer} hat eine Zahlung über {amount}{currency} in \"{room}\" eingetragen"
+msgstr ""
+"{payer} hat eine Zahlung über {amount}{currency} in \"{room}\" eingetragen"
 
 #: apps/news/handlers/events/create_news_on_transaction_create.py:21
 #, python-brace-format
 msgid "{creator} logged that {payer} paid {amount}{currency} in \"{room}\""
-msgstr "{creator} hat eingetragen, dass {payer} {amount}{currency} in \"{room}\" gezahlt hat"
+msgstr ""
+"{creator} hat eingetragen, dass {payer} {amount}{currency} in \"{room}\" "
+"gezahlt hat"
 
 #: apps/news/handlers/events/create_news_on_transaction_delete.py:12
 #, python-brace-format
-msgid "{actor} deleted the transaction \"{description}\" ({amount}{currency}) in \"{room}\""
-msgstr "{actor} hat die Transaktion \"{description}\" ({amount}{currency}) in \"{room}\" gelöscht"
+msgid ""
+"{actor} deleted the transaction \"{description}\" ({amount}{currency}) in "
+"\"{room}\""
+msgstr ""
+"{actor} hat die Transaktion \"{description}\" ({amount}{currency}) in "
+"\"{room}\" gelöscht"
 
 #: apps/news/handlers/events/create_news_on_transaction_delete.py:21
 #, python-brace-format
@@ -1473,8 +1628,44 @@ msgid "News update"
 msgstr "News Update"
 
 #: apps/news/models.py:63 apps/news/models.py:64
+#: apps/news/templates/news/list.html:4 apps/templates/_side_menu.html:159
 msgid "News"
 msgstr "Neuigkeiten"
+
+#: apps/news/templates/news/list.html:12
+msgid "Room activity timeline"
+msgstr "Aktivitätsverlauf des Raums"
+
+#: apps/news/templates/news/list.html:13
+msgid "See transactions and changes at a glance"
+msgstr "Transaktionen und Änderungen auf einen Blick sehen"
+
+#: apps/news/templates/news/list.html:15
+msgid ""
+"Every room update - expenses logged, settlements, highlights - lands here so "
+"you never miss a beat."
+msgstr ""
+"Jedes Raum-Update – erfasste Ausgaben, Abrechnungen, Highlights – landet "
+"hier, damit du nichts verpasst."
+
+#: apps/news/templates/news/list.html:19
+msgid "Auto-updated feed"
+msgstr "Automatisch aktualisierter Feed"
+
+#: apps/news/templates/news/list.html:20
+msgid "Events appear in chronological order with the newest at the top."
+msgstr ""
+"Ereignisse erscheinen in chronologischer Reihenfolge, die Neuesten oben."
+
+#: apps/news/templates/news/list.html:33
+msgid "No updates yet"
+msgstr "Noch keine Aktualisierungen"
+
+#: apps/news/templates/news/list.html:34
+msgid ""
+"Once roommates start logging expenses or changes, they will appear here."
+msgstr ""
+"Sobald Mitbewohner Ausgaben oder Änderungen erfassen, erscheinen sie hier."
 
 #: apps/room/handlers/events/notify_on_room_status_changed.py:21
 #, python-brace-format
@@ -1499,19 +1690,6 @@ msgstr "Neuer Raum"
 msgid "You have been added to {room}!"
 msgstr "Du wurdest zu {room} hinzugefügt!"
 
-#: apps/room/models/room.py:17 apps/room/templates/room/detail.html:17
-#: apps/templates/_side_menu_room_list.html:4
-#: apps/transaction/templates/transaction/list.html:328
-msgid "Open"
-msgstr "Offen"
-
-#: apps/room/models/room.py:18 apps/room/templates/room/detail.html:15
-#: apps/room/templates/room/partials/_detail_who_are_you.html:13
-#: apps/templates/_side_menu_room_list.html:70
-#: apps/transaction/templates/transaction/list.html:326
-msgid "Closed"
-msgstr "Geschlossen"
-
 #: apps/room/models/room.py:36
 #: apps/room/templates/room/partials/_detail_who_are_you.html:76
 #: apps/transaction/templates/transaction/create.html:272
@@ -1535,11 +1713,6 @@ msgstr "Zurück zum Dashboard"
 msgid "Create Room"
 msgstr "Raum erstellen"
 
-#: apps/room/templates/room/create.html:61
-#: apps/templates/_side_menu_room_list.html:48
-msgid "Create"
-msgstr "Erstellen"
-
 #: apps/room/templates/room/create.html:71
 msgid "Suggested guests"
 msgstr "Vorgeschlagene Gäste"
@@ -1549,8 +1722,12 @@ msgid "Invite frequent collaborators"
 msgstr "Lade häufige Mitwirkende ein"
 
 #: apps/room/templates/room/create.html:74
-msgid "Add past roommates with one tap. Mark your go-to teammates as friends to pin them to the top."
-msgstr "Füge frühere Mitbewohner mit einem Tippen hinzu. Markiere deine bevorzugten Teammitglieder als Freunde, um sie oben anzupinnen."
+msgid ""
+"Add past roommates with one tap. Mark your go-to teammates as friends to pin "
+"them to the top."
+msgstr ""
+"Füge frühere Mitbewohner mit einem Tippen hinzu. Markiere deine bevorzugten "
+"Teammitglieder als Freunde, um sie oben anzupinnen."
 
 #: apps/room/templates/room/detail.html:9
 msgid "Room overview"
@@ -1606,8 +1783,12 @@ msgid "Keep logging expenses and invite more people whenever you need to."
 msgstr "Erfasse weiterhin Ausgaben und lade bei Bedarf weitere Menschen ein."
 
 #: apps/room/templates/room/detail.html:68
-msgid "This room is locked for editing. Reopen it from the edit screen if you need to make changes."
-msgstr "Dieser Raum ist zur Bearbeitung gesperrt. Öffne ihn auf dem Bearbeitungsbildschirm, wenn du Änderungen brauchst."
+msgid ""
+"This room is locked for editing. Reopen it from the edit screen if you need "
+"to make changes."
+msgstr ""
+"Dieser Raum ist zur Bearbeitung gesperrt. Öffne ihn auf dem "
+"Bearbeitungsbildschirm, wenn du Änderungen brauchst."
 
 #: apps/room/templates/room/edit.html:5
 msgid "Back to room"
@@ -1657,19 +1838,23 @@ msgstr "Alle Schulden sind beglichen. Du kannst den Raum schließen."
 #, python-format
 msgid ""
 "\n"
-"                                            There is still %(debt_count)s open debt.\n"
+"                                            There is still %(debt_count)s "
+"open debt.\n"
 "                                        "
 msgid_plural ""
 "\n"
-"                                            There are still %(debt_count)s open debts.\n"
+"                                            There are still %(debt_count)s "
+"open debts.\n"
 "                                        "
 msgstr[0] ""
 "\n"
-"                                            Es gibt noch %(debt_count)s offene Schuld.\n"
+"                                            Es gibt noch %(debt_count)s "
+"offene Schuld.\n"
 "                                        "
 msgstr[1] ""
 "\n"
-"                                            Es gibt noch %(debt_count)s offene Schulden.\n"
+"                                            Es gibt noch %(debt_count)s "
+"offene Schulden.\n"
 "                                        "
 
 #: apps/room/templates/room/edit.html:128
@@ -1694,8 +1879,12 @@ msgid "Customize tracking categories"
 msgstr "Tracking-Kategorien anpassen"
 
 #: apps/room/templates/room/edit.html:184
-msgid "Add room-specific categories and control their order without touching the global defaults."
-msgstr "Füge raumspezifische Kategorien hinzu und steuere deren Reihenfolge, ohne die globalen Standardeinstellungen zu verändern."
+msgid ""
+"Add room-specific categories and control their order without touching the "
+"global defaults."
+msgstr ""
+"Füge raumspezifische Kategorien hinzu und steuere deren Reihenfolge, ohne "
+"die globalen Standardeinstellungen zu verändern."
 
 #: apps/room/templates/room/edit.html:195
 msgid "Open manager"
@@ -1713,24 +1902,32 @@ msgstr "Dieser Raum hat noch ausstehende Zahlungen."
 #, python-format
 msgid ""
 "\n"
-"                                    There is still %(debt_count)s open debt. Closing the room anyway will mark it as settled.\n"
+"                                    There is still %(debt_count)s open debt. "
+"Closing the room anyway will mark it as settled.\n"
 "                                "
 msgid_plural ""
 "\n"
-"                                    There are still %(debt_count)s open debts. Closing the room anyway will mark them as settled.\n"
+"                                    There are still %(debt_count)s open "
+"debts. Closing the room anyway will mark them as settled.\n"
 "                                "
 msgstr[0] ""
 "\n"
-"                                    Es gibt noch %(debt_count)s offene Schuld. Wenn du den Raum trotzdem schließt, wird sie als beglichen markiert.\n"
+"                                    Es gibt noch %(debt_count)s offene "
+"Schuld. Wenn du den Raum trotzdem schließt, wird sie als beglichen "
+"markiert.\n"
 "                                "
 msgstr[1] ""
 "\n"
-"                                    Es gibt noch %(debt_count)s offene Schulden. Wenn du den Raum trotzdem schließt, werden sie als beglichen markiert.\n"
+"                                    Es gibt noch %(debt_count)s offene "
+"Schulden. Wenn du den Raum trotzdem schließt, werden sie als beglichen "
+"markiert.\n"
 "                                "
 
 #: apps/room/templates/room/edit.html:227
 msgid "Use this option only if you want to skip manual settlement."
-msgstr "Nutze diese Option nur, wenn du die manuelle Abrechnung überspringen möchtest."
+msgstr ""
+"Nutze diese Option nur, wenn du die manuelle Abrechnung überspringen "
+"möchtest."
 
 #: apps/room/templates/room/edit.html:233
 msgid "Close anyway"
@@ -1741,16 +1938,24 @@ msgid "Open to guests"
 msgstr "Für Gäste offen"
 
 #: apps/room/templates/room/partials/_detail_who_are_you.html:20
-msgid "Maybe register? A free account keeps your rooms, reminders, and history together."
-msgstr "Vielleicht registrieren? Ein kostenloses Konto hält deine Räume, Erinnerungen und Historie zusammen."
+msgid ""
+"Maybe register? A free account keeps your rooms, reminders, and history "
+"together."
+msgstr ""
+"Vielleicht registrieren? Ein kostenloses Konto hält deine Räume, "
+"Erinnerungen und Historie zusammen."
 
 #: apps/room/templates/room/partials/_detail_who_are_you.html:29
 msgid "Claim your invitation"
 msgstr "Einladung annehmen"
 
 #: apps/room/templates/room/partials/_detail_who_are_you.html:31
-msgid "Guests who arrive via the shared link can register or log in here to confirm their spot."
-msgstr "Gäste, die über den geteilten Link kommen, können sich hier registrieren oder anmelden, um ihren Platz zu bestätigen."
+msgid ""
+"Guests who arrive via the shared link can register or log in here to confirm "
+"their spot."
+msgstr ""
+"Gäste, die über den geteilten Link kommen, können sich hier registrieren "
+"oder anmelden, um ihren Platz zu bestätigen."
 
 #: apps/room/templates/room/partials/_detail_who_are_you.html:47
 msgid "Who are you?"
@@ -1758,8 +1963,14 @@ msgstr "Wer bist du?"
 
 #: apps/room/templates/room/partials/_detail_who_are_you.html:64
 #: apps/room/templates/room/partials/_detail_who_are_you.html:69
-msgid "Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in."
-msgstr "Nur Gastnutzer:innen des Raums werden hier angezeigt. Wenn du deinen Namen nicht siehst, bist du entweder nicht Teil dieses Raums oder hast bereits ein Konto. Wenn du schon ein Konto hast, versuche dich einzuloggen."
+msgid ""
+"Only Guest Users of the room are shown here. If you do not see your name, "
+"that means that you either are not part of this room or that you already "
+"have an account. If you already have an account, try logging in."
+msgstr ""
+"Nur Gastnutzer:innen des Raums werden hier angezeigt. Wenn du deinen Namen "
+"nicht siehst, bist du entweder nicht Teil dieses Raums oder hast bereits ein "
+"Konto. Wenn du schon ein Konto hast, versuche dich einzuloggen."
 
 #: apps/room/templates/room/partials/_detail_who_are_you.html:66
 msgid "Not seeing your name?"
@@ -1770,12 +1981,29 @@ msgid "That's me!"
 msgstr "Das bin ich!"
 
 #: apps/room/templates/room/partials/_detail_who_are_you.html:90
-msgid "No guests have been invited yet. Create an account to add yourself to the room."
-msgstr "Es wurden noch keine Gäste eingeladen. Erstelle ein Konto, um dich selbst zum Raum hinzuzufügen."
+msgid ""
+"No guests have been invited yet. Create an account to add yourself to the "
+"room."
+msgstr ""
+"Es wurden noch keine Gäste eingeladen. Erstelle ein Konto, um dich selbst "
+"zum Raum hinzuzufügen."
+
+#: apps/room/templates/room/partials/_room_overview_card.html:32
+msgid "You owe %(amount)s%(currency)s"
+msgstr "Du schuldest %(amount)s%(currency)s"
+
+#: apps/room/templates/room/partials/_room_overview_card.html:38
+msgid "You get back %(amount)s%(currency)s"
+msgstr "Du bekommst %(amount)s%(currency)s zurück"
+
+#: apps/room/templates/room/partials/_room_overview_card.html:44
+msgid "All settled"
+msgstr "Alles beglichen"
 
 #: apps/room/views/mixins/room_not_closed_required.py:11
 msgid "This room is closed. No changes can be made."
-msgstr "Dieser Raum ist geschlossen. Es können keine Änderungen vorgenommen werden."
+msgstr ""
+"Dieser Raum ist geschlossen. Es können keine Änderungen vorgenommen werden."
 
 #: apps/templates/_side_menu.html:2
 msgid "Toggle navigation"
@@ -1783,7 +2011,9 @@ msgstr "Navigation umschalten"
 
 #: apps/templates/_side_menu.html:3
 msgid "Copy the rooms URL to your clipboard to send it to your friends"
-msgstr "Kopiere die Raum-URL in die Zwischenablage, um sie deinen Freunden zu schicken"
+msgstr ""
+"Kopiere die Raum-URL in die Zwischenablage, um sie deinen Freunden zu "
+"schicken"
 
 #: apps/templates/_side_menu.html:58
 msgid "Menu"
@@ -1817,7 +2047,15 @@ msgstr "Zur Startseite"
 msgid "Start"
 msgstr "Start"
 
-#: apps/templates/_side_menu.html:154
+#: apps/templates/_side_menu.html:160
+msgid "What happened in your rooms"
+msgstr "Was in deinen Räumen passiert ist"
+
+#: apps/templates/_side_menu.html:162
+msgid "Updates"
+msgstr "Neuigkeiten"
+
+#: apps/templates/_side_menu.html:173
 msgid "Log out"
 msgstr "Abmelden"
 
@@ -1826,17 +2064,9 @@ msgstr "Abmelden"
 msgid "New"
 msgstr "Neu"
 
-#: apps/templates/_side_menu_room_list.html:46
-msgid "Start a new group with friends"
-msgstr "Starte eine neue Gruppe mit Freunden"
-
 #: apps/templates/_side_menu_room_list.html:64
 msgid "Bring your data from another app"
 msgstr "Hol deine Daten aus einer anderen App"
-
-#: apps/templates/_side_menu_room_list.html:99
-msgid "Other"
-msgstr "Andere"
 
 #: apps/templates/shared_partials/_loading_overlay.html:8
 #: apps/templates/shared_partials/loading_spinner.html:6
@@ -1869,7 +2099,9 @@ msgstr "Absenden"
 
 #: apps/templates/shared_partials/member_form.html:195
 msgid "This room is closed, so new members cannot be added."
-msgstr "Dieser Raum ist geschlossen, daher können keine neuen Mitglieder hinzugefügt werden."
+msgstr ""
+"Dieser Raum ist geschlossen, daher können keine neuen Mitglieder hinzugefügt "
+"werden."
 
 #: apps/templates/shared_partials/news_batch.html:6
 msgid "No updates yet."
@@ -1919,12 +2151,17 @@ msgid "Not seen yet"
 msgstr "Noch nicht gesehen"
 
 #: apps/templates/shared_partials/user_card.html:45
-msgid "Are you sure you want to remove yourself from this room? You will not be able to see this room afterwards anymore!"
-msgstr "Bist du sicher, dass du dich aus diesem Raum entfernen möchtest? Danach kannst du ihn nicht mehr sehen!"
+msgid ""
+"Are you sure you want to remove yourself from this room? You will not be "
+"able to see this room afterwards anymore!"
+msgstr ""
+"Bist du sicher, dass du dich aus diesem Raum entfernen möchtest? Danach "
+"kannst du ihn nicht mehr sehen!"
 
 #: apps/templates/shared_partials/user_card.html:47
 msgid "Are you sure you wish to remove this user from this room?"
-msgstr "Bist du sicher, dass du diesen Nutzer aus diesem Raum entfernen möchtest?"
+msgstr ""
+"Bist du sicher, dass du diesen Nutzer aus diesem Raum entfernen möchtest?"
 
 #: apps/templates/shared_partials/user_card.html:64
 msgid "Guest access with limited features"
@@ -2009,7 +2246,9 @@ msgstr "Transaktionen für %(category_name)s anzeigen"
 
 #: apps/transaction/templates/transaction/category_breakdown.html:155
 msgid "No tracked expenses yet. Add a transaction to populate the breakdown."
-msgstr "Noch keine erfassten Ausgaben. Füge eine Transaktion hinzu, um die Aufschlüsselung zu füllen."
+msgstr ""
+"Noch keine erfassten Ausgaben. Füge eine Transaktion hinzu, um die "
+"Aufschlüsselung zu füllen."
 
 #: apps/transaction/templates/transaction/category_breakdown.html:170
 msgid "Add expenses to unlock the breakdown."
@@ -2026,7 +2265,9 @@ msgstr "Kategorien für „%(room_name)s“ verwalten"
 
 #: apps/transaction/templates/transaction/category_manager.html:14
 msgid "Add or reorder categories that match how your group tracks spending."
-msgstr "Füge Kategorien hinzu oder ordne sie neu, die der Art und Weise entsprechen, wie deine Gruppe Ausgaben erfasst."
+msgstr ""
+"Füge Kategorien hinzu oder ordne sie neu, die der Art und Weise entsprechen, "
+"wie deine Gruppe Ausgaben erfasst."
 
 #: apps/transaction/templates/transaction/child_transaction_create.html:20
 #: apps/transaction/templates/transaction/edit.html:247
@@ -2305,7 +2546,8 @@ msgid ""
 "                                "
 msgstr ""
 "\n"
-"                                    Schuldet %(owed_value)s%(owed_currency)s\n"
+"                                    Schuldet "
+"%(owed_value)s%(owed_currency)s\n"
 "                                "
 
 #: apps/transaction/templates/transaction/detail.html:122
@@ -2329,11 +2571,13 @@ msgstr "Bist du sicher, dass du diese Transaktion löschen möchtest?"
 #, python-format
 msgid ""
 "\n"
-"                                    Current split: %(split_total)s%(split_currency)s\n"
+"                                    Current split: "
+"%(split_total)s%(split_currency)s\n"
 "                                "
 msgstr ""
 "\n"
-"                                    Aktuelle Aufteilung: %(split_total)s%(split_currency)s\n"
+"                                    Aktuelle Aufteilung: "
+"%(split_total)s%(split_currency)s\n"
 "                                "
 
 #: apps/transaction/templates/transaction/edit.html:170
@@ -2345,8 +2589,12 @@ msgid "Receipts stay on the detail page, so upload PDFs there instead of here."
 msgstr "Belege bleiben auf der Detailseite, lade PDFs dort statt hier hoch."
 
 #: apps/transaction/templates/transaction/edit.html:186
-msgid "You can continue editing this transaction; switch to the detail view if you need to manage uploads."
-msgstr "Du kannst diese Transaktion weiter bearbeiten; wechsle zur Detailansicht, wenn du Uploads verwalten möchtest."
+msgid ""
+"You can continue editing this transaction; switch to the detail view if you "
+"need to manage uploads."
+msgstr ""
+"Du kannst diese Transaktion weiter bearbeiten; wechsle zur Detailansicht, "
+"wenn du Uploads verwalten möchtest."
 
 #: apps/transaction/templates/transaction/edit.html:197
 msgid "Open detail view"
@@ -2376,8 +2624,12 @@ msgstr[1] ""
 "                                "
 
 #: apps/transaction/templates/transaction/edit.html:220
-msgid "⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically."
-msgstr "⚠️ Gesamte Änderungen sperren einzelne Anteile; das Backend gleicht die Splits automatisch aus."
+msgid ""
+"⚠️ Total edits lock individual share inputs; the backend will rebalance "
+"splits automatically."
+msgstr ""
+"⚠️ Gesamte Änderungen sperren einzelne Anteile; das Backend gleicht die "
+"Splits automatisch aus."
 
 #: apps/transaction/templates/transaction/edit.html:291
 msgid "No split entries yet."
@@ -2392,8 +2644,12 @@ msgid "Add extra notes here"
 msgstr "Hier zusätzliche Notizen hinzufügen"
 
 #: apps/transaction/templates/transaction/list.html:9
-msgid "Import done. Share this room with the others instead of letting them import their own export — otherwise the same history ends up in two rooms."
-msgstr "Import fertig. Teile diesen Raum mit den anderen, statt dass sie ihren eigenen Export hochladen — sonst landet dieselbe Historie in zwei Räumen."
+msgid ""
+"Import done. Share this room with the others instead of letting them import "
+"their own export — otherwise the same history ends up in two rooms."
+msgstr ""
+"Import fertig. Teile diesen Raum mit den anderen, statt dass sie ihren "
+"eigenen Export hochladen — sonst landet dieselbe Historie in zwei Räumen."
 
 #: apps/transaction/templates/transaction/list.html:14
 msgid "Copy share link"
@@ -2473,11 +2729,13 @@ msgstr "Nutze das Suchfeld, um nach Zahler:in oder Beschreibung zu filtern."
 
 #: apps/transaction/templates/transaction/list.html:351
 msgid "Tap a row or the eye icon to review the split details."
-msgstr "Tippe eine Zeile oder das Augensymbol an, um die Split-Details anzusehen."
+msgstr ""
+"Tippe eine Zeile oder das Augensymbol an, um die Split-Details anzusehen."
 
 #: apps/transaction/templates/transaction/list.html:352
 msgid "The floating '+' button lets you capture a new transaction."
-msgstr "Der schwebende '+'-Button ermöglicht dir, eine neue Transaktion zu erfassen."
+msgstr ""
+"Der schwebende '+'-Button ermöglicht dir, eine neue Transaktion zu erfassen."
 
 #: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:70
 msgid "Back to debts"
@@ -2499,7 +2757,8 @@ msgid ""
 "                                "
 msgstr ""
 "\n"
-"                                    Insgesamt ausgegeben (%(currency_sign)s)\n"
+"                                    Insgesamt ausgegeben "
+"(%(currency_sign)s)\n"
 "                                "
 
 #: apps/transaction/templates/transaction/partials/_money_spent_on_room.html:104
@@ -2703,8 +2962,11 @@ msgid "Save order for this category"
 msgstr "Reihenfolge für diese Kategorie speichern"
 
 #: apps/transaction/templates/transaction/partials/_room_category_list.html:103
-msgid "No room-specific categories yet. Create one to override the shared baseline."
-msgstr "Noch keine raumspezifischen Kategorien vorhanden. Erstelle eine, um die gemeinsame Basislinie zu überschreiben."
+msgid ""
+"No room-specific categories yet. Create one to override the shared baseline."
+msgstr ""
+"Noch keine raumspezifischen Kategorien vorhanden. Erstelle eine, um die "
+"gemeinsame Basislinie zu überschreiben."
 
 #: apps/transaction/templates/transaction/partials/_transaction_batch.html:31
 msgid "Paid on"
@@ -2749,7 +3011,9 @@ msgstr "Du bist auf dem Laufenden."
 
 #: apps/transaction/views/category_manager_view.py:66
 msgid "Unable to update that category. Please correct the highlighted fields."
-msgstr "Diese Kategorie kann nicht aktualisiert werden. Bitte korrigiere die markierten Felder."
+msgstr ""
+"Diese Kategorie kann nicht aktualisiert werden. Bitte korrigiere die "
+"markierten Felder."
 
 #: apps/transaction/views/category_manager_view.py:165
 msgid "Category added."
@@ -2781,7 +3045,8 @@ msgid ""
 "{payer} logged a payment of {amount}{currency} (\"{description}\")\n"
 "Have a look!"
 msgstr ""
-"{payer} hat eine Zahlung über {amount}{currency} eingetragen (\"{description}\")\n"
+"{payer} hat eine Zahlung über {amount}{currency} eingetragen "
+"(\"{description}\")\n"
 "Schau vorbei!"
 
 #: apps/webpush/handlers/events/events.py:37
@@ -2790,7 +3055,8 @@ msgid ""
 "{creator} logged that {payer} paid {amount}{currency} (\"{description}\")\n"
 "Have a look!"
 msgstr ""
-"{creator} hat eingetragen, dass {payer} {amount}{currency} gezahlt hat (\"{description}\")\n"
+"{creator} hat eingetragen, dass {payer} {amount}{currency} gezahlt hat "
+"(\"{description}\")\n"
 "Schau vorbei!"
 
 #: apps/webpush/handlers/events/events.py:81
