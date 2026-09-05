@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yamsa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 22:28+0200\n"
+"POT-Creation-Date: 2026-09-05 22:48+0200\n"
 "PO-Revision-Date: 2025-01-01 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -765,7 +765,9 @@ msgstr "Wie du gerade dastehst"
 
 #: apps/core/templates/core/_welcome.html:10
 msgid "Every room you are part of, with what you owe and what you get back."
-msgstr "Jeder Raum, in dem du bist – mit dem, was du schuldest und was du zurückbekommst."
+msgstr ""
+"Jeder Raum, in dem du bist – mit dem, was du schuldest und was du "
+"zurückbekommst."
 
 #: apps/core/templates/core/_welcome.html:13 apps/room/models/room.py:17
 #: apps/room/templates/room/detail.html:17
@@ -1700,7 +1702,7 @@ msgstr "Raum"
 msgid "Rooms"
 msgstr "Räume"
 
-#: apps/room/models/user_connection_to_room.py:20
+#: apps/room/models/user_connection_to_room.py:25
 #, python-brace-format
 msgid "{user} belongs to {room}"
 msgstr "{user} gehört zu {room}"
@@ -1989,10 +1991,12 @@ msgstr ""
 "zum Raum hinzuzufügen."
 
 #: apps/room/templates/room/partials/_room_overview_card.html:32
+#, python-format
 msgid "You owe %(amount)s%(currency)s"
 msgstr "Du schuldest %(amount)s%(currency)s"
 
 #: apps/room/templates/room/partials/_room_overview_card.html:38
+#, python-format
 msgid "You get back %(amount)s%(currency)s"
 msgstr "Du bekommst %(amount)s%(currency)s zurück"
 

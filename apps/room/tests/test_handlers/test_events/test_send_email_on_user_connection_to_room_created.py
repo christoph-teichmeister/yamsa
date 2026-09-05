@@ -8,7 +8,7 @@ from apps.room.handlers.events.notify_on_user_connection_to_room_created import 
     send_email_on_user_connection_to_room_created,
 )
 from apps.room.messages.events.user_connection_to_room_created import UserConnectionToRoomCreated
-from apps.room.tests.factories import UserConnectionToRoomFactory
+from apps.room.tests.factories import RoomFactory, UserConnectionToRoomFactory
 
 
 @pytest.mark.django_db
@@ -29,8 +29,9 @@ class TestSendEmailOnUserConnectionToRoomCreated:
         mocked_init.assert_called_once_with(recipient=another_user, new_room=room)
         mocked_process.assert_called_once()
 
-    def test_returns_none_for_creator(self, room, user):
-        ucr = UserConnectionToRoomFactory(user=user, room=room, created_by=user)
+    def test_returns_none_for_creator(self, user):
+        # A fresh room: the user is not connected to it yet, so the connection is a new one.
+        ucr = UserConnectionToRoomFactory(user=user, room=RoomFactory(created_by=user), created_by=user)
 
         result = send_email_on_user_connection_to_room_created(
             context=UserConnectionToRoomCreated.Context(instance=ucr)
@@ -38,8 +39,8 @@ class TestSendEmailOnUserConnectionToRoomCreated:
 
         assert result is None
 
-    def test_returns_none_for_guest(self, room, guest_user, user):
-        ucr = UserConnectionToRoomFactory(user=guest_user, room=room, created_by=user)
+    def test_returns_none_for_guest(self, guest_user, user):
+        ucr = UserConnectionToRoomFactory(user=guest_user, room=RoomFactory(created_by=user), created_by=user)
 
         result = send_email_on_user_connection_to_room_created(
             context=UserConnectionToRoomCreated.Context(instance=ucr)

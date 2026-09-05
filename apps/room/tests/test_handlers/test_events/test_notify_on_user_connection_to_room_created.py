@@ -3,6 +3,7 @@ from django_pony_express.services.tests import EmailTestService
 
 from apps.account.tests.factories import UserFactory
 from apps.room.models import UserConnectionToRoom
+from apps.room.tests.factories import RoomFactory
 from apps.webpush.services.notification_send_test_service import NotificationSendTestService
 
 
@@ -16,8 +17,9 @@ class TestNotifyOnUserConnectionToRoomCreated:
         self.notification_test_service = NotificationSendTestService()
         self.notification_test_service.empty()
 
-    def test_creator_of_room_does_not_receive_an_email_when_creating_room(self, room, user):
-        UserConnectionToRoom.objects.create(user=user, room=room, created_by=user)
+    def test_creator_of_room_does_not_receive_an_email_when_creating_room(self, user):
+        # A fresh room: the user is not connected to it yet, so the connection is a new one.
+        UserConnectionToRoom.objects.create(user=user, room=RoomFactory(created_by=user), created_by=user)
 
         assert self.email_test_service.all().count() == 0
         assert len(self.notification_test_service.all()) == 0
@@ -32,8 +34,8 @@ class TestNotifyOnUserConnectionToRoomCreated:
         assert self.email_test_service.all().count() == 1
         assert self.email_test_service.filter(to=another_user.email).count() == 1
 
-    def test_no_email_is_sent_when_a_guest_is_invited_to_room(self, room, guest_user, user):
-        UserConnectionToRoom.objects.create(user=guest_user, room=room, created_by=user)
+    def test_no_email_is_sent_when_a_guest_is_invited_to_room(self, guest_user, user):
+        UserConnectionToRoom.objects.create(user=guest_user, room=RoomFactory(created_by=user), created_by=user)
 
         assert self.email_test_service.all().count() == 0
         assert len(self.notification_test_service.all()) == 0
