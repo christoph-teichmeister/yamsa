@@ -1,8 +1,10 @@
 from collections import OrderedDict
 from decimal import Decimal
+from urllib.parse import urlencode
 
 from django.db.models import DecimalField, Sum, Value
 from django.db.models.functions import Coalesce
+from django.urls import reverse
 from django.utils.formats import number_format
 from django.utils.translation import ngettext
 from django.views import generic
@@ -71,9 +73,11 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
         for group in breakdown_by_currency.values():
             sorted_categories = sorted(group["categories"], key=lambda item: item["total_amount"], reverse=True)
             currency_sign = group["currency"]["sign"] or ""
-            chart_points = self._build_chart_points(sorted_categories, currency_sign)
-
             currency_code = group["currency"]["code"] or ""
+            chart_points = self._build_chart_points(sorted_categories, currency_sign)
+            for category in sorted_categories:
+                category["filter_url"] = self._build_filter_url(category["slug"], currency_code)
+
             currency_id = group["currency"]["id"]
             chart_suffix = f"{currency_code}-{currency_id}"
 
@@ -96,6 +100,10 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
             }
         )
         return context
+
+    def _build_filter_url(self, category_slug: str, currency_code: str) -> str:
+        list_url = reverse("transaction:list", kwargs={"room_slug": self.request.room.slug})
+        return f"{list_url}?{urlencode({'category': category_slug, 'currency': currency_code})}"
 
     def _format_amount(self, amount: Decimal, currency_sign: str) -> str:
         return f"{number_format(amount, decimal_pos=2, use_l10n=True, force_grouping=True)}{currency_sign}"

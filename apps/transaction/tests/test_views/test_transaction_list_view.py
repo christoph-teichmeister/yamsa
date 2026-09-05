@@ -33,6 +33,24 @@ class TestTransactionListViewFiltering:
         # The feed is loaded via HTMX, so the filters must be re-sent with every batch request.
         assert filter_inputs == {"category": groceries.slug, "currency": room.preferred_currency.code}
 
+    def test_list_view_wires_the_filters_into_every_feed_request(self, authenticated_client, room, user, guest_user):
+        create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+
+        response = authenticated_client.get(reverse("transaction:list", kwargs={"room_slug": room.slug}))
+
+        assert response.status_code == http.HTTPStatus.OK
+        soup = BeautifulSoup(response.content.decode(), "html.parser")
+
+        # Without this the filter is dropped as soon as the user types in the search field.
+        assert soup.select_one("#transaction-search")["hx-include"] == ".transaction-feed-filters"
+        assert soup.select_one("#transaction-table-body")["hx-include"] == (
+            "#transaction-search, .transaction-feed-filters"
+        )
+        # The wrapper is rendered even unfiltered: htmx logs a console error for an hx-include
+        # selector that matches nothing, and unfiltered is the common case.
+        assert soup.select_one(".transaction-feed-filters") is not None
+        assert soup.select(".transaction-feed-filters input") == []
+
     def test_list_view_without_filter_renders_no_filter_chip(self, authenticated_client, room, user, guest_user):
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
 

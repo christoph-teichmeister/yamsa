@@ -171,6 +171,36 @@ class TestTransactionCategoryBreakdownView:
             f"?category={groceries.slug}&currency={room.preferred_currency.code}"
         )
         assert legend_item["hx-get"] == expected_url
+        # An anchor with a real href, so Enter activates it natively and it survives without JS.
+        assert legend_item.name == "a"
+        assert legend_item["href"] == expected_url
+
+    def test_category_breakdown_legend_entry_needs_no_scripted_keyboard_trigger(self, authenticated_client, room, user):
+        groceries = Category.objects.get(slug="groceries")
+        parent_groceries = ParentTransactionFactory(
+            room=room,
+            paid_by=user,
+            currency=room.preferred_currency,
+            category=groceries,
+            paid_at=timezone.now(),
+        )
+        _make_child(parent_groceries, user, Decimal("34.25"))
+
+        response = authenticated_client.get(reverse("transaction:category-breakdown", kwargs={"room_slug": room.slug}))
+        assert response.status_code == 200
+
+        soup = BeautifulSoup(response.content.decode(), "html.parser")
+        legend_item = soup.select_one("[data-category-legend-item]")
+
+        # Regression guard: the entry used to be a div with hx-trigger="click keyup[...]" — htmx splits
+        # that attribute on commas only, so the keyup half was dropped and the row was unreachable by
+        # keyboard. Both attributes also compile via new Function(), which the project's CSP forbids.
+        assert "hx-trigger" not in legend_item.attrs
+        assert not any(attribute.startswith("hx-on") for attribute in legend_item.attrs)
+        # No aria-label either: it would override the row's content as the accessible name and hide
+        # the amount from assistive tech.
+        assert "aria-label" not in legend_item.attrs
+        assert legend_item.select_one("span.fw-semibold").get_text(strip=True)
 
     def test_category_breakdown_chart_data_carries_formatted_amount(self, authenticated_client, room, user):
         groceries = Category.objects.get(slug="groceries")

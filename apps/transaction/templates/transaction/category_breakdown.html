@@ -115,20 +115,21 @@
                 <div class="list-group list-group-flush">
                   {% for category in breakdown.categories %}
                     {% blocktrans asvar show_category_transactions_label with category_name=category.name %}Show transactions for {{ category_name }}{% endblocktrans %}
-                    <div class="list-group-item list-group-item-action border-0 px-0 py-2 d-flex justify-content-between align-items-center gap-2 cursor-pointer category-legend-item"
-                         role="button"
-                         tabindex="0"
-                         data-category-legend-item
-                         data-category-slug="{{ category.slug }}"
-                         title="{{ show_category_transactions_label }}"
-                         aria-label="{{ show_category_transactions_label }}"
-                         hx-get="{% room_url 'transaction:list' %}?category={{ category.slug|urlencode }}&currency={{ breakdown.currency.code|urlencode }}"
-                         hx-target="#body"
-                         hx-indicator="#body-loading-spinner"
-                         hx-swap="morph:innerHTML"
-                         hx-push-url="true"
-                         hx-trigger="click keyup[key=='Enter' || key==' ']"
-                         hx-on:keydown="if (event.key === ' ') { event.preventDefault(); }">
+                    {% comment %}
+                    An anchor, not a div+role=button: Enter activates it natively, so the row needs
+                    neither a keyup trigger nor hx-on - both of which htmx compiles with new Function()
+                    and the project's CSP (script-src without unsafe-eval) refuses to run.
+                    {% endcomment %}
+                    <a class="list-group-item list-group-item-action border-0 px-0 py-2 d-flex justify-content-between align-items-center gap-2"
+                       data-category-legend-item
+                       data-category-slug="{{ category.slug }}"
+                       title="{{ show_category_transactions_label }}"
+                       href="{{ category.filter_url }}"
+                       hx-get="{{ category.filter_url }}"
+                       hx-target="#body"
+                       hx-indicator="#body-loading-spinner"
+                       hx-swap="morph:innerHTML"
+                       hx-push-url="true">
                       <div class="d-flex align-items-center gap-3">
                         <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white category-swatch"
                               data-category-color="{{ category.color|default:'#6c757d' }}">{{ category.emoji }}</span>
@@ -141,7 +142,7 @@
                         <span class="fw-semibold">{{ category.total_amount|format_with_thousands }}{{ breakdown.currency.sign }}</span>
                         <i class="bi bi-chevron-right text-muted small" aria-hidden="true"></i>
                       </div>
-                    </div>
+                    </a>
                   {% endfor %}
                 </div>
               </div>

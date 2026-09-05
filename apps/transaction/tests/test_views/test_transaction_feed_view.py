@@ -124,3 +124,31 @@ class TestTransactionFeedFiltering:
         next_batch_trigger = soup.select_one("#transaction-batch-trigger")
         assert next_batch_trigger is not None
         assert f"category={groceries.slug}" in next_batch_trigger["hx-get"]
+
+    def test_feed_combines_search_and_category_filter(self, authenticated_client, room, user, guest_user):
+        groceries = Category.objects.get(slug="groceries")
+        transport = Category.objects.get(slug="transport")
+        for description, category in (
+            ("Market groceries", groceries),
+            ("Market ticket", transport),
+            ("Corner shop groceries", groceries),
+        ):
+            create_parent_transaction_with_optimisation(
+                room=room,
+                paid_by=user,
+                paid_for_tuple=(guest_user,),
+                parent_transaction_kwargs={"description": description, "category": category},
+            )
+
+        response = authenticated_client.get(
+            reverse("transaction:feed", kwargs={"room_slug": room.slug}),
+            data={"q": "Market", "category": groceries.slug},
+            HTTP_HX_REQUEST="true",
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        content = response.content.decode()
+        # Both narrowings have to apply — neither may replace the other.
+        assert "Market groceries" in content
+        assert "Market ticket" not in content
+        assert "Corner shop groceries" not in content
