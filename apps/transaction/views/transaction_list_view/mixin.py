@@ -1,10 +1,12 @@
 from datetime import datetime
+from urllib.parse import urlencode
 
 from django.db.models import Q, Sum
 from django.utils import timezone
 
+from apps.currency.models import Currency
 from apps.transaction.constants import TRANSACTION_FEED_PAGE_SIZE
-from apps.transaction.models import ParentTransaction
+from apps.transaction.models import Category, ParentTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -15,6 +17,33 @@ class TransactionFeedMixin(TransactionBaseContext):
         if not hasattr(self, "_search_query"):
             self._search_query = self.request.GET.get("q", "").strip()
         return self._search_query
+
+    def get_category_slug(self) -> str:
+        # Truncated to the model's own limit: the raw value is echoed back into the filter chip and
+        # into every batch URL, so a multi-KB query parameter would render verbatim in the UI.
+        if not hasattr(self, "_category_slug"):
+            self._category_slug = self.request.GET.get("category", "").strip()[
+                : Category._meta.get_field("slug").max_length
+            ]
+        return self._category_slug
+
+    def get_currency_code(self) -> str:
+        if not hasattr(self, "_currency_code"):
+            self._currency_code = self.request.GET.get("currency", "").strip()[
+                : Currency._meta.get_field("code").max_length
+            ]
+        return self._currency_code
+
+    def get_feed_params(self) -> dict[str, str]:
+        """Return the active feed filters, ready to be re-sent with the next batch request."""
+        params = {}
+        if search_query := self.get_search_query():
+            params["q"] = search_query
+        if category_slug := self.get_category_slug():
+            params["category"] = category_slug
+        if currency_code := self.get_currency_code():
+            params["currency"] = currency_code
+        return params
 
     def get_base_queryset(self):
         return (
@@ -31,6 +60,15 @@ class TransactionFeedMixin(TransactionBaseContext):
             queryset = queryset.filter(
                 Q(description__icontains=search_query) | Q(paid_by__name__icontains=search_query)
             )
+
+        # Filtering on the raw slug/code keeps an unknown value honest: it yields an empty feed
+        # instead of silently falling back to the unfiltered list. Slugs are already normalised by
+        # slugify(), currency codes travel in links in whatever case the source used - hence iexact.
+        if category_slug := self.get_category_slug():
+            queryset = queryset.filter(category__slug=category_slug)
+        if currency_code := self.get_currency_code():
+            queryset = queryset.filter(currency__code__iexact=currency_code)
+
         return queryset
 
     def apply_cursor(self, queryset):
@@ -69,8 +107,12 @@ class TransactionFeedMixin(TransactionBaseContext):
 
     def build_feed_context(self, *, queryset=None):
         transactions, next_cursor = self.get_feed_batch(queryset=queryset)
+        feed_params = self.get_feed_params()
         return {
             "parent_transactions": transactions,
             "transaction_next_cursor": next_cursor,
             "transaction_search_query": self.get_search_query(),
+            "transaction_category_filter": self.get_category_slug(),
+            "transaction_currency_filter": self.get_currency_code(),
+            "transaction_feed_query_string": urlencode(feed_params),
         }

@@ -99,7 +99,7 @@
       <ul class="list-group list-group-flush">
         {% for child_transaction in child_transactions %}
           <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2 transaction-breakdown-item {% if current_room.is_open %}cursor-pointer{% endif %}"
-              {% if current_room.is_open %} role="button" tabindex="0" hx-trigger="click keyup[key=='Enter']" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
+              {% if current_room.is_open %} role="button" tabindex="0" data-keyboard-click hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
             <div>
               <p class="fw-semibold mb-1">
                 {% autoescape off %}

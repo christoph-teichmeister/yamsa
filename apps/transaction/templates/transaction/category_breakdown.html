@@ -39,6 +39,15 @@
             .category-breakdown-header > :nth-child(2) {
                 justify-self: center;
             }
+
+            [data-transaction-category-chart] svg path:focus {
+                outline: none;
+            }
+
+            [data-transaction-category-chart] svg path:focus-visible {
+                outline: 2px solid currentColor;
+                outline-offset: 2px;
+            }
     </style>
     <div class="category-breakdown-header mb-4">
       {% trans "Back to transactions" as back_to_transactions_label %}
@@ -92,7 +101,7 @@
                 {{ breakdown.chart_data|json_script:breakdown.chart_data_id }}
               </div>
               <div class="col-12 col-lg-5">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
                   <p class="fw-semibold mb-0">{% trans "Legend" %}</p>
                   <span class="text-muted small">
                     {% blocktrans count category_count=breakdown.categories|length %}
@@ -102,9 +111,25 @@
                                         {% endblocktrans %}
                   </span>
                 </div>
+                <p class="text-muted small mb-3">{% trans "Tap a category to see its transactions." %}</p>
                 <div class="list-group list-group-flush">
                   {% for category in breakdown.categories %}
-                    <div class="list-group-item border-0 px-0 py-2 d-flex justify-content-between align-items-center">
+                    {% blocktrans asvar show_category_transactions_label with category_name=category.name %}Show transactions for {{ category_name }}{% endblocktrans %}
+                    {% comment %}
+                    An anchor, not a div+role=button: Enter activates it natively, so the row needs
+                    neither a keyup trigger nor hx-on - both of which htmx compiles with new Function()
+                    and the project's CSP (script-src without unsafe-eval) refuses to run.
+                    {% endcomment %}
+                    <a class="list-group-item list-group-item-action border-0 px-0 py-2 d-flex justify-content-between align-items-center gap-2"
+                       data-category-legend-item
+                       data-category-slug="{{ category.slug }}"
+                       title="{{ show_category_transactions_label }}"
+                       href="{{ category.filter_url }}"
+                       hx-get="{{ category.filter_url }}"
+                       hx-target="#body"
+                       hx-indicator="#body-loading-spinner"
+                       hx-swap="morph:innerHTML"
+                       hx-push-url="true">
                       <div class="d-flex align-items-center gap-3">
                         <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white category-swatch"
                               data-category-color="{{ category.color|default:'#6c757d' }}">{{ category.emoji }}</span>
@@ -113,8 +138,11 @@
                           <p class="text-muted small mb-0">{{ category.slug|title }}</p>
                         </div>
                       </div>
-                      <span class="fw-semibold">{{ category.total_amount|format_with_thousands }}{{ breakdown.currency.sign }}</span>
-                    </div>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="fw-semibold">{{ category.total_amount|format_with_thousands }}{{ breakdown.currency.sign }}</span>
+                        <i class="bi bi-chevron-right text-muted small" aria-hidden="true"></i>
+                      </div>
+                    </a>
                   {% endfor %}
                 </div>
               </div>
@@ -139,6 +167,45 @@
                 return;
             }
             const emptyBreakdownMessage = '{% trans "Add expenses to unlock the breakdown." %}';
+            const chartHintMessage = '{% trans "Tap a slice" %}';
+            const CHART_BUCKET_COLOR = "{{ chart_small_slice_bucket_color }}";
+
+            // getComputedTextLength() returns 0 while the SVG is not laid out (e.g. inside a
+            // hidden tab), which would collapse every label into a single overflowing line.
+            // Fall back to an average-glyph estimate so wrapping still happens.
+            const measureText = (probe, text, fontSize) => {
+                probe.text(text).attr("font-size", fontSize);
+                const measured = probe.node().getComputedTextLength();
+                return measured || text.length * fontSize * 0.6;
+            };
+
+            // The amount and the share are single tokens: they cannot wrap, so they shrink instead.
+            const fitFontSize = (probe, text, fontSize, maxWidth) => {
+                const measured = measureText(probe, text, fontSize);
+                if (measured <= maxWidth) {
+                    return fontSize;
+                }
+                return Math.max(9, fontSize * (maxWidth / measured));
+            };
+
+            const splitIntoLines = (probe, text, fontSize, maxWidth) => {
+                const words = text.split(/\s+/).filter(Boolean);
+                const lines = [];
+                let current = "";
+                words.forEach(word => {
+                    const candidate = current ? `${current} ${word}` : word;
+                    if (current && measureText(probe, candidate, fontSize) > maxWidth) {
+                        lines.push(current);
+                        current = word;
+                    } else {
+                        current = candidate;
+                    }
+                });
+                if (current) {
+                    lines.push(current);
+                }
+                return lines.length ? lines : [text];
+            };
 
             const renderSingleChart = (container, dataset) => {
                 container.innerHTML = "";
@@ -150,6 +217,8 @@
                 const width = container.clientWidth || container.parentElement?.clientWidth || 360;
                 const height = Math.max(260, Math.min(360, width));
                 const radius = Math.min(width, height) / 2;
+                const innerRadius = radius * 0.55;
+                const total = d3.sum(dataset, d => d.value);
                 const svg = d3
                     .select(container)
                     .append("svg")
@@ -157,17 +226,144 @@
                     .attr("preserveAspectRatio", "xMidYMid meet");
                 const chartGroup = svg.append("g").attr("transform", `translate(${width / 2}, ${height / 2})`);
                 const pie = d3.pie().value(d => d.value).sort(null);
-                const arc = d3.arc().innerRadius(radius * 0.55).outerRadius(radius * 0.95);
-                chartGroup
+                const arc = d3.arc().innerRadius(innerRadius).outerRadius(radius * 0.95);
+                const activeArc = d3.arc().innerRadius(innerRadius).outerRadius(radius);
+
+                const bucketPatternId = `${container.id}-small-slice-bucket`;
+                const bucketPattern = svg
+                    .append("defs")
+                    .append("pattern")
+                    .attr("id", bucketPatternId)
+                    .attr("patternUnits", "userSpaceOnUse")
+                    .attr("patternTransform", "rotate(45)")
+                    .attr("width", 6)
+                    .attr("height", 6);
+                bucketPattern.append("rect").attr("width", 6).attr("height", 6).attr("fill", CHART_BUCKET_COLOR);
+                bucketPattern
+                    .append("line")
+                    .attr("x1", 0)
+                    .attr("y1", 0)
+                    .attr("x2", 0)
+                    .attr("y2", 6)
+                    .attr("stroke", "#fff")
+                    .attr("stroke-width", 2);
+
+                const slices = chartGroup
                     .selectAll("path")
                     .data(pie(dataset))
                     .join("path")
                     .attr("d", arc)
-                    .attr("fill", d => d.data.color)
+                    // The bucket carries no slug; hatching keeps it apart from a category that
+                    // happens to be painted the same colour.
+                    .attr("fill", d => (d.data.slug === null ? `url(#${bucketPatternId})` : d.data.color))
                     .attr("stroke", "#fff")
                     .attr("stroke-width", 2)
-                    .append("title")
-                    .text(d => `${d.data.label}: ${d.data.value.toFixed(2)}`);
+                    .attr("cursor", "pointer")
+                    .attr("tabindex", 0)
+                    .attr("role", "button")
+                    .attr("aria-label", d => `${d.data.label}: ${d.data.amount_label}`);
+                slices.append("title").text(d => `${d.data.label}: ${d.data.amount_label}`);
+
+                const centerLabel = chartGroup
+                    .append("text")
+                    .attr("text-anchor", "middle")
+                    .attr("fill", "currentColor")
+                    .attr("pointer-events", "none");
+                // Outside centerLabel: paintLabel wipes that node's children on every repaint.
+                const probe = chartGroup.append("text").attr("visibility", "hidden").attr("aria-hidden", "true");
+                // The label sits in the donut hole; lines away from the vertical center have a
+                // shorter chord available, so stay well inside the hole's diameter.
+                const maxLabelWidth = innerRadius * 1.45;
+                const baseFontSize = Math.max(11, Math.min(16, radius * 0.12));
+
+                const paintLabel = point => {
+                    centerLabel.selectAll("tspan").remove();
+
+                    const lines = [];
+                    if (point) {
+                        splitIntoLines(probe, point.label, baseFontSize, maxLabelWidth).forEach(text => {
+                            lines.push({
+                                text: text,
+                                // A category name can be one long word, which splitIntoLines cannot break.
+                                size: fitFontSize(probe, text, baseFontSize, maxLabelWidth),
+                                weight: 600,
+                                opacity: 1,
+                            });
+                        });
+                        lines.push({
+                            text: point.amount_label,
+                            size: fitFontSize(probe, point.amount_label, baseFontSize, maxLabelWidth),
+                            weight: 600,
+                            opacity: 1,
+                        });
+                        const share = total > 0 ? (point.value / total) * 100 : 0;
+                        const shareText = `${share.toFixed(1)}%`;
+                        lines.push({
+                            text: shareText,
+                            size: fitFontSize(probe, shareText, baseFontSize * 0.85, maxLabelWidth),
+                            weight: 400,
+                            opacity: 0.65,
+                        });
+                    } else {
+                        splitIntoLines(probe, chartHintMessage, baseFontSize * 0.85, maxLabelWidth).forEach(text => {
+                            lines.push({text: text, size: baseFontSize * 0.85, weight: 400, opacity: 0.65});
+                        });
+                    }
+
+                    const lineHeight = baseFontSize * 1.25;
+                    const startY = -((lines.length - 1) * lineHeight) / 2;
+                    lines.forEach((line, index) => {
+                        centerLabel
+                            .append("tspan")
+                            .attr("x", 0)
+                            .attr("y", startY + index * lineHeight)
+                            .attr("dominant-baseline", "middle")
+                            .attr("font-size", line.size)
+                            .attr("font-weight", line.weight)
+                            .attr("opacity", line.opacity)
+                            .text(line.text);
+                    });
+                };
+
+                // Identified by the datum itself rather than by slug: the bucket slice that
+                // collapses the small categories has no slug of its own.
+                let selectedPoint = null;
+
+                const applySelection = () => {
+                    slices
+                        .attr("d", d => (d.data === selectedPoint ? activeArc(d) : arc(d)))
+                        .attr("opacity", d => (!selectedPoint || d.data === selectedPoint ? 1 : 0.35))
+                        .attr("aria-pressed", d => d.data === selectedPoint);
+                    paintLabel(selectedPoint);
+                };
+
+                const toggleSlice = datum => {
+                    selectedPoint = selectedPoint === datum.data ? null : datum.data;
+                    applySelection();
+                };
+
+                slices
+                    .on("click", (event, datum) => {
+                        event.stopPropagation();
+                        toggleSlice(datum);
+                    })
+                    .on("keydown", (event, datum) => {
+                        if (event.key !== "Enter" && event.key !== " ") {
+                            return;
+                        }
+                        event.preventDefault();
+                        toggleSlice(datum);
+                    });
+
+                svg.on("click", () => {
+                    if (!selectedPoint) {
+                        return;
+                    }
+                    selectedPoint = null;
+                    applySelection();
+                });
+
+                applySelection();
             };
 
             const renderAllCharts = () => {

@@ -219,6 +219,33 @@ window.bootstrap = bootstrap;
     applyDataStyleVars();
   };
 
+  const KEYBOARD_CLICK_SELECTOR = '[data-keyboard-click]';
+
+  /*
+   * Enter/Space activation for elements that only look like buttons.
+   *
+   * htmx cannot carry this itself: its `keyup[...]` trigger filters and `hx-on:` handlers are
+   * compiled with new Function(), which the CSP (script-src without unsafe-eval) refuses - htmx
+   * then fires the trigger unconditionally, on any key. A delegated listener in this nonce'd
+   * bundle has neither problem, and being on `document` it survives every HTMX swap.
+   */
+  const handleKeyboardActivation = (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    const target = event.target;
+    // The marked element itself only. A focused descendant that is a real control already gets a
+    // synthetic click from the browser, and clicking the ancestor too would navigate twice.
+    if (!target || typeof target.matches !== 'function' || !target.matches(KEYBOARD_CLICK_SELECTOR)) {
+      return;
+    }
+
+    // Space would scroll the page.
+    event.preventDefault();
+    target.click();
+  };
+
   const handleNavigationClick = (event) => {
     const stopPropagationEl = event.target.closest('[data-stop-propagation]');
     if (stopPropagationEl) {
@@ -241,6 +268,7 @@ window.bootstrap = bootstrap;
     initRoomNavigationScrollReset();
     refreshDynamicElements();
     document.addEventListener('click', handleNavigationClick);
+    document.addEventListener('keydown', handleKeyboardActivation);
 
     if (document.body) {
       document.body.addEventListener('htmx:afterSwap', refreshDynamicElements);

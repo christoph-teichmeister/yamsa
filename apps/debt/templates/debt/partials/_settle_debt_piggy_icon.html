@@ -16,8 +16,7 @@
        role="button"
        tabindex="0"
        aria-label="{{ settle_label }}"
-       hx-trigger="click keyup[key=='Enter' || key==' ']"
-       hx-on:keydown="if (event.key === ' ') { event.preventDefault(); }"
+       data-keyboard-click
        hx-get="{% room_url 'debt:settle' pk=debt.id %}"
        hx-target="#body"
        hx-indicator="#body-loading-spinner"
