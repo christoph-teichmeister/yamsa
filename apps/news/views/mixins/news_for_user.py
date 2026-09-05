@@ -5,8 +5,6 @@ class NewsForUserMixin:
     """Scope the news feed to the rooms the requesting user belongs to."""
 
     def get_base_queryset(self):
-        if self.request.user.is_anonymous:
-            return News.objects.none()
         room_ids = self.request.user.room_set.values_list("id", flat=True)
         return News.objects.filter(room_id__in=room_ids)
 

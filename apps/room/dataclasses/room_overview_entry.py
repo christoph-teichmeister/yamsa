@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from uuid import UUID
 
 from apps.room.dataclasses.room_balance import RoomBalance
 
@@ -7,10 +8,9 @@ from apps.room.dataclasses.room_balance import RoomBalance
 class RoomOverviewEntry:
     """One room card on the dashboard."""
 
-    slug: str
+    slug: UUID
     name: str
     description: str
-    status: int
     status_label: str
     capitalised_initials: str
     created_by_name: str

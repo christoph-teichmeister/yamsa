@@ -41,10 +41,7 @@ def room_status_label(status):
     """Render the label of a Room status value, for rows that are dicts rather than model instances."""
     from apps.room.models import Room
 
-    try:
-        return Room.status_label_for(status)
-    except ValueError:
-        return ""
+    return Room.status_label_for(status)
 
 
 @register.filter

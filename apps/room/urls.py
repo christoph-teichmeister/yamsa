@@ -12,7 +12,7 @@ def build_room_specific_paths(list_of_url_paths: list):
 app_name = "room"
 urlpatterns = [
     # Compatibility shim: post-register mails already in inboxes link here.
-    path("list/", RedirectView.as_view(pattern_name="core:welcome"), name="list"),
+    path("list/", RedirectView.as_view(pattern_name="core:welcome", query_string=True), name="list"),
     path("create/", views.RoomCreateView.as_view(), name="create"),
     path("share/<str:share_hash>/", views.RoomShareView.as_view(), name="share"),
     path(
