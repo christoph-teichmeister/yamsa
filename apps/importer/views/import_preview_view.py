@@ -98,8 +98,9 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
         pop_parsed_import(self.request.session, self._token)
 
         # Both of these emit webpush/email, so they belong outside the atomic block (#333).
-        for user in result.deferred_connections:
-            service.connect(user=user, room=result.room)
+        # The event runs first because it recalculates the room's debts: handle_event re-raises,
+        # so a failing connection mail would otherwise leave a room full of transactions and no
+        # debts at all. In this order the same failure costs one missing membership instead.
         handle_message(
             TransactionsImported(
                 context_data={
@@ -111,6 +112,8 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
                 }
             )
         )
+        for user in result.deferred_connections:
+            service.connect(user=user, room=result.room)
 
         self.request.session[IMPORT_SHARE_HINT_SESSION_KEY] = str(result.room.slug)
         self.request.toast_queue.success(self._build_success_message(result))
