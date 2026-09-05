@@ -15,6 +15,10 @@ class LoginPage(BasePage):
     def login(self, email: str, password: str):
         self.fill_credentials(email, password)
         self.submit()
+        # The login POST answers with a redirect. expect_response() returns on that response,
+        # while the browser is still on the login URL and the redirect is in flight - a page.goto()
+        # issued right after can then be superseded by it and land somewhere else entirely.
+        self.page.wait_for_url(lambda url: self.path not in url)
 
     def expect_auth_failed_error_visible(self):
         expect(self.page.locator(".alert-danger")).to_be_visible()
