@@ -117,6 +117,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
                 "capitalised_initials",
                 "created_by__name",
                 "description",
+                "id",
                 "name",
                 "slug",
                 "status",
