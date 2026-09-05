@@ -66,6 +66,15 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     def has_guests(self):
         return self.room_users.filter(is_guest=True).exists()
 
+    @classmethod
+    def status_label_for(cls, status: int) -> str:
+        """Resolve a raw status value to its label.
+
+        Rows coming from a values() queryset are plain dicts and carry no
+        get_status_display(), so every such consumer has to resolve the label itself.
+        """
+        return cls.StatusChoices(status).label
+
     @cached_property
     def capitalised_initials(self):
         return self.name[:2].upper()

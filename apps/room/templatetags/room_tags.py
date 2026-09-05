@@ -37,6 +37,17 @@ def room_url(parser, token):
 
 
 @register.filter
+def room_status_label(status):
+    """Render the label of a Room status value, for rows that are dicts rather than model instances."""
+    from apps.room.models import Room
+
+    try:
+        return Room.status_label_for(status)
+    except ValueError:
+        return ""
+
+
+@register.filter
 def format_with_thousands(value):
     """
     Formats a number with thousands separator using Django's locale-aware number_format.

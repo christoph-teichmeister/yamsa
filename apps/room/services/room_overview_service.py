@@ -50,8 +50,7 @@ class RoomOverviewService:
             name=room_values["name"],
             description=room_values["description"],
             status=room_values["status"],
-            # Resolved here because room_qs_for_list yields plain dicts, which have no get_status_display().
-            status_label=Room.StatusChoices(room_values["status"]).label,
+            status_label=Room.status_label_for(room_values["status"]),
             capitalised_initials=room_values["capitalised_initials"],
             created_by_name=room_values["created_by__name"],
             user_is_in_room=room_values["user_is_in_room"],
