@@ -18,7 +18,6 @@ class TestNotifyOnUserConnectionToRoomCreated:
         self.notification_test_service.empty()
 
     def test_creator_of_room_does_not_receive_an_email_when_creating_room(self, user):
-        # A fresh room: the user is not connected to it yet, so the connection is a new one.
         UserConnectionToRoom.objects.create(user=user, room=RoomFactory(created_by=user), created_by=user)
 
         assert self.email_test_service.all().count() == 0

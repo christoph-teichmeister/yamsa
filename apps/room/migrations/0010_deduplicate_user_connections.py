@@ -3,6 +3,15 @@ from django.db.models import Count, Min
 
 
 def deduplicate_user_connections(apps, schema_editor):
+    """Collapse duplicate (user, room) connections onto the oldest row.
+
+    Effectively irreversible: the surplus rows are deleted, so the reverse operation is a
+    no-op rather than a restore. Runs before 0011 adds the unique constraint, which would
+    otherwise fail on any pre-existing duplicate.
+
+    Deletion is scoped per (user, room) pair rather than by two independent id__in sets -
+    the latter is a cross product and would take out unrelated single connections.
+    """
     UserConnectionToRoom = apps.get_model("room", "UserConnectionToRoom")
 
     duplicated_pairs = (

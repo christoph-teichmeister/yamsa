@@ -30,7 +30,6 @@ class TestSendEmailOnUserConnectionToRoomCreated:
         mocked_process.assert_called_once()
 
     def test_returns_none_for_creator(self, user):
-        # A fresh room: the user is not connected to it yet, so the connection is a new one.
         ucr = UserConnectionToRoomFactory(user=user, room=RoomFactory(created_by=user), created_by=user)
 
         result = send_email_on_user_connection_to_room_created(
