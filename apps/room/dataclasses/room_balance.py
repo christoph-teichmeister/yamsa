@@ -25,3 +25,11 @@ class RoomBalance:
     @property
     def user_owes(self) -> bool:
         return self.net_amount < 0
+
+    @property
+    def is_balanced(self) -> bool:
+        """Both sides cancel out, yet the underlying debts are still open and payable.
+
+        Distinct from a room with no open debts at all, which yields no RoomBalance.
+        """
+        return self.net_amount == Decimal("0")

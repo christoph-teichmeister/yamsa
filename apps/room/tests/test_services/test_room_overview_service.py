@@ -62,12 +62,30 @@ class TestRoomOverviewService:
         assert receiving_balance.user_owes is False
         assert receiving_balance.absolute_amount == Decimal("7.00")
 
-    def test_a_net_zero_balance_produces_no_entry(self, room, user, guest_user):
+    def test_a_net_zero_balance_stays_visible_as_balanced(self, room, user, guest_user):
         currency = CurrencyFactory()
         create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00")
         create_debt(room=room, debitor=guest_user, creditor=user, currency=currency, value="10.00")
 
+        balances = entry_for(RoomOverviewService(user=user).get_entries(), room).balances
+
+        assert len(balances) == 1
+        assert balances[0].is_balanced is True
+
+    def test_a_room_without_open_debts_has_no_balances(self, room, user):
         assert entry_for(RoomOverviewService(user=user).get_entries(), room).balances == ()
+
+    def test_currencies_sharing_a_sign_stay_separate(self, room, user, guest_user):
+        # Currency has no unique constraint on sign or code, so USD and CAD can both use "$".
+        usd = CurrencyFactory(code="USD", sign="$")
+        cad = CurrencyFactory(code="CAD", sign="$")
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=usd, value="10.00")
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=cad, value="5.00")
+
+        balances = entry_for(RoomOverviewService(user=user).get_entries(), room).balances
+
+        assert len(balances) == 2
+        assert sorted(balance.absolute_amount for balance in balances) == [Decimal("5.00"), Decimal("10.00")]
 
     def test_superuser_sees_foreign_rooms_without_balances(self, room, superuser):
         entries = RoomOverviewService(user=superuser).get_entries()

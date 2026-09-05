@@ -1,5 +1,4 @@
 from collections import defaultdict
-from decimal import Decimal
 from functools import cached_property
 
 from django.urls import reverse
@@ -30,26 +29,26 @@ class RoomOverviewService:
 
         balances_per_room_id = defaultdict(list)
         for row in rows:
-            balance = RoomBalance(
-                currency_sign=row["currency_sign"],
-                owed_by_user=row["owed_by_user"],
-                owed_to_user=row["owed_to_user"],
+            # A row that nets to zero is kept: its debts are still open and payable, and an
+            # empty balance list is what tells the card that nothing is owed at all.
+            balances_per_room_id[row["room_id"]].append(
+                RoomBalance(
+                    currency_sign=row["currency_sign"],
+                    owed_by_user=row["owed_by_user"],
+                    owed_to_user=row["owed_to_user"],
+                )
             )
-            if balance.net_amount == Decimal("0"):
-                continue
-            balances_per_room_id[row["room_id"]].append(balance)
 
         return balances_per_room_id
 
     def _build_entry(self, room_values: dict) -> RoomOverviewEntry:
         is_closed = room_values["status"] == Room.StatusChoices.CLOSED
-        target_viewname = "room:detail" if is_closed else "transaction:list"
+        target_viewname = Room.dashboard_viewname_for(room_values["status"])
 
         return RoomOverviewEntry(
             slug=room_values["slug"],
             name=room_values["name"],
             description=room_values["description"],
-            status=room_values["status"],
             status_label=Room.status_label_for(room_values["status"]),
             capitalised_initials=room_values["capitalised_initials"],
             created_by_name=room_values["created_by__name"],
@@ -60,4 +59,5 @@ class RoomOverviewService:
         )
 
     def get_entries(self) -> list[RoomOverviewEntry]:
+        """Return one entry per visible room, in room_qs_for_list's order (most recently active first)."""
         return [self._build_entry(room_values) for room_values in self.user.room_qs_for_list]

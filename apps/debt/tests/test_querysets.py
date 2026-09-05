@@ -43,6 +43,18 @@ class TestDebtQuerySet:
         assert by_sign["€"]["owed_by_user"] == Decimal("10.00")
         assert by_sign["$"]["owed_by_user"] == Decimal("4.00")
 
+    def test_currencies_sharing_a_sign_stay_separate(self, room, user, guest_user):
+        # Currency has no unique constraint on sign or code, so USD and CAD can both use "$".
+        usd = CurrencyFactory(code="USD", sign="$")
+        cad = CurrencyFactory(code="CAD", sign="$")
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=usd, value="10.00")
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=cad, value="5.00")
+
+        rows = balance_rows_for(user)
+
+        assert len(rows) == 2
+        assert sorted(row["owed_by_user"] for row in rows) == [Decimal("5.00"), Decimal("10.00")]
+
     def test_both_sides_of_the_same_room_and_currency_are_aggregated_into_one_row(self, room, user, guest_user):
         currency = CurrencyFactory()
         create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00")
