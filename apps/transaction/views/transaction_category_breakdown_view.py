@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from django.db.models import DecimalField, Sum, Value
 from django.db.models.functions import Coalesce
+from django.utils.formats import number_format
 from django.views import generic
 
 from apps.transaction.models import ParentTransaction
@@ -62,12 +63,17 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
         formatted_breakdowns = []
         for group in breakdown_by_currency.values():
             sorted_categories = sorted(group["categories"], key=lambda item: item["total_amount"], reverse=True)
+            currency_sign = group["currency"]["sign"] or ""
             chart_points = [
                 {
                     "slug": category["slug"],
                     "label": f"{category['emoji']} {category['name']}",
                     "value": float(category["total_amount"]),
                     "color": category["color"],
+                    "amount_label": (
+                        f"{number_format(category['total_amount'], decimal_pos=2, use_l10n=True, force_grouping=True)}"
+                        f"{currency_sign}"
+                    ),
                 }
                 for category in sorted_categories
             ]

@@ -146,3 +146,49 @@ class TestTransactionCategoryBreakdownView:
         other_chart = {point["slug"]: point for point in other_breakdown["chart_data"]}
         assert preferred_chart["groceries"]["value"] == 20.0
         assert other_chart["transport"]["value"] == 5.5
+
+    def test_category_breakdown_legend_links_to_filtered_transaction_list(self, authenticated_client, room, user):
+        groceries = Category.objects.get(slug="groceries")
+        parent_groceries = ParentTransactionFactory(
+            room=room,
+            paid_by=user,
+            currency=room.preferred_currency,
+            category=groceries,
+            paid_at=timezone.now(),
+        )
+        _make_child(parent_groceries, user, Decimal("34.25"))
+
+        response = authenticated_client.get(reverse("transaction:category-breakdown", kwargs={"room_slug": room.slug}))
+        assert response.status_code == 200
+
+        soup = BeautifulSoup(response.content.decode(), "html.parser")
+        legend_item = soup.select_one("[data-category-legend-item]")
+        assert legend_item is not None
+        assert legend_item["data-category-slug"] == groceries.slug
+
+        expected_url = (
+            f"{reverse('transaction:list', kwargs={'room_slug': room.slug})}"
+            f"?category={groceries.slug}&currency={room.preferred_currency.code}"
+        )
+        assert legend_item["hx-get"] == expected_url
+
+    def test_category_breakdown_chart_data_carries_formatted_amount(self, authenticated_client, room, user):
+        groceries = Category.objects.get(slug="groceries")
+        parent_groceries = ParentTransactionFactory(
+            room=room,
+            paid_by=user,
+            currency=room.preferred_currency,
+            category=groceries,
+            paid_at=timezone.now(),
+        )
+        _make_child(parent_groceries, user, Decimal("1234.50"))
+
+        response = authenticated_client.get(reverse("transaction:category-breakdown", kwargs={"room_slug": room.slug}))
+        assert response.status_code == 200
+
+        chart_data = response.context_data["category_breakdown_by_currency"][0]["chart_data"]
+        expected_amount = (
+            f"{number_format(Decimal('1234.50'), decimal_pos=2, use_l10n=True, force_grouping=True)}"
+            f"{room.preferred_currency.sign}"
+        )
+        assert chart_data[0]["amount_label"] == expected_amount

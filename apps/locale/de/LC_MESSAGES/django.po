@@ -1242,11 +1242,21 @@ msgstr[1] ""
 msgid "Legend"
 msgstr "Legende"
 
+msgid "Tap a category to see its transactions."
+msgstr "Tippe auf eine Kategorie, um ihre Transaktionen zu sehen."
+
+#, python-format
+msgid "Show transactions for %(category_name)s"
+msgstr "Transaktionen für %(category_name)s anzeigen"
+
 msgid "No tracked expenses yet. Add a transaction to populate the breakdown."
 msgstr "Noch keine erfassten Ausgaben. Füge eine Transaktion hinzu, um die Aufschlüsselung zu füllen."
 
 msgid "Add expenses to unlock the breakdown."
 msgstr "Füge Ausgaben hinzu, um die Aufschlüsselung freizuschalten."
+
+msgid "Tap a slice"
+msgstr "Tippe auf ein Segment"
 
 #, python-format
 msgid "Manage categories for \"%(room_name)s\""
@@ -1554,6 +1564,12 @@ msgstr "Suche"
 msgid "Filter by payer or description"
 msgstr "Nach Zahler:in oder Beschreibung filtern"
 
+msgid "Filtered by"
+msgstr "Gefiltert nach"
+
+msgid "Clear filter"
+msgstr "Filter zurücksetzen"
+
 msgid "Details"
 msgstr "Details"
 
@@ -1789,6 +1805,9 @@ msgstr "Split-Details ansehen"
 #, python-format
 msgid "No transactions match \"%(query)s\"."
 msgstr "Keine Transaktionen entsprechen \"%(query)s\"."
+
+msgid "No transactions match the active filter."
+msgstr "Keine Transaktionen entsprechen dem aktiven Filter."
 
 msgid "No transactions to show yet."
 msgstr "Noch keine Transaktionen anzuzeigen."

@@ -195,6 +195,39 @@
       {% endif %}
       <div class="card border-0 shadow-sm">
         <div class="card-body pb-0">
+          {% if transaction_filter_active %}
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3"
+                 id="transaction-active-filters">
+              <span class="text-muted small text-uppercase">{% trans "Filtered by" %}</span>
+              {% if transaction_filter_category_label %}
+                <span class="badge rounded-pill text-bg-secondary">{{ transaction_filter_category_label }}</span>
+              {% endif %}
+              {% if transaction_filter_currency_label %}
+                <span class="badge rounded-pill text-bg-secondary">{{ transaction_filter_currency_label }}</span>
+              {% endif %}
+              <button type="button"
+                      class="btn btn-link btn-sm p-0 text-decoration-none"
+                      hx-get="{% room_url 'transaction:list' %}"
+                      hx-target="#body"
+                      hx-indicator="#body-loading-spinner"
+                      hx-swap="morph:innerHTML"
+                      hx-push-url="true">
+                <i class="bi bi-x-lg me-1"></i>{% trans "Clear filter" %}
+              </button>
+            </div>
+            <div class="transaction-feed-filters">
+              {% if transaction_category_filter %}
+                <input type="hidden"
+                       name="category"
+                       value="{{ transaction_category_filter }}">
+              {% endif %}
+              {% if transaction_currency_filter %}
+                <input type="hidden"
+                       name="currency"
+                       value="{{ transaction_currency_filter }}">
+              {% endif %}
+            </div>
+          {% endif %}
           <label for="transaction-search" class="form-label text-muted small mb-1">{% trans "Search" %}</label>
           <input type="search"
                  id="transaction-search"
@@ -207,6 +240,7 @@
                  hx-trigger="input changed delay:400ms, search"
                  hx-target="#transaction-table-body"
                  hx-swap="innerHTML"
+                 hx-include=".transaction-feed-filters input"
                  hx-indicator="#transaction-search-indicator"
                  {% if not transactions_available %}disabled{% endif %}>
         </div>
@@ -223,7 +257,7 @@
                      hx-get="{% room_url 'transaction:feed' %}"
                      hx-trigger="load"
                      hx-swap="innerHTML"
-                     hx-include="#transaction-search">
+                     hx-include="#transaction-search, .transaction-feed-filters input">
                 <tr>
                   <td colspan="2" class="p-0 border-0">
                     {% include "shared_partials/_list_loader.html" with loader_id="transaction-table-body" skeleton_count=5 %}
