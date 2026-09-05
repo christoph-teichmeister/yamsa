@@ -13,8 +13,7 @@
            role="button"
            tabindex="0"
            aria-label="{{ edit_back_label }}"
-           hx-trigger="click keyup[key=='Enter' || key==' ']"
-           hx-on:keydown="if (event.key === ' ') { event.preventDefault(); }"
+           data-keyboard-click
            hx-get="{% room_url 'room:detail' %}"
            hx-target="#body"
            hx-indicator="#body-loading-spinner"

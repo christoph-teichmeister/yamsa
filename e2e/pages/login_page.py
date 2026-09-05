@@ -12,9 +12,13 @@ class LoginPage(BasePage):
         with self.page.expect_response(lambda response: self.path in response.url):
             self.page.click("#login-submit-button")
 
-    def login(self, email: str, password: str):
+    def login(self, email: str, password: str, *, expect_redirect: bool = True):
         self.fill_credentials(email, password)
         self.submit()
+        if not expect_redirect:
+            # A rejected login re-renders the same URL, so there is no navigation to wait for -
+            # waiting would burn the full Playwright timeout instead of failing on an assertion.
+            return
         # The login POST answers with a redirect. expect_response() returns on that response,
         # while the browser is still on the login URL and the redirect is in flight - a page.goto()
         # issued right after can then be superseded by it and land somewhere else entirely.

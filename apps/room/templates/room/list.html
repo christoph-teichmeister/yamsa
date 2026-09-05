@@ -9,8 +9,7 @@
             <div class="card container d-flex justify-content-center room-list-card"
                  role="button"
                  tabindex="0"
-                 hx-trigger="click keyup[key=='Enter' || key==' ']"
-                 hx-on:keydown="if (event.key === ' ') { event.preventDefault(); }"
+                 data-keyboard-click
                  hx-get="{% room_url 'transaction:list' %}"
                  hx-target="#body"
                  hx-indicator="#body-loading-spinner"
@@ -23,8 +22,8 @@
                       <i class="bi bi-dash-circle"
                          role="button"
                          tabindex="0"
-                         hx-trigger="click consume, keyup[key=='Enter' || key==' '] consume"
-                         hx-on:keydown="if (event.key === ' ') { event.preventDefault(); }"
+                         data-keyboard-click
+                         hx-trigger="click consume"
                          hx-get="{% room_url 'room:edit' %}"
                          hx-target="#body"
                          hx-indicator="#body-loading-spinner"
@@ -64,8 +63,7 @@
           <div class="card room-list-card room-list-card-add"
                role="button"
                tabindex="0"
-               hx-trigger="click keyup[key=='Enter' || key==' ']"
-               hx-on:keydown="if (event.key === ' ') { event.preventDefault(); }"
+               data-keyboard-click
                hx-get="{% url 'room:create' %}"
                hx-target="#body"
                hx-indicator="#body-loading-spinner"
