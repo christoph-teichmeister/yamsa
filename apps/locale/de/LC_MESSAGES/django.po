@@ -1259,6 +1259,12 @@ msgid "Tap a slice"
 msgstr "Tippe auf ein Segment"
 
 #, python-format
+msgid "%(count)s more category"
+msgid_plural "%(count)s more categories"
+msgstr[0] "%(count)s weitere Kategorie"
+msgstr[1] "%(count)s weitere Kategorien"
+
+#, python-format
 msgid "Manage categories for \"%(room_name)s\""
 msgstr "Kategorien für „%(room_name)s“ verwalten"
 

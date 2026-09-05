@@ -297,18 +297,20 @@
                     });
                 };
 
-                let selectedSlug = null;
+                // Identified by the datum itself rather than by slug: the bucket slice that
+                // collapses the small categories has no slug of its own.
+                let selectedPoint = null;
 
                 const applySelection = () => {
                     slices
-                        .attr("d", d => (d.data.slug === selectedSlug ? activeArc(d) : arc(d)))
-                        .attr("opacity", d => (!selectedSlug || d.data.slug === selectedSlug ? 1 : 0.35))
-                        .attr("aria-pressed", d => d.data.slug === selectedSlug);
-                    paintLabel(dataset.find(point => point.slug === selectedSlug) || null);
+                        .attr("d", d => (d.data === selectedPoint ? activeArc(d) : arc(d)))
+                        .attr("opacity", d => (!selectedPoint || d.data === selectedPoint ? 1 : 0.35))
+                        .attr("aria-pressed", d => d.data === selectedPoint);
+                    paintLabel(selectedPoint);
                 };
 
                 const toggleSlice = datum => {
-                    selectedSlug = selectedSlug === datum.data.slug ? null : datum.data.slug;
+                    selectedPoint = selectedPoint === datum.data ? null : datum.data;
                     applySelection();
                 };
 
@@ -326,10 +328,10 @@
                     });
 
                 svg.on("click", () => {
-                    if (!selectedSlug) {
+                    if (!selectedPoint) {
                         return;
                     }
-                    selectedSlug = null;
+                    selectedPoint = null;
                     applySelection();
                 });
 

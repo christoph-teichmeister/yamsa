@@ -1,10 +1,17 @@
 from collections import OrderedDict
+from decimal import Decimal
 
 from django.db.models import DecimalField, Sum, Value
 from django.db.models.functions import Coalesce
 from django.utils.formats import number_format
+from django.utils.translation import ngettext
 from django.views import generic
 
+from apps.transaction.constants import (
+    CHART_SMALL_SLICE_BUCKET_COLOR,
+    CHART_SMALL_SLICE_MINIMUM_BUCKET_SIZE,
+    CHART_SMALL_SLICE_SHARE_THRESHOLD,
+)
 from apps.transaction.models import ParentTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
@@ -64,19 +71,7 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
         for group in breakdown_by_currency.values():
             sorted_categories = sorted(group["categories"], key=lambda item: item["total_amount"], reverse=True)
             currency_sign = group["currency"]["sign"] or ""
-            chart_points = [
-                {
-                    "slug": category["slug"],
-                    "label": f"{category['emoji']} {category['name']}",
-                    "value": float(category["total_amount"]),
-                    "color": category["color"],
-                    "amount_label": (
-                        f"{number_format(category['total_amount'], decimal_pos=2, use_l10n=True, force_grouping=True)}"
-                        f"{currency_sign}"
-                    ),
-                }
-                for category in sorted_categories
-            ]
+            chart_points = self._build_chart_points(sorted_categories, currency_sign)
 
             currency_code = group["currency"]["code"] or ""
             currency_id = group["currency"]["id"]
@@ -101,3 +96,56 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
             }
         )
         return context
+
+    def _format_amount(self, amount: Decimal, currency_sign: str) -> str:
+        return f"{number_format(amount, decimal_pos=2, use_l10n=True, force_grouping=True)}{currency_sign}"
+
+    def _build_chart_points(self, sorted_categories: list[dict], currency_sign: str) -> list[dict]:
+        """
+        Build the donut slices, collapsing slivers too thin to tap into one bucket.
+
+        The legend keeps every category, so nothing becomes unreachable — only the chart trades
+        exact slices for hit targets.
+        """
+        total_amount = sum(category["total_amount"] for category in sorted_categories)
+        small_categories = [
+            category
+            for category in sorted_categories
+            if total_amount > 0 and category["total_amount"] / total_amount < CHART_SMALL_SLICE_SHARE_THRESHOLD
+        ]
+
+        # Bucketing a single sliver only relabels it, so it stays a slice of its own.
+        if len(small_categories) < CHART_SMALL_SLICE_MINIMUM_BUCKET_SIZE:
+            small_categories = []
+
+        small_category_slugs = {category["slug"] for category in small_categories}
+        chart_points = [
+            {
+                "slug": category["slug"],
+                "label": f"{category['emoji']} {category['name']}",
+                "value": float(category["total_amount"]),
+                "color": category["color"],
+                "amount_label": self._format_amount(category["total_amount"], currency_sign),
+            }
+            for category in sorted_categories
+            if category["slug"] not in small_category_slugs
+        ]
+
+        if small_categories:
+            bucket_amount = sum(category["total_amount"] for category in small_categories)
+            chart_points.append(
+                {
+                    "slug": None,
+                    "label": ngettext(
+                        "%(count)s more category",
+                        "%(count)s more categories",
+                        len(small_categories),
+                    )
+                    % {"count": len(small_categories)},
+                    "value": float(bucket_amount),
+                    "color": CHART_SMALL_SLICE_BUCKET_COLOR,
+                    "amount_label": self._format_amount(bucket_amount, currency_sign),
+                }
+            )
+
+        return chart_points

@@ -192,3 +192,102 @@ class TestTransactionCategoryBreakdownView:
             f"{room.preferred_currency.sign}"
         )
         assert chart_data[0]["amount_label"] == expected_amount
+
+    def test_category_breakdown_collapses_small_slices_into_one_bucket(self, authenticated_client, room, user):
+        big_category = Category.objects.get(slug="restaurants-and-bars")
+        first_small_category = Category.objects.get(slug="groceries")
+        second_small_category = Category.objects.get(slug="transport")
+
+        amounts_by_category = {
+            big_category: Decimal("1000.00"),
+            first_small_category: Decimal("10.00"),
+            second_small_category: Decimal("5.00"),
+        }
+        for category, amount in amounts_by_category.items():
+            parent_transaction = ParentTransactionFactory(
+                room=room,
+                paid_by=user,
+                currency=room.preferred_currency,
+                category=category,
+                paid_at=timezone.now(),
+            )
+            _make_child(parent_transaction, user, amount)
+
+        response = authenticated_client.get(reverse("transaction:category-breakdown", kwargs={"room_slug": room.slug}))
+        assert response.status_code == 200
+
+        breakdown = response.context_data["category_breakdown_by_currency"][0]
+        chart_data = breakdown["chart_data"]
+
+        assert [point["slug"] for point in chart_data] == [big_category.slug, None]
+        bucket_point = chart_data[-1]
+        assert bucket_point["value"] == 15.0
+        assert "2" in bucket_point["label"]
+
+        # The legend stays complete, so every category remains reachable for filtering.
+        assert {category["slug"] for category in breakdown["categories"]} == {
+            category.slug for category in amounts_by_category
+        }
+
+    def test_category_breakdown_keeps_a_lone_small_slice_as_its_own_category(self, authenticated_client, room, user):
+        big_category = Category.objects.get(slug="restaurants-and-bars")
+        small_category = Category.objects.get(slug="groceries")
+
+        for category, amount in ((big_category, Decimal("1000.00")), (small_category, Decimal("5.00"))):
+            parent_transaction = ParentTransactionFactory(
+                room=room,
+                paid_by=user,
+                currency=room.preferred_currency,
+                category=category,
+                paid_at=timezone.now(),
+            )
+            _make_child(parent_transaction, user, amount)
+
+        response = authenticated_client.get(reverse("transaction:category-breakdown", kwargs={"room_slug": room.slug}))
+        assert response.status_code == 200
+
+        chart_data = response.context_data["category_breakdown_by_currency"][0]["chart_data"]
+        assert [point["slug"] for point in chart_data] == [big_category.slug, small_category.slug]
+
+    def test_category_breakdown_measures_small_slices_per_currency(self, authenticated_client, room, user):
+        other_currency = CurrencyFactory(code="ALT")
+        big_category = Category.objects.get(slug="restaurants-and-bars")
+        first_small_category = Category.objects.get(slug="groceries")
+        second_small_category = Category.objects.get(slug="transport")
+
+        for category, amount in (
+            (big_category, Decimal("1000.00")),
+            (first_small_category, Decimal("10.00")),
+            (second_small_category, Decimal("5.00")),
+        ):
+            parent_transaction = ParentTransactionFactory(
+                room=room,
+                paid_by=user,
+                currency=room.preferred_currency,
+                category=category,
+                paid_at=timezone.now(),
+            )
+            _make_child(parent_transaction, user, amount)
+
+        # The same absolute amounts carry the whole second currency, so nothing is collapsed there.
+        for category, amount in ((first_small_category, Decimal("10.00")), (second_small_category, Decimal("5.00"))):
+            parent_transaction = ParentTransactionFactory(
+                room=room,
+                paid_by=user,
+                currency=other_currency,
+                category=category,
+                paid_at=timezone.now(),
+            )
+            _make_child(parent_transaction, user, amount)
+
+        response = authenticated_client.get(reverse("transaction:category-breakdown", kwargs={"room_slug": room.slug}))
+        assert response.status_code == 200
+
+        breakdowns = {
+            data["currency"]["code"]: data for data in response.context_data["category_breakdown_by_currency"]
+        }
+        preferred_slugs = [point["slug"] for point in breakdowns[room.preferred_currency.code]["chart_data"]]
+        other_slugs = [point["slug"] for point in breakdowns[other_currency.code]["chart_data"]]
+
+        assert preferred_slugs == [big_category.slug, None]
+        assert other_slugs == [first_small_category.slug, second_small_category.slug]
