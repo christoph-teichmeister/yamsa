@@ -16,7 +16,7 @@ class TestPersonCandidateService:
         room.users.add(friend)
         service = PersonCandidateService(user=user)
 
-        assert service.match_by_name("  elisabeth ") == friend
+        assert service.match_by_name("  elisabeth ", service.get_candidates()) == friend
 
     def test_unknown_name_matches_nothing(self, db, user, room):
-        assert PersonCandidateService(user=user).match_by_name("Nobody") is None
+        assert PersonCandidateService(user=user).match_by_name("Nobody", []) is None

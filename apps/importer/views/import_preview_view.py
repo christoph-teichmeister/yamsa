@@ -3,16 +3,18 @@ from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
-from apps.currency.models import Currency
-from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY, SESSION_KEY
+from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY, TOKEN_PARAM
 from apps.importer.dataclasses import ParsedImport
 from apps.importer.forms import ImportPreviewForm
 from apps.importer.registry import get_parser
 from apps.importer.services.import_service import ImportService
+from apps.importer.session import pop_parsed_import, read_parsed_import, resolve_currencies_by_code
+from apps.room.models import Room
 from apps.transaction.messages.events.transaction import TransactionsImported
 
 
@@ -21,13 +23,29 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
     form_class = ImportPreviewForm
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and SESSION_KEY not in request.session:
+        # This runs before LoginRequiredMixin.dispatch, so anonymous visitors must fall through
+        # to the mixin instead of being redirected to the upload page.
+        if request.user.is_authenticated and self._payload is None:
             return redirect("importer:upload")
         return super().dispatch(request, *args, **kwargs)
 
-    @property
+    @cached_property
+    def _token(self) -> str:
+        return self.request.GET.get(TOKEN_PARAM, "") or self.request.POST.get(TOKEN_PARAM, "")
+
+    @cached_property
+    def _payload(self) -> dict | None:
+        return read_parsed_import(self.request.session, self._token)
+
+    @cached_property
     def parsed(self) -> ParsedImport:
-        return ParsedImport.from_payload(self.request.session[SESSION_KEY])
+        # Rebuilding this costs a full deserialisation of up to MAX_IMPORT_ROWS rows, and a POST
+        # reads it half a dozen times.
+        return ParsedImport.from_payload(self._payload)
+
+    @cached_property
+    def source_label(self) -> str:
+        return get_parser(self.parsed.source_key).label
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -37,30 +55,34 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
 
     def get_initial(self):
         initial = super().get_initial()
-        parsed = self.parsed
-        initial.setdefault("room_name", " & ".join(parsed.people)[:100])
-        description = _("Import from %(source)s") % {"source": self._source_label()}
-        initial.setdefault("room_description", description[:50])
+        name_limit = Room._meta.get_field("name").max_length
+        description_limit = Room._meta.get_field("description").max_length
+        initial.setdefault("room_name", " & ".join(self.parsed.people)[:name_limit])
+        description = _("Import from %(source)s") % {"source": self.source_label}
+        initial.setdefault("room_description", description[:description_limit])
 
-        codes = parsed.currency_codes
-        if codes:
-            match = Currency.objects.filter(code__iexact=codes[0]).order_by("id").first()
-            if match:
-                initial.setdefault("preferred_currency", match.pk)
+        currencies = resolve_currencies_by_code(self.parsed.currency_codes)
+        for code in self.parsed.currency_codes:
+            if currencies.get(code):
+                initial.setdefault("preferred_currency", currencies[code].pk)
+                break
         return initial
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        parsed = self.parsed
-        context["parsed"] = parsed
-        context["source_label"] = self._source_label()
-        context["date_range"] = parsed.date_range
-        context["totals_by_currency"] = parsed.totals_by_currency()
+        currencies = resolve_currencies_by_code(self.parsed.currency_codes)
+        context["parsed"] = self.parsed
+        context["source_label"] = self.source_label
+        context["date_range"] = self.parsed.date_range
+        context["totals_by_currency"] = self.parsed.totals_by_currency()
+        context["import_token"] = self._token
+        # Codes without a Currency row are booked in the room's currency, which silently merges
+        # foreign amounts into one balance — the user has to see that before confirming.
+        context["unknown_currency_codes"] = [code for code in self.parsed.currency_codes if not currencies.get(code)]
         return context
 
     def form_valid(self, form):
-        parsed = self.parsed
-        service = ImportService(parsed=parsed, user=self.request.user)
+        service = ImportService(parsed=self.parsed, user=self.request.user)
 
         with transaction.atomic():
             result = service.process(
@@ -71,20 +93,25 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
                 category_assignments=form.cleaned_data["category_assignments"],
             )
 
-        # Side effects belong outside the atomic block so no HTTP call holds the DB connection.
+        # Consumed before the side effects: a handler that raises would otherwise leave the payload
+        # in place and let a retry import the same file a second time.
+        pop_parsed_import(self.request.session, self._token)
+
+        # Both of these emit webpush/email, so they belong outside the atomic block (#333).
+        for user in result.deferred_connections:
+            service.connect(user=user, room=result.room)
         handle_message(
             TransactionsImported(
                 context_data={
                     "room": result.room,
                     "imported_count": result.transaction_count,
                     "settled_count": result.settlement_count,
-                    "source_label": self._source_label(),
+                    "source_label": self.source_label,
                     "triggered_by": self.request.user,
                 }
             )
         )
 
-        del self.request.session[SESSION_KEY]
         self.request.session[IMPORT_SHARE_HINT_SESSION_KEY] = str(result.room.slug)
         self.request.toast_queue.success(self._build_success_message(result))
 
@@ -102,6 +129,3 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
         if result.skipped_count:
             message += _(", %(count)d rows skipped") % {"count": result.skipped_count}
         return message
-
-    def _source_label(self) -> str:
-        return get_parser(self.parsed.source_key).label

@@ -11,6 +11,7 @@ from apps.importer.dataclasses import (
     ParsedImport,
     PersonAssignment,
 )
+from apps.importer.session import resolve_currencies_by_code
 from apps.room.models import Room, UserConnectionToRoom
 from apps.transaction.models import Category, ChildTransaction, ParentTransaction
 from apps.transaction.services.room_category_service import RoomCategoryService
@@ -38,7 +39,9 @@ class ImportService:
         category_assignments: list[CategoryAssignment],
     ) -> ImportResult:
         room = self._create_room(name=room_name, description=room_description, currency=currency)
-        users_by_column, created_guest_count = self._resolve_people(room=room, assignments=person_assignments)
+        users_by_column, created_guest_count, deferred_connections = self._resolve_people(
+            room=room, assignments=person_assignments
+        )
         categories_by_label, created_category_count = self._resolve_categories(
             room=room, assignments=category_assignments
         )
@@ -63,6 +66,7 @@ class ImportService:
             skipped_count=len(self.parsed.skipped_rows),
             created_category_count=created_category_count,
             created_guest_count=created_guest_count,
+            deferred_connections=deferred_connections,
         )
 
     def _create_room(self, *, name: str, description: str, currency: Currency) -> Room:
@@ -78,9 +82,12 @@ class ImportService:
 
         return room
 
-    def _resolve_people(self, *, room: Room, assignments: list[PersonAssignment]) -> tuple[dict[str, User], int]:
+    def _resolve_people(
+        self, *, room: Room, assignments: list[PersonAssignment]
+    ) -> tuple[dict[str, User], int, list[User]]:
         users_by_column: dict[str, User] = {}
         created_guest_count = 0
+        deferred: list[User] = []
 
         for assignment in assignments:
             if assignment.kind == PersonAssignment.ME:
@@ -90,7 +97,10 @@ class ImportService:
             if assignment.kind == PersonAssignment.EXISTING:
                 existing = User.objects.get(pk=assignment.user_id)
                 users_by_column[assignment.column] = existing
-                self._connect(user=existing, room=room)
+                # Connecting an existing non-guest emits webpush and email from inside Model.save().
+                # Doing that here would run HTTP and SMTP inside the caller's atomic block (#333), so
+                # the caller connects them once the transaction has committed.
+                deferred.append(existing)
                 continue
 
             guest = User(name=assignment.guest_name or assignment.column, is_guest=True)
@@ -98,11 +108,12 @@ class ImportService:
             guest.save()
             created_guest_count += 1
             users_by_column[assignment.column] = guest
-            self._connect(user=guest, room=room)
+            # Guest connections are safe here: both handlers return early for guests.
+            self.connect(user=guest, room=room)
 
-        return users_by_column, created_guest_count
+        return users_by_column, created_guest_count, deferred
 
-    def _connect(self, *, user: User, room: Room) -> None:
+    def connect(self, *, user: User, room: Room) -> None:
         connection = UserConnectionToRoom(user=user, room=room)
         connection.created_by = self.user
         connection.save()
@@ -116,12 +127,19 @@ class ImportService:
 
         categories_by_label: dict[str, Category] = {}
         created_category_count = 0
+        # Two source labels can ask for the same new category name; creating it twice would leave
+        # the room with two categories a user cannot tell apart.
+        created_by_name: dict[str, Category] = {}
 
         for assignment in assignments:
             if assignment.kind == CategoryAssignment.NEW:
-                room_category = service.create_room_category(name=assignment.name, emoji=assignment.emoji)
-                categories_by_label[assignment.label] = room_category.category
-                created_category_count += 1
+                key = assignment.name.strip().casefold()
+                category = created_by_name.get(key)
+                if category is None:
+                    category = service.create_room_category(name=assignment.name, emoji=assignment.emoji).category
+                    created_by_name[key] = category
+                    created_category_count += 1
+                categories_by_label[assignment.label] = category
                 continue
 
             category = categories_by_slug.get(assignment.slug)
@@ -132,12 +150,8 @@ class ImportService:
         return categories_by_label, created_category_count
 
     def _resolve_currencies(self, *, fallback: Currency) -> dict[str, Currency]:
-        currencies_by_code: dict[str, Currency] = {}
-        for code in self.parsed.currency_codes:
-            # Currency.code carries no unique constraint, so .get() could raise MultipleObjectsReturned.
-            match = Currency.objects.filter(code__iexact=code.strip()).order_by("id").first()
-            currencies_by_code[code] = match or fallback
-        return currencies_by_code
+        matches = resolve_currencies_by_code(self.parsed.currency_codes)
+        return {code: match or fallback for code, match in matches.items()}
 
     def _create_transactions(
         self,
@@ -192,5 +206,7 @@ class ImportService:
 
     @staticmethod
     def _as_aware(value) -> datetime:
-        # USE_TZ is on, so a naive datetime would warn and store the wrong instant.
-        return timezone.make_aware(datetime.combine(value, time.min), timezone.get_current_timezone())
+        # USE_TZ is on, so a naive datetime would warn and store the wrong instant. Midday rather
+        # than midnight because some zones move their DST boundary through 00:00, where make_aware
+        # raises NonExistentTimeError.
+        return timezone.make_aware(datetime.combine(value, time(hour=12)), timezone.get_current_timezone())

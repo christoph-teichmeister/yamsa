@@ -79,8 +79,15 @@ EMOJI_BY_LABEL = {
 DECIMAL_DOT_PATTERN = re.compile(r"^-?\d+(\.\d+)?$")
 DECIMAL_COMMA_PATTERN = re.compile(r"^-?\d+,\d+$")
 
-# ParentTransaction.description is capped at 50 characters; the untruncated text goes to further_notes.
+# ParentTransaction.description is capped at 50 characters; the untruncated text goes to further_notes,
+# which is itself capped at 5000.
 MAX_DESCRIPTION_LENGTH = 50
+MAX_NOTES_LENGTH = 5000
+
+# ChildTransaction.value and Debt.value are DecimalField(max_digits=10, decimal_places=2) and are
+# validated on save, so anything outside this range would reach the user as a 500 mid-import.
+MAX_VALUE = Decimal("99999999.99")
+MAX_DECIMAL_PLACES = 2
 
 
 class SplitwiseCsvParser(BaseImportParser):
@@ -114,7 +121,7 @@ class SplitwiseCsvParser(BaseImportParser):
 
         return ParsedImport(
             source_key=self.source_key,
-            people=people,
+            people=tuple(label for _offset, label in people),
             transactions=tuple(transactions),
             settlements=tuple(settlements),
             skipped_rows=tuple(skipped),
@@ -130,10 +137,31 @@ class SplitwiseCsvParser(BaseImportParser):
                 raise ImportParseError(_("The file is not valid UTF-8 text.")) from error
         else:
             text = raw
-        return list(csv.reader(io.StringIO(text)))
+        try:
+            return list(csv.reader(io.StringIO(text)))
+        except csv.Error as error:
+            # csv.reader raises on a single field above 128 KB, which the 2 MB file cap still allows.
+            raise ImportParseError(_("The file could not be read as CSV.")) from error
 
-    def _read_people(self, header: list[str]) -> tuple[str, ...]:
-        people = tuple(name.strip() for name in header[FIXED_COLUMN_COUNT:] if name.strip())
+    def _read_people(self, header: list[str]) -> list[tuple[int, str]]:
+        """
+        Return (column offset, label) per person column.
+
+        The offset is the position in the raw header, not in the filtered list: a blank heading
+        between two people would otherwise shift every later person's value by one column.
+        Labels are made unique because everything downstream keys people by label, so two columns
+        with the same heading would collapse into one person and lose their shares.
+        """
+        people: list[tuple[int, str]] = []
+        seen: dict[str, int] = {}
+        for offset, raw_name in enumerate(header[FIXED_COLUMN_COUNT:]):
+            name = raw_name.strip()
+            if not name:
+                continue
+            seen[name] = seen.get(name, 0) + 1
+            label = name if seen[name] == 1 else f"{name} ({seen[name]})"
+            people.append((offset, label))
+
         if not people:
             raise ImportParseError(
                 _("No person columns found. A Splitwise export has one column per person after the currency column.")
@@ -144,7 +172,7 @@ class SplitwiseCsvParser(BaseImportParser):
         self,
         row: list[str],
         row_number: int,
-        people: tuple[str, ...],
+        people: list[tuple[int, str]],
         transactions: list[ParsedTransaction],
         settlements: list[ParsedSettlement],
         skipped: list[SkippedRow],
@@ -153,7 +181,8 @@ class SplitwiseCsvParser(BaseImportParser):
             skipped.append(SkippedRow(row_number=row_number, reason=reason, excerpt=self._excerpt(row)))
 
         cells = [cell.strip() for cell in row]
-        cells += [""] * (FIXED_COLUMN_COUNT + len(people) - len(cells))
+        highest_offset = max(offset for offset, _label in people)
+        cells += [""] * (FIXED_COLUMN_COUNT + highest_offset + 1 - len(cells))
 
         raw_date, raw_description, raw_category, raw_cost, raw_currency = cells[:FIXED_COLUMN_COUNT]
 
@@ -173,10 +202,10 @@ class SplitwiseCsvParser(BaseImportParser):
             return
 
         nets: list[Decimal] = []
-        for index, person in enumerate(people):
-            value = self._parse_decimal(cells[FIXED_COLUMN_COUNT + index] or "0")
+        for offset, label in people:
+            value = self._parse_decimal(cells[FIXED_COLUMN_COUNT + offset] or "0")
             if value is None:
-                skip(_("Unreadable value for %(person)s") % {"person": person})
+                skip(_("Unreadable value for %(person)s") % {"person": label})
                 return
             nets.append(value)
 
@@ -198,7 +227,7 @@ class SplitwiseCsvParser(BaseImportParser):
             return
 
         if cost <= 0:
-            skip(_("Cost is zero"))
+            skip(_("Cost is zero or negative"))
             return
 
         payer_indexes = [index for index, value in enumerate(nets) if value > 0]
@@ -220,10 +249,12 @@ class SplitwiseCsvParser(BaseImportParser):
                 row_number=row_number,
                 paid_at=paid_at,
                 description=raw_description[:MAX_DESCRIPTION_LENGTH] or _("Import"),
-                further_notes=raw_description if len(raw_description) > MAX_DESCRIPTION_LENGTH else "",
+                further_notes=(
+                    raw_description[:MAX_NOTES_LENGTH] if len(raw_description) > MAX_DESCRIPTION_LENGTH else ""
+                ),
                 category_label=raw_category,
                 currency_code=raw_currency,
-                payer=people[payer_index],
+                payer=people[payer_index][1],
                 shares=shares,
             )
         )
@@ -231,7 +262,7 @@ class SplitwiseCsvParser(BaseImportParser):
     def _handle_settlement(
         self,
         *,
-        people: tuple[str, ...],
+        people: list[tuple[int, str]],
         nets: list[Decimal],
         cost: Decimal,
         settled_at: date,
@@ -254,19 +285,19 @@ class SplitwiseCsvParser(BaseImportParser):
                 row_number=row_number,
                 settled_at=settled_at,
                 # The person who transferred the money owed it, so they are the debitor.
-                debitor=people[positives[0]],
-                creditor=people[negatives[0]],
+                debitor=people[positives[0]][1],
+                creditor=people[negatives[0]][1],
                 value=cost,
                 currency_code=currency_code,
             )
         )
 
     def _build_shares(
-        self, *, people: tuple[str, ...], nets: list[Decimal], cost: Decimal, payer_index: int
+        self, *, people: list[tuple[int, str]], nets: list[Decimal], cost: Decimal, payer_index: int
     ) -> tuple[ParsedShare, ...] | None:
         shares: list[ParsedShare] = []
         others_total = Decimal("0")
-        for index, person in enumerate(people):
+        for index, (_offset, person) in enumerate(people):
             if index == payer_index:
                 continue
             share = -nets[index]
@@ -280,7 +311,7 @@ class SplitwiseCsvParser(BaseImportParser):
         if payer_share < 0:
             return None
         if payer_share > 0:
-            shares.insert(0, ParsedShare(person=people[payer_index], value=payer_share))
+            shares.insert(0, ParsedShare(person=people[payer_index][1], value=payer_share))
 
         if not shares:
             return None
@@ -327,9 +358,13 @@ class SplitwiseCsvParser(BaseImportParser):
         if not DECIMAL_DOT_PATTERN.match(candidate):
             return None
         try:
-            return Decimal(candidate)
+            parsed = Decimal(candidate)
         except InvalidOperation:
             return None
+        # Out-of-range values would only fail later, in full_clean() halfway through the import.
+        if -parsed.as_tuple().exponent > MAX_DECIMAL_PLACES or abs(parsed) > MAX_VALUE:
+            return None
+        return parsed
 
     @staticmethod
     def _excerpt(row: list[str]) -> str:

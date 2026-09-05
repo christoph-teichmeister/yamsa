@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from apps.currency.models import Currency
 from apps.debt.models import Debt
+from apps.importer.session import read_parsed_import
 from apps.room.models import Room
 from apps.transaction.models import ParentTransaction, RoomCategory
 
@@ -23,12 +24,14 @@ class TestRealSplitwiseExport:
 
     def _import(self, client, currency):
         upload = SimpleUploadedFile("Splitwise_expenses.csv", FIXTURE.read_bytes(), content_type="text/csv")
-        client.post(reverse("importer:upload"), data={"source": "splitwise-csv", "file": upload})
+        redirect = client.post(reverse("importer:upload"), data={"source": "splitwise-csv", "file": upload})
+        token = redirect.url.split("token=")[1]
 
-        response = client.get(reverse("importer:preview"))
+        response = client.get(f"{reverse('importer:preview')}?token={token}")
         form = response.context["form"]
 
         payload = {
+            "token": token,
             "room_name": "Kilian & Elisabeth",
             "room_description": "Import aus Splitwise",
             "preferred_currency": str(currency.pk),
@@ -61,9 +64,12 @@ class TestRealSplitwiseExport:
 
     def test_balance_summary_row_is_the_only_skipped_row(self, db, authenticated_client, currency):
         upload = SimpleUploadedFile("Splitwise_expenses.csv", FIXTURE.read_bytes(), content_type="text/csv")
-        authenticated_client.post(reverse("importer:upload"), data={"source": "splitwise-csv", "file": upload})
+        redirect = authenticated_client.post(
+            reverse("importer:upload"), data={"source": "splitwise-csv", "file": upload}
+        )
+        token = redirect.url.split("token=")[1]
 
-        skipped = authenticated_client.session["importer_parsed_import"]["skipped_rows"]
+        skipped = read_parsed_import(authenticated_client.session, token)["skipped_rows"]
         assert len(skipped) == 1
         assert "Gesamtbilanz" in skipped[0]["excerpt"]
 

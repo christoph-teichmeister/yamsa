@@ -1,11 +1,8 @@
-import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
-from apps.currency.models import Currency
-from apps.importer.constants import SESSION_KEY
-from apps.importer.parsers.splitwise import SplitwiseCsvParser
-from apps.importer.tests.factories import build_csv, build_upload
+from apps.importer.constants import SESSION_KEY_PREFIX
+from apps.importer.tests.factories import build_upload
 
 ROWS = [
     "2023-02-28,Cambio,Allgemein,25.20,EUR,-25.20,25.20",
@@ -14,36 +11,12 @@ ROWS = [
 ]
 
 
-@pytest.fixture
-def currency(db):
-    return Currency.objects.create(name="Euro", sign="€", code="EUR")
-
-
-@pytest.fixture
-def preview_session(authenticated_client):
-    parsed = SplitwiseCsvParser().parse(SimpleUploadedFile("e.csv", build_csv(ROWS).encode("utf-8")))
-    session = authenticated_client.session
-    session[SESSION_KEY] = parsed.as_payload()
-    session.save()
-    return parsed
-
-
-def build_preview_payload(parsed, currency, **overrides):
-    payload = {
-        "room_name": "Kilian & Elisabeth",
-        "room_description": "Import aus Splitwise",
-        "preferred_currency": str(currency.pk),
-        "person_0": "me",
-        "person_0_name": "Kilian Karaus",
-        "person_1": "guest",
-        "person_1_name": "Elisabeth",
-    }
-    for index, category in enumerate(parsed.categories):
-        payload[f"category_{index}"] = category.suggested_slug
-        payload[f"category_{index}_name"] = category.label
-        payload[f"category_{index}_emoji"] = category.suggested_emoji
-    payload.update(overrides)
-    return payload
+def _stored_payload(session):
+    """The parsed file lives under a per-upload token, so tests cannot address it by a fixed key."""
+    for key, value in session.items():
+        if key.startswith(f"{SESSION_KEY_PREFIX}:"):
+            return value
+    return None
 
 
 class TestImportUploadView:
@@ -64,8 +37,9 @@ class TestImportUploadView:
         )
 
         assert response.status_code == 302
-        assert response.url == reverse("importer:preview")
-        assert len(authenticated_client.session[SESSION_KEY]["transactions"]) == 2
+        assert response.url.startswith(reverse("importer:preview"))
+        payload = _stored_payload(authenticated_client.session)
+        assert len(payload["transactions"]) == 2
 
     def test_non_csv_file_is_rejected(self, db, authenticated_client):
         upload = SimpleUploadedFile("export.txt", b"whatever", content_type="text/plain")
@@ -75,7 +49,7 @@ class TestImportUploadView:
         )
 
         assert response.status_code == 200
-        assert SESSION_KEY not in authenticated_client.session
+        assert _stored_payload(authenticated_client.session) is None
 
     def test_empty_file_is_rejected(self, db, authenticated_client):
         upload = SimpleUploadedFile("export.csv", b"", content_type="text/csv")
@@ -85,7 +59,7 @@ class TestImportUploadView:
         )
 
         assert response.status_code == 200
-        assert SESSION_KEY not in authenticated_client.session
+        assert _stored_payload(authenticated_client.session) is None
 
     def test_file_without_importable_rows_is_rejected(self, db, authenticated_client):
         response = authenticated_client.post(
@@ -94,4 +68,4 @@ class TestImportUploadView:
         )
 
         assert response.status_code == 200
-        assert SESSION_KEY not in authenticated_client.session
+        assert _stored_payload(authenticated_client.session) is None

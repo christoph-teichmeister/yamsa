@@ -30,7 +30,8 @@ class ImportUploadForm(forms.Form):
             raise forms.ValidationError({"file": _("The file is empty.")})
 
         if uploaded_file.size > MAX_IMPORT_FILE_SIZE:
-            raise forms.ValidationError({"file": _("The file must be 2 MB or smaller.")})
+            limit_mb = MAX_IMPORT_FILE_SIZE // (1024 * 1024)
+            raise forms.ValidationError({"file": _("The file must be %(limit)d MB or smaller.") % {"limit": limit_mb}})
 
         uploaded_file.seek(0)
         try:

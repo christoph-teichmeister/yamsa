@@ -1,10 +1,9 @@
 from django.views import generic
 
 from apps.currency.models import Currency
+from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY
 from apps.transaction.models import Category
 from apps.transaction.views.transaction_list_view.mixin import TransactionFeedMixin
-
-IMPORT_SHARE_HINT_SESSION_KEY = "importer_show_share_hint"
 
 
 class TransactionListView(TransactionFeedMixin, generic.TemplateView):

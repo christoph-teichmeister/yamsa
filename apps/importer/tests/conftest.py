@@ -46,6 +46,11 @@ def run_import():
                 category_assignments=category_assignments,
             )
 
+        # The view connects existing users after the atomic block; mirror that here so tests
+        # exercise the same end state.
+        for deferred in result.deferred_connections:
+            service.connect(user=deferred, room=result.room)
+
         if fire_event:
             handle_message(
                 TransactionsImported(

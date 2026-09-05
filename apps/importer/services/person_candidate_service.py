@@ -20,12 +20,12 @@ class PersonCandidateService:
             User.objects.filter(rooms__id__in=list(room_ids)).exclude(pk=self.user.pk).distinct().order_by("name", "id")
         )
 
-    def match_by_name(self, name: str, candidates: list[User] | None = None) -> User | None:
+    def match_by_name(self, name: str, candidates: list[User]) -> User | None:
         """Return the candidate whose name equals the column heading, ignoring case and padding."""
         needle = name.strip().casefold()
         if not needle:
             return None
-        for candidate in candidates if candidates is not None else self.get_candidates():
+        for candidate in candidates:
             if candidate.name.strip().casefold() == needle:
                 return candidate
         return None

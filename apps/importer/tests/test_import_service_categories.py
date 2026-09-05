@@ -61,3 +61,23 @@ class TestImportServiceCategories:
         result = run_import(parsed=parsed, user=user, currency=currency, category_assignments=assignments)
 
         assert ParentTransaction.objects.filter(room=result.room, category__isnull=True).count() == 0
+
+    def test_two_labels_mapped_to_the_same_new_name_create_one_category(self, db, user, currency, run_import):
+        parsed = SplitwiseCsvParser().parse(
+            build_file_like(
+                [
+                    "2023-03-06,Sofa,Möbel,10.00,EUR,5.00,-5.00",
+                    "2023-03-07,Lampe,Zuhause - Sonstiges,10.00,EUR,5.00,-5.00",
+                ]
+            )
+        )
+        assignments = [
+            CategoryAssignment(label=entry.label, kind=CategoryAssignment.NEW, name="Wohnen", emoji="🛋️")
+            for entry in parsed.categories
+        ]
+
+        result = run_import(parsed=parsed, user=user, currency=currency, category_assignments=assignments)
+
+        assert Category.objects.filter(name="Wohnen").count() == 1
+        assert RoomCategory.objects.filter(room=result.room, category__name="Wohnen").count() == 1
+        assert result.created_category_count == 1

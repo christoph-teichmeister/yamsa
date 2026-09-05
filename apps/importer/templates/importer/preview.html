@@ -4,6 +4,7 @@
   <div class="container-fluid py-4 px-2 px-md-4 px-lg-5">
     <form action="{% url 'importer:preview' %}" method="post">
       {% csrf_token %}
+      <input type="hidden" name="token" value="{{ import_token }}">
       <div class="row g-4">
         <div class="col-12 col-lg-7">
           <div class="card border-0 shadow-sm rounded-4 mb-4">
@@ -27,6 +28,8 @@
                   </div>
                   <div class="col-12 col-md-4">
                     <select name="{{ choice_field.html_name }}"
+                            id="{{ choice_field.id_for_label }}"
+                            aria-label="{% blocktrans with name=person %}Assignment for {{ name }}{% endblocktrans %}"
                             class="form-select form-select-sm">
                       {% for value, label in choice_field.field.choices %}
                         <option value="{{ value }}"
@@ -39,11 +42,19 @@
                   <div class="col-12 col-md-4">
                     <input type="text"
                            name="{{ name_field.html_name }}"
+                           id="{{ name_field.id_for_label }}"
+                           aria-label="{% blocktrans with name=person %}Guest name for {{ name }}{% endblocktrans %}"
                            class="form-control form-control-sm"
                            value="{{ name_field.value|default_if_none:'' }}"
                            placeholder="{% trans 'Guest name' %}">
+                    <div class="form-text">{% trans "Only used for a new guest." %}</div>
                   </div>
                   {% for error_message in choice_field.errors %}
+                    <div class="col-12">
+                      <small class="text-danger">{{ error_message }}</small>
+                    </div>
+                  {% endfor %}
+                  {% for error_message in name_field.errors %}
                     <div class="col-12">
                       <small class="text-danger">{{ error_message }}</small>
                     </div>
@@ -66,6 +77,8 @@
                   </div>
                   <div class="col-12 col-md-4">
                     <select name="{{ choice_field.html_name }}"
+                            id="{{ choice_field.id_for_label }}"
+                            aria-label="{% blocktrans with name=category.label %}Target category for {{ name }}{% endblocktrans %}"
                             class="form-select form-select-sm">
                       {% for value, label in choice_field.field.choices %}
                         <option value="{{ value }}"
@@ -78,6 +91,8 @@
                   <div class="col-8 col-md-3">
                     <input type="text"
                            name="{{ name_field.html_name }}"
+                           id="{{ name_field.id_for_label }}"
+                           aria-label="{% blocktrans with name=category.label %}New category name for {{ name }}{% endblocktrans %}"
                            class="form-control form-control-sm"
                            value="{{ name_field.value|default_if_none:'' }}"
                            placeholder="{% trans 'Category name' %}">
@@ -85,11 +100,19 @@
                   <div class="col-4 col-md-1">
                     <input type="text"
                            name="{{ emoji_field.html_name }}"
+                           id="{{ emoji_field.id_for_label }}"
+                           aria-label="{% blocktrans with name=category.label %}Emoji for {{ name }}{% endblocktrans %}"
                            class="form-control form-control-sm text-center"
                            value="{{ emoji_field.value|default_if_none:'' }}"
+                           placeholder="🏷️"
                            maxlength="10">
                   </div>
                   {% for error_message in choice_field.errors %}
+                    <div class="col-12">
+                      <small class="text-danger">{{ error_message }}</small>
+                    </div>
+                  {% endfor %}
+                  {% for error_message in name_field.errors %}
                     <div class="col-12">
                       <small class="text-danger">{{ error_message }}</small>
                     </div>
@@ -99,6 +122,9 @@
                       <small class="text-danger">{{ error_message }}</small>
                     </div>
                   {% endfor %}
+                  <div class="col-12">
+                    <div class="form-text">{% trans "Name and emoji are only used when creating a new category." %}</div>
+                  </div>
                 </div>
               {% endfor %}
             </div>
@@ -197,7 +223,13 @@
               </div>
             </div>
           {% endif %}
+          {% if unknown_currency_codes %}
+            <div class="alert alert-warning rounded-4 border-0 small" role="alert">
+              {% blocktrans with codes=unknown_currency_codes|join:", " %}These currencies are unknown here and will be booked in the room currency: {{ codes }}. Their amounts land in the same balance, so the resulting debts will be wrong.{% endblocktrans %}
+            </div>
+          {% endif %}
           <button type="submit"
+                  data-disable-on-submit="true"
                   class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
             <i class="bi bi-check2-circle" aria-hidden="true"></i>
             {% trans "Import now" %}

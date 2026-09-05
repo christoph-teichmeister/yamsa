@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: yamsa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 20:10+0200\n"
+"POT-Creation-Date: 2026-09-05 20:54+0200\n"
 "PO-Revision-Date: 2025-01-01 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -148,8 +148,8 @@ msgid "Guest pass"
 msgstr "Gastpass"
 
 #: apps/account/templates/account/create_guest.html:11
-#: apps/importer/forms/import_preview_form.py:55
-#: apps/importer/templates/importer/preview.html:44
+#: apps/importer/forms/import_preview_form.py:61
+#: apps/importer/templates/importer/preview.html:49
 msgid "Guest name"
 msgstr "Gastname"
 
@@ -739,7 +739,7 @@ msgid "yamsa"
 msgstr "yamsa"
 
 #: apps/currency/models.py:13 apps/debt/views/debt_export_view.py:16
-#: apps/importer/forms/import_preview_form.py:22
+#: apps/importer/forms/import_preview_form.py:30
 #: apps/transaction/templates/transaction/create.html:176
 #: apps/transaction/templates/transaction/edit.html:129
 #: apps/transaction/views/transaction_export_view.py:17
@@ -936,11 +936,11 @@ msgstr "Betrag"
 msgid "debts"
 msgstr "schulden"
 
-#: apps/importer/forms/import_preview_form.py:20
+#: apps/importer/forms/import_preview_form.py:28
 msgid "Room name"
 msgstr "Raumname"
 
-#: apps/importer/forms/import_preview_form.py:21
+#: apps/importer/forms/import_preview_form.py:29
 #: apps/transaction/templates/transaction/detail.html:69
 #: apps/transaction/templates/transaction/edit.html:148
 #: apps/transaction/templates/transaction/edit.html:150
@@ -949,49 +949,53 @@ msgstr "Raumname"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: apps/importer/forms/import_preview_form.py:40
+#: apps/importer/forms/import_preview_form.py:46
 msgid "That is me"
 msgstr "Das bin ich"
 
-#: apps/importer/forms/import_preview_form.py:42
+#: apps/importer/forms/import_preview_form.py:48
 msgid "New guest"
 msgstr "Neuer Gast"
 
-#: apps/importer/forms/import_preview_form.py:60
+#: apps/importer/forms/import_preview_form.py:66
 msgid "Create as a new room category"
 msgstr "Als neue Raum-Kategorie anlegen"
 
-#: apps/importer/forms/import_preview_form.py:69
-#: apps/importer/templates/importer/preview.html:83
+#: apps/importer/forms/import_preview_form.py:75
+#: apps/importer/templates/importer/preview.html:98
 msgid "Category name"
 msgstr "Kategoriename"
 
-#: apps/importer/forms/import_preview_form.py:72
+#: apps/importer/forms/import_preview_form.py:78
 #: apps/transaction/templates/transaction/partials/_room_category_creation_form.html:34
 msgid "Emoji"
 msgstr "Emoji"
 
-#: apps/importer/forms/import_preview_form.py:113
+#: apps/importer/forms/import_preview_form.py:121
 msgid "Please provide a name for this guest."
 msgstr "Bitte gib einen Namen für diesen Gast an."
 
-#: apps/importer/forms/import_preview_form.py:122
+#: apps/importer/forms/import_preview_form.py:124
+msgid "This guest name is already used for another column."
+msgstr "Dieser Gastname ist bereits einer anderen Spalte zugeordnet."
+
+#: apps/importer/forms/import_preview_form.py:134
 msgid "This person is already assigned to another column."
 msgstr "Diese Person ist bereits einer anderen Spalte zugeordnet."
 
-#: apps/importer/forms/import_preview_form.py:128
+#: apps/importer/forms/import_preview_form.py:140
 msgid "Mark exactly one column as 'That is me'."
 msgstr "Markiere genau eine Spalte als „Das bin ich“."
 
-#: apps/importer/forms/import_preview_form.py:150
+#: apps/importer/forms/import_preview_form.py:163
 msgid "Please provide a name for this category."
 msgstr "Bitte gib einen Namen für diese Kategorie an."
 
-#: apps/importer/forms/import_upload_form.py:11
+#: apps/importer/forms/import_upload_form.py:12
 msgid "Source"
 msgstr "Quelle"
 
-#: apps/importer/forms/import_upload_form.py:12
+#: apps/importer/forms/import_upload_form.py:13
 msgid "Export file"
 msgstr "Export-Datei"
 
@@ -1000,145 +1004,188 @@ msgstr "Export-Datei"
 msgid "Please upload a %(extensions)s file."
 msgstr "Bitte lade eine %(extensions)s-Datei hoch."
 
-#: apps/importer/forms/import_upload_form.py:31
-#: apps/importer/parsers/splitwise.py:92
+#: apps/importer/forms/import_upload_form.py:30
+#: apps/importer/parsers/splitwise.py:100
 msgid "The file is empty."
 msgstr "Die Datei ist leer."
 
 #: apps/importer/forms/import_upload_form.py:34
-msgid "The file must be 2 MB or smaller."
-msgstr "Die Datei darf höchstens 2 MB groß sein."
+#, python-format
+msgid "The file must be %(limit)d MB or smaller."
+msgstr "Die Datei darf höchstens %(limit)d MB groß sein."
 
 #: apps/importer/forms/import_upload_form.py:44
 msgid "No importable rows found in this file."
 msgstr "In dieser Datei sind keine importierbaren Zeilen."
 
-#: apps/importer/parsers/splitwise.py:103
+#: apps/importer/parsers/splitwise.py:111
 #, python-format
 msgid "The file has %(count)d rows, the import handles at most %(limit)d."
 msgstr "Die Datei hat %(count)d Zeilen, der Import verarbeitet höchstens %(limit)d."
 
-#: apps/importer/parsers/splitwise.py:129
+#: apps/importer/parsers/splitwise.py:137
 msgid "The file is not valid UTF-8 text."
 msgstr "Die Datei ist kein gültiger UTF-8-Text."
 
-#: apps/importer/parsers/splitwise.py:138
+#: apps/importer/parsers/splitwise.py:144
+msgid "The file could not be read as CSV."
+msgstr "Die Datei konnte nicht als CSV gelesen werden."
+
+#: apps/importer/parsers/splitwise.py:167
 msgid "No person columns found. A Splitwise export has one column per person after the currency column."
 msgstr "Keine Personenspalten gefunden. Ein Splitwise-Export hat nach der Währungsspalte eine Spalte je Person."
 
-#: apps/importer/parsers/splitwise.py:161
+#: apps/importer/parsers/splitwise.py:191
 msgid "Row without a cost value (e.g. the balance summary line)"
 msgstr "Zeile ohne Kostenwert (z. B. die Gesamtbilanz-Zeile)"
 
-#: apps/importer/parsers/splitwise.py:166
+#: apps/importer/parsers/splitwise.py:196
 #, python-format
 msgid "Unreadable date '%(value)s'"
 msgstr "Unlesbares Datum „%(value)s“"
 
-#: apps/importer/parsers/splitwise.py:171
+#: apps/importer/parsers/splitwise.py:201
 #, python-format
 msgid "Unreadable cost '%(value)s'"
 msgstr "Unlesbare Kosten „%(value)s“"
 
-#: apps/importer/parsers/splitwise.py:178
+#: apps/importer/parsers/splitwise.py:208
 #, python-format
 msgid "Unreadable value for %(person)s"
 msgstr "Unlesbarer Wert für %(person)s"
 
-#: apps/importer/parsers/splitwise.py:183
+#: apps/importer/parsers/splitwise.py:213
 msgid "The person columns do not cancel out"
 msgstr "Die Personenspalten heben sich nicht auf"
 
-#: apps/importer/parsers/splitwise.py:200
-msgid "Cost is zero"
-msgstr "Kosten sind null"
+#: apps/importer/parsers/splitwise.py:230
+msgid "Cost is zero or negative"
+msgstr "Kosten sind null oder negativ"
 
-#: apps/importer/parsers/splitwise.py:205
+#: apps/importer/parsers/splitwise.py:235
 msgid "No payer — everybody covered their own share"
 msgstr "Kein Zahler — alle haben ihren eigenen Anteil selbst getragen"
 
-#: apps/importer/parsers/splitwise.py:208
+#: apps/importer/parsers/splitwise.py:238
 msgid "More than one payer, which a single transaction cannot represent"
 msgstr "Mehr als ein Zahler, das kann eine einzelne Transaktion nicht abbilden"
 
-#: apps/importer/parsers/splitwise.py:214
+#: apps/importer/parsers/splitwise.py:244
 msgid "The shares do not add up to the cost"
 msgstr "Die Anteile ergeben nicht die Kosten"
 
-#: apps/importer/parsers/splitwise.py:221
+#: apps/importer/parsers/splitwise.py:251
 #: apps/templates/_side_menu_room_list.html:63
 msgid "Import"
 msgstr "Import"
 
-#: apps/importer/parsers/splitwise.py:245
+#: apps/importer/parsers/splitwise.py:277
 msgid "A settlement needs exactly one payer and one recipient"
 msgstr "Eine Ausgleichszahlung braucht genau einen Zahler und einen Empfänger"
 
-#: apps/importer/parsers/splitwise.py:248
+#: apps/importer/parsers/splitwise.py:280
 msgid "Settlement without an amount"
 msgstr "Ausgleichszahlung ohne Betrag"
 
-#: apps/importer/templates/importer/preview.html:11
+#: apps/importer/templates/importer/preview.html:12
 msgid "Check the import"
 msgstr "Import prüfen"
 
-#: apps/importer/templates/importer/preview.html:13
+#: apps/importer/templates/importer/preview.html:14
 #, python-format
 msgid "Read from your %(source)s export."
 msgstr "Eingelesen aus deinem %(source)s-Export."
 
-#: apps/importer/templates/importer/preview.html:19
+#: apps/importer/templates/importer/preview.html:20
 msgid "Who is who?"
 msgstr "Wer ist wer?"
 
-#: apps/importer/templates/importer/preview.html:21
+#: apps/importer/templates/importer/preview.html:22
 msgid "Mark exactly one row as yourself. People you already share a room with are preselected so nobody is created twice."
 msgstr "Markiere genau eine Zeile als dich selbst. Personen, mit denen du schon einen Raum teilst, sind vorausgewählt, damit niemand doppelt angelegt wird."
 
-#: apps/importer/templates/importer/preview.html:57
+#: apps/importer/templates/importer/preview.html:32
+#, python-format
+msgid "Assignment for %(name)s"
+msgstr "Zuordnung für %(name)s"
+
+#: apps/importer/templates/importer/preview.html:46
+#, python-format
+msgid "Guest name for %(name)s"
+msgstr "Name des Gasts für %(name)s"
+
+#: apps/importer/templates/importer/preview.html:50
+msgid "Only used for a new guest."
+msgstr "Wird nur für einen neuen Gast verwendet."
+
+#: apps/importer/templates/importer/preview.html:68
 msgid "Categories"
 msgstr "Kategorien"
 
-#: apps/importer/templates/importer/preview.html:59
+#: apps/importer/templates/importer/preview.html:70
 msgid "Each category from the file is mapped onto one of yours — or created as a new category in this room."
 msgstr "Jede Kategorie aus der Datei wird auf eine deiner Kategorien gemappt — oder als neue Kategorie in diesem Raum angelegt."
 
-#: apps/importer/templates/importer/preview.html:110
+#: apps/importer/templates/importer/preview.html:81
+#, python-format
+msgid "Target category for %(name)s"
+msgstr "Zielkategorie für %(name)s"
+
+#: apps/importer/templates/importer/preview.html:95
+#, python-format
+msgid "New category name for %(name)s"
+msgstr "Name der neuen Kategorie für %(name)s"
+
+#: apps/importer/templates/importer/preview.html:104
+#, python-format
+msgid "Emoji for %(name)s"
+msgstr "Emoji für %(name)s"
+
+#: apps/importer/templates/importer/preview.html:126
+msgid "Name and emoji are only used when creating a new category."
+msgstr "Name und Emoji werden nur beim Anlegen einer neuen Kategorie verwendet."
+
+#: apps/importer/templates/importer/preview.html:136
 #: apps/templates/_side_menu_room_list.html:45
 msgid "New room"
 msgstr "Neuer Raum"
 
-#: apps/importer/templates/importer/preview.html:155
+#: apps/importer/templates/importer/preview.html:181
 msgid "What will be imported"
 msgstr "Was importiert wird"
 
-#: apps/importer/templates/importer/preview.html:158
+#: apps/importer/templates/importer/preview.html:184
 msgid "Transactions"
 msgstr "Transaktionen"
 
-#: apps/importer/templates/importer/preview.html:162
+#: apps/importer/templates/importer/preview.html:188
 msgid "Settlements"
 msgstr "Ausgleichszahlungen"
 
-#: apps/importer/templates/importer/preview.html:166
-#: apps/importer/templates/importer/preview.html:187
+#: apps/importer/templates/importer/preview.html:192
+#: apps/importer/templates/importer/preview.html:213
 msgid "Skipped rows"
 msgstr "Übersprungene Zeilen"
 
-#: apps/importer/templates/importer/preview.html:171
+#: apps/importer/templates/importer/preview.html:197
 msgid "Period"
 msgstr "Zeitraum"
 
-#: apps/importer/templates/importer/preview.html:177
+#: apps/importer/templates/importer/preview.html:203
 #: apps/transaction/templates/transaction/edit.html:101
 msgid "Total"
 msgstr "Gesamt"
 
-#: apps/importer/templates/importer/preview.html:191
+#: apps/importer/templates/importer/preview.html:217
 msgid "Row"
 msgstr "Zeile"
 
-#: apps/importer/templates/importer/preview.html:203
+#: apps/importer/templates/importer/preview.html:228
+#, python-format
+msgid "These currencies are unknown here and will be booked in the room currency: %(codes)s. Their amounts land in the same balance, so the resulting debts will be wrong."
+msgstr "Diese Währungen sind hier unbekannt und werden in der Raumwährung gebucht: %(codes)s. Ihre Beträge landen in derselben Bilanz, die Schulden stimmen dann nicht."
+
+#: apps/importer/templates/importer/preview.html:235
 msgid "Import now"
 msgstr "Jetzt importieren"
 
@@ -1151,8 +1198,9 @@ msgid "Upload your export from another app. The import always creates a new room
 msgstr "Lade deinen Export aus einer anderen App hoch. Der Import legt immer einen neuen Raum an."
 
 #: apps/importer/templates/importer/upload.html:38
-msgid "CSV file, max. 2 MB."
-msgstr "CSV-Datei, max. 2 MB."
+#, python-format
+msgid "CSV file, max. %(limit)s MB."
+msgstr "CSV-Datei, max. %(limit)s MB."
 
 #: apps/importer/templates/importer/upload.html:47
 msgid "Read file"
@@ -1174,22 +1222,22 @@ msgstr "Sag, welche Person in der Datei du bist, und prüfe die Kategorien."
 msgid "Confirm — a new room is created with all transactions."
 msgstr "Bestätigen — es entsteht ein neuer Raum mit allen Transaktionen."
 
-#: apps/importer/views/import_views.py:54
+#: apps/importer/views/import_preview_view.py:61
 #, python-format
 msgid "Import from %(source)s"
 msgstr "Import aus %(source)s"
 
-#: apps/importer/views/import_views.py:113
+#: apps/importer/views/import_preview_view.py:126
 #, python-format
 msgid "%(count)d transactions imported"
 msgstr "%(count)d Transaktionen importiert"
 
-#: apps/importer/views/import_views.py:115
+#: apps/importer/views/import_preview_view.py:128
 #, python-format
 msgid ", %(count)d settlements"
 msgstr ", %(count)d Ausgleichszahlungen"
 
-#: apps/importer/views/import_views.py:117
+#: apps/importer/views/import_preview_view.py:130
 #, python-format
 msgid ", %(count)d rows skipped"
 msgstr ", %(count)d Zeilen übersprungen"

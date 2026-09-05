@@ -1,14 +1,22 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
+from apps.account.models import User
 from apps.currency.models import Currency
 from apps.importer.dataclasses import CategoryAssignment, ParsedImport, PersonAssignment
 from apps.importer.services.person_candidate_service import PersonCandidateService
+from apps.room.models import Room
 from apps.transaction.forms.room_category_forms.validators import validate_single_emoji
 from apps.transaction.models import BASE_CATEGORY_SLUGS, Category
 
 PERSON_FIELD_PREFIX = "person_"
 CATEGORY_FIELD_PREFIX = "category_"
+
+ROOM_NAME_MAX_LENGTH = Room._meta.get_field("name").max_length
+ROOM_DESCRIPTION_MAX_LENGTH = Room._meta.get_field("description").max_length
+GUEST_NAME_MAX_LENGTH = User._meta.get_field("name").max_length
+CATEGORY_NAME_MAX_LENGTH = Category._meta.get_field("name").max_length
+CATEGORY_EMOJI_MAX_LENGTH = Category._meta.get_field("emoji").max_length
 
 
 class ImportPreviewForm(forms.Form):
@@ -17,8 +25,8 @@ class ImportPreviewForm(forms.Form):
     fields for the room that the import creates.
     """
 
-    room_name = forms.CharField(max_length=100, label=_("Room name"))
-    room_description = forms.CharField(max_length=50, label=_("Description"))
+    room_name = forms.CharField(max_length=ROOM_NAME_MAX_LENGTH, label=_("Room name"))
+    room_description = forms.CharField(max_length=ROOM_DESCRIPTION_MAX_LENGTH, label=_("Description"))
     preferred_currency = forms.ModelChoiceField(queryset=Currency.objects.all(), label=_("Currency"))
 
     def __init__(self, *args, parsed: ParsedImport, user, **kwargs):
@@ -50,7 +58,7 @@ class ImportPreviewForm(forms.Form):
                 initial=f"user-{match.pk}" if match else PersonAssignment.GUEST,
             )
             self.fields[f"{PERSON_FIELD_PREFIX}{index}_name"] = forms.CharField(
-                max_length=50, required=False, initial=person, label=_("Guest name")
+                max_length=GUEST_NAME_MAX_LENGTH, required=False, initial=person, label=_("Guest name")
             )
 
     def _build_category_fields(self) -> None:
@@ -64,10 +72,10 @@ class ImportPreviewForm(forms.Form):
                 initial=category.suggested_slug,
             )
             self.fields[f"{CATEGORY_FIELD_PREFIX}{index}_name"] = forms.CharField(
-                max_length=100, required=False, initial=category.label, label=_("Category name")
+                max_length=CATEGORY_NAME_MAX_LENGTH, required=False, initial=category.label, label=_("Category name")
             )
             self.fields[f"{CATEGORY_FIELD_PREFIX}{index}_emoji"] = forms.CharField(
-                max_length=10, required=False, initial=category.suggested_emoji, label=_("Emoji")
+                max_length=CATEGORY_EMOJI_MAX_LENGTH, required=False, initial=category.suggested_emoji, label=_("Emoji")
             )
 
     def person_rows(self):
@@ -93,6 +101,7 @@ class ImportPreviewForm(forms.Form):
         assignments: list[PersonAssignment] = []
         me_count = 0
         seen_user_ids: set[int] = set()
+        seen_guest_names: set[str] = set()
 
         for index, person in enumerate(self.parsed.people):
             field_name = f"{PERSON_FIELD_PREFIX}{index}"
@@ -106,13 +115,20 @@ class ImportPreviewForm(forms.Form):
                 continue
 
             if choice == PersonAssignment.GUEST:
-                guest_name = (cleaned_data.get(f"{field_name}_name") or person).strip()
+                # The fallback is the file's column heading, which carries no length bound of its own.
+                guest_name = (cleaned_data.get(f"{field_name}_name") or person).strip()[:GUEST_NAME_MAX_LENGTH]
                 if not guest_name:
                     self.add_error(f"{field_name}_name", _("Please provide a name for this guest."))
                     continue
+                if guest_name.casefold() in seen_guest_names:
+                    self.add_error(f"{field_name}_name", _("This guest name is already used for another column."))
+                    continue
+                seen_guest_names.add(guest_name.casefold())
                 assignments.append(PersonAssignment(column=person, kind=PersonAssignment.GUEST, guest_name=guest_name))
                 continue
 
+            # Safe without a further check: ChoiceField.validate() already rejected anything the
+            # candidate list did not produce, so an arbitrary pk cannot reach this line.
             user_id = int(choice.removeprefix("user-"))
             if user_id in seen_user_ids:
                 self.add_error(field_name, _("This person is already assigned to another column."))
@@ -140,7 +156,8 @@ class ImportPreviewForm(forms.Form):
                 )
                 continue
 
-            name = (cleaned_data.get(f"{field_name}_name") or category.label).strip()
+            # Same as for guests: the fallback is unbounded source data.
+            name = (cleaned_data.get(f"{field_name}_name") or category.label).strip()[:CATEGORY_NAME_MAX_LENGTH]
             emoji = (cleaned_data.get(f"{field_name}_emoji") or "").strip()
             if not name:
                 self.add_error(f"{field_name}_name", _("Please provide a name for this category."))
