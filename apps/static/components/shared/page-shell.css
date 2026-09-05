@@ -1,0 +1,29 @@
+/* Shell shared by the full-width content pages (dashboard, news). */
+
+.page-wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1rem 0 3rem;
+}
+
+.page-hero {
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.18), rgba(32, 201, 151, 0.22));
+    border: 1px solid rgba(var(--bs-primary-rgb, 13, 110, 253), 0.18);
+}
+
+.page-hero h2 {
+    font-weight: 700;
+}
+
+.page-hero p {
+    color: var(--bs-secondary-color, #6c757d);
+}
+
+.page-empty {
+    border: 1px dashed rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.25);
+    border-radius: 1rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+}

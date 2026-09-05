@@ -1,8 +1,9 @@
 {% load i18n %}
-<div class="card room-overview-card shadow-sm border-0 rounded-4 h-100{% if entry.is_closed %} room-overview-card-closed{% endif %}{% if not entry.user_is_in_room %} room-overview-card-ghost{% endif %}"
+<div class="card room-overview-card shadow-sm rounded-4 h-100{% if entry.is_closed %} room-overview-card-closed{% endif %}{% if not entry.user_is_in_room %} room-overview-card-ghost{% endif %}"
      role="button"
      tabindex="0"
      data-keyboard-click
+     aria-label="{{ entry.name }}"
      hx-get="{{ entry.target_url }}"
      hx-target="#body"
      hx-indicator="#body-loading-spinner"
@@ -14,34 +15,40 @@
       <div class="flex-grow-1 text-start">
         <h5 class="card-title room-overview-name mb-1">{{ entry.name }}</h5>
         {% if entry.description %}
-          <p class="room-overview-description text-muted small mb-0">{{ entry.description|truncatechars:60 }}</p>
+          <p class="text-muted small mb-0">{{ entry.description|truncatechars:60 }}</p>
         {% endif %}
         {% if not entry.user_is_in_room and entry.created_by_name %}
-          <p class="room-overview-description text-muted small fst-italic mb-0">{{ entry.created_by_name }}</p>
+          <p class="text-muted small fst-italic mb-0">{{ entry.created_by_name }}</p>
         {% endif %}
       </div>
-      <span class="badge room-status-badge {% if entry.is_closed %}bg-danger bg-opacity-10 text-danger{% else %}bg-light text-dark{% endif %}">
+      <span class="badge room-status-badge {% if entry.is_closed %}bg-danger-subtle text-danger-emphasis{% else %}bg-light text-dark{% endif %}">
         {{ entry.status_label }}
       </span>
     </div>
     {% if entry.user_is_in_room %}
       <div class="d-flex flex-wrap gap-2 mt-auto">
         {% for balance in entry.balances %}
-          {% if balance.user_owes %}
-            <span class="badge room-overview-balance text-bg-warning-subtle text-warning">
+          {% if balance.is_balanced %}
+            <span class="badge room-overview-balance bg-secondary-subtle text-secondary-emphasis">
+              {% blocktrans trimmed with currency=balance.currency_sign %}
+                Open, but balanced ({{ currency }})
+              {% endblocktrans %}
+            </span>
+          {% elif balance.user_owes %}
+            <span class="badge room-overview-balance bg-warning-subtle text-warning-emphasis">
               {% blocktrans trimmed with amount=balance.absolute_amount|format_with_thousands currency=balance.currency_sign %}
                 You owe {{ amount }}{{ currency }}
               {% endblocktrans %}
             </span>
           {% else %}
-            <span class="badge room-overview-balance text-bg-success-subtle text-success">
+            <span class="badge room-overview-balance bg-success-subtle text-success-emphasis">
               {% blocktrans trimmed with amount=balance.absolute_amount|format_with_thousands currency=balance.currency_sign %}
                 You get back {{ amount }}{{ currency }}
               {% endblocktrans %}
             </span>
           {% endif %}
         {% empty %}
-          <span class="badge room-overview-balance text-bg-light text-muted">{% trans "All settled" %}</span>
+          <span class="badge room-overview-balance bg-light text-muted">{% trans "All settled" %}</span>
         {% endfor %}
       </div>
     {% endif %}

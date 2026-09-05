@@ -1,0 +1,18 @@
+{% load i18n %}
+<div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm room-entry-callout{% if request.path == create_url %} active{% endif %}"
+     role="button"
+     tabindex="0"
+     data-keyboard-click
+     {% if dismiss_offcanvas %}data-bs-dismiss="offcanvas" data-bs-target="#offcanvasNavbar" hx-trigger="click delay:300ms"{% endif %}
+     hx-get="{{ create_url }}"
+     hx-target="#body"
+     hx-indicator="#body-loading-spinner"
+     hx-swap="morph:innerHTML"
+     hx-push-url="true">
+  <div class="room-circle{% if request.path == create_url %} selected{% endif %}">+</div>
+  <div class="flex-grow-1 text-start">
+    <div class="room-name fw-semibold mb-0">{% trans "New room" %}</div>
+    <small class="room-description text-muted">{% trans "Start a new group with friends" %}</small>
+  </div>
+  <span class="badge room-status-badge bg-primary text-white">{% trans "Create" %}</span>
+</div>

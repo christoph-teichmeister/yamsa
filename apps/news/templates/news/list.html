@@ -4,9 +4,11 @@
   yamsa | {% trans "News" %}
 {% endblock title %}
 {% block content %}
+  <link rel="stylesheet"
+        href="{% static 'components/shared/page-shell.css' %}">
   <link rel="stylesheet" href="{% static 'components/news/list.css' %}">
-  <div class="news-wrap">
-    <div class="timeline-hero">
+  <div class="page-wrap">
+    <div class="page-hero">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
         <div>
           <p class="text-uppercase small text-muted mb-1">{% trans "Room activity timeline" %}</p>
