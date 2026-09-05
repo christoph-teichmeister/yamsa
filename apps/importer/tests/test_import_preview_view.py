@@ -4,9 +4,9 @@ from django.urls import reverse
 
 from apps.account.tests.factories import GuestUserFactory
 from apps.currency.models import Currency
+from apps.importer.constants import SESSION_KEY
 from apps.importer.parsers.splitwise import SplitwiseCsvParser
-from apps.importer.tests.factories import build_csv, build_upload
-from apps.importer.views.import_views import SESSION_KEY
+from apps.importer.tests.factories import build_csv
 from apps.room.models import Room
 from apps.transaction.models import ParentTransaction
 
@@ -47,57 +47,6 @@ def build_preview_payload(parsed, currency, **overrides):
         payload[f"category_{index}_emoji"] = category.suggested_emoji
     payload.update(overrides)
     return payload
-
-
-class TestImportUploadView:
-    def test_login_is_required(self, db, client):
-        response = client.get(reverse("importer:upload"))
-
-        assert response.status_code == 302
-
-    def test_page_renders_for_a_logged_in_user(self, db, authenticated_client):
-        response = authenticated_client.get(reverse("importer:upload"))
-
-        assert response.status_code == 200
-
-    def test_valid_upload_stores_the_parsed_file_in_the_session(self, db, authenticated_client):
-        response = authenticated_client.post(
-            reverse("importer:upload"),
-            data={"source": "splitwise-csv", "file": build_upload(ROWS)},
-        )
-
-        assert response.status_code == 302
-        assert response.url == reverse("importer:preview")
-        assert len(authenticated_client.session[SESSION_KEY]["transactions"]) == 2
-
-    def test_non_csv_file_is_rejected(self, db, authenticated_client):
-        upload = SimpleUploadedFile("export.txt", b"whatever", content_type="text/plain")
-
-        response = authenticated_client.post(
-            reverse("importer:upload"), data={"source": "splitwise-csv", "file": upload}
-        )
-
-        assert response.status_code == 200
-        assert SESSION_KEY not in authenticated_client.session
-
-    def test_empty_file_is_rejected(self, db, authenticated_client):
-        upload = SimpleUploadedFile("export.csv", b"", content_type="text/csv")
-
-        response = authenticated_client.post(
-            reverse("importer:upload"), data={"source": "splitwise-csv", "file": upload}
-        )
-
-        assert response.status_code == 200
-        assert SESSION_KEY not in authenticated_client.session
-
-    def test_file_without_importable_rows_is_rejected(self, db, authenticated_client):
-        response = authenticated_client.post(
-            reverse("importer:upload"),
-            data={"source": "splitwise-csv", "file": build_upload(["2026-09-05,Gesamtbilanz,,,EUR,1.00,-1.00"])},
-        )
-
-        assert response.status_code == 200
-        assert SESSION_KEY not in authenticated_client.session
 
 
 class TestImportPreviewView:

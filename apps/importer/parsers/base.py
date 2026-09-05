@@ -6,10 +6,6 @@ MAX_IMPORT_FILE_SIZE = 2 * 1024 * 1024  # 2 MB
 MAX_IMPORT_ROWS = 2000
 
 
-class ImportParseError(Exception):
-    """Raised when a file cannot be parsed at all — as opposed to single rows being skipped."""
-
-
 class BaseImportParser(ABC):
     source_key: str
     label: str

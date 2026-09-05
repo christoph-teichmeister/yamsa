@@ -3,7 +3,8 @@ import os
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from apps.importer.parsers.base import MAX_IMPORT_FILE_SIZE, ImportParseError
+from apps.importer.parsers.base import MAX_IMPORT_FILE_SIZE
+from apps.importer.parsers.exceptions import ImportParseError
 from apps.importer.registry import get_parser, get_source_choices
 
 

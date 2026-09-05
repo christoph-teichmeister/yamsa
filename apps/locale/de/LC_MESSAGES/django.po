@@ -937,10 +937,8 @@ msgid "debts"
 msgstr "schulden"
 
 #: apps/importer/forms/import_preview_form.py:20
-#, fuzzy
-#| msgid "Room access"
 msgid "Room name"
-msgstr "Raumzugang"
+msgstr "Raumname"
 
 #: apps/importer/forms/import_preview_form.py:21
 #: apps/transaction/templates/transaction/detail.html:69
@@ -952,29 +950,21 @@ msgid "Description"
 msgstr "Beschreibung"
 
 #: apps/importer/forms/import_preview_form.py:40
-#, fuzzy
-#| msgid "That's me!"
 msgid "That is me"
-msgstr "Das bin ich!"
+msgstr "Das bin ich"
 
 #: apps/importer/forms/import_preview_form.py:42
-#, fuzzy
-#| msgid "Add guest"
 msgid "New guest"
-msgstr "Gast hinzufügen"
+msgstr "Neuer Gast"
 
 #: apps/importer/forms/import_preview_form.py:60
-#, fuzzy
-#| msgid "Create new category"
 msgid "Create as a new room category"
-msgstr "Neue Kategorie erstellen"
+msgstr "Als neue Raum-Kategorie anlegen"
 
 #: apps/importer/forms/import_preview_form.py:69
 #: apps/importer/templates/importer/preview.html:83
-#, fuzzy
-#| msgid "Category manager"
 msgid "Category name"
-msgstr "Kategorie-Manager"
+msgstr "Kategoriename"
 
 #: apps/importer/forms/import_preview_form.py:72
 #: apps/transaction/templates/transaction/partials/_room_category_creation_form.html:34
@@ -982,10 +972,8 @@ msgid "Emoji"
 msgstr "Emoji"
 
 #: apps/importer/forms/import_preview_form.py:113
-#, fuzzy
-#| msgid "Please enter a name for your passkey."
 msgid "Please provide a name for this guest."
-msgstr "Bitte gib einen Namen für deinen Passkey ein."
+msgstr "Bitte gib einen Namen für diesen Gast an."
 
 #: apps/importer/forms/import_preview_form.py:122
 msgid "This person is already assigned to another column."
@@ -996,20 +984,16 @@ msgid "Mark exactly one column as 'That is me'."
 msgstr "Markiere genau eine Spalte als „Das bin ich“."
 
 #: apps/importer/forms/import_preview_form.py:150
-#, fuzzy
-#| msgid "Save order for this category"
 msgid "Please provide a name for this category."
-msgstr "Reihenfolge für diese Kategorie speichern"
+msgstr "Bitte gib einen Namen für diese Kategorie an."
 
 #: apps/importer/forms/import_upload_form.py:11
 msgid "Source"
 msgstr "Quelle"
 
 #: apps/importer/forms/import_upload_form.py:12
-#, fuzzy
-#| msgid "Export CSV"
 msgid "Export file"
-msgstr "CSV exportieren"
+msgstr "Export-Datei"
 
 #: apps/importer/forms/import_upload_form.py:27
 #, python-format
@@ -1104,20 +1088,16 @@ msgid "Read from your %(source)s export."
 msgstr "Eingelesen aus deinem %(source)s-Export."
 
 #: apps/importer/templates/importer/preview.html:19
-#, fuzzy
-#| msgid "Who paid what"
 msgid "Who is who?"
-msgstr "Wer hat was bezahlt"
+msgstr "Wer ist wer?"
 
 #: apps/importer/templates/importer/preview.html:21
 msgid "Mark exactly one row as yourself. People you already share a room with are preselected so nobody is created twice."
 msgstr "Markiere genau eine Zeile als dich selbst. Personen, mit denen du schon einen Raum teilst, sind vorausgewählt, damit niemand doppelt angelegt wird."
 
 #: apps/importer/templates/importer/preview.html:57
-#, fuzzy
-#| msgid "Category"
 msgid "Categories"
-msgstr "Kategorie"
+msgstr "Kategorien"
 
 #: apps/importer/templates/importer/preview.html:59
 msgid "Each category from the file is mapped onto one of yours — or created as a new category in this room."
@@ -1133,16 +1113,12 @@ msgid "What will be imported"
 msgstr "Was importiert wird"
 
 #: apps/importer/templates/importer/preview.html:158
-#, fuzzy
-#| msgid "transactions"
 msgid "Transactions"
-msgstr "transaktionen"
+msgstr "Transaktionen"
 
 #: apps/importer/templates/importer/preview.html:162
-#, fuzzy
-#| msgid "Settled"
 msgid "Settlements"
-msgstr "Beglichen"
+msgstr "Ausgleichszahlungen"
 
 #: apps/importer/templates/importer/preview.html:166
 #: apps/importer/templates/importer/preview.html:187
@@ -1163,16 +1139,12 @@ msgid "Row"
 msgstr "Zeile"
 
 #: apps/importer/templates/importer/preview.html:203
-#, fuzzy
-#| msgid "Start now"
 msgid "Import now"
-msgstr "Jetzt anfangen"
+msgstr "Jetzt importieren"
 
 #: apps/importer/templates/importer/upload.html:9
-#, fuzzy
-#| msgid "Room transactions"
 msgid "Import transactions"
-msgstr "Raumtransaktionen"
+msgstr "Transaktionen importieren"
 
 #: apps/importer/templates/importer/upload.html:11
 msgid "Upload your export from another app. The import always creates a new room."
@@ -1183,10 +1155,8 @@ msgid "CSV file, max. 2 MB."
 msgstr "CSV-Datei, max. 2 MB."
 
 #: apps/importer/templates/importer/upload.html:47
-#, fuzzy
-#| msgid "Clear filter"
 msgid "Read file"
-msgstr "Filter zurücksetzen"
+msgstr "Datei einlesen"
 
 #: apps/importer/templates/importer/upload.html:56
 msgid "How it works"
@@ -1210,16 +1180,14 @@ msgid "Import from %(source)s"
 msgstr "Import aus %(source)s"
 
 #: apps/importer/views/import_views.py:113
-#, fuzzy, python-format
-#| msgid "Transactions logged"
+#, python-format
 msgid "%(count)d transactions imported"
-msgstr "Erfasste Transaktionen"
+msgstr "%(count)d Transaktionen importiert"
 
 #: apps/importer/views/import_views.py:115
-#, fuzzy, python-format
-#| msgid "Account settings"
+#, python-format
 msgid ", %(count)d settlements"
-msgstr "Kontoeinstellungen"
+msgstr ", %(count)d Ausgleichszahlungen"
 
 #: apps/importer/views/import_views.py:117
 #, python-format
@@ -2818,10 +2786,8 @@ msgid "User removed"
 msgstr "Nutzer:in entfernt"
 
 #: apps/webpush/handlers/events/events.py:198
-#, fuzzy
-#| msgid "Transactions logged"
 msgid "Transactions imported"
-msgstr "Erfasste Transaktionen"
+msgstr "Transaktionen importiert"
 
 #: apps/webpush/handlers/events/events.py:199
 #, python-brace-format

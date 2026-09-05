@@ -8,24 +8,12 @@ from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
 from apps.currency.models import Currency
+from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY, SESSION_KEY
 from apps.importer.dataclasses import ParsedImport
-from apps.importer.forms import ImportPreviewForm, ImportUploadForm
+from apps.importer.forms import ImportPreviewForm
 from apps.importer.registry import get_parser
 from apps.importer.services.import_service import ImportService
 from apps.transaction.messages.events.transaction import TransactionsImported
-
-SESSION_KEY = "importer_parsed_import"
-
-
-class ImportUploadView(mixins.LoginRequiredMixin, generic.FormView):
-    template_name = "importer/upload.html"
-    form_class = ImportUploadForm
-
-    def form_valid(self, form):
-        parsed: ParsedImport = form.cleaned_data["parsed"]
-        # The upload itself is never persisted — only its parsed result travels to the next step.
-        self.request.session[SESSION_KEY] = parsed.as_payload()
-        return HttpResponseRedirect(reverse("importer:preview"))
 
 
 class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
@@ -97,7 +85,7 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
         )
 
         del self.request.session[SESSION_KEY]
-        self.request.session["importer_show_share_hint"] = str(result.room.slug)
+        self.request.session[IMPORT_SHARE_HINT_SESSION_KEY] = str(result.room.slug)
         self.request.toast_queue.success(self._build_success_message(result))
 
         return HttpResponseRedirect(reverse("transaction:list", kwargs={"room_slug": result.room.slug}))

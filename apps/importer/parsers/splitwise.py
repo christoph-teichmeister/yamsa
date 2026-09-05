@@ -14,7 +14,8 @@ from apps.importer.dataclasses import (
     ParsedTransaction,
     SkippedRow,
 )
-from apps.importer.parsers.base import MAX_IMPORT_ROWS, BaseImportParser, ImportParseError
+from apps.importer.parsers.base import MAX_IMPORT_ROWS, BaseImportParser
+from apps.importer.parsers.exceptions import ImportParseError
 from apps.transaction.models import DEFAULT_CATEGORY_SLUG
 
 # Splitwise puts five fixed columns first; everything after them is one column per person.
