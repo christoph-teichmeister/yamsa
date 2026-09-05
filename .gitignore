@@ -28,6 +28,8 @@ staticfiles/
 /media/
 tmp/
 yamsa_db_test
+# Default DJANGO_DATABASE_URL target (sqlite:///sqlite.db) — created by any manage.py call
+sqlite.db
 
 # Node/Yarn
 node_modules/
