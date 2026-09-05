@@ -12,7 +12,7 @@ from apps.transaction.tests.conftest import create_parent_transaction_with_optim
 pytestmark = pytest.mark.django_db
 
 
-class TestTransactionFeed:
+class TestTransactionFeedView:
     def test_transaction_feed_displays_no_matches_message(self, client, room, user, guest_user):
         create_parent_transaction_with_optimisation(
             room=room,
@@ -31,8 +31,6 @@ class TestTransactionFeed:
         content = response.content.decode()
         assert 'No transactions match "missing".' in content
 
-
-class TestTransactionFeedFiltering:
     def test_feed_filters_by_category(self, authenticated_client, room, user, guest_user):
         groceries = Category.objects.get(slug="groceries")
         transport = Category.objects.get(slug="transport")
