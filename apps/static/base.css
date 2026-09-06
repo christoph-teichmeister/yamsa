@@ -41,9 +41,7 @@
 }
 
 [data-bs-theme=dark] {
-    /* The dark link colour is a tint too pale to also mark the active nav item, and the list
-       group reads better on the plain line than on the stronger one. */
-    --nav-active-color: var(--yamsa-brand);
+    /* The list group reads better on the plain line than on the stronger one. */
     --list-group-border-color: var(--yamsa-line);
 }
 
@@ -233,7 +231,7 @@ body {
 
 .toast-yamsa-inner.toast-primary {
     background: linear-gradient(45deg, transparent, var(--yamsa-brand-soft)), var(--yamsa-surface-raised);
-    border-top-color: var(--yamsa-brand);
+    border-top-color: var(--yamsa-brand-text);
 }
 
 .toast-yamsa-inner.toast-success {

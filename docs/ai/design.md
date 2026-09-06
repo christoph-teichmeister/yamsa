@@ -116,8 +116,17 @@ Never reach for a fixed Bootstrap color — `bg-light`, `text-dark`, `text-bg-li
 or a raw hex in CSS. The theme-aware equivalents are the `-subtle`/`-emphasis` pairs,
 `bg-body-secondary`, `.btn-surface` (in `base.css`), or a token.
 
-`brand` is a **fill**. As text it lands at 3.25:1 on a dark surface — the token that reads on a
-surface is `brand-text`.
+### `brand` fills, `brand-text` reads
+
+`brand` is a **fill**: a button, a switch, a focus ring, a tinted background. Everything the eye
+reads as content or as an accent beside it — text, icons, a chart line, a status bar, the active
+nav item — takes `brand-text` (`text-primary-emphasis` on the Bootstrap side), which is the tone
+that carries on a surface: lighter than the fill on the dark theme, darker on the light one.
+
+Mixing the two is not a contrast bug but it looks like one: an amount in `text-primary` next to a
+name in the link colour puts two different blues in the same row. The one place the fill is right
+as a label is a control that is itself a fixed light colour, such as the button on the auth hero,
+where `brand-text` would be a light blue on white.
 
 An SVG **presentation attribute does not resolve `var()`** — a d3 chart has to set its colours as
 inline styles (`.style("stroke", "var(--yamsa-line)")`), not with `.attr()`, or the chart keeps the
