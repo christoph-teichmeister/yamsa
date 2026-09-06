@@ -20,6 +20,13 @@
 /* The theme is picked by Bootstrap's attribute on <html>, so both frameworks stay in sync. */
 @custom-variant dark ([data-bs-theme="dark"] &);
 
+/* Panels that flip between reading and editing without a round trip: both states live in the DOM
+   and these variants decide which one shows, keyed off `data-profile-mode` on the panel root.
+   Written without :where() on purpose — the extra specificity lets `tw:editing:flex` beat the
+   plain `tw:hidden` it has to override, independently of utility order. */
+@custom-variant reading ([data-profile-mode="reading"] &);
+@custom-variant editing ([data-profile-mode="editing"] &);
+
 /* Semantic colours resolve per theme, so templates need no `dark:` variant for them:
    `tw:bg-surface` is correct in both themes. Values mirror apps/static/base.css. */
 :root,
