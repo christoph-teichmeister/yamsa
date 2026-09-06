@@ -1332,12 +1332,6 @@ msgid "All settled"
 msgstr "Alles beglichen"
 
 #, python-format
-msgid "and %(counter)s more room"
-msgid_plural "and %(counter)s more rooms"
-msgstr[0] "und %(counter)s weiterer Raum"
-msgstr[1] "und %(counter)s weitere Räume"
-
-#, python-format
 msgid "%(timesince)s ago"
 msgstr "vor %(timesince)s"
 

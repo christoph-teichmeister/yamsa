@@ -260,6 +260,17 @@ class TestWelcomePartialView:
         assert content.count("class=col-6") == 1
         assert 'class="col-12 col-md-6"' in content
 
+    def test_every_foreign_room_is_listed(self, superuser_htmx_client, user, guest_user):
+        rooms = [RoomFactory(created_by=user) for _ in range(12)]
+        for foreign_room in rooms:
+            foreign_room.users.add(user, guest_user)
+
+        response = superuser_htmx_client.get(reverse("core:welcome"))
+
+        # No cap: the superuser is the one user meant to see the whole instance.
+        assert len(response.context_data["other_room_entries"]) == len(rooms)
+        assert f"Other ({len(rooms)})" in response.content.decode()
+
     def test_foreign_rooms_are_laid_out_as_two_tiles_per_row(self, superuser_htmx_client, room, closed_room):
         content = superuser_htmx_client.get(reverse("core:welcome")).content.decode()
 

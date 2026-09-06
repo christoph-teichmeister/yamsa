@@ -14,11 +14,6 @@ class WelcomePartialView(generic.TemplateView):
 
     template_name = "core/_welcome.html"
 
-    # Superusers see every room of the instance through Room.objects.visible_for(). Those are
-    # not their rooms and carry no balance, so the dashboard shows a sample rather than a list
-    # that grows with the database.
-    OTHER_ROOM_LIMIT = 10
-
     def get(self, request, *args, **kwargs):
         if request.user.is_anonymous:
             return HttpResponseRedirect(redirect_to=reverse(viewname="account:login"))
@@ -49,15 +44,11 @@ class WelcomePartialView(generic.TemplateView):
     @context
     @property
     def other_room_entries(self) -> list[RoomOverviewEntry]:
-        return self._foreign_room_entries[: self.OTHER_ROOM_LIMIT]
+        """Every room of the instance a superuser can see but is not a member of.
 
-    @context
-    @property
-    def other_room_overflow_count(self) -> int:
-        return max(0, len(self._foreign_room_entries) - self.OTHER_ROOM_LIMIT)
-
-    @cached_property
-    def _foreign_room_entries(self) -> list[RoomOverviewEntry]:
+        Uncapped on purpose: the section is collapsed until it is clicked, and the rooms are
+        loaded either way - a cap would only hide rooms from the one user meant to see them all.
+        """
         entries = [entry for entry in self._room_entries if not entry.user_is_in_room]
         return RoomOverviewService.sorted_by_last_activity(entries)
 

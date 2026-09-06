@@ -23,15 +23,6 @@
           </div>
         {% endfor %}
       </div>
-      {% if overflow_count %}
-        <p class="text-muted small mt-2 mb-0">
-          {% blocktrans trimmed count counter=overflow_count %}
-            and {{ counter }} more room
-          {% plural %}
-            and {{ counter }} more rooms
-          {% endblocktrans %}
-        </p>
-      {% endif %}
     </div>
   </section>
 {% endif %}
