@@ -141,6 +141,22 @@ class AccountDetailPage(BasePage):
     def expect_guest_mode_banner_visible(self):
         expect(self.page.locator("#guest-mode-banner")).to_be_visible()
 
+    def mark_body_shell(self):
+        """Tag the loading spinner with a JS property, which only survives if the node itself does.
+
+        An attribute would be a false negative: morphing keeps the element but syncs its attributes
+        to the incoming markup, which carries no marker.
+        """
+
+        self.page.locator("#body-loading-spinner").evaluate("(element) => (element.e2eSurvivedSwap = true)")
+
+    def body_shell_survived(self) -> bool:
+        return self.page.locator("#body-loading-spinner").evaluate("(element) => element.e2eSurvivedSwap === true")
+
+    def open_change_password_via_security_row(self):
+        with self.page.expect_response(lambda response: "/change-password/" in response.url):
+            self.page.locator("#security-section button[hx-get*='change-password']").click()
+
     def expect_notifications_radio_checked(self, *, wants_notifications: bool):
         checkbox = self.page.locator("#wants_to_receive_webpush_notifications")
         if wants_notifications:

@@ -52,8 +52,11 @@ module.exports = {
     ],
   },
   plugins: [
+    // The bare module gives webpack a namespace object whose only export is `default`, so
+    // idiomorph-ext's `htmx.defineExtension(...)` would call a method that is not there and take
+    // the whole htmx entry down with it. Name the export explicitly.
     new webpack.ProvidePlugin({
-      htmx: "htmx.org",
+      htmx: ["htmx.org", "default"],
     }),
     new MiniCssExtractPlugin({
       filename: "[name].bundle.css",
