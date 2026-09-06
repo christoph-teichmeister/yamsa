@@ -41,6 +41,9 @@ jobs:
       - name: Enforce one class per file
         run: uv run python scripts/check_one_class_per_file.py --fail-on-multiple
 
+      - name: Check the palette's contrast
+        run: uv run python scripts/check_palette_contrast.py
+
   verify-pre-commit-packages-are-up-to-date:
     runs-on: ubuntu-latest
     continue-on-error: true  # Equivalent to allow_failure

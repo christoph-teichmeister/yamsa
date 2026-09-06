@@ -46,7 +46,7 @@
               <p class="text-muted small mb-0">{% trans "Basics" %}</p>
               <h5 class="fw-semibold mb-0">{% trans "Name, description & currency" %}</h5>
               {% if form.errors %}
-                <small class="text-danger">{% trans "Please fix the highlighted errors in the form." %}</small>
+                <small class="text-danger-emphasis">{% trans "Please fix the highlighted errors in the form." %}</small>
               {% endif %}
             </div>
             <form id="room-details-form"
@@ -66,7 +66,7 @@
                        value="{{ current_room.name }}"
                        {% if current_room.is_closed %}disabled{% endif %}>
                 {% for error_message in form.errors.name.data %}
-                  <small class="text-danger">{{ error_message.message }}</small>
+                  <small class="text-danger-emphasis">{{ error_message.message }}</small>
                 {% endfor %}
               </div>
               <div class="col-12">
@@ -80,7 +80,7 @@
                        maxlength="50"
                        {% if current_room.is_closed %}disabled{% endif %}>
                 {% for error_message in form.errors.description.data %}
-                  <small class="text-danger">{{ error_message.message }}</small>
+                  <small class="text-danger-emphasis">{{ error_message.message }}</small>
                 {% endfor %}
               </div>
               <div class="col-12">
@@ -98,7 +98,7 @@
                   {% endfor %}
                 </select>
                 {% for error_message in form.errors.preferred_currency.data %}
-                  <small class="text-danger">{{ error_message.message }}</small>
+                  <small class="text-danger-emphasis">{{ error_message.message }}</small>
                 {% endfor %}
               </div>
               <input type="hidden" name="status" value="{{ current_room.status }}">
@@ -116,7 +116,7 @@
                 {% if current_room.can_be_closed %}
                   <p class="small text-muted mb-0">{% trans "All debts are settled. You can close the room." %}</p>
                 {% elif current_room.open_debt_count > 0 %}
-                  <p class="small text-warning mb-0">
+                  <p class="small text-warning-emphasis mb-0">
                     {% blocktrans count current_room.open_debt_count as debt_count %}
                                             There is still {{ debt_count }} open debt.
                                         {% plural %}
@@ -165,7 +165,7 @@
               </div>
               <div class="mt-3 text-center">
                 {% for error_message in form.errors.status.data %}
-                  <small class="text-danger">{{ error_message.message }}</small>
+                  <small class="text-danger-emphasis">{{ error_message.message }}</small>
                 {% endfor %}
               </div>
             </form>

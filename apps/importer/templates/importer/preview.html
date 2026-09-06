@@ -51,12 +51,12 @@
                   </div>
                   {% for error_message in choice_field.errors %}
                     <div class="col-12">
-                      <small class="text-danger">{{ error_message }}</small>
+                      <small class="text-danger-emphasis">{{ error_message }}</small>
                     </div>
                   {% endfor %}
                   {% for error_message in name_field.errors %}
                     <div class="col-12">
-                      <small class="text-danger">{{ error_message }}</small>
+                      <small class="text-danger-emphasis">{{ error_message }}</small>
                     </div>
                   {% endfor %}
                 </div>
@@ -109,17 +109,17 @@
                   </div>
                   {% for error_message in choice_field.errors %}
                     <div class="col-12">
-                      <small class="text-danger">{{ error_message }}</small>
+                      <small class="text-danger-emphasis">{{ error_message }}</small>
                     </div>
                   {% endfor %}
                   {% for error_message in name_field.errors %}
                     <div class="col-12">
-                      <small class="text-danger">{{ error_message }}</small>
+                      <small class="text-danger-emphasis">{{ error_message }}</small>
                     </div>
                   {% endfor %}
                   {% for error_message in emoji_field.errors %}
                     <div class="col-12">
-                      <small class="text-danger">{{ error_message }}</small>
+                      <small class="text-danger-emphasis">{{ error_message }}</small>
                     </div>
                   {% endfor %}
                   <div class="col-12">
@@ -214,7 +214,7 @@
                 <ul class="list-unstyled small mb-0">
                   {% for row in parsed.skipped_rows %}
                     <li class="mb-2">
-                      <span class="badge text-bg-light">{% trans "Row" %} {{ row.row_number }}</span>
+                      <span class="badge bg-body-secondary text-body-emphasis">{% trans "Row" %} {{ row.row_number }}</span>
                       <span class="text-muted">{{ row.reason }}</span>
                       <div class="text-muted opacity-75">{{ row.excerpt }}</div>
                     </li>

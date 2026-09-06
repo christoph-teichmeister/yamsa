@@ -1,7 +1,7 @@
 repos:
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     # https://github.com/astral-sh/ruff-pre-commit/releases
-    rev: v0.16.5
+    rev: v0.16.6
     hooks:
       # Run the formatter.
       - id: ruff-format
@@ -11,7 +11,7 @@ repos:
 
   - repo: https://github.com/djlint/djLint
     # https://github.com/djlint/djLint/releases
-    rev: v1.44.2
+    rev: v1.45.2
     hooks:
       - id: djlint-reformat-django
       - id: djlint-django

@@ -48,26 +48,99 @@ at its own selector.
 
 ## Colors
 
-Semantic colors are CSS custom properties that switch with the theme and are exposed to Tailwind via
-`@theme inline`. **Prefer them over `dark:` variants** — `tw:bg-surface` is already correct in both
-themes. The values mirror `apps/static/base.css`, so a Tailwind page sits flush inside the
-Bootstrap shell.
+`apps/static_src/tailwind.css` holds the palette of the **whole app** — the `--yamsa-*` tokens
+there are the only place a color is written down. Bootstrap has no values of its own:
+`apps/static/base.css` maps `--bs-*` onto the same tokens, once, so the two frameworks cannot drift
+apart. Tailwind exposes the tokens via `@theme inline`; **prefer them over `dark:` variants** —
+`tw:bg-surface` is already correct in both themes.
 
 | Token                                          | Use                                                       |
 |------------------------------------------------|-----------------------------------------------------------|
-| `surface`, `surface-raised`, `surface-sunken`  | card, elevated card, inset panel / page ground            |
+| `canvas`                                       | the page ground the shell paints (Bootstrap's body bg)    |
+| `surface`, `surface-raised`, `surface-sunken`  | card, elevated card, inset panel                          |
 | `surface-hover`                                | hover fill for ghost buttons and rows                     |
 | `line`, `line-strong`                          | default border, border of interactive elements            |
-| `ink`, `ink-muted`, `ink-subtle`               | primary, secondary, tertiary text                         |
+| `ink-strong`, `ink`, `ink-muted`, `ink-subtle` | heading, primary, secondary, tertiary text                |
 | `brand`, `brand-hover`, `brand-text`           | brand fill, its hover, brand-colored text on a surface    |
 | `brand-soft`                                   | tinted brand background (badges, icon tiles, gradients)   |
 | `on-brand`                                     | text and icons on a brand fill                            |
-| `success-*`, `warning-*`, `danger-*`           | `-text` and `-soft` pairs for status                      |
+| `success-*`, `warning-*`, `danger-*`           | `-text`, `-soft` and `-border` triples for status         |
 
-`brand-50` … `brand-900` is the raw ramp for fills that must not shift with the theme.
+These tokens are the palette in full. There is no second, theme-independent ramp beside them —
+one existed, went unused, and would only have drifted from the tokens that do the work. A colour
+that must not shift with the theme is a colour that has not been thought through yet.
 
-The theme itself is driven by Bootstrap's `data-bs-theme` attribute on `<html>` (set by
-`apps/static/js/navigation.js`), so `tw:dark:…` keys off `[data-bs-theme="dark"]`.
+Two tokens are kept as bare triplets, `--yamsa-brand-rgb` and `--yamsa-link-rgb`, because Bootstrap
+composes its own colors from `--bs-primary-rgb` and `--bs-link-color-rgb`: a link colour set only as
+`--bs-link-color` never reaches an `<a>`.
+
+### The values are a contract, not a taste
+
+`scripts/check_palette_contrast.py` (a step in the QA workflow) holds the palette to four rules,
+and the numbers in `tailwind.css` are what they are because of them:
+
+- every text token reaches **4.5:1** on *every* opaque ground — `surface`, `surface-raised`,
+  `surface-sunken`, `surface-hover` and `canvas`. The hover fill and the raised card are the
+  strictest of them, and they are where the first version of this palette failed;
+- every `-text` token reaches 4.5:1 on its own `-soft` tint, composited over each of those grounds:
+  a tint is translucent, so what a badge label really sits on is the tint *plus* whatever carries
+  the badge;
+- a button label reaches 4.5:1 on the brand fill **and on its hover** — which is why the brand is
+  dark enough to carry white rather than a tint that needs dark text, and why the fill darkens on
+  hover in both themes instead of lightening on the dark one;
+- `line-strong` (the boundary of inputs and outline buttons) and the brand as a focus ring reach
+  **3:1**;
+- the neutrals of a theme stay within 20° of hue of each other **and of the other theme's**. A warm
+  neutral under a cold brand is what made the old dark theme look muddy — the two sat 59° apart.
+
+Run the script after touching a colour. It prints every failing pair with its measured ratio, and
+`--verbose` prints all of them.
+
+### Bootstrap's own variables are mapped, its utilities are not
+
+`base.css` points Bootstrap's neutrals and status tints at the tokens —
+`--bs-body-color-rgb`, `--bs-secondary-color`, `--bs-secondary-bg`, `--bs-tertiary-bg`,
+`--bs-emphasis-color`, and the `-text-emphasis` / `-bg-subtle` / `-border-subtle` trio of each
+status. So `bg-success-subtle text-success-emphasis` and `bg-body-secondary text-body-emphasis`
+**are** the palette, and are the pairs to reach for.
+
+What is *not* mapped is `--bs-primary`/`--bs-success`/`--bs-danger`/`--bs-warning` themselves,
+because each drives a text colour (`.text-success`) and a solid fill with forced white text
+(`.text-bg-success`) at once: a value that reads as text is too dark for the fill and vice versa.
+Which is why the fixed status utilities are out of bounds — measured on this palette,
+`.text-danger` and `.text-success` fail on three of the four grounds and `.text-warning` is
+**1.63:1** on the light theme, yellow on white.
+
+Never reach for a fixed Bootstrap color — `bg-light`, `text-dark`, `text-bg-light`, `btn-light`,
+`btn-close-white`, `text-danger`, `text-success`, `text-warning`, `text-bg-*`, solid `bg-success` —
+or a raw hex in CSS. The theme-aware equivalents are the `-subtle`/`-emphasis` pairs,
+`bg-body-secondary`, `.btn-surface` (in `base.css`), or a token.
+
+`brand` is a **fill**. As text it lands at 3.25:1 on a dark surface — the token that reads on a
+surface is `brand-text`.
+
+An SVG **presentation attribute does not resolve `var()`** — a d3 chart has to set its colours as
+inline styles (`.style("stroke", "var(--yamsa-line)")`), not with `.attr()`, or the chart keeps the
+colour it was born with.
+
+## Themes
+
+Both themes are first-class; neither is a filter over the other. Three things carry that:
+
+- **The preference is `light`, `dark` or `auto`**, stored under `theme` in `localStorage`; `auto`
+  follows `prefers-color-scheme` and stays selected while the system flips the page.
+  `apps/static/js/navigation.js` owns it and marks the chosen button with `aria-pressed`.
+- **The theme is applied before the first paint** by the inline script in
+  `core/base.html`'s `<head>` — a deferred bundle would show every reader on the other theme a full
+  page of the wrong one first. That script does the minimum (read the preference, set
+  `data-bs-theme`) and nothing else; it deliberately sits before the stylesheets so it never waits
+  for them.
+- **`color-scheme` is declared per theme**, next to the tokens. Scrollbars, form controls and every
+  other native widget follow the theme through that property alone. The browser's own chrome
+  follows `<meta name="theme-color">`, which `navigation.js` re-points at `--yamsa-canvas` on every
+  switch.
+
+`tw:dark:…` keys off `[data-bs-theme="dark"]`, the attribute all of this sets.
 
 Radius, spacing and type scale are Tailwind's defaults — they already match the intended scale, so
 they are deliberately **not** redefined. Only `--shadow-card`, `--shadow-card-hover` and

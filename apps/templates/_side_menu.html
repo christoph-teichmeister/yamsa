@@ -1,6 +1,10 @@
 {% load room_tags i18n %}
 {% trans "Toggle navigation" as offcanvas_toggle_label %}
 {% trans "Copy the rooms URL to your clipboard to send it to your friends" as copy_rooms_url_tooltip %}
+{% trans "Theme" as theme_group_label %}
+{% trans "Light theme" as light_theme_label %}
+{% trans "Dark theme" as dark_theme_label %}
+{% trans "Follow the system theme" as system_theme_label %}
 <nav class="navbar fixed-top pt-4">
   <div class="container-fluid pt-4 justify-content-center"
        id="offcanvasContainer">
@@ -28,7 +32,7 @@
       {% if current_room %}
         <div class="col-1 px-0 d-flex align-items-center justify-content-end">
           {% if current_room.is_open %}
-            <button class="btn btn-light btn-sm"
+            <button class="btn btn-surface btn-sm"
                     data-copy-share-url="true"
                     data-share-url="{{ current_room.share_url }}"
                     data-bs-toggle="tooltip"
@@ -63,16 +67,32 @@
                 aria-label="Close"></button>
       </div>
       <div class="offcanvas-body d-flex flex-column gap-4 pt-3 pb-4">
-        <div class="d-flex justify-content-center gap-2">
+        <div class="d-flex justify-content-center gap-2"
+             role="group"
+             aria-label="{{ theme_group_label }}">
           <button type="button"
                   class="btn btn-sm btn-outline-primary px-3 rounded-3"
-                  data-theme-value="light">
-            <i class="bi bi-sun-fill"></i>
+                  data-theme-value="light"
+                  aria-pressed="false"
+                  title="{{ light_theme_label }}"
+                  aria-label="{{ light_theme_label }}">
+            <i class="bi bi-sun-fill" aria-hidden="true"></i>
           </button>
           <button type="button"
                   class="btn btn-sm btn-outline-primary px-3 rounded-3"
-                  data-theme-value="dark">
-            <i class="bi bi-moon-fill"></i>
+                  data-theme-value="dark"
+                  aria-pressed="false"
+                  title="{{ dark_theme_label }}"
+                  aria-label="{{ dark_theme_label }}">
+            <i class="bi bi-moon-fill" aria-hidden="true"></i>
+          </button>
+          <button type="button"
+                  class="btn btn-sm btn-outline-primary px-3 rounded-3"
+                  data-theme-value="auto"
+                  aria-pressed="false"
+                  title="{{ system_theme_label }}"
+                  aria-label="{{ system_theme_label }}">
+            <i class="bi bi-circle-half" aria-hidden="true"></i>
           </button>
         </div>
         <div class="card shadow-sm border-0 room-card text-center">
@@ -143,7 +163,7 @@
             <div class="room-name fw-semibold mb-0">{% trans "Home" %}</div>
             <small class="room-description text-muted">{% trans "Back to home" %}</small>
           </div>
-          <span class="badge bg-light text-dark room-status-badge">{% trans "Start" %}</span>
+          <span class="badge bg-body-secondary text-body-emphasis room-status-badge">{% trans "Start" %}</span>
         </div>
         {% url 'news:list' as news_url %}
         <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm {% if request.path == news_url %}active{% endif %}"
@@ -165,7 +185,7 @@
             <div class="room-name fw-semibold mb-0">{% trans "News" %}</div>
             <small class="room-description text-muted">{% trans "What happened in your rooms" %}</small>
           </div>
-          <span class="badge bg-light text-dark room-status-badge">{% trans "Updates" %}</span>
+          <span class="badge bg-body-secondary text-body-emphasis room-status-badge">{% trans "Updates" %}</span>
         </div>
         {% include "_side_menu_room_list.html" %}
         <div class="mt-auto">

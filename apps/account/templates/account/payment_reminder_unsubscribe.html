@@ -10,10 +10,10 @@
         <div class="card border-0 shadow-sm rounded-4">
           <div class="card-body text-center p-5">
             {% if success %}
-              <span class="badge text-bg-success text-uppercase mb-3">{% trans "Unsubscribed" %}</span>
+              <span class="badge bg-success-subtle text-success-emphasis text-uppercase mb-3">{% trans "Unsubscribed" %}</span>
               <h1 class="h4 fw-semibold mb-3">{% trans "You’re no longer receiving payment reminders." %}</h1>
             {% else %}
-              <span class="badge text-bg-danger text-uppercase mb-3">{% trans "Oops" %}</span>
+              <span class="badge bg-danger-subtle text-danger-emphasis text-uppercase mb-3">{% trans "Oops" %}</span>
               <h1 class="h4 fw-semibold mb-3">{% trans "We couldn’t process the unsubscribe." %}</h1>
             {% endif %}
             <p class="text-muted mb-4">{{ message }}</p>

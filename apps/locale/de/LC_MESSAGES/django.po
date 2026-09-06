@@ -1288,6 +1288,18 @@ msgstr "Navigation umschalten"
 msgid "Copy the rooms URL to your clipboard to send it to your friends"
 msgstr "Kopiere die Raum-URL in die Zwischenablage, um sie deinen Freunden zu schicken"
 
+msgid "Theme"
+msgstr "Design"
+
+msgid "Light theme"
+msgstr "Helles Design"
+
+msgid "Dark theme"
+msgstr "Dunkles Design"
+
+msgid "Follow the system theme"
+msgstr "Systemeinstellung übernehmen"
+
 msgid "Menu"
 msgstr "Menü"
 

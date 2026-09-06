@@ -27,7 +27,7 @@
             <small class="room-description text-muted">{{ room.status|room_status_label }}</small>
           {% endif %}
         </div>
-        <span class="badge room-status-badge bg-light text-dark">{{ room.status|room_status_label }}</span>
+        <span class="badge room-status-badge bg-body-secondary text-body-emphasis">{{ room.status|room_status_label }}</span>
       </div>
     {% endfor %}
   </section>
@@ -55,7 +55,7 @@
       <div class="room-name fw-semibold mb-0">{% trans "Import" %}</div>
       <small class="room-description text-muted">{% trans "Bring your data from another app" %}</small>
     </div>
-    <span class="badge room-status-badge bg-light text-dark">{% trans "New" %}</span>
+    <span class="badge room-status-badge bg-body-secondary text-body-emphasis">{% trans "New" %}</span>
   </div>
 </section>
 {% if current_user.closed_room_qs_for_list %}
@@ -85,7 +85,7 @@
             <small class="room-description text-muted">{{ room.status|room_status_label }}</small>
           {% endif %}
         </div>
-        <span class="badge room-status-badge bg-danger bg-opacity-10 text-danger">{{ room.status|room_status_label }}</span>
+        <span class="badge room-status-badge bg-danger-subtle text-danger-emphasis">{{ room.status|room_status_label }}</span>
       </div>
     {% endfor %}
   </section>
@@ -117,7 +117,7 @@
             <small class="room-description text-muted">{{ room.status|room_status_label }}</small>
           {% endif %}
         </div>
-        <span class="badge room-status-badge bg-secondary bg-opacity-10 text-secondary">{{ room.status|room_status_label }}</span>
+        <span class="badge room-status-badge bg-body-secondary text-body-emphasis">{{ room.status|room_status_label }}</span>
       </div>
     {% endfor %}
   </section>

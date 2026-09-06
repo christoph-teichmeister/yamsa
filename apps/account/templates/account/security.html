@@ -32,7 +32,7 @@
                     action="{% url 'account:passkey-delete' %}">
                 {% csrf_token %}
                 <input type="hidden" name="id" value="{{ passkey.id }}">
-                <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-danger-500/60 tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-danger-text/60 tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
                         type="submit">
                   <i class="bi bi-trash" aria-hidden="true"></i>
                   {% trans "Delete" %}

@@ -8,7 +8,7 @@
             <p class="text-uppercase text-muted small mb-1">{% trans "Guest access" %}</p>
             <h2 class="fw-semibold mb-1">{{ current_room.name }}</h2>
           </div>
-          <span class="badge rounded-pill {{ current_room.is_closed|yesno:'text-bg-danger,text-bg-success' }} py-2 px-3">
+          <span class="badge rounded-pill {{ current_room.is_closed|yesno:'bg-danger-subtle text-danger-emphasis,bg-success-subtle text-success-emphasis' }} py-2 px-3">
             {% if current_room.is_closed %}
               <i class="bi bi-lock-fill me-1"></i>{% trans "Closed" %}
             {% else %}

@@ -12,9 +12,9 @@
         .people-hero {
             border-radius: 1.25rem;
             padding: 1.75rem;
-            background: linear-gradient(135deg, rgba(13, 110, 253, 0.16), rgba(50, 205, 153, 0.25));
-            border: 1px solid rgba(var(--bs-primary-rgb, 13, 110, 253), 0.15);
-            box-shadow: 0 25px 45px rgba(13, 110, 253, 0.12);
+            background: linear-gradient(135deg, var(--yamsa-brand-soft), transparent);
+            border: 1px solid rgb(var(--yamsa-brand-rgb), 0.15);
+            box-shadow: 0 25px 45px rgb(var(--yamsa-brand-rgb), 0.12);
         }
 
         .people-hero h3 {
@@ -41,7 +41,7 @@
         .people-action-btn:hover:not(.disabled) {
             transform: translateY(-2px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-            background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.08);
+            background: rgb(var(--yamsa-brand-rgb), 0.08);
         }
 
         .people-grid {
@@ -67,8 +67,8 @@
 
         .people-card--interactive:hover {
             transform: translateY(-4px);
-            border-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.35);
-            box-shadow: 0 20px 45px rgba(13, 110, 253, 0.15);
+            border-color: rgb(var(--yamsa-brand-rgb), 0.35);
+            box-shadow: 0 20px 45px rgb(var(--yamsa-brand-rgb), 0.15);
             cursor: pointer;
         }
 
@@ -90,13 +90,13 @@
             text-transform: uppercase;
             border-radius: 999px;
             padding: 0.2rem 0.65rem;
-            background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.15);
-            color: var(--bs-primary, #0d6efd);
+            background: rgb(var(--yamsa-brand-rgb), 0.15);
+            color: var(--yamsa-brand-text);
         }
 
         .people-pill-guest {
-            background: rgba(255, 193, 7, 0.2);
-            color: rgba(232, 166, 93, 0.9);
+            background: var(--yamsa-warning-soft);
+            color: var(--yamsa-warning-text);
         }
 
         .people-pill-muted {
@@ -119,12 +119,12 @@
             width: 3rem;
             height: 3rem;
             border-radius: 0.85rem;
-            background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.1);
+            background: rgb(var(--yamsa-brand-rgb), 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.3rem;
-            color: var(--bs-primary, #0d6efd);
+            color: var(--yamsa-brand-text);
         }
 
         .people-avatar img {
@@ -153,7 +153,7 @@
           </div>
           <div class="text-md-end">
             <p class="mb-1 small text-muted">{% trans "Status" %}</p>
-            <span class="badge {% if current_room.is_closed %}bg-secondary{% else %}bg-success{% endif %}">
+            <span class="badge {% if current_room.is_closed %}bg-body-secondary text-body-emphasis{% else %}bg-success-subtle text-success-emphasis{% endif %}">
               {% if current_room.is_closed %}
                 {% trans "Room closed" %}
               {% else %}
