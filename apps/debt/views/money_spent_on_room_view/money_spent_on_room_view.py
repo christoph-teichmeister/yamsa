@@ -1,4 +1,5 @@
 from django.db.models import F, Max, QuerySet, Sum
+from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
@@ -13,11 +14,26 @@ class MoneySpentOnRoomView(RoomChildTransactionQuerysetMixin, DebtBaseContext, g
     template_name = "transaction/partials/_money_spent_on_room.html"
 
     @context
+    @cached_property
+    def room_member_avatars(self) -> dict[int, str | None]:
+        """Avatar per member id, so the aggregate rows below can show a face without carrying a user.
+
+        The rows are `.values()` dicts, which cannot reach the picture of a user. Every person in
+        them is still a member of the room - a user with a transaction or a debt cannot be removed
+        from it (User.can_be_removed_from_room) - so one pass over the members covers all of them.
+        """
+        return {member.id: member.avatar_url for member in self.request.room.users.all()}
+
+    @context
     @property
     def money_spent_per_person_qs(self) -> QuerySet[dict[str, object]]:
         return (
             self.get_base_queryset()
-            .values("parent_transaction__paid_by__name", "parent_transaction__currency__sign")
+            .values(
+                "parent_transaction__paid_by_id",
+                "parent_transaction__paid_by__name",
+                "parent_transaction__currency__sign",
+            )
             .annotate(
                 paid_by_name=F("parent_transaction__paid_by__name"),
                 currency_sign=F("parent_transaction__currency__sign"),
@@ -42,7 +58,7 @@ class MoneySpentOnRoomView(RoomChildTransactionQuerysetMixin, DebtBaseContext, g
         return (
             self.get_base_queryset()
             .exclude(paid_for=F("parent_transaction__paid_by"))
-            .values("paid_for__name", "parent_transaction__currency__sign")
+            .values("paid_for_id", "paid_for__name", "parent_transaction__currency__sign")
             .annotate(
                 currency_sign=F("parent_transaction__currency__sign"),
                 total_covered_for_person=Sum("value"),
@@ -57,7 +73,7 @@ class MoneySpentOnRoomView(RoomChildTransactionQuerysetMixin, DebtBaseContext, g
         """Actual outstanding debts after optimisation, grouped by debtor and currency."""
         return (
             Debt.objects.filter(room_id=self.request.room.id, settled=False)
-            .values("debitor__name", "currency__sign")
+            .values("debitor_id", "debitor__name", "currency__sign")
             .annotate(
                 debitor_name=F("debitor__name"),
                 currency_sign=F("currency__sign"),
