@@ -4,8 +4,6 @@
 .room-overview-card {
     background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.04);
     border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.15);
-    border-left-width: 3px;
-    border-left-color: transparent;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     cursor: pointer;
 }
@@ -15,17 +13,6 @@
     transform: translateY(-2px);
     border-color: rgba(var(--bs-primary-rgb, 110, 168, 254), 0.55);
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.22);
-}
-
-/* The edge marks the same direction the amount's colour does, so it survives a hover that
-   recolours the other three sides. Doubled class and placed last: :hover above scores 0-2-0
-   and would otherwise win on the left side too. */
-.room-overview-card.room-overview-card-owing {
-    border-left-color: var(--bs-warning-text-emphasis, #ffda6a);
-}
-
-.room-overview-card.room-overview-card-receiving {
-    border-left-color: var(--bs-success-text-emphasis, #75b798);
 }
 
 .room-overview-card-closed {
