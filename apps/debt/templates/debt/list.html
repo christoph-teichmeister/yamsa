@@ -118,9 +118,9 @@
               </div>
               <div class="d-flex align-items-center gap-2">
                 {% if debt.settled %}
-                  <span class="badge text-bg-success-subtle text-success">{% trans "Settled" %}</span>
+                  <span class="badge bg-success-subtle text-success-emphasis">{% trans "Settled" %}</span>
                 {% else %}
-                  <span class="badge text-bg-warning-subtle text-warning">{% trans "Outstanding" %}</span>
+                  <span class="badge bg-warning-subtle text-warning-emphasis">{% trans "Outstanding" %}</span>
                 {% endif %}
                 <div>{% include "debt/partials/_settle_debt_piggy_icon.html" with debt=debt %}</div>
               </div>

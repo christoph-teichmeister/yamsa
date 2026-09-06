@@ -125,6 +125,9 @@
           </div>
         </div>
         <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm {% if request.path == "/welcome/" %}active{% endif %}"
+             role="button"
+             tabindex="0"
+             data-keyboard-click
              data-bs-dismiss="offcanvas"
              data-bs-target="#offcanvasNavbar"
              hx-trigger="click delay:300ms"
@@ -141,6 +144,28 @@
             <small class="room-description text-muted">{% trans "Back to home" %}</small>
           </div>
           <span class="badge bg-light text-dark room-status-badge">{% trans "Start" %}</span>
+        </div>
+        {% url 'news:list' as news_url %}
+        <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm {% if request.path == news_url %}active{% endif %}"
+             role="button"
+             tabindex="0"
+             data-keyboard-click
+             data-bs-dismiss="offcanvas"
+             data-bs-target="#offcanvasNavbar"
+             hx-trigger="click delay:300ms"
+             hx-get="{{ news_url }}"
+             hx-indicator="#body-loading-spinner"
+             hx-target="#body"
+             hx-swap="morph:innerHTML"
+             hx-push-url="true">
+          <div class="room-circle{% if request.path == news_url %} selected{% endif %}">
+            <i class="bi bi-newspaper"></i>
+          </div>
+          <div class="flex-grow-1 text-start">
+            <div class="room-name fw-semibold mb-0">{% trans "News" %}</div>
+            <small class="room-description text-muted">{% trans "What happened in your rooms" %}</small>
+          </div>
+          <span class="badge bg-light text-dark room-status-badge">{% trans "Updates" %}</span>
         </div>
         {% include "_side_menu_room_list.html" %}
         <div class="mt-auto">

@@ -23,17 +23,25 @@ def parse_user_text(context, user_name: str, start_of_sentence: bool = False):
 
 @register.tag
 def room_url(parser, token):
-    # Templates using the room_url tag, will have "current_room" available in their context
+    # The tag resolves against "current_room", which the room middleware only provides for URLs
+    # carrying a room_slug. _side_menu_room_list.html renders outside such a URL and iterates a
+    # room_qs instead, so it is the one template that binds "room".
     room_context_name = "current_room"
 
-    # room/list.html does not and can not have current_room as context_variable, but it does iterate over a room_qs
-    # calling each entry "room", so use that instead
-    if "room/list.html" in parser.origin.name or "_side_menu_room_list.html" in parser.origin.name:
+    if "_side_menu_room_list.html" in parser.origin.name:
         room_context_name = "room"
 
     token.contents += f" room_slug={room_context_name}.slug"
 
     return url(parser, token)
+
+
+@register.filter
+def room_status_label(status):
+    """Render the label of a Room status value, for rows that are dicts rather than model instances."""
+    from apps.room.models import Room
+
+    return Room.status_label_for(status)
 
 
 @register.filter

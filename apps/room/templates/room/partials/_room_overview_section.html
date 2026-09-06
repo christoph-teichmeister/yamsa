@@ -1,0 +1,20 @@
+{% load i18n %}
+{% if entries %}
+  <section class="room-overview-section">
+    {% include "side_menu_components/room_list_title.html" with title=title %}
+    <div class="row g-3">
+      {% for entry in entries %}
+        <div class="col-12 col-lg-6">{% include "room/partials/_room_overview_card.html" with entry=entry %}</div>
+      {% endfor %}
+    </div>
+    {% if overflow_count %}
+      <p class="text-muted small mt-2 mb-0">
+        {% blocktrans trimmed count counter=overflow_count %}
+          and {{ counter }} more room
+        {% plural %}
+          and {{ counter }} more rooms
+        {% endblocktrans %}
+      </p>
+    {% endif %}
+  </section>
+{% endif %}

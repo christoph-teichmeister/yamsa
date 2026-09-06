@@ -15,6 +15,11 @@ class UserConnectionToRoom(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixi
     class Meta:
         verbose_name = _lazy("User-Connection to Room")
         verbose_name_plural = _lazy("User-Connections to Rooms")
+        constraints = (
+            # A second connection re-emits UserConnectionToRoomCreated, which sends the welcome
+            # mail, the push notification and the news entry all over again.
+            models.UniqueConstraint(fields=("user", "room"), name="unique_user_connection_per_room"),
+        )
 
     def __str__(self) -> str:
         return _("{user} belongs to {room}").format(user=self.user, room=self.room)

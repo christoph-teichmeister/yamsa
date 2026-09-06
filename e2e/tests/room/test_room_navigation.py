@@ -1,5 +1,6 @@
 import pytest
 from django.urls import reverse
+from playwright.sync_api import expect
 
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from e2e.pages.base_page import BasePage
@@ -16,11 +17,16 @@ class TestRoomNavigation:
         login_page.navigate()
         login_page.login(profile_user.email, DEFAULT_PASSWORD)
 
-        room_list = BasePage(page, base_url, reverse("room:list"))
-        room_list.navigate()
+        dashboard = BasePage(page, base_url, reverse("core:welcome"))
+        dashboard.navigate()
 
-        card = page.locator("[data-keyboard-click]").first
+        # Addressed by its target URL rather than by position: the side menu renders before
+        # #base-content and its entries carry the same marker, so "the first one" is a menu row.
+        room_url = reverse("transaction:list", kwargs={"room_slug": shared_room.slug})
+        card = page.locator(f'.room-overview-card[hx-get="{room_url}"]')
+        expect(card).to_have_count(1)
+
         card.focus()
         page.keyboard.press("Enter")
 
-        page.wait_for_url(f"**{reverse('transaction:list', kwargs={'room_slug': shared_room.slug})}")
+        page.wait_for_url(f"**{room_url}")

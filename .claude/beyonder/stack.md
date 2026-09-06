@@ -5,6 +5,7 @@
 - Missing or irreversible migrations; migrations not reviewed alongside the model change that produced them
 - `ModelForm.save()` holding side effects or a `transaction.atomic()` boundary — per AGENTS.md/docs/ai/architecture.md, that belongs in the view's `form_valid()`, called after the atomic block exits (see #333)
 - `.save()` without `update_fields` on hot paths
+- Money aggregations grouped by `currency__sign`/`currency__code` instead of `currency_id` — neither field has a unique constraint, so two currencies sharing a symbol (USD/CAD = `$`) collapse into one sum (reference implementation: `DebtOptimiseService`)
 - Relative imports inside `apps/` (project convention: absolute imports anchored at project root)
 - Module-level `__all__` exports (project convention: avoid)
 

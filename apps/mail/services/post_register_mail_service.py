@@ -32,7 +32,7 @@ class PostRegisterEmailService(BaseYamsaEmailService):
         cta_btn_text = _("Create a room")
 
         if self.user_has_rooms:
-            cta_btn_link = reverse(viewname="room:list")
+            cta_btn_link = reverse(viewname="core:welcome")
             cta_btn_text = _("See your rooms")
 
         return EmailExtraContext(

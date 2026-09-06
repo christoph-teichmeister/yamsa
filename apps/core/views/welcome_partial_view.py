@@ -1,38 +1,58 @@
+from functools import cached_property
+
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
+from django_context_decorator import context
 
-from apps.news.constants import NEWS_FEED_PAGE_SIZE
-from apps.news.models import News
+from apps.room.dataclasses import RoomOverviewEntry
+from apps.room.services.room_overview_service import RoomOverviewService
 
 
 class WelcomePartialView(generic.TemplateView):
+    """Dashboard: the rooms the user is part of, with their open balance."""
+
     template_name = "core/_welcome.html"
+
+    # Superusers see every room of the instance through Room.objects.visible_for(). Those are
+    # not their rooms and carry no balance, so the dashboard shows a sample rather than a list
+    # that grows with the database.
+    OTHER_ROOM_LIMIT = 10
 
     def get(self, request, *args, **kwargs):
         if request.user.is_anonymous:
             return HttpResponseRedirect(redirect_to=reverse(viewname="account:login"))
         return super().get(request, *args, **kwargs)
 
-    def _get_news_base_qs(self):
-        if self.request.user.is_authenticated:
-            return News.objects.filter(room_id__in=self.request.user.room_set.values_list("id", flat=True))
+    @cached_property
+    def _room_entries(self) -> list[RoomOverviewEntry]:
+        return RoomOverviewService(user=self.request.user).get_entries()
 
-        return News.objects.none()
+    @context
+    @property
+    def open_room_entries(self) -> list[RoomOverviewEntry]:
+        return [entry for entry in self._room_entries if entry.user_is_in_room and not entry.is_closed]
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        base_queryset = self._get_news_base_qs()
-        news_queryset = base_queryset.exclude(highlighted=True).order_by("-id")
-        news_batch = list(news_queryset[:NEWS_FEED_PAGE_SIZE])
-        next_cursor = news_batch[-1].id if len(news_batch) == NEWS_FEED_PAGE_SIZE else None
+    @context
+    @property
+    def closed_room_entries(self) -> list[RoomOverviewEntry]:
+        return [entry for entry in self._room_entries if entry.user_is_in_room and entry.is_closed]
 
-        context.update(
-            {
-                "news": news_batch,
-                "news_next_cursor": next_cursor,
-                "news_initial_render": True,
-                "highlighted_news": base_queryset.filter(highlighted=True).first(),
-            }
-        )
-        return context
+    @context
+    @property
+    def other_room_entries(self) -> list[RoomOverviewEntry]:
+        return self._foreign_room_entries[: self.OTHER_ROOM_LIMIT]
+
+    @context
+    @property
+    def other_room_overflow_count(self) -> int:
+        return max(0, len(self._foreign_room_entries) - self.OTHER_ROOM_LIMIT)
+
+    @cached_property
+    def _foreign_room_entries(self) -> list[RoomOverviewEntry]:
+        return [entry for entry in self._room_entries if not entry.user_is_in_room]
+
+    @context
+    @property
+    def has_room_entries(self) -> bool:
+        return bool(self._room_entries)
