@@ -196,14 +196,8 @@ msgstr "Aktiviert"
 msgid "Disabled"
 msgstr "Deaktiviert"
 
-msgid "Manage this toggle from the edit screen."
-msgstr "Verwalte diesen Schalter im Bearbeitungsbildschirm."
-
 msgid "Payment reminders"
 msgstr "Zahlungserinnerungen"
-
-msgid "Toggle this in the notifications center or via the email footer."
-msgstr "Schalte dies im Benachrichtigungszentrum oder über die Fußzeile der E-Mail um."
 
 msgid "Security"
 msgstr "Sicherheit"
@@ -219,9 +213,6 @@ msgstr "Passwort ändern"
 
 msgid "Security settings"
 msgstr "Sicherheitseinstellungen"
-
-msgid "Keep your details up to date"
-msgstr "Halte deine Daten aktuell"
 
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -249,12 +240,6 @@ msgstr "Benachrichtigungszentrum"
 
 msgid "Choose how you want to hear from us."
 msgstr "Wähle, wie du von uns hören möchtest."
-
-msgid "Need a new password?"
-msgstr "Neues Passwort benötigt?"
-
-msgid "Set a fresh password any time. We’ll keep you logged in while you update it."
-msgstr "Lege jederzeit ein neues Passwort fest. Wir halten dich während der Aktualisierung angemeldet."
 
 msgid "Forgot password"
 msgstr "Passwort vergessen"
@@ -2163,3 +2148,9 @@ msgstr ""
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
+
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+msgid "Change photo"
+msgstr "Foto ändern"

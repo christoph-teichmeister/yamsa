@@ -1,0 +1,19 @@
+{% load i18n %}
+{% if user.is_superuser %}
+  <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">
+    <i class="bi bi-shield-lock" aria-hidden="true"></i>
+    {% trans "Superuser" %}
+  </span>
+{% endif %}
+{% if user.is_staff %}
+  <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-brand-text">
+    <i class="bi bi-people" aria-hidden="true"></i>
+    {% trans "Staff" %}
+  </span>
+{% endif %}
+{% if user.paypal_me_username %}
+  <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-success-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-success-text">
+    <i class="bi bi-check-circle" aria-hidden="true"></i>
+    {% trans "PayPal linked" %}
+  </span>
+{% endif %}

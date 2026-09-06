@@ -3,6 +3,7 @@ import json
 from django.contrib.auth import mixins
 from django.views import generic
 
+from apps.account.forms import EditUserForm
 from apps.account.models import User
 
 
@@ -29,6 +30,15 @@ class UserDetailView(mixins.LoginRequiredMixin, generic.DetailView):
             return self.handle_no_permission()
 
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.id == self.object.id:
+            # Own profile: every value is rendered as its own form control so the page can switch
+            # to editing without another round trip.
+            context["form"] = EditUserForm(instance=self.object)
+            context["profile_is_editing"] = False
+        return context
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)

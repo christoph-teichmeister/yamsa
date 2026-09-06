@@ -6,15 +6,14 @@ is done.
 
 Migrated so far:
 
-- `account/detail.html` — profile detail
-- `account/edit.html` — profile edit
+- `account/detail.html` — the profile page, which reads and edits in the same place
 
 Everything else is still Bootstrap and follows the Bootstrap notes in
 [`architecture.md`](architecture.md) § Design System & UI Concepts.
 
 ## Coexistence rules
 
-Tailwind is compiled by `@tailwindcss/postcss` from `apps/static/js/tailwind.css` into the
+Tailwind is compiled by `@tailwindcss/postcss` from `apps/static_src/tailwind.css` into the
 `tailwind` webpack bundle, loaded **after** every Bootstrap stylesheet in
 `core/partials/_head_links_and_scripts.html`. Two constraints follow from sharing a page with
 Bootstrap, and both are enforced by the CSS entrypoint:
@@ -82,6 +81,53 @@ declare `tw:@container` and use container-query variants:
 | `tw:@lg` | ≥ 512 px        | one column → two                     |
 | `tw:@xl` | ≥ 576 px        | text and an action side by side      |
 
+## Sheets, not tiles
+
+A settings-style page is **one sheet**, not a grid of cards: a header band with the identity, then
+sections of full-width label/value rows separated by hairlines. A row spans the sheet, puts its
+label in a fixed-width column (`tw:@md:w-44`) and its value next to it, so values line up down the
+page. A card grid says "these are separate things"; on a page where everything belongs to one
+object it only adds borders to read past.
+
+Rows that lead somewhere are buttons of the same shape with an icon, a title, a sub-line and a
+chevron — never a card with a button in it.
+
+## Editing in place
+
+The profile sheet does not have a separate edit page. Every value is already its own form control,
+`readonly` (or `disabled`, for controls that have no readonly state) until the sheet switches to
+edit mode. So:
+
+- Entering edit mode costs **no request**: `profile-sheet.js` flips `data-profile-mode` on the
+  sheet and unlocks the controls. Nothing is fetched, nothing re-renders.
+- Nothing moves: the same element that showed the value becomes the input, so the text stays where
+  it was. What differs between the modes must not change the layout — that is why the action column
+  has a fixed width (`tw:@md:w-64`) and the badges sit in their own row: otherwise the wider edit
+  actions would squeeze the name and reflow the header.
+- Saving posts the sheet and swaps **only the sheet** back in (`hx-target="this"`,
+  `hx-swap="outerHTML"`), so the page shell, side menu and scroll position stay untouched. The view
+  answers with the sheet partial for htmx requests and redirects for plain ones.
+
+Two variants drive the visible difference, `tw:reading:` and `tw:editing:`, keyed off
+`data-profile-mode` on the sheet root. Field appearance uses the native `tw:read-only:` and
+`tw:disabled:` variants instead, so a control's look follows its actual state rather than a class:
+
+```
+tw:border tw:border-line-strong tw:bg-surface-sunken
+tw:read-only:border-transparent tw:read-only:bg-transparent tw:read-only:cursor-default
+```
+
+Both custom variants are written without `:where()`, which gives them the extra specificity to beat
+the plain utility they override (`tw:hidden tw:editing:flex`) whatever the utility order is.
+
+Server and client must agree on the starting state: the template renders `readonly`/`disabled` and
+the `data-profile-mode` attribute from `profile_is_editing`, so there is no unlocked flash before
+the bundle runs and the page works when it never runs.
+
+Do not add a loading indicator for a swap this small. The save button is disabled for the duration
+(`hx-disabled-elt`) and that is the whole feedback; an `htmx-indicator` also keeps its box at
+opacity 0 and would widen the button permanently.
+
 ## Component patterns
 
 Canonical class strings. Keep them in sync when a pattern changes.
@@ -92,11 +138,35 @@ Canonical class strings. Keep them in sync when a pattern changes.
 tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4
 ```
 
-**Card** — hero cards add a `tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent` band and
-`tw:rounded-3xl`.
+**Sheet** — one object, sections inside it separated by `tw:border-t tw:border-line`, rows inside
+a section by `tw:divide-y tw:divide-line`. The header band adds
+`tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent`.
+
+```
+tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface
+tw:shadow-card
+```
+
+**Card** — for genuinely separate things next to each other, not for the fields of one object.
 
 ```
 tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5
+```
+
+**Sheet row** — label column plus value, stacking below `@md`.
+
+```
+tw:flex tw:flex-col tw:gap-1 tw:px-5 tw:py-3 tw:@md:flex-row tw:@md:items-center tw:@md:gap-4
+```
+
+with the label `tw:m-0 tw:text-sm tw:text-ink-muted tw:@md:w-44 tw:@md:shrink-0` and the value in a
+`tw:min-w-0 tw:flex-1` wrapper.
+
+**Section caption**
+
+```
+tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle
+tw:uppercase
 ```
 
 **Primary button**
@@ -118,8 +188,23 @@ tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2
 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95
 ```
 
-**Text input** (label: `tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink`, field error:
-`tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text`)
+**Text input in a sheet row** — the read-only pair is what makes reading and editing the same
+element. Field error: `tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text tw:reading:hidden`.
+
+```
+tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2
+tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle
+tw:read-only:cursor-default tw:read-only:border-transparent tw:read-only:bg-transparent
+tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand
+```
+
+A `select` cannot be read-only, so it uses `disabled` with the same look plus
+`tw:disabled:opacity-100 tw:disabled:text-ink
+tw:disabled:[-webkit-text-fill-color:currentcolor]` — without those, browsers grey out its text.
+Its chevron carries `tw:reading:hidden`.
+
+**Standalone text input** — outside a row, with a label above
+(`tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink`).
 
 ```
 tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5
@@ -134,11 +219,17 @@ tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px
 tw:text-xs tw:font-semibold tw:text-brand-text
 ```
 
-**Caption above a value**
+**Navigation row** — a row that leads somewhere, instead of a card with a button in it.
 
 ```
-tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase
+tw:flex tw:w-full tw:items-center tw:gap-3 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left
+tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2
+tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand
 ```
+
+with an icon tile (`tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center
+tw:rounded-xl tw:bg-brand-soft tw:text-brand-text`), a `tw:min-w-0 tw:flex-1` text column and a
+trailing `bi-chevron-right`.
 
 **Switch** — `shared_partials/_toggle_switch.html`. The input stays a real, hit-testable checkbox
 (`opacity-0`, stretched across the track) instead of `sr-only`, so keyboard, screen readers and
@@ -146,8 +237,11 @@ Playwright's `check()` keep working.
 
 ## Shared partials
 
-- `shared_partials/_toggle_switch.html` — switch-styled checkbox
-- `account/shared_partials/_profile_info_tile.html` — icon + caption + value tile
+- `shared_partials/_toggle_switch.html` — switch-styled checkbox; read-only unless
+  `toggle_editable` is passed
+- `account/partials/_profile_sheet.html` — the own profile, read and edit in one markup
+- `account/partials/_profile_value_row.html` — static label/value row
+- `account/partials/_profile_badges.html` — role and PayPal pills
 
 Icons stay on bootstrap-icons (`<i class="bi bi-…" aria-hidden="true">`); that font is independent of
 Bootstrap's CSS and outlives the migration.
