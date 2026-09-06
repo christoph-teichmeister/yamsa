@@ -66,15 +66,37 @@ apart. Tailwind exposes the tokens via `@theme inline`; **prefer them over `dark
 | `on-brand`                                     | text and icons on a brand fill                            |
 | `success-*`, `warning-*`, `danger-*`           | `-text` and `-soft` pairs for status                      |
 
-`brand-50` … `brand-900` is the raw ramp for fills that must not shift with the theme.
+`brand-50` … `brand-900` is the raw ramp for fills that must not shift with the theme; it is
+derived from the brand and currently used nowhere.
 
 Two tokens are kept as bare triplets, `--yamsa-brand-rgb` and `--yamsa-link-rgb`, because Bootstrap
 composes its own colors from `--bs-primary-rgb` and `--bs-link-color-rgb`: a link colour set only as
 `--bs-link-color` never reaches an `<a>`.
 
-Never reach for a fixed Bootstrap color (`bg-light`, `text-dark`, `text-bg-light`) or a raw hex in
-CSS. Those do not switch with the theme, which is how light chips with dark text ended up on the
-dark theme. The theme-aware equivalents are `bg-body-secondary`, `text-body-emphasis`, or a token.
+### The values are a contract, not a taste
+
+`scripts/check_palette_contrast.py` (a step in the QA workflow) holds the palette to four rules,
+and the numbers in `tailwind.css` are what they are because of them:
+
+- every text token reaches **4.5:1** on `surface`, `canvas` and `surface-sunken`;
+- a button label reaches 4.5:1 on the brand fill — which is why the brand is dark enough to carry
+  white rather than a tint that needs dark text on it;
+- `line-strong` (the boundary of inputs and outline buttons) and the brand as a focus ring reach
+  **3:1**;
+- the neutrals of a theme stay within 20° of hue of each other **and of the other theme's**. A warm
+  neutral under a cold brand is what made the old dark theme look muddy — the two sat 59° apart.
+
+Run the script after touching a colour. It prints every failing pair with its measured ratio, and
+`--verbose` prints all of them.
+
+Never reach for a fixed Bootstrap color (`bg-light`, `text-dark`, `text-bg-light`, `btn-light`,
+`btn-close-white`) or a raw hex in CSS. Those do not switch with the theme, which is how light chips
+with dark text ended up on the dark theme. The theme-aware equivalents are `bg-body-secondary`,
+`text-body-emphasis`, `.btn-surface` (in `base.css`), or a token.
+
+An SVG **presentation attribute does not resolve `var()`** — a d3 chart has to set its colours as
+inline styles (`.style("stroke", "var(--yamsa-line)")`), not with `.attr()`, or the chart keeps the
+colour it was born with.
 
 ## Themes
 

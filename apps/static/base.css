@@ -36,6 +36,20 @@
     color: var(--nav-active-color);
 }
 
+/* Sits on the app chrome rather than on a page. Bootstrap's .btn-light is a fixed colour and
+   stays white on the dark theme. */
+.btn-surface {
+    --bs-btn-bg: var(--yamsa-surface);
+    --bs-btn-border-color: var(--yamsa-line-strong);
+    --bs-btn-color: var(--yamsa-ink);
+    --bs-btn-hover-bg: var(--yamsa-surface-hover);
+    --bs-btn-hover-border-color: var(--yamsa-line-strong);
+    --bs-btn-hover-color: var(--yamsa-ink);
+    --bs-btn-active-bg: var(--yamsa-surface-hover);
+    --bs-btn-active-border-color: var(--yamsa-line-strong);
+    --bs-btn-active-color: var(--yamsa-ink);
+}
+
 .btn-primary {
     --bs-btn-bg: var(--yamsa-brand);
     --bs-btn-border-color: var(--yamsa-brand);
@@ -107,7 +121,7 @@ body {
 }
 
 .auth-hero {
-    background: linear-gradient(135deg, rgba(110, 168, 254, 0.95), rgba(20, 83, 191, 0.92));
+    background: linear-gradient(135deg, rgb(var(--yamsa-brand-rgb), 0.95), rgba(17, 56, 129, 0.92));
     min-height: 100%;
     color: #fff;
     gap: 0.5rem;

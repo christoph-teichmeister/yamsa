@@ -30,32 +30,40 @@
 /* The palette of the whole app, both frameworks. Bootstrap does not get its own values:
    apps/static/base.css maps `--bs-*` onto these tokens, so every colour has exactly one
    definition per theme and the two systems cannot drift apart.
-   The tokens switch with the theme, which is why templates need no `dark:` variant for them —
-   `tw:bg-surface` is already correct in both. */
+   The tokens switch with the theme, which is why templates need no `dark:` variant for them -
+   `tw:bg-surface` is already correct in both.
+
+   Every pair a reader has to make out is contrast-checked by scripts/check_palette_contrast.py:
+   text on its ground at 4.5:1, control borders and the focus ring at 3:1. Change a value here and
+   run that script - the failures it reports are the reason these numbers are what they are.
+   The neutrals of both themes sit on the same hue as the brand (~219°); a warm neutral under a
+   cold brand is what made the old dark theme look muddy. */
 :root,
 [data-bs-theme="light"] {
   /* Scrollbars, form controls and every other native widget follow the theme only through this. */
   color-scheme: light;
 
-  --yamsa-canvas: #f6f8fb;
+  --yamsa-canvas: #f5f7fa;
   --yamsa-surface: #ffffff;
   --yamsa-surface-raised: #ffffff;
-  --yamsa-surface-sunken: #eff4fb;
-  --yamsa-surface-hover: #e4ecf7;
-  --yamsa-line: #d6dce8;
-  --yamsa-line-strong: #c9d2e3;
-  --yamsa-ink-strong: #141820;
-  --yamsa-ink: #1f232a;
-  --yamsa-ink-muted: #5b6577;
-  --yamsa-ink-subtle: #7c879b;
-  --yamsa-brand-hover: #5797fb;
-  --yamsa-brand-text: #2f5e97;
+  --yamsa-surface-sunken: #eef1f7;
+  --yamsa-surface-hover: #e5eaf3;
+  --yamsa-line: #dde2ec;
+  /* Carries the boundary of inputs and outline buttons, so it is held to 3:1 - clearly darker
+     than the decorative `line`. */
+  --yamsa-line-strong: #8895b0;
+  --yamsa-ink-strong: #0f1319;
+  --yamsa-ink: #1b2027;
+  --yamsa-ink-muted: #4d5665;
+  --yamsa-ink-subtle: #646e84;
+  --yamsa-brand-hover: #2660cc;
+  --yamsa-brand-text: #1f5bbf;
   --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.12);
   /* A triplet, because Bootstrap builds every link colour from --bs-link-color-rgb. */
-  --yamsa-link-rgb: 61, 121, 219;
-  --yamsa-success-text: #0f7a45;
+  --yamsa-link-rgb: 31, 91, 191;
+  --yamsa-success-text: #0d7a44;
   --yamsa-success-soft: rgb(16 185 129 / 0.14);
-  --yamsa-warning-text: #a4560f;
+  --yamsa-warning-text: #8f4d0d;
   --yamsa-warning-soft: rgb(255 140 66 / 0.16);
   --yamsa-danger-text: #b42318;
   --yamsa-danger-soft: rgb(239 68 68 / 0.12);
@@ -64,37 +72,39 @@
 [data-bs-theme="dark"] {
   color-scheme: dark;
 
-  --yamsa-canvas: #2d2a2e;
-  --yamsa-surface: #3a3740;
-  --yamsa-surface-raised: #443f4a;
-  --yamsa-surface-sunken: #201e21;
-  --yamsa-surface-hover: #4a4650;
-  --yamsa-line: #4c4a4f;
-  --yamsa-line-strong: #605d66;
-  --yamsa-ink-strong: #fdfdff;
-  --yamsa-ink: #f4f6fb;
-  --yamsa-ink-muted: #c3bfcc;
-  --yamsa-ink-subtle: #a7a3b1;
-  --yamsa-brand-hover: #8ebcfe;
-  --yamsa-brand-text: #9ec0ff;
-  --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.16);
-  --yamsa-link-rgb: 158, 192, 255;
-  --yamsa-success-text: #6ee7b7;
+  --yamsa-canvas: #1b1e24;
+  --yamsa-surface: #23262e;
+  --yamsa-surface-raised: #2b2f38;
+  --yamsa-surface-sunken: #14161b;
+  --yamsa-surface-hover: #31353f;
+  --yamsa-line: #343945;
+  --yamsa-line-strong: #667082;
+  --yamsa-ink-strong: #ffffff;
+  --yamsa-ink: #e8ebf2;
+  --yamsa-ink-muted: #aab3c2;
+  --yamsa-ink-subtle: #828da1;
+  /* Hover lightens here and darkens on the light theme - the brand fill itself is the same in
+     both, dark enough to carry white and light enough to ring at 3:1 on the dark ground. */
+  --yamsa-brand-hover: #4a86f0;
+  --yamsa-brand-text: #8fb8ff;
+  --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.18);
+  --yamsa-link-rgb: 143, 184, 255;
+  --yamsa-success-text: #5fd6a4;
   --yamsa-success-soft: rgb(16 185 129 / 0.18);
-  --yamsa-warning-text: #ffbe8a;
+  --yamsa-warning-text: #f0ad6d;
   --yamsa-warning-soft: rgb(255 140 66 / 0.18);
-  --yamsa-danger-text: #ffa8a1;
+  --yamsa-danger-text: #ff9c94;
   --yamsa-danger-soft: rgb(239 68 68 / 0.18);
 }
 
 /* Identical in both themes. Kept out of the blocks above so that a value which does not switch
    cannot be given two definitions that drift. */
 :root {
-  --yamsa-brand-rgb: 110, 168, 254;
+  --yamsa-brand-rgb: 47, 111, 228;
   --yamsa-brand: rgb(var(--yamsa-brand-rgb));
   --yamsa-link: rgb(var(--yamsa-link-rgb));
   /* Reads on a brand-filled surface. */
-  --yamsa-on-brand: #0b1b33;
+  --yamsa-on-brand: #ffffff;
 }
 
 @theme inline {
@@ -124,16 +134,16 @@
 
 @theme {
   /* Brand ramp, identical in both themes — for fills that must not shift with the theme. */
-  --color-brand-50: #eef4ff;
-  --color-brand-100: #dbe7ff;
-  --color-brand-200: #bcd4ff;
-  --color-brand-300: #9ec0ff;
-  --color-brand-400: #8ebcfe;
-  --color-brand-500: #6ea8fe;
-  --color-brand-600: #5797fb;
-  --color-brand-700: #3d79db;
-  --color-brand-800: #2f5e97;
-  --color-brand-900: #0b1b33;
+  --color-brand-50: #eff4fd;
+  --color-brand-100: #dde8fb;
+  --color-brand-200: #bed2f7;
+  --color-brand-300: #99b9f2;
+  --color-brand-400: #6896eb;
+  --color-brand-500: #3271e4;
+  --color-brand-600: #1b5acd;
+  --color-brand-700: #164aa9;
+  --color-brand-800: #113881;
+  --color-brand-900: #0a234f;
 
   --color-success-500: #10b981;
   --color-warning-500: #ff8c42;
@@ -141,7 +151,7 @@
 
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
   --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.08), 0 14px 32px rgb(0 0 0 / 0.14);
-  --shadow-brand: 0 8px 20px rgb(110 168 254 / 0.28);
+  --shadow-brand: 0 8px 20px rgb(var(--yamsa-brand-rgb), 0.28);
 }
 
 /* Tailwind's spacing scale cannot express the notch insets. */

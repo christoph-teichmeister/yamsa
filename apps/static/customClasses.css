@@ -36,7 +36,7 @@
 }
 
 .room-entry.active {
-    background-color: rgba(var(--bs-primary-rgb, 110, 168, 254), 0.15);
+    background-color: rgba(var(--bs-primary-rgb, 47, 111, 228), 0.15);
 }
 
 .room-entry-ghost {
@@ -45,7 +45,7 @@
 }
 
 .room-entry-callout {
-    border: 1px dashed rgba(var(--bs-primary-rgb, 110, 168, 254), 0.35);
+    border: 1px dashed rgba(var(--bs-primary-rgb, 47, 111, 228), 0.35);
 }
 
 .room-group {
@@ -120,9 +120,9 @@
 }
 
 .room-circle.selected {
-    background: linear-gradient(145deg, #5f79c2, #4c5eb7);
-    color: #fff;
-    box-shadow: 0 12px 28px rgba(40, 64, 128, 0.35);
+    background: linear-gradient(145deg, var(--yamsa-brand-hover), var(--yamsa-brand));
+    color: var(--yamsa-on-brand);
+    box-shadow: 0 12px 28px rgb(var(--yamsa-brand-rgb), 0.35);
 }
 
 .room-circle.closed {
