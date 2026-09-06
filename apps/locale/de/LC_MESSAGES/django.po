@@ -130,8 +130,8 @@ msgid "Guest Mode"
 msgstr "Gastmodus"
 
 #, python-format
-msgid "Hi %(user.name)s"
-msgstr "Hallo %(user.name)s"
+msgid "Hi %(user_name)s"
+msgstr "Hallo %(user_name)s"
 
 msgid "Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account."
 msgstr "Danke, dass du als Gast einem Raum beigetreten bist. Schalte Erinnerungen, Push-Benachrichtigungen und ausführlichere Historie frei, sobald du ein vollständiges Konto erstellst."

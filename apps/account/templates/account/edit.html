@@ -1,247 +1,244 @@
 {% extends "core/base.html" %}
 {% load i18n %}
 {% block content %}
-  <section class="container px-2 px-md-4 px-lg-5 account-edit">
-    <div class="row justify-content-center gy-4">
-      <div class="col-12 col-xl-9">
-        <form method="post"
-              enctype="multipart/form-data"
-              class="card border-0 shadow-sm rounded-4"
-              hx-post="{% url 'account:update' pk=user.id %}"
-              hx-target="#body"
-              hx-indicator="#body-loading-spinner"
-              hx-swap="morph:innerHTML"
-              hx-push-url="true">
-          {% csrf_token %}
-          <div class="card-body p-4 p-md-5">
-            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4">
-              <div>
-                <p class="text-uppercase small fw-semibold text-muted mb-1">{% trans "Edit profile" %}</p>
-                <h1 class="h4 fw-semibold mb-0">{% trans "Keep your details up to date" %}</h1>
-              </div>
-              <div class="ms-md-auto d-flex flex-wrap gap-2">
-                <button type="button"
-                        class="btn btn-outline-secondary"
-                        hx-get="{% url 'account:detail' pk=user.id %}"
-                        hx-target="#body"
-                        hx-indicator="#body-loading-spinner"
-                        hx-swap="morph:innerHTML"
-                        hx-push-url="true">{% trans "Cancel" %}</button>
-                <button type="submit"
-                        id="save-profile-button"
-                        class="btn btn-primary d-flex align-items-center gap-2">
-                  <i class="bi bi-check2-circle"></i>
-                  {% trans "Save changes" %}
-                </button>
-              </div>
-            </div>
-            <div class="row g-4">
-              <div class="col-12">
-                <div class="border rounded-4 p-4 d-flex flex-column flex-md-row align-items-center gap-4">
-                  <div class="profile-avatar profile-avatar--expanded position-relative overflow-hidden d-inline-flex align-items-center justify-content-center">
-                    <img id="profile-picture-preview-img"
-                         class="profile-picture-preview-img w-100 h-100 object-fit-cover rounded-4 {% if not user.profile_picture %}d-none{% endif %}"
-                         alt="{% trans "Profile picture preview" %}"
-                         loading="lazy"
-                         width="68"
-                         height="68"
-                         {% if user.profile_picture %}src="{{ user.profile_picture_url }}" data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"{% endif %}>
-                    <span id="profile-picture-preview-placeholder"
-                          class="profile-picture-preview-initial fs-3 fw-semibold text-primary-emphasis {% if user.profile_picture %}d-none{% endif %}">
-                      {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
-                    </span>
-                  </div>
-                  <div class="flex-grow-1 d-flex flex-column gap-2">
-                    <div class="d-flex flex-column gap-1">
-                      <label for="profile_picture" class="form-label fw-semibold">{% trans "Profile photo" %}</label>
-                      <input type="file"
-                             id="profile_picture"
-                             name="profile_picture"
-                             accept="image/*"
-                             class="form-control form-control-sm">
-                      {% for error_message in form.errors.profile_picture.data %}
-                        <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                      {% endfor %}
-                    </div>
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-                      <small class="text-muted small mb-0">{% trans "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB." %}</small>
-                      <button type="button"
-                              class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
-                              hx-post="{% url 'account:profile-picture-delete' %}"
-                              hx-target="#body"
-                              hx-indicator="#body-loading-spinner"
-                              hx-swap="morph:innerHTML"
-                              hx-push-url="true"
-                              hx-confirm="{% trans "Remove your profile picture?" %}"
-                              {% if not user.profile_picture %}disabled{% endif %}>
-                        <i class="bi bi-trash"></i>
-                        {% trans "Remove photo" %}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="name" class="form-label fw-semibold">{{ form.fields.name.label }}</label>
-                <input type="text"
-                       class="form-control"
-                       id="name"
-                       name="name"
-                       autocomplete="name"
-                       required
-                       value="{{ form.name.value|default_if_none:user.name }}">
-                {% for error_message in form.errors.name.data %}
-                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                {% endfor %}
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="email" class="form-label fw-semibold">{{ form.fields.email.label }}</label>
-                <input type="email"
-                       class="form-control"
-                       id="email"
-                       name="email"
-                       autocomplete="email"
-                       required
-                       value="{{ form.email.value|default_if_none:user.email }}">
-                {% for error_message in form.errors.email.data %}
-                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                {% endfor %}
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="paypal_me_username" class="form-label fw-semibold">{{ form.fields.paypal_me_username.label }}</label>
-                <div class="input-group">
-                  <span class="input-group-text">@</span>
-                  <input type="text"
-                         class="form-control"
-                         id="paypal_me_username"
-                         name="paypal_me_username"
-                         value="{{ form.paypal_me_username.value|default_if_none:user.paypal_me_username }}"
-                         placeholder="-">
-                </div>
-                {% for error_message in form.errors.paypal_me_username.data %}
-                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                {% endfor %}
-              </div>
-              <div class="col-12 col-md-6">
-                <label for="id_language" class="form-label fw-semibold">{{ form.fields.language.label }}</label>
-                <select name="language" id="id_language" class="form-select">
-                  {% for choice_value, choice_label in form.fields.language.choices %}
-                    <option value="{{ choice_value }}"
-                            {% if form.language.value == choice_value %}selected{% endif %}>{{ choice_label }}</option>
-                  {% endfor %}
-                </select>
-                {% for error_message in form.errors.language.data %}
-                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                {% endfor %}
-              </div>
-              <div class="col-12 col-md-6">
-                <label class="form-label fw-semibold d-block mb-0">{% trans "Notification Center" %}</label>
-                <p class="text-muted small mt-0">{% trans "Choose how you want to hear from us." %}</p>
-                <div class="form-check form-switch">
-                  <input type="checkbox"
-                         class="form-check-input"
-                         id="wants_to_receive_webpush_notifications"
-                         name="wants_to_receive_webpush_notifications"
-                         {% if form.wants_to_receive_webpush_notifications.value|default_if_none:user.wants_to_receive_webpush_notifications %}checked{% endif %}>
-                  <label for="wants_to_receive_webpush_notifications" class="form-check-label">
-                    {{ form.fields.wants_to_receive_webpush_notifications.label }}
-                  </label>
-                </div>
-                {% for error_message in form.errors.wants_to_receive_webpush_notifications.data %}
-                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                {% endfor %}
-                <div class="form-check form-switch mt-3">
-                  <input type="checkbox"
-                         class="form-check-input"
-                         id="wants_to_receive_payment_reminders"
-                         name="wants_to_receive_payment_reminders"
-                         {% if form.wants_to_receive_payment_reminders.value|default_if_none:user.wants_to_receive_payment_reminders %}checked{% endif %}>
-                  <label for="wants_to_receive_payment_reminders" class="form-check-label">
-                    {{ form.fields.wants_to_receive_payment_reminders.label }}
-                  </label>
-                </div>
-                {% for error_message in form.errors.wants_to_receive_payment_reminders.data %}
-                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                {% endfor %}
-                <div class="form-check form-switch mt-3">
-                  <input type="checkbox"
-                         class="form-check-input"
-                         id="wants_to_receive_room_reminders"
-                         name="wants_to_receive_room_reminders"
-                         {% if form.wants_to_receive_room_reminders.value|default_if_none:user.wants_to_receive_room_reminders %}checked{% endif %}>
-                  <label for="wants_to_receive_room_reminders" class="form-check-label">
-                    {{ form.fields.wants_to_receive_room_reminders.label }}
-                  </label>
-                </div>
-                {% for error_message in form.errors.wants_to_receive_room_reminders.data %}
-                  <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-        </form>
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+    <form method="post"
+          enctype="multipart/form-data"
+          class="tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+          hx-post="{% url 'account:update' pk=user.id %}"
+          hx-target="#body"
+          hx-indicator="#body-loading-spinner"
+          hx-swap="morph:innerHTML"
+          hx-push-url="true">
+      {% csrf_token %}
+      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:p-5 tw:@md:p-7">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Edit profile" %}</p>
+        <h1 class="tw:mt-1 tw:mb-0 tw:text-2xl tw:font-semibold tw:text-ink">{% trans "Keep your details up to date" %}</h1>
       </div>
-      <div class="col-12 col-xl-9">
-        <div class="card border-0 rounded-4 shadow-sm">
-          <div class="card-body p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
-            <div>
-              <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
-              <h2 class="h5 fw-semibold mb-2">{% trans "Need a new password?" %}</h2>
-              <p class="text-muted mb-0">
-                {% trans "Set a fresh password any time. We’ll keep you logged in while you update it." %}
+      <div class="tw:flex tw:flex-col tw:gap-5 tw:p-5 tw:@md:p-7">
+        <div class="tw:flex tw:flex-col tw:items-center tw:gap-5 tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken tw:p-4 tw:@md:flex-row tw:@md:items-start">
+          <div class="tw:flex tw:size-20 tw:shrink-0 tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-2xl tw:bg-brand-soft">
+            <img id="profile-picture-preview-img"
+                 class="tw:h-full tw:w-full tw:object-cover"
+                 alt="{% trans "Profile picture preview" %}"
+                 loading="lazy"
+                 width="80"
+                 height="80"
+                 {% if user.profile_picture %}src="{{ user.profile_picture_url }}" data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"{% else %}hidden{% endif %}>
+            <span id="profile-picture-preview-placeholder"
+                  class="tw:text-3xl tw:font-semibold tw:tracking-wider tw:text-brand-text"
+                  {% if user.profile_picture %}hidden{% endif %}>
+              {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
+            </span>
+          </div>
+          <div class="tw:w-full tw:min-w-0 tw:flex-1">
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="profile_picture">{% trans "Profile photo" %}</label>
+            <input id="profile_picture"
+                   class="tw:w-full tw:cursor-pointer tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface tw:p-2 tw:text-sm tw:text-ink-muted tw:file:mr-3 tw:file:cursor-pointer tw:file:rounded-lg tw:file:border-0 tw:file:bg-brand-soft tw:file:px-3 tw:file:py-1.5 tw:file:text-sm tw:file:font-semibold tw:file:text-brand-text tw:focus:outline-2 tw:focus:outline-offset-2 tw:focus:outline-brand"
+                   type="file"
+                   name="profile_picture"
+                   accept="image/*">
+            {% for error_message in form.errors.profile_picture.data %}
+              <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            {% endfor %}
+            <div class="tw:mt-3 tw:flex tw:flex-wrap tw:items-center tw:gap-3">
+              <p class="tw:m-0 tw:text-xs tw:text-ink-subtle">
+                {% trans "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB." %}
               </p>
-            </div>
-            <div class="ms-md-auto">
-              <button type="button"
-                      class="btn btn-outline-primary"
-                      hx-get="{% url 'account:change-password' pk=user.id %}"
+              <button class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-lg tw:border tw:border-danger-500/60 tw:bg-transparent tw:px-3 tw:py-1.5 tw:text-xs tw:font-semibold tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:cursor-not-allowed tw:disabled:opacity-50"
+                      type="button"
+                      hx-post="{% url 'account:profile-picture-delete' %}"
                       hx-target="#body"
                       hx-indicator="#body-loading-spinner"
                       hx-swap="morph:innerHTML"
-                      hx-push-url="true">{% trans "Change password" %}</button>
+                      hx-push-url="true"
+                      hx-confirm="{% trans "Remove your profile picture?" %}"
+                      {% if not user.profile_picture %}disabled{% endif %}>
+                <i class="bi bi-trash" aria-hidden="true"></i>
+                {% trans "Remove photo" %}
+              </button>
             </div>
           </div>
         </div>
+        <div class="tw:grid tw:grid-cols-1 tw:gap-5 tw:@lg:grid-cols-2">
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="name">{{ form.fields.name.label }}</label>
+            <input id="name"
+                   class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                   type="text"
+                   name="name"
+                   autocomplete="name"
+                   required
+                   value="{{ form.name.value|default_if_none:user.name }}">
+            {% for error_message in form.errors.name.data %}
+              <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            {% endfor %}
+          </div>
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="email">{{ form.fields.email.label }}</label>
+            <input id="email"
+                   class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                   type="email"
+                   name="email"
+                   autocomplete="email"
+                   required
+                   value="{{ form.email.value|default_if_none:user.email }}">
+            {% for error_message in form.errors.email.data %}
+              <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            {% endfor %}
+          </div>
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="paypal_me_username">{{ form.fields.paypal_me_username.label }}</label>
+            <div class="tw:flex tw:items-center tw:overflow-hidden tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:transition tw:focus-within:border-brand tw:focus-within:outline-2 tw:focus-within:outline-offset-0 tw:focus-within:outline-brand">
+              <span class="tw:self-stretch tw:border-r tw:border-line-strong tw:px-3 tw:py-2.5 tw:text-ink-subtle"
+                    aria-hidden="true">@</span>
+              <input id="paypal_me_username"
+                     class="tw:w-full tw:min-w-0 tw:border-0 tw:bg-transparent tw:py-2.5 tw:pr-4 tw:text-ink tw:outline-none tw:placeholder:text-ink-subtle"
+                     type="text"
+                     name="paypal_me_username"
+                     value="{{ form.paypal_me_username.value|default_if_none:user.paypal_me_username }}"
+                     placeholder="-">
+            </div>
+            {% for error_message in form.errors.paypal_me_username.data %}
+              <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            {% endfor %}
+          </div>
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="id_language">{{ form.fields.language.label }}</label>
+            <div class="tw:relative">
+              <select id="id_language"
+                      class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                      name="language">
+                {% for choice_value, choice_label in form.fields.language.choices %}
+                  <option value="{{ choice_value }}"
+                          {% if form.language.value == choice_value %}selected{% endif %}>{{ choice_label }}</option>
+                {% endfor %}
+              </select>
+              <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
+                 aria-hidden="true"></i>
+            </div>
+            {% for error_message in form.errors.language.data %}
+              <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken tw:p-4">
+          <p class="tw:m-0 tw:text-sm tw:font-semibold tw:text-ink">{% trans "Notification Center" %}</p>
+          <p class="tw:mt-1 tw:mb-4 tw:text-sm tw:text-ink-subtle">{% trans "Choose how you want to hear from us." %}</p>
+          <div class="tw:flex tw:flex-col tw:gap-3">
+            <div class="tw:flex tw:items-center tw:justify-between tw:gap-4">
+              <label class="tw:cursor-pointer tw:text-sm tw:text-ink"
+                     for="wants_to_receive_webpush_notifications">
+                {{ form.fields.wants_to_receive_webpush_notifications.label }}
+              </label>
+              {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_webpush_notifications" toggle_name="wants_to_receive_webpush_notifications" toggle_checked=form.wants_to_receive_webpush_notifications.value|default_if_none:user.wants_to_receive_webpush_notifications %}
+            </div>
+            {% for error_message in form.errors.wants_to_receive_webpush_notifications.data %}
+              <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            {% endfor %}
+            <div class="tw:flex tw:items-center tw:justify-between tw:gap-4">
+              <label class="tw:cursor-pointer tw:text-sm tw:text-ink"
+                     for="wants_to_receive_payment_reminders">
+                {{ form.fields.wants_to_receive_payment_reminders.label }}
+              </label>
+              {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_payment_reminders" toggle_name="wants_to_receive_payment_reminders" toggle_checked=form.wants_to_receive_payment_reminders.value|default_if_none:user.wants_to_receive_payment_reminders %}
+            </div>
+            {% for error_message in form.errors.wants_to_receive_payment_reminders.data %}
+              <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            {% endfor %}
+            <div class="tw:flex tw:items-center tw:justify-between tw:gap-4">
+              <label class="tw:cursor-pointer tw:text-sm tw:text-ink"
+                     for="wants_to_receive_room_reminders">
+                {{ form.fields.wants_to_receive_room_reminders.label }}
+              </label>
+              {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_room_reminders" toggle_name="wants_to_receive_room_reminders" toggle_checked=form.wants_to_receive_room_reminders.value|default_if_none:user.wants_to_receive_room_reminders %}
+            </div>
+            {% for error_message in form.errors.wants_to_receive_room_reminders.data %}
+              <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="tw:flex tw:flex-col-reverse tw:gap-2 tw:border-t tw:border-line tw:bg-surface-sunken tw:p-5 tw:@md:flex-row tw:@md:justify-end">
+        <button class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+                type="button"
+                hx-get="{% url 'account:detail' pk=user.id %}"
+                hx-target="#body"
+                hx-indicator="#body-loading-spinner"
+                hx-swap="morph:innerHTML"
+                hx-push-url="true">{% trans "Cancel" %}</button>
+        <button id="save-profile-button"
+                class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+                type="submit">
+          <i class="bi bi-check2-circle" aria-hidden="true"></i>
+          {% trans "Save changes" %}
+        </button>
+      </div>
+    </form>
+    <div class="tw:flex tw:flex-col tw:gap-4 tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5 tw:@xl:flex-row tw:@xl:items-center">
+      <div class="tw:min-w-0">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Security" %}</p>
+        <h2 class="tw:mt-1 tw:mb-1 tw:text-lg tw:font-semibold tw:text-ink">{% trans "Need a new password?" %}</h2>
+        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+          {% trans "Set a fresh password any time. We’ll keep you logged in while you update it." %}
+        </p>
+      </div>
+      <div class="tw:@xl:ml-auto">
+        <button class="tw:inline-flex tw:w-full tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-brand tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-brand-text tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:whitespace-nowrap tw:active:scale-95 tw:@xl:w-auto"
+                type="button"
+                hx-get="{% url 'account:change-password' pk=user.id %}"
+                hx-target="#body"
+                hx-indicator="#body-loading-spinner"
+                hx-swap="morph:innerHTML"
+                hx-push-url="true">
+          <i class="bi bi-key" aria-hidden="true"></i>
+          {% trans "Change password" %}
+        </button>
       </div>
     </div>
     <script nonce="{{ csp_nonce }}">
-            (function () {
-                const fileInput = document.getElementById("profile_picture");
-                const previewImage = document.getElementById("profile-picture-preview-img");
-                const placeholder = document.getElementById("profile-picture-preview-placeholder");
+      (function () {
+          const fileInput = document.getElementById("profile_picture");
+          const previewImage = document.getElementById("profile-picture-preview-img");
+          const placeholder = document.getElementById("profile-picture-preview-placeholder");
 
-                if (!fileInput || !previewImage) {
-                    return;
-                }
+          if (!fileInput || !previewImage) {
+              return;
+          }
 
-                fileInput.addEventListener("change", () => {
-                    const file = fileInput.files && fileInput.files[0];
-                    if (!file) {
-                        previewImage.classList.add("d-none");
-                        previewImage.removeAttribute("src");
-                        if (placeholder) {
-                            placeholder.classList.remove("d-none");
-                        }
-                        return;
-                    }
+          fileInput.addEventListener("change", () => {
+              const file = fileInput.files && fileInput.files[0];
+              if (!file) {
+                  previewImage.hidden = true;
+                  previewImage.removeAttribute("src");
+                  if (placeholder) {
+                      placeholder.hidden = false;
+                  }
+                  return;
+              }
 
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const newDataUrl = event.target?.result;
-                        if (!newDataUrl) {
-                            return;
-                        }
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                  const newDataUrl = event.target?.result;
+                  if (!newDataUrl) {
+                      return;
+                  }
 
-                        previewImage.src = newDataUrl;
-                        previewImage.classList.remove("d-none");
-                        if (placeholder) {
-                            placeholder.classList.add("d-none");
-                        }
-                    };
+                  previewImage.src = newDataUrl;
+                  previewImage.hidden = false;
+                  if (placeholder) {
+                      placeholder.hidden = true;
+                  }
+              };
 
-                    reader.readAsDataURL(file);
-                });
-            })();
+              reader.readAsDataURL(file);
+          });
+      })();
     </script>
   </section>
 {% endblock content %}

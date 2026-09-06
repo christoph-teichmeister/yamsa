@@ -1,223 +1,199 @@
 {% extends "core/base.html" %}
 {% load i18n %}
 {% block content %}
-  <section class="container px-2 px-md-4 px-lg-5 account-detail">
+  {% trans "Not set" as not_set_label %}
+  {% trans "No PayPal link yet" as no_paypal_label %}
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
     {% if user.is_guest %}
-      <div class="row justify-content-center" id="guest-mode-banner">
-        <div class="col-12 col-lg-8">
-          <div class="card shadow-sm border-0 rounded-4">
-            <div class="card-body text-center py-5 px-4 px-md-5">
-              <div class="mb-4">
-                <span class="badge bg-warning-subtle text-warning-emphasis text-uppercase fw-semibold">{% trans "Guest Mode" %}</span>
-              </div>
-              <h2 class="fw-semibold mb-2">
-                {% blocktrans trimmed %}
-                  Hi {{ user.name }}
-                {% endblocktrans %}
-                👋
-              </h2>
-              <p class="text-muted mb-4">
-                {% trans "Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account." %}
-              </p>
-              <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
-                <a class="btn btn-primary px-4" href="{% url 'account:register' %}">{% trans "Create a free account" %}</a>
-                <a class="btn btn-outline-secondary px-4"
-                   href="{% url 'account:login' %}">{% trans "I already have an account" %}</a>
-              </div>
-              <p class="small text-muted mt-4 mb-0">
-                {% trans "Not you?" %} <a href="{% url 'account:logout' %}" class="link-secondary">{% trans "Log out instead" %}</a>.
-              </p>
-            </div>
+      <div id="guest-mode-banner"
+           class="tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
+        <div class="tw:bg-gradient-to-br tw:from-warning-soft tw:to-transparent tw:px-5 tw:py-8 tw:text-center tw:@md:px-8">
+          <span class="tw:inline-flex tw:items-center tw:rounded-full tw:bg-warning-soft tw:px-3 tw:py-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-warning-text tw:uppercase">
+            {% trans "Guest Mode" %}
+          </span>
+          <h2 class="tw:mt-5 tw:mb-2 tw:text-2xl tw:font-semibold tw:text-ink">
+            {% blocktrans trimmed with user_name=user.name %}
+              Hi {{ user_name }}
+            {% endblocktrans %}
+            👋
+          </h2>
+          <p class="tw:mx-auto tw:mt-0 tw:mb-6 tw:max-w-md tw:text-ink-muted">
+            {% trans "Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account." %}
+          </p>
+          <div class="tw:flex tw:flex-col tw:justify-center tw:gap-3 tw:@md:flex-row">
+            <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:no-underline tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+               href="{% url 'account:register' %}">{% trans "Create a free account" %}</a>
+            <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+               href="{% url 'account:login' %}">{% trans "I already have an account" %}</a>
           </div>
+          <p class="tw:mt-6 tw:mb-0 tw:text-sm tw:text-ink-subtle">
+            {% trans "Not you?" %}
+            <a class="tw:font-semibold tw:text-brand-text tw:underline tw:underline-offset-2"
+               href="{% url 'account:logout' %}">{% trans "Log out instead" %}</a>.
+          </p>
         </div>
       </div>
     {% else %}
       {% if request.user.is_superuser and user.is_superuser %}
-        <div class="d-flex justify-content-end mb-3">
+        <div class="tw:flex tw:justify-end">
           <a id="superuser-admin-link"
-             class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
+             class="tw:inline-flex tw:items-center tw:gap-2 tw:rounded-lg tw:border tw:border-line-strong tw:bg-transparent tw:px-3 tw:py-1.5 tw:text-xs tw:font-semibold tw:text-ink-muted tw:no-underline tw:transition tw:hover:bg-surface-hover tw:hover:text-ink"
              href="{{ core.BACKEND_URL }}/{{ core.ADMIN_URL }}/login"
              target="_blank">
-            <i class="bi bi-terminal"></i>
+            <i class="bi bi-terminal" aria-hidden="true"></i>
             {% trans "Admin" %}
           </a>
         </div>
       {% endif %}
-      <div class="row justify-content-center gy-4">
-        <div class="col-12 col-xl-9">
-          <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-            <div class="card-body p-4 p-md-5">
-              <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-4">
-                {% with avatar_source=user.name|default:user.email %}
-                  <div class="rounded-circle bg-primary-subtle text-primary-emphasis d-inline-flex align-items-center justify-content-center account-avatar-circle">
-                    {% if user.profile_picture %}
-                      <img src="{{ user.profile_picture_url }}"
-                           data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
-                           alt="{{ user.name }}"
-                           class="account-avatar-img rounded-circle w-100 h-100"
-                           loading="lazy"
-                           width="72"
-                           height="72">
-                    {% else %}
-                      <span class="fs-3 fw-semibold">{{ avatar_source|slice:':1'|upper }}</span>
-                    {% endif %}
-                  </div>
-                {% endwith %}
-                <div class="flex-grow-1">
-                  <p class="text-uppercase small fw-semibold text-muted mb-1">
-                    {% if request.user.id == user.id %}
-                      {% trans "Your account overview" %}
-                    {% else %}
-                      {% trans "Member profile" %}
-                    {% endif %}
-                  </p>
-                  <h1 class="h3 fw-semibold mb-2" id="profile-name">{{ user.name }}</h1>
-                  <p class="text-muted mb-3" id="profile-email">{{ user.email }}</p>
-                  <div class="d-flex flex-wrap gap-2">
-                    {% if user.is_superuser %}
-                      <span class="badge text-bg-dark">{% trans "Superuser" %}</span>
-                    {% endif %}
-                    {% if user.is_staff %}
-                      <span class="badge text-bg-info">{% trans "Staff" %}</span>
-                    {% endif %}
-                    <span class="badge text-bg-secondary">
-                      {% if user.paypal_me_username %}
-                        {% trans "PayPal linked" %}
-                      {% else %}
-                        {% trans "No PayPal link" %}
-                      {% endif %}
-                    </span>
-                  </div>
-                </div>
-                {% if request.user.id == user.id %}
-                  <div class="ms-auto">
-                    <button type="button"
-                            id="edit-profile-button"
-                            class="btn btn-primary d-flex align-items-center gap-2"
-                            hx-get="{% url 'account:update' pk=user.id %}"
-                            hx-target="#body"
-                            hx-indicator="#body-loading-spinner"
-                            hx-swap="morph:innerHTML"
-                            hx-push-url="true">
-                      <i class="bi bi-pencil"></i>
-                      {% trans "Edit profile" %}
-                    </button>
-                  </div>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-xl-9">
-          <div class="row g-4">
-            <div class="col-12 col-md-6">
-              <div class="border rounded-4 h-100 p-4 bg-body-secondary-subtle">
-                <p class="text-uppercase small text-muted mb-1">{% trans "Display name" %}</p>
-                <p class="fw-semibold mb-0">{{ user.name }}</p>
-              </div>
-            </div>
-            <div class="col-12 col-md-6">
-              <div class="border rounded-4 h-100 p-4">
-                <p class="text-uppercase small text-muted mb-1">{% trans "Email address" %}</p>
-                <p class="fw-semibold text-break mb-0">{{ user.email }}</p>
-              </div>
-            </div>
-            <div class="col-12 col-md-6">
-              <div class="border rounded-4 h-100 p-4">
-                <p class="text-uppercase small text-muted mb-1">{% trans "PayPal.me username" %}</p>
-                {% if user.paypal_me_username %}
-                  <p class="fw-semibold mb-0">@{{ user.paypal_me_username }}</p>
+      <div class="tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
+        <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:p-5 tw:@md:p-7">
+          <div class="tw:flex tw:flex-col tw:gap-5 tw:@md:flex-row tw:@md:items-center">
+            {% with avatar_source=user.name|default:user.email %}
+              <div class="tw:flex tw:size-20 tw:shrink-0 tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-full tw:bg-brand-soft tw:ring-2 tw:ring-brand/40">
+                {% if user.profile_picture %}
+                  <img src="{{ user.profile_picture_url }}"
+                       data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
+                       alt="{{ user.name }}"
+                       class="tw:h-full tw:w-full tw:object-cover"
+                       loading="lazy"
+                       width="80"
+                       height="80">
                 {% else %}
-                  <p class="text-muted mb-0">{% trans "No PayPal link yet" %}</p>
+                  <span class="tw:text-3xl tw:font-semibold tw:tracking-wider tw:text-brand-text">{{ avatar_source|slice:':1'|upper }}</span>
+                {% endif %}
+              </div>
+            {% endwith %}
+            <div class="tw:min-w-0 tw:flex-1">
+              <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">
+                {% if request.user.id == user.id %}
+                  {% trans "Your account overview" %}
+                {% else %}
+                  {% trans "Member profile" %}
+                {% endif %}
+              </p>
+              <h1 id="profile-name"
+                  class="tw:mt-1 tw:mb-0 tw:truncate tw:text-2xl tw:font-semibold tw:text-ink">{{ user.name }}</h1>
+              <p id="profile-email"
+                 class="tw:mt-1 tw:mb-0 tw:text-sm tw:break-words tw:text-ink-muted">{{ user.email }}</p>
+              <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
+                {% if user.is_superuser %}
+                  <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">
+                    <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                    {% trans "Superuser" %}
+                  </span>
+                {% endif %}
+                {% if user.is_staff %}
+                  <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-brand-text">
+                    <i class="bi bi-people" aria-hidden="true"></i>
+                    {% trans "Staff" %}
+                  </span>
+                {% endif %}
+                {% if user.paypal_me_username %}
+                  <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-success-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-success-text">
+                    <i class="bi bi-check-circle" aria-hidden="true"></i>
+                    {% trans "PayPal linked" %}
+                  </span>
+                {% else %}
+                  <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:border tw:border-line tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink-subtle">
+                    <i class="bi bi-dash-circle" aria-hidden="true"></i>
+                    {% trans "No PayPal link" %}
+                  </span>
                 {% endif %}
               </div>
             </div>
-            <div class="col-12 col-md-6">
-              <div class="border rounded-4 h-100 p-4">
-                <p class="text-uppercase small text-muted mb-1">{% trans "Preferred language" %}</p>
-                <p class="fw-semibold mb-0">{{ user.get_language_display|default:_("Not set") }}</p>
-              </div>
-            </div>
-            {% if request.user == user %}
-              <div class="col-12 col-md-6">
-                <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
-                  <div>
-                    <p class="text-uppercase small text-muted mb-1">{% trans "Push notifications" %}</p>
-                    <p class="fw-semibold mb-0">
-                      {% if user.wants_to_receive_webpush_notifications %}
-                        {% trans "Enabled" %}
-                      {% else %}
-                        {% trans "Disabled" %}
-                      {% endif %}
-                    </p>
-                    <p class="text-muted small mb-0">{% trans "Manage this toggle from the edit screen." %}</p>
-                  </div>
-                  <div class="form-check form-switch m-0">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           role="switch"
-                           id="wants_to_receive_webpush_notifications"
-                           aria-label="{% trans "Push notifications" %}"
-                           {% if user.wants_to_receive_webpush_notifications %}checked{% endif %}
-                           disabled>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <div class="border rounded-4 h-100 p-4 d-flex align-items-center justify-content-between gap-3">
-                  <div>
-                    <p class="text-uppercase small text-muted mb-1">{% trans "Payment reminders" %}</p>
-                    <p class="fw-semibold mb-0">
-                      {% if user.wants_to_receive_payment_reminders %}
-                        {% trans "Enabled" %}
-                      {% else %}
-                        {% trans "Disabled" %}
-                      {% endif %}
-                    </p>
-                    <p class="text-muted small mb-0">{% trans "Toggle this in the notifications center or via the email footer." %}</p>
-                  </div>
-                  <div class="form-check form-switch m-0">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           role="switch"
-                           id="wants_to_receive_payment_reminders"
-                           aria-label="{% trans "Payment reminders" %}"
-                           {% if user.wants_to_receive_payment_reminders %}checked{% endif %}
-                           disabled>
-                  </div>
-                </div>
-              </div>
-            {% endif %}
-            {% if request.user == user %}
-              <div class="col-12" id="security-section">
-                <div class="border rounded-4 h-100 p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
-                  <div>
-                    <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
-                    <p class="fw-semibold mb-1">{% trans "Manage your login methods" %}</p>
-                    <p class="text-muted small mb-0">{% trans "Change your password or add a passkey for biometric login." %}</p>
-                  </div>
-                  <div class="ms-md-auto d-flex gap-2 flex-wrap">
-                    <button type="button"
-                            class="btn btn-outline-primary"
-                            hx-get="{% url 'account:change-password' pk=user.id %}"
-                            hx-target="#body"
-                            hx-indicator="#body-loading-spinner"
-                            hx-swap="morph:innerHTML"
-                            hx-push-url="true">{% trans "Change password" %}</button>
-                    <button type="button"
-                            class="btn btn-outline-secondary"
-                            hx-get="{% url 'account:security' pk=user.id %}"
-                            hx-target="#body"
-                            hx-indicator="#body-loading-spinner"
-                            hx-swap="morph:innerHTML"
-                            hx-push-url="true">{% trans "Security settings" %}</button>
-                  </div>
-                </div>
-              </div>
+            {% if request.user.id == user.id %}
+              <button id="edit-profile-button"
+                      type="button"
+                      class="tw:inline-flex tw:w-full tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:@md:w-auto tw:@md:self-start"
+                      hx-get="{% url 'account:update' pk=user.id %}"
+                      hx-target="#body"
+                      hx-indicator="#body-loading-spinner"
+                      hx-swap="morph:innerHTML"
+                      hx-push-url="true">
+                <i class="bi bi-pencil" aria-hidden="true"></i>
+                {% trans "Edit profile" %}
+              </button>
             {% endif %}
           </div>
         </div>
       </div>
+      <div class="tw:grid tw:grid-cols-1 tw:gap-3 tw:@lg:grid-cols-2">
+        {% trans "Display name" as display_name_label %}
+        {% include "account/shared_partials/_profile_info_tile.html" with tile_icon="person" tile_label=display_name_label tile_value=user.name %}
+        {% trans "Email address" as email_label %}
+        {% include "account/shared_partials/_profile_info_tile.html" with tile_icon="envelope" tile_label=email_label tile_value=user.email %}
+        {% trans "PayPal.me username" as paypal_label %}
+        {% include "account/shared_partials/_profile_info_tile.html" with tile_icon="cash-coin" tile_label=paypal_label tile_value=user.paypal_me_username tile_prefix="@" tile_placeholder=no_paypal_label %}
+        {% trans "Preferred language" as language_label %}
+        {% include "account/shared_partials/_profile_info_tile.html" with tile_icon="translate" tile_label=language_label tile_value=user.get_language_display tile_placeholder=not_set_label %}
+      </div>
+      {% if request.user == user %}
+        {% trans "Enabled" as enabled_label %}
+        {% trans "Disabled" as disabled_label %}
+        <div class="tw:overflow-hidden tw:rounded-2xl tw:border tw:border-line tw:bg-surface">
+          <div class="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:p-4">
+            <div class="tw:min-w-0">
+              <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Push notifications" %}</p>
+              <p class="tw:mt-1 tw:mb-0 tw:font-semibold tw:text-ink">
+                {% if user.wants_to_receive_webpush_notifications %}
+                  {{ enabled_label }}
+                {% else %}
+                  {{ disabled_label }}
+                {% endif %}
+              </p>
+              <p class="tw:mt-1 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Manage this toggle from the edit screen." %}</p>
+            </div>
+            {% trans "Push notifications" as push_notifications_label %}
+            {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_webpush_notifications" toggle_checked=user.wants_to_receive_webpush_notifications toggle_disabled=True toggle_aria_label=push_notifications_label %}
+          </div>
+          <div class="tw:h-px tw:bg-line"></div>
+          <div class="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:p-4">
+            <div class="tw:min-w-0">
+              <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Payment reminders" %}</p>
+              <p class="tw:mt-1 tw:mb-0 tw:font-semibold tw:text-ink">
+                {% if user.wants_to_receive_payment_reminders %}
+                  {{ enabled_label }}
+                {% else %}
+                  {{ disabled_label }}
+                {% endif %}
+              </p>
+              <p class="tw:mt-1 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Toggle this in the notifications center or via the email footer." %}</p>
+            </div>
+            {% trans "Payment reminders" as payment_reminders_label %}
+            {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_payment_reminders" toggle_checked=user.wants_to_receive_payment_reminders toggle_disabled=True toggle_aria_label=payment_reminders_label %}
+          </div>
+        </div>
+        <div id="security-section"
+             class="tw:flex tw:flex-col tw:gap-4 tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5">
+          <div class="tw:min-w-0">
+            <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Security" %}</p>
+            <p class="tw:mt-1 tw:mb-0 tw:font-semibold tw:text-ink">{% trans "Manage your login methods" %}</p>
+            <p class="tw:mt-1 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Change your password or add a passkey for biometric login." %}</p>
+          </div>
+          <div class="tw:flex tw:flex-wrap tw:gap-2">
+            <button type="button"
+                    class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-brand tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-brand-text tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+                    hx-get="{% url 'account:change-password' pk=user.id %}"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true">
+              <i class="bi bi-key" aria-hidden="true"></i>
+              {% trans "Change password" %}
+            </button>
+            <button type="button"
+                    class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+                    hx-get="{% url 'account:security' pk=user.id %}"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true">
+              <i class="bi bi-shield-check" aria-hidden="true"></i>
+              {% trans "Security settings" %}
+            </button>
+          </div>
+        </div>
+      {% endif %}
     {% endif %}
   </section>
 {% endblock content %}
