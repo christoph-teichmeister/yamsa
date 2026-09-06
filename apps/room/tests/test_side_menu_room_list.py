@@ -21,7 +21,7 @@ class TestSideMenuRoomList:
 
         html = render_side_menu(request)
 
-        assert f'<span class="badge room-status-badge bg-light text-dark">{OPEN_LABEL}</span>' in html
+        assert f'<span class="badge room-status-badge bg-body-secondary text-body-emphasis">{OPEN_LABEL}</span>' in html
 
     def test_closed_room_shows_its_status_label(self, rf, user, closed_room):
         request = rf.get("/welcome/")

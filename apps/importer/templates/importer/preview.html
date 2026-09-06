@@ -214,7 +214,7 @@
                 <ul class="list-unstyled small mb-0">
                   {% for row in parsed.skipped_rows %}
                     <li class="mb-2">
-                      <span class="badge text-bg-light">{% trans "Row" %} {{ row.row_number }}</span>
+                      <span class="badge bg-body-secondary text-body-emphasis">{% trans "Row" %} {{ row.row_number }}</span>
                       <span class="text-muted">{{ row.reason }}</span>
                       <div class="text-muted opacity-75">{{ row.excerpt }}</div>
                     </li>
