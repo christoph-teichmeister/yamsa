@@ -522,8 +522,8 @@ msgstr "Erinnerungsprotokolle"
 msgid "Optimised debts"
 msgstr "Optimierte Schulden"
 
-msgid "Track what is left to settle inside this room. Click the piggy-bank to mark a debt as paid."
-msgstr "Verfolge, was in diesem Raum noch ausgeglichen werden muss. Klicke auf das Sparschwein, um eine Schuld als bezahlt zu markieren."
+msgid "Track what is left to settle inside this room."
+msgstr "Verfolge, was in diesem Raum noch ausgeglichen werden muss."
 
 #, python-format
 msgid ""
@@ -543,37 +543,39 @@ msgstr[1] ""
 "                        %(active_debt_count)s ausstehende Schulden\n"
 "                    "
 
+msgid "All settled"
+msgstr "Alles beglichen"
+
 msgid "Export CSV"
 msgstr "CSV exportieren"
 
-msgid "View category breakdown"
-msgstr "Kategorienaufteilung anzeigen"
+msgid "Who paid what"
+msgstr "Wer hat was bezahlt"
 
-msgid "Break down spend"
-msgstr "Ausgaben aufschlüsseln"
+msgid "Totals and open balances per person."
+msgstr "Summen und offene Beträge pro Person."
 
-msgid "Money overview"
-msgstr "Geldübersicht"
+msgid "Category breakdown"
+msgstr "Kategorienübersicht"
 
-msgid "See how much each person has paid and who still owes what."
-msgstr "Sieh, wie viel jede Person bezahlt hat und wer noch was schuldet."
+msgid "Where the money went, by category."
+msgstr "Wohin das Geld geflossen ist – nach Kategorie."
 
 #, python-format
-msgid "%(debitor_display)s owes %(value)s%(currency)s to %(creditor_display)s"
-msgstr "%(debitor_display)s schuldet %(value)s%(currency)s an %(creditor_display)s"
+msgid "You owe <strong>%(creditor_name)s</strong>"
+msgstr "Du schuldest <strong>%(creditor_name)s</strong>"
+
+#, python-format
+msgid "<strong>%(debitor_name)s</strong> owes you"
+msgstr "<strong>%(debitor_name)s</strong> schuldet dir"
+
+#, python-format
+msgid "<strong>%(debitor_name)s</strong> owes <strong>%(creditor_name)s</strong>"
+msgstr "<strong>%(debitor_name)s</strong> schuldet <strong>%(creditor_name)s</strong>"
 
 #, python-format
 msgid "Settled on %(settled_at)s"
 msgstr "Am %(settled_at)s beglichen"
-
-msgid "Tap the piggy-bank when this debt is paid off."
-msgstr "Tippe auf das Sparschwein, wenn diese Schuld beglichen ist."
-
-msgid "Settled"
-msgstr "Beglichen"
-
-msgid "Outstanding"
-msgstr "Ausstehend"
 
 msgid "No debts yet"
 msgstr "Noch keine Schulden"
@@ -581,54 +583,32 @@ msgstr "Noch keine Schulden"
 msgid "As expenses are added, we will surface who owes whom here."
 msgstr "Wenn Ausgaben hinzukommen, zeigen wir hier, wer wem etwas schuldet."
 
-msgid "Settle via PayPal"
-msgstr "Über PayPal begleichen"
+msgid "Settled"
+msgstr "Beglichen"
 
-msgid "Settle this debt"
-msgstr "Diese Schuld begleichen"
+msgid "Pay with PayPal"
+msgstr "Mit PayPal bezahlen"
 
-msgid "This transaction is not yours to settle!"
-msgstr "Diese Transaktion darfst du nicht ausgleichen!"
-
-#, python-format
-msgid ""
-"\n"
-"                    Your debt to %(creditor_name)s\n"
-"                "
-msgstr ""
-"\n"
-"                    Deine Schuld an %(creditor_name)s\n"
-"                "
+msgid "Mark as paid"
+msgstr "Als bezahlt markieren"
 
 #, python-format
-msgid ""
-"\n"
-"                    Are you sure that you have settled your debt (%(debt_value)s%(debt_currency)s)\n"
-"                    to %(creditor_name)s?\n"
-"                "
-msgstr ""
-"\n"
-"                    Bist du sicher, dass du deine Schuld (%(debt_value)s%(debt_currency)s)\n"
-"                    bei %(creditor_name)s beglichen hast?\n"
-"                "
+msgid "Your debt to %(creditor_name)s"
+msgstr "Deine Schuld an %(creditor_name)s"
 
-msgid "Debt ID"
-msgstr "Schulden-ID"
+#, python-format
+msgid "Are you sure that you have settled your debt (%(debt_value)s%(debt_currency)s) to %(creditor_name)s?"
+msgstr "Bist du sicher, dass du deine Schuld (%(debt_value)s%(debt_currency)s) bei %(creditor_name)s beglichen hast?"
 
-msgid "Settled?"
-msgstr "Beglichen?"
+msgid "Yes, I paid this"
+msgstr "Ja, ist bezahlt"
 
-msgid "No, take me to their paypal"
-msgstr "Nein, bring mich zu ihrem PayPal"
+msgid "Not paid yet?"
+msgstr "Noch nicht bezahlt?"
 
-msgid "No action available"
-msgstr "Keine Aktion möglich"
-
-msgid "No"
-msgstr "Nein"
-
-msgid "Yes"
-msgstr "Ja"
+#, python-format
+msgid "Pay %(creditor_name)s via PayPal"
+msgstr "%(creditor_name)s über PayPal bezahlen"
 
 msgid "Debitor"
 msgstr "Schuldner"
@@ -1295,9 +1275,6 @@ msgstr "Starte eine neue Gruppe mit Freunden"
 msgid "Balanced (%(currency)s)"
 msgstr "Ausgeglichen (%(currency)s)"
 
-msgid "All settled"
-msgstr "Alles beglichen"
-
 #, python-format
 msgid "%(timesince)s ago"
 msgstr "vor %(timesince)s"
@@ -1428,9 +1405,6 @@ msgstr "{paid_by} hat {value}{currency} für {paid_for} bezahlt"
 
 msgid "Back to transactions"
 msgstr "Zurück zu den Transaktionen"
-
-msgid "Category breakdown"
-msgstr "Kategorienübersicht"
 
 msgid "All recorded spend"
 msgstr "Alle erfassten Ausgaben"
@@ -1835,9 +1809,6 @@ msgstr "Zurück zu Schulden"
 
 msgid "Room spending overview"
 msgstr "Übersicht der Raumausgaben"
-
-msgid "Who paid what"
-msgstr "Wer hat was bezahlt"
 
 #, python-format
 msgid ""

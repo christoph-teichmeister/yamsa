@@ -1,5 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load static room_tags i18n %}
+{% load room_tags i18n %}
 {% block tab_content %}
   <style nonce="{{ csp_nonce }}">
         .debt-card {
@@ -11,119 +11,134 @@
             border-radius: 0.75rem;
             border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.08);
             padding: 1rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .debt-row + .debt-row {
             margin-top: 0.75rem;
         }
 
-        .debt-row:hover {
-            border-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.35);
-            box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb, 13, 110, 253), 0.08);
+        .debt-row-settled {
+            background-color: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.03);
         }
 
-        .action-card {
-            border: 1px dashed rgba(var(--bs-primary-rgb, 13, 110, 253), 0.45);
+        .debt-amount {
+            /* Lining figures so the amounts of stacked rows line up on the decimal point. */
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .insight-list {
             border-radius: 0.9rem;
-            padding: 1rem;
-            cursor: pointer;
+            overflow: hidden;
         }
 
-        .action-card:hover {
-            background-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.04);
+        .insight-row {
+            padding: 0.9rem 1rem;
+        }
+
+        .insight-icon {
+            display: flex;
+            flex: 0 0 auto;
+            width: 2.25rem;
+            height: 2.25rem;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.75rem;
+            background-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.1);
+            color: var(--bs-primary, #0d6efd);
         }
   </style>
   <div class="container-fluid px-0 px-md-2 mt-3">
-    <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
-      <div>
-        <h4 class="mb-1">{% trans "Optimised debts" %}</h4>
-        <p class="text-muted small mb-0">
-          {% trans "Track what is left to settle inside this room. Click the piggy-bank to mark a debt as paid." %}
-        </p>
-      </div>
-      <div class="d-flex flex-row w-100 align-items-center justify-content-between gap-2">
-        {% if debts %}
-          <span class="badge text-bg-light">
+    <h4 class="mb-1">{% trans "Optimised debts" %}</h4>
+    <p class="text-muted small mb-3">{% trans "Track what is left to settle inside this room." %}</p>
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+      {% if debts %}
+        {% if active_debt_count %}
+          <span class="badge bg-warning-subtle text-warning-emphasis">
             {% blocktrans count active_debt_count=active_debt_count %}
                             {{ active_debt_count }} pending debt
                         {% plural %}
                             {{ active_debt_count }} pending debts
                         {% endblocktrans %}
           </span>
+        {% else %}
+          <span class="badge bg-success-subtle text-success-emphasis">{% trans "All settled" %}</span>
         {% endif %}
-      </div>
+      {% endif %}
       {% if has_transactions %}
-        <div class="w-100 d-flex justify-content-around">
-          <a href="{% room_url 'debt:export' %}"
-             class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
-             title="{% trans "Export CSV" %}">
-            <i class="bi bi-download"></i>
-            {% trans "Export CSV" %}
-          </a>
-          <button type="button"
-                  class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
-                  title="{% trans "View category breakdown" %}"
-                  hx-get="{% room_url 'transaction:category-breakdown' %}"
-                  hx-target="#body"
-                  hx-indicator="#body-loading-spinner"
-                  hx-swap="morph:innerHTML"
-                  hx-push-url="true">
-            <i class="bi bi-pie-chart-fill"></i>
-            {% trans "Break down spend" %}
-          </button>
-        </div>
+        <a href="{% room_url 'debt:export' %}"
+           class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2 ms-auto">
+          <i class="bi bi-download" aria-hidden="true"></i>
+          {% trans "Export CSV" %}
+        </a>
       {% endif %}
     </div>
     {% if has_transactions %}
-      <div class="action-card mt-4 d-flex align-items-center justify-content-between"
-           role="button"
-           tabindex="0"
-           data-keyboard-click
-           hx-get="{% room_url 'debt:money-spent-on-room' %}"
-           hx-target="#body"
-           hx-indicator="#body-loading-spinner"
-           hx-swap="morph:innerHTML"
-           hx-push-url="true">
-        <div>
-          <p class="mb-1 fw-semibold">{% trans "Money overview" %}</p>
-          <p class="text-muted small mb-0">{% trans "See how much each person has paid and who still owes what." %}</p>
-        </div>
-        <i class="bi bi-arrow-up-right-circle fs-4 text-primary"></i>
+      <div class="list-group insight-list shadow-sm mb-4">
+        <button type="button"
+                class="list-group-item list-group-item-action insight-row d-flex align-items-center gap-3 text-start"
+                hx-get="{% room_url 'debt:money-spent-on-room' %}"
+                hx-target="#body"
+                hx-indicator="#body-loading-spinner"
+                hx-swap="morph:innerHTML"
+                hx-push-url="true">
+          <span class="insight-icon"><i class="bi bi-people-fill" aria-hidden="true"></i></span>
+          <span class="flex-grow-1">
+            <span class="d-block fw-semibold">{% trans "Who paid what" %}</span>
+            <span class="d-block text-muted small">{% trans "Totals and open balances per person." %}</span>
+          </span>
+          <i class="bi bi-chevron-right text-muted" aria-hidden="true"></i>
+        </button>
+        <button type="button"
+                class="list-group-item list-group-item-action insight-row d-flex align-items-center gap-3 text-start"
+                hx-get="{% room_url 'transaction:category-breakdown' %}"
+                hx-target="#body"
+                hx-indicator="#body-loading-spinner"
+                hx-swap="morph:innerHTML"
+                hx-push-url="true">
+          <span class="insight-icon"><i class="bi bi-pie-chart-fill" aria-hidden="true"></i></span>
+          <span class="flex-grow-1">
+            <span class="d-block fw-semibold">{% trans "Category breakdown" %}</span>
+            <span class="d-block text-muted small">{% trans "Where the money went, by category." %}</span>
+          </span>
+          <i class="bi bi-chevron-right text-muted" aria-hidden="true"></i>
+        </button>
       </div>
     {% endif %}
-    <div class="card debt-card shadow-sm mt-4">
+    <div class="card debt-card shadow-sm">
       <div class="card-body">
         {% for debt in debts %}
-          <div class="debt-row">
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-              <div>
-                <p class="fw-semibold mb-1">
-                  {% parse_user_text debt.debitor.name True as debitor_display %}
-                  {% parse_user_text debt.creditor.name as creditor_display %}
-                  {% blocktrans with debitor_display=debitor_display creditor_display=creditor_display value=debt.value currency=debt.currency.sign trimmed %}
-                    {{ debitor_display }} owes {{ value }}{{ currency }} to
-                    {{ creditor_display }}
+          <div class="debt-row{% if debt.settled %} debt-row-settled{% endif %}">
+            <div class="d-flex justify-content-between align-items-baseline gap-3">
+              <p class="mb-0">
+                {% if debt.viewer_is_debitor %}
+                  {% blocktrans with creditor_name=debt.creditor.name trimmed %}
+                    You owe <strong>{{ creditor_name }}</strong>
                   {% endblocktrans %}
-                </p>
-                {% if debt.settled %}
-                  <p class="text-success small mb-0">
-                    {% blocktrans with settled_at=debt.settled_at|date trimmed %}
-                      Settled on {{ settled_at }}
-                    {% endblocktrans %}
-                  </p>
+                {% elif debt.viewer_is_creditor %}
+                  {% blocktrans with debitor_name=debt.debitor.name trimmed %}
+                    <strong>{{ debitor_name }}</strong> owes you
+                  {% endblocktrans %}
                 {% else %}
-                  <p class="text-muted small mb-0">{% trans "Tap the piggy-bank when this debt is paid off." %}</p>
+                  {% blocktrans with debitor_name=debt.debitor.name creditor_name=debt.creditor.name trimmed %}
+                    <strong>{{ debitor_name }}</strong> owes <strong>{{ creditor_name }}</strong>
+                  {% endblocktrans %}
                 {% endif %}
-              </div>
-              <div class="d-flex align-items-center gap-2">
-                {% if debt.settled %}
-                  <span class="badge bg-success-subtle text-success-emphasis">{% trans "Settled" %}</span>
-                {% else %}
-                  <span class="badge bg-warning-subtle text-warning-emphasis">{% trans "Outstanding" %}</span>
-                {% endif %}
-                <div>{% include "debt/partials/_settle_debt_piggy_icon.html" with debt=debt %}</div>
-              </div>
+              </p>
+              <p class="debt-amount mb-0 {% if debt.settled %}text-muted{% elif debt.viewer_is_debitor %}text-danger-emphasis{% elif debt.viewer_is_creditor %}text-success-emphasis{% endif %}">
+                {{ debt.value|format_with_thousands }}&nbsp;{{ debt.currency.sign }}
+              </p>
+            </div>
+            {% if debt.settled %}
+              <p class="text-success small mb-0 mt-1">
+                {% blocktrans with settled_at=debt.settled_at|date trimmed %}
+                  Settled on {{ settled_at }}
+                {% endblocktrans %}
+              </p>
+            {% endif %}
+            <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+              {% include "debt/partials/_debt_row_actions.html" with debt=debt %}
             </div>
           </div>
         {% empty %}

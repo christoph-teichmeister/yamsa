@@ -1,69 +1,56 @@
 {% extends "room/dashboard.html" %}
-{% load static room_tags i18n %}
+{% load room_tags i18n l10n %}
 {% block tab_content %}
-  <div class="row py-1 mt-4 d-flex w-100 justify-content-between align-items-center">
-    <div class="col">
-      <h5>
-        {% blocktrans with creditor_name=debt.creditor.name %}
-                    Your debt to {{ creditor_name }}
-                {% endblocktrans %}
-      </h5>
-      <small>
-        {% blocktrans with creditor_name=debt.creditor.name debt_value=debt.value debt_currency=debt.currency.sign %}
-                    Are you sure that you have settled your debt ({{ debt_value }}{{ debt_currency }})
-                    to {{ creditor_name }}?
-                {% endblocktrans %}
-      </small>
-    </div>
-  </div>
-  <form hx-post="{% room_url 'debt:settle' pk=debt.id %}"
-        hx-target="#body"
-        hx-indicator="#body-loading-spinner"
-        hx-swap="morph:innerHTML"
-        hx-push-url="true">
-    {% csrf_token %}
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">
-        <div class="form-group" hidden>
-          <label for="debt_id">{% trans "Debt ID" %}</label>
-          <input id="debt_id"
-                 type="number"
-                 name="debt_id"
-                 class="form-control"
-                 required
-                 value="{{ debt.id }}" />
-        </div>
-        <div class="form-group" hidden>
-          <label for="settled" class="form-label">{% trans "Settled?" %}</label>
-          <input id="settled"
-                 name="settled"
-                 type="checkbox"
-                 checked
-                 class="form-control"
-                 required />
-        </div>
-      </li>
-    </ul>
-    <div class="row d-flex justify-content-end me-2">
-      {% if debt.creditor.paypal_me_username %}
-        <div class="col-9">
-          <a href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/{{ debt.value }}{{ debt.currency.code }}"
-             target="_blank"
-             class="btn btn-secondary w-100">{% trans "No, take me to their paypal" %}</a>
-        </div>
-      {% else %}
-        <div class="col-3">
-          <button type="button"
-                  class="btn btn-secondary w-100"
-                  disabled
-                  aria-disabled="true"
-                  aria-label="{% trans "No action available" %}">{% trans "No" %}</button>
-        </div>
-      {% endif %}
-      <div class="col-3">
-        <button type="submit" class="btn btn-primary w-100">{% trans "Yes" %}</button>
+  <div class="container-fluid px-0 px-md-2 mt-3">
+    <h4 class="mb-1">
+      {% blocktrans with creditor_name=debt.creditor.name trimmed %}
+        Your debt to {{ creditor_name }}
+      {% endblocktrans %}
+    </h4>
+    <p class="text-muted small mb-4">
+      {% blocktrans with creditor_name=debt.creditor.name debt_value=debt.value|format_with_thousands debt_currency=debt.currency.sign trimmed %}
+        Are you sure that you have settled your debt ({{ debt_value }}{{ debt_currency }}) to {{ creditor_name }}?
+      {% endblocktrans %}
+    </p>
+    {% comment %}
+      method/action next to hx-post so the confirmation still submits when the bundle never runs.
+    {% endcomment %}
+    <form method="post"
+          action="{% room_url 'debt:settle' pk=debt.id %}"
+          hx-post="{% room_url 'debt:settle' pk=debt.id %}"
+          hx-target="#body"
+          hx-indicator="#body-loading-spinner"
+          hx-swap="morph:innerHTML"
+          hx-push-url="true">
+      {% csrf_token %}
+      {# The form's only editable field; absent from the POST it would mark the debt unsettled. #}
+      <input type="hidden" name="settled" value="true" />
+      <div class="d-flex flex-wrap gap-2">
+        <button type="submit"
+                class="btn btn-success d-inline-flex align-items-center gap-2">
+          <i class="bi bi-piggy-bank" aria-hidden="true"></i>
+          {% trans "Yes, I paid this" %}
+        </button>
+        <button type="button"
+                class="btn btn-outline-secondary"
+                hx-get="{% room_url 'debt:list' %}"
+                hx-target="#body"
+                hx-indicator="#body-loading-spinner"
+                hx-swap="morph:innerHTML"
+                hx-push-url="true">{% trans "Cancel" %}</button>
       </div>
-    </div>
-    <div class="modal-footer"></div>
-  </form>
+    </form>
+    {% if debt.creditor.paypal_me_username %}
+      <p class="text-muted small mt-4 mb-0">
+        {% trans "Not paid yet?" %}
+        <a href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
+           target="_blank"
+           rel="noopener">
+          {% blocktrans with creditor_name=debt.creditor.name trimmed %}
+            Pay {{ creditor_name }} via PayPal
+          {% endblocktrans %}
+        </a>
+      </p>
+    {% endif %}
+  </div>
 {% endblock tab_content %}

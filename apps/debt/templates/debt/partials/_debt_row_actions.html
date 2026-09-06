@@ -1,0 +1,37 @@
+{% load room_tags i18n l10n %}
+{% if debt.settled %}
+  <span class="badge bg-success-subtle text-success-emphasis d-inline-flex align-items-center gap-1">
+    <i class="bi bi-piggy-bank-fill" aria-hidden="true"></i>
+    {% trans "Settled" %}
+  </span>
+{% elif debt.viewer_is_debitor %}
+  {% if debt.creditor.paypal_me_username %}
+    {% comment %}
+      paypal.me parses the amount itself, so it must stay unlocalised - a German viewer would
+      otherwise send "42,50" into the URL and land on a broken PayPal page.
+    {% endcomment %}
+    <a class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-2"
+       href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
+       target="_blank"
+       rel="noopener">
+      <i class="bi bi-paypal" aria-hidden="true"></i>
+      {% trans "Pay with PayPal" %}
+    </a>
+  {% endif %}
+  <button type="button"
+          class="btn btn-sm btn-success d-inline-flex align-items-center gap-2"
+          hx-get="{% room_url 'debt:settle' pk=debt.id %}"
+          hx-target="#body"
+          hx-indicator="#body-loading-spinner"
+          hx-swap="morph:innerHTML"
+          hx-push-url="true">
+    <i class="bi bi-piggy-bank" aria-hidden="true"></i>
+    {% trans "Mark as paid" %}
+  </button>
+{% else %}
+  {% comment %}
+    Whose debt it is now comes from the row's own wording ("<name> owes you"), so a debt the
+    viewer cannot settle only needs its status - not a second sentence repeating the name.
+  {% endcomment %}
+  <span class="badge bg-secondary-subtle text-secondary-emphasis">{% trans "Open" %}</span>
+{% endif %}
