@@ -118,6 +118,8 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
                 "created_by__name",
                 "description",
                 "id",
+                "last_activity",
+                "last_transaction_at",
                 "name",
                 "slug",
                 "status",

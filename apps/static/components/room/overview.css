@@ -2,6 +2,9 @@
    instead of two and a half cards. */
 
 .room-overview-card {
+    /* Queried below: how much of the meta line fits depends on the card, not on the viewport -
+       the same card is full width on a phone and half a column wide on a desktop. */
+    container-type: inline-size;
     background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.04);
     border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.15);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -51,9 +54,36 @@
 }
 
 .room-overview-meta {
+    display: flex;
+    align-items: baseline;
+    column-gap: 0.5rem;
+    min-width: 0;
     white-space: nowrap;
+}
+
+/* Shrinks all the way to nothing on a narrow card: the description is the part of this line
+   the room can be recognised without. A separator glyph would survive that collapse and be
+   left dangling in front of the time, so the gap above is the only separator. */
+.room-overview-meta-text {
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Under this the description only has room for a stub like "K…", which says less than the
+   time it is crowding out. */
+@container (max-width: 20rem) {
+    .room-overview-meta-text {
+        display: none;
+    }
+}
+
+/* Never shrinks: it explains why the row sits where it sits in the list. */
+.room-overview-activity {
+    flex: 0 0 auto;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--bs-secondary-color, #9aa3ab);
 }
 
 .room-overview-amounts {

@@ -33,6 +33,12 @@ class DashboardPage(BasePage):
     def expect_status_badge(self, target_url: str, label: str):
         expect(self.card_for(target_url).locator(".room-status-badge")).to_have_text(label)
 
+    def expect_last_used(self, target_url: str, text: str):
+        expect(self.card_for(target_url).locator(".room-overview-activity")).to_have_text(text)
+
+    def expect_no_last_used(self, target_url: str):
+        expect(self.card_for(target_url).locator(".room-overview-activity")).to_have_count(0)
+
     def expect_summary(self, *, owed: list[str], received: list[str]):
         expect(self.page.locator(".room-balance-tile.owing .room-balance-value")).to_have_text(owed)
         expect(self.page.locator(".room-balance-tile.receiving .room-balance-value")).to_have_text(received)

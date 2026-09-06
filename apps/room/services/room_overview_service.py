@@ -58,12 +58,22 @@ class RoomOverviewService:
             user_is_in_room=room_values["user_is_in_room"],
             is_closed=is_closed,
             target_url=reverse(target_viewname, kwargs={"room_slug": room_values["slug"]}),
+            last_activity_at=room_values["last_activity"],
+            last_transaction_at=room_values["last_transaction_at"],
             balances=tuple(self._balances_per_room_id.get(room_values["id"], ())),
         )
 
     def get_entries(self) -> list[RoomOverviewEntry]:
         """Return one entry per visible room, in room_qs_for_list's order (most recently active first)."""
         return [self._build_entry(room_values) for room_values in self.user.room_qs_for_list]
+
+    @staticmethod
+    def sorted_by_last_activity(entries: Iterable[RoomOverviewEntry]) -> list[RoomOverviewEntry]:
+        """Order rooms by when they were last used, newest first.
+
+        Ties keep the order they came in, sorted() being stable even in reverse.
+        """
+        return sorted(entries, key=lambda entry: entry.last_activity_at, reverse=True)
 
     @staticmethod
     def currency_totals_for(entries: Iterable[RoomOverviewEntry]) -> list[CurrencyTotal]:
