@@ -55,13 +55,12 @@
   --yamsa-ink-strong: #0f1319;
   --yamsa-ink: #1b2027;
   --yamsa-ink-muted: #4d5665;
-  --yamsa-ink-subtle: #646e84;
-  --yamsa-brand-hover: #2660cc;
+  --yamsa-ink-subtle: #606a7f;
   --yamsa-brand-text: #1f5bbf;
   --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.12);
   /* A triplet, because Bootstrap builds every link colour from --bs-link-color-rgb. */
   --yamsa-link-rgb: 31, 91, 191;
-  --yamsa-success-text: #0d7a44;
+  --yamsa-success-text: #0c7047;
   --yamsa-success-soft: rgb(16 185 129 / 0.14);
   --yamsa-warning-text: #8f4d0d;
   --yamsa-warning-soft: rgb(255 140 66 / 0.16);
@@ -82,10 +81,7 @@
   --yamsa-ink-strong: #ffffff;
   --yamsa-ink: #e8ebf2;
   --yamsa-ink-muted: #aab3c2;
-  --yamsa-ink-subtle: #828da1;
-  /* Hover lightens here and darkens on the light theme - the brand fill itself is the same in
-     both, dark enough to carry white and light enough to ring at 3:1 on the dark ground. */
-  --yamsa-brand-hover: #4a86f0;
+  --yamsa-ink-subtle: #959daf;
   --yamsa-brand-text: #8fb8ff;
   --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.18);
   --yamsa-link-rgb: 143, 184, 255;
@@ -102,6 +98,9 @@
 :root {
   --yamsa-brand-rgb: 47, 111, 228;
   --yamsa-brand: rgb(var(--yamsa-brand-rgb));
+  /* The fill darkens on hover in both themes: lightening it on the dark theme drops the white
+     label below 4.5:1, and the label may not change with the state. */
+  --yamsa-brand-hover: #2660cc;
   --yamsa-link: rgb(var(--yamsa-link-rgb));
   /* Reads on a brand-filled surface. */
   --yamsa-on-brand: #ffffff;

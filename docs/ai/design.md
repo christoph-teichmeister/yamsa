@@ -79,9 +79,15 @@ composes its own colors from `--bs-primary-rgb` and `--bs-link-color-rgb`: a lin
 `scripts/check_palette_contrast.py` (a step in the QA workflow) holds the palette to four rules,
 and the numbers in `tailwind.css` are what they are because of them:
 
-- every text token reaches **4.5:1** on `surface`, `canvas` and `surface-sunken`;
-- a button label reaches 4.5:1 on the brand fill — which is why the brand is dark enough to carry
-  white rather than a tint that needs dark text on it;
+- every text token reaches **4.5:1** on *every* opaque ground — `surface`, `surface-raised`,
+  `surface-sunken`, `surface-hover` and `canvas`. The hover fill and the raised card are the
+  strictest of them, and they are where the first version of this palette failed;
+- every `-text` token reaches 4.5:1 on its own `-soft` tint, composited over each of those grounds:
+  a tint is translucent, so what a badge label really sits on is the tint *plus* whatever carries
+  the badge;
+- a button label reaches 4.5:1 on the brand fill **and on its hover** — which is why the brand is
+  dark enough to carry white rather than a tint that needs dark text, and why the fill darkens on
+  hover in both themes instead of lightening on the dark one;
 - `line-strong` (the boundary of inputs and outline buttons) and the brand as a focus ring reach
   **3:1**;
 - the neutrals of a theme stay within 20° of hue of each other **and of the other theme's**. A warm

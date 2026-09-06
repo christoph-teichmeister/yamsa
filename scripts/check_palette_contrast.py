@@ -30,7 +30,12 @@ TEXT_TOKENS = (
     "warning-text",
     "danger-text",
 )
-GROUNDS = ("surface", "canvas", "surface-sunken")
+# Every opaque ground text can end up on, not just the common ones: a tertiary label on a hovered
+# row or a raised card is the same reading task as one on a card.
+GROUNDS = ("surface", "surface-raised", "surface-sunken", "surface-hover", "canvas")
+# The `-soft` tints are translucent, so what a badge label really sits on is the tint composited
+# over whatever carries the badge.
+TINTED = ("brand", "success", "warning", "danger")
 NEUTRALS = ("canvas", "surface-sunken", "line")
 
 BLOCK_PATTERN = re.compile(r"(?P<selector>[^{}]+)\{(?P<body>[^{}]*)\}", re.MULTILINE)
@@ -45,6 +50,22 @@ def _channels(value: str) -> tuple[int, int, int]:
         return tuple(int(digits[i : i + 2], 16) for i in (0, 2, 4))
     numbers = [int(part) for part in re.findall(r"\d+", value)[:3]]
     return tuple(numbers)
+
+
+def _alpha(value: str) -> float:
+    """The alpha of `rgb(r g b / .14)` or `rgb(var(--…), 0.12)`; 1 when the colour is opaque."""
+    match = re.search(r"[,/]\s*(0?\.\d+|1(?:\.0+)?)\s*\)\s*$", value.strip())
+    return float(match.group(1)) if match else 1.0
+
+
+def flatten(color: str, ground: str) -> str:
+    """What the eye actually sees when a translucent colour is painted on an opaque one."""
+    alpha = _alpha(color)
+    if alpha >= 1:
+        return color
+    top, bottom = _channels(color), _channels(ground)
+    mixed = (round(top[index] * alpha + bottom[index] * (1 - alpha)) for index in range(3))
+    return "#" + "".join(f"{channel:02x}" for channel in mixed)
 
 
 def _relative_luminance(color: str) -> float:
@@ -93,6 +114,11 @@ def read_themes(css: str) -> dict[str, dict[str, str]]:
             reference = re.fullmatch(r"rgb\(var\(--yamsa-([a-z-]+)\)\)", value.strip())
             if reference:
                 theme[name] = theme[reference.group(1)]
+            # `rgb(var(--yamsa-brand-rgb), 0.12)` keeps its alpha but needs the triplet inlined.
+            tinted = re.fullmatch(r"rgb\(var\(--yamsa-([a-z-]+)\),\s*([\d.]+)\)", value.strip())
+            if tinted:
+                red, green, blue = _channels(theme[tinted.group(1)])
+                theme[name] = f"rgb({red} {green} {blue} / {tinted.group(2)})"
     return themes
 
 
@@ -105,8 +131,19 @@ def failures(themes: dict[str, dict[str, str]]) -> list[str]:
                 if ratio < BODY_TEXT_RATIO:
                     found.append(f"{name}: {token} on {ground} is {ratio:.2f}:1, needs {BODY_TEXT_RATIO}:1")
 
+        for tint_name in TINTED:
+            for ground in GROUNDS:
+                tint = flatten(tokens[f"{tint_name}-soft"], tokens[ground])
+                ratio = contrast(tokens[f"{tint_name}-text"], tint)
+                if ratio < BODY_TEXT_RATIO:
+                    found.append(
+                        f"{name}: {tint_name}-text on {tint_name}-soft over {ground} ({tint}) is "
+                        f"{ratio:.2f}:1, needs {BODY_TEXT_RATIO}:1"
+                    )
+
         checks = (
             ("on-brand", "brand", BODY_TEXT_RATIO, "a button label on the brand fill"),
+            ("on-brand", "brand-hover", BODY_TEXT_RATIO, "a button label on the hovered brand fill"),
             ("brand", "surface", NON_TEXT_RATIO, "the focus ring on a surface"),
             ("line-strong", "surface", NON_TEXT_RATIO, "a control border on a surface"),
         )
