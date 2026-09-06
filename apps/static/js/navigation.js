@@ -9,49 +9,76 @@ window.bootstrap = bootstrap;
   window.__yamsaNavigationInitialized = true;
 
   const THEME_STORAGE_KEY = 'theme';
+  const THEME_PREFERENCES = ['light', 'dark', 'auto'];
+  // No stored preference means the system decides; the inline head script resolves it the same way.
+  const DEFAULT_THEME_PREFERENCE = 'auto';
   const prefersDark = typeof window.matchMedia === 'function'
     ? window.matchMedia('(prefers-color-scheme: dark)')
     : null;
 
-  const getStoredTheme = () => {
+  const getStoredPreference = () => {
     try {
-      return localStorage.getItem(THEME_STORAGE_KEY);
+      const stored = localStorage.getItem(THEME_STORAGE_KEY);
+      return THEME_PREFERENCES.includes(stored) ? stored : DEFAULT_THEME_PREFERENCE;
     } catch (error) {
       console.error('Unable to read theme preference from localStorage', error);
-      return null;
+      return DEFAULT_THEME_PREFERENCE;
     }
   };
 
-  const setStoredTheme = (theme) => {
+  const setStoredPreference = (preference) => {
     try {
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
+      localStorage.setItem(THEME_STORAGE_KEY, preference);
     } catch (error) {
       console.error('Unable to persist theme preference to localStorage', error);
     }
   };
 
-  const resolveTheme = (theme) => {
-    if (theme === 'auto') {
-      if (!prefersDark) {
-        return 'dark';
-      }
-
-      return prefersDark.matches ? 'dark' : 'light';
+  const resolveTheme = (preference) => {
+    if (preference !== 'auto') {
+      return preference;
     }
 
-    return theme;
+    // Without matchMedia there is no system theme to follow, so fall back to the app's default.
+    if (!prefersDark) {
+      return 'dark';
+    }
+
+    return prefersDark.matches ? 'dark' : 'light';
   };
 
-  const applyTheme = (theme) => {
-    if (!theme) {
+  // The browser paints its own chrome (address bar, task switcher) from this, so a theme switch
+  // that leaves it alone shows the old theme around the page.
+  const applyBrowserThemeColor = () => {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) {
       return;
     }
 
-    document.documentElement.setAttribute('data-bs-theme', resolveTheme(theme));
+    const canvas = getComputedStyle(document.documentElement).getPropertyValue('--yamsa-canvas').trim();
+    if (canvas) {
+      meta.setAttribute('content', canvas);
+    }
+  };
+
+  // The buttons offer the preference, not the resolved theme: `auto` stays pressed while the
+  // system flips the page between light and dark.
+  const applyThemeToggleState = (preference) => {
+    document.querySelectorAll('[data-theme-value]').forEach((button) => {
+      const isSelected = button.dataset.themeValue === preference;
+      button.setAttribute('aria-pressed', String(isSelected));
+      button.classList.toggle('active', isSelected);
+    });
+  };
+
+  const applyPreference = (preference) => {
+    document.documentElement.setAttribute('data-bs-theme', resolveTheme(preference));
+    applyBrowserThemeColor();
+    applyThemeToggleState(preference);
   };
 
   const initThemeToggle = () => {
-    applyTheme(getStoredTheme() || resolveTheme('auto'));
+    applyPreference(getStoredPreference());
 
     document.addEventListener('click', (event) => {
       const button = event.target.closest('[data-theme-value]');
@@ -60,19 +87,18 @@ window.bootstrap = bootstrap;
       }
 
       const value = button.dataset.themeValue;
-      if (!value) {
+      if (!THEME_PREFERENCES.includes(value)) {
         return;
       }
 
-      setStoredTheme(value);
-      applyTheme(value);
+      setStoredPreference(value);
+      applyPreference(value);
     });
 
     if (prefersDark) {
       const handleColorSchemeChange = () => {
-        const storedTheme = getStoredTheme();
-        if (storedTheme !== 'light' && storedTheme !== 'dark') {
-          applyTheme(resolveTheme('auto'));
+        if (getStoredPreference() === 'auto') {
+          applyPreference('auto');
         }
       };
 
@@ -217,6 +243,9 @@ window.bootstrap = bootstrap;
   const refreshDynamicElements = () => {
     initProfilePictureFallbacks();
     applyDataStyleVars();
+    // A swap of #body brings a fresh side menu, and with it toggle buttons that know nothing
+    // about the stored preference.
+    applyThemeToggleState(getStoredPreference());
   };
 
   const KEYBOARD_CLICK_SELECTOR = '[data-keyboard-click]';

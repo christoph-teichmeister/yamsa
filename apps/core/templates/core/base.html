@@ -21,6 +21,31 @@
     <link rel="icon" href="{% static 'images/favicon.ico' %}">
     {% load_pwa_meta_data %}
     {% load_serviceworker %}
+    <!-- Runs before the first paint, and before the stylesheets so it never waits for them: the
+         document can only ship one default theme, so without this every reader on the other one
+         sees a full page of the wrong theme until the deferred bundles run. Everything else about
+         the theme - the preference, the toggle, the browser UI colour - lives in
+         apps/static/js/navigation.js. -->
+    <script type="text/javascript" nonce="{{ csp_nonce }}">
+      (function () {
+        var preference = null;
+
+        try {
+          preference = localStorage.getItem('theme');
+        } catch (error) {
+          preference = null;
+        }
+
+        if (preference !== 'light' && preference !== 'dark') {
+          // Anything else means "follow the system"; without matchMedia that is the app's default.
+          preference = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark';
+        }
+
+        document.documentElement.setAttribute('data-bs-theme', preference);
+      })();
+    </script>
     {% include "core/partials/_head_links_and_scripts.html" %}
     <!-- Disable default hx-indicator styling -->
     <meta name="htmx-config"
