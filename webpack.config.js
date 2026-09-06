@@ -5,6 +5,9 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const bundlesPath = path.resolve(__dirname, "apps/static/bundles");
 const staticJsPath = path.resolve(__dirname, "apps/static/js");
+// Build-only sources, deliberately outside apps/static: collectstatic runs every .css it
+// finds there through the manifest storage, which cannot resolve Tailwind's @import.
+const staticSrcPath = path.resolve(__dirname, "apps/static_src");
 
 module.exports = {
   mode: "production",
@@ -13,7 +16,9 @@ module.exports = {
     navigation: path.resolve(staticJsPath, "navigation.js"),
     "suggested-guests": path.resolve(staticJsPath, "suggested-guests.js"),
     "category-suggestion": path.resolve(staticJsPath, "category-suggestion.js"),
+    "profile-sheet": path.resolve(staticJsPath, "profile-sheet.js"),
     styles: path.resolve(staticJsPath, "styles.js"),
+    tailwind: path.resolve(staticSrcPath, "tailwind.js"),
     htmx: path.resolve(staticJsPath, "htmx.js"),
   },
   output: {
@@ -34,6 +39,7 @@ module.exports = {
               sourceMap: false,
             },
           },
+          "postcss-loader",
         ],
       },
       {

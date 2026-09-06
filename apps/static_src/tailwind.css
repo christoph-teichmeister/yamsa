@@ -1,0 +1,127 @@
+/* Tailwind runs next to Bootstrap for the duration of the redesign, which forces two
+   constraints that must not be relaxed before the last Bootstrap template is gone:
+
+   1. No Preflight. Bootstrap Reboot stays the base reset; loading a second one would
+      re-style every element on the pages that are still on Bootstrap.
+   2. Every utility carries the `tw:` prefix. Bootstrap and Tailwind share class names
+      with different values (`p-3`, `gap-4`, `border`, `rounded`, `shadow-sm`, …), and
+      this bundle loads last — unprefixed utilities would silently override their
+      Bootstrap namesakes app-wide.
+
+   Dropping Bootstrap means: swap these two imports for `@import "tailwindcss";`, strip
+   the `tw:` prefixes from the templates, and point `dark` at its own selector. */
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" prefix(tw);
+
+@source "../templates/**/*.html";
+@source "../*/templates/**/*.html";
+@source "../static/js/**/*.js";
+
+/* The theme is picked by Bootstrap's attribute on <html>, so both frameworks stay in sync. */
+@custom-variant dark ([data-bs-theme="dark"] &);
+
+/* Panels that flip between reading and editing without a round trip: both states live in the DOM
+   and these variants decide which one shows, keyed off `data-profile-mode` on the panel root.
+   Written without :where() on purpose — the extra specificity lets `tw:editing:flex` beat the
+   plain `tw:hidden` it has to override, independently of utility order. */
+@custom-variant reading ([data-profile-mode="reading"] &);
+@custom-variant editing ([data-profile-mode="editing"] &);
+
+/* Semantic colours resolve per theme, so templates need no `dark:` variant for them:
+   `tw:bg-surface` is correct in both themes. Values mirror apps/static/base.css. */
+:root,
+[data-bs-theme="light"] {
+  --yamsa-surface: #ffffff;
+  --yamsa-surface-raised: #ffffff;
+  --yamsa-surface-sunken: #eff4fb;
+  --yamsa-surface-hover: #e4ecf7;
+  --yamsa-line: #d6dce8;
+  --yamsa-line-strong: #c9d2e3;
+  --yamsa-ink: #1f232a;
+  --yamsa-ink-muted: #5b6577;
+  --yamsa-ink-subtle: #7c879b;
+  --yamsa-brand: #6ea8fe;
+  --yamsa-brand-hover: #5797fb;
+  --yamsa-brand-text: #2f5e97;
+  --yamsa-brand-soft: rgb(110 168 254 / 0.12);
+  --yamsa-success-text: #0f7a45;
+  --yamsa-success-soft: rgb(16 185 129 / 0.14);
+  --yamsa-warning-text: #a4560f;
+  --yamsa-warning-soft: rgb(255 140 66 / 0.16);
+  --yamsa-danger-text: #b42318;
+  --yamsa-danger-soft: rgb(239 68 68 / 0.12);
+}
+
+[data-bs-theme="dark"] {
+  --yamsa-surface: #3a3740;
+  --yamsa-surface-raised: #443f4a;
+  --yamsa-surface-sunken: #201e21;
+  --yamsa-surface-hover: #4a4650;
+  --yamsa-line: #4c4a4f;
+  --yamsa-line-strong: #605d66;
+  --yamsa-ink: #f4f6fb;
+  --yamsa-ink-muted: #c3bfcc;
+  --yamsa-ink-subtle: #a7a3b1;
+  --yamsa-brand: #6ea8fe;
+  --yamsa-brand-hover: #8ebcfe;
+  --yamsa-brand-text: #9ec0ff;
+  --yamsa-brand-soft: rgb(110 168 254 / 0.16);
+  --yamsa-success-text: #6ee7b7;
+  --yamsa-success-soft: rgb(16 185 129 / 0.18);
+  --yamsa-warning-text: #ffbe8a;
+  --yamsa-warning-soft: rgb(255 140 66 / 0.18);
+  --yamsa-danger-text: #ffa8a1;
+  --yamsa-danger-soft: rgb(239 68 68 / 0.18);
+}
+
+@theme inline {
+  --color-surface: var(--yamsa-surface);
+  --color-surface-raised: var(--yamsa-surface-raised);
+  --color-surface-sunken: var(--yamsa-surface-sunken);
+  --color-surface-hover: var(--yamsa-surface-hover);
+  --color-line: var(--yamsa-line);
+  --color-line-strong: var(--yamsa-line-strong);
+  --color-ink: var(--yamsa-ink);
+  --color-ink-muted: var(--yamsa-ink-muted);
+  --color-ink-subtle: var(--yamsa-ink-subtle);
+  --color-brand: var(--yamsa-brand);
+  --color-brand-hover: var(--yamsa-brand-hover);
+  --color-brand-text: var(--yamsa-brand-text);
+  --color-brand-soft: var(--yamsa-brand-soft);
+  --color-success-text: var(--yamsa-success-text);
+  --color-success-soft: var(--yamsa-success-soft);
+  --color-warning-text: var(--yamsa-warning-text);
+  --color-warning-soft: var(--yamsa-warning-soft);
+  --color-danger-text: var(--yamsa-danger-text);
+  --color-danger-soft: var(--yamsa-danger-soft);
+}
+
+@theme {
+  /* Brand ramp, identical in both themes — for fills that must not shift with the theme. */
+  --color-brand-50: #eef4ff;
+  --color-brand-100: #dbe7ff;
+  --color-brand-200: #bcd4ff;
+  --color-brand-300: #9ec0ff;
+  --color-brand-400: #8ebcfe;
+  --color-brand-500: #6ea8fe;
+  --color-brand-600: #5797fb;
+  --color-brand-700: #3d79db;
+  --color-brand-800: #2f5e97;
+  --color-brand-900: #0b1b33;
+
+  --color-success-500: #10b981;
+  --color-warning-500: #ff8c42;
+  --color-danger-500: #ef4444;
+
+  /* Reads on a brand-filled surface (matches --bs-btn-color of .btn-primary). */
+  --color-on-brand: #0b1b33;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
+  --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.08), 0 14px 32px rgb(0 0 0 / 0.14);
+  --shadow-brand: 0 8px 20px rgb(110 168 254 / 0.28);
+}
+
+/* Tailwind's spacing scale cannot express the notch insets. */
+@utility pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}

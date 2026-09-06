@@ -4,7 +4,7 @@ import pytest
 from django.core.files.base import ContentFile
 from django.urls import reverse
 
-from apps.account.tests.test_utils import build_image_bytes
+from apps.account.tests.test_utils import build_image_bytes, contains_attribute
 from apps.account.views import UserDetailView
 
 pytestmark = pytest.mark.django_db
@@ -27,7 +27,8 @@ def test_get_as_registered_user_own_profile(authenticated_client, user):
     assert "Your account overview" in content
     assert user.name in content
     assert user.email in content
-    assert f"@{user.paypal_me_username}" in content
+    assert contains_attribute(content, "value", user.paypal_me_username)
+    assert contains_attribute(content, "data-profile-mode", "reading")
     assert not has_superuser_admin_link(content)
 
 

@@ -27,7 +27,7 @@ class TestViewProfile:
         detail_page = AccountDetailPage(page, base_url, roommate_path)
         detail_page.navigate()
 
-        detail_page.expect_name(roommate.name)
+        detail_page.expect_member_name(roommate.name)
         detail_page.expect_edit_button_hidden()
         detail_page.expect_security_section_hidden()
 
@@ -53,7 +53,7 @@ class TestViewProfile:
         detail_page = AccountDetailPage(page, base_url, path)
         detail_page.navigate()
 
-        detail_page.expect_name(unrelated_user.name)
+        detail_page.expect_member_name(unrelated_user.name)
 
     def test_guest_sees_guest_mode_banner_on_own_profile(self, logged_in_guest_detail_page):
         logged_in_guest_detail_page.expect_guest_mode_banner_visible()

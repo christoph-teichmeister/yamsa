@@ -1,82 +1,136 @@
 import http
+import json
 
 import pytest
-from django.core.files.base import ContentFile
+from django.test.client import Client
 from django.urls import reverse
 
+from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.tests.factories import UserFactory
-from apps.account.tests.test_utils import build_image_bytes
+from apps.account.tests.test_utils import contains_attribute
 from apps.account.views import UserDetailView, UserUpdateView
 
 pytestmark = pytest.mark.django_db
 
 
-def test_get_foreign_account_forbidden(authenticated_client, user):
-    other_user = UserFactory()
+@pytest.fixture
+def plain_client(user) -> Client:
+    """A client without the HX-Request header, standing in for a direct browser navigation."""
 
-    response = authenticated_client.get(reverse("account:update", kwargs={"pk": other_user.id}))
-
-    assert response.status_code == http.HTTPStatus.FORBIDDEN
-
-
-def test_post_foreign_account_forbidden(authenticated_client, user):
-    other_user = UserFactory()
-    original_name = other_user.name
-
-    response = authenticated_client.post(
-        reverse("account:update", kwargs={"pk": other_user.id}),
-        data={"name": "hijacked", "email": other_user.email},
-    )
-
-    assert response.status_code == http.HTTPStatus.FORBIDDEN
-    other_user.refresh_from_db()
-    assert other_user.name == original_name
+    client = Client()
+    client.force_login(user)
+    return client
 
 
-def test_get_regular(authenticated_client, user):
-    response = authenticated_client.get(reverse("account:update", kwargs={"pk": user.id}))
+class TestUserUpdateView:
+    def test_get_foreign_account_forbidden(self, authenticated_client, user):
+        other_user = UserFactory()
 
-    assert response.status_code == http.HTTPStatus.OK
-    assert response.template_name[0] == UserUpdateView.template_name
+        response = authenticated_client.get(reverse("account:update", kwargs={"pk": other_user.id}))
 
-    content = response.content.decode()
-    assert "Keep your details up to date" in content
-    assert "Need a new password?" in content
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
 
+    def test_post_foreign_account_forbidden(self, authenticated_client, user):
+        other_user = UserFactory()
+        original_name = other_user.name
 
-def test_post_regular(authenticated_client, user):
-    new_name = "new_name"
-    response = authenticated_client.post(
-        reverse("account:update", kwargs={"pk": user.id}),
-        data={"name": new_name, "email": user.email},
-        follow=True,
-    )
+        response = authenticated_client.post(
+            reverse("account:update", kwargs={"pk": other_user.id}),
+            data={"name": "hijacked", "email": other_user.email},
+        )
 
-    assert response.status_code == http.HTTPStatus.OK
-    assert response.template_name[0] == UserDetailView.template_name
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
+        other_user.refresh_from_db()
+        assert other_user.name == original_name
 
-    content = response.content.decode()
-    assert "Your account overview" in content
-    assert "Edit profile" in content
+    def test_get_renders_the_profile_page_with_the_sheet_unlocked(self, authenticated_client, user):
+        response = authenticated_client.get(reverse("account:update", kwargs={"pk": user.id}))
 
-    user.refresh_from_db()
-    assert user.name == new_name
+        assert response.status_code == http.HTTPStatus.OK
+        assert response.template_name[0] == UserUpdateView.template_name
+        assert UserUpdateView.template_name == UserDetailView.template_name
 
+        content = response.content.decode()
+        assert contains_attribute(content, "data-profile-mode", "editing")
+        assert "readonly" not in content
 
-def test_profile_picture_delete(tmp_path, authenticated_client, settings, user):
-    media_root = tmp_path / "media"
-    media_root.mkdir()
-    settings.MEDIA_ROOT = str(media_root)
+    def test_post_answers_with_the_locked_sheet_alone(self, authenticated_client, user):
+        new_name = "new_name"
 
-    user.profile_picture.save("avatar.png", ContentFile(build_image_bytes()), save=True)
-    file_name = user.profile_picture.name
-    assert user.profile_picture.storage.exists(file_name)
+        response = authenticated_client.post(
+            reverse("account:update", kwargs={"pk": user.id}),
+            data={"name": new_name, "email": user.email},
+        )
 
-    response = authenticated_client.post(reverse("account:profile-picture-delete"), follow=True)
+        assert response.status_code == http.HTTPStatus.OK
+        content = response.content.decode()
+        # Only the sheet, so the browser keeps the page it is on instead of reloading it.
+        assert contains_attribute(content, "id", "profile-sheet")
+        assert "<html" not in content
+        assert contains_attribute(content, "data-profile-mode", "reading")
 
-    assert response.status_code == http.HTTPStatus.OK
-    assert UserUpdateView.template_name in response.template_name
+        user.refresh_from_db()
+        assert user.name == new_name
 
-    user.refresh_from_db()
-    assert not user.profile_picture
-    assert not user.profile_picture.storage.exists(file_name)
+    def test_post_triggers_the_webpush_subscription_update(self, authenticated_client, user):
+        response = authenticated_client.post(
+            reverse("account:update", kwargs={"pk": user.id}),
+            data={
+                "name": user.name,
+                "email": user.email,
+                "wants_to_receive_webpush_notifications": "on",
+            },
+        )
+
+        assert json.loads(response.headers["HX-Trigger"]) == {"notificationsEnabled": True}
+
+    def test_post_of_invalid_data_answers_with_the_unlocked_sheet_and_the_error(self, authenticated_client, user):
+        response = authenticated_client.post(
+            reverse("account:update", kwargs={"pk": user.id}),
+            data={"name": "", "email": "not-an-email"},
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        content = response.content.decode()
+        # A rejected save has to leave the fields editable, or the corrections cannot be typed.
+        assert contains_attribute(content, "data-profile-mode", "editing")
+        assert "Enter a valid email address." in content
+
+        user.refresh_from_db()
+        assert user.email != "not-an-email"
+
+    def test_post_of_a_new_language_asks_the_browser_to_reload(self, authenticated_client, user):
+        response = authenticated_client.post(
+            reverse("account:update", kwargs={"pk": user.id}),
+            data={"name": user.name, "email": user.email, "language": "de"},
+        )
+
+        # Everything outside the sheet is still rendered in the previous language.
+        assert response.headers["HX-Refresh"] == "true"
+
+        user.refresh_from_db()
+        assert user.language == "de"
+
+    def test_post_without_htmx_redirects_to_the_profile(self, plain_client, user):
+        new_name = "new_name"
+
+        response = plain_client.post(
+            reverse("account:update", kwargs={"pk": user.id}),
+            data={"name": new_name, "email": user.email},
+            follow=True,
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        assert response.template_name[0] == UserDetailView.template_name
+
+        user.refresh_from_db()
+        assert user.name == new_name
+
+    def test_post_keeps_working_for_the_login_password(self, authenticated_client, user):
+        authenticated_client.post(
+            reverse("account:update", kwargs={"pk": user.id}),
+            data={"name": "renamed", "email": user.email},
+        )
+
+        user.refresh_from_db()
+        assert user.check_password(DEFAULT_PASSWORD)

@@ -1,0 +1,17 @@
+{% comment %}
+  Static label/value row of a profile sheet, for profiles the viewer cannot edit.
+
+  Parameters:
+    row_label       label on the left (required)
+    row_value       the value; falls back to row_placeholder when empty
+    row_prefix      rendered directly in front of a present value, e.g. "@"
+    row_placeholder shown instead of the value when there is none
+{% endcomment %}
+<div class="tw:flex tw:flex-col tw:gap-1 tw:px-5 tw:py-3 tw:@md:flex-row tw:@md:items-baseline tw:@md:gap-4">
+  <p class="tw:m-0 tw:text-sm tw:text-ink-muted tw:@md:w-44 tw:@md:shrink-0">{{ row_label }}</p>
+  {% if row_value %}
+    <p class="tw:m-0 tw:min-w-0 tw:flex-1 tw:px-3 tw:font-medium tw:break-words tw:text-ink">{{ row_prefix }}{{ row_value }}</p>
+  {% else %}
+    <p class="tw:m-0 tw:min-w-0 tw:flex-1 tw:px-3 tw:text-ink-subtle">{{ row_placeholder }}</p>
+  {% endif %}
+</div>
