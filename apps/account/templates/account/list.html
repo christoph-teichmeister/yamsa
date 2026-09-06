@@ -12,7 +12,7 @@
         .people-hero {
             border-radius: 1.25rem;
             padding: 1.75rem;
-            background: linear-gradient(135deg, rgb(var(--yamsa-brand-rgb), 0.16), rgba(50, 205, 153, 0.25));
+            background: linear-gradient(135deg, var(--yamsa-brand-soft), transparent);
             border: 1px solid rgb(var(--yamsa-brand-rgb), 0.15);
             box-shadow: 0 25px 45px rgb(var(--yamsa-brand-rgb), 0.12);
         }
@@ -91,12 +91,12 @@
             border-radius: 999px;
             padding: 0.2rem 0.65rem;
             background: rgb(var(--yamsa-brand-rgb), 0.15);
-            color: var(--yamsa-brand);
+            color: var(--yamsa-brand-text);
         }
 
         .people-pill-guest {
-            background: rgba(255, 193, 7, 0.2);
-            color: rgba(232, 166, 93, 0.9);
+            background: var(--yamsa-warning-soft);
+            color: var(--yamsa-warning-text);
         }
 
         .people-pill-muted {
@@ -124,7 +124,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.3rem;
-            color: var(--yamsa-brand);
+            color: var(--yamsa-brand-text);
         }
 
         .people-avatar img {
@@ -153,7 +153,7 @@
           </div>
           <div class="text-md-end">
             <p class="mb-1 small text-muted">{% trans "Status" %}</p>
-            <span class="badge {% if current_room.is_closed %}bg-secondary{% else %}bg-success{% endif %}">
+            <span class="badge {% if current_room.is_closed %}bg-body-secondary text-body-emphasis{% else %}bg-success-subtle text-success-emphasis{% endif %}">
               {% if current_room.is_closed %}
                 {% trans "Room closed" %}
               {% else %}

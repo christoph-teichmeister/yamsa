@@ -85,7 +85,7 @@
             <small class="room-description text-muted">{{ room.status|room_status_label }}</small>
           {% endif %}
         </div>
-        <span class="badge room-status-badge bg-danger bg-opacity-10 text-danger">{{ room.status|room_status_label }}</span>
+        <span class="badge room-status-badge bg-danger-subtle text-danger-emphasis">{{ room.status|room_status_label }}</span>
       </div>
     {% endfor %}
   </section>
@@ -117,7 +117,7 @@
             <small class="room-description text-muted">{{ room.status|room_status_label }}</small>
           {% endif %}
         </div>
-        <span class="badge room-status-badge bg-secondary bg-opacity-10 text-secondary">{{ room.status|room_status_label }}</span>
+        <span class="badge room-status-badge bg-body-secondary text-body-emphasis">{{ room.status|room_status_label }}</span>
       </div>
     {% endfor %}
   </section>

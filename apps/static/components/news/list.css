@@ -100,7 +100,7 @@
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
     background: rgb(var(--yamsa-brand-rgb), 0.15);
-    color: var(--yamsa-brand);
+    color: var(--yamsa-brand-text);
     font-size: 0.7rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;

@@ -46,7 +46,7 @@
             justify-content: center;
             border-radius: 0.75rem;
             background-color: rgb(var(--yamsa-brand-rgb), 0.1);
-            color: var(--yamsa-brand);
+            color: var(--yamsa-brand-text);
         }
   </style>
   <div class="container-fluid px-0 px-md-2 mt-3">
@@ -131,7 +131,7 @@
               </p>
             </div>
             {% if debt.settled %}
-              <p class="text-success small mb-0 mt-1">
+              <p class="text-success-emphasis small mb-0 mt-1">
                 {% blocktrans with settled_at=debt.settled_at|date trimmed %}
                   Settled on {{ settled_at }}
                 {% endblocktrans %}

@@ -13,6 +13,25 @@
        latter leaves the links at their Bootstrap default. */
     --bs-link-color-rgb: var(--yamsa-link-rgb);
     --bs-border-color: var(--yamsa-line);
+    /* Bootstrap's own neutrals and status tints. Without these its components - badges, subtle
+       backgrounds, .text-body-secondary, every `rgba(var(--bs-body-color-rgb), …)` in this
+       project's CSS - would keep painting from Bootstrap's palette next to ours. */
+    --bs-body-color-rgb: var(--yamsa-ink-rgb);
+    --bs-emphasis-color: var(--yamsa-ink-strong);
+    --bs-secondary-color: var(--yamsa-ink-muted);
+    --bs-secondary-bg: var(--yamsa-surface-hover);
+    --bs-tertiary-bg: var(--yamsa-surface-sunken);
+    --bs-success-text-emphasis: var(--yamsa-success-text);
+    --bs-warning-text-emphasis: var(--yamsa-warning-text);
+    --bs-danger-text-emphasis: var(--yamsa-danger-text);
+    --bs-primary-bg-subtle: var(--yamsa-brand-soft);
+    --bs-success-bg-subtle: var(--yamsa-success-soft);
+    --bs-warning-bg-subtle: var(--yamsa-warning-soft);
+    --bs-danger-bg-subtle: var(--yamsa-danger-soft);
+    --bs-primary-border-subtle: var(--yamsa-brand-border);
+    --bs-success-border-subtle: var(--yamsa-success-border);
+    --bs-warning-border-subtle: var(--yamsa-warning-border);
+    --bs-danger-border-subtle: var(--yamsa-danger-border);
 
     --offcanvas-and-nav-bg: var(--yamsa-surface-sunken);
     --offcanvas-and-nav-color: var(--yamsa-ink);

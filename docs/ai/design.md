@@ -64,7 +64,7 @@ apart. Tailwind exposes the tokens via `@theme inline`; **prefer them over `dark
 | `brand`, `brand-hover`, `brand-text`           | brand fill, its hover, brand-colored text on a surface    |
 | `brand-soft`                                   | tinted brand background (badges, icon tiles, gradients)   |
 | `on-brand`                                     | text and icons on a brand fill                            |
-| `success-*`, `warning-*`, `danger-*`           | `-text` and `-soft` pairs for status                      |
+| `success-*`, `warning-*`, `danger-*`           | `-text`, `-soft` and `-border` triples for status         |
 
 These tokens are the palette in full. There is no second, theme-independent ramp beside them —
 one existed, went unused, and would only have drifted from the tokens that do the work. A colour
@@ -96,10 +96,28 @@ and the numbers in `tailwind.css` are what they are because of them:
 Run the script after touching a colour. It prints every failing pair with its measured ratio, and
 `--verbose` prints all of them.
 
-Never reach for a fixed Bootstrap color (`bg-light`, `text-dark`, `text-bg-light`, `btn-light`,
-`btn-close-white`) or a raw hex in CSS. Those do not switch with the theme, which is how light chips
-with dark text ended up on the dark theme. The theme-aware equivalents are `bg-body-secondary`,
-`text-body-emphasis`, `.btn-surface` (in `base.css`), or a token.
+### Bootstrap's own variables are mapped, its utilities are not
+
+`base.css` points Bootstrap's neutrals and status tints at the tokens —
+`--bs-body-color-rgb`, `--bs-secondary-color`, `--bs-secondary-bg`, `--bs-tertiary-bg`,
+`--bs-emphasis-color`, and the `-text-emphasis` / `-bg-subtle` / `-border-subtle` trio of each
+status. So `bg-success-subtle text-success-emphasis` and `bg-body-secondary text-body-emphasis`
+**are** the palette, and are the pairs to reach for.
+
+What is *not* mapped is `--bs-primary`/`--bs-success`/`--bs-danger`/`--bs-warning` themselves,
+because each drives a text colour (`.text-success`) and a solid fill with forced white text
+(`.text-bg-success`) at once: a value that reads as text is too dark for the fill and vice versa.
+Which is why the fixed status utilities are out of bounds — measured on this palette,
+`.text-danger` and `.text-success` fail on three of the four grounds and `.text-warning` is
+**1.63:1** on the light theme, yellow on white.
+
+Never reach for a fixed Bootstrap color — `bg-light`, `text-dark`, `text-bg-light`, `btn-light`,
+`btn-close-white`, `text-danger`, `text-success`, `text-warning`, `text-bg-*`, solid `bg-success` —
+or a raw hex in CSS. The theme-aware equivalents are the `-subtle`/`-emphasis` pairs,
+`bg-body-secondary`, `.btn-surface` (in `base.css`), or a token.
+
+`brand` is a **fill**. As text it lands at 3.25:1 on a dark surface — the token that reads on a
+surface is `brand-text`.
 
 An SVG **presentation attribute does not resolve `var()`** — a d3 chart has to set its colours as
 inline styles (`.style("stroke", "var(--yamsa-line)")`), not with `.attr()`, or the chart keeps the

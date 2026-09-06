@@ -48,7 +48,7 @@
                              required
                              autocomplete="name">
                       {% for error_message in form.errors.name.data %}
-                        <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                        <small class="text-danger-emphasis d-block mt-1">{{ error_message.message }}</small>
                       {% endfor %}
                     </div>
                     <div class="mb-3">
@@ -61,7 +61,7 @@
                              autocomplete="email"
                              value="{% if form.initial.email %}{{ form.initial.email }}{% endif %}">
                       {% for error_message in form.errors.email.data %}
-                        <small class="text-danger d-block mt-1">{{ error_message.message }}</small>
+                        <small class="text-danger-emphasis d-block mt-1">{{ error_message.message }}</small>
                       {% endfor %}
                     </div>
                     {% include "account/shared_partials/password_input_component.html" with password_autocomplete="new-password" %}

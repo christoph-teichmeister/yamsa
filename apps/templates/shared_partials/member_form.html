@@ -10,7 +10,7 @@
     .member-hero-card {
         border-radius: 1.25rem;
         padding: 1.75rem;
-        background: linear-gradient(145deg, var(--yamsa-brand-soft), rgb(var(--yamsa-brand-rgb), 0.22));
+        background: linear-gradient(145deg, var(--yamsa-brand-soft), transparent);
         border: 1px solid rgb(var(--yamsa-brand-rgb), 0.2);
         box-shadow: 0 20px 45px rgba(15, 23, 42, 0.15);
         color: var(--bs-body-color);
@@ -191,7 +191,7 @@
       </button>
     </div>
     {% if submit_disabled %}
-      <div class="member-helper text-danger fw-semibold mt-2">
+      <div class="member-helper text-danger-emphasis fw-semibold mt-2">
         {% trans "This room is closed, so new members cannot be added." %}
       </div>
     {% endif %}

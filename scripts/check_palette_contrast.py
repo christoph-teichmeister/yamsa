@@ -21,6 +21,7 @@ NON_TEXT_RATIO = 3.0
 MAX_HUE_SPREAD = 20
 
 TEXT_TOKENS = (
+    "ink-strong",
     "ink",
     "ink-muted",
     "ink-subtle",

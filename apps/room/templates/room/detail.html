@@ -52,10 +52,10 @@
         <div class="room-info-card">
           <p class="text-uppercase small">{% trans "Closing readiness" %}</p>
           {% if room.can_be_closed %}
-            <h5 class="text-success mb-1">{% trans "Ready to close" %}</h5>
+            <h5 class="text-success-emphasis mb-1">{% trans "Ready to close" %}</h5>
             <p class="mb-0">{% trans "No unsettled debts remain." %}</p>
           {% else %}
-            <h5 class="text-warning mb-1">{% trans "Outstanding balances" %}</h5>
+            <h5 class="text-warning-emphasis mb-1">{% trans "Outstanding balances" %}</h5>
             <p class="mb-0">{% trans "Settle open debts before closing." %}</p>
           {% endif %}
         </div>

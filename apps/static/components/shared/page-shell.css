@@ -9,7 +9,7 @@
 .page-hero {
     border-radius: 1.25rem;
     padding: 1.75rem;
-    background: linear-gradient(135deg, rgb(var(--yamsa-brand-rgb), 0.18), rgba(32, 201, 151, 0.22));
+    background: linear-gradient(135deg, var(--yamsa-brand-soft), transparent);
     border: 1px solid rgb(var(--yamsa-brand-rgb), 0.18);
 }
 

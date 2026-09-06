@@ -50,6 +50,6 @@ def test_post_email_invalid(authenticated_client):
     assert response.status_code == http.HTTPStatus.OK
     assert response.template_name[0] == UserForgotPasswordView.template_name
     content = response.content.decode()
-    assert "text-danger d-block mt-1" in content
+    assert "text-danger-emphasis d-block mt-1" in content
     assert unknown_email in content
     assert "is not registered with yamsa" in content

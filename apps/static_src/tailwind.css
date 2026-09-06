@@ -53,7 +53,8 @@
      than the decorative `line`. */
   --yamsa-line-strong: #8895b0;
   --yamsa-ink-strong: #0f1319;
-  --yamsa-ink: #1b2027;
+  /* A triplet as well: Bootstrap tints its own neutrals from --bs-body-color-rgb. */
+  --yamsa-ink-rgb: 27, 32, 39;
   --yamsa-ink-muted: #4d5665;
   --yamsa-ink-subtle: #606a7f;
   --yamsa-brand-text: #1f5bbf;
@@ -61,11 +62,11 @@
   /* A triplet, because Bootstrap builds every link colour from --bs-link-color-rgb. */
   --yamsa-link-rgb: 31, 91, 191;
   --yamsa-success-text: #0c7047;
-  --yamsa-success-soft: rgb(16 185 129 / 0.14);
+  --yamsa-success-soft: rgb(var(--yamsa-success-rgb), 0.14);
   --yamsa-warning-text: #8f4d0d;
-  --yamsa-warning-soft: rgb(255 140 66 / 0.16);
+  --yamsa-warning-soft: rgb(var(--yamsa-warning-rgb), 0.16);
   --yamsa-danger-text: #b42318;
-  --yamsa-danger-soft: rgb(239 68 68 / 0.12);
+  --yamsa-danger-soft: rgb(var(--yamsa-danger-rgb), 0.12);
 }
 
 [data-bs-theme="dark"] {
@@ -79,18 +80,18 @@
   --yamsa-line: #343945;
   --yamsa-line-strong: #667082;
   --yamsa-ink-strong: #ffffff;
-  --yamsa-ink: #e8ebf2;
+  --yamsa-ink-rgb: 232, 235, 242;
   --yamsa-ink-muted: #aab3c2;
   --yamsa-ink-subtle: #959daf;
   --yamsa-brand-text: #8fb8ff;
   --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.18);
   --yamsa-link-rgb: 143, 184, 255;
   --yamsa-success-text: #5fd6a4;
-  --yamsa-success-soft: rgb(16 185 129 / 0.18);
+  --yamsa-success-soft: rgb(var(--yamsa-success-rgb), 0.18);
   --yamsa-warning-text: #f0ad6d;
-  --yamsa-warning-soft: rgb(255 140 66 / 0.18);
+  --yamsa-warning-soft: rgb(var(--yamsa-warning-rgb), 0.18);
   --yamsa-danger-text: #ff9c94;
-  --yamsa-danger-soft: rgb(239 68 68 / 0.18);
+  --yamsa-danger-soft: rgb(var(--yamsa-danger-rgb), 0.18);
 }
 
 /* Identical in both themes. Kept out of the blocks above so that a value which does not switch
@@ -102,8 +103,20 @@
      label below 4.5:1, and the label may not change with the state. */
   --yamsa-brand-hover: #2660cc;
   --yamsa-link: rgb(var(--yamsa-link-rgb));
+  --yamsa-ink: rgb(var(--yamsa-ink-rgb));
   /* Reads on a brand-filled surface. */
   --yamsa-on-brand: #ffffff;
+
+  /* The status hues do not change with the theme - only how strongly they are mixed into it
+     does, which is what the `-soft` tints above do. The border step is the same in both: enough
+     to define a card's edge, not enough to shout. */
+  --yamsa-success-rgb: 16, 185, 129;
+  --yamsa-warning-rgb: 255, 140, 66;
+  --yamsa-danger-rgb: 239, 68, 68;
+  --yamsa-success-border: rgb(var(--yamsa-success-rgb), 0.4);
+  --yamsa-warning-border: rgb(var(--yamsa-warning-rgb), 0.4);
+  --yamsa-danger-border: rgb(var(--yamsa-danger-rgb), 0.4);
+  --yamsa-brand-border: rgb(var(--yamsa-brand-rgb), 0.4);
 }
 
 @theme inline {

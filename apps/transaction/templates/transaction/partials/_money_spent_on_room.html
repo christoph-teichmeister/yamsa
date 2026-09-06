@@ -15,7 +15,7 @@
             padding: 0.35rem 0.75rem;
             border-radius: 999px;
             background: rgb(var(--yamsa-brand-rgb), 0.08);
-            color: var(--yamsa-brand);
+            color: var(--yamsa-brand-text);
             font-size: 0.8rem;
         }
 
@@ -46,12 +46,12 @@
             right: 0;
             bottom: 0;
             left: 0;
-            background: linear-gradient(90deg, rgb(var(--yamsa-brand-rgb), 0.9), rgba(111, 66, 193, 0.9));
+            background: linear-gradient(90deg, var(--yamsa-brand), var(--yamsa-brand-hover));
             width: var(--graph-width, 0%);
         }
 
         .graph-bar.graph-bar-secondary::after {
-            background: linear-gradient(90deg, rgba(25, 135, 84, 0.9), rgba(32, 201, 151, 0.9));
+            background: linear-gradient(90deg, rgb(var(--yamsa-success-rgb), 0.75), rgb(var(--yamsa-success-rgb), 0.95));
         }
 
         .graph-bar.graph-bar-tertiary::after {

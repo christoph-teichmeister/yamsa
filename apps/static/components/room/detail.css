@@ -7,7 +7,7 @@
 .room-hero {
     border-radius: 1.5rem;
     padding: 2rem;
-    background: linear-gradient(135deg, rgb(var(--yamsa-brand-rgb), 0.18), rgba(255, 193, 7, 0.2));
+    background: linear-gradient(135deg, var(--yamsa-brand-soft), transparent);
     border: 1px solid rgb(var(--yamsa-brand-rgb), 0.15);
     box-shadow: 0 25px 45px rgb(var(--yamsa-brand-rgb), 0.12);
 }
@@ -30,13 +30,13 @@
     font-size: 0.8rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    background: rgba(var(--bs-success-rgb, 25, 135, 84), 0.18);
-    color: #1fbe74;
+    background: var(--yamsa-success-soft);
+    color: var(--yamsa-success-text);
 }
 
 .room-status-pill-closed {
-    background: rgba(var(--bs-danger-rgb, 220, 53, 69), 0.18);
-    color: #ef3e4f;
+    background: var(--yamsa-danger-soft);
+    color: var(--yamsa-danger-text);
 }
 
 .room-edit-btn {
