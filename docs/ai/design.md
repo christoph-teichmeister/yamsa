@@ -48,17 +48,19 @@ at its own selector.
 
 ## Colors
 
-Semantic colors are CSS custom properties that switch with the theme and are exposed to Tailwind via
-`@theme inline`. **Prefer them over `dark:` variants** — `tw:bg-surface` is already correct in both
-themes. The values mirror `apps/static/base.css`, so a Tailwind page sits flush inside the
-Bootstrap shell.
+`apps/static_src/tailwind.css` holds the palette of the **whole app** — the `--yamsa-*` tokens
+there are the only place a color is written down. Bootstrap has no values of its own:
+`apps/static/base.css` maps `--bs-*` onto the same tokens, once, so the two frameworks cannot drift
+apart. Tailwind exposes the tokens via `@theme inline`; **prefer them over `dark:` variants** —
+`tw:bg-surface` is already correct in both themes.
 
 | Token                                          | Use                                                       |
 |------------------------------------------------|-----------------------------------------------------------|
-| `surface`, `surface-raised`, `surface-sunken`  | card, elevated card, inset panel / page ground            |
+| `canvas`                                       | the page ground the shell paints (Bootstrap's body bg)    |
+| `surface`, `surface-raised`, `surface-sunken`  | card, elevated card, inset panel                          |
 | `surface-hover`                                | hover fill for ghost buttons and rows                     |
 | `line`, `line-strong`                          | default border, border of interactive elements            |
-| `ink`, `ink-muted`, `ink-subtle`               | primary, secondary, tertiary text                         |
+| `ink-strong`, `ink`, `ink-muted`, `ink-subtle` | heading, primary, secondary, tertiary text                |
 | `brand`, `brand-hover`, `brand-text`           | brand fill, its hover, brand-colored text on a surface    |
 | `brand-soft`                                   | tinted brand background (badges, icon tiles, gradients)   |
 | `on-brand`                                     | text and icons on a brand fill                            |
@@ -66,8 +68,32 @@ Bootstrap shell.
 
 `brand-50` … `brand-900` is the raw ramp for fills that must not shift with the theme.
 
-The theme itself is driven by Bootstrap's `data-bs-theme` attribute on `<html>` (set by
-`apps/static/js/navigation.js`), so `tw:dark:…` keys off `[data-bs-theme="dark"]`.
+Two tokens are kept as bare triplets, `--yamsa-brand-rgb` and `--yamsa-link-rgb`, because Bootstrap
+composes its own colors from `--bs-primary-rgb` and `--bs-link-color-rgb`: a link colour set only as
+`--bs-link-color` never reaches an `<a>`.
+
+Never reach for a fixed Bootstrap color (`bg-light`, `text-dark`, `text-bg-light`) or a raw hex in
+CSS. Those do not switch with the theme, which is how light chips with dark text ended up on the
+dark theme. The theme-aware equivalents are `bg-body-secondary`, `text-body-emphasis`, or a token.
+
+## Themes
+
+Both themes are first-class; neither is a filter over the other. Three things carry that:
+
+- **The preference is `light`, `dark` or `auto`**, stored under `theme` in `localStorage`; `auto`
+  follows `prefers-color-scheme` and stays selected while the system flips the page.
+  `apps/static/js/navigation.js` owns it and marks the chosen button with `aria-pressed`.
+- **The theme is applied before the first paint** by the inline script in
+  `core/base.html`'s `<head>` — a deferred bundle would show every reader on the other theme a full
+  page of the wrong one first. That script does the minimum (read the preference, set
+  `data-bs-theme`) and nothing else; it deliberately sits before the stylesheets so it never waits
+  for them.
+- **`color-scheme` is declared per theme**, next to the tokens. Scrollbars, form controls and every
+  other native widget follow the theme through that property alone. The browser's own chrome
+  follows `<meta name="theme-color">`, which `navigation.js` re-points at `--yamsa-canvas` on every
+  switch.
+
+`tw:dark:…` keys off `[data-bs-theme="dark"]`, the attribute all of this sets.
 
 Radius, spacing and type scale are Tailwind's defaults — they already match the intended scale, so
 they are deliberately **not** redefined. Only `--shadow-card`, `--shadow-card-hover` and

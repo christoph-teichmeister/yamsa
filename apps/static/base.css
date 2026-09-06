@@ -1,20 +1,31 @@
-[data-bs-theme=light] {
-    --bs-body-bg: #f6f8fb;
-    --bs-body-color: #1f232a;
-    --bs-heading-color: #141820;
-    --bs-primary: #6ea8fe;
-    --bs-primary-rgb: 110, 168, 254;
-    --bs-primary-text-emphasis: #2f5e97;
-    --bs-link-color: #3d79db;
-    --bs-border-color: #d6dce8;
+/* Colours come from the palette in apps/static_src/tailwind.css: its tokens already switch with
+   the theme, so Bootstrap's variables are mapped onto them once here instead of once per theme.
+   Only what genuinely differs between the themes is repeated below. */
+:root {
+    --bs-body-bg: var(--yamsa-canvas);
+    --bs-body-color: var(--yamsa-ink);
+    --bs-heading-color: var(--yamsa-ink-strong);
+    --bs-primary: var(--yamsa-brand);
+    --bs-primary-rgb: var(--yamsa-brand-rgb);
+    --bs-primary-text-emphasis: var(--yamsa-brand-text);
+    --bs-link-color: var(--yamsa-link);
+    /* Bootstrap colours every `a` from the triplet, not from --bs-link-color; setting only the
+       latter leaves the links at their Bootstrap default. */
+    --bs-link-color-rgb: var(--yamsa-link-rgb);
+    --bs-border-color: var(--yamsa-line);
 
-    --offcanvas-and-nav-bg: #eff4fb;
-    --offcanvas-and-nav-color: #1f232a;
-    --offcanvas-and-nav-text-muted: #7c879b;
-    --nav-active-color: #3d79db;
-    --list-group-border-color: #c9d2e3;
+    --offcanvas-and-nav-bg: var(--yamsa-surface-sunken);
+    --offcanvas-and-nav-color: var(--yamsa-ink);
+    --offcanvas-and-nav-text-muted: var(--yamsa-ink-subtle);
+    --nav-active-color: var(--yamsa-link);
+    --list-group-border-color: var(--yamsa-line-strong);
+}
 
-    --yamsa-room-circle-color: #4d5669;
+[data-bs-theme=dark] {
+    /* The dark link colour is a tint too pale to also mark the active nav item, and the list
+       group reads better on the plain line than on the stronger one. */
+    --nav-active-color: var(--yamsa-brand);
+    --list-group-border-color: var(--yamsa-line);
 }
 
 [data-bs-theme=light] .navbar-nav .p-e-color {
@@ -25,39 +36,12 @@
     color: var(--nav-active-color);
 }
 
-[data-bs-theme=light] .btn-primary {
-    --bs-btn-bg: #6ea8fe;
-    --bs-btn-border-color: #6ea8fe;
-    --bs-btn-hover-bg: #5797fb;
-    --bs-btn-hover-border-color: #5797fb;
-    --bs-btn-color: #0b1b33;
-}
-
-[data-bs-theme=dark] {
-    --bs-body-bg: #2d2a2e;
-    --bs-body-color: #f4f6fb;
-    --bs-heading-color: #fdfdff;
-    --bs-primary: #6ea8fe;
-    --bs-primary-rgb: 110, 168, 254;
-    --bs-primary-text-emphasis: #9ec0ff;
-    --bs-link-color: #9ec0ff;
-    --bs-border-color: #4c4a4f;
-
-    --offcanvas-and-nav-bg: #201e21;
-    --offcanvas-and-nav-color: #f4f6fb;
-    --offcanvas-and-nav-text-muted: #a7a3b1;
-    --nav-active-color: #6ea8fe;
-    --list-group-border-color: #4c4a4f;
-
-    --yamsa-room-circle-color: #f4f6fb;
-}
-
-[data-bs-theme=dark] .btn-primary {
-    --bs-btn-bg: #6ea8fe;
-    --bs-btn-border-color: #6ea8fe;
-    --bs-btn-hover-bg: #8ebcfe;
-    --bs-btn-hover-border-color: #8ebcfe;
-    --bs-btn-color: #0b1b33;
+.btn-primary {
+    --bs-btn-bg: var(--yamsa-brand);
+    --bs-btn-border-color: var(--yamsa-brand);
+    --bs-btn-hover-bg: var(--yamsa-brand-hover);
+    --bs-btn-hover-border-color: var(--yamsa-brand-hover);
+    --bs-btn-color: var(--yamsa-on-brand);
 }
 
 :root {
@@ -202,8 +186,8 @@ body {
 }
 
 .toast-yamsa-inner {
-    background: #eef0f3;
-    color: #1f232a;
+    background: var(--yamsa-surface-raised);
+    color: var(--yamsa-ink);
     border-top: 4px solid transparent;
     pointer-events: auto;
     border-radius: 0.9rem;
@@ -215,25 +199,21 @@ body {
 }
 
 .toast-yamsa-inner.toast-primary {
-    background: linear-gradient(45deg, rgb(45, 42, 46), rgb(61, 121, 219, 0.25));
-    border-top-color: #3d79db;
-    color: #ffffff;
+    background: linear-gradient(45deg, transparent, var(--yamsa-brand-soft)), var(--yamsa-surface-raised);
+    border-top-color: var(--yamsa-brand);
 }
 
 .toast-yamsa-inner.toast-success {
-    background: linear-gradient(45deg, rgb(45, 42, 46), rgb(27, 122, 60, 0.25));
-    border-top-color: #1b7a3c;
-    color: #ffffff;
+    background: linear-gradient(45deg, transparent, var(--yamsa-success-soft)), var(--yamsa-surface-raised);
+    border-top-color: var(--yamsa-success-text);
 }
 
 .toast-yamsa-inner.toast-warning {
-    background: linear-gradient(45deg, rgb(45, 42, 46), rgb(180, 83, 9, 0.25));
-    border-top-color: #b45309;
-    color: #ffffff;
+    background: linear-gradient(45deg, transparent, var(--yamsa-warning-soft)), var(--yamsa-surface-raised);
+    border-top-color: var(--yamsa-warning-text);
 }
 
 .toast-yamsa-inner.toast-danger {
-    background: linear-gradient(45deg, rgb(45, 42, 46), rgb(153, 27, 27, 0.25));
-    border-top-color: #991b1b;
-    color: #ffffff;
+    background: linear-gradient(45deg, transparent, var(--yamsa-danger-soft)), var(--yamsa-surface-raised);
+    border-top-color: var(--yamsa-danger-text);
 }

@@ -107,7 +107,7 @@
     height: 3.25rem;
     border-radius: 50%;
     border: none;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.1);
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.15);
     display: flex;
     align-items: center;
@@ -126,8 +126,8 @@
 }
 
 .room-circle.closed {
-    background: rgba(220, 53, 69, 0.15);
-    color: #a71d2a;
+    background: var(--yamsa-danger-soft);
+    color: var(--yamsa-danger-text);
 }
 
 .room-circle.closed.selected {
@@ -149,7 +149,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(110, 168, 254, 0.15);
+    background: var(--yamsa-brand-soft);
 }
 
 .profile-avatar img,
@@ -198,7 +198,10 @@
 
 /* Skeleton Screen (placeholder animation) */
 .skeleton-item {
-    background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    background: linear-gradient(90deg,
+        rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.05),
+        rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.12),
+        rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.05));
     background-size: 200% 100%;
     animation: skeleton-loading 1.5s ease-in-out infinite;
     border-radius: 0.5rem;

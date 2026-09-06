@@ -27,23 +27,32 @@
 @custom-variant reading ([data-profile-mode="reading"] &);
 @custom-variant editing ([data-profile-mode="editing"] &);
 
-/* Semantic colours resolve per theme, so templates need no `dark:` variant for them:
-   `tw:bg-surface` is correct in both themes. Values mirror apps/static/base.css. */
+/* The palette of the whole app, both frameworks. Bootstrap does not get its own values:
+   apps/static/base.css maps `--bs-*` onto these tokens, so every colour has exactly one
+   definition per theme and the two systems cannot drift apart.
+   The tokens switch with the theme, which is why templates need no `dark:` variant for them —
+   `tw:bg-surface` is already correct in both. */
 :root,
 [data-bs-theme="light"] {
+  /* Scrollbars, form controls and every other native widget follow the theme only through this. */
+  color-scheme: light;
+
+  --yamsa-canvas: #f6f8fb;
   --yamsa-surface: #ffffff;
   --yamsa-surface-raised: #ffffff;
   --yamsa-surface-sunken: #eff4fb;
   --yamsa-surface-hover: #e4ecf7;
   --yamsa-line: #d6dce8;
   --yamsa-line-strong: #c9d2e3;
+  --yamsa-ink-strong: #141820;
   --yamsa-ink: #1f232a;
   --yamsa-ink-muted: #5b6577;
   --yamsa-ink-subtle: #7c879b;
-  --yamsa-brand: #6ea8fe;
   --yamsa-brand-hover: #5797fb;
   --yamsa-brand-text: #2f5e97;
-  --yamsa-brand-soft: rgb(110 168 254 / 0.12);
+  --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.12);
+  /* A triplet, because Bootstrap builds every link colour from --bs-link-color-rgb. */
+  --yamsa-link-rgb: 61, 121, 219;
   --yamsa-success-text: #0f7a45;
   --yamsa-success-soft: rgb(16 185 129 / 0.14);
   --yamsa-warning-text: #a4560f;
@@ -53,19 +62,23 @@
 }
 
 [data-bs-theme="dark"] {
+  color-scheme: dark;
+
+  --yamsa-canvas: #2d2a2e;
   --yamsa-surface: #3a3740;
   --yamsa-surface-raised: #443f4a;
   --yamsa-surface-sunken: #201e21;
   --yamsa-surface-hover: #4a4650;
   --yamsa-line: #4c4a4f;
   --yamsa-line-strong: #605d66;
+  --yamsa-ink-strong: #fdfdff;
   --yamsa-ink: #f4f6fb;
   --yamsa-ink-muted: #c3bfcc;
   --yamsa-ink-subtle: #a7a3b1;
-  --yamsa-brand: #6ea8fe;
   --yamsa-brand-hover: #8ebcfe;
   --yamsa-brand-text: #9ec0ff;
-  --yamsa-brand-soft: rgb(110 168 254 / 0.16);
+  --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.16);
+  --yamsa-link-rgb: 158, 192, 255;
   --yamsa-success-text: #6ee7b7;
   --yamsa-success-soft: rgb(16 185 129 / 0.18);
   --yamsa-warning-text: #ffbe8a;
@@ -74,13 +87,25 @@
   --yamsa-danger-soft: rgb(239 68 68 / 0.18);
 }
 
+/* Identical in both themes. Kept out of the blocks above so that a value which does not switch
+   cannot be given two definitions that drift. */
+:root {
+  --yamsa-brand-rgb: 110, 168, 254;
+  --yamsa-brand: rgb(var(--yamsa-brand-rgb));
+  --yamsa-link: rgb(var(--yamsa-link-rgb));
+  /* Reads on a brand-filled surface. */
+  --yamsa-on-brand: #0b1b33;
+}
+
 @theme inline {
+  --color-canvas: var(--yamsa-canvas);
   --color-surface: var(--yamsa-surface);
   --color-surface-raised: var(--yamsa-surface-raised);
   --color-surface-sunken: var(--yamsa-surface-sunken);
   --color-surface-hover: var(--yamsa-surface-hover);
   --color-line: var(--yamsa-line);
   --color-line-strong: var(--yamsa-line-strong);
+  --color-ink-strong: var(--yamsa-ink-strong);
   --color-ink: var(--yamsa-ink);
   --color-ink-muted: var(--yamsa-ink-muted);
   --color-ink-subtle: var(--yamsa-ink-subtle);
@@ -88,6 +113,7 @@
   --color-brand-hover: var(--yamsa-brand-hover);
   --color-brand-text: var(--yamsa-brand-text);
   --color-brand-soft: var(--yamsa-brand-soft);
+  --color-on-brand: var(--yamsa-on-brand);
   --color-success-text: var(--yamsa-success-text);
   --color-success-soft: var(--yamsa-success-soft);
   --color-warning-text: var(--yamsa-warning-text);
@@ -112,9 +138,6 @@
   --color-success-500: #10b981;
   --color-warning-500: #ff8c42;
   --color-danger-500: #ef4444;
-
-  /* Reads on a brand-filled surface (matches --bs-btn-color of .btn-primary). */
-  --color-on-brand: #0b1b33;
 
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
   --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.08), 0 14px 32px rgb(0 0 0 / 0.14);
