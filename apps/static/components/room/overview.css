@@ -1,6 +1,11 @@
+/* Dashboard room list: one compact row per room, so a phone screen shows the whole list
+   instead of two and a half cards. */
+
 .room-overview-card {
     background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.04);
     border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.15);
+    border-left-width: 3px;
+    border-left-color: transparent;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     cursor: pointer;
 }
@@ -12,6 +17,17 @@
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.22);
 }
 
+/* The edge marks the same direction the amount's colour does, so it survives a hover that
+   recolours the other three sides. Doubled class and placed last: :hover above scores 0-2-0
+   and would otherwise win on the left side too. */
+.room-overview-card.room-overview-card-owing {
+    border-left-color: var(--bs-warning-text-emphasis, #ffda6a);
+}
+
+.room-overview-card.room-overview-card-receiving {
+    border-left-color: var(--bs-success-text-emphasis, #75b798);
+}
+
 .room-overview-card-closed {
     opacity: 0.85;
 }
@@ -20,19 +36,148 @@
     font-style: italic;
 }
 
-.room-overview-name {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0;
+.room-overview-body {
+    padding: 0.75rem 0.875rem;
 }
 
-.room-overview-balance {
+/* Two classes on purpose: .room-circle sets 3.25rem and must lose here regardless of file order. */
+.room-overview-card .room-overview-circle {
+    width: 2.5rem;
+    height: 2.5rem;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    font-size: 0.875rem;
+}
+
+/* min-width on the flex item is what lets the ellipsis below take effect at all. */
+.room-overview-text {
+    min-width: 0;
+}
+
+.room-overview-name {
+    font-size: 0.975rem;
+    font-weight: 600;
+    margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.room-overview-meta {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.room-overview-amounts {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+    text-align: right;
+}
+
+.room-overview-amount {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1.2;
+}
+
+/* Kept small and tight on purpose: this label is the widest thing in the amount column and
+   every pixel it takes is one the room name loses to an ellipsis on a phone. */
+.room-overview-amount-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--bs-secondary-color, #9aa3ab);
+}
+
+.room-overview-amount-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.room-overview-amount.owing .room-overview-amount-value {
+    color: var(--bs-warning-text-emphasis, #ffda6a);
+}
+
+.room-overview-amount.receiving .room-overview-amount-value {
+    color: var(--bs-success-text-emphasis, #75b798);
+}
+
+.room-overview-amount.balanced .room-overview-amount-value,
+.room-overview-amount.settled .room-overview-amount-value {
     font-size: 0.8rem;
-    border-radius: 999px;
-    padding: 0.35rem 0.75rem;
+    font-weight: 500;
+    color: var(--bs-secondary-color, #9aa3ab);
 }
 
 .room-overview-create {
     border-style: dashed;
     border-color: rgba(var(--bs-primary-rgb, 110, 168, 254), 0.45);
+}
+
+/* One tile per direction and currency - amounts of different currencies are never merged. */
+.room-balance-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.room-balance-tile {
+    flex: 1 1 8rem;
+    max-width: 16rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.15);
+}
+
+.room-balance-tile.owing {
+    background: var(--bs-warning-bg-subtle, #332701);
+    border-color: var(--bs-warning-border-subtle, #664d03);
+}
+
+.room-balance-tile.receiving {
+    background: var(--bs-success-bg-subtle, #051b11);
+    border-color: var(--bs-success-border-subtle, #0f5132);
+}
+
+.room-balance-caption {
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--bs-secondary-color, #9aa3ab);
+}
+
+.room-balance-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+
+.room-balance-tile.owing .room-balance-value {
+    color: var(--bs-warning-text-emphasis, #ffda6a);
+}
+
+.room-balance-tile.receiving .room-balance-value {
+    color: var(--bs-success-text-emphasis, #75b798);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .room-overview-card {
+        transition: none;
+    }
+
+    .room-overview-card:hover,
+    .room-overview-card:focus-visible {
+        transform: none;
+    }
 }

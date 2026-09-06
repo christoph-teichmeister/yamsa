@@ -1316,16 +1316,17 @@ msgid "Start a new group with friends"
 msgstr "Starte eine neue Gruppe mit Freunden"
 
 #, python-format
-msgid "Open, but balanced (%(currency)s)"
-msgstr "Offen, aber ausgeglichen (%(currency)s)"
+msgid "Balanced (%(currency)s)"
+msgstr "Ausgeglichen (%(currency)s)"
 
-#, python-format
-msgid "You owe %(amount)s%(currency)s"
-msgstr "Du schuldest %(amount)s%(currency)s"
+msgid "You owe"
+msgstr "Du schuldest"
 
-#, python-format
-msgid "You get back %(amount)s%(currency)s"
-msgstr "Du bekommst %(amount)s%(currency)s zurück"
+msgid "You get back"
+msgstr "Du bekommst"
+
+msgid "Your open balance"
+msgstr "Deine offene Bilanz"
 
 msgid "All settled"
 msgstr "Alles beglichen"

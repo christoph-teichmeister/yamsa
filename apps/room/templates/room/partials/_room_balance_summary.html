@@ -1,0 +1,20 @@
+{% load i18n %}
+{% if totals %}
+  {% trans "Your open balance" as summary_label %}
+  <section class="room-balance-summary" aria-label="{{ summary_label }}">
+    {% for total in totals %}
+      {% if total.owed_by_user %}
+        <div class="room-balance-tile owing">
+          <span class="room-balance-caption">{% trans "You owe" %}</span>
+          <span class="room-balance-value">{{ total.owed_by_user|format_with_thousands }}{{ total.currency_sign }}</span>
+        </div>
+      {% endif %}
+      {% if total.owed_to_user %}
+        <div class="room-balance-tile receiving">
+          <span class="room-balance-caption">{% trans "You get back" %}</span>
+          <span class="room-balance-value">{{ total.owed_to_user|format_with_thousands }}{{ total.currency_sign }}</span>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </section>
+{% endif %}

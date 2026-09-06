@@ -87,3 +87,85 @@ class TestWelcomePartialView:
             authenticated_client.get(reverse("core:welcome"))
 
         payment_reminder.assert_not_called()
+
+
+class TestOpenRoomOrdering:
+    def test_rooms_the_user_owes_in_come_before_rooms_owing_the_user(
+        self, authenticated_client, room, user, guest_user
+    ):
+        currency = CurrencyFactory(sign="€")
+        receiving_room = RoomFactory(created_by=user)
+        receiving_room.users.add(user, guest_user)
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="5.00")
+        create_debt(room=receiving_room, debitor=guest_user, creditor=user, currency=currency, value="80.00")
+
+        entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
+
+        assert [entry.slug for entry in entries] == [room.slug, receiving_room.slug]
+
+    def test_within_the_same_direction_the_larger_amount_comes_first(
+        self, authenticated_client, room, user, guest_user
+    ):
+        currency = CurrencyFactory(sign="€")
+        bigger_room = RoomFactory(created_by=user)
+        bigger_room.users.add(user, guest_user)
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="5.00")
+        create_debt(room=bigger_room, debitor=user, creditor=guest_user, currency=currency, value="500.00")
+
+        entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
+
+        assert [entry.slug for entry in entries] == [bigger_room.slug, room.slug]
+
+    def test_settled_rooms_come_last(self, authenticated_client, room, user, guest_user):
+        owing_room = RoomFactory(created_by=user)
+        owing_room.users.add(user, guest_user)
+        create_debt(room=owing_room, debitor=user, creditor=guest_user, currency=CurrencyFactory(), value="1.00")
+
+        entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
+
+        assert [entry.slug for entry in entries] == [owing_room.slug, room.slug]
+
+    def test_a_room_owing_in_one_currency_and_receiving_in_another_ranks_as_owing(
+        self, authenticated_client, room, user, guest_user
+    ):
+        mixed_room = RoomFactory(created_by=user)
+        mixed_room.users.add(user, guest_user)
+        create_debt(
+            room=mixed_room, debitor=user, creditor=guest_user, currency=CurrencyFactory(sign="€"), value="1.00"
+        )
+        create_debt(
+            room=mixed_room, debitor=guest_user, creditor=user, currency=CurrencyFactory(sign="$"), value="99.00"
+        )
+
+        entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
+
+        assert entries[0].slug == mixed_room.slug
+        assert entries[0].user_owes is True
+
+
+class TestOpenBalanceSummary:
+    def test_closed_rooms_are_left_out_of_the_totals(self, authenticated_client, room, closed_room, user, guest_user):
+        currency = CurrencyFactory(sign="€")
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00")
+        create_debt(room=closed_room, debitor=user, creditor=guest_user, currency=currency, value="90.00")
+
+        totals = authenticated_client.get(reverse("core:welcome")).context_data["open_balance_totals"]
+
+        assert [total.owed_by_user for total in totals] == [Decimal("10.00")]
+
+    def test_the_summed_amount_is_rendered(self, authenticated_client, room, user, guest_user):
+        currency = CurrencyFactory(sign="€")
+        other_room = RoomFactory(created_by=user)
+        other_room.users.add(user, guest_user)
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00")
+        create_debt(room=other_room, debitor=user, creditor=guest_user, currency=currency, value="2.50")
+
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        assert "12.50€" in content or "12,50€" in content
+
+    def test_a_user_without_debts_gets_no_summary(self, authenticated_client, room):
+        response = authenticated_client.get(reverse("core:welcome"))
+
+        assert response.context_data["open_balance_totals"] == []
+        assert "room-balance-summary" not in response.content.decode()
