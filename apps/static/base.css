@@ -67,6 +67,38 @@
     --bs-btn-active-color: var(--yamsa-ink);
 }
 
+/* The same literals reach further than the buttons: every focus ring in the app, the checked
+   state of a checkbox and the active list-group row are Bootstrap's own blue, not ours. Only the
+   components this project actually uses are mapped here. */
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: var(--yamsa-brand);
+    box-shadow: 0 0 0 0.25rem rgb(var(--yamsa-brand-rgb), 0.25);
+}
+
+/* The tick and the switch knob inside are a white SVG that Bootstrap does not theme, so this fill
+   has to carry white on both themes - the same reason the auth hero uses it. */
+.form-check-input:checked,
+.form-check-input[type=checkbox]:indeterminate {
+    background-color: var(--yamsa-brand-strong);
+    border-color: var(--yamsa-brand-strong);
+}
+
+.nav-link:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgb(var(--yamsa-brand-rgb), 0.25);
+}
+
+.btn-close {
+    --bs-btn-close-focus-shadow: 0 0 0 0.25rem rgb(var(--yamsa-brand-rgb), 0.25);
+}
+
+.list-group {
+    --bs-list-group-active-bg: var(--yamsa-brand);
+    --bs-list-group-active-border-color: var(--yamsa-brand);
+    --bs-list-group-active-color: var(--yamsa-on-brand);
+}
+
 /* Bootstrap writes every one of these as the literal #0d6efd rather than reading --bs-primary,
    so an outline button was a third blue next to the brand and the text tone. */
 .btn-outline-primary {
@@ -103,6 +135,14 @@
     --bs-btn-hover-bg: var(--yamsa-brand-hover);
     --bs-btn-hover-border-color: var(--yamsa-brand-hover);
     --bs-btn-color: var(--yamsa-on-brand);
+    --bs-btn-hover-color: var(--yamsa-on-brand);
+    --bs-btn-active-bg: var(--yamsa-brand-hover);
+    --bs-btn-active-border-color: var(--yamsa-brand-hover);
+    --bs-btn-active-color: var(--yamsa-on-brand);
+    --bs-btn-disabled-bg: var(--yamsa-brand);
+    --bs-btn-disabled-border-color: var(--yamsa-brand);
+    --bs-btn-disabled-color: var(--yamsa-on-brand);
+    --bs-btn-focus-shadow-rgb: var(--yamsa-brand-rgb);
 }
 
 :root {
