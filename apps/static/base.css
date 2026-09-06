@@ -67,6 +67,36 @@
     --bs-btn-active-color: var(--yamsa-ink);
 }
 
+/* Bootstrap writes every one of these as the literal #0d6efd rather than reading --bs-primary,
+   so an outline button was a third blue next to the brand and the text tone. */
+.btn-outline-primary {
+    --bs-btn-color: var(--yamsa-brand-text);
+    --bs-btn-border-color: var(--yamsa-brand-text);
+    --bs-btn-hover-color: var(--yamsa-on-brand);
+    --bs-btn-hover-bg: var(--yamsa-brand);
+    --bs-btn-hover-border-color: var(--yamsa-brand);
+    --bs-btn-active-color: var(--yamsa-on-brand);
+    --bs-btn-active-bg: var(--yamsa-brand);
+    --bs-btn-active-border-color: var(--yamsa-brand);
+    --bs-btn-focus-shadow-rgb: var(--yamsa-brand-rgb);
+    --bs-btn-disabled-color: var(--yamsa-brand-text);
+    --bs-btn-disabled-border-color: var(--yamsa-brand-text);
+}
+
+/* Same literals, same problem: #6c757d reads at 3.23:1 on a dark surface. */
+.btn-outline-secondary {
+    --bs-btn-color: var(--yamsa-ink-muted);
+    --bs-btn-border-color: var(--yamsa-line-strong);
+    --bs-btn-hover-color: var(--yamsa-ink);
+    --bs-btn-hover-bg: var(--yamsa-surface-hover);
+    --bs-btn-hover-border-color: var(--yamsa-line-strong);
+    --bs-btn-active-color: var(--yamsa-ink);
+    --bs-btn-active-bg: var(--yamsa-surface-hover);
+    --bs-btn-active-border-color: var(--yamsa-line-strong);
+    --bs-btn-disabled-color: var(--yamsa-ink-subtle);
+    --bs-btn-disabled-border-color: var(--yamsa-line);
+}
+
 .btn-primary {
     --bs-btn-bg: var(--yamsa-brand);
     --bs-btn-border-color: var(--yamsa-brand);
@@ -138,10 +168,16 @@ body {
 }
 
 .auth-hero {
-    background: linear-gradient(135deg, rgb(var(--yamsa-brand-rgb), 0.95), rgba(17, 56, 129, 0.92));
+    background: linear-gradient(135deg, var(--yamsa-brand-strong), #113881);
     min-height: 100%;
     color: #fff;
     gap: 0.5rem;
+}
+
+/* Stands on the hero, which is the same on both themes: the label needs the tone that carries on
+   white there, not the one that follows the theme. */
+.auth-hero .btn-light {
+    color: var(--yamsa-brand-strong);
 }
 
 .hero-cta {

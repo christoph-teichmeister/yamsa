@@ -116,17 +116,25 @@ Never reach for a fixed Bootstrap color — `bg-light`, `text-dark`, `text-bg-li
 or a raw hex in CSS. The theme-aware equivalents are the `-subtle`/`-emphasis` pairs,
 `bg-body-secondary`, `.btn-surface` (in `base.css`), or a token.
 
-### `brand` fills, `brand-text` reads
+### One blue per theme
 
-`brand` is a **fill**: a button, a switch, a focus ring, a tinted background. Everything the eye
-reads as content or as an accent beside it — text, icons, a chart line, a status bar, the active
-nav item — takes `brand-text` (`text-primary-emphasis` on the Bootstrap side), which is the tone
-that carries on a surface: lighter than the fill on the dark theme, darker on the light one.
+`brand` is the **fill** — a button, a switch, a focus ring, a tinted background — and it *follows
+the theme*: a deep blue on the light theme, the same light blue as the text on the dark one. So
+`on-brand`, the label standing on it, flips with it: white on light, near-black on dark. A single
+fill for both themes cannot work — dark enough to carry white is too dark to read as an accent on
+a dark ground, and light enough to read there is too light for a white label.
 
-Mixing the two is not a contrast bug but it looks like one: an amount in `text-primary` next to a
-name in the link colour puts two different blues in the same row. The one place the fill is right
-as a label is a control that is itself a fixed light colour, such as the button on the auth hero,
-where `brand-text` would be a light blue on white.
+`brand-text` (`text-primary-emphasis` on the Bootstrap side) is what everything read rather than
+filled takes: text, icons, a chart line, a status bar, the active nav item. On the dark theme it
+equals the fill, which is the point — a button, a link and an amount are then one colour.
+
+`brand-strong` is the exception, the one brand tone that does not switch. It belongs to surfaces
+that look the same on both themes and carry white either way: the auth hero and the label of the
+white button standing on it.
+
+**Bootstrap's `.btn-outline-*` writes its colours as literals** (`#0d6efd`, `#6c757d`), not from
+`--bs-primary`, so `base.css` maps every one of their `--bs-btn-*` variables. Without that an
+outline button is a third blue, and the grey one reads at 3.23:1 on a dark surface.
 
 An SVG **presentation attribute does not resolve `var()`** — a d3 chart has to set its colours as
 inline styles (`.style("stroke", "var(--yamsa-line)")`), not with `.attr()`, or the chart keeps the
