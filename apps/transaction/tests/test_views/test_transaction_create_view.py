@@ -1,4 +1,5 @@
 import http
+import json
 from datetime import UTC, datetime
 from decimal import Decimal
 from unittest.mock import patch
@@ -11,7 +12,8 @@ from apps.account.tests.factories import UserFactory
 from apps.currency.tests.factories import CurrencyFactory
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
-from apps.transaction.models import ChildTransaction, ParentTransaction
+from apps.transaction.models import Category, ChildTransaction, ParentTransaction
+from apps.transaction.services.room_category_service import RoomCategoryService
 from apps.transaction.views import TransactionListView
 
 pytestmark = pytest.mark.django_db
@@ -25,6 +27,7 @@ class TestTransactionCreateView:
         response = authenticated_client.post(
             reverse("transaction:create", kwargs={"room_slug": room.slug}),
             data={
+                "category": Category.objects.get(slug="groceries").id,
                 "description": "My description",
                 "currency": room.preferred_currency.id,
                 "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
@@ -50,6 +53,58 @@ class TestTransactionCreateView:
         for member in room.users.all():
             qs = ChildTransaction.objects.filter(paid_for=member, value=child_transaction_value)
             assert qs.exists()
+
+    def test_get_renders_a_chip_per_category_without_preselecting_one(self, authenticated_client, room):
+        response = authenticated_client.get(reverse("transaction:create", kwargs={"room_slug": room.slug}))
+        markup = self._category_field_markup(response)
+
+        categories = list(RoomCategoryService(room=room).get_category_queryset())
+        assert categories
+        for category in categories:
+            assert category.name in markup
+            assert category.emoji in markup
+
+        # The response is minified, so count the radios rather than match their attribute quoting.
+        assert markup.count("btn-check") == len(categories)
+        # Nothing is preselected: the user has to pick a category deliberately.
+        assert "checked" not in markup
+
+    @staticmethod
+    def _category_field_markup(response) -> str:
+        content = response.content.decode()
+        start = content.index("data-category-field")
+        return content[start : content.index("</fieldset>", start)]
+
+    def test_get_offers_a_way_into_the_category_manager(self, authenticated_client, room):
+        response = authenticated_client.get(reverse("transaction:create", kwargs={"room_slug": room.slug}))
+
+        manager_url = reverse("transaction:category-manager", kwargs={"room_slug": room.slug})
+        assert manager_url in response.content.decode()
+
+    def test_get_exposes_the_category_suggestion_index(self, authenticated_client, room):
+        response = authenticated_client.get(reverse("transaction:create", kwargs={"room_slug": room.slug}))
+
+        index = json.loads(response.context_data["category_suggestion_index"])
+        assert index["rewe"] == Category.objects.get(slug="groceries").id
+        assert "data-category-suggestion-index" in response.content.decode()
+
+    def test_post_without_a_category_is_rejected(self, authenticated_client, room, user):
+        response = authenticated_client.post(
+            reverse("transaction:create", kwargs={"room_slug": room.slug}),
+            data={
+                "description": "Uncategorised",
+                "currency": room.preferred_currency.id,
+                "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
+                "paid_by": user.id,
+                "room": room.id,
+                "paid_for": [str(member.id) for member in room.users.all()],
+                "room_slug": room.slug,
+                "value": 10,
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        assert not ParentTransaction.objects.filter(description="Uncategorised").exists()
 
     def test_post_closed_room_is_rejected(self, authenticated_client, closed_room, user):
         response = authenticated_client.post(
@@ -95,6 +150,7 @@ class TestTransactionCreateView:
 
         form = TransactionCreateForm(
             data={
+                "category": Category.objects.get(slug="groceries").id,
                 "description": "Test",
                 "currency": currency.id,
                 "paid_at": timezone.now(),

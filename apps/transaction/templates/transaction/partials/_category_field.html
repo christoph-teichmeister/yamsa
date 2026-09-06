@@ -1,0 +1,51 @@
+{% load i18n room_tags %}
+{% comment %}
+Shared by the transaction create and edit forms so both offer the same control.
+Expects "category_field" (a bound form field); "category_suggestion_index" is optional and
+switches on the suggestion markup static/js/category-suggestion.js drives.
+{% endcomment %}
+<fieldset data-category-field
+          {% if category_suggestion_index %}data-category-suggestion-index="{{ category_suggestion_index }}"{% endif %}>
+  <legend class="form-label fw-semibold fs-6 mb-1">{% trans "Category" %}</legend>
+  <p class="text-muted small mb-2">{% trans "Groups this expense in the room's charts and filters." %}</p>
+  <div class="d-flex flex-wrap gap-2">
+    {% for category in category_field.field.queryset %}
+      <input type="radio"
+             class="btn-check"
+             name="{{ category_field.html_name }}"
+             id="{{ category_field.auto_id }}_{{ category.id }}"
+             value="{{ category.id }}"
+             autocomplete="off"
+             data-category-slug="{{ category.slug }}"
+             required
+             {% if category.id|stringformat:"s" == category_field.value|stringformat:"s" %}checked{% endif %} />
+      <label class="btn btn-outline-secondary rounded-pill d-inline-flex align-items-center gap-2"
+             data-category-slug="{{ category.slug }}"
+             for="{{ category_field.auto_id }}_{{ category.id }}">
+        <span aria-hidden="true">{{ category.emoji }}</span>
+        <span>{{ category.name }}</span>
+      </label>
+    {% endfor %}
+  </div>
+  {% if category_field.errors %}
+    <div class="invalid-feedback d-block">{{ category_field.errors.0 }}</div>
+  {% endif %}
+  {% if category_suggestion_index %}
+    <p class="form-text text-primary d-none mb-0 mt-2"
+       data-category-suggestion-hint>
+      <i class="bi bi-lightbulb me-1" aria-hidden="true"></i>
+      {% trans "Suggested from your description — pick another one any time." %}
+    </p>
+  {% endif %}
+  {% comment %}
+  Opens in a new tab on purpose: the manager replaces #body via htmx, which would
+  discard everything already typed into this form.
+  {% endcomment %}
+  <a class="btn btn-link btn-sm px-0 text-decoration-none"
+     href="{% room_url 'transaction:category-manager' %}"
+     target="_blank"
+     rel="noopener">
+    <i class="bi bi-gear me-1" aria-hidden="true"></i>
+    {% trans "Manage categories" %}
+  </a>
+</fieldset>

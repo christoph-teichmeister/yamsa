@@ -39,10 +39,41 @@ class TestTransactionFormStructure:
         slugs = [category.slug for category in form.fields["category"].queryset]
         assert any(slug.startswith("house-tag") for slug in slugs)
 
+    def test_edit_form_respects_room_specific_categories(self, room):
+        service = RoomCategoryService(room=room)
+        service.create_room_category(name="Edit Tag", emoji="✏️", color="#654321")
+        parent_transaction = ParentTransactionFactory(room=room)
+
+        from apps.transaction.forms.transaction_edit_form import TransactionEditForm
+
+        form = TransactionEditForm(instance=parent_transaction)
+
+        slugs = [category.slug for category in form.fields["category"].queryset]
+        assert any(slug.startswith("edit-tag") for slug in slugs)
+
+    def test_create_form_requires_a_category(self, room, user):
+        currency = CurrencyFactory()
+        form_data = self._build_create_form_data(room, user, currency, list(room.users.all()))
+        del form_data["category"]
+
+        form = TransactionCreateForm(data=form_data, request=MagicMock(user=user), room=room)
+
+        assert not form.is_valid()
+        assert "category" in form.errors
+
+    def test_edit_form_requires_a_category(self):
+        from apps.transaction.forms.transaction_edit_form import TransactionEditForm
+
+        parent_transaction = ParentTransactionFactory()
+        form = TransactionEditForm(instance=parent_transaction)
+
+        assert form.fields["category"].required
+
     def _build_create_form_data(self, room, user, currency, paid_for_users, description="Test transaction"):
         from django.utils import timezone
 
         return {
+            "category": Category.objects.get(slug="groceries").id,
             "description": description,
             "currency": currency.id,
             "paid_at": timezone.now(),

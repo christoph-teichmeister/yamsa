@@ -11,7 +11,7 @@ from django.utils.datastructures import MultiValueDict
 
 from apps.currency.tests.factories import CurrencyFactory
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
-from apps.transaction.models import Receipt
+from apps.transaction.models import Category, Receipt
 
 pytestmark = pytest.mark.django_db
 
@@ -29,6 +29,7 @@ def currency():
 
 def _transaction_payload(user, room, currency_id) -> dict[str, Any]:
     return {
+        "category": Category.objects.get(slug="groceries").id,
         "description": "Receipt upload",
         "currency": currency_id,
         "paid_at": datetime(2020, 1, 1, 12, 0, tzinfo=UTC),

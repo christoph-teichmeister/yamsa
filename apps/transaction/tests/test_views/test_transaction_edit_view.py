@@ -103,6 +103,22 @@ class TestTransactionEditView:
         parent_transaction.refresh_from_db()
         assert parent_transaction.description == "Original"
 
+    def test_edit_form_preselects_the_current_category(self, authenticated_client, room, user):
+        category = next(
+            room_category.category
+            for room_category in RoomCategoryService(room=room).get_categories()
+            if room_category.category.slug == "transport"
+        )
+        parent_transaction = ParentTransactionFactory(room=room, paid_by=user, category=category)
+
+        response = authenticated_client.get(
+            reverse("transaction:edit", kwargs={"room_slug": room.slug, "pk": parent_transaction.id})
+        )
+
+        soup = BeautifulSoup(response.content.decode(), "html.parser")
+        checked = soup.select("input[name='category'][checked]")
+        assert [radio["value"] for radio in checked] == [str(category.id)]
+
     def test_post_rebalances_child_transactions_when_total_changes(self, authenticated_client, room, user, guest_user):
         parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
         default_category = RoomCategoryService(room=room).get_default_category()

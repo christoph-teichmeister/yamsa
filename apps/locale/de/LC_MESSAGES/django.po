@@ -1629,12 +1629,6 @@ msgstr "Verwenden, wenn die Ausgabe früher stattfand."
 msgid "Defaults to the room preference."
 msgstr "Standardmäßig wird die Raumpräferenz verwendet."
 
-msgid "Category"
-msgstr "Kategorie"
-
-msgid "Tag this expense for dashboards and charts."
-msgstr "Markiere diese Ausgabe für Dashboards und Diagramme."
-
 msgid "Notes"
 msgstr "Notizen"
 
@@ -1758,9 +1752,6 @@ msgstr ""
 "                                    Aktuelle Aufteilung: %(split_total)s%(split_currency)s\n"
 "                                "
 
-msgid "Use categories to group similar spend."
-msgstr "Nutze Kategorien, um ähnliche Ausgaben zu bündeln."
-
 msgid "Receipts stay on the detail page, so upload PDFs there instead of here."
 msgstr "Belege bleiben auf der Detailseite, lade PDFs dort statt hier hoch."
 
@@ -1868,6 +1859,18 @@ msgstr "Tippe eine Zeile oder das Augensymbol an, um die Split-Details anzusehen
 
 msgid "The floating '+' button lets you capture a new transaction."
 msgstr "Der schwebende '+'-Button ermöglicht dir, eine neue Transaktion zu erfassen."
+
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "Groups this expense in the room's charts and filters."
+msgstr "Bündelt diese Ausgabe in den Diagrammen und Filtern des Raums."
+
+msgid "Suggested from your description — pick another one any time."
+msgstr "Aus der Beschreibung vorgeschlagen — du kannst jederzeit eine andere wählen."
+
+msgid "Manage categories"
+msgstr "Kategorien verwalten"
 
 msgid "Back to debts"
 msgstr "Zurück zu Schulden"
