@@ -47,6 +47,14 @@ class TestRoomOverviewService:
         assert entry.is_closed is True
         assert entry.target_url == reverse("room:detail", kwargs={"room_slug": closed_room.slug})
 
+    def test_a_closed_room_carries_no_balance(self, closed_room, user, guest_user):
+        currency = CurrencyFactory(sign="€")
+        create_debt(room=closed_room, debitor=user, creditor=guest_user, currency=currency, value="99.00")
+
+        entries = RoomOverviewService(user=user).get_entries()
+
+        assert entry_for(entries, closed_room).balances == ()
+
     def test_status_label_is_resolved(self, room, closed_room, user):
         entries = RoomOverviewService(user=user).get_entries()
 
