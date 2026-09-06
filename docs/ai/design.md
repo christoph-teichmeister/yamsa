@@ -31,7 +31,10 @@ Bootstrap, and both are enforced by the CSS entrypoint:
    - `p` keeps `margin-bottom: 1rem` → always set an explicit margin utility;
    - `a` keeps Bootstrap's link color and underline → `tw:no-underline` plus a color utility for
      link-buttons;
-   - `button` keeps the UA background → outline and ghost buttons need `tw:bg-transparent`;
+   - `button` keeps the UA background **and its UA border** (`2px outset`; Bootstrap resets it
+     only in `.btn`) → outline and ghost buttons need `tw:bg-transparent`, and every button
+     needs a border of its own: `tw:border tw:border-transparent` on a filled one, so it has
+     the same border box as the outlined button beside it and swapping them moves nothing;
    - `select` and `input` are unstyled without `.form-control` → style them fully, `select` needs
      `tw:appearance-none` and its own chevron;
    - `tw:border` sets width only (border color defaults to `currentColor` without Preflight) →
@@ -108,6 +111,12 @@ edit mode. So:
   `hx-swap="outerHTML"`), so the page shell, side menu and scroll position stay untouched. The view
   answers with the sheet partial for htmx requests and redirects for plain ones.
 
+What must **not** go into the edit cycle is anything that only exists while editing and sits
+above the fields: it grows the header and pushes every row down. The profile photo used to do
+exactly that (an upload hint plus a delete button) and now runs on its own cycle instead — see
+below. When in doubt, measure it: `test_entering_edit_mode_does_not_move_the_rows` compares the
+first row's offset before and after the switch, on a phone viewport where the header stacks.
+
 Two variants drive the visible difference, `tw:reading:` and `tw:editing:`, keyed off
 `data-profile-mode` on the sheet root. Field appearance uses the native `tw:read-only:` and
 `tw:disabled:` variants instead, so a control's look follows its actual state rather than a class:
@@ -127,6 +136,27 @@ the bundle runs and the page works when it never runs.
 Do not add a loading indicator for a swap this small. The save button is disabled for the duration
 (`hx-disabled-elt`) and that is the whole feedback; an `htmx-indicator` also keeps its box at
 opacity 0 and would widen the button permanently.
+
+## Sub-cycles: parts that update on their own
+
+Not everything on a page belongs to the page's own save. The profile photo has its own upload and
+delete endpoints, its own narrow form (`ProfilePictureForm`), and swaps only itself
+(`hx-target="#profile-photo"`). Three things follow, and they generalise to any part that works
+this way:
+
+- **It leaves the rest alone.** Because the swap replaces only the photo, whether the surrounding
+  sheet is being edited is never in question — no mode has to be carried through the request and
+  back.
+- **Its own affordance, in both modes.** The avatar is a button whenever it is on screen, opening a
+  dialog that shows the photo full size and offers upload and delete next to it. Nothing about it
+  appears or disappears with edit mode.
+- **Its form ignores the rest of the post.** htmx sends the enclosing form's fields along, so the
+  narrow form must have exactly the field it owns — every other key is then ignored by
+  construction rather than by a filter someone has to maintain.
+
+A `<dialog>` swapped back in with the `open` attribute is *not* in the top layer, so the backdrop
+and Escape are dead. `profile-sheet.js` re-opens it with `showModal()` after the swap; check
+`:modal`, not the attribute, to tell the two apart.
 
 ## Component patterns
 
@@ -169,13 +199,13 @@ tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:
 tw:uppercase
 ```
 
-**Primary button**
+**Primary button** — `tw:border tw:border-transparent` is load-bearing, see the Preflight notes.
 
 ```
-tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:bg-brand tw:px-5
-tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition
-tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2
-tw:focus-visible:outline-brand tw:active:scale-95
+tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border
+tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand
+tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2
+tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95
 ```
 
 **Secondary button** — swap `tw:border-line-strong tw:text-ink tw:hover:bg-surface-hover` for
@@ -240,6 +270,7 @@ Playwright's `check()` keep working.
 - `shared_partials/_toggle_switch.html` — switch-styled checkbox; read-only unless
   `toggle_editable` is passed
 - `account/partials/_profile_sheet.html` — the own profile, read and edit in one markup
+- `account/partials/_profile_photo.html` — the avatar, its dialog and its own upload cycle
 - `account/partials/_profile_value_row.html` — static label/value row
 - `account/partials/_profile_badges.html` — role and PayPal pills
 

@@ -9,10 +9,10 @@ from django.views import generic
 from apps.account.constants import LANGUAGE_SESSION_KEY
 from apps.account.forms import EditUserForm
 from apps.account.models import User
-from apps.account.views.mixins.profile_sheet_response import ProfileSheetResponseMixin
+from apps.account.views.mixins.profile_partial_response import ProfilePartialResponseMixin
 
 
-class UserUpdateView(ProfileSheetResponseMixin, mixins.LoginRequiredMixin, generic.UpdateView):
+class UserUpdateView(ProfilePartialResponseMixin, mixins.LoginRequiredMixin, generic.UpdateView):
     # The profile is one page that switches between reading and editing in place, so this view
     # renders the very same template — only with the sheet unlocked.
     template_name = "account/detail.html"

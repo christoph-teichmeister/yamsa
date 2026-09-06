@@ -22,7 +22,7 @@ def user_with_profile_picture(tmp_path, settings, user):
 
 
 class TestUserProfilePictureDeleteView:
-    def test_post_deletes_the_file_and_answers_with_the_unlocked_sheet(
+    def test_post_deletes_the_file_and_answers_with_the_photo_alone(
         self, authenticated_client, user_with_profile_picture
     ):
         file_name = user_with_profile_picture.profile_picture.name
@@ -31,19 +31,19 @@ class TestUserProfilePictureDeleteView:
 
         assert response.status_code == http.HTTPStatus.OK
         content = response.content.decode()
-        # Removing the picture happens mid-edit, so the sheet comes back still editable.
-        assert contains_attribute(content, "id", "profile-sheet")
-        assert contains_attribute(content, "data-profile-mode", "editing")
+        # Only the photo: the surrounding sheet keeps whatever edit state the viewer left it in.
+        assert contains_attribute(content, "id", "profile-photo")
+        assert not contains_attribute(content, "id", "profile-sheet")
 
         user_with_profile_picture.refresh_from_db()
         assert not user_with_profile_picture.profile_picture
         assert not user_with_profile_picture.profile_picture.storage.exists(file_name)
 
-    def test_post_without_htmx_redirects_back_into_the_edit_state(self, user_with_profile_picture):
+    def test_post_without_htmx_redirects_to_the_profile(self, user_with_profile_picture):
         client = Client()
         client.force_login(user_with_profile_picture)
 
         response = client.post(reverse("account:profile-picture-delete"), follow=True)
 
         assert response.status_code == http.HTTPStatus.OK
-        assert response.redirect_chain[-1][0] == reverse("account:update", kwargs={"pk": user_with_profile_picture.id})
+        assert response.redirect_chain[-1][0] == reverse("account:detail", kwargs={"pk": user_with_profile_picture.id})

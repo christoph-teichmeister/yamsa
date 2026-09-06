@@ -8,50 +8,24 @@
 
   Saving posts the sheet and swaps it back in place, so the response of UserUpdateView must be
   this partial. `profile_is_editing` keeps the server-rendered state in sync with the client one.
+
+  The photo is not part of that cycle — see _profile_photo.html — so entering edit mode adds
+  nothing to the header and the rows below it stay put.
 {% endcomment %}
 <form id="profile-sheet"
       class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
       method="post"
-      enctype="multipart/form-data"
       action="{% url 'account:update' pk=user.id %}"
       data-profile-sheet
       data-profile-mode="{% if profile_is_editing %}editing{% else %}reading{% endif %}"
       hx-post="{% url 'account:update' pk=user.id %}"
-      hx-encoding="multipart/form-data"
       hx-target="this"
       hx-swap="outerHTML"
       hx-disabled-elt="find [data-profile-save]">
   {% csrf_token %}
   <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:p-5 tw:@md:p-6">
     <div class="tw:flex tw:flex-col tw:gap-4 tw:@md:flex-row tw:@md:items-center">
-      <div class="tw:relative tw:size-20 tw:shrink-0">
-        <span class="tw:flex tw:size-20 tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-full tw:bg-brand-soft tw:ring-2 tw:ring-brand/40">
-          <img class="tw:h-full tw:w-full tw:object-cover"
-               alt="{% trans "Profile photo" %}"
-               loading="lazy"
-               width="80"
-               height="80"
-               data-profile-picture-preview
-               {% if user.profile_picture %}src="{{ user.profile_picture_url }}" data-original-src="{{ user.profile_picture_url }}" data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"{% else %}hidden{% endif %}>
-          <span class="tw:text-3xl tw:font-semibold tw:tracking-wider tw:text-brand-text"
-                data-profile-picture-placeholder
-                {% if user.profile_picture %}hidden{% endif %}>
-            {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
-          </span>
-        </span>
-        <label class="tw:absolute tw:-right-1 tw:-bottom-1 tw:hidden tw:size-8 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-full tw:border-2 tw:border-surface tw:bg-brand tw:text-on-brand tw:shadow-sm tw:transition tw:hover:bg-brand-hover tw:editing:flex"
-               for="profile_picture"
-               title="{% trans "Change photo" %}">
-          <i class="bi bi-camera" aria-hidden="true"></i>
-          <span class="tw:sr-only">{% trans "Change photo" %}</span>
-        </label>
-        <input id="profile_picture"
-               class="tw:hidden"
-               type="file"
-               name="profile_picture"
-               accept="image/*"
-               {% if not profile_is_editing %}disabled{% endif %}>
-      </div>
+      {% include "account/partials/_profile_photo.html" %}
       <div class="tw:min-w-0 tw:flex-1">
         <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Your account overview" %}</p>
         <h1 id="profile-name"
@@ -59,7 +33,7 @@
       </div>
       <div class="tw:flex tw:shrink-0 tw:flex-wrap tw:gap-2 tw:@md:w-64 tw:@md:justify-end">
         <button id="edit-profile-button"
-                class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:editing:hidden"
+                class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:editing:hidden"
                 type="button"
                 data-profile-edit>
           <i class="bi bi-pencil" aria-hidden="true"></i>
@@ -70,7 +44,7 @@
                 type="button"
                 data-profile-cancel>{% trans "Cancel" %}</button>
         <button id="save-profile-button"
-                class="tw:hidden tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:opacity-60 tw:editing:inline-flex"
+                class="tw:hidden tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:opacity-60 tw:editing:inline-flex"
                 type="submit"
                 data-profile-save>{% trans "Save changes" %}</button>
       </div>
@@ -78,24 +52,6 @@
     <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
       {% include "account/partials/_profile_badges.html" with user=user %}
     </div>
-    <div class="tw:mt-4 tw:hidden tw:flex-wrap tw:items-center tw:gap-3 tw:editing:flex">
-      <p class="tw:m-0 tw:text-xs tw:text-ink-subtle">
-        {% trans "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB." %}
-      </p>
-      <button class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-lg tw:border tw:border-danger-500/60 tw:bg-transparent tw:px-3 tw:py-1.5 tw:text-xs tw:font-semibold tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:cursor-not-allowed tw:disabled:opacity-50"
-              type="button"
-              hx-post="{% url 'account:profile-picture-delete' %}"
-              hx-target="#profile-sheet"
-              hx-swap="outerHTML"
-              hx-confirm="{% trans "Remove your profile picture?" %}"
-              {% if not user.profile_picture %}disabled{% endif %}>
-        <i class="bi bi-trash" aria-hidden="true"></i>
-        {% trans "Remove photo" %}
-      </button>
-    </div>
-    {% for error_message in form.errors.profile_picture.data %}
-      <p class="tw:mt-2 tw:mb-0 tw:text-sm tw:text-danger-text tw:reading:hidden">{{ error_message.message }}</p>
-    {% endfor %}
   </div>
   <div class="tw:border-t tw:border-line">
     <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Profile" %}</p>
@@ -207,7 +163,7 @@
   <div id="security-section" class="tw:border-t tw:border-line">
     <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Security" %}</p>
     <div class="tw:divide-y tw:divide-line">
-      <button class="tw:flex tw:w-full tw:items-center tw:gap-3 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+      <button class="tw:flex tw:w-full tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
               type="button"
               hx-get="{% url 'account:change-password' pk=user.id %}"
               hx-target="#body"
@@ -224,7 +180,7 @@
         </span>
         <i class="bi bi-chevron-right tw:text-ink-subtle" aria-hidden="true"></i>
       </button>
-      <button class="tw:flex tw:w-full tw:items-center tw:gap-3 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+      <button class="tw:flex tw:w-full tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
               type="button"
               hx-get="{% url 'account:security' pk=user.id %}"
               hx-target="#body"

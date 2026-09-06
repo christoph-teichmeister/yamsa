@@ -12,6 +12,7 @@ urlpatterns = [
     path("passkeys/delete/", views.PasskeyDeleteView.as_view(), name="passkey-delete"),
     path("detail/<int:pk>", views.UserDetailView.as_view(), name="detail"),
     path("update/<int:pk>/", views.UserUpdateView.as_view(), name="update"),
+    path("profile-picture/update/", views.UserProfilePictureUpdateView.as_view(), name="profile-picture-update"),
     path("profile-picture/delete/", views.UserProfilePictureDeleteView.as_view(), name="profile-picture-delete"),
     path("change-password/<int:pk>/", views.UserChangePasswordView.as_view(), name="change-password"),
     path("guest/login/", views.AuthenticateGuestUserView.as_view(), name="guest-login"),

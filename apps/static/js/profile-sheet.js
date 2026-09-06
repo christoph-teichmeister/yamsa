@@ -7,15 +7,15 @@
   window.__yamsaProfileSheetReady = true;
 
   const SHEET_SELECTOR = "[data-profile-sheet]";
-  // Every control of the sheet except the CSRF token, which must stay enabled to be posted.
-  const FIELD_SELECTOR = "input:not([type='hidden']), select, textarea";
-  const PREVIEW_SELECTOR = "[data-profile-picture-preview]";
-  const PLACEHOLDER_SELECTOR = "[data-profile-picture-placeholder]";
+  // Every control of the sheet except the CSRF token, which must stay enabled to be posted, and
+  // the photo's file input, which belongs to the photo's own cycle rather than to edit mode.
+  const FIELD_SELECTOR = "input:not([type='hidden']):not([type='file']), select, textarea";
+  const DIALOG_SELECTOR = "[data-profile-photo-dialog]";
 
   // A select cannot be readonly and a disabled field is not submitted — so read mode disables the
   // controls that have no readonly state and relies on readonly for the rest.
   const lock = (field, locked) => {
-    if (field.tagName === "SELECT" || field.type === "checkbox" || field.type === "file") {
+    if (field.tagName === "SELECT" || field.type === "checkbox") {
       field.disabled = locked;
       return;
     }
@@ -38,29 +38,27 @@
     }
   };
 
-  const resetPicturePreview = (sheet) => {
-    const preview = sheet.querySelector(PREVIEW_SELECTOR);
-    const placeholder = sheet.querySelector(PLACEHOLDER_SELECTOR);
-    if (!preview) {
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest(
+      "[data-profile-edit], [data-profile-cancel], [data-profile-photo-open], [data-profile-photo-close]",
+    );
+    if (!trigger) {
       return;
     }
 
-    const originalSource = preview.dataset.originalSrc;
-    if (originalSource) {
-      preview.src = originalSource;
-      preview.hidden = false;
-    } else {
-      preview.removeAttribute("src");
-      preview.hidden = true;
+    if (trigger.matches("[data-profile-photo-open]")) {
+      const dialog = trigger.closest("#profile-photo").querySelector(DIALOG_SELECTOR);
+      if (dialog) {
+        dialog.showModal();
+      }
+      return;
     }
-    if (placeholder) {
-      placeholder.hidden = Boolean(originalSource);
-    }
-  };
 
-  document.addEventListener("click", (event) => {
-    const trigger = event.target.closest("[data-profile-edit], [data-profile-cancel]");
-    if (!trigger) {
+    if (trigger.matches("[data-profile-photo-close]")) {
+      const dialog = trigger.closest(DIALOG_SELECTOR);
+      if (dialog) {
+        dialog.close();
+      }
       return;
     }
 
@@ -71,7 +69,6 @@
 
     if (trigger.matches("[data-profile-cancel]")) {
       sheet.reset();
-      resetPicturePreview(sheet);
       setMode(sheet, "reading");
       return;
     }
@@ -79,38 +76,22 @@
     setMode(sheet, "editing");
   });
 
-  document.addEventListener("change", (event) => {
-    const fileInput = event.target;
-    if (!fileInput.matches("input[type='file']") || !fileInput.closest(SHEET_SELECTOR)) {
-      return;
+  // A click on the backdrop lands on the dialog element itself, never on its content.
+  document.addEventListener("click", (event) => {
+    const dialog = event.target;
+    if (dialog.matches && dialog.matches(DIALOG_SELECTOR)) {
+      dialog.close();
     }
+  });
 
-    const sheet = fileInput.closest(SHEET_SELECTOR);
-    const preview = sheet && sheet.querySelector(PREVIEW_SELECTOR);
-    if (!preview) {
-      return;
+  // The swap that answers an upload or a delete replaces the dialog, so a dialog that has to stay
+  // open comes back with the `open` attribute — which does not put it in the top layer. Re-open it
+  // properly so the backdrop and Escape keep working.
+  document.addEventListener("htmx:afterSwap", (event) => {
+    const dialog = event.target.querySelector && event.target.querySelector(DIALOG_SELECTOR);
+    if (dialog && dialog.hasAttribute("open") && !dialog.matches(":modal")) {
+      dialog.close();
+      dialog.showModal();
     }
-
-    const file = fileInput.files && fileInput.files[0];
-    if (!file) {
-      resetPicturePreview(sheet);
-      return;
-    }
-
-    const placeholder = sheet.querySelector(PLACEHOLDER_SELECTOR);
-    const reader = new FileReader();
-    reader.onload = (loadEvent) => {
-      const dataUrl = loadEvent.target && loadEvent.target.result;
-      if (!dataUrl) {
-        return;
-      }
-
-      preview.src = dataUrl;
-      preview.hidden = false;
-      if (placeholder) {
-        placeholder.hidden = true;
-      }
-    };
-    reader.readAsDataURL(file);
   });
 })();
