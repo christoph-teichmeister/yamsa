@@ -108,5 +108,24 @@ class TestEditProfile:
         logged_in_profile_detail_page.open_photo_dialog()
         logged_in_profile_detail_page.close_photo_dialog()
 
+    def test_photo_dialog_opens_from_the_camera_badge(self, logged_in_profile_detail_page):
+        # The badge overhangs the avatar button, so it carries the same trigger of its own.
+        logged_in_profile_detail_page.open_photo_dialog_via_badge()
+
+    def test_the_photo_hover_hint_does_not_stick_after_a_click(self, logged_in_profile_detail_page):
+        logged_in_profile_detail_page.move_pointer_away()
+        logged_in_profile_detail_page.expect_photo_hover_hint(visible=False)
+
+        logged_in_profile_detail_page.hover_photo()
+        logged_in_profile_detail_page.expect_photo_hover_hint(visible=True)
+
+        logged_in_profile_detail_page.open_photo_dialog()
+        logged_in_profile_detail_page.close_photo_dialog()
+        logged_in_profile_detail_page.move_pointer_away()
+
+        # A mouse click leaves the button focused; keying the hint off :focus-within left the
+        # overlay covering the photo from then on.
+        logged_in_profile_detail_page.expect_photo_hover_hint(visible=False)
+
     def test_guest_has_no_edit_option_on_own_profile(self, logged_in_guest_detail_page):
         logged_in_guest_detail_page.expect_edit_button_hidden()

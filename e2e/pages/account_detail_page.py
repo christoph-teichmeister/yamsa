@@ -32,8 +32,28 @@ class AccountDetailPage(BasePage):
         return self.page.locator("#profile-sheet").evaluate("(sheet) => sheet.dataset.e2eMarker || null")
 
     def open_photo_dialog(self):
-        self.page.locator("[data-profile-photo-open]").click()
+        self.page.locator("button[data-profile-photo-open]").click()
         expect(self.page.locator("[data-profile-photo-dialog]")).to_be_visible()
+
+    def open_photo_dialog_via_badge(self):
+        self.page.locator("span[data-profile-photo-open]").click()
+        expect(self.page.locator("[data-profile-photo-dialog]")).to_be_visible()
+
+    def expect_photo_hover_hint(self, *, visible: bool):
+        """The camera overlay may only show while the avatar is hovered.
+
+        to_have_css retries, which a plain read cannot: the overlay fades in over a transition.
+        """
+
+        expect(self.page.locator("#profile-photo button span[aria-hidden]")).to_have_css(
+            "opacity", "1" if visible else "0"
+        )
+
+    def hover_photo(self):
+        self.page.locator("#profile-photo").hover()
+
+    def move_pointer_away(self):
+        self.page.mouse.move(0, 0)
 
     def close_photo_dialog(self):
         self.page.locator("[data-profile-photo-close]").click()
