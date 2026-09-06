@@ -39,6 +39,18 @@ class TestTransactionFormStructure:
         slugs = [category.slug for category in form.fields["category"].queryset]
         assert any(slug.startswith("house-tag") for slug in slugs)
 
+    def test_edit_form_respects_room_specific_categories(self, room):
+        service = RoomCategoryService(room=room)
+        service.create_room_category(name="Edit Tag", emoji="✏️", color="#654321")
+        parent_transaction = ParentTransactionFactory(room=room)
+
+        from apps.transaction.forms.transaction_edit_form import TransactionEditForm
+
+        form = TransactionEditForm(instance=parent_transaction)
+
+        slugs = [category.slug for category in form.fields["category"].queryset]
+        assert any(slug.startswith("edit-tag") for slug in slugs)
+
     def test_create_form_requires_a_category(self, room, user):
         currency = CurrencyFactory()
         form_data = self._build_create_form_data(room, user, currency, list(room.users.all()))

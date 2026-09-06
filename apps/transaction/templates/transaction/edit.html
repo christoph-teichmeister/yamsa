@@ -89,7 +89,7 @@
         <div class="card-body">
           <div class="row g-3 align-items-end">
             <div class="col-md-4">
-              <label class="form-label transaction-label" for="paid_by_select">{% trans "Paid by" %}</label>
+              <label class="form-label fw-semibold" for="paid_by_select">{% trans "Paid by" %}</label>
               <select name="paid_by" class="form-select" id="paid_by_select" required>
                 {% for user in form.fields.paid_by.queryset %}
                   <option {% if user.id == form.initial.paid_by %}selected{% endif %}
@@ -98,7 +98,7 @@
               </select>
             </div>
             <div class="col-md-4">
-              <label class="form-label transaction-label" for="total_value_input">{% trans "Total" %}</label>
+              <label class="form-label fw-semibold" for="total_value_input">{% trans "Total" %}</label>
               <div class="input-group">
                 <span class="input-group-text">{{ parent_transaction.currency.sign }}</span>
                 {% with normalized_total=form.initial.total_value|default_if_none:parent_transaction.value|default_if_none:0 %}
@@ -126,7 +126,7 @@
               </p>
             </div>
             <div class="col-md-4">
-              <label class="form-label transaction-label" for="currency_select">{% trans "Currency" %}</label>
+              <label class="form-label fw-semibold" for="currency_select">{% trans "Currency" %}</label>
               <select name="currency" class="form-select" id="currency_select" required>
                 {% for currency in form.fields.currency.queryset %}
                   <option {% if currency.id == form.initial.currency %}selected{% endif %}
@@ -135,7 +135,7 @@
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label transaction-label" for="paid_at_input">{% trans "Paid at" %}</label>
+              <label class="form-label fw-semibold" for="paid_at_input">{% trans "Paid at" %}</label>
               <input id="paid_at_input"
                      name="paid_at"
                      class="form-control"
@@ -145,7 +145,7 @@
                      max="2099-12-31T00:00" />
             </div>
             <div class="col-md-6">
-              <label class="form-label transaction-label" for="description">{% trans "Description" %}</label>
+              <label class="form-label fw-semibold" for="description">{% trans "Description" %}</label>
               <textarea class="form-control"
                         aria-label="{% trans "Description" %}"
                         id="description"
@@ -296,7 +296,7 @@
       </div>
       <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
-          <label class="form-label transaction-label" for="further_notes">{% trans "Notes" %}</label>
+          <label class="form-label fw-semibold" for="further_notes">{% trans "Notes" %}</label>
           <textarea class="form-control"
                     aria-label="{% trans "Notes" %}"
                     id="further_notes"

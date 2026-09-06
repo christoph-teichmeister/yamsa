@@ -2,11 +2,10 @@ import mimetypes
 from decimal import Decimal
 
 from django import forms
-from django.db.models import QuerySet
 
 from apps.account.models import User
-from apps.transaction.models import Category, ChildTransaction, ParentTransaction, Receipt
-from apps.transaction.services.room_category_service import RoomCategoryService
+from apps.transaction.forms.mixins.room_category_field import RoomCategoryFieldMixin
+from apps.transaction.models import ChildTransaction, ParentTransaction, Receipt
 from apps.transaction.utils import split_total_across_paid_for
 
 RECEIPT_ACCEPTED_CONTENT_TYPES = (
@@ -20,14 +19,11 @@ MAX_RECEIPT_SIZE = 5 * 1024 * 1024  # 5 MB
 RECEIPT_AUTH_REQUIRED_MESSAGE = "Authenticated user is required to upload receipts."
 
 
-class TransactionCreateForm(forms.ModelForm):
+class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
     paid_for = forms.ModelMultipleChoiceField(queryset=User.objects.all())
     room_slug = forms.CharField()
     value = forms.DecimalField()
-    category = forms.ModelChoiceField(
-        queryset=Category.objects.order_by("order_index", "id"),
-        empty_label=None,
-    )
+    category = RoomCategoryFieldMixin.build_category_field()
     receipts = forms.FileField(
         widget=forms.ClearableFileInput(),
         required=False,
@@ -51,9 +47,8 @@ class TransactionCreateForm(forms.ModelForm):
 
     def __init__(self, *args, request=None, room=None, **kwargs):
         self._request = request
-        self._room = room
         super().__init__(*args, **kwargs)
-        self.fields["category"].queryset = self._build_category_queryset()
+        self.narrow_category_field_to(room)
 
     def clean_receipts(self):
         field_name = self.add_prefix("receipts")
@@ -129,8 +124,3 @@ class TransactionCreateForm(forms.ModelForm):
                 size=uploaded_file.size,
                 uploaded_by=getattr(self._request, "user", None),
             )
-
-    def _build_category_queryset(self) -> QuerySet:
-        if self._room:
-            return RoomCategoryService(room=self._room).get_category_queryset()
-        return Category.objects.order_by("order_index", "id")
