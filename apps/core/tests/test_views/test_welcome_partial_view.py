@@ -1,4 +1,5 @@
 import http
+from datetime import datetime, timedelta
 from decimal import Decimal
 from unittest import mock
 
@@ -6,10 +7,14 @@ import pytest
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.currency.tests.factories import CurrencyFactory
 from apps.debt.models import Debt
+from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
+from apps.transaction.models import ParentTransaction
+from apps.transaction.tests.factories import ParentTransactionFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -22,6 +27,17 @@ def create_debt(*, room, debitor, creditor, currency, value):
         currency=currency,
         value=Decimal(value),
     )
+
+
+def add_transaction(*, room, user, at: datetime):
+    """Give the room a transaction whose lastmodified_at is exactly ``at``.
+
+    CommonInfo stamps lastmodified_at on every save, so the timestamp has to be forced past
+    the ORM with an update() - assigning it before save() would simply be overwritten.
+    """
+    transaction = ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency)
+    ParentTransaction.objects.filter(pk=transaction.pk).update(lastmodified_at=at)
+    return transaction
 
 
 def add_rooms_with_debts(*, user, guest_user, currency, count):
@@ -88,57 +104,68 @@ class TestWelcomePartialView:
 
         payment_reminder.assert_not_called()
 
-    def test_rooms_the_user_owes_in_come_before_rooms_owing_the_user(
+    def test_open_rooms_are_ordered_by_their_latest_transaction(self, authenticated_client, room, user, guest_user):
+        now = timezone.now()
+        stale_room = RoomFactory(created_by=user)
+        stale_room.users.add(user, guest_user)
+        freshest_room = RoomFactory(created_by=user)
+        freshest_room.users.add(user, guest_user)
+        add_transaction(room=stale_room, user=user, at=now - timedelta(days=30))
+        add_transaction(room=room, user=user, at=now - timedelta(days=2))
+        add_transaction(room=freshest_room, user=user, at=now - timedelta(minutes=5))
+
+        entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
+
+        assert [entry.slug for entry in entries] == [freshest_room.slug, room.slug, stale_room.slug]
+
+    def test_only_the_latest_transaction_of_a_room_counts(self, authenticated_client, room, user, guest_user):
+        now = timezone.now()
+        other_room = RoomFactory(created_by=user)
+        other_room.users.add(user, guest_user)
+        add_transaction(room=room, user=user, at=now - timedelta(days=90))
+        add_transaction(room=room, user=user, at=now - timedelta(minutes=1))
+        add_transaction(room=other_room, user=user, at=now - timedelta(days=1))
+
+        entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
+
+        assert [entry.slug for entry in entries] == [room.slug, other_room.slug]
+
+    def test_the_open_balance_no_longer_decides_the_order(self, authenticated_client, room, user, guest_user):
+        now = timezone.now()
+        settled_room = RoomFactory(created_by=user)
+        settled_room.users.add(user, guest_user)
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=CurrencyFactory(), value="500.00")
+        add_transaction(room=room, user=user, at=now - timedelta(days=10))
+        add_transaction(room=settled_room, user=user, at=now - timedelta(hours=1))
+
+        entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
+
+        assert [entry.slug for entry in entries] == [settled_room.slug, room.slug]
+
+    def test_a_room_without_transactions_is_ranked_by_its_own_timestamp(
         self, authenticated_client, room, user, guest_user
     ):
-        currency = CurrencyFactory(sign="€")
-        receiving_room = RoomFactory(created_by=user)
-        receiving_room.users.add(user, guest_user)
-        create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="5.00")
-        create_debt(room=receiving_room, debitor=guest_user, creditor=user, currency=currency, value="80.00")
+        # A room created just now has nothing to show yet and must not start out at the bottom.
+        add_transaction(room=room, user=user, at=timezone.now() - timedelta(days=3))
+        brand_new_room = RoomFactory(created_by=user)
+        brand_new_room.users.add(user, guest_user)
 
         entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
 
-        assert [entry.slug for entry in entries] == [room.slug, receiving_room.slug]
+        assert [entry.slug for entry in entries] == [brand_new_room.slug, room.slug]
 
-    def test_within_the_same_direction_the_larger_amount_comes_first(
-        self, authenticated_client, room, user, guest_user
+    def test_closed_rooms_are_ordered_by_their_latest_transaction_too(
+        self, authenticated_client, closed_room, user, guest_user
     ):
-        currency = CurrencyFactory(sign="€")
-        bigger_room = RoomFactory(created_by=user)
-        bigger_room.users.add(user, guest_user)
-        create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="5.00")
-        create_debt(room=bigger_room, debitor=user, creditor=guest_user, currency=currency, value="500.00")
+        now = timezone.now()
+        other_closed_room = RoomFactory(created_by=user, status=Room.StatusChoices.CLOSED)
+        other_closed_room.users.add(user, guest_user)
+        add_transaction(room=closed_room, user=user, at=now - timedelta(days=5))
+        add_transaction(room=other_closed_room, user=user, at=now - timedelta(days=1))
 
-        entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
+        entries = authenticated_client.get(reverse("core:welcome")).context_data["closed_room_entries"]
 
-        assert [entry.slug for entry in entries] == [bigger_room.slug, room.slug]
-
-    def test_settled_rooms_come_last(self, authenticated_client, room, user, guest_user):
-        owing_room = RoomFactory(created_by=user)
-        owing_room.users.add(user, guest_user)
-        create_debt(room=owing_room, debitor=user, creditor=guest_user, currency=CurrencyFactory(), value="1.00")
-
-        entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
-
-        assert [entry.slug for entry in entries] == [owing_room.slug, room.slug]
-
-    def test_a_room_owing_in_one_currency_and_receiving_in_another_ranks_as_owing(
-        self, authenticated_client, room, user, guest_user
-    ):
-        mixed_room = RoomFactory(created_by=user)
-        mixed_room.users.add(user, guest_user)
-        create_debt(
-            room=mixed_room, debitor=user, creditor=guest_user, currency=CurrencyFactory(sign="€"), value="1.00"
-        )
-        create_debt(
-            room=mixed_room, debitor=guest_user, creditor=user, currency=CurrencyFactory(sign="$"), value="99.00"
-        )
-
-        entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
-
-        assert entries[0].slug == mixed_room.slug
-        assert entries[0].user_owes is True
+        assert [entry.slug for entry in entries] == [other_closed_room.slug, closed_room.slug]
 
     def test_closed_rooms_are_left_out_of_the_totals(self, authenticated_client, room, closed_room, user, guest_user):
         currency = CurrencyFactory(sign="€")

@@ -1,13 +1,18 @@
+from dataclasses import replace
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 import pytest
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.currency.tests.factories import CurrencyFactory
 from apps.debt.models import Debt
 from apps.room.models import Room
 from apps.room.services.room_overview_service import RoomOverviewService
 from apps.room.tests.factories import RoomFactory
+from apps.transaction.models import ParentTransaction
+from apps.transaction.tests.factories import ParentTransactionFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -20,6 +25,17 @@ def create_debt(*, room, debitor, creditor, currency, value):
         currency=currency,
         value=Decimal(value),
     )
+
+
+def add_transaction(*, room, user, at: datetime):
+    """Give the room a transaction whose lastmodified_at is exactly ``at``.
+
+    CommonInfo stamps lastmodified_at on every save, so the timestamp has to be forced past
+    the ORM with an update() - assigning it before save() would simply be overwritten.
+    """
+    transaction = ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency)
+    ParentTransaction.objects.filter(pk=transaction.pk).update(lastmodified_at=at)
+    return transaction
 
 
 def entry_for(entries, room):
@@ -93,6 +109,37 @@ class TestRoomOverviewService:
         entry = entry_for(entries, room)
         assert entry.user_is_in_room is False
         assert entry.balances == ()
+
+    def test_last_activity_is_the_timestamp_of_the_newest_transaction(self, room, user):
+        newest = timezone.now() - timedelta(hours=2)
+        add_transaction(room=room, user=user, at=timezone.now() - timedelta(days=40))
+        add_transaction(room=room, user=user, at=newest)
+
+        assert entry_for(RoomOverviewService(user=user).get_entries(), room).last_activity_at == newest
+
+    def test_last_activity_falls_back_to_the_rooms_own_timestamp(self, room, user):
+        # Without the fallback a room without transactions would carry None and could not be sorted.
+        entry = entry_for(RoomOverviewService(user=user).get_entries(), room)
+
+        assert entry.last_activity_at == room.lastmodified_at
+
+    def test_sorted_by_last_activity_puts_the_newest_room_first(self, room, closed_room, user):
+        entries = RoomOverviewService(user=user).get_entries()
+        shuffled = sorted(entries, key=lambda entry: entry.last_activity_at)
+
+        ordered = RoomOverviewService.sorted_by_last_activity(shuffled)
+
+        assert [entry.last_activity_at for entry in ordered] == sorted(
+            (entry.last_activity_at for entry in entries), reverse=True
+        )
+
+    def test_sorted_by_last_activity_keeps_equal_timestamps_in_their_incoming_order(self, room, user):
+        entry = entry_for(RoomOverviewService(user=user).get_entries(), room)
+        same_moment = [replace(entry, name=name) for name in ("first", "second", "third")]
+
+        ordered = RoomOverviewService.sorted_by_last_activity(same_moment)
+
+        assert [ranked.name for ranked in ordered] == ["first", "second", "third"]
 
     def test_entries_keep_the_ordering_of_room_qs_for_list(self, room, closed_room, user):
         entries = RoomOverviewService(user=user).get_entries()

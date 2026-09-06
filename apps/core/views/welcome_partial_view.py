@@ -31,14 +31,9 @@ class WelcomePartialView(generic.TemplateView):
     @context
     @property
     def open_room_entries(self) -> list[RoomOverviewEntry]:
-        """Open rooms, the ones asking for money first, the settled ones last.
-
-        Deliberately drops room_qs_for_list's last-activity order for this section: what the
-        dashboard is opened for is "what do I still have to pay", not "what did I touch last".
-        Rooms of equal rank keep the last-activity order, sorted() being stable.
-        """
+        """Open rooms, the most recently used one first."""
         entries = [entry for entry in self._room_entries if entry.user_is_in_room and not entry.is_closed]
-        return sorted(entries, key=lambda entry: (entry.attention_rank, -entry.ranking_amount))
+        return RoomOverviewService.sorted_by_last_activity(entries)
 
     @context
     @property
@@ -48,7 +43,8 @@ class WelcomePartialView(generic.TemplateView):
     @context
     @property
     def closed_room_entries(self) -> list[RoomOverviewEntry]:
-        return [entry for entry in self._room_entries if entry.user_is_in_room and entry.is_closed]
+        entries = [entry for entry in self._room_entries if entry.user_is_in_room and entry.is_closed]
+        return RoomOverviewService.sorted_by_last_activity(entries)
 
     @context
     @property
@@ -62,7 +58,8 @@ class WelcomePartialView(generic.TemplateView):
 
     @cached_property
     def _foreign_room_entries(self) -> list[RoomOverviewEntry]:
-        return [entry for entry in self._room_entries if not entry.user_is_in_room]
+        entries = [entry for entry in self._room_entries if not entry.user_is_in_room]
+        return RoomOverviewService.sorted_by_last_activity(entries)
 
     @context
     @property
