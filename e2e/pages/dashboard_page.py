@@ -33,6 +33,14 @@ class DashboardPage(BasePage):
     def expect_status_badge(self, target_url: str, label: str):
         expect(self.card_for(target_url).locator(".room-status-badge")).to_have_text(label)
 
+    def expect_side_by_side(self, left_target_url: str, right_target_url: str):
+        left = self.card_for(left_target_url).bounding_box()
+        right = self.card_for(right_target_url).bounding_box()
+
+        # A pixel of tolerance: the two cards sit in the same grid row, not on the same subpixel.
+        assert abs(left["y"] - right["y"]) <= 1, "the two cards are not in the same row"
+        assert left["x"] < right["x"]
+
     def expect_last_used(self, target_url: str, text: str):
         expect(self.card_for(target_url).locator(".room-overview-activity")).to_have_text(text)
 
