@@ -17,8 +17,8 @@
       </div>
       {% if current_room %}
         <div class="col-10 p-0 text-center">
-          <h6 class="mb-0">{{ current_room.name }}</h6>
-          <span class="text-muted small">{{ current_room.description|truncatechars:50 }}</span>
+          <h6 class="mb-0 text-truncate">{{ current_room.name }}</h6>
+          <span class="text-muted small d-block text-truncate">{{ current_room.description|truncatechars:50 }}</span>
         </div>
       {% else %}
         <div class="col-11 d-flex align-items-center justify-content-end">
