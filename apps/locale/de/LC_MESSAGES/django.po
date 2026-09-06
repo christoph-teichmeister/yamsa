@@ -1312,20 +1312,21 @@ msgstr "Das bin ich!"
 msgid "No guests have been invited yet. Create an account to add yourself to the room."
 msgstr "Es wurden noch keine Gäste eingeladen. Erstelle ein Konto, um dich selbst zum Raum hinzuzufügen."
 
+msgid "Your open balance"
+msgstr "Deine offene Bilanz"
+
+msgid "You owe"
+msgstr "Du schuldest"
+
+msgid "You get back"
+msgstr "Du bekommst"
+
 msgid "Start a new group with friends"
 msgstr "Starte eine neue Gruppe mit Freunden"
 
 #, python-format
-msgid "Open, but balanced (%(currency)s)"
-msgstr "Offen, aber ausgeglichen (%(currency)s)"
-
-#, python-format
-msgid "You owe %(amount)s%(currency)s"
-msgstr "Du schuldest %(amount)s%(currency)s"
-
-#, python-format
-msgid "You get back %(amount)s%(currency)s"
-msgstr "Du bekommst %(amount)s%(currency)s zurück"
+msgid "Balanced (%(currency)s)"
+msgstr "Ausgeglichen (%(currency)s)"
 
 msgid "All settled"
 msgstr "Alles beglichen"

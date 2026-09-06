@@ -8,8 +8,12 @@ class RoomBalance:
 
     The project has no exchange rates, so a room with transactions in several currencies
     yields one RoomBalance per currency and they must never be summed up.
+
+    ``currency_id`` identifies the currency across rooms; ``currency_sign`` cannot, because
+    Currency has no unique constraint on it (USD and CAD both use "$").
     """
 
+    currency_id: int
     currency_sign: str
     owed_by_user: Decimal
     owed_to_user: Decimal
@@ -25,6 +29,10 @@ class RoomBalance:
     @property
     def user_owes(self) -> bool:
         return self.net_amount < 0
+
+    @property
+    def user_gets_back(self) -> bool:
+        return self.net_amount > 0
 
     @property
     def is_balanced(self) -> bool:

@@ -1,10 +1,12 @@
 from collections import defaultdict
+from collections.abc import Iterable
+from decimal import Decimal
 from functools import cached_property
 
 from django.urls import reverse
 
 from apps.debt.models import Debt
-from apps.room.dataclasses import RoomBalance, RoomOverviewEntry
+from apps.room.dataclasses import CurrencyTotal, RoomBalance, RoomOverviewEntry
 from apps.room.models import Room
 
 
@@ -33,6 +35,7 @@ class RoomOverviewService:
             # empty balance list is what tells the card that nothing is owed at all.
             balances_per_room_id[row["room_id"]].append(
                 RoomBalance(
+                    currency_id=row["currency_id"],
                     currency_sign=row["currency_sign"],
                     owed_by_user=row["owed_by_user"],
                     owed_to_user=row["owed_to_user"],
@@ -61,3 +64,39 @@ class RoomOverviewService:
     def get_entries(self) -> list[RoomOverviewEntry]:
         """Return one entry per visible room, in room_qs_for_list's order (most recently active first)."""
         return [self._build_entry(room_values) for room_values in self.user.room_qs_for_list]
+
+    @staticmethod
+    def currency_totals_for(entries: Iterable[RoomOverviewEntry]) -> list[CurrencyTotal]:
+        """Sum the given entries' balances into one CurrencyTotal per currency, largest first.
+
+        Takes entries instead of querying, so the caller decides which rooms count and the
+        totals cost no extra query. Only each room's net side is added up, and the two
+        directions stay apart: a debt the user owes in one room is not cancelled by a debt
+        owed to them in another, because different people are on the other end.
+        """
+        owed_by_user: dict[int, Decimal] = defaultdict(Decimal)
+        owed_to_user: dict[int, Decimal] = defaultdict(Decimal)
+        signs: dict[int, str] = {}
+
+        for entry in entries:
+            for balance in entry.balances:
+                signs.setdefault(balance.currency_id, balance.currency_sign)
+                if balance.user_owes:
+                    owed_by_user[balance.currency_id] += balance.absolute_amount
+                elif balance.user_gets_back:
+                    owed_to_user[balance.currency_id] += balance.absolute_amount
+
+        totals = [
+            CurrencyTotal(
+                currency_id=currency_id,
+                currency_sign=sign,
+                owed_by_user=owed_by_user[currency_id],
+                owed_to_user=owed_to_user[currency_id],
+            )
+            for currency_id, sign in signs.items()
+            if owed_by_user[currency_id] or owed_to_user[currency_id]
+        ]
+
+        # Ordering only, so comparing amounts across currencies is fine here; currency_id breaks
+        # ties so two currencies sharing a sign keep a stable order.
+        return sorted(totals, key=lambda total: (-total.owed_by_user, -total.owed_to_user, total.currency_id))

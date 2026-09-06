@@ -114,3 +114,57 @@ class TestRoomOverviewService:
             entries = service.get_entries()
 
         assert len(entries) == extra_room_count
+
+    def test_the_two_directions_stay_apart(self, room, user, guest_user):
+        currency = CurrencyFactory(sign="€")
+        other_room = RoomFactory(created_by=user)
+        other_room.users.add(user, guest_user)
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00")
+        create_debt(room=other_room, debitor=guest_user, creditor=user, currency=currency, value="7.00")
+
+        totals = RoomOverviewService.currency_totals_for(RoomOverviewService(user=user).get_entries())
+
+        assert len(totals) == 1
+        assert totals[0].owed_by_user == Decimal("10.00")
+        assert totals[0].owed_to_user == Decimal("7.00")
+
+    def test_amounts_of_one_currency_are_summed_across_rooms(self, room, user, guest_user):
+        currency = CurrencyFactory(sign="€")
+        other_room = RoomFactory(created_by=user)
+        other_room.users.add(user, guest_user)
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00")
+        create_debt(room=other_room, debitor=user, creditor=guest_user, currency=currency, value="2.50")
+
+        totals = RoomOverviewService.currency_totals_for(RoomOverviewService(user=user).get_entries())
+
+        assert [total.owed_by_user for total in totals] == [Decimal("12.50")]
+
+    def test_currencies_sharing_a_sign_are_not_merged(self, room, user, guest_user):
+        # Currency has no unique constraint on sign, so grouping by sign would add USD to CAD.
+        usd = CurrencyFactory(code="USD", sign="$")
+        cad = CurrencyFactory(code="CAD", sign="$")
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=usd, value="10.00")
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=cad, value="5.00")
+
+        totals = RoomOverviewService.currency_totals_for(RoomOverviewService(user=user).get_entries())
+
+        assert len(totals) == 2
+        assert {total.currency_id for total in totals} == {usd.id, cad.id}
+        assert [total.owed_by_user for total in totals] == [Decimal("10.00"), Decimal("5.00")]
+
+    def test_a_room_that_nets_to_zero_contributes_nothing(self, room, user, guest_user):
+        currency = CurrencyFactory()
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00")
+        create_debt(room=room, debitor=guest_user, creditor=user, currency=currency, value="10.00")
+
+        assert RoomOverviewService.currency_totals_for(RoomOverviewService(user=user).get_entries()) == []
+
+    def test_a_user_without_debts_has_no_totals(self, room, user):
+        assert RoomOverviewService.currency_totals_for(RoomOverviewService(user=user).get_entries()) == []
+
+    def test_totals_need_no_further_query(self, room, user, guest_user, django_assert_num_queries):
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=CurrencyFactory(), value="4.00")
+        entries = RoomOverviewService(user=user).get_entries()
+
+        with django_assert_num_queries(0):
+            RoomOverviewService.currency_totals_for(entries)

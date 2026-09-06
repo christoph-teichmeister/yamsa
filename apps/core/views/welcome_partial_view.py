@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views import generic
 from django_context_decorator import context
 
-from apps.room.dataclasses import RoomOverviewEntry
+from apps.room.dataclasses import CurrencyTotal, RoomOverviewEntry
 from apps.room.services.room_overview_service import RoomOverviewService
 
 
@@ -31,7 +31,19 @@ class WelcomePartialView(generic.TemplateView):
     @context
     @property
     def open_room_entries(self) -> list[RoomOverviewEntry]:
-        return [entry for entry in self._room_entries if entry.user_is_in_room and not entry.is_closed]
+        """Open rooms, the ones asking for money first, the settled ones last.
+
+        Deliberately drops room_qs_for_list's last-activity order for this section: what the
+        dashboard is opened for is "what do I still have to pay", not "what did I touch last".
+        Rooms of equal rank keep the last-activity order, sorted() being stable.
+        """
+        entries = [entry for entry in self._room_entries if entry.user_is_in_room and not entry.is_closed]
+        return sorted(entries, key=lambda entry: (entry.attention_rank, -entry.ranking_amount))
+
+    @context
+    @property
+    def open_balance_totals(self) -> list[CurrencyTotal]:
+        return RoomOverviewService.currency_totals_for(self.open_room_entries)
 
     @context
     @property

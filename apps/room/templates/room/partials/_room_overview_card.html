@@ -9,48 +9,49 @@
      hx-indicator="#body-loading-spinner"
      hx-swap="morph:innerHTML"
      hx-push-url="true">
-  <div class="card-body d-flex flex-column gap-3">
-    <div class="d-flex align-items-center gap-3">
-      <div class="room-circle{% if entry.is_closed %} closed{% endif %}">{{ entry.capitalised_initials }}</div>
-      <div class="flex-grow-1 text-start">
-        <h5 class="card-title room-overview-name mb-1">{{ entry.name }}</h5>
-        {% if entry.description %}
-          <p class="text-muted small mb-0">{{ entry.description|truncatechars:60 }}</p>
-        {% endif %}
-        {% if not entry.user_is_in_room and entry.created_by_name %}
-          <p class="text-muted small fst-italic mb-0">{{ entry.created_by_name }}</p>
-        {% endif %}
-      </div>
-      <span class="badge room-status-badge {% if entry.is_closed %}bg-danger-subtle text-danger-emphasis{% else %}bg-light text-dark{% endif %}">
-        {{ entry.status_label }}
-      </span>
+  <div class="card-body room-overview-body d-flex align-items-center gap-3">
+    <div class="room-circle room-overview-circle{% if entry.is_closed %} closed{% endif %}">{{ entry.capitalised_initials }}</div>
+    <div class="room-overview-text flex-grow-1 text-start">
+      <h5 class="card-title room-overview-name mb-0">{{ entry.name }}</h5>
+      {% if not entry.user_is_in_room and entry.created_by_name %}
+        <p class="room-overview-meta text-muted small fst-italic mb-0">{{ entry.created_by_name }}</p>
+      {% elif entry.description %}
+        <p class="room-overview-meta text-muted small mb-0">{{ entry.description }}</p>
+      {% endif %}
     </div>
     {% if entry.user_is_in_room %}
-      <div class="d-flex flex-wrap gap-2 mt-auto">
+      <div class="room-overview-amounts">
         {% for balance in entry.balances %}
           {% if balance.is_balanced %}
-            <span class="badge room-overview-balance bg-info-subtle text-info-emphasis">
-              {% blocktrans trimmed with currency=balance.currency_sign %}
-                Open, but balanced ({{ currency }})
-              {% endblocktrans %}
+            <span class="room-overview-amount balanced">
+              <span class="room-overview-amount-value">
+                {% blocktrans trimmed with currency=balance.currency_sign %}
+                  Balanced ({{ currency }})
+                {% endblocktrans %}
+              </span>
             </span>
           {% elif balance.user_owes %}
-            <span class="badge room-overview-balance bg-warning-subtle text-warning-emphasis">
-              {% blocktrans trimmed with amount=balance.absolute_amount|format_with_thousands currency=balance.currency_sign %}
-                You owe {{ amount }}{{ currency }}
-              {% endblocktrans %}
+            <span class="room-overview-amount owing">
+              <span class="room-overview-amount-label">{% trans "You owe" %}</span>
+              <span class="room-overview-amount-value">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
             </span>
           {% else %}
-            <span class="badge room-overview-balance bg-success-subtle text-success-emphasis">
-              {% blocktrans trimmed with amount=balance.absolute_amount|format_with_thousands currency=balance.currency_sign %}
-                You get back {{ amount }}{{ currency }}
-              {% endblocktrans %}
+            <span class="room-overview-amount receiving">
+              <span class="room-overview-amount-label">{% trans "You get back" %}</span>
+              <span class="room-overview-amount-value">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
             </span>
           {% endif %}
         {% empty %}
-          <span class="badge room-overview-balance bg-secondary-subtle text-secondary-emphasis">{% trans "All settled" %}</span>
+          <span class="room-overview-amount settled">
+            <span class="room-overview-amount-value">{% trans "All settled" %}</span>
+          </span>
         {% endfor %}
       </div>
+    {% else %}
+      {# The section headings already say Open and Closed; only the mixed "Other" section needs the badge. #}
+      <span class="badge room-status-badge {% if entry.is_closed %}bg-danger-subtle text-danger-emphasis{% else %}bg-light text-dark{% endif %}">
+        {{ entry.status_label }}
+      </span>
     {% endif %}
   </div>
 </div>
