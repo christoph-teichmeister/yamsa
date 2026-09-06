@@ -148,98 +148,20 @@ msgstr "Nicht du?"
 msgid "Log out instead"
 msgstr "Stattdessen abmelden"
 
-msgid "Admin"
-msgstr "Administrator"
+msgid "Not set"
+msgstr "Nicht gesetzt"
 
-msgid "Your account overview"
-msgstr "Deine Kontenübersicht"
+msgid "No PayPal link yet"
+msgstr "Noch kein PayPal-Link"
 
 msgid "Member profile"
 msgstr "Mitgliederprofil"
-
-msgid "Superuser"
-msgstr "Superuser"
-
-msgid "Staff"
-msgstr "Mitarbeitende"
-
-msgid "PayPal linked"
-msgstr "PayPal verknüpft"
-
-msgid "No PayPal link"
-msgstr "Kein PayPal-Link"
-
-msgid "Edit profile"
-msgstr "Profil bearbeiten"
-
-msgid "Display name"
-msgstr "Anzeigename"
 
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
 msgid "PayPal.me username"
 msgstr "PayPal.me-Benutzername"
-
-msgid "No PayPal link yet"
-msgstr "Noch kein PayPal-Link"
-
-msgid "Not set"
-msgstr "Nicht gesetzt"
-
-msgid "Push notifications"
-msgstr "Push-Benachrichtigungen"
-
-msgid "Enabled"
-msgstr "Aktiviert"
-
-msgid "Disabled"
-msgstr "Deaktiviert"
-
-msgid "Payment reminders"
-msgstr "Zahlungserinnerungen"
-
-msgid "Security"
-msgstr "Sicherheit"
-
-msgid "Manage your login methods"
-msgstr "Deine Anmeldemethoden verwalten"
-
-msgid "Change your password or add a passkey for biometric login."
-msgstr "Ändere dein Passwort oder füge einen Passkey für biometrische Anmeldung hinzu."
-
-msgid "Change password"
-msgstr "Passwort ändern"
-
-msgid "Security settings"
-msgstr "Sicherheitseinstellungen"
-
-msgid "Cancel"
-msgstr "Abbrechen"
-
-msgid "Save changes"
-msgstr "Änderungen speichern"
-
-msgid "Profile picture preview"
-msgstr "Vorschau des Profilbilds"
-
-msgid "Profile photo"
-msgstr "Profilfoto"
-
-msgid "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB."
-msgstr "Wir ändern automatisch die Größe und komprimieren PNG-/JPEG-Uploads, damit sie unter 3 MB bleiben."
-
-msgid "Remove your profile picture?"
-msgstr "Profilbild entfernen?"
-
-msgid "Remove photo"
-msgstr "Foto entfernen"
-
-msgid "Notification Center"
-msgstr "Benachrichtigungszentrum"
-
-msgid "Choose how you want to hear from us."
-msgstr "Wähle, wie du von uns hören möchtest."
 
 msgid "Forgot password"
 msgstr "Passwort vergessen"
@@ -367,6 +289,72 @@ msgstr "Anmeldung fehlgeschlagen."
 msgid "An unexpected error occurred."
 msgstr "Ein unerwarteter Fehler ist aufgetreten."
 
+msgid "Superuser"
+msgstr "Superuser"
+
+msgid "Staff"
+msgstr "Mitarbeitende"
+
+msgid "PayPal linked"
+msgstr "PayPal verknüpft"
+
+msgid "Profile photo"
+msgstr "Profilfoto"
+
+msgid "Change photo"
+msgstr "Foto ändern"
+
+msgid "Your account overview"
+msgstr "Deine Kontenübersicht"
+
+msgid "Edit profile"
+msgstr "Profil bearbeiten"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+msgid "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB."
+msgstr "Wir ändern automatisch die Größe und komprimieren PNG-/JPEG-Uploads, damit sie unter 3 MB bleiben."
+
+msgid "Remove your profile picture?"
+msgstr "Profilbild entfernen?"
+
+msgid "Remove photo"
+msgstr "Foto entfernen"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+msgid "Choose how you want to hear from us."
+msgstr "Wähle, wie du von uns hören möchtest."
+
+msgid "Security"
+msgstr "Sicherheit"
+
+msgid "Change your password"
+msgstr "Ändere dein Passwort"
+
+msgid "Choose a unique password to keep your rooms safe."
+msgstr "Wähle ein einzigartiges Passwort, um deine Räume zu schützen."
+
+msgid "Security settings"
+msgstr "Sicherheitseinstellungen"
+
+msgid "Log in with your fingerprint, face ID, or a hardware security key — no password required."
+msgstr "Melde dich mit deinem Fingerabdruck, Face ID oder einem Hardware-Sicherheitsschlüssel an – ganz ohne Passwort."
+
+msgid "Admin"
+msgstr "Administrator"
+
+msgid "Payment reminders"
+msgstr "Zahlungserinnerungen"
+
 msgid "Unsubscribed"
 msgstr "Abgemeldet"
 
@@ -430,9 +418,6 @@ msgstr "Passkeys"
 msgid "Biometric login"
 msgstr "Biometrische Anmeldung"
 
-msgid "Log in with your fingerprint, face ID, or a hardware security key — no password required."
-msgstr "Melde dich mit deinem Fingerabdruck, Face ID oder einem Hardware-Sicherheitsschlüssel an – ganz ohne Passwort."
-
 msgid "Added:"
 msgstr "Hinzugefügt:"
 
@@ -451,11 +436,8 @@ msgstr "z. B. MacBook Touch ID"
 msgid "Register passkey"
 msgstr "Passkey anlegen"
 
-msgid "Change your password"
-msgstr "Ändere dein Passwort"
-
-msgid "Choose a unique password to keep your rooms safe."
-msgstr "Wähle ein einzigartiges Passwort, um deine Räume zu schützen."
+msgid "Change password"
+msgstr "Passwort ändern"
 
 msgid "Please enter a name for your passkey."
 msgstr "Bitte gib einen Namen für deinen Passkey ein."
@@ -1338,9 +1320,6 @@ msgstr "Kopiere die Raum-URL in die Zwischenablage, um sie deinen Freunden zu sc
 msgid "Menu"
 msgstr "Menü"
 
-msgid "Profile"
-msgstr "Profil"
-
 msgid "Log in to access rooms"
 msgstr "Melde dich an, um Räume zu nutzen"
 
@@ -2148,9 +2127,3 @@ msgstr ""
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
-
-msgid "Notifications"
-msgstr "Benachrichtigungen"
-
-msgid "Change photo"
-msgstr "Foto ändern"
