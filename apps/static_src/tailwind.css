@@ -133,22 +133,7 @@
 }
 
 @theme {
-  /* Brand ramp, identical in both themes — for fills that must not shift with the theme. */
-  --color-brand-50: #eff4fd;
-  --color-brand-100: #dde8fb;
-  --color-brand-200: #bed2f7;
-  --color-brand-300: #99b9f2;
-  --color-brand-400: #6896eb;
-  --color-brand-500: #3271e4;
-  --color-brand-600: #1b5acd;
-  --color-brand-700: #164aa9;
-  --color-brand-800: #113881;
-  --color-brand-900: #0a234f;
-
-  --color-success-500: #10b981;
-  --color-warning-500: #ff8c42;
-  --color-danger-500: #ef4444;
-
+  /* The only additions to Tailwind's own scales: its default shadows vanish on a dark ground. */
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
   --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.08), 0 14px 32px rgb(0 0 0 / 0.14);
   --shadow-brand: 0 8px 20px rgb(var(--yamsa-brand-rgb), 0.28);

@@ -66,8 +66,9 @@ apart. Tailwind exposes the tokens via `@theme inline`; **prefer them over `dark
 | `on-brand`                                     | text and icons on a brand fill                            |
 | `success-*`, `warning-*`, `danger-*`           | `-text` and `-soft` pairs for status                      |
 
-`brand-50` … `brand-900` is the raw ramp for fills that must not shift with the theme; it is
-derived from the brand and currently used nowhere.
+These tokens are the palette in full. There is no second, theme-independent ramp beside them —
+one existed, went unused, and would only have drifted from the tokens that do the work. A colour
+that must not shift with the theme is a colour that has not been thought through yet.
 
 Two tokens are kept as bare triplets, `--yamsa-brand-rgb` and `--yamsa-link-rgb`, because Bootstrap
 composes its own colors from `--bs-primary-rgb` and `--bs-link-color-rgb`: a link colour set only as
