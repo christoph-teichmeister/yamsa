@@ -1815,8 +1815,8 @@ msgstr "Nutze das Suchfeld, um nach Zahler:in oder Beschreibung zu filtern."
 msgid "Tap a row or the eye icon to review the split details."
 msgstr "Tippe eine Zeile oder das Augensymbol an, um die Split-Details anzusehen."
 
-msgid "The floating '+' button lets you capture a new transaction."
-msgstr "Der schwebende '+'-Button ermöglicht dir, eine neue Transaktion zu erfassen."
+msgid "The floating button above the list lets you capture a new transaction."
+msgstr "Der schwebende Button über der Liste ermöglicht dir, eine neue Transaktion zu erfassen."
 
 msgid "Category"
 msgstr "Kategorie"
