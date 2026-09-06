@@ -29,15 +29,8 @@ def create_debt(*, room, debitor, creditor, currency, value):
     )
 
 
-def add_transaction(*, room, user, at: datetime):
-    """Give the room a transaction whose lastmodified_at is exactly ``at``.
-
-    CommonInfo stamps lastmodified_at on every save, so the timestamp has to be forced past
-    the ORM with an update() - assigning it before save() would simply be overwritten.
-    """
-    transaction = ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency)
-    ParentTransaction.objects.filter(pk=transaction.pk).update(lastmodified_at=at)
-    return transaction
+def add_transaction(*, room, user, paid_at: datetime):
+    return ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency, paid_at=paid_at)
 
 
 def add_rooms_with_debts(*, user, guest_user, currency, count):
@@ -110,9 +103,9 @@ class TestWelcomePartialView:
         stale_room.users.add(user, guest_user)
         freshest_room = RoomFactory(created_by=user)
         freshest_room.users.add(user, guest_user)
-        add_transaction(room=stale_room, user=user, at=now - timedelta(days=30))
-        add_transaction(room=room, user=user, at=now - timedelta(days=2))
-        add_transaction(room=freshest_room, user=user, at=now - timedelta(minutes=5))
+        add_transaction(room=stale_room, user=user, paid_at=now - timedelta(days=30))
+        add_transaction(room=room, user=user, paid_at=now - timedelta(days=2))
+        add_transaction(room=freshest_room, user=user, paid_at=now - timedelta(minutes=5))
 
         entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
 
@@ -122,9 +115,9 @@ class TestWelcomePartialView:
         now = timezone.now()
         other_room = RoomFactory(created_by=user)
         other_room.users.add(user, guest_user)
-        add_transaction(room=room, user=user, at=now - timedelta(days=90))
-        add_transaction(room=room, user=user, at=now - timedelta(minutes=1))
-        add_transaction(room=other_room, user=user, at=now - timedelta(days=1))
+        add_transaction(room=room, user=user, paid_at=now - timedelta(days=90))
+        add_transaction(room=room, user=user, paid_at=now - timedelta(minutes=1))
+        add_transaction(room=other_room, user=user, paid_at=now - timedelta(days=1))
 
         entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
 
@@ -135,8 +128,8 @@ class TestWelcomePartialView:
         settled_room = RoomFactory(created_by=user)
         settled_room.users.add(user, guest_user)
         create_debt(room=room, debitor=user, creditor=guest_user, currency=CurrencyFactory(), value="500.00")
-        add_transaction(room=room, user=user, at=now - timedelta(days=10))
-        add_transaction(room=settled_room, user=user, at=now - timedelta(hours=1))
+        add_transaction(room=room, user=user, paid_at=now - timedelta(days=10))
+        add_transaction(room=settled_room, user=user, paid_at=now - timedelta(hours=1))
 
         entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
 
@@ -146,7 +139,7 @@ class TestWelcomePartialView:
         self, authenticated_client, room, user, guest_user
     ):
         # A room created just now has nothing to show yet and must not start out at the bottom.
-        add_transaction(room=room, user=user, at=timezone.now() - timedelta(days=3))
+        add_transaction(room=room, user=user, paid_at=timezone.now() - timedelta(days=3))
         brand_new_room = RoomFactory(created_by=user)
         brand_new_room.users.add(user, guest_user)
 
@@ -154,14 +147,42 @@ class TestWelcomePartialView:
 
         assert [entry.slug for entry in entries] == [brand_new_room.slug, room.slug]
 
+    def test_editing_an_old_transaction_does_not_lift_its_room(self, authenticated_client, room, user, guest_user):
+        # Correcting an amount from last year is bookkeeping, not use of the room.
+        now = timezone.now()
+        recent_room = RoomFactory(created_by=user)
+        recent_room.users.add(user, guest_user)
+        old_transaction = add_transaction(room=room, user=user, paid_at=now - timedelta(days=365))
+        add_transaction(room=recent_room, user=user, paid_at=now - timedelta(days=1))
+        ParentTransaction.objects.filter(pk=old_transaction.pk).update(lastmodified_at=now)
+
+        entries = authenticated_client.get(reverse("core:welcome")).context_data["open_room_entries"]
+
+        assert [entry.slug for entry in entries] == [recent_room.slug, room.slug]
+
+    def test_the_card_names_when_the_room_was_last_used(self, authenticated_client, room, user):
+        add_transaction(room=room, user=user, paid_at=timezone.now() - timedelta(days=3))
+
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        # django_minify_html strips the quotes around attribute values, so match the bare class;
+        # naturaltime joins number and unit with a non-breaking space.
+        assert "room-overview-activity" in content
+        assert "3\xa0days ago" in content
+
+    def test_a_room_without_transactions_names_no_time(self, authenticated_client, room):
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        assert "room-overview-activity" not in content
+
     def test_closed_rooms_are_ordered_by_their_latest_transaction_too(
         self, authenticated_client, closed_room, user, guest_user
     ):
         now = timezone.now()
         other_closed_room = RoomFactory(created_by=user, status=Room.StatusChoices.CLOSED)
         other_closed_room.users.add(user, guest_user)
-        add_transaction(room=closed_room, user=user, at=now - timedelta(days=5))
-        add_transaction(room=other_closed_room, user=user, at=now - timedelta(days=1))
+        add_transaction(room=closed_room, user=user, paid_at=now - timedelta(days=5))
+        add_transaction(room=other_closed_room, user=user, paid_at=now - timedelta(days=1))
 
         entries = authenticated_client.get(reverse("core:welcome")).context_data["closed_room_entries"]
 

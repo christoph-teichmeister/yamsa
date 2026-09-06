@@ -1337,6 +1337,10 @@ msgid_plural "and %(counter)s more rooms"
 msgstr[0] "und %(counter)s weiterer Raum"
 msgstr[1] "und %(counter)s weitere Räume"
 
+#, python-format
+msgid "%(timesince)s ago"
+msgstr "vor %(timesince)s"
+
 msgid "This room is closed. No changes can be made."
 msgstr "Dieser Raum ist geschlossen. Es können keine Änderungen vorgenommen werden."
 
@@ -1420,10 +1424,6 @@ msgstr "Verwandtes Update öffnen"
 
 msgid "Update"
 msgstr "Aktualisierung"
-
-#, python-format
-msgid "%(timesince)s ago"
-msgstr "vor %(timesince)s"
 
 msgid "Something went wrong"
 msgstr "Etwas ist schiefgelaufen"

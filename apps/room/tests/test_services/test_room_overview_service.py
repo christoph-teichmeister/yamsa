@@ -11,7 +11,6 @@ from apps.debt.models import Debt
 from apps.room.models import Room
 from apps.room.services.room_overview_service import RoomOverviewService
 from apps.room.tests.factories import RoomFactory
-from apps.transaction.models import ParentTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 
 pytestmark = pytest.mark.django_db
@@ -27,15 +26,8 @@ def create_debt(*, room, debitor, creditor, currency, value):
     )
 
 
-def add_transaction(*, room, user, at: datetime):
-    """Give the room a transaction whose lastmodified_at is exactly ``at``.
-
-    CommonInfo stamps lastmodified_at on every save, so the timestamp has to be forced past
-    the ORM with an update() - assigning it before save() would simply be overwritten.
-    """
-    transaction = ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency)
-    ParentTransaction.objects.filter(pk=transaction.pk).update(lastmodified_at=at)
-    return transaction
+def add_transaction(*, room, user, paid_at: datetime):
+    return ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency, paid_at=paid_at)
 
 
 def entry_for(entries, room):
@@ -112,8 +104,8 @@ class TestRoomOverviewService:
 
     def test_last_activity_is_the_timestamp_of_the_newest_transaction(self, room, user):
         newest = timezone.now() - timedelta(hours=2)
-        add_transaction(room=room, user=user, at=timezone.now() - timedelta(days=40))
-        add_transaction(room=room, user=user, at=newest)
+        add_transaction(room=room, user=user, paid_at=timezone.now() - timedelta(days=40))
+        add_transaction(room=room, user=user, paid_at=newest)
 
         assert entry_for(RoomOverviewService(user=user).get_entries(), room).last_activity_at == newest
 
@@ -122,6 +114,24 @@ class TestRoomOverviewService:
         entry = entry_for(RoomOverviewService(user=user).get_entries(), room)
 
         assert entry.last_activity_at == room.lastmodified_at
+
+    def test_last_transaction_at_stays_empty_without_transactions(self, room, user):
+        # Unlike last_activity_at it has no fallback: the card must not name a time for a room
+        # in which nothing was ever paid.
+        assert entry_for(RoomOverviewService(user=user).get_entries(), room).last_transaction_at is None
+
+    def test_last_transaction_at_is_the_newest_paid_at(self, room, user):
+        newest = timezone.now() - timedelta(hours=2)
+        add_transaction(room=room, user=user, paid_at=timezone.now() - timedelta(days=40))
+        add_transaction(room=room, user=user, paid_at=newest)
+
+        assert entry_for(RoomOverviewService(user=user).get_entries(), room).last_transaction_at == newest
+
+    def test_meta_text_is_the_description_of_a_room_the_user_is_in(self, room, user):
+        assert entry_for(RoomOverviewService(user=user).get_entries(), room).meta_text == room.description
+
+    def test_meta_text_names_the_owner_of_a_foreign_room(self, room, superuser):
+        assert entry_for(RoomOverviewService(user=superuser).get_entries(), room).meta_text == room.created_by.name
 
     def test_sorted_by_last_activity_puts_the_newest_room_first(self, room, closed_room, user):
         entries = RoomOverviewService(user=user).get_entries()

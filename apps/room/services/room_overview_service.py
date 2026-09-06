@@ -59,6 +59,7 @@ class RoomOverviewService:
             is_closed=is_closed,
             target_url=reverse(target_viewname, kwargs={"room_slug": room_values["slug"]}),
             last_activity_at=room_values["last_activity"],
+            last_transaction_at=room_values["last_transaction_at"],
             balances=tuple(self._balances_per_room_id.get(room_values["id"], ())),
         )
 
@@ -68,10 +69,8 @@ class RoomOverviewService:
 
     @staticmethod
     def sorted_by_last_activity(entries: Iterable[RoomOverviewEntry]) -> list[RoomOverviewEntry]:
-        """Order rooms by their most recent transaction, newest first.
+        """Order rooms by when they were last used, newest first.
 
-        ``last_activity_at`` falls back to the room's own timestamp when it has no transactions
-        yet, so a freshly created room opens at the top instead of at the bottom of the list.
         Ties keep the order they came in, sorted() being stable even in reverse.
         """
         return sorted(entries, key=lambda entry: entry.last_activity_at, reverse=True)

@@ -119,6 +119,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
                 "description",
                 "id",
                 "last_activity",
+                "last_transaction_at",
                 "name",
                 "slug",
                 "status",

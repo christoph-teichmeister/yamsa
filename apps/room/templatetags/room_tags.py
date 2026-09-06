@@ -1,8 +1,12 @@
 from decimal import Decimal
 
 from django import template
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.template.defaulttags import url
+from django.utils import timezone
 from django.utils.safestring import mark_safe
+from django.utils.timesince import timesince
+from django.utils.translation import gettext as _
 
 from apps.core.utils import format_number_with_thousands
 
@@ -42,6 +46,25 @@ def room_status_label(status):
     from apps.room.models import Room
 
     return Room.status_label_for(status)
+
+
+@register.filter
+def room_last_used(value):
+    """Say when a room was last used, in a single unit ("3 weeks ago").
+
+    naturaltime and timesince both default to two units ("4 weeks, 2 days ago"), which costs
+    the compact room row more width than the extra precision is worth on a phone. A paid_at in
+    the future - the transaction form allows one - keeps naturaltime's wording, which already
+    reads forwards.
+    """
+    if value is None:
+        return ""
+
+    if value > timezone.now():
+        return naturaltime(value)
+
+    # Same msgid the news cards and the transaction list already use, so no new string.
+    return _("%(timesince)s ago") % {"timesince": timesince(value, depth=1)}
 
 
 @register.filter

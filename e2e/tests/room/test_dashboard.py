@@ -10,21 +10,13 @@ from apps.currency.tests.factories import CurrencyFactory
 from apps.debt.models import Debt
 from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
-from apps.transaction.models import ParentTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 from e2e.pages.dashboard_page import DashboardPage
 from e2e.pages.login_page import LoginPage
 
 
-def _add_transaction(*, room, user, at: datetime):
-    """Give the room a transaction whose lastmodified_at is exactly ``at``.
-
-    CommonInfo stamps lastmodified_at on every save, so the timestamp has to be forced past
-    the ORM with an update() - assigning it before save() would simply be overwritten.
-    """
-    transaction = ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency)
-    ParentTransaction.objects.filter(pk=transaction.pk).update(lastmodified_at=at)
-    return transaction
+def _add_transaction(*, room, user, paid_at: datetime):
+    return ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency, paid_at=paid_at)
 
 
 def _room_with_balance(
@@ -45,7 +37,7 @@ def _room_with_balance(
     if owed_to_owner is not None:
         Debt.objects.create(room=room, debitor=roommate, creditor=owner, currency=currency, value=owed_to_owner)
     if last_transaction_at is not None:
-        _add_transaction(room=room, user=owner, at=last_transaction_at)
+        _add_transaction(room=room, user=owner, paid_at=last_transaction_at)
     return room
 
 
@@ -131,7 +123,7 @@ class TestDashboardRoomList:
         dashboard = open_dashboard()
         dashboard.expect_room_order(["Settled Room", "Receiving Room", "Small Debt Room", "Big Debt Room"])
 
-        _add_transaction(room=rooms_by_recency["big_debt"], user=profile_user, at=timezone.now())
+        _add_transaction(room=rooms_by_recency["big_debt"], user=profile_user, paid_at=timezone.now())
         dashboard.navigate()
 
         dashboard.expect_room_order(["Big Debt Room", "Settled Room", "Receiving Room", "Small Debt Room"])
@@ -140,11 +132,23 @@ class TestDashboardRoomList:
         self, rooms_by_recency, profile_user, roommate, euro, open_dashboard
     ):
         # A room created just now has nothing to show yet and must not open at the bottom.
-        _room_with_balance(name="Brand New Room", owner=profile_user, roommate=roommate, currency=euro)
+        brand_new_room = _room_with_balance(name="Brand New Room", owner=profile_user, roommate=roommate, currency=euro)
 
-        open_dashboard().expect_room_order(
+        dashboard = open_dashboard()
+
+        dashboard.expect_room_order(
             ["Brand New Room", "Settled Room", "Receiving Room", "Small Debt Room", "Big Debt Room"]
         )
+        # Nothing was ever paid here, so the card has no last use to name.
+        dashboard.expect_no_last_used(_url_of(brand_new_room))
+
+    def test_each_card_names_when_its_room_was_last_used(self, rooms_by_recency, open_dashboard):
+        dashboard = open_dashboard()
+
+        dashboard.expect_last_used(_url_of(rooms_by_recency["settled"]), "5\xa0minutes ago")
+        dashboard.expect_last_used(_url_of(rooms_by_recency["receiving"]), "1\xa0hour ago")
+        # One unit, not naturaltime's "4 weeks, 2 days ago".
+        dashboard.expect_last_used(_url_of(rooms_by_recency["big_debt"]), "4\xa0weeks ago")
 
     def test_each_card_names_its_direction_and_amount(self, rooms_by_recency, open_dashboard):
         dashboard = open_dashboard()

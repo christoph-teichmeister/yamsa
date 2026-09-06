@@ -13,10 +13,14 @@
     <div class="room-circle room-overview-circle{% if entry.is_closed %} closed{% endif %}">{{ entry.capitalised_initials }}</div>
     <div class="room-overview-text flex-grow-1 text-start">
       <h5 class="card-title room-overview-name mb-0">{{ entry.name }}</h5>
-      {% if not entry.user_is_in_room and entry.created_by_name %}
-        <p class="room-overview-meta text-muted small fst-italic mb-0">{{ entry.created_by_name }}</p>
-      {% elif entry.description %}
-        <p class="room-overview-meta text-muted small mb-0">{{ entry.description }}</p>
+      {% if entry.meta_text or entry.last_transaction_at %}
+        <p class="room-overview-meta text-muted small mb-0">
+          {% if entry.meta_text %}<span class="room-overview-meta-text">{{ entry.meta_text }}</span>{% endif %}
+          {% if entry.last_transaction_at %}
+            <span class="room-overview-activity"
+                  title="{{ entry.last_transaction_at }}">{{ entry.last_transaction_at|room_last_used }}</span>
+          {% endif %}
+        </p>
       {% endif %}
     </div>
     {% if entry.user_is_in_room %}

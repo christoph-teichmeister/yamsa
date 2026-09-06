@@ -27,14 +27,25 @@ class RoomQuerySet(models.QuerySet):
         return self.annotate(last_transaction_created_at_date=Max("parent_transactions__lastmodified_at"))
 
     def annotate_last_activity(self):
-        """Annotate each room with the timestamp of its most recent transaction,
-        falling back to the room's own lastmodified_at so rooms without transactions
-        still sort correctly (most-recently-active first)."""
+        """Annotate each room with when it was last used, from two angles.
+
+        ``last_transaction_at`` is when the room's most recent transaction was paid, or NULL
+        for a room that has none - it is what a room list may show, because a room without
+        transactions has no last transaction to name.
+
+        ``last_activity`` is the same value with the room's own lastmodified_at as a fallback,
+        so every room can be ordered most-recently-used-first and a freshly created one starts
+        at the top instead of at the bottom.
+
+        Both read paid_at, never lastmodified_at: correcting the amount of a transaction from
+        last year is bookkeeping, and must not present that room as the one in use right now.
+        """
         return self.annotate(
+            last_transaction_at=Max("parent_transactions__paid_at"),
             last_activity=Coalesce(
-                Max("parent_transactions__lastmodified_at"),
+                Max("parent_transactions__paid_at"),
                 F("lastmodified_at"),
-            )
+            ),
         )
 
     def annotate_capitalised_initials(self):
