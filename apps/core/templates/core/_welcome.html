@@ -6,11 +6,6 @@
           href="{% static 'components/shared/page-shell.css' %}">
     <link rel="stylesheet" href="{% static 'components/room/overview.css' %}">
     <div class="page-wrap d-flex flex-column gap-4">
-      <div class="page-hero">
-        <p class="text-uppercase small text-muted mb-1">{% trans "Your rooms" %}</p>
-        <h2 class="mb-2">{% trans "Where you stand right now" %}</h2>
-        <p class="mb-0">{% trans "Every room you are part of, with what you owe and what you get back." %}</p>
-      </div>
       {% if has_room_entries %}
         {% include "room/partials/_room_overview_section.html" with entries=open_room_entries title=_("Open") %}
         {% include "room/partials/_room_overview_section.html" with entries=closed_room_entries title=_("Closed") %}
