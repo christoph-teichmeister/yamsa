@@ -7,6 +7,8 @@ is done.
 Migrated so far:
 
 - `account/detail.html` — the profile page, which reads and edits in the same place
+- `account/security.html` — the security settings behind the profile's security rows
+- `account/change_password.html` — the password form behind those settings
 
 Everything else is still Bootstrap and follows the Bootstrap notes in
 [`architecture.md`](architecture.md) § Design System & UI Concepts.
@@ -94,6 +96,22 @@ object it only adds borders to read past.
 
 Rows that lead somewhere are buttons of the same shape with an icon, a title, a sub-line and a
 chevron — never a card with a button in it.
+
+## Form pages behind a sheet
+
+A page a sheet row leads to keeps the same shape: the page section, a `Back to profile` button
+above the sheet, then the sheet with its header band. It differs from the profile in two places:
+
+- **The primary action sits in a footer row**, not in the header. The profile's header holds
+  Edit/Cancel/Save because that is where the mode lives and the fields are sections away; a
+  single-purpose form reads top to bottom and its action belongs after the fields.
+- **Labels go above their field**, not in a label column. `Confirm your new password` does not fit
+  a `tw:@md:w-44` column on the narrow content shell, and a form is filled in sequence rather than
+  scanned down a column of values.
+
+Give such a form `method="post"` and an `action` next to its `hx-post`, so it still submits without
+the bundle. htmx pushes the URL it was finally answered from, so a view that redirects on success
+leaves the browser on the redirect target rather than on the form.
 
 ## Editing in place
 
@@ -248,6 +266,12 @@ tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand t
 tw:focus:outline-offset-0 tw:focus:outline-brand
 ```
 
+**Password field** — `account/partials/_password_field.html`. The reveal toggle sits *inside* the
+field box (`tw:absolute tw:inset-y-0 tw:right-0 tw:w-12`) and the input reserves `tw:pr-12` for it;
+a button next to the field would shrink the field on the narrow content column. The toggle carries
+both labels as data attributes so `password-visibility.js` can swap them without hard-coding
+translated text.
+
 **Badge**
 
 ```
@@ -275,10 +299,18 @@ Playwright's `check()` keep working.
 
 - `shared_partials/_toggle_switch.html` — switch-styled checkbox; read-only unless
   `toggle_editable` is passed
+- `account/partials/_back_to_profile.html` — the back button of the pages behind the profile,
+  hooked with `data-back-to-profile` because the side menu also links to the profile
+- `account/partials/_password_field.html` — password input with its reveal toggle
 - `account/partials/_profile_sheet.html` — the own profile, read and edit in one markup
 - `account/partials/_profile_photo.html` — the avatar, its dialog and its own upload cycle
 - `account/partials/_profile_value_row.html` — static label/value row
 - `account/partials/_profile_badges.html` — role and PayPal pills
+
+State a script toggles must be expressed the way that script expects. `#passkey-reg-result` is
+hidden with the `hidden` attribute rather than `tw:hidden`, because `passkey-register.js` reveals
+it by clearing that attribute — a utility class would leave the error invisible whatever the script
+does.
 
 Icons stay on bootstrap-icons (`<i class="bi bi-…" aria-hidden="true">`); that font is independent of
 Bootstrap's CSS and outlives the migration.

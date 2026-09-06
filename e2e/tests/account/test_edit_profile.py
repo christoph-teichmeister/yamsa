@@ -129,3 +129,13 @@ class TestEditProfile:
 
     def test_guest_has_no_edit_option_on_own_profile(self, logged_in_guest_detail_page):
         logged_in_guest_detail_page.expect_edit_button_hidden()
+
+    def test_navigating_from_the_security_rows_morphs_instead_of_replacing(self, logged_in_profile_detail_page):
+        # The security rows ask for hx-swap="morph:innerHTML". That only takes effect while the
+        # idiomorph extension both registers and is activated under the name it registers with —
+        # miss either and htmx quietly replaces the shell instead, throwing away focus and scroll.
+        logged_in_profile_detail_page.mark_body_shell()
+
+        logged_in_profile_detail_page.open_change_password_via_security_row()
+
+        assert logged_in_profile_detail_page.body_shell_survived()

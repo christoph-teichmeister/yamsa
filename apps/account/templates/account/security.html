@@ -1,88 +1,90 @@
 {% extends "core/base.html" %}
 {% load static i18n %}
 {% block content %}
-  <section class="container px-2 px-md-4 px-lg-5">
-    <div class="row justify-content-center gy-4">
-      <div class="col-12 col-xl-9">
-        <div class="mb-3">
-          <button type="button"
-                  class="btn btn-link text-decoration-none ps-0 text-muted small"
-                  hx-get="{% url 'account:detail' pk=user.id %}"
-                  hx-target="#body"
-                  hx-indicator="#body-loading-spinner"
-                  hx-swap="morph:innerHTML"
-                  hx-push-url="true">← {% trans "Back to profile" %}</button>
-        </div>
-        <div class="card border-0 shadow-sm rounded-4">
-          <div class="card-body p-4 p-md-5">
-            <div class="mb-4">
-              <p class="text-uppercase small text-muted mb-1">{% trans "Security" %}</p>
-              <h1 class="h3 fw-semibold mb-0">{% trans "Security settings" %}</h1>
-            </div>
-            <div class="row gy-4">
-              <div class="col-12">
-                <div class="border rounded-4 p-4">
-                  <p class="text-uppercase small text-muted mb-1">{% trans "Passkeys" %}</p>
-                  <p class="fw-semibold mb-1">{% trans "Biometric login" %}</p>
-                  <p class="text-muted small mb-3">
-                    {% trans "Log in with your fingerprint, face ID, or a hardware security key — no password required." %}
-                  </p>
-                  {% if has_passkey %}
-                    <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 p-3 bg-body-secondary rounded-3 mb-3">
-                      <div>
-                        <p class="fw-semibold mb-0">{{ passkey.name }}</p>
-                        <small class="text-muted">
-                          {% trans "Added:" %} {{ passkey.added_on|date }}
-                          {% if passkey.last_used %}
-                            · {% trans "Last used:" %} {{ passkey.last_used|date }}
-                          {% endif %}
-                        </small>
-                      </div>
-                      <div class="ms-md-auto">
-                        <form id="passkey-delete-form"
-                              method="post"
-                              action="{% url 'account:passkey-delete' %}">
-                          {% csrf_token %}
-                          <input type="hidden" name="id" value="{{ passkey.id }}">
-                          <button type="submit" class="btn btn-outline-danger btn-sm">{% trans "Delete" %}</button>
-                        </form>
-                      </div>
-                    </div>
-                  {% else %}
-                    <div class="mb-3">
-                      <label class="form-label" for="passkey-name">{% trans "Passkey name" %}</label>
-                      <input type="text"
-                             id="passkey-name"
-                             class="form-control"
-                             placeholder="{% trans "e.g. MacBook Touch ID" %}"
-                             maxlength="255">
-                    </div>
-                    <div id="passkey-reg-result" class="text-danger small mb-2 d-none"></div>
-                    <button type="button" id="passkey-reg-btn" class="btn btn-primary">{% trans "Register passkey" %}</button>
-                  {% endif %}
-                </div>
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+    {% include "account/partials/_back_to_profile.html" %}
+    <div class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
+      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Security" %}</p>
+        <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Security settings" %}</h1>
+      </div>
+      <div class="tw:border-t tw:border-line">
+        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase tw:@md:px-6">
+          {% trans "Passkeys" %}
+        </p>
+        <div class="tw:px-5 tw:pt-1 tw:pb-5 tw:@md:px-6">
+          <p class="tw:m-0 tw:font-medium tw:text-ink">{% trans "Biometric login" %}</p>
+          <p class="tw:mt-1 tw:mb-4 tw:text-sm tw:text-ink-muted">
+            {% trans "Log in with your fingerprint, face ID, or a hardware security key — no password required." %}
+          </p>
+          {% if has_passkey %}
+            <div class="tw:flex tw:flex-col tw:gap-3 tw:rounded-2xl tw:bg-surface-sunken tw:px-4 tw:py-3 tw:@md:flex-row tw:@md:items-center tw:@md:gap-4">
+              <div class="tw:min-w-0 tw:flex-1">
+                <p class="tw:m-0 tw:font-medium tw:break-words tw:text-ink">{{ passkey.name }}</p>
+                <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">
+                  {% trans "Added:" %} {{ passkey.added_on|date }}
+                  {% if passkey.last_used %}· {% trans "Last used:" %} {{ passkey.last_used|date }}{% endif %}
+                </p>
               </div>
-              <div class="col-12">
-                <div class="border rounded-4 p-4 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
-                  <div>
-                    <p class="text-uppercase small text-muted mb-1">{% trans "Password" %}</p>
-                    <p class="fw-semibold mb-1">{% trans "Change your password" %}</p>
-                    <p class="text-muted small mb-0">{% trans "Choose a unique password to keep your rooms safe." %}</p>
-                  </div>
-                  <div class="ms-md-auto">
-                    <button type="button"
-                            class="btn btn-outline-primary"
-                            hx-get="{% url 'account:change-password' pk=user.id %}"
-                            hx-target="#body"
-                            hx-indicator="#body-loading-spinner"
-                            hx-swap="morph:innerHTML"
-                            hx-push-url="true">{% trans "Change password" %}</button>
-                  </div>
-                </div>
-              </div>
+              <form id="passkey-delete-form"
+                    class="tw:shrink-0"
+                    method="post"
+                    action="{% url 'account:passkey-delete' %}">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ passkey.id }}">
+                <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-danger-500/60 tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                        type="submit">
+                  <i class="bi bi-trash" aria-hidden="true"></i>
+                  {% trans "Delete" %}
+                </button>
+              </form>
             </div>
-          </div>
+          {% else %}
+            <div class="tw:flex tw:flex-col tw:gap-3">
+              <div>
+                <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                       for="passkey-name">{% trans "Passkey name" %}</label>
+                <input id="passkey-name"
+                       class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                       type="text"
+                       placeholder="{% trans "e.g. MacBook Touch ID" %}"
+                       maxlength="255">
+              </div>
+              {# hidden attribute, not a utility class: passkey-register.js reveals it by clearing it. #}
+              <p id="passkey-reg-result"
+                 class="tw:m-0 tw:rounded-lg tw:bg-danger-soft tw:px-3 tw:py-2 tw:text-sm tw:text-danger-text"
+                 hidden></p>
+              <button id="passkey-reg-btn"
+                      class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:self-start tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+                      type="button">
+                <i class="bi bi-fingerprint" aria-hidden="true"></i>
+                {% trans "Register passkey" %}
+              </button>
+            </div>
+          {% endif %}
         </div>
+      </div>
+      <div class="tw:border-t tw:border-line">
+        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase tw:@md:px-6">
+          {% trans "Password" %}
+        </p>
+        <button class="tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand tw:@md:px-6"
+                type="button"
+                hx-get="{% url 'account:change-password' pk=user.id %}"
+                hx-target="#body"
+                hx-indicator="#body-loading-spinner"
+                hx-swap="morph:innerHTML"
+                hx-push-url="true">
+          <span class="tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-brand-soft tw:text-brand-text"
+                aria-hidden="true">
+            <i class="bi bi-key"></i>
+          </span>
+          <span class="tw:min-w-0 tw:flex-1">
+            <span class="tw:block tw:font-medium tw:text-ink">{% trans "Change your password" %}</span>
+            <span class="tw:block tw:text-sm tw:text-ink-subtle">{% trans "Choose a unique password to keep your rooms safe." %}</span>
+          </span>
+          <i class="bi bi-chevron-right tw:text-ink-subtle" aria-hidden="true"></i>
+        </button>
       </div>
     </div>
   </section>

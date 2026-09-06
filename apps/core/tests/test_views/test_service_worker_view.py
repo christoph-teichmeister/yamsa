@@ -1,6 +1,8 @@
 import json
+import re
 
 from django.test import override_settings
+from django.urls import reverse
 
 from apps.core.views.service_worker_view import ServiceWorkerView
 
@@ -35,3 +37,14 @@ def test_service_worker_builds_precache_urls_from_manifest():
         "/static/images/icons/icon.png",
         "/static/images/splash/splash.png",
     ]
+
+
+def test_service_worker_never_answers_app_assets_from_the_cache_first(client):
+    """Guards the invariant that made bundle changes invisible until the caches were cleared."""
+    script = client.get(reverse("core:serviceworker")).content.decode()
+
+    assert "cacheFirst" not in script
+    assert re.search(
+        r"if \(isDocument \|\| isAppAsset\) \{\s*event\.respondWith\(networkFirst\(request\)\);",
+        script,
+    )

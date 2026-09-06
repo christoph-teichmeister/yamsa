@@ -17,6 +17,7 @@ module.exports = {
     "suggested-guests": path.resolve(staticJsPath, "suggested-guests.js"),
     "category-suggestion": path.resolve(staticJsPath, "category-suggestion.js"),
     "profile-sheet": path.resolve(staticJsPath, "profile-sheet.js"),
+    "password-visibility": path.resolve(staticJsPath, "password-visibility.js"),
     styles: path.resolve(staticJsPath, "styles.js"),
     tailwind: path.resolve(staticSrcPath, "tailwind.js"),
     htmx: path.resolve(staticJsPath, "htmx.js"),
@@ -52,8 +53,11 @@ module.exports = {
     ],
   },
   plugins: [
+    // The bare module gives webpack a namespace object whose only export is `default`, so
+    // idiomorph-ext's `htmx.defineExtension(...)` would call a method that is not there and take
+    // the whole htmx entry down with it. Name the export explicitly.
     new webpack.ProvidePlugin({
-      htmx: "htmx.org",
+      htmx: ["htmx.org", "default"],
     }),
     new MiniCssExtractPlugin({
       filename: "[name].bundle.css",

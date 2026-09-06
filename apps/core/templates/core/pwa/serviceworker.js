@@ -45,21 +45,6 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(purgeLegacyCaches());
 });
 
-const cacheFirst = async (request) => {
-  const cache = await caches.open(STATIC_CACHE_NAME);
-  const cachedResponse = await cache.match(request);
-
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-
-  const networkResponse = await fetch(request);
-  if (networkResponse && networkResponse.ok) {
-    cache.put(request, networkResponse.clone());
-  }
-  return networkResponse;
-};
-
 const networkFirst = async (request) => {
   const cache = await caches.open(STATIC_CACHE_NAME);
   try {
@@ -92,26 +77,21 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (request.mode === "navigate" || request.destination === "document") {
-    event.respondWith(networkFirst(request));
-    return;
-  }
-
   const normalisedRequestUrl = normalizeUrl(request.url);
-
-  if (
+  const isDocument = request.mode === "navigate" || request.destination === "document";
+  // Answering an app asset from the cache first would strand the client on it for good: the URLs
+  // carry no content hash (render_bundle emits bundles/<name>.bundle.js in every environment), so
+  // no later build can invalidate the entry. The cache is the offline fallback, not the source.
+  const isAppAsset =
     normalisedRequestUrl.startsWith(`${SAME_ORIGIN}${STATIC_URL_PREFIX}`) ||
-    PRECACHE_URL_SET.has(normalisedRequestUrl)
-  ) {
-    event.respondWith(cacheFirst(request));
-    return;
-  }
+    PRECACHE_URL_SET.has(normalisedRequestUrl);
 
-  event.respondWith(
-    fetch(request)
-      .then((response) => response)
-      .catch((error) => caches.match(request).then((cached) => cached || Promise.reject(error)))
-  );
+  // Anything else is left to the browser. Nothing puts such a request in the cache, so there is no
+  // offline copy to fall back to, and mediating it would only stall responses that are meant to
+  // stay open — the dev server's reload stream among them.
+  if (isDocument || isAppAsset) {
+    event.respondWith(networkFirst(request));
+  }
 });
 
 // Register event listener for the 'push' event.

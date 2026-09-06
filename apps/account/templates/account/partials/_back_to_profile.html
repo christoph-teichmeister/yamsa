@@ -1,0 +1,12 @@
+{% load i18n %}
+<button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-1.5 tw:self-start tw:rounded-lg tw:border-0 tw:bg-transparent tw:px-1 tw:py-1 tw:text-sm tw:font-semibold tw:text-ink-muted tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+        type="button"
+        data-back-to-profile
+        hx-get="{% url 'account:detail' pk=user.id %}"
+        hx-target="#body"
+        hx-indicator="#body-loading-spinner"
+        hx-swap="morph:innerHTML"
+        hx-push-url="true">
+  <i class="bi bi-chevron-left" aria-hidden="true"></i>
+  {% trans "Back to profile" %}
+</button>
