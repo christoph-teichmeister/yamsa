@@ -115,8 +115,6 @@ class TestRoomOverviewService:
 
         assert len(entries) == extra_room_count
 
-
-class TestCurrencyTotalsFor:
     def test_the_two_directions_stay_apart(self, room, user, guest_user):
         currency = CurrencyFactory(sign="€")
         other_room = RoomFactory(created_by=user)

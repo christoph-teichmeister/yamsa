@@ -1,18 +1,9 @@
 from dataclasses import dataclass
 from decimal import Decimal
-from enum import IntEnum
 from uuid import UUID
 
+from apps.room.dataclasses.attention_rank import AttentionRank
 from apps.room.dataclasses.room_balance import RoomBalance
-
-
-class AttentionRank(IntEnum):
-    """Order in which the dashboard surfaces a room: the lower the rank, the more it needs doing."""
-
-    OWING = 0
-    BALANCED = 1
-    RECEIVING = 2
-    SETTLED = 3
 
 
 @dataclass(frozen=True)

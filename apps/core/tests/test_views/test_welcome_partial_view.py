@@ -88,8 +88,6 @@ class TestWelcomePartialView:
 
         payment_reminder.assert_not_called()
 
-
-class TestOpenRoomOrdering:
     def test_rooms_the_user_owes_in_come_before_rooms_owing_the_user(
         self, authenticated_client, room, user, guest_user
     ):
@@ -142,8 +140,6 @@ class TestOpenRoomOrdering:
         assert entries[0].slug == mixed_room.slug
         assert entries[0].user_owes is True
 
-
-class TestOpenBalanceSummary:
     def test_closed_rooms_are_left_out_of_the_totals(self, authenticated_client, room, closed_room, user, guest_user):
         currency = CurrencyFactory(sign="€")
         create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00")
