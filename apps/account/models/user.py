@@ -1,3 +1,4 @@
+import hashlib
 import random
 import string
 from functools import cached_property, lru_cache
@@ -9,6 +10,7 @@ from django.conf import settings
 from django.contrib.auth import hashers
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+from django.core.cache import cache
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -34,29 +36,92 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
     UPLOAD_FOLDER_NAME = "profile_picture"
     PROFILE_PICTURE_FALLBACK_PATH = "img/profile-default.svg"
 
+    # A list asks for a picture per row, and MediaCloudinaryStorage answers exists() with an HTTP
+    # request. An upload name carries a uuid4 (determine_upload_to) and is therefore never reused,
+    # so a name that exists keeps existing. A miss is not cached as long, because the same branch
+    # also catches a storage that is momentarily unreachable.
+    PROFILE_PICTURE_EXISTS_CACHE_TIMEOUT = 60 * 60 * 24
+    PROFILE_PICTURE_MISSING_CACHE_TIMEOUT = 60
+
+    # Cloudinary delivers the avatar at twice the size the lists paint it, instead of the original
+    # the upload limit allows (3 MB).
+    AVATAR_TRANSFORMATION = "c_fill,g_auto,h_128,w_128,f_auto,q_auto"
+    CLOUDINARY_UPLOAD_MARKER = "/image/upload/"
+
     def _build_fallback_profile_picture_url(self) -> str:
         static_url = settings.STATIC_URL
         if not static_url.endswith("/"):
             static_url = f"{static_url}/"
         return f"{static_url}{self.PROFILE_PICTURE_FALLBACK_PATH.lstrip('/')}"
 
+    def _profile_picture_exists(self) -> bool:
+        picture = self.profile_picture
+        # The name, not the pk: it identifies the file the answer is about, and a re-upload asks
+        # under a new one rather than reading a stale entry.
+        digest = hashlib.sha256(picture.name.encode()).hexdigest()
+        cache_key = f"profile-picture-exists:{digest}"
+
+        cached_answer = cache.get(cache_key)
+        if cached_answer is not None:
+            return cached_answer
+
+        try:
+            picture_exists = picture.storage.exists(picture.name)
+        except Exception:
+            picture_exists = False
+
+        cache.set(
+            cache_key,
+            picture_exists,
+            self.PROFILE_PICTURE_EXISTS_CACHE_TIMEOUT if picture_exists else self.PROFILE_PICTURE_MISSING_CACHE_TIMEOUT,
+        )
+        return picture_exists
+
+    def _has_profile_picture(self) -> bool:
+        picture = self.profile_picture
+        if not picture or not getattr(picture, "name", None):
+            return False
+        return self._profile_picture_exists()
+
+    def _as_avatar_url(self, url: str) -> str:
+        """Narrow a Cloudinary delivery URL to the avatar size; leave every other storage alone."""
+        marker = self.CLOUDINARY_UPLOAD_MARKER
+        head, separator, tail = url.partition(marker)
+        if not separator:
+            return url
+        return f"{head}{marker}{self.AVATAR_TRANSFORMATION}/{tail}"
+
     @property
     def profile_picture_fallback_url(self) -> str:
         return self._build_fallback_profile_picture_url()
 
+    @cached_property
+    def avatar_url(self) -> str | None:
+        """The thumbnail of this user, or None when there is no picture to show.
+
+        None rather than the placeholder: a caller that has room for a picture but none to show
+        renders the user's initial instead, and only the caller knows how big it has to be.
+        """
+        if not self._has_profile_picture():
+            return None
+
+        try:
+            url = self.profile_picture.url
+        except Exception:
+            return None
+
+        return self._as_avatar_url(url)
+
     @property
     def profile_picture_url(self) -> str:
+        """The picture at its stored size, for the profile page and its dialog."""
         fallback_url = self._build_fallback_profile_picture_url()
-        picture = self.profile_picture
 
-        if not picture or not getattr(picture, "name", None):
+        if not self._has_profile_picture():
             return fallback_url
 
         try:
-            if not picture.storage.exists(picture.name):
-                return fallback_url
-
-            return picture.url
+            return self.profile_picture.url
         except Exception:
             return fallback_url
 
