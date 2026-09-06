@@ -5,3 +5,5 @@
 <link rel="stylesheet" href="{% static 'components/navbar/navbar.css' %}">
 <link rel="stylesheet" href="{% static 'customClasses.css' %}">
 <link rel="stylesheet" href="{% static 'htmxIndicatorRequest.css' %}">
+<!-- Loaded last on purpose: the Tailwind utilities of migrated pages must win over Bootstrap. -->
+{% render_bundle "tailwind" "css" %}
