@@ -2092,3 +2092,15 @@ msgstr ""
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
+
+msgid "Theme"
+msgstr "Design"
+
+msgid "Light theme"
+msgstr "Helles Design"
+
+msgid "Dark theme"
+msgstr "Dunkles Design"
+
+msgid "Follow the system theme"
+msgstr "Systemeinstellung übernehmen"
