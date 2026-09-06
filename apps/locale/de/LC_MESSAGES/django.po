@@ -2159,12 +2159,3 @@ msgstr ""
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
-
-#~ msgid "Your rooms"
-#~ msgstr "Deine Räume"
-
-#~ msgid "Where you stand right now"
-#~ msgstr "Wie du gerade dastehst"
-
-#~ msgid "Every room you are part of, with what you owe and what you get back."
-#~ msgstr "Jeder Raum, in dem du bist – mit dem, was du schuldest und was du zurückbekommst."
