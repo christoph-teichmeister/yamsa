@@ -1,4 +1,5 @@
 import http
+import re
 from datetime import datetime, timedelta
 from decimal import Decimal
 from unittest import mock
@@ -207,6 +208,30 @@ class TestWelcomePartialView:
         content = authenticated_client.get(reverse("core:welcome")).content.decode()
 
         assert "12.50€" in content or "12,50€" in content
+
+    def test_the_closed_section_hides_its_rooms_behind_a_toggle(self, authenticated_client, room, closed_room):
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        # django_minify_html strips the quotes around attribute values, hence the optional ones.
+        toggle = re.search(r'<button[^>]*aria-controls="?closedRooms"?[^>]*>', content)
+        assert toggle is not None
+        assert re.search(r'aria-expanded="?false"?', toggle.group())
+        assert re.search(r'class="?collapse"? id="?closedRooms"?', content)
+        assert closed_room.name in content
+
+    def test_the_closed_toggle_names_how_many_rooms_it_hides(self, authenticated_client, closed_room, user, guest_user):
+        second_closed_room = RoomFactory(created_by=user, status=Room.StatusChoices.CLOSED)
+        second_closed_room.users.add(user, guest_user)
+
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        assert "Closed (2)" in content
+
+    def test_the_open_rooms_are_not_collapsed(self, authenticated_client, room, closed_room):
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        # Only the closed section carries a toggle; the open one shows its rooms without a click.
+        assert content.count("room-overview-toggle-icon") == 1
 
     def test_a_user_without_debts_gets_no_summary(self, authenticated_client, room):
         response = authenticated_client.get(reverse("core:welcome"))

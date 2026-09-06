@@ -9,7 +9,7 @@
       {% if has_room_entries %}
         {% include "room/partials/_room_balance_summary.html" with totals=open_balance_totals %}
         {% include "room/partials/_room_overview_section.html" with entries=open_room_entries title=_("Open") %}
-        {% include "room/partials/_room_overview_section.html" with entries=closed_room_entries title=_("Closed") %}
+        {% include "room/partials/_room_overview_section.html" with entries=closed_room_entries title=_("Closed") collapsible=True section_id="closedRooms" %}
         {% include "room/partials/_room_overview_section.html" with entries=other_room_entries title=_("Other") overflow_count=other_room_overflow_count %}
       {% else %}
         <div class="page-empty">
