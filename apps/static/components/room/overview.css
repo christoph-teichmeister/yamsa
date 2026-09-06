@@ -14,7 +14,7 @@
 .room-overview-card:hover,
 .room-overview-card:focus-visible {
     transform: translateY(-2px);
-    border-color: rgba(var(--bs-primary-rgb, 110, 168, 254), 0.55);
+    border-color: rgba(var(--bs-primary-rgb, 47, 111, 228), 0.55);
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.22);
 }
 
@@ -171,7 +171,7 @@
 
 .room-overview-create {
     border-style: dashed;
-    border-color: rgba(var(--bs-primary-rgb, 110, 168, 254), 0.45);
+    border-color: rgba(var(--bs-primary-rgb, 47, 111, 228), 0.45);
 }
 
 /* One tile per direction and currency - amounts of different currencies are never merged. */

@@ -14,8 +14,8 @@
             gap: 0.4rem;
             padding: 0.35rem 0.75rem;
             border-radius: 999px;
-            background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.08);
-            color: var(--bs-primary, #0d6efd);
+            background: rgb(var(--yamsa-brand-rgb), 0.08);
+            color: var(--yamsa-brand);
             font-size: 0.8rem;
         }
 
@@ -46,7 +46,7 @@
             right: 0;
             bottom: 0;
             left: 0;
-            background: linear-gradient(90deg, rgba(13, 110, 253, 0.9), rgba(111, 66, 193, 0.9));
+            background: linear-gradient(90deg, rgb(var(--yamsa-brand-rgb), 0.9), rgba(111, 66, 193, 0.9));
             width: var(--graph-width, 0%);
         }
 
@@ -298,8 +298,8 @@
                 .attr("y1", "0%")
                 .attr("x2", "0%")
                 .attr("y2", "100%")
-            gradient.append("stop").attr("offset", "0%").attr("stop-color", "rgba(13, 110, 253, 0.4)")
-            gradient.append("stop").attr("offset", "100%").attr("stop-color", "rgba(13, 110, 253, 0)")
+            gradient.append("stop").attr("offset", "0%").style("stop-color", "rgb(var(--yamsa-brand-rgb), 0.4)")
+            gradient.append("stop").attr("offset", "100%").style("stop-color", "rgb(var(--yamsa-brand-rgb), 0)")
 
             const chart = svg
                 .append("g")
@@ -330,8 +330,8 @@
                             .ticks(Math.min(6, dataset.length))
                             .tickFormat(d3.utcFormat("%d %b"))
                     )
-                    .call(g => g.select(".domain").attr("stroke", "rgba(0,0,0,0.2)"))
-                    .call(g => g.selectAll(".tick line").attr("stroke", "rgba(0,0,0,0.15)"))
+                    .call(g => g.select(".domain").style("stroke", "var(--yamsa-line-strong)"))
+                    .call(g => g.selectAll(".tick line").style("stroke", "var(--yamsa-line)"))
                 g.selectAll("text")
                     .attr("text-anchor", "end")
                     .attr("transform", "rotate(-90)")
@@ -353,8 +353,8 @@
                             .tickSize(-innerWidth)
                             .tickFormat(value => `${currency}${numberFormatter.format(value)}`)
                     )
-                    .call(g => g.select(".domain").attr("stroke", "rgba(0,0,0,0.2)"))
-                    .call(g => g.selectAll(".tick line").attr("stroke", "rgba(0,0,0,0.1)"))
+                    .call(g => g.select(".domain").style("stroke", "var(--yamsa-line-strong)"))
+                    .call(g => g.selectAll(".tick line").style("stroke", "var(--yamsa-line)"))
 
             chart.append("g").call(xAxis)
             chart.append("g").call(yAxis)

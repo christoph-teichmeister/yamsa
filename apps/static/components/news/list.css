@@ -33,7 +33,7 @@
     top: 1.35rem;
     width: 1.4rem;
     height: 1px;
-    border-top: 1px solid var(--timeline-line-color, rgba(13, 110, 253, 0.35));
+    border-top: 1px solid var(--timeline-line-color, rgb(var(--yamsa-brand-rgb), 0.35));
     border-bottom: 2px solid transparent;
     border-radius: 999px;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
@@ -60,13 +60,13 @@
 .timeline-card-interactive:hover {
     transform: translateY(-2px);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-    border-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.35);
+    border-color: rgb(var(--yamsa-brand-rgb), 0.35);
 }
 
 .timeline-card-link:focus-visible .timeline-card-interactive {
     transform: translateY(-2px);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-    border-color: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.35);
+    border-color: rgb(var(--yamsa-brand-rgb), 0.35);
     outline: none;
 }
 
@@ -99,8 +99,8 @@
     gap: 0.3rem;
     padding: 0.2rem 0.6rem;
     border-radius: 999px;
-    background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.15);
-    color: var(--bs-primary, #0d6efd);
+    background: rgb(var(--yamsa-brand-rgb), 0.15);
+    color: var(--yamsa-brand);
     font-size: 0.7rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
