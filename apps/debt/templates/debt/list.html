@@ -1,5 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load static room_tags i18n %}
+{% load room_tags i18n %}
 {% block tab_content %}
   <style nonce="{{ csp_nonce }}">
         .debt-card {
@@ -19,6 +19,13 @@
 
         .debt-row-settled {
             background-color: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.03);
+        }
+
+        .debt-amount {
+            /* Lining figures so the amounts of stacked rows line up on the decimal point. */
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+            white-space: nowrap;
         }
 
         .insight-list {
@@ -103,27 +110,35 @@
       <div class="card-body">
         {% for debt in debts %}
           <div class="debt-row{% if debt.settled %} debt-row-settled{% endif %}">
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-              <div>
-                <p class="fw-semibold mb-1">
-                  {% parse_user_text debt.debitor.name True as debitor_display %}
-                  {% parse_user_text debt.creditor.name as creditor_display %}
-                  {% blocktrans with debitor_display=debitor_display creditor_display=creditor_display value=debt.value currency=debt.currency.sign trimmed %}
-                    {{ debitor_display }} owes {{ value }}{{ currency }} to
-                    {{ creditor_display }}
+            <div class="d-flex justify-content-between align-items-baseline gap-3">
+              <p class="mb-0">
+                {% if debt.viewer_is_debitor %}
+                  {% blocktrans with creditor_name=debt.creditor.name trimmed %}
+                    You owe <strong>{{ creditor_name }}</strong>
                   {% endblocktrans %}
-                </p>
-                {% if debt.settled %}
-                  <p class="text-success small mb-0">
-                    {% blocktrans with settled_at=debt.settled_at|date trimmed %}
-                      Settled on {{ settled_at }}
-                    {% endblocktrans %}
-                  </p>
+                {% elif debt.viewer_is_creditor %}
+                  {% blocktrans with debitor_name=debt.debitor.name trimmed %}
+                    <strong>{{ debitor_name }}</strong> owes you
+                  {% endblocktrans %}
+                {% else %}
+                  {% blocktrans with debitor_name=debt.debitor.name creditor_name=debt.creditor.name trimmed %}
+                    <strong>{{ debitor_name }}</strong> owes <strong>{{ creditor_name }}</strong>
+                  {% endblocktrans %}
                 {% endif %}
-              </div>
-              <div class="d-flex flex-wrap align-items-center gap-2">
-                {% include "debt/partials/_debt_row_actions.html" with debt=debt %}
-              </div>
+              </p>
+              <p class="debt-amount mb-0 {% if debt.settled %}text-muted{% elif debt.viewer_is_debitor %}text-danger-emphasis{% elif debt.viewer_is_creditor %}text-success-emphasis{% endif %}">
+                {{ debt.value|format_with_thousands }}&nbsp;{{ debt.currency.sign }}
+              </p>
+            </div>
+            {% if debt.settled %}
+              <p class="text-success small mb-0 mt-1">
+                {% blocktrans with settled_at=debt.settled_at|date trimmed %}
+                  Settled on {{ settled_at }}
+                {% endblocktrans %}
+              </p>
+            {% endif %}
+            <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+              {% include "debt/partials/_debt_row_actions.html" with debt=debt %}
             </div>
           </div>
         {% empty %}
