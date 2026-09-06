@@ -39,6 +39,9 @@ class DashboardPage(BasePage):
     def expect_no_last_used(self, target_url: str):
         expect(self.card_for(target_url).locator(".room-overview-activity")).to_have_count(0)
 
+    def expect_no_amount(self, target_url: str):
+        expect(self.card_for(target_url).locator(".room-overview-amount")).to_have_count(0)
+
     def expect_closed_rooms_are_collapsed(self):
         expect(self.page.locator("#closedRooms")).to_be_hidden()
 

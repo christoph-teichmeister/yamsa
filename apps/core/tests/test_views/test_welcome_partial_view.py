@@ -233,6 +233,17 @@ class TestWelcomePartialView:
         # Only the closed section carries a toggle; the open one shows its rooms without a click.
         assert content.count("room-overview-toggle-icon") == 1
 
+    def test_a_closed_room_carries_no_balance_on_its_tile(self, authenticated_client, closed_room, user, guest_user):
+        currency = CurrencyFactory(sign="€")
+        create_debt(room=closed_room, debitor=user, creditor=guest_user, currency=currency, value="99.00")
+
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        # The only room on this dashboard is the closed one, so no amount may show up at all.
+        assert closed_room.name in content
+        assert "room-overview-amount" not in content
+        assert "All settled" not in content
+
     def test_only_the_closed_rooms_are_laid_out_as_two_tiles_per_row(self, authenticated_client, room, closed_room):
         content = authenticated_client.get(reverse("core:welcome")).content.decode()
 

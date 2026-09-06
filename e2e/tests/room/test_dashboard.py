@@ -176,7 +176,7 @@ class TestDashboardRoomList:
         # The "Open" section heading already says it; repeating it per card only costs width.
         open_dashboard().expect_no_status_badge(_url_of(rooms_by_recency["big_debt"]))
 
-    def test_a_closed_rooms_debt_shows_on_its_card_but_not_in_the_summary(
+    def test_a_closed_room_shows_neither_its_debt_nor_a_settled_hint(
         self, profile_user, roommate, euro, open_dashboard
     ):
         closed_room = _closed_room_with_debt(owner=profile_user, roommate=roommate, currency=euro)
@@ -184,7 +184,7 @@ class TestDashboardRoomList:
         dashboard = open_dashboard()
         dashboard.expand_closed_rooms()
 
-        dashboard.expect_amount(_url_of(closed_room), label="You owe", value="99.00€")
+        dashboard.expect_no_amount(_url_of(closed_room))
         dashboard.expect_no_summary()
 
     def test_closed_rooms_stay_collapsed_until_the_section_is_opened(

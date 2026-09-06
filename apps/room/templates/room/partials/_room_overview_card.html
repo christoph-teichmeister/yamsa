@@ -19,8 +19,8 @@
         {% endif %}
       </div>
       <h5 class="card-title room-overview-name">{{ entry.name }}</h5>
+      {# A closed room is settled and done with; its balance would only be noise on the tile. #}
       {% if entry.meta_text %}<p class="room-overview-meta text-muted small">{{ entry.meta_text }}</p>{% endif %}
-      {% include "room/partials/_room_overview_amounts.html" with entry=entry %}
     </div>
   {% else %}
     <div class="card-body room-overview-body d-flex align-items-center gap-3">

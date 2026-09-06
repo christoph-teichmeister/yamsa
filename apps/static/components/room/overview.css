@@ -132,8 +132,9 @@
     color: var(--bs-secondary-color, #9aa3ab);
 }
 
-/* Closed rooms only: they live behind a toggle, so they are shown two per row as compact tiles.
-   At half a phone screen wide a name and an amount do not fit side by side, hence the stack. */
+/* Closed rooms only: they live behind a toggle and carry no balance, so they are shown two per
+   row as compact tiles. At half a phone screen wide the row layout has no width left for a
+   name next to the initials, hence the stack. */
 .room-overview-card-tile .room-overview-body {
     gap: 0.25rem;
 }
@@ -142,8 +143,8 @@
     margin-bottom: 0.25rem;
 }
 
-/* Two lines at most: the name gets the full tile width, but a long one must not push the amount
-   out of sight on a tile whose neighbour is a single line. */
+/* Two lines at most: the name gets the full tile width, but a long one must not stretch its row
+   past the tile next to it. */
 .room-overview-card-tile .room-overview-name {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -160,24 +161,6 @@
     margin-bottom: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-/* margin-top pins the amount to the bottom edge, so the amounts of two tiles in a row line up
-   however many lines their names take. */
-.room-overview-card-tile .room-overview-amounts,
-.room-overview-card-tile .room-overview-amount {
-    align-items: flex-start;
-    text-align: left;
-}
-
-.room-overview-card-tile .room-overview-amounts {
-    margin-top: auto;
-    padding-top: 0.5rem;
-}
-
-.room-overview-card-tile .room-overview-status {
-    align-self: flex-start;
-    margin-top: auto;
 }
 
 .room-overview-create {
