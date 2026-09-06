@@ -93,6 +93,14 @@ body {
     --bs-offcanvas-width: 75%;
 }
 
+/* Bootstrap gives .offcanvas-body an overflow-y of auto, which per spec turns the visible
+   overflow-x into auto as well: any child wider than the panel silently makes the whole menu
+   scrollable sideways, with nothing to see at the end of that scroll. The rows above are built to
+   fit, so a sideways scroll here can only ever be a bug. */
+.offcanvas-body {
+    overflow-x: hidden;
+}
+
 @media (min-width: 768px) {
     .offcanvas {
         --bs-offcanvas-width: 30%;

@@ -31,6 +31,9 @@
 }
 
 .room-entry {
+    /* Queried below: how much of the row fits depends on the menu panel, not on the viewport -
+       the panel is 75% of a phone screen and 30% of a desktop one. */
+    container-type: inline-size;
     border-radius: 1rem;
     background-color: transparent;
     padding: 0.5rem 0.75rem;
@@ -61,6 +64,19 @@
     gap: 0.5rem;
 }
 
+/* min-width is what lets the ellipsis below take effect at all: a flex item never shrinks below
+   its longest word, so without this a room name pushes the row wider than the menu. */
+.room-entry-text {
+    min-width: 0;
+}
+
+.room-entry .room-name,
+.room-entry .room-description {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .room-entry .room-name {
     font-size: 0.95rem;
 }
@@ -71,10 +87,21 @@
     display: block;
 }
 
+/* Never shrinks and never wraps: a status label has no shorter form, only a hidden one. */
 .room-status-badge {
     font-size: 0.7rem;
     border-radius: 999px;
     padding: 0.2rem 0.65rem;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+/* Below this the badge costs more than it says: it takes a third of the row, while the group
+   heading above it already names the status. The name is what a row is picked by, so it wins. */
+@container (max-width: 18rem) {
+    .room-status-badge {
+        display: none;
+    }
 }
 
 .room-group-label {
