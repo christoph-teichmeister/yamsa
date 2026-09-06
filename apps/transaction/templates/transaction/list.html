@@ -86,16 +86,27 @@
             --bs-gutter-y: 0.85rem;
         }
 
-        .btn-icon {
-            width: 2rem;
-            height: 2rem;
-            border-radius: 50%;
-            padding: 0;
+        /* Clears the fixed bottom nav (~5rem tall) and stacks above it, but below the offcanvas
+           menu (1200) and the toasts (1400). */
+        .transaction-add-fab {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+            z-index: 1050;
+            width: fit-content;
+            max-width: calc(100% - 2rem);
+            margin-inline: auto;
+            border-radius: 999px;
+            padding: 0.6rem 1.35rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.35);
         }
 
-        .btn-icon svg {
-            width: 1.1rem;
-            height: 1.1rem;
+        /* The list ends behind the pill otherwise. */
+        .transaction-list-shell {
+            padding-bottom: 4rem;
         }
 
         @media (max-width: 359.98px) {
@@ -181,31 +192,15 @@
             }
         }
   </style>
-  <div class="container-fluid px-0 px-md-2 mt-3">
+  <div class="container-fluid px-0 px-md-2 mt-3 transaction-list-shell">
     <div class="col-12">
-      <div class="d-flex align-items-md-start justify-content-between gap-3 mb-3">
-        <div>
-          <h4 class="mb-1">{% trans "Room transactions" %}</h4>
-          {% if transactions_available %}
-            <p class="text-muted small mb-0">{% trans "Click a row to explore the full breakdown." %}</p>
-          {% else %}
-            <p class="text-muted small mb-0">{% trans "Record your first expense to see the running history here." %}</p>
-          {% endif %}
-        </div>
-        <div class="d-flex align-items-center justify-content-end gap-2">
-          <button type="button"
-                  class="btn btn-primary btn-icon d-inline-flex align-items-center justify-content-center {% if current_room.is_closed %}disabled{% endif %}"
-                  aria-label="{% trans "Add transaction" %}"
-                  title="{% trans "Add transaction" %}"
-                  {% if current_room.is_closed %}disabled aria-disabled="true"{% endif %}
-                  hx-get="{% room_url 'transaction:create' %}"
-                  hx-target="#body"
-                  hx-indicator="#body-loading-spinner"
-                  hx-swap="morph:innerHTML"
-                  hx-push-url="true">
-            <i class="bi bi-plus-lg d-flex align-items-center justify-content-center"></i>
-          </button>
-        </div>
+      <div class="mb-3">
+        <h4 class="mb-1">{% trans "Room transactions" %}</h4>
+        {% if transactions_available %}
+          <p class="text-muted small mb-0">{% trans "Click a row to explore the full breakdown." %}</p>
+        {% else %}
+          <p class="text-muted small mb-0">{% trans "Record your first expense to see the running history here." %}</p>
+        {% endif %}
       </div>
       {% if current_room.is_closed %}
         <div class="alert alert-warning small mb-3" role="alert">
@@ -348,7 +343,7 @@
           <ul class="list-unstyled mb-0 small text-muted">
             <li>{% trans "Use the search field to filter by payer or description." %}</li>
             <li>{% trans "Tap a row or the eye icon to review the split details." %}</li>
-            <li>{% trans "The floating '+' button lets you capture a new transaction." %}</li>
+            <li>{% trans "The floating button above the list lets you capture a new transaction." %}</li>
           </ul>
         </div>
       </div>
@@ -364,6 +359,18 @@
       {% endif %}
     </div>
   </div>
+  {% if not current_room.is_closed %}
+    <button type="button"
+            class="btn btn-primary transaction-add-fab d-inline-flex align-items-center gap-2"
+            hx-get="{% room_url 'transaction:create' %}"
+            hx-target="#body"
+            hx-indicator="#body-loading-spinner"
+            hx-swap="morph:innerHTML"
+            hx-push-url="true">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i>
+      <span>{% trans "Add transaction" %}</span>
+    </button>
+  {% endif %}
   <!-- Observer to scroll to correct element when anchor tags are in url -->
   <script type="text/javascript" nonce="{{ csp_nonce }}">
       function highlightTransactionRow(target) {
