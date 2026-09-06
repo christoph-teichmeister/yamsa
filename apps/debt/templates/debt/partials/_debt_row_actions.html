@@ -1,0 +1,35 @@
+{% load room_tags i18n %}
+{% if debt.settled %}
+  <span class="badge bg-success-subtle text-success-emphasis d-inline-flex align-items-center gap-1">
+    <i class="bi bi-piggy-bank-fill" aria-hidden="true"></i>
+    {% trans "Settled" %}
+  </span>
+{% elif debt.debitor.name == request.user.name %}
+  {% if debt.creditor.paypal_me_username %}
+    <a class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-2"
+       href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value }}{{ debt.currency.code }}"
+       target="_blank"
+       rel="noopener">
+      <i class="bi bi-paypal" aria-hidden="true"></i>
+      {% trans "Pay with PayPal" %}
+    </a>
+  {% endif %}
+  <button type="button"
+          class="btn btn-sm btn-success d-inline-flex align-items-center gap-2"
+          hx-get="{% room_url 'debt:settle' pk=debt.id %}"
+          hx-target="#body"
+          hx-indicator="#body-loading-spinner"
+          hx-swap="morph:innerHTML"
+          hx-push-url="true">
+    <i class="bi bi-piggy-bank" aria-hidden="true"></i>
+    {% trans "Mark as paid" %}
+  </button>
+{% else %}
+  {% comment %}
+    Only the debitor may settle, and a hover tooltip cannot say so on touch - the reason is
+    rendered as visible text instead.
+  {% endcomment %}
+  <span class="badge bg-secondary-subtle text-secondary-emphasis">
+    {% blocktrans with debitor_name=debt.debitor.name %}Waiting on {{ debitor_name }}{% endblocktrans %}
+  </span>
+{% endif %}

@@ -522,8 +522,20 @@ msgstr "Erinnerungsprotokolle"
 msgid "Optimised debts"
 msgstr "Optimierte Schulden"
 
-msgid "Track what is left to settle inside this room. Click the piggy-bank to mark a debt as paid."
-msgstr "Verfolge, was in diesem Raum noch ausgeglichen werden muss. Klicke auf das Sparschwein, um eine Schuld als bezahlt zu markieren."
+msgid "Track what is left to settle inside this room."
+msgstr "Verfolge, was in diesem Raum noch ausgeglichen werden muss."
+
+msgid "All settled"
+msgstr "Alles beglichen"
+
+msgid "Where the money went, by category."
+msgstr "Wohin das Geld geflossen ist – nach Kategorie."
+
+msgid "Pay with PayPal"
+msgstr "Mit PayPal bezahlen"
+
+msgid "Mark as paid"
+msgstr "Als bezahlt markieren"
 
 #, python-format
 msgid ""
@@ -546,17 +558,8 @@ msgstr[1] ""
 msgid "Export CSV"
 msgstr "CSV exportieren"
 
-msgid "View category breakdown"
-msgstr "Kategorienaufteilung anzeigen"
-
-msgid "Break down spend"
-msgstr "Ausgaben aufschlüsseln"
-
-msgid "Money overview"
-msgstr "Geldübersicht"
-
-msgid "See how much each person has paid and who still owes what."
-msgstr "Sieh, wie viel jede Person bezahlt hat und wer noch was schuldet."
+msgid "Totals and open balances per person."
+msgstr "Summen und offene Beträge pro Person."
 
 #, python-format
 msgid "%(debitor_display)s owes %(value)s%(currency)s to %(creditor_display)s"
@@ -566,29 +569,18 @@ msgstr "%(debitor_display)s schuldet %(value)s%(currency)s an %(creditor_display
 msgid "Settled on %(settled_at)s"
 msgstr "Am %(settled_at)s beglichen"
 
-msgid "Tap the piggy-bank when this debt is paid off."
-msgstr "Tippe auf das Sparschwein, wenn diese Schuld beglichen ist."
-
 msgid "Settled"
 msgstr "Beglichen"
 
-msgid "Outstanding"
-msgstr "Ausstehend"
+#, python-format
+msgid "Waiting on %(debitor_name)s"
+msgstr "Warten auf %(debitor_name)s"
 
 msgid "No debts yet"
 msgstr "Noch keine Schulden"
 
 msgid "As expenses are added, we will surface who owes whom here."
 msgstr "Wenn Ausgaben hinzukommen, zeigen wir hier, wer wem etwas schuldet."
-
-msgid "Settle via PayPal"
-msgstr "Über PayPal begleichen"
-
-msgid "Settle this debt"
-msgstr "Diese Schuld begleichen"
-
-msgid "This transaction is not yours to settle!"
-msgstr "Diese Transaktion darfst du nicht ausgleichen!"
 
 #, python-format
 msgid ""
