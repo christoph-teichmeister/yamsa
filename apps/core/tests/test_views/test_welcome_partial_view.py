@@ -216,7 +216,7 @@ class TestWelcomePartialView:
         toggle = re.search(r'<button[^>]*aria-controls="?closedRooms"?[^>]*>', content)
         assert toggle is not None
         assert re.search(r'aria-expanded="?false"?', toggle.group())
-        assert re.search(r'class="?collapse"? id="?closedRooms"?', content)
+        assert re.search(r'class="room-overview-entries collapse" id="?closedRooms"?', content)
         assert closed_room.name in content
 
     def test_the_closed_toggle_names_how_many_rooms_it_hides(self, authenticated_client, closed_room, user, guest_user):
@@ -232,6 +232,13 @@ class TestWelcomePartialView:
 
         # Only the closed section carries a toggle; the open one shows its rooms without a click.
         assert content.count("room-overview-toggle-icon") == 1
+
+    def test_only_the_closed_rooms_are_laid_out_as_two_tiles_per_row(self, authenticated_client, room, closed_room):
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        assert content.count("room-overview-card-tile") == 1
+        assert content.count("class=col-6") == 1
+        assert 'class="col-12 col-md-6"' in content
 
     def test_a_user_without_debts_gets_no_summary(self, authenticated_client, room):
         response = authenticated_client.get(reverse("core:welcome"))

@@ -14,10 +14,13 @@
     {% else %}
       {% include "side_menu_components/room_list_title.html" with title=title %}
     {% endif %}
-    <div {% if collapsible %}class="collapse" id="{{ section_id }}"{% endif %}>
+    <div class="room-overview-entries{% if collapsible %} collapse{% endif %}"
+         {% if collapsible %}id="{{ section_id }}"{% endif %}>
       <div class="row g-2 g-md-3">
         {% for entry in entries %}
-          <div class="col-6">{% include "room/partials/_room_overview_card.html" with entry=entry %}</div>
+          <div class="{% if tile %}col-6{% else %}col-12 col-md-6{% endif %}">
+            {% include "room/partials/_room_overview_card.html" with entry=entry tile=tile %}
+          </div>
         {% endfor %}
       </div>
       {% if overflow_count %}
