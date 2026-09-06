@@ -73,6 +73,6 @@ function showPasskeyRegError(msg) {
     const el = document.getElementById("passkey-reg-result");
     if (el) {
         el.textContent = msg;
-        el.classList.remove("d-none");
+        el.hidden = false;
     }
 }

@@ -83,17 +83,17 @@ msgstr "Benutzer:innenfreundschaften"
 msgid "Users cannot be friends with themselves."
 msgstr "Benutzer:innen können nicht mit sich selbst befreundet sein."
 
-msgid "Change your password:"
-msgstr "Ändere dein Passwort:"
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Change your password"
+msgstr "Ändere dein Passwort"
+
+msgid "Choose a unique password to keep your rooms safe. You stay signed in on this device once it is saved."
+msgstr "Wähle ein einzigartiges Passwort, um deine Räume zu schützen. Auf diesem Gerät bleibst du angemeldet."
 
 msgid "Save"
 msgstr "Speichern"
-
-msgid "Note:"
-msgstr "Achtung:"
-
-msgid "After a successful password change, you will be prompted to login again."
-msgstr "Nach einer erfolgreichen Passwortänderung wirst du aufgefordert, dich erneut anzumelden."
 
 #, python-format
 msgid "Invite a guest to \"%(room)s\""
@@ -244,9 +244,6 @@ msgstr "Sichere Anmeldung"
 msgid "Login"
 msgstr "Anmelden"
 
-msgid "Password"
-msgstr "Passwort"
-
 msgid "Stay signed in for 30 days"
 msgstr "Für 30 Tage angemeldet bleiben"
 
@@ -288,6 +285,15 @@ msgstr "Anmeldung fehlgeschlagen."
 
 msgid "An unexpected error occurred."
 msgstr "Ein unerwarteter Fehler ist aufgetreten."
+
+msgid "Back to profile"
+msgstr "Zurück zum Profil"
+
+msgid "Show password"
+msgstr "Passwort anzeigen"
+
+msgid "Hide password"
+msgstr "Passwort verbergen"
 
 msgid "Superuser"
 msgstr "Superuser"
@@ -342,9 +348,6 @@ msgstr "Wähle, wie du von uns hören möchtest."
 
 msgid "Security"
 msgstr "Sicherheit"
-
-msgid "Change your password"
-msgstr "Ändere dein Passwort"
 
 msgid "Choose a unique password to keep your rooms safe."
 msgstr "Wähle ein einzigartiges Passwort, um deine Räume zu schützen."
@@ -415,9 +418,6 @@ msgstr "Ist Gast"
 msgid "Register now"
 msgstr "Jetzt registrieren"
 
-msgid "Back to profile"
-msgstr "Zurück zum Profil"
-
 msgid "Passkeys"
 msgstr "Passkeys"
 
@@ -441,9 +441,6 @@ msgstr "z. B. MacBook Touch ID"
 
 msgid "Register passkey"
 msgstr "Passkey anlegen"
-
-msgid "Change password"
-msgstr "Passwort ändern"
 
 msgid "Please enter a name for your passkey."
 msgstr "Bitte gib einen Namen für deinen Passkey ein."

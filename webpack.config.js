@@ -17,6 +17,7 @@ module.exports = {
     "suggested-guests": path.resolve(staticJsPath, "suggested-guests.js"),
     "category-suggestion": path.resolve(staticJsPath, "category-suggestion.js"),
     "profile-sheet": path.resolve(staticJsPath, "profile-sheet.js"),
+    "password-visibility": path.resolve(staticJsPath, "password-visibility.js"),
     styles: path.resolve(staticJsPath, "styles.js"),
     tailwind: path.resolve(staticSrcPath, "tailwind.js"),
     htmx: path.resolve(staticJsPath, "htmx.js"),
