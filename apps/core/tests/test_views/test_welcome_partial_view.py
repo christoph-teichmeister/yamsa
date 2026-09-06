@@ -227,6 +227,15 @@ class TestWelcomePartialView:
 
         assert "Closed (2)" in content
 
+    def test_the_other_section_hides_its_rooms_behind_a_toggle(self, superuser_htmx_client, room, closed_room):
+        content = superuser_htmx_client.get(reverse("core:welcome")).content.decode()
+
+        toggle = re.search(r'<button[^>]*aria-controls="?otherRooms"?[^>]*>', content)
+        assert toggle is not None
+        assert re.search(r'aria-expanded="?false"?', toggle.group())
+        assert re.search(r'class="room-overview-entries collapse" id="?otherRooms"?', content)
+        assert "Other (2)" in content
+
     def test_the_open_rooms_are_not_collapsed(self, authenticated_client, room, closed_room):
         content = authenticated_client.get(reverse("core:welcome")).content.decode()
 

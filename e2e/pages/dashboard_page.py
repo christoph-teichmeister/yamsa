@@ -50,12 +50,12 @@ class DashboardPage(BasePage):
     def expect_no_amount(self, target_url: str):
         expect(self.card_for(target_url).locator(".room-overview-amount")).to_have_count(0)
 
-    def expect_closed_rooms_are_collapsed(self):
-        expect(self.page.locator("#closedRooms")).to_be_hidden()
+    def expect_section_is_collapsed(self, section_id: str):
+        expect(self.page.locator(f"#{section_id}")).to_be_hidden()
 
-    def expand_closed_rooms(self):
-        self.page.locator(".room-overview-toggle").click()
-        expect(self.page.locator("#closedRooms")).to_be_visible()
+    def expand_section(self, section_id: str):
+        self.page.locator(f'.room-overview-toggle[aria-controls="{section_id}"]').click()
+        expect(self.page.locator(f"#{section_id}")).to_be_visible()
 
     def expect_summary(self, *, owed: list[str], received: list[str]):
         expect(self.page.locator(".room-balance-tile.owing .room-balance-value")).to_have_text(owed)

@@ -182,7 +182,7 @@ class TestDashboardRoomList:
         closed_room = _closed_room_with_debt(owner=profile_user, roommate=roommate, currency=euro)
 
         dashboard = open_dashboard()
-        dashboard.expand_closed_rooms()
+        dashboard.expand_section("closedRooms")
 
         dashboard.expect_no_amount(_url_of(closed_room))
         dashboard.expect_no_summary()
@@ -194,8 +194,8 @@ class TestDashboardRoomList:
 
         dashboard = open_dashboard()
 
-        dashboard.expect_closed_rooms_are_collapsed()
-        dashboard.expand_closed_rooms()
+        dashboard.expect_section_is_collapsed("closedRooms")
+        dashboard.expand_section("closedRooms")
         expect(dashboard.card_for(_url_of(closed_room))).to_be_visible()
 
     def test_a_user_without_open_balances_gets_no_summary(self, shared_room, open_dashboard):
@@ -226,6 +226,8 @@ class TestDashboardRoomList:
 
         dashboard = open_dashboard(superuser)
 
+        dashboard.expect_section_is_collapsed("otherRooms")
+        dashboard.expand_section("otherRooms")
         dashboard.expect_side_by_side(_url_of(open_room), _url_of(closed_room))
         dashboard.expect_status_badge(_url_of(open_room), str(Room.StatusChoices.OPEN.label))
         dashboard.expect_status_badge(_url_of(closed_room), str(Room.StatusChoices.CLOSED.label))
