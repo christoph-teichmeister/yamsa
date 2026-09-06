@@ -38,10 +38,13 @@
           </div>
           <div class="col text-md-end">
             <div class="transaction-label text-muted text-uppercase small mb-1">{% trans "Payer" %}</div>
-            <div class="fw-semibold">
-              {% autoescape off %}
-                {% parse_user_text parent_transaction.paid_by.name True %}
-              {% endautoescape %}
+            <div class="d-flex align-items-center justify-content-md-end gap-2 fw-semibold">
+              {% include "shared_partials/_user_avatar.html" with avatar_url=parent_transaction.paid_by.avatar_url avatar_name=parent_transaction.paid_by.name avatar_fallback_url=parent_transaction.paid_by.profile_picture_fallback_url %}
+              <span>
+                {% autoescape off %}
+                  {% parse_user_text parent_transaction.paid_by.name True %}
+                {% endautoescape %}
+              </span>
             </div>
           </div>
         </div>

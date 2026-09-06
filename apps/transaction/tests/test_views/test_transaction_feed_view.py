@@ -13,6 +13,38 @@ pytestmark = pytest.mark.django_db
 
 
 class TestTransactionFeedView:
+    def test_feed_shows_the_picture_of_a_payer_who_has_one(
+        self, client, room, user, guest_user, attach_profile_picture
+    ):
+        attach_profile_picture(user)
+        create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+        client.force_login(user)
+
+        response = client.get(
+            reverse("transaction:feed", kwargs={"room_slug": room.slug}),
+            HTTP_HX_REQUEST="true",
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        avatar = BeautifulSoup(response.content.decode(), "html.parser").select_one(".avatar")
+        assert avatar is not None
+        assert avatar.find("img")["src"] == user.avatar_url
+
+    def test_feed_falls_back_to_the_initial_of_a_payer_without_a_picture(self, client, room, user, guest_user):
+        create_parent_transaction_with_optimisation(room=room, paid_by=guest_user, paid_for_tuple=(user,))
+        client.force_login(user)
+
+        response = client.get(
+            reverse("transaction:feed", kwargs={"room_slug": room.slug}),
+            HTTP_HX_REQUEST="true",
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        avatar = BeautifulSoup(response.content.decode(), "html.parser").select_one(".avatar")
+        assert avatar is not None
+        assert avatar.find("img") is None
+        assert avatar.get_text(strip=True) == guest_user.name[:1].upper()
+
     def test_transaction_feed_displays_no_matches_message(self, client, room, user, guest_user):
         create_parent_transaction_with_optimisation(
             room=room,
