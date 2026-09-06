@@ -41,3 +41,13 @@ class TestSideMenuRoomList:
         html = render_side_menu(request)
 
         assert f'<small class="room-description text-muted">{OPEN_LABEL}</small>' in html
+
+    def test_the_name_column_can_shrink_below_the_room_name(self, rf, user, room):
+        # Without room-entry-text the column keeps its longest word and pushes the row past the
+        # menu panel, which turns the whole side menu into a horizontal scroller.
+        request = rf.get("/welcome/")
+        request.user = user
+
+        html = render_side_menu(request)
+
+        assert '<div class="room-entry-text flex-grow-1 text-start">' in html
