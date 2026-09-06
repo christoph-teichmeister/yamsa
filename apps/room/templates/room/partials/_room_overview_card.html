@@ -29,7 +29,7 @@
       <div class="d-flex flex-wrap gap-2 mt-auto">
         {% for balance in entry.balances %}
           {% if balance.is_balanced %}
-            <span class="badge room-overview-balance bg-secondary-subtle text-secondary-emphasis">
+            <span class="badge room-overview-balance bg-info-subtle text-info-emphasis">
               {% blocktrans trimmed with currency=balance.currency_sign %}
                 Open, but balanced ({{ currency }})
               {% endblocktrans %}
@@ -48,7 +48,7 @@
             </span>
           {% endif %}
         {% empty %}
-          <span class="badge room-overview-balance bg-light text-muted">{% trans "All settled" %}</span>
+          <span class="badge room-overview-balance bg-secondary-subtle text-secondary-emphasis">{% trans "All settled" %}</span>
         {% endfor %}
       </div>
     {% endif %}
