@@ -1,9 +1,8 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.db.models import F, Sum
-from django.db.models.functions import TruncWeek
-from django.utils import timezone
+from django.utils import formats, timezone
 from django.views import generic
 from django_context_decorator import context
 
@@ -29,109 +28,117 @@ class MoneySpentTrendPartialView(RoomChildTransactionQuerysetMixin, DebtBaseCont
     }
     DEFAULT_PERIOD = "last-activity"
 
-    def get_period_key(self):
+    def get_period_key(self) -> str:
         period = self.request.GET.get("period", self.DEFAULT_PERIOD)
         if period not in self.PERIOD_OPTIONS:
             return self.DEFAULT_PERIOD
         return period
 
-    def _build_timeseries(self):
-        period_key = self.get_period_key()
-        period_config = self.PERIOD_OPTIONS[period_key]
+    def _resolve_range(self) -> tuple[datetime, datetime]:
+        period_config = self.PERIOD_OPTIONS[self.get_period_key()]
         now = timezone.localtime(timezone.now())
 
-        base_qs = self.get_base_queryset()
+        end = now
         if period_config.get("relative"):
             latest_paid_at = (
-                base_qs.order_by("-parent_transaction__paid_at")
+                self.get_base_queryset()
+                .order_by("-parent_transaction__paid_at")
                 .values_list("parent_transaction__paid_at", flat=True)
                 .first()
             )
             if latest_paid_at:
-                latest_dt = timezone.localtime(latest_paid_at)
-                raw_end = latest_dt
-                raw_start = latest_dt - timedelta(weeks=period_config["weeks"])
-            else:
-                raw_end = now
-                raw_start = now - timedelta(weeks=period_config["weeks"])
-        else:
-            raw_end = now
-            raw_start = now - timedelta(weeks=period_config["weeks"])
+                end = timezone.localtime(latest_paid_at)
 
-        start_week = raw_start - timedelta(days=raw_start.weekday())
-        start_week = start_week.replace(hour=0, minute=0, second=0, microsecond=0)
-        last_monday = raw_end - timedelta(days=raw_end.weekday())
-        queryset = (
-            base_qs.filter(parent_transaction__paid_at__gte=start_week, parent_transaction__paid_at__lte=raw_end)
-            .annotate(week=TruncWeek("parent_transaction__paid_at"))
-            .values("week", "parent_transaction__currency__sign")
-            .annotate(
-                currency_sign=F("parent_transaction__currency__sign"),
-                weekly_total=Sum("value"),
+        return end - timedelta(weeks=period_config["weeks"]), end
+
+    def _baseline_per_currency(self, range_start: datetime) -> dict[str, Decimal]:
+        """Total spent before the window - the level each series starts from."""
+        rows = (
+            self.get_base_queryset()
+            .filter(parent_transaction__paid_at__lt=range_start)
+            .values("parent_transaction__currency__sign")
+            .annotate(currency_sign=F("parent_transaction__currency__sign"), total=Sum("value"))
+        )
+        return {row["currency_sign"]: row["total"] for row in rows}
+
+    def _expenses_in_range(self, range_start: datetime, range_end: datetime):
+        """One row per parent transaction: the chart steps per expense, not per calendar bucket."""
+        return (
+            self.get_base_queryset()
+            .filter(parent_transaction__paid_at__gte=range_start, parent_transaction__paid_at__lte=range_end)
+            .values(
+                "parent_transaction_id",
+                "parent_transaction__paid_at",
+                "parent_transaction__currency__sign",
             )
-            .order_by("week")
+            .annotate(currency_sign=F("parent_transaction__currency__sign"), expense_total=Sum("value"))
+            .order_by("parent_transaction__paid_at", "parent_transaction_id")
         )
 
-        bucket_totals = {}
-        currency_sign = ""
-        for row in queryset:
-            week_start = timezone.localtime(row["week"]).date()
-            bucket_totals[week_start] = row["weekly_total"]
-            currency_sign = currency_sign or row["currency_sign"]
-
-        current_week = start_week.date()
-        final_week = last_monday.date()
-        cumulative_total = Decimal("0")
-        timeseries = []
-        max_cumulative = Decimal("0")
-
-        while current_week <= final_week:
-            weekly_total = bucket_totals.get(current_week, Decimal("0"))
-            cumulative_total += weekly_total
-            timeseries.append(
-                {
-                    "label": current_week.strftime("%d %b"),
-                    "week_start": current_week,
-                    "weekly_total": weekly_total,
-                    "cumulative_total": cumulative_total,
-                }
-            )
-            if cumulative_total > max_cumulative:
-                max_cumulative = cumulative_total
-            current_week += timedelta(weeks=1)
-
-        point_count = len(timeseries)
-        for index, point in enumerate(timeseries):
-            if max_cumulative == 0:
-                point["height"] = 0
-            else:
-                point["height"] = round((point["cumulative_total"] / max_cumulative) * 100)
-            point["chart_y"] = 100 - point["height"]
-
-            position = (
-                Decimal("0") if point_count <= 1 else (Decimal(index) * Decimal("100")) / Decimal(point_count - 1)
-            )
-            point["position"] = float(position.quantize(Decimal("0.01")))
-            point["cumulative_float"] = float(point["cumulative_total"])
-            point["week_iso"] = point["week_start"].isoformat()
-
+    @staticmethod
+    def _point(moment: datetime, cumulative: Decimal, delta: Decimal) -> dict:
         return {
-            "points": timeseries,
-            "currency_sign": currency_sign,
-            "max_value": max_cumulative,
-            "range_start": start_week.date(),
-            "range_end": raw_end.date(),
-            "period_label": period_config["label"],
+            "date": moment.replace(tzinfo=None).isoformat(timespec="seconds"),
+            "label": formats.date_format(moment, "SHORT_DATETIME_FORMAT"),
+            "value": float(cumulative),
+            "delta": float(delta),
         }
 
-    def get_timeseries_payload(self):
+    def _build_timeseries(self) -> dict:
+        range_start, range_end = self._resolve_range()
+        baselines = self._baseline_per_currency(range_start)
+
+        # Currencies are never summed into one line: a EUR and a HUF total share no scale, so each
+        # gets its own series (and its own axis in the chart).
+        cumulative_per_currency = dict(baselines)
+        points_per_currency: dict[str, list[dict]] = {
+            sign: [self._point(range_start, total, Decimal("0"))] for sign, total in baselines.items()
+        }
+
+        for row in self._expenses_in_range(range_start, range_end):
+            sign = row["currency_sign"]
+            expense_total = row["expense_total"]
+            if sign not in points_per_currency:
+                points_per_currency[sign] = [self._point(range_start, Decimal("0"), Decimal("0"))]
+                cumulative_per_currency[sign] = Decimal("0")
+            cumulative_per_currency[sign] += expense_total
+            points_per_currency[sign].append(
+                self._point(
+                    timezone.localtime(row["parent_transaction__paid_at"]),
+                    cumulative_per_currency[sign],
+                    expense_total,
+                )
+            )
+
+        series = []
+        for sign, points in points_per_currency.items():
+            cumulative = cumulative_per_currency[sign]
+            points.append(self._point(range_end, cumulative, Decimal("0")))
+            series.append(
+                {
+                    "currency": sign,
+                    "points": points,
+                    "baseline": float(baselines.get(sign, Decimal("0"))),
+                    "total": float(cumulative),
+                }
+            )
+        series.sort(key=lambda entry: (-entry["total"], entry["currency"]))
+
+        return {
+            "series": series,
+            "range_start": range_start,
+            "range_end": range_end,
+            "period_label": self.PERIOD_OPTIONS[self.get_period_key()]["label"],
+        }
+
+    def get_timeseries_payload(self) -> dict:
         if not hasattr(self, "_timeseries_cache"):
             self._timeseries_cache = self._build_timeseries()
         return self._timeseries_cache
 
     @context
     @property
-    def period_options(self):
+    def period_options(self) -> list[dict]:
         active = self.get_period_key()
         return [
             {
@@ -146,38 +153,30 @@ class MoneySpentTrendPartialView(RoomChildTransactionQuerysetMixin, DebtBaseCont
 
     @context
     @property
-    def trend_period_label(self):
-        return self.PERIOD_OPTIONS[self.get_period_key()]["label"]
+    def trend_period_label(self) -> str:
+        return self.get_timeseries_payload()["period_label"]
 
     @context
     @property
-    def timeseries(self):
-        return self.get_timeseries_payload()["points"]
+    def trend_series(self) -> list[dict]:
+        return self.get_timeseries_payload()["series"]
 
     @context
     @property
-    def trend_currency_sign(self):
-        return self.get_timeseries_payload()["currency_sign"]
-
-    @context
-    @property
-    def timeseries_max_value(self):
-        return self.get_timeseries_payload()["max_value"]
-
-    @context
-    @property
-    def trend_range_start(self):
+    def trend_range_start(self) -> datetime:
         return self.get_timeseries_payload()["range_start"]
 
     @context
     @property
-    def trend_range_end(self):
+    def trend_range_end(self) -> datetime:
         return self.get_timeseries_payload()["range_end"]
 
     @context
     @property
-    def trend_chart_points(self):
-        return [
-            {"date": point["week_iso"], "label": point["label"], "value": point["cumulative_float"]}
-            for point in self.get_timeseries_payload()["points"]
-        ]
+    def trend_chart_data(self) -> dict:
+        payload = self.get_timeseries_payload()
+        return {
+            "rangeStart": payload["range_start"].replace(tzinfo=None).isoformat(timespec="seconds"),
+            "rangeEnd": payload["range_end"].replace(tzinfo=None).isoformat(timespec="seconds"),
+            "series": [{"currency": entry["currency"], "points": entry["points"]} for entry in payload["series"]],
+        }
