@@ -1,10 +1,11 @@
+import json
+
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.functional import cached_property
 from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
@@ -12,7 +13,7 @@ from apps.room.views.mixins import RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
 from apps.transaction.models import ParentTransaction
-from apps.transaction.services.room_category_service import RoomCategoryService
+from apps.transaction.services.category_suggestion_service import CategorySuggestionService
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -22,14 +23,6 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
     template_name = "transaction/create.html"
 
     _active_tab = "transaction"
-
-    def get_initial(self):
-        initial = super().get_initial()
-        if not initial.get("category"):
-            default_category = self._room_category_service.get_default_category()
-            if default_category:
-                initial["category"] = default_category.pk
-        return initial
 
     def get_success_url(self):
         return reverse("transaction:list", kwargs={"room_slug": self.request.room.slug})
@@ -104,7 +97,9 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
         context["selected_paid_by"] = self._build_selected_paid_by(form)
         context["selected_currency"] = self._build_selected_currency(form)
-        context["selected_category"] = self._build_selected_category(form)
+        suggestion_index = CategorySuggestionService(room=self.request.room).build_index()
+        # An empty index would still render as "{}" and switch the suggestion markup on.
+        context["category_suggestion_index"] = json.dumps(suggestion_index) if suggestion_index else ""
 
         return context
 
@@ -133,21 +128,3 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
             if value:
                 return str(value)
         return str(self.request.room.preferred_currency.id)
-
-    def _build_selected_category(self, form):
-        if self.request.method == "POST":
-            posted = self.request.POST.get("category")
-            if posted:
-                return posted
-        if form:
-            value = form["category"].value()
-            if value:
-                return str(value)
-        default_category = self._room_category_service.get_default_category()
-        if default_category:
-            return str(default_category.id)
-        return ""
-
-    @cached_property
-    def _room_category_service(self):
-        return RoomCategoryService(room=self.request.room)

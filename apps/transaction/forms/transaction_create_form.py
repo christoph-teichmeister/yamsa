@@ -27,7 +27,6 @@ class TransactionCreateForm(forms.ModelForm):
     category = forms.ModelChoiceField(
         queryset=Category.objects.order_by("order_index", "id"),
         empty_label=None,
-        required=False,
     )
     receipts = forms.FileField(
         widget=forms.ClearableFileInput(),

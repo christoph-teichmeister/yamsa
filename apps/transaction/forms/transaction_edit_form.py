@@ -23,7 +23,6 @@ class TransactionEditForm(forms.ModelForm):
     category = forms.ModelChoiceField(
         queryset=Category.objects.order_by("order_index", "id"),
         empty_label=None,
-        required=False,
     )
 
     # ChildTransaction fields

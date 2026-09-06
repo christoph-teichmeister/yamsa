@@ -157,18 +157,7 @@
             </div>
           </div>
           <div class="row g-3 mt-3">
-            <div class="col-md-6">
-              <label class="form-label transaction-label" for="category_select">{% trans "Category" %}</label>
-              <select name="category" class="form-select" id="category_select" required>
-                {% for category in form.fields.category.queryset %}
-                  <option value="{{ category.id }}"
-                          {% if category.id == form.initial.category %}selected{% endif %}>
-                    {{ category.emoji }} {{ category.name }}
-                  </option>
-                {% endfor %}
-              </select>
-              <small class="text-muted">{% trans "Use categories to group similar spend." %}</small>
-            </div>
+            <div class="col-12">{% include "transaction/partials/_category_field.html" with category_field=form.category %}</div>
           </div>
         </div>
       </div>

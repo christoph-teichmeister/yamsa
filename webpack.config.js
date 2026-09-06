@@ -12,6 +12,7 @@ module.exports = {
     d3: path.resolve(staticJsPath, "vendor/d3-entry.js"),
     navigation: path.resolve(staticJsPath, "navigation.js"),
     "suggested-guests": path.resolve(staticJsPath, "suggested-guests.js"),
+    "category-suggestion": path.resolve(staticJsPath, "category-suggestion.js"),
     styles: path.resolve(staticJsPath, "styles.js"),
     htmx: path.resolve(staticJsPath, "htmx.js"),
   },

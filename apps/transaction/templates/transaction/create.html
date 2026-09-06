@@ -1,5 +1,6 @@
 {% extends "room/dashboard.html" %}
 {% load static room_tags i18n %}
+{% load render_bundle from webpack_loader %}
 {% now "Y-m-d\TH:i" as current_datetime %}
 {% block tab_content %}
   <section class="container px-2 px-md-4 px-lg-5 py-4">
@@ -92,6 +93,7 @@
                 <small class="text-muted">{% trans "Total paid in the selected currency." %}</small>
               </div>
             </div>
+            {% include "transaction/partials/_category_field.html" with category_field=form.category %}
             <div class="row g-4">
               <div class="col-12 col-lg-6">
                 <label for="paidBySelect" class="form-label fw-semibold">{% trans "Who paid?" %}</label>
@@ -156,7 +158,7 @@
             </div>
             <div class="collapse" id="optionalDetails">
               <div class="row g-4">
-                <div class="col-12 col-lg-4">
+                <div class="col-12 col-lg-6">
                   <label for="paid_at_input" class="form-label fw-semibold">{% trans "Paid at" %}</label>
                   {% with paid_at_field=form.paid_at %}
                     {% with paid_at_value=paid_at_field.value %}
@@ -172,7 +174,7 @@
                   {% endwith %}
                   <small class="text-muted">{% trans "Use if the expense occurred earlier." %}</small>
                 </div>
-                <div class="col-12 col-lg-4">
+                <div class="col-12 col-lg-6">
                   <label for="currencySelect" class="form-label fw-semibold">{% trans "Currency" %}</label>
                   {% with currency_field=form.currency %}
                     <select name="currency"
@@ -195,24 +197,6 @@
                     {% if currency_field.errors %}<div class="invalid-feedback d-block">{{ currency_field.errors.0 }}</div>{% endif %}
                   {% endwith %}
                   <small class="text-muted">{% trans "Defaults to the room preference." %}</small>
-                </div>
-                <div class="col-12 col-lg-4">
-                  <label for="categorySelect" class="form-label fw-semibold">{% trans "Category" %}</label>
-                  {% with category_field=form.category %}
-                    <select name="category"
-                            class="form-select{% if category_field.errors %} is-invalid{% endif %}"
-                            id="categorySelect"
-                            required>
-                      {% for category in form.fields.category.queryset %}
-                        <option value="{{ category.id }}"
-                                {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
-                          {{ category.emoji }} {{ category.name }}
-                        </option>
-                      {% endfor %}
-                    </select>
-                    {% if category_field.errors %}<div class="invalid-feedback d-block">{{ category_field.errors.0 }}</div>{% endif %}
-                  {% endwith %}
-                  <small class="text-muted">{% trans "Tag this expense for dashboards and charts." %}</small>
                 </div>
               </div>
               <div class="mt-4">
@@ -288,4 +272,5 @@
       </div>
     </div>
   </section>
+  {% render_bundle "category-suggestion" attrs="defer" %}
 {% endblock tab_content %}
