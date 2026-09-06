@@ -47,3 +47,24 @@ class TransactionCreatePage(BasePage):
     def choose_category(self, category_slug: str):
         # The radio itself is visually hidden by .btn-check, so the click has to go to its label.
         self.category_field.locator(f"label[data-category-slug='{category_slug}']").click()
+
+    def fill_required_fields(self, *, description: str, amount: str):
+        self.type_description(description)
+        self.page.locator("#value").fill(amount)
+
+    def submit(self):
+        self.page.get_by_role("button", name="Add transaction").click()
+
+    def open_category_manager(self):
+        with self.page.context.expect_page() as new_page:
+            self.category_field.get_by_role("link", name="Manage categories").click()
+        return new_page.value
+
+    def expect_category_reported_as_missing(self):
+        # No chip is checked, so the browser blocks the submit on the radio group's own
+        # constraint rather than letting the request through.
+        missing = self.radio_for_any().evaluate("radio => radio.validity.valueMissing")
+        assert missing, "Expected the category radio group to report a missing value."
+
+    def radio_for_any(self):
+        return self.category_field.locator("input[type='radio']").first
