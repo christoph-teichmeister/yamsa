@@ -1,27 +1,23 @@
-"""Form helpers around editing users and validating profile uploads."""
+"""Form helpers around editing users."""
 
-from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
-from PIL import Image, UnidentifiedImageError
 
 from apps.account.models import User
-from apps.core.services import CompressPictureService
-from apps.core.services.compress_picture_service import MAX_PROFILE_PICTURE_FILE_SIZE
-
-PROFILE_PICTURE_INVALID_IMAGE_ERROR = _("We could not read that file. Please upload a valid image.")
-PROFILE_PICTURE_TOO_LARGE_ERROR = _("The profile picture could not be reduced enough. Try a smaller file.")
 
 
 class EditUserForm(ModelForm):
-    """Handle user edits while validating uploaded avatars."""
+    """Handle user edits.
+
+    The profile picture is deliberately not a field here: it has its own upload and delete cycle
+    (see ProfilePictureForm), so saving the profile never touches it.
+    """
 
     class Meta:
         model = User
         fields = (
             "name",
             "email",
-            "profile_picture",
             "paypal_me_username",
             "language",
             "wants_to_receive_webpush_notifications",
@@ -36,42 +32,8 @@ class EditUserForm(ModelForm):
         }
 
     def save(self, commit=True):
-        """Compress an uploaded profile picture prior to saving the user."""
-
-        picture = self.cleaned_data.get("profile_picture")
-        if picture:
-            compressed_picture = getattr(self, "_compressed_profile_picture", None)
-            if compressed_picture is None or compressed_picture is not picture:
-                compressed_picture = CompressPictureService(picture).process()
-            self.cleaned_data["profile_picture"] = compressed_picture
-            self.instance.profile_picture = compressed_picture
-
         # Remove stored webpush subscriptions when the user explicitly opts out.
         if self.cleaned_data["wants_to_receive_webpush_notifications"] is False:
             self.instance.webpush_infos.all().delete()
 
         return super().save(commit)
-
-    def clean_profile_picture(self):
-        """Ensure the uploaded file is a valid image before accepting it."""
-        picture = self.cleaned_data.get("profile_picture")
-        if not picture:
-            return picture
-
-        try:
-            with Image.open(picture) as image:
-                image.verify()
-        except (UnidentifiedImageError, OSError) as exc:
-            raise ValidationError(PROFILE_PICTURE_INVALID_IMAGE_ERROR) from exc
-
-        picture.seek(0)
-        try:
-            compressed_picture = CompressPictureService(picture).process()
-        except Exception as exc:
-            raise ValidationError(PROFILE_PICTURE_INVALID_IMAGE_ERROR) from exc
-
-        if compressed_picture.size > MAX_PROFILE_PICTURE_FILE_SIZE:
-            raise ValidationError(PROFILE_PICTURE_TOO_LARGE_ERROR)
-
-        self._compressed_profile_picture = compressed_picture
-        return compressed_picture

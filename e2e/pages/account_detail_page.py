@@ -31,14 +31,42 @@ class AccountDetailPage(BasePage):
     def read_sheet_marker(self) -> str | None:
         return self.page.locator("#profile-sheet").evaluate("(sheet) => sheet.dataset.e2eMarker || null")
 
-    def attach_profile_photo(self, file_name: str, content: bytes):
-        self.page.set_input_files(
-            "#profile_picture",
-            files=[{"name": file_name, "mimeType": "image/png", "buffer": content}],
-        )
+    def open_photo_dialog(self):
+        self.page.locator("[data-profile-photo-open]").click()
+        expect(self.page.locator("[data-profile-photo-dialog]")).to_be_visible()
 
-    def expect_profile_photo_visible(self):
-        expect(self.page.locator("[data-profile-picture-preview]")).to_be_visible()
+    def close_photo_dialog(self):
+        self.page.locator("[data-profile-photo-close]").click()
+        expect(self.page.locator("[data-profile-photo-dialog]")).not_to_be_visible()
+
+    def expect_photo_dialog_offers(self, *, delete: bool):
+        expect(self.page.locator("label[for='profile-picture-input']")).to_be_visible()
+        matcher = expect(self.page.locator("[data-profile-photo-delete]"))
+        matcher.to_be_visible() if delete else matcher.to_have_count(0)
+
+    def upload_photo_from_dialog(self, file_name: str, content: bytes):
+        with self.page.expect_response(lambda response: "/profile-picture/update/" in response.url):
+            self.page.set_input_files(
+                "#profile-picture-input",
+                files=[{"name": file_name, "mimeType": "image/png", "buffer": content}],
+            )
+
+    def delete_photo_from_dialog(self):
+        self.page.once("dialog", lambda confirmation: confirmation.accept())
+        with self.page.expect_response(lambda response: "/profile-picture/delete/" in response.url):
+            self.page.locator("[data-profile-photo-delete]").click()
+
+    def expect_photo_present(self):
+        expect(self.page.locator("[data-profile-photo-open] img")).to_be_visible()
+
+    def expect_no_photo(self):
+        expect(self.page.locator("[data-profile-photo-open] img")).to_have_count(0)
+
+    def profile_section_offset(self) -> float:
+        """Where the first settings row sits, to catch the sheet growing on a mode switch."""
+
+        box = self.page.locator("#name").bounding_box()
+        return box["y"]
 
     def fill_name(self, name: str):
         self.page.fill("#name", name)

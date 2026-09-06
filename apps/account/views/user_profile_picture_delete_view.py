@@ -3,10 +3,10 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import View
 
-from apps.account.views.mixins.profile_sheet_response import ProfileSheetResponseMixin
+from apps.account.views.mixins.profile_partial_response import ProfilePartialResponseMixin
 
 
-class UserProfilePictureDeleteView(ProfileSheetResponseMixin, mixins.LoginRequiredMixin, View):
+class UserProfilePictureDeleteView(ProfilePartialResponseMixin, mixins.LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         user = request.user
         if user.profile_picture:
@@ -15,8 +15,7 @@ class UserProfilePictureDeleteView(ProfileSheetResponseMixin, mixins.LoginRequir
             user.save(update_fields=["profile_picture"])
 
         if self.is_htmx_request():
-            # Removing the picture happens mid-edit, so the sheet swaps back in still unlocked.
-            return self.render_profile_sheet(user, is_editing=True)
+            return self.render_profile_photo(user)
 
-        redirect_url = reverse("account:update", kwargs={"pk": user.id})
+        redirect_url = reverse("account:detail", kwargs={"pk": user.id})
         return HttpResponseRedirect(redirect_url)

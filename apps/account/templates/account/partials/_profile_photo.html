@@ -1,0 +1,101 @@
+{% load i18n %}
+{% comment %}
+  The profile photo and its dialog, as one swappable unit.
+
+  The photo runs on its own cycle: uploading and deleting post straight from here and swap only
+  this element back in, so they neither depend on the profile being edited nor disturb it. That is
+  why the avatar is a button in both modes and nothing about it grows the sheet.
+
+  Clicking the avatar opens the dialog, which shows the photo at full size — that covers "look at
+  it" — and offers the two actions next to it.
+{% endcomment %}
+<div id="profile-photo" class="tw:relative tw:size-20 tw:shrink-0">
+  <button class="tw:flex tw:size-20 tw:cursor-pointer tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-full tw:border-0 tw:bg-brand-soft tw:p-0 tw:ring-2 tw:ring-brand/40 tw:transition tw:hover:ring-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+          type="button"
+          aria-haspopup="dialog"
+          aria-label="{% trans "Profile photo" %}"
+          data-profile-photo-open>
+    {% if user.profile_picture %}
+      <img class="tw:h-full tw:w-full tw:object-cover"
+           src="{{ user.profile_picture_url }}"
+           data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
+           alt="{% trans "Profile photo" %}"
+           loading="lazy"
+           width="80"
+           height="80">
+    {% else %}
+      <span class="tw:text-3xl tw:font-semibold tw:tracking-wider tw:text-brand-text">
+        {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
+      </span>
+    {% endif %}
+  </button>
+  <span class="tw:pointer-events-none tw:absolute tw:-right-1 tw:-bottom-1 tw:flex tw:size-7 tw:items-center tw:justify-center tw:rounded-full tw:border-2 tw:border-surface tw:bg-brand tw:text-xs tw:text-on-brand tw:shadow-sm"
+        aria-hidden="true">
+    <i class="bi bi-camera"></i>
+  </span>
+  <dialog id="profile-photo-dialog"
+          class="tw:m-auto tw:w-[min(24rem,calc(100vw-2rem))] tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:p-0 tw:text-ink tw:backdrop:bg-black/60"
+          data-profile-photo-dialog
+          {% if photo_dialog_is_open %}open{% endif %}>
+    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:border-b tw:border-line tw:px-5 tw:py-3">
+      <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "Profile photo" %}</p>
+      <button class="tw:flex tw:size-8 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-lg tw:border-0 tw:bg-transparent tw:text-ink-subtle tw:transition tw:hover:bg-surface-hover tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+              type="button"
+              aria-label="{% trans "Close" %}"
+              data-profile-photo-close>
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="tw:flex tw:flex-col tw:gap-4 tw:p-5">
+      {# Square only with a picture in it: an initial does not need that much room. #}
+      <div class="tw:flex tw:w-full tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-2xl tw:bg-surface-sunken {% if user.profile_picture %}tw:aspect-square{% else %}tw:h-32{% endif %}">
+        {% if user.profile_picture %}
+          <img class="tw:h-full tw:w-full tw:object-cover"
+               src="{{ user.profile_picture_url }}"
+               data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
+               alt="{% trans "Profile photo" %}">
+        {% else %}
+          <span class="tw:text-6xl tw:font-semibold tw:tracking-wider tw:text-brand-text">
+            {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
+          </span>
+        {% endif %}
+      </div>
+      {% for error_message in picture_form.errors.profile_picture.data %}
+        <p class="tw:m-0 tw:rounded-lg tw:bg-danger-soft tw:px-3 tw:py-2 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+      {% endfor %}
+      <div class="tw:flex tw:flex-col tw:gap-2">
+        <label class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover"
+               for="profile-picture-input">
+          <i class="bi bi-upload" aria-hidden="true"></i>
+          {% trans "Upload a new photo" %}
+        </label>
+        {# The input posts itself: htmx sends the chosen file straight away and swaps this unit. #}
+        <input id="profile-picture-input"
+               class="tw:hidden"
+               type="file"
+               name="profile_picture"
+               accept="image/*"
+               hx-post="{% url 'account:profile-picture-update' %}"
+               hx-encoding="multipart/form-data"
+               hx-trigger="change"
+               hx-target="#profile-photo"
+               hx-swap="outerHTML">
+        {% if user.profile_picture %}
+          <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-danger-500/60 tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                  type="button"
+                  data-profile-photo-delete
+                  hx-post="{% url 'account:profile-picture-delete' %}"
+                  hx-target="#profile-photo"
+                  hx-swap="outerHTML"
+                  hx-confirm="{% trans "Remove your profile picture?" %}">
+            <i class="bi bi-trash" aria-hidden="true"></i>
+            {% trans "Remove photo" %}
+          </button>
+        {% endif %}
+      </div>
+      <p class="tw:m-0 tw:text-xs tw:text-ink-subtle">
+        {% trans "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB." %}
+      </p>
+    </div>
+  </dialog>
+</div>

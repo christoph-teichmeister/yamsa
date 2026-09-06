@@ -26,12 +26,6 @@ msgstr "Dein neues Passwort"
 msgid "Confirm your new password"
 msgstr "Bestätige dein neues Passwort"
 
-msgid "We could not read that file. Please upload a valid image."
-msgstr "Wir konnten diese Datei nicht lesen. Bitte lade ein gültiges Bild hoch."
-
-msgid "The profile picture could not be reduced enough. Try a smaller file."
-msgstr "Das Profilbild konnte nicht ausreichend verkleinert werden. Versuche es mit einer kleineren Datei."
-
 msgid "Receive push notifications"
 msgstr "Push-Benachrichtigungen erhalten"
 
@@ -47,6 +41,12 @@ msgstr "E-Mail-Erinnerungen zum Raum erhalten"
 #, python-brace-format
 msgid "User with email address '{email}' already exists"
 msgstr "Benutzer:in mit der E-Mail-Adresse '{email}' existiert bereits"
+
+msgid "We could not read that file. Please upload a valid image."
+msgstr "Wir konnten diese Datei nicht lesen. Bitte lade ein gültiges Bild hoch."
+
+msgid "The profile picture could not be reduced enough. Try a smaller file."
+msgstr "Das Profilbild konnte nicht ausreichend verkleinert werden. Versuche es mit einer kleineren Datei."
 
 #, python-brace-format
 msgid "The email address '{email}' is already in use"
@@ -301,8 +301,20 @@ msgstr "PayPal verknüpft"
 msgid "Profile photo"
 msgstr "Profilfoto"
 
-msgid "Change photo"
-msgstr "Foto ändern"
+msgid "Close"
+msgstr "Schließen"
+
+msgid "Upload a new photo"
+msgstr "Neues Foto hochladen"
+
+msgid "Remove your profile picture?"
+msgstr "Profilbild entfernen?"
+
+msgid "Remove photo"
+msgstr "Foto entfernen"
+
+msgid "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB."
+msgstr "Wir ändern automatisch die Größe und komprimieren PNG-/JPEG-Uploads, damit sie unter 3 MB bleiben."
 
 msgid "Your account overview"
 msgstr "Deine Kontenübersicht"
@@ -315,15 +327,6 @@ msgstr "Abbrechen"
 
 msgid "Save changes"
 msgstr "Änderungen speichern"
-
-msgid "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB."
-msgstr "Wir ändern automatisch die Größe und komprimieren PNG-/JPEG-Uploads, damit sie unter 3 MB bleiben."
-
-msgid "Remove your profile picture?"
-msgstr "Profilbild entfernen?"
-
-msgid "Remove photo"
-msgstr "Foto entfernen"
 
 msgid "Profile"
 msgstr "Profil"
@@ -1157,9 +1160,6 @@ msgstr "Zurück zum Raum"
 
 msgid "Save room details"
 msgstr "Raumdetails speichern"
-
-msgid "Close"
-msgstr "Schließen"
 
 msgid "Room settings"
 msgstr "Raumeinstellungen"

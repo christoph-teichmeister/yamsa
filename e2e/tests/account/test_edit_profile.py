@@ -16,6 +16,17 @@ class TestEditProfile:
         # so this fails the moment entering edit mode starts fetching a new page or fragment.
         assert logged_in_profile_detail_page.read_sheet_marker() == "before-edit"
 
+    def test_entering_edit_mode_does_not_move_the_rows(self, logged_in_profile_detail_page):
+        # A phone viewport stacks the header, where the swap from one button to two shows up as
+        # height: it caught a 2px shift that the desktop layout hid.
+        logged_in_profile_detail_page.page.set_viewport_size({"width": 390, "height": 844})
+        offset_before = logged_in_profile_detail_page.profile_section_offset()
+
+        logged_in_profile_detail_page.enter_edit_mode()
+
+        # Anything the header only shows while editing would push every row down the page.
+        assert logged_in_profile_detail_page.profile_section_offset() == offset_before
+
     def test_user_can_edit_name_and_email(self, logged_in_profile_detail_page, profile_user, profile_detail_path):
         logged_in_profile_detail_page.enter_edit_mode()
 
@@ -64,16 +75,38 @@ class TestEditProfile:
         profile_user.refresh_from_db()
         assert profile_user.wants_to_receive_webpush_notifications == new_preference
 
-    def test_user_can_upload_a_profile_photo(self, logged_in_profile_detail_page, profile_user):
-        logged_in_profile_detail_page.enter_edit_mode()
-        # The sheet posts through htmx, which only sends the file when hx-encoding is set.
-        logged_in_profile_detail_page.attach_profile_photo("avatar.png", build_image_bytes())
-        logged_in_profile_detail_page.save()
+    def test_photo_dialog_uploads_without_touching_the_profile(self, logged_in_profile_detail_page, profile_user):
+        original_name = profile_user.name
 
-        logged_in_profile_detail_page.expect_profile_photo_visible()
+        logged_in_profile_detail_page.open_photo_dialog()
+        logged_in_profile_detail_page.expect_photo_dialog_offers(delete=False)
+        # The input posts itself through htmx, which only sends the file when hx-encoding is set.
+        logged_in_profile_detail_page.upload_photo_from_dialog("avatar.png", build_image_bytes())
+
+        logged_in_profile_detail_page.expect_photo_present()
+        # The photo has its own cycle: it neither needs edit mode nor saves the rest of the sheet.
+        logged_in_profile_detail_page.expect_fields_locked()
 
         profile_user.refresh_from_db()
         assert profile_user.profile_picture
+        assert profile_user.name == original_name
+
+    def test_photo_dialog_deletes_the_stored_photo(self, logged_in_profile_detail_page, profile_user):
+        logged_in_profile_detail_page.open_photo_dialog()
+        logged_in_profile_detail_page.upload_photo_from_dialog("avatar.png", build_image_bytes())
+
+        logged_in_profile_detail_page.open_photo_dialog()
+        logged_in_profile_detail_page.expect_photo_dialog_offers(delete=True)
+        logged_in_profile_detail_page.delete_photo_from_dialog()
+
+        logged_in_profile_detail_page.expect_no_photo()
+
+        profile_user.refresh_from_db()
+        assert not profile_user.profile_picture
+
+    def test_photo_dialog_closes_again(self, logged_in_profile_detail_page):
+        logged_in_profile_detail_page.open_photo_dialog()
+        logged_in_profile_detail_page.close_photo_dialog()
 
     def test_guest_has_no_edit_option_on_own_profile(self, logged_in_guest_detail_page):
         logged_in_guest_detail_page.expect_edit_button_hidden()
