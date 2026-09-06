@@ -3,6 +3,7 @@ from datetime import timedelta
 import pytest
 from django.conf import settings
 from django.test import RequestFactory
+from django.test.client import Client
 from django.utils import timezone
 
 from apps.account.tests.constants import DEFAULT_PASSWORD
@@ -61,6 +62,14 @@ def authenticated_client(client, user):
     client.defaults["HTTP_HX_REQUEST"] = "true"
     request = RequestFactory().get("/")
     assert client.login(request=request, email=user.email, password=DEFAULT_PASSWORD)
+    return client
+
+
+@pytest.fixture
+def superuser_htmx_client(superuser) -> Client:
+    client = Client()
+    client.defaults["HTTP_HX_REQUEST"] = "true"
+    client.force_login(superuser)
     return client
 
 

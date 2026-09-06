@@ -28,8 +28,5 @@
     {% endfor %}
   </div>
 {% else %}
-  {# The section headings already say Open and Closed; only the mixed "Other" section needs the badge. #}
-  <span class="badge room-status-badge room-overview-status {% if entry.is_closed %}bg-danger-subtle text-danger-emphasis{% else %}bg-light text-dark{% endif %}">
-    {{ entry.status_label }}
-  </span>
+  {% include "room/partials/_room_overview_status_badge.html" with entry=entry %}
 {% endif %}

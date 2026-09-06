@@ -244,12 +244,38 @@ class TestWelcomePartialView:
         assert "room-overview-amount" not in content
         assert "All settled" not in content
 
-    def test_only_the_closed_rooms_are_laid_out_as_two_tiles_per_row(self, authenticated_client, room, closed_room):
+    def test_only_the_open_rooms_keep_the_full_width_row(self, authenticated_client, room, closed_room):
         content = authenticated_client.get(reverse("core:welcome")).content.decode()
 
         assert content.count("room-overview-card-tile") == 1
         assert content.count("class=col-6") == 1
         assert 'class="col-12 col-md-6"' in content
+
+    def test_foreign_rooms_are_laid_out_as_two_tiles_per_row(self, superuser_htmx_client, room, closed_room):
+        content = superuser_htmx_client.get(reverse("core:welcome")).content.decode()
+
+        # Both rooms belong to someone else, so the superuser sees them in the "Other" section alone.
+        assert content.count("room-overview-card-tile") == 2
+        assert content.count("class=col-6") == 2
+        assert 'class="col-12 col-md-6"' not in content
+
+    def test_a_foreign_tile_keeps_naming_its_status(self, superuser_htmx_client, room, closed_room):
+        content = superuser_htmx_client.get(reverse("core:welcome")).content.decode()
+
+        # The "Other" section mixes open and closed rooms, so the badge is the only thing saying
+        # which of the two a tile is - and that decides where a click on it lands.
+        assert content.count("room-overview-status") == 2
+        assert str(Room.StatusChoices.OPEN.label) in content
+        assert str(Room.StatusChoices.CLOSED.label) in content
+
+    def test_a_foreign_tile_carries_no_balance(self, superuser_htmx_client, room, user, guest_user):
+        currency = CurrencyFactory(sign="€")
+        create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="99.00")
+
+        content = superuser_htmx_client.get(reverse("core:welcome")).content.decode()
+
+        assert "room-overview-amount" not in content
+        assert "99.00€" not in content
 
     def test_a_user_without_debts_gets_no_summary(self, authenticated_client, room):
         response = authenticated_client.get(reverse("core:welcome"))

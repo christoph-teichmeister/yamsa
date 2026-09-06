@@ -132,9 +132,9 @@
     color: var(--bs-secondary-color, #9aa3ab);
 }
 
-/* Closed rooms only: they live behind a toggle and carry no balance, so they are shown two per
-   row as compact tiles. At half a phone screen wide the row layout has no width left for a
-   name next to the initials, hence the stack. */
+/* The sections without a balance to show - closed rooms and, for a superuser, foreign ones -
+   are laid out two per row as compact tiles. At half a phone screen wide the row layout has no
+   width left for a name next to the initials, hence the stack. */
 .room-overview-card-tile .room-overview-body {
     gap: 0.25rem;
 }
@@ -161,6 +161,12 @@
     margin-bottom: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* The badge is a foreign room's only status marker: the "Other" section mixes open and closed
+   rooms, and which of the two a tile is decides where a click on it lands. */
+.room-overview-tile-status {
+    padding-top: 0.375rem;
 }
 
 .room-overview-create {

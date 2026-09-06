@@ -1,0 +1,4 @@
+{# The Open and Closed headings already name the status; only the mixed "Other" section needs it. #}
+<span class="badge room-status-badge room-overview-status {% if entry.is_closed %}bg-danger-subtle text-danger-emphasis{% else %}bg-light text-dark{% endif %}">
+  {{ entry.status_label }}
+</span>

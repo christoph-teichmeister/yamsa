@@ -114,10 +114,10 @@ def open_dashboard(page, base_url, profile_user):
     assertion would then be about an empty dashboard.
     """
 
-    def _open() -> DashboardPage:
+    def _open(as_user=None) -> DashboardPage:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
-        login_page.login(profile_user.email, DEFAULT_PASSWORD)
+        login_page.login((as_user or profile_user).email, DEFAULT_PASSWORD)
 
         dashboard = DashboardPage(page, base_url, reverse("core:welcome"))
         dashboard.navigate()
@@ -200,3 +200,34 @@ class TestDashboardRoomList:
 
     def test_a_user_without_open_balances_gets_no_summary(self, shared_room, open_dashboard):
         open_dashboard().expect_no_summary()
+
+    def test_foreign_rooms_are_shown_two_per_row_with_their_status(
+        self, profile_user, roommate, euro, superuser, open_dashboard
+    ):
+        # A superuser sees every room of the instance, none of which is theirs. The section mixes
+        # open and closed rooms, so each tile has to say which of the two it is.
+        now = timezone.now()
+        open_room = _room_with_balance(
+            name="Foreign Open Room",
+            owner=profile_user,
+            roommate=roommate,
+            currency=euro,
+            last_transaction_at=now - timedelta(minutes=5),
+        )
+        closed_room = _room_with_balance(
+            name="Foreign Closed Room",
+            owner=profile_user,
+            roommate=roommate,
+            currency=euro,
+            owed_by_owner=Decimal("99.00"),
+            status=Room.StatusChoices.CLOSED,
+            last_transaction_at=now - timedelta(days=30),
+        )
+
+        dashboard = open_dashboard(superuser)
+
+        dashboard.expect_side_by_side(_url_of(open_room), _url_of(closed_room))
+        dashboard.expect_status_badge(_url_of(open_room), str(Room.StatusChoices.OPEN.label))
+        dashboard.expect_status_badge(_url_of(closed_room), str(Room.StatusChoices.CLOSED.label))
+        # Foreign rooms carry no balance for the superuser, tile or not.
+        dashboard.expect_no_amount(_url_of(closed_room))
