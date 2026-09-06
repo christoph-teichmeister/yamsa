@@ -150,6 +150,12 @@ this way:
 - **Its own affordance, in both modes.** The avatar is a button whenever it is on screen, opening a
   dialog that shows the photo full size and offers upload and delete next to it. Nothing about it
   appears or disappears with edit mode.
+- **It has to look like a control.** A camera badge alone reads as a status dot — the visual
+  language of presence and verified marks — so the avatar also darkens under a centred camera icon
+  on hover, carries a `title`, and its `aria-label` names the action ("Change photo"), not the
+  object. Hover hints belong on `tw:group-hover:` and, if focus should count,
+  `tw:group-has-focus-visible:`; plain `group-focus-within:` fires on mouse focus too and leaves
+  the hint stuck over the photo after every click.
 - **Its form ignores the rest of the post.** htmx sends the enclosing form's fields along, so the
   narrow form must have exactly the field it owns — every other key is then ignored by
   construction rather than by a filter someone has to maintain.

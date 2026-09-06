@@ -9,11 +9,12 @@
   Clicking the avatar opens the dialog, which shows the photo at full size — that covers "look at
   it" — and offers the two actions next to it.
 {% endcomment %}
-<div id="profile-photo" class="tw:relative tw:size-20 tw:shrink-0">
-  <button class="tw:flex tw:size-20 tw:cursor-pointer tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-full tw:border-0 tw:bg-brand-soft tw:p-0 tw:ring-2 tw:ring-brand/40 tw:transition tw:hover:ring-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+<div id="profile-photo" class="tw:group tw:relative tw:size-20 tw:shrink-0">
+  <button class="tw:relative tw:flex tw:size-20 tw:cursor-pointer tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-full tw:border-0 tw:bg-brand-soft tw:p-0 tw:ring-2 tw:ring-brand/40 tw:transition tw:hover:ring-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
           type="button"
           aria-haspopup="dialog"
-          aria-label="{% trans "Profile photo" %}"
+          aria-label="{% trans "Change photo" %}"
+          title="{% trans "Change photo" %}"
           data-profile-photo-open>
     {% if user.profile_picture %}
       <img class="tw:h-full tw:w-full tw:object-cover"
@@ -28,9 +29,14 @@
         {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
       </span>
     {% endif %}
+    <span class="tw:pointer-events-none tw:absolute tw:inset-0 tw:flex tw:items-center tw:justify-center tw:bg-black/45 tw:text-lg tw:text-white tw:opacity-0 tw:transition-opacity tw:group-hover:opacity-100 tw:group-has-focus-visible:opacity-100"
+          aria-hidden="true">
+      <i class="bi bi-camera"></i>
+    </span>
   </button>
-  <span class="tw:pointer-events-none tw:absolute tw:-right-1 tw:-bottom-1 tw:flex tw:size-7 tw:items-center tw:justify-center tw:rounded-full tw:border-2 tw:border-surface tw:bg-brand tw:text-xs tw:text-on-brand tw:shadow-sm"
-        aria-hidden="true">
+  <span class="tw:absolute tw:-right-1 tw:-bottom-1 tw:flex tw:size-7 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-full tw:border-2 tw:border-surface tw:bg-brand tw:text-xs tw:text-on-brand tw:shadow-sm tw:transition tw:group-hover:bg-brand-hover"
+        aria-hidden="true"
+        data-profile-photo-open>
     <i class="bi bi-camera"></i>
   </span>
   <dialog id="profile-photo-dialog"
