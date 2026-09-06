@@ -1,0 +1,35 @@
+{% load i18n %}
+{% if entry.user_is_in_room %}
+  <div class="room-overview-amounts">
+    {% for balance in entry.balances %}
+      {% if balance.is_balanced %}
+        <span class="room-overview-amount balanced">
+          <span class="room-overview-amount-value">
+            {% blocktrans trimmed with currency=balance.currency_sign %}
+              Balanced ({{ currency }})
+            {% endblocktrans %}
+          </span>
+        </span>
+      {% elif balance.user_owes %}
+        <span class="room-overview-amount owing">
+          <span class="room-overview-amount-label">{% trans "You owe" %}</span>
+          <span class="room-overview-amount-value">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
+        </span>
+      {% else %}
+        <span class="room-overview-amount receiving">
+          <span class="room-overview-amount-label">{% trans "You get back" %}</span>
+          <span class="room-overview-amount-value">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
+        </span>
+      {% endif %}
+    {% empty %}
+      <span class="room-overview-amount settled">
+        <span class="room-overview-amount-value">{% trans "All settled" %}</span>
+      </span>
+    {% endfor %}
+  </div>
+{% else %}
+  {# The section headings already say Open and Closed; only the mixed "Other" section needs the badge. #}
+  <span class="badge room-status-badge room-overview-status {% if entry.is_closed %}bg-danger-subtle text-danger-emphasis{% else %}bg-light text-dark{% endif %}">
+    {{ entry.status_label }}
+  </span>
+{% endif %}

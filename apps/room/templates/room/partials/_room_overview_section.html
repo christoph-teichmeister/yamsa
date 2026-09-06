@@ -1,20 +1,37 @@
 {% load i18n %}
 {% if entries %}
   <section class="room-overview-section">
-    {% include "side_menu_components/room_list_title.html" with title=title %}
-    <div class="row g-2 g-md-3">
-      {% for entry in entries %}
-        <div class="col-12 col-md-6">{% include "room/partials/_room_overview_card.html" with entry=entry %}</div>
-      {% endfor %}
-    </div>
-    {% if overflow_count %}
-      <p class="text-muted small mt-2 mb-0">
-        {% blocktrans trimmed count counter=overflow_count %}
-          and {{ counter }} more room
-        {% plural %}
-          and {{ counter }} more rooms
-        {% endblocktrans %}
-      </p>
+    {% if collapsible %}
+      <button class="room-overview-toggle btn btn-link text-decoration-none w-100 d-flex align-items-center justify-content-between gap-2 px-0"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#{{ section_id }}"
+              aria-expanded="false"
+              aria-controls="{{ section_id }}">
+        <span class="room-group-label text-uppercase small fw-semibold text-muted">{% trans title %} ({{ entries|length }})</span>
+        <i class="bi bi-chevron-down room-overview-toggle-icon"></i>
+      </button>
+    {% else %}
+      {% include "side_menu_components/room_list_title.html" with title=title %}
     {% endif %}
+    <div class="room-overview-entries{% if collapsible %} collapse{% endif %}"
+         {% if collapsible %}id="{{ section_id }}"{% endif %}>
+      <div class="row g-2 g-md-3">
+        {% for entry in entries %}
+          <div class="{% if tile %}col-6{% else %}col-12 col-md-6{% endif %}">
+            {% include "room/partials/_room_overview_card.html" with entry=entry tile=tile %}
+          </div>
+        {% endfor %}
+      </div>
+      {% if overflow_count %}
+        <p class="text-muted small mt-2 mb-0">
+          {% blocktrans trimmed count counter=overflow_count %}
+            and {{ counter }} more room
+          {% plural %}
+            and {{ counter }} more rooms
+          {% endblocktrans %}
+        </p>
+      {% endif %}
+    </div>
   </section>
 {% endif %}

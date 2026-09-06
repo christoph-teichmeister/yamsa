@@ -132,6 +132,37 @@
     color: var(--bs-secondary-color, #9aa3ab);
 }
 
+/* Closed rooms only: they live behind a toggle and carry no balance, so they are shown two per
+   row as compact tiles. At half a phone screen wide the row layout has no width left for a
+   name next to the initials, hence the stack. */
+.room-overview-card-tile .room-overview-body {
+    gap: 0.25rem;
+}
+
+.room-overview-card-tile .room-overview-head {
+    margin-bottom: 0.25rem;
+}
+
+/* Two lines at most: the name gets the full tile width, but a long one must not stretch its row
+   past the tile next to it. */
+.room-overview-card-tile .room-overview-name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+/* Block, not the flex row of the wide layout: the tile carries the description alone, on its
+   own line, and only a block box can cut it off with an ellipsis. */
+.room-overview-card-tile .room-overview-meta {
+    display: block;
+    margin-bottom: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .room-overview-create {
     border-style: dashed;
     border-color: rgba(var(--bs-primary-rgb, 110, 168, 254), 0.45);
@@ -188,6 +219,19 @@
     color: var(--bs-success-text-emphasis, #75b798);
 }
 
+.room-overview-toggle {
+    color: inherit;
+}
+
+.room-overview-toggle-icon {
+    color: var(--bs-secondary-color, #9aa3ab);
+    transition: transform 0.2s ease;
+}
+
+.room-overview-toggle[aria-expanded="true"] .room-overview-toggle-icon {
+    transform: rotate(180deg);
+}
+
 @media (prefers-reduced-motion: reduce) {
     .room-overview-card {
         transition: none;
@@ -196,5 +240,9 @@
     .room-overview-card:hover,
     .room-overview-card:focus-visible {
         transform: none;
+    }
+
+    .room-overview-toggle-icon {
+        transition: none;
     }
 }

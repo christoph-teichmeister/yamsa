@@ -1,4 +1,5 @@
 import http
+import re
 from datetime import datetime, timedelta
 from decimal import Decimal
 from unittest import mock
@@ -207,6 +208,48 @@ class TestWelcomePartialView:
         content = authenticated_client.get(reverse("core:welcome")).content.decode()
 
         assert "12.50€" in content or "12,50€" in content
+
+    def test_the_closed_section_hides_its_rooms_behind_a_toggle(self, authenticated_client, room, closed_room):
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        # django_minify_html strips the quotes around attribute values, hence the optional ones.
+        toggle = re.search(r'<button[^>]*aria-controls="?closedRooms"?[^>]*>', content)
+        assert toggle is not None
+        assert re.search(r'aria-expanded="?false"?', toggle.group())
+        assert re.search(r'class="room-overview-entries collapse" id="?closedRooms"?', content)
+        assert closed_room.name in content
+
+    def test_the_closed_toggle_names_how_many_rooms_it_hides(self, authenticated_client, closed_room, user, guest_user):
+        second_closed_room = RoomFactory(created_by=user, status=Room.StatusChoices.CLOSED)
+        second_closed_room.users.add(user, guest_user)
+
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        assert "Closed (2)" in content
+
+    def test_the_open_rooms_are_not_collapsed(self, authenticated_client, room, closed_room):
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        # Only the closed section carries a toggle; the open one shows its rooms without a click.
+        assert content.count("room-overview-toggle-icon") == 1
+
+    def test_a_closed_room_carries_no_balance_on_its_tile(self, authenticated_client, closed_room, user, guest_user):
+        currency = CurrencyFactory(sign="€")
+        create_debt(room=closed_room, debitor=user, creditor=guest_user, currency=currency, value="99.00")
+
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        # The only room on this dashboard is the closed one, so no amount may show up at all.
+        assert closed_room.name in content
+        assert "room-overview-amount" not in content
+        assert "All settled" not in content
+
+    def test_only_the_closed_rooms_are_laid_out_as_two_tiles_per_row(self, authenticated_client, room, closed_room):
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        assert content.count("room-overview-card-tile") == 1
+        assert content.count("class=col-6") == 1
+        assert 'class="col-12 col-md-6"' in content
 
     def test_a_user_without_debts_gets_no_summary(self, authenticated_client, room):
         response = authenticated_client.get(reverse("core:welcome"))

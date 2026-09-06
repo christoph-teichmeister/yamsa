@@ -1,5 +1,5 @@
 {% load i18n %}
-<div class="card room-overview-card shadow-sm rounded-4 h-100{% if entry.is_closed %} room-overview-card-closed{% endif %}{% if not entry.user_is_in_room %} room-overview-card-ghost{% endif %}"
+<div class="card room-overview-card shadow-sm rounded-4 h-100{% if tile %} room-overview-card-tile{% endif %}{% if entry.is_closed %} room-overview-card-closed{% endif %}{% if not entry.user_is_in_room %} room-overview-card-ghost{% endif %}"
      role="button"
      tabindex="0"
      data-keyboard-click
@@ -9,53 +9,35 @@
      hx-indicator="#body-loading-spinner"
      hx-swap="morph:innerHTML"
      hx-push-url="true">
-  <div class="card-body room-overview-body d-flex align-items-center gap-3">
-    <div class="room-circle room-overview-circle{% if entry.is_closed %} closed{% endif %}">{{ entry.capitalised_initials }}</div>
-    <div class="room-overview-text flex-grow-1 text-start">
-      <h5 class="card-title room-overview-name mb-0">{{ entry.name }}</h5>
-      {% if entry.meta_text or entry.last_transaction_at %}
-        <p class="room-overview-meta text-muted small mb-0">
-          {% if entry.meta_text %}<span class="room-overview-meta-text">{{ entry.meta_text }}</span>{% endif %}
-          {% if entry.last_transaction_at %}
-            <span class="room-overview-activity"
-                  title="{{ entry.last_transaction_at }}">{{ entry.last_transaction_at|room_last_used }}</span>
-          {% endif %}
-        </p>
-      {% endif %}
-    </div>
-    {% if entry.user_is_in_room %}
-      <div class="room-overview-amounts">
-        {% for balance in entry.balances %}
-          {% if balance.is_balanced %}
-            <span class="room-overview-amount balanced">
-              <span class="room-overview-amount-value">
-                {% blocktrans trimmed with currency=balance.currency_sign %}
-                  Balanced ({{ currency }})
-                {% endblocktrans %}
-              </span>
-            </span>
-          {% elif balance.user_owes %}
-            <span class="room-overview-amount owing">
-              <span class="room-overview-amount-label">{% trans "You owe" %}</span>
-              <span class="room-overview-amount-value">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
-            </span>
-          {% else %}
-            <span class="room-overview-amount receiving">
-              <span class="room-overview-amount-label">{% trans "You get back" %}</span>
-              <span class="room-overview-amount-value">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
-            </span>
-          {% endif %}
-        {% empty %}
-          <span class="room-overview-amount settled">
-            <span class="room-overview-amount-value">{% trans "All settled" %}</span>
-          </span>
-        {% endfor %}
+  {% if tile %}
+    <div class="card-body room-overview-body d-flex flex-column text-start">
+      <div class="room-overview-head d-flex align-items-center justify-content-between gap-2">
+        <div class="room-circle room-overview-circle{% if entry.is_closed %} closed{% endif %}">{{ entry.capitalised_initials }}</div>
+        {% if entry.last_transaction_at %}
+          <span class="room-overview-activity"
+                title="{{ entry.last_transaction_at }}">{{ entry.last_transaction_at|room_last_used }}</span>
+        {% endif %}
       </div>
-    {% else %}
-      {# The section headings already say Open and Closed; only the mixed "Other" section needs the badge. #}
-      <span class="badge room-status-badge {% if entry.is_closed %}bg-danger-subtle text-danger-emphasis{% else %}bg-light text-dark{% endif %}">
-        {{ entry.status_label }}
-      </span>
-    {% endif %}
-  </div>
+      <h5 class="card-title room-overview-name">{{ entry.name }}</h5>
+      {# A closed room is settled and done with; its balance would only be noise on the tile. #}
+      {% if entry.meta_text %}<p class="room-overview-meta text-muted small">{{ entry.meta_text }}</p>{% endif %}
+    </div>
+  {% else %}
+    <div class="card-body room-overview-body d-flex align-items-center gap-3">
+      <div class="room-circle room-overview-circle{% if entry.is_closed %} closed{% endif %}">{{ entry.capitalised_initials }}</div>
+      <div class="room-overview-text flex-grow-1 text-start">
+        <h5 class="card-title room-overview-name mb-0">{{ entry.name }}</h5>
+        {% if entry.meta_text or entry.last_transaction_at %}
+          <p class="room-overview-meta text-muted small mb-0">
+            {% if entry.meta_text %}<span class="room-overview-meta-text">{{ entry.meta_text }}</span>{% endif %}
+            {% if entry.last_transaction_at %}
+              <span class="room-overview-activity"
+                    title="{{ entry.last_transaction_at }}">{{ entry.last_transaction_at|room_last_used }}</span>
+            {% endif %}
+          </p>
+        {% endif %}
+      </div>
+      {% include "room/partials/_room_overview_amounts.html" with entry=entry %}
+    </div>
+  {% endif %}
 </div>

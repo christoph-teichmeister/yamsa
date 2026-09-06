@@ -23,9 +23,12 @@ class RoomOverviewService:
 
     @cached_property
     def _balances_per_room_id(self) -> dict[int, list[RoomBalance]]:
+        # Closed rooms are excluded here rather than when the card is built: their tile shows no
+        # balance and they are left out of the totals, so their debts are rows nobody reads.
         rows = (
             Debt.objects.filter_open()
             .filter_involving_user(user_id=self.user.id)
+            .exclude(room__status=Room.StatusChoices.CLOSED)
             .aggregate_balance_per_room_and_currency(user_id=self.user.id)
         )
 

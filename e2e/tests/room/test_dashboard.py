@@ -4,6 +4,7 @@ from decimal import Decimal
 import pytest
 from django.urls import reverse
 from django.utils import timezone
+from playwright.sync_api import expect
 
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.currency.tests.factories import CurrencyFactory
@@ -39,6 +40,17 @@ def _room_with_balance(
     if last_transaction_at is not None:
         _add_transaction(room=room, user=owner, paid_at=last_transaction_at)
     return room
+
+
+def _closed_room_with_debt(*, owner, roommate, currency):
+    return _room_with_balance(
+        name="Closed Room",
+        owner=owner,
+        roommate=roommate,
+        currency=currency,
+        owed_by_owner=Decimal("99.00"),
+        status=Room.StatusChoices.CLOSED,
+    )
 
 
 def _url_of(room):
@@ -164,22 +176,27 @@ class TestDashboardRoomList:
         # The "Open" section heading already says it; repeating it per card only costs width.
         open_dashboard().expect_no_status_badge(_url_of(rooms_by_recency["big_debt"]))
 
-    def test_a_closed_rooms_debt_shows_on_its_card_but_not_in_the_summary(
+    def test_a_closed_room_shows_neither_its_debt_nor_a_settled_hint(
         self, profile_user, roommate, euro, open_dashboard
     ):
-        closed_room = _room_with_balance(
-            name="Closed Room",
-            owner=profile_user,
-            roommate=roommate,
-            currency=euro,
-            owed_by_owner=Decimal("99.00"),
-            status=Room.StatusChoices.CLOSED,
-        )
+        closed_room = _closed_room_with_debt(owner=profile_user, roommate=roommate, currency=euro)
+
+        dashboard = open_dashboard()
+        dashboard.expand_closed_rooms()
+
+        dashboard.expect_no_amount(_url_of(closed_room))
+        dashboard.expect_no_summary()
+
+    def test_closed_rooms_stay_collapsed_until_the_section_is_opened(
+        self, profile_user, roommate, euro, open_dashboard
+    ):
+        closed_room = _closed_room_with_debt(owner=profile_user, roommate=roommate, currency=euro)
 
         dashboard = open_dashboard()
 
-        dashboard.expect_amount(_url_of(closed_room), label="You owe", value="99.00€")
-        dashboard.expect_no_summary()
+        dashboard.expect_closed_rooms_are_collapsed()
+        dashboard.expand_closed_rooms()
+        expect(dashboard.card_for(_url_of(closed_room))).to_be_visible()
 
     def test_a_user_without_open_balances_gets_no_summary(self, shared_room, open_dashboard):
         open_dashboard().expect_no_summary()
