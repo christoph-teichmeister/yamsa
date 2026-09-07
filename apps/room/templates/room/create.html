@@ -1,84 +1,107 @@
 {% extends "core/base.html" %}
-{% load static %}
 {% load i18n %}
 {% load render_bundle from webpack_loader %}
 {% block content %}
-  <div class="container-fluid py-4 px-2 px-md-4 px-lg-5">
-    <div class="row g-4">
-      <div class="col-12 col-lg-7">
-        <div class="card border-0 shadow-sm">
-          <div class="card-body">
-            <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4">
-              {% trans "Back to dashboard" as back_to_dashboard_label %}
-              <a class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center text-decoration-none"
-                 href="{{ dashboard_url }}"
-                 role="button"
-                 aria-label="{{ back_to_dashboard_label }}"
-                 hx-get="{{ dashboard_url }}"
-                 hx-target="#body"
-                 hx-indicator="#body-loading-spinner"
-                 hx-swap="innerHTML"
-                 hx-push-url="true">
-                <i class="bi bi-arrow-left" aria-hidden="true"></i>
-              </a>
-              <h1 class="h3 fw-semibold mb-0">{% trans "Create Room" %}</h1>
-            </div>
-            <form action="{% url 'room:create' %}" method="post">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label for="name" class="form-label">{{ form.fields.name.label }}</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-                {% for error_message in form.errors.name.data %}
-                  <small class="error" id="nameError">{{ error_message.message }}</small>
-                {% endfor %}
-              </div>
-              <div class="mb-3">
-                <label for="preferred_currency">Preferred Currency</label>
-                <select name="preferred_currency"
-                        class="form-control form-select"
-                        id="preferred_currency"
-                        required>
-                  {% for currency in all_currencies %}
-                    <option {% if forloop.first %}selected{% endif %} value="{{ currency.id }}">{{ currency.sign }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="description" class="form-label">{{ form.fields.description.label }}</label>
-                <textarea class="form-control"
-                          id="description"
-                          name="description"
-                          required
-                          rows="2"
-                          maxlength="50"
-                          minlength="1"></textarea>
-                {% for error_message in form.errors.description.data %}
-                  <small class="error" id="descriptionError">{{ error_message.message }}</small>
-                {% endfor %}
-              </div>
-              <div id="suggested-guest-hidden-inputs" data-suggested-guest-inputs-target></div>
-              <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary btn-lg">{% trans "Create" %}</button>
-              </div>
-            </form>
-          </div>
-        </div>
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+    {% trans "Back to dashboard" as back_to_dashboard_label %}
+    {# An anchor, not a button: the back link then works without the bundle and can be opened in a new tab. #}
+    <a class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-1.5 tw:self-start tw:rounded-lg tw:border-0 tw:bg-transparent tw:px-1 tw:py-1 tw:text-sm tw:font-semibold tw:text-ink-muted tw:no-underline tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+       href="{{ dashboard_url }}"
+       hx-get="{{ dashboard_url }}"
+       hx-target="#body"
+       hx-indicator="#body-loading-spinner"
+       hx-swap="morph:innerHTML"
+       hx-push-url="true">
+      <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      {{ back_to_dashboard_label }}
+    </a>
+    <form id="room-create-form"
+          class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+          method="post"
+          action="{% url 'room:create' %}">
+      {% csrf_token %}
+      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "New room" %}</p>
+        <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Create Room" %}</h1>
+        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Name it, pick the currency you settle in, and invite people right away." %}</p>
       </div>
-      <div class="col-12 col-lg-5">
-        <div class="card border-0 shadow-sm h-100">
-          <div class="card-body d-flex flex-column gap-3">
-            <div>
-              <p class="text-uppercase text-muted small mb-2">{% trans "Suggested guests" %}</p>
-              <h2 class="h5 fw-semibold mb-1">{% trans "Invite frequent collaborators" %}</h2>
-              <p class="small text-muted mb-0">
-                {% trans "Add past roommates with one tap. Mark your go-to teammates as friends to pin them to the top." %}
-              </p>
-            </div>
-            {% include "room/_suggested_guest_list.html" %}
-          </div>
+      <div class="tw:flex tw:flex-col tw:gap-4 tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
+        <div>
+          <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                 for="name">{{ form.fields.name.label }}</label>
+          <input id="name"
+                 class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                 type="text"
+                 name="name"
+                 value="{{ form.name.value|default_if_none:'' }}"
+                 required>
+          {% for error_message in form.errors.name.data %}
+            <p id="nameError"
+               class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+          {% endfor %}
         </div>
+        <div>
+          <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                 for="preferred_currency">{{ form.fields.preferred_currency.label }}</label>
+          <div class="tw:relative">
+            <select id="preferred_currency"
+                    class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                    name="preferred_currency"
+                    required>
+              {% for currency in all_currencies %}
+                <option value="{{ currency.id }}"
+                        {% if currency.id|stringformat:"s" == form.preferred_currency.value|stringformat:"s" %}selected{% elif forloop.first and not form.preferred_currency.value %}selected{% endif %}>
+                  {{ currency }}
+                </option>
+              {% endfor %}
+            </select>
+            <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-4 tw:-translate-y-1/2 tw:text-ink-subtle"
+               aria-hidden="true"></i>
+          </div>
+          {% for error_message in form.errors.preferred_currency.data %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                 for="description">{{ form.fields.description.label }}</label>
+          {# An input, not a textarea: the field is capped at 50 characters, the same as the sheet's. #}
+          <input id="description"
+                 class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                 type="text"
+                 name="description"
+                 value="{{ form.description.value|default_if_none:'' }}"
+                 placeholder="{% trans "What is this room for?" %}"
+                 maxlength="50"
+                 minlength="1"
+                 required>
+          {% for error_message in form.errors.description.data %}
+            <p id="descriptionError"
+               class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+          {% endfor %}
+        </div>
+        {# The suggested-guest buttons below write their picks in here, so they post with the room. #}
+        <div id="suggested-guest-hidden-inputs" data-suggested-guest-inputs-target></div>
+      </div>
+      <div class="tw:flex tw:justify-end tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
+        <button id="create-room-button"
+                class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+                type="submit">
+          <i class="bi bi-plus-circle" aria-hidden="true"></i>
+          {% trans "Create" %}
+        </button>
+      </div>
+    </form>
+    <div class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
+      <div class="tw:px-5 tw:py-5 tw:@md:px-6">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Suggested guests" %}</p>
+        <h2 class="tw:mt-1 tw:mb-1 tw:text-lg tw:font-semibold tw:text-ink">{% trans "Invite frequent collaborators" %}</h2>
+        <p class="tw:mt-0 tw:mb-4 tw:text-sm tw:text-ink-muted">
+          {% trans "Add past roommates with one tap. Mark your go-to teammates as friends to pin them to the top." %}
+        </p>
+        {% include "room/_suggested_guest_list.html" %}
       </div>
     </div>
-  </div>
+  </section>
   {% render_bundle "suggested-guests" attrs="defer" %}
 {% endblock content %}

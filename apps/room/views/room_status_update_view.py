@@ -44,9 +44,9 @@ class RoomStatusUpdateView(RoomSheetResponseMixin, RoomBaseContext, generic.Upda
         if not self.is_htmx_request():
             return response
 
-        return self.render_room_sheet(self.object, is_editing=False)
+        return self.render_room_sheet(self.object)
 
     def form_invalid(self, form):
         if self.is_htmx_request():
-            return self.render_room_sheet(self.object, is_editing=False, status_form=form)
+            return self.render_room_sheet(self.object, status_form=form)
         return super().form_invalid(form)

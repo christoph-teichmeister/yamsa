@@ -76,7 +76,8 @@ class TestRoomStatusUpdateView:
         content = response.content.decode()
 
         assert response.status_code == http.HTTPStatus.OK
-        assert contains_attribute(content, "id", "edit-room-button")
+        # Reopening puts the fields and their action row back.
+        assert contains_attribute(content, "id", "save-room-button")
         closed_room.refresh_from_db()
         assert closed_room.status == Room.StatusChoices.OPEN
         handle_message.assert_called_once()

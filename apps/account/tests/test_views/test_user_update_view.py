@@ -8,7 +8,7 @@ from django.urls import reverse
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.tests.factories import UserFactory
 from apps.account.tests.test_utils import contains_attribute
-from apps.account.views import UserDetailView, UserUpdateView
+from apps.account.views import UserDetailView
 
 pytestmark = pytest.mark.django_db
 
@@ -43,18 +43,14 @@ class TestUserUpdateView:
         other_user.refresh_from_db()
         assert other_user.name == original_name
 
-    def test_get_renders_the_profile_page_with_the_sheet_unlocked(self, authenticated_client, user):
+    def test_a_get_belongs_on_the_profile(self, authenticated_client, user):
+        """There is no edit page left to land on — the profile itself is editable."""
         response = authenticated_client.get(reverse("account:update", kwargs={"pk": user.id}))
 
-        assert response.status_code == http.HTTPStatus.OK
-        assert response.template_name[0] == UserUpdateView.template_name
-        assert UserUpdateView.template_name == UserDetailView.template_name
+        assert response.status_code == http.HTTPStatus.FOUND
+        assert response["Location"] == reverse("account:detail", kwargs={"pk": user.id})
 
-        content = response.content.decode()
-        assert contains_attribute(content, "data-sheet-mode", "editing")
-        assert "readonly" not in content
-
-    def test_post_answers_with_the_locked_sheet_alone(self, authenticated_client, user):
+    def test_post_answers_with_the_sheet_alone(self, authenticated_client, user):
         new_name = "new_name"
 
         response = authenticated_client.post(
@@ -67,7 +63,6 @@ class TestUserUpdateView:
         # Only the sheet, so the browser keeps the page it is on instead of reloading it.
         assert contains_attribute(content, "id", "profile-sheet")
         assert "<html" not in content
-        assert contains_attribute(content, "data-sheet-mode", "reading")
 
         user.refresh_from_db()
         assert user.name == new_name
@@ -84,7 +79,7 @@ class TestUserUpdateView:
 
         assert json.loads(response.headers["HX-Trigger"]) == {"notificationsEnabled": True}
 
-    def test_post_of_invalid_data_answers_with_the_unlocked_sheet_and_the_error(self, authenticated_client, user):
+    def test_post_of_invalid_data_answers_with_the_sheet_and_the_error(self, authenticated_client, user):
         response = authenticated_client.post(
             reverse("account:update", kwargs={"pk": user.id}),
             data={"name": "", "email": "not-an-email"},
@@ -92,8 +87,9 @@ class TestUserUpdateView:
 
         assert response.status_code == http.HTTPStatus.OK
         content = response.content.decode()
-        # A rejected save has to leave the fields editable, or the corrections cannot be typed.
-        assert contains_attribute(content, "data-sheet-mode", "editing")
+        # A rejected save keeps the typed values, or the corrections start from scratch.
+        assert contains_attribute(content, "id", "profile-sheet")
+        assert contains_attribute(content, "value", "not-an-email")
         assert "Enter a valid email address." in content
 
         user.refresh_from_db()

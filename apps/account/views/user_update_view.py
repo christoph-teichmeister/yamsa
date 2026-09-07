@@ -2,6 +2,7 @@ import json
 
 from django.contrib.auth import mixins
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import translation
 from django.views import generic
@@ -13,8 +14,8 @@ from apps.account.views.mixins.profile_partial_response import ProfilePartialRes
 
 
 class UserUpdateView(ProfilePartialResponseMixin, mixins.LoginRequiredMixin, generic.UpdateView):
-    # The profile is one page that switches between reading and editing in place, so this view
-    # renders the very same template — only with the sheet unlocked.
+    # The sheet is editable wherever it is shown, so this view has no page of its own: it is the
+    # POST target, and a GET on it belongs on the profile.
     template_name = "account/detail.html"
     context_object_name = "user"
     model = User
@@ -27,13 +28,11 @@ class UserUpdateView(ProfilePartialResponseMixin, mixins.LoginRequiredMixin, gen
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)
 
+    def get(self, request, *args, **kwargs):
+        return redirect("account:detail", pk=kwargs["pk"])
+
     def get_success_url(self):
         return reverse(viewname="account:detail", kwargs={"pk": self.object.id})
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["profile_is_editing"] = True
-        return context
 
     def form_valid(self, form):
         language_changed = "language" in form.changed_data
@@ -54,7 +53,7 @@ class UserUpdateView(ProfilePartialResponseMixin, mixins.LoginRequiredMixin, gen
             # the previous language — this is the one save that cannot be a partial swap.
             return HttpResponse(status=204, headers={"HX-Refresh": "true"})
 
-        sheet_response = self.render_profile_sheet(self.object, is_editing=False)
+        sheet_response = self.render_profile_sheet(self.object)
         # The service worker subscribes or unsubscribes off this trigger, which the full page load
         # used to deliver.
         sheet_response["HX-Trigger"] = json.dumps(
@@ -64,5 +63,5 @@ class UserUpdateView(ProfilePartialResponseMixin, mixins.LoginRequiredMixin, gen
 
     def form_invalid(self, form):
         if self.is_htmx_request():
-            return self.render_profile_sheet(self.object, is_editing=True, form=form)
+            return self.render_profile_sheet(self.object, form=form)
         return super().form_invalid(form)

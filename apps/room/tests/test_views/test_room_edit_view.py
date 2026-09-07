@@ -10,15 +10,14 @@ pytestmark = pytest.mark.django_db
 
 
 class TestRoomEditView:
-    def test_a_plain_get_carries_editing_without_the_bundle(self, client, user, room):
+    def test_a_get_belongs_on_the_room(self, client, user, room):
+        """There is no edit page left to land on — the room itself is editable."""
         client.force_login(user)
 
         response = client.get(reverse("room:edit", kwargs={"room_slug": room.slug}))
-        content = response.content.decode()
 
-        assert response.status_code == http.HTTPStatus.OK
-        assert contains_attribute(content, "data-sheet-mode", "editing")
-        assert contains_attribute(content, "id", "save-room-button")
+        assert response.status_code == http.HTTPStatus.FOUND
+        assert response["Location"] == reverse("room:detail", kwargs={"room_slug": room.slug})
 
     def test_an_htmx_save_answers_with_the_sheet_alone(self, authenticated_client, room):
         response = authenticated_client.post(
@@ -35,7 +34,7 @@ class TestRoomEditView:
         # The sheet alone, so the page shell and the scroll position survive the save.
         assert content.lstrip().startswith("<form")
         assert contains_attribute(content, "id", "room-sheet")
-        assert contains_attribute(content, "data-sheet-mode", "reading")
+        assert "<html" not in content
 
     def test_the_swapped_sheet_shows_the_saved_values(self, authenticated_client, room):
         """request.room is loaded before the view runs, so the swap must not answer with it."""
@@ -52,7 +51,7 @@ class TestRoomEditView:
         assert "Renamed room" in content
         assert room.name not in content
 
-    def test_an_invalid_save_comes_back_editing_with_the_error(self, authenticated_client, room):
+    def test_an_invalid_save_comes_back_with_the_error(self, authenticated_client, room):
         response = authenticated_client.post(
             reverse("room:edit", kwargs={"room_slug": room.slug}),
             data={"name": "", "description": "", "preferred_currency": room.preferred_currency.pk},
@@ -60,7 +59,7 @@ class TestRoomEditView:
         content = response.content.decode()
 
         assert response.status_code == http.HTTPStatus.OK
-        assert contains_attribute(content, "data-sheet-mode", "editing")
+        assert contains_attribute(content, "id", "room-sheet")
         assert "This field is required" in content
         room.refresh_from_db()
         assert room.name != ""

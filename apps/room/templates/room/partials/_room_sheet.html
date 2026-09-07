@@ -1,23 +1,21 @@
 {% load i18n room_tags %}
 {% comment %}
-  The room as one continuous sheet: identity header, then a labelled row per setting. Reading and
-  editing are the same markup — every value is already its own form control, locked until the sheet
-  switches to edit mode, so entering edit mode needs no request and nothing moves on screen.
-  `sheet.js` flips `data-sheet-mode` and unlocks the controls; the `tw:reading:` / `tw:editing:`
-  variants show the matching actions.
+  The room as one continuous sheet: identity header, then a labelled row per setting.
+
+  There is no edit mode. Every value is its own form control at all times, and the action row after
+  the fields is what says whether anything changed — `sheet.js` keeps its buttons disabled until a
+  field differs from what was rendered.
 
   Saving posts the sheet and swaps it back in place, so RoomEditView must answer with this partial.
-  `room_is_editing` keeps the server-rendered state in sync with the client one.
 
-  A closed room has nothing to edit, so it offers no edit mode at all — only the status section,
-  which runs on its own cycle and is therefore reachable in both modes.
+  A closed room cannot be edited: the fields render disabled and the action row stays out. Only the
+  status section is live, because it runs on its own cycle.
 {% endcomment %}
 <form id="room-sheet"
       class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
       method="post"
       action="{% room_url 'room:edit' %}"
       data-sheet
-      data-sheet-mode="{% if room_is_editing %}editing{% else %}reading{% endif %}"
       hx-post="{% room_url 'room:edit' %}"
       hx-target="this"
       hx-swap="outerHTML"
@@ -30,25 +28,6 @@
         <h1 id="room-name"
             class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">{{ current_room.name }}</h1>
       </div>
-      {% if current_room.is_open %}
-        <div class="tw:flex tw:shrink-0 tw:flex-wrap tw:gap-2 tw:@md:w-64 tw:@md:justify-end">
-          <button id="edit-room-button"
-                  class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:editing:hidden"
-                  type="button"
-                  data-sheet-edit>
-            <i class="bi bi-pencil" aria-hidden="true"></i>
-            {% trans "Edit room" %}
-          </button>
-          <button id="cancel-room-button"
-                  class="tw:hidden tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-4 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:editing:inline-flex"
-                  type="button"
-                  data-sheet-cancel>{% trans "Cancel" %}</button>
-          <button id="save-room-button"
-                  class="tw:hidden tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:opacity-60 tw:editing:inline-flex"
-                  type="submit"
-                  data-sheet-save>{% trans "Save changes" %}</button>
-        </div>
-      {% endif %}
     </div>
     <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
       {% include "room/partials/_room_status_badge.html" %}
@@ -66,14 +45,14 @@
                for="name">{{ form.fields.name.label }}</label>
         <div class="tw:min-w-0 tw:flex-1">
           <input id="name"
-                 class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:read-only:cursor-default tw:read-only:border-transparent tw:read-only:bg-transparent tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                 class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
                  type="text"
                  name="name"
                  required
                  value="{{ form.name.value|default_if_none:current_room.name }}"
-                 {% if not room_is_editing %}readonly{% endif %}>
+                 {% if current_room.is_closed %}disabled{% endif %}>
           {% for error_message in form.errors.name.data %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text tw:reading:hidden">{{ error_message.message }}</p>
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -82,15 +61,15 @@
                for="description">{{ form.fields.description.label }}</label>
         <div class="tw:min-w-0 tw:flex-1">
           <input id="description"
-                 class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:read-only:cursor-default tw:read-only:border-transparent tw:read-only:bg-transparent tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                 class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
                  type="text"
                  name="description"
                  maxlength="50"
                  placeholder="{% trans "No description added yet." %}"
                  value="{{ form.description.value|default_if_none:current_room.description }}"
-                 {% if not room_is_editing %}readonly{% endif %}>
+                 {% if current_room.is_closed %}disabled{% endif %}>
           {% for error_message in form.errors.description.data %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text tw:reading:hidden">{{ error_message.message }}</p>
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -100,10 +79,10 @@
         <div class="tw:min-w-0 tw:flex-1">
           <div class="tw:relative">
             <select id="preferred_currency"
-                    class="tw:w-full tw:appearance-none tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2 tw:pr-9 tw:pl-3 tw:font-medium tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand tw:disabled:cursor-default tw:disabled:border-transparent tw:disabled:bg-transparent tw:disabled:text-ink tw:disabled:opacity-100 tw:disabled:[-webkit-text-fill-color:currentcolor]"
+                    class="tw:w-full tw:appearance-none tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2 tw:pr-9 tw:pl-3 tw:font-medium tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
                     name="preferred_currency"
                     required
-                    {% if not room_is_editing %}disabled{% endif %}>
+                    {% if current_room.is_closed %}disabled{% endif %}>
               {% for currency in all_currencies %}
                 <option value="{{ currency.id }}"
                         {% if currency.id|stringformat:"s" == form.preferred_currency.value|stringformat:"s" %}selected{% endif %}>
@@ -111,16 +90,19 @@
                 </option>
               {% endfor %}
             </select>
-            <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle tw:reading:hidden"
+            <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
                aria-hidden="true"></i>
           </div>
           {% for error_message in form.errors.preferred_currency.data %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text tw:reading:hidden">{{ error_message.message }}</p>
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
     </div>
   </div>
+  {% if current_room.is_open %}
+    {% include "shared_partials/_sheet_actions.html" with save_button_id="save-room-button" discard_button_id="discard-room-button" %}
+  {% endif %}
   <div class="tw:border-t tw:border-line">
     <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Overview" %}</p>
     <div class="tw:divide-y tw:divide-line">

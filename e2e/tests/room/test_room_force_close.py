@@ -24,4 +24,4 @@ class TestRoomForceClose:
         logged_in_room_detail_page.confirm_force_close()
 
         logged_in_room_detail_page.expect_status("Closed")
-        logged_in_room_detail_page.expect_edit_button_absent()
+        logged_in_room_detail_page.expect_actions_absent()

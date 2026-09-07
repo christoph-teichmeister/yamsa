@@ -96,8 +96,8 @@ msgid "Save"
 msgstr "Speichern"
 
 #, python-format
-msgid "Invite a guest to \"%(room)s\""
-msgstr "Gast zu \"%(room)s\" einladen"
+msgid "Invite a guest to \"%(room_name)s\""
+msgstr "Gast zu \"%(room_name)s\" einladen"
 
 msgid "Guest access"
 msgstr "Gastzugang"
@@ -327,15 +327,6 @@ msgstr "Wir ändern automatisch die Größe und komprimieren PNG-/JPEG-Uploads, 
 
 msgid "Your account overview"
 msgstr "Deine Kontenübersicht"
-
-msgid "Edit profile"
-msgstr "Profil bearbeiten"
-
-msgid "Cancel"
-msgstr "Abbrechen"
-
-msgid "Save changes"
-msgstr "Änderungen speichern"
 
 msgid "Profile"
 msgstr "Profil"
@@ -602,6 +593,9 @@ msgstr "Bist du sicher, dass du deine Schuld (%(debt_value)s%(debt_currency)s) b
 
 msgid "Yes, I paid this"
 msgstr "Ja, ist bezahlt"
+
+msgid "Cancel"
+msgstr "Abbrechen"
 
 msgid "Not paid yet?"
 msgstr "Noch nicht bezahlt?"
@@ -1081,11 +1075,44 @@ msgstr "Räume"
 msgid "{user} belongs to {room}"
 msgstr "{user} gehört zu {room}"
 
+#, python-format
+msgid "%(room_count)s room together"
+msgid_plural "%(room_count)s rooms together"
+msgstr[0] "%(room_count)s gemeinsamer Raum"
+msgstr[1] "%(room_count)s gemeinsame Räume"
+
+msgid "Friend"
+msgstr "Freund"
+
+msgid "Remove friend"
+msgstr "Freund entfernen"
+
+msgid "Mark as friend"
+msgstr "Als Freund markieren"
+
+msgid "Add to room"
+msgstr "Zum Raum hinzufügen"
+
+msgid "Add"
+msgstr "Hinzufügen"
+
+msgid "Added"
+msgstr "Hinzugefügt"
+
+msgid "No frequent collaborators yet — create more rooms to surface suggestions."
+msgstr "Noch keine häufigen Mitbewohner — leg weitere Räume an, dann erscheinen hier Vorschläge."
+
 msgid "Back to dashboard"
 msgstr "Zurück zum Dashboard"
 
 msgid "Create Room"
 msgstr "Raum erstellen"
+
+msgid "Name it, pick the currency you settle in, and invite people right away."
+msgstr "Gib ihm einen Namen, wähle die Währung, in der du abrechnest, und lade direkt Leute ein."
+
+msgid "What is this room for?"
+msgstr "Worum geht es in diesem Raum?"
 
 msgid "Create"
 msgstr "Erstellen"
@@ -1144,9 +1171,6 @@ msgstr "Ausgeglichen (%(currency)s)"
 
 msgid "Room overview"
 msgstr "Raumübersicht"
-
-msgid "Edit room"
-msgstr "Raum bearbeiten"
 
 msgid "Details"
 msgstr "Details"
@@ -1210,6 +1234,34 @@ msgstr "Nutze diese Option nur, wenn du die manuelle Abrechnung überspringen m�
 
 msgid "Close anyway"
 msgstr "Trotzdem schließen"
+
+#, python-format
+msgid "Invite a teammate to \"%(room_name)s\""
+msgstr "Mitbewohner zu \"%(room_name)s\" einladen"
+
+msgid "Existing user"
+msgstr "Bestehender Account"
+
+msgid "Send an invite to someone who already has a yamsa account."
+msgstr "Lade jemanden ein, der schon einen yamsa-Account hat."
+
+msgid "Registered"
+msgstr "Registriert"
+
+msgid "Their email address"
+msgstr "Ihre E-Mail-Adresse"
+
+msgid "We'll check if they're already part of this room before adding."
+msgstr "Wir prüfen vor dem Hinzufügen, ob sie schon in diesem Raum sind."
+
+msgid "They'll see the room immediately after joining."
+msgstr "Sie sehen den Raum direkt nach dem Beitritt."
+
+msgid "Pick a roommate from your friends"
+msgstr "Wähle jemanden aus deinen Freunden"
+
+msgid "Avoid typing emails by picking collaborators you already worked with. Mark someone as a friend to pin them to the top."
+msgstr "Spare dir das Tippen von E-Mail-Adressen und wähle Leute, mit denen du schon zusammen gewohnt hast. Markiere jemanden als Freund, um ihn oben anzupinnen."
 
 #, python-format
 msgid "%(timesince)s ago"
@@ -1278,6 +1330,12 @@ msgstr "Wird geladen..."
 msgid "This is taking longer than expected!"
 msgstr "Das dauert länger als geplant!"
 
+msgid "Discard changes"
+msgstr "Änderungen verwerfen"
+
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
 msgid "Back"
 msgstr "Zurück"
 
@@ -1287,14 +1345,14 @@ msgstr "Raumzugang"
 msgid "New member"
 msgstr "Neues Mitglied"
 
+msgid "This room is closed, so new members cannot be added."
+msgstr "Dieser Raum ist geschlossen, daher können keine neuen Mitglieder hinzugefügt werden."
+
 msgid "We'll notify members automatically."
 msgstr "Wir benachrichtigen die Mitglieder automatisch."
 
 msgid "Submit"
 msgstr "Absenden"
-
-msgid "This room is closed, so new members cannot be added."
-msgstr "Dieser Raum ist geschlossen, daher können keine neuen Mitglieder hinzugefügt werden."
 
 msgid "No updates yet."
 msgstr "Noch keine Updates."

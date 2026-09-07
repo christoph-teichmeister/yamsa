@@ -1,23 +1,22 @@
 {% load i18n %}
 {% comment %}
   The viewer's own profile as one continuous sheet: identity header, then a labelled row per
-  setting. Reading and editing are the same markup — every value is already its own form control,
-  read-only until the sheet switches to edit mode, so entering edit mode needs no request and
-  nothing moves on screen. `sheet.js` flips `data-sheet-mode` and unlocks the controls;
-  the `tw:reading:` / `tw:editing:` variants show the matching actions.
+  setting.
+
+  There is no edit mode. Every value is its own form control at all times, and the action row after
+  the last editable section is what says whether anything changed — `sheet.js` keeps its buttons
+  disabled until a field differs from what was rendered.
 
   Saving posts the sheet and swaps it back in place, so the response of UserUpdateView must be
-  this partial. `profile_is_editing` keeps the server-rendered state in sync with the client one.
+  this partial.
 
-  The photo is not part of that cycle — see _profile_photo.html — so entering edit mode adds
-  nothing to the header and the rows below it stay put.
+  The photo is not part of that cycle — see _profile_photo.html.
 {% endcomment %}
 <form id="profile-sheet"
       class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
       method="post"
       action="{% url 'account:update' pk=user.id %}"
       data-sheet
-      data-sheet-mode="{% if profile_is_editing %}editing{% else %}reading{% endif %}"
       hx-post="{% url 'account:update' pk=user.id %}"
       hx-target="this"
       hx-swap="outerHTML"
@@ -30,23 +29,6 @@
         <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Your account overview" %}</p>
         <h1 id="profile-name"
             class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">{{ user.name }}</h1>
-      </div>
-      <div class="tw:flex tw:shrink-0 tw:flex-wrap tw:gap-2 tw:@md:w-64 tw:@md:justify-end">
-        <button id="edit-profile-button"
-                class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:editing:hidden"
-                type="button"
-                data-sheet-edit>
-          <i class="bi bi-pencil" aria-hidden="true"></i>
-          {% trans "Edit profile" %}
-        </button>
-        <button id="cancel-profile-button"
-                class="tw:hidden tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-4 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:editing:inline-flex"
-                type="button"
-                data-sheet-cancel>{% trans "Cancel" %}</button>
-        <button id="save-profile-button"
-                class="tw:hidden tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:opacity-60 tw:editing:inline-flex"
-                type="submit"
-                data-sheet-save>{% trans "Save changes" %}</button>
       </div>
     </div>
     <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
@@ -61,15 +43,14 @@
                for="name">{{ form.fields.name.label }}</label>
         <div class="tw:min-w-0 tw:flex-1">
           <input id="name"
-                 class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:read-only:cursor-default tw:read-only:border-transparent tw:read-only:bg-transparent tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                 class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
                  type="text"
                  name="name"
                  autocomplete="name"
                  required
-                 value="{{ form.name.value|default_if_none:user.name }}"
-                 {% if not profile_is_editing %}readonly{% endif %}>
+                 value="{{ form.name.value|default_if_none:user.name }}">
           {% for error_message in form.errors.name.data %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text tw:reading:hidden">{{ error_message.message }}</p>
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -78,15 +59,14 @@
                for="email">{{ form.fields.email.label }}</label>
         <div class="tw:min-w-0 tw:flex-1">
           <input id="email"
-                 class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:read-only:cursor-default tw:read-only:border-transparent tw:read-only:bg-transparent tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                 class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
                  type="email"
                  name="email"
                  autocomplete="email"
                  required
-                 value="{{ form.email.value|default_if_none:user.email }}"
-                 {% if not profile_is_editing %}readonly{% endif %}>
+                 value="{{ form.email.value|default_if_none:user.email }}">
           {% for error_message in form.errors.email.data %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text tw:reading:hidden">{{ error_message.message }}</p>
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -94,20 +74,17 @@
         <label class="tw:m-0 tw:text-sm tw:text-ink-muted tw:@md:w-44 tw:@md:shrink-0"
                for="paypal_me_username">{{ form.fields.paypal_me_username.label }}</label>
         <div class="tw:min-w-0 tw:flex-1">
-          <div class="tw:flex tw:items-center tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:transition tw:reading:border-transparent tw:reading:bg-transparent tw:focus-within:border-brand tw:focus-within:outline-2 tw:focus-within:outline-offset-0 tw:focus-within:outline-brand">
-            {# Without a handle the bare "@" would read as a value, so it only shows once there is one to prefix. #}
-            <span class="tw:pl-3 tw:font-medium tw:text-ink-subtle {% if not user.paypal_me_username %}tw:reading:hidden{% endif %}"
-                  aria-hidden="true">@</span>
+          <div class="tw:flex tw:items-center tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:transition tw:focus-within:border-brand tw:focus-within:outline-2 tw:focus-within:outline-offset-0 tw:focus-within:outline-brand">
+            <span class="tw:pl-3 tw:font-medium tw:text-ink-subtle" aria-hidden="true">@</span>
             <input id="paypal_me_username"
-                   class="tw:w-full tw:min-w-0 tw:border-0 tw:bg-transparent tw:py-2 tw:pr-3 tw:pl-0 tw:font-medium tw:text-ink tw:outline-none tw:read-only:cursor-default tw:placeholder:text-ink-subtle"
+                   class="tw:w-full tw:min-w-0 tw:border-0 tw:bg-transparent tw:py-2 tw:pr-3 tw:pl-0 tw:font-medium tw:text-ink tw:outline-none tw:placeholder:text-ink-subtle"
                    type="text"
                    name="paypal_me_username"
                    placeholder="{% trans "Not set" %}"
-                   value="{{ form.paypal_me_username.value|default_if_none:user.paypal_me_username }}"
-                   {% if not profile_is_editing %}readonly{% endif %}>
+                   value="{{ form.paypal_me_username.value|default_if_none:user.paypal_me_username }}">
           </div>
           {% for error_message in form.errors.paypal_me_username.data %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text tw:reading:hidden">{{ error_message.message }}</p>
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -117,19 +94,18 @@
         <div class="tw:min-w-0 tw:flex-1">
           <div class="tw:relative">
             <select id="id_language"
-                    class="tw:w-full tw:appearance-none tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2 tw:pr-9 tw:pl-3 tw:font-medium tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand tw:disabled:cursor-default tw:disabled:border-transparent tw:disabled:bg-transparent tw:disabled:text-ink tw:disabled:opacity-100 tw:disabled:[-webkit-text-fill-color:currentcolor]"
-                    name="language"
-                    {% if not profile_is_editing %}disabled{% endif %}>
+                    class="tw:w-full tw:appearance-none tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2 tw:pr-9 tw:pl-3 tw:font-medium tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                    name="language">
               {% for choice_value, choice_label in form.fields.language.choices %}
                 <option value="{{ choice_value }}"
                         {% if form.language.value == choice_value %}selected{% endif %}>{{ choice_label }}</option>
               {% endfor %}
             </select>
-            <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle tw:reading:hidden"
+            <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
                aria-hidden="true"></i>
           </div>
           {% for error_message in form.errors.language.data %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text tw:reading:hidden">{{ error_message.message }}</p>
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -144,22 +120,23 @@
                for="wants_to_receive_webpush_notifications">
           {{ form.fields.wants_to_receive_webpush_notifications.label }}
         </label>
-        {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_webpush_notifications" toggle_name="wants_to_receive_webpush_notifications" toggle_checked=form.wants_to_receive_webpush_notifications.value|default_if_none:user.wants_to_receive_webpush_notifications toggle_editable=profile_is_editing %}
+        {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_webpush_notifications" toggle_name="wants_to_receive_webpush_notifications" toggle_checked=form.wants_to_receive_webpush_notifications.value|default_if_none:user.wants_to_receive_webpush_notifications toggle_editable=True %}
       </div>
       <div class="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:px-5 tw:py-3">
         <label class="tw:m-0 tw:text-sm tw:text-ink"
                for="wants_to_receive_payment_reminders">
           {{ form.fields.wants_to_receive_payment_reminders.label }}
         </label>
-        {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_payment_reminders" toggle_name="wants_to_receive_payment_reminders" toggle_checked=form.wants_to_receive_payment_reminders.value|default_if_none:user.wants_to_receive_payment_reminders toggle_editable=profile_is_editing %}
+        {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_payment_reminders" toggle_name="wants_to_receive_payment_reminders" toggle_checked=form.wants_to_receive_payment_reminders.value|default_if_none:user.wants_to_receive_payment_reminders toggle_editable=True %}
       </div>
       <div class="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:px-5 tw:py-3">
         <label class="tw:m-0 tw:text-sm tw:text-ink"
                for="wants_to_receive_room_reminders">{{ form.fields.wants_to_receive_room_reminders.label }}</label>
-        {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_room_reminders" toggle_name="wants_to_receive_room_reminders" toggle_checked=form.wants_to_receive_room_reminders.value|default_if_none:user.wants_to_receive_room_reminders toggle_editable=profile_is_editing %}
+        {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_room_reminders" toggle_name="wants_to_receive_room_reminders" toggle_checked=form.wants_to_receive_room_reminders.value|default_if_none:user.wants_to_receive_room_reminders toggle_editable=True %}
       </div>
     </div>
   </div>
+  {% include "shared_partials/_sheet_actions.html" with save_button_id="save-profile-button" discard_button_id="discard-profile-button" %}
   <div id="security-section" class="tw:border-t tw:border-line">
     <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Security" %}</p>
     <div class="tw:divide-y tw:divide-line">

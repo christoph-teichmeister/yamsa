@@ -9,7 +9,10 @@ Migrated so far:
 - `account/detail.html` — the profile page, which reads and edits in the same place
 - `account/security.html` — the security settings behind the profile's security rows
 - `account/change_password.html` — the password form behind those settings
-- `room/detail.html` — the room, which reads and edits in the same place
+- `room/detail.html` — the room, editable in place
+- `room/create.html` — the new-room form and its suggested guests
+- `room/userconnectiontoroom_create.html` and `account/create_guest.html` — adding a member,
+  both through `shared_partials/member_form.html`
 
 Everything else is still Bootstrap and follows the Bootstrap notes in
 [`architecture.md`](architecture.md) § Design System & UI Concepts.
@@ -187,59 +190,42 @@ Give such a form `method="post"` and an `action` next to its `hx-post`, so it st
 the bundle. htmx pushes the URL it was finally answered from, so a view that redirects on success
 leaves the browser on the redirect target rather than on the form.
 
-## Editing in place
+## Editing in place, without an edit mode
 
-Two sheets work this way, the profile and the room, and they share one implementation:
-`apps/static/js/sheet.js` keyed off `data-sheet`, `data-sheet-mode`, `data-sheet-edit`,
-`data-sheet-cancel` and `data-sheet-save`. Dialogs inside them share `apps/static/js/dialog.js`
-(`data-dialog`, `data-dialog-open="<id>"`, `data-dialog-close`), which also re-opens a dialog that
-an htmx swap brought back with the `open` attribute. Neither bundle knows which page it is on — a
-second copy of this logic would drift from the first.
+The profile and the room are both one sheet that is **editable wherever it is shown**. There is no
+Edit button and no mode: every value is its own form control from the first paint, and an action
+row after the last editable section is what carries saving.
 
-The sheet does not have a separate edit page. Every value is already its own form control,
-`readonly` (or `disabled`, for controls that have no readonly state) until the sheet switches to
-edit mode. So:
+That row is the whole of the interaction design, and three things about it are load-bearing:
 
-- Entering edit mode costs **no request**: `profile-sheet.js` flips `data-profile-mode` on the
-  sheet and unlocks the controls. Nothing is fetched, nothing re-renders.
-- Nothing moves: the same element that showed the value becomes the input, so the text stays where
-  it was. What differs between the modes must not change the layout — that is why the action column
-  has a fixed width (`tw:@md:w-64`) and the badges sit in their own row: otherwise the wider edit
-  actions would squeeze the name and reflow the header.
-- Saving posts the sheet and swaps **only the sheet** back in (`hx-target="this"`,
-  `hx-swap="outerHTML"`), so the page shell, side menu and scroll position stay untouched. The view
-  answers with the sheet partial for htmx requests and redirects for plain ones.
+- **It sits after the fields it acts on**, not in the header. A form is filled top to bottom; a
+  Save at the top means typing your way down and then scrolling back up. The header carries the
+  identity and the badges, nothing else.
+- **Its buttons are disabled until something differs** from what the server rendered.
+  `apps/static/js/sheet.js` snapshots the sheet's `FormData` on load and after every swap, and
+  compares on `input` and `change`. Discard resets the form and lands back on that snapshot.
+- **They render enabled.** A disabled submit would leave the sheet unsubmittable whenever the
+  bundle never runs, which is the one state the server cannot detect — so the server renders them
+  live and the bundle disables them once it holds the snapshot.
 
-What must **not** go into the edit cycle is anything that only exists while editing and sits
-above the fields: it grows the header and pushes every row down. The profile photo used to do
-exactly that (an upload hint plus a delete button) and now runs on its own cycle instead — see
-below. When in doubt, measure it: `test_entering_edit_mode_does_not_move_the_rows` compares the
-first row's offset before and after the switch, on a phone viewport where the header stacks.
+A sheet whose object cannot be edited at all renders **no action row** and its fields carry
+`disabled`: a closed room is inert except for its status section, and someone else's profile has
+no editable field to begin with.
 
-Two variants drive the visible difference, `tw:reading:` and `tw:editing:`, keyed off
-`data-profile-mode` on the sheet root. Field appearance uses the native `tw:read-only:` and
-`tw:disabled:` variants instead, so a control's look follows its actual state rather than a class:
-
-```
-tw:border tw:border-line-strong tw:bg-surface-sunken
-tw:read-only:border-transparent tw:read-only:bg-transparent tw:read-only:cursor-default
-```
-
-Both custom variants are written without `:where()`, which gives them the extra specificity to beat
-the plain utility they override (`tw:hidden tw:editing:flex`) whatever the utility order is.
-
-Server and client must agree on the starting state: the template renders `readonly`/`disabled` and
-the `data-sheet-mode` attribute from `profile_is_editing` / `room_is_editing`, so there is no
-unlocked flash before the bundle runs and the page works when it never runs. That is also what a
-plain GET on the edit URL is for — `UserUpdateView` and `RoomEditView` render the very same
-template with the sheet unlocked, which is the whole of editing without the bundle.
-
-A sheet whose object cannot be edited at all offers **no edit mode**, rather than one that unlocks
-nothing: a closed room renders without an edit button, and only its status section stays live.
+Saving posts the sheet and swaps **only the sheet** back in (`hx-target="this"`,
+`hx-swap="outerHTML"`), so the page shell, side menu and scroll position stay untouched. The view
+answers with the sheet partial for htmx requests and redirects for plain ones. The edit URLs
+(`account:update`, `room:edit`) are POST targets only — a GET on them redirects to the object,
+because there is no separate edit page left to land on.
 
 Do not add a loading indicator for a swap this small. The save button is disabled for the duration
 (`hx-disabled-elt`) and that is the whole feedback; an `htmx-indicator` also keeps its box at
 opacity 0 and would widen the button permanently.
+
+Dialogs inside a sheet share `apps/static/js/dialog.js` (`data-dialog`,
+`data-dialog-open="<id>"`, `data-dialog-close`), which also re-opens a dialog that an htmx swap
+brought back with the `open` attribute. Neither bundle knows which page it is on — a second copy
+of either would drift from the first.
 
 ## Sub-cycles: parts that update on their own
 
@@ -263,6 +249,11 @@ this way:
 - **Its form ignores the rest of the post.** htmx sends the enclosing form's fields along, so the
   narrow form must have exactly the field it owns — every other key is then ignored by
   construction rather than by a filter someone has to maintain.
+- **State a script toggles belongs in an attribute, not in a class.** The suggested-guest "Add"
+  button carries both labels and both icons and flips only `aria-pressed`; the
+  `tw:group-aria-pressed:` variants pick the matching half. `suggested-guests.js` therefore
+  assembles no markup and touches no framework class, which is also what keeps those labels
+  translatable.
 
 A `<dialog>` swapped back in with the `open` attribute is *not* in the top layer, so the backdrop
 and Escape are dead. `dialog.js` re-opens it with `showModal()` after the swap; check `:modal`, not
@@ -314,6 +305,10 @@ tw:flex tw:flex-col tw:gap-1 tw:px-5 tw:py-3 tw:@md:flex-row tw:@md:items-center
 with the label `tw:m-0 tw:text-sm tw:text-ink-muted tw:@md:w-44 tw:@md:shrink-0` and the value in a
 `tw:min-w-0 tw:flex-1` wrapper.
 
+**Sheet action row** — `shared_partials/_sheet_actions.html`, right after the last editable
+section. Discard is the secondary button, Save the primary one, both with
+`tw:disabled:cursor-not-allowed tw:disabled:opacity-50`.
+
 **Section caption**
 
 ```
@@ -340,20 +335,18 @@ tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2
 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95
 ```
 
-**Text input in a sheet row** — the read-only pair is what makes reading and editing the same
-element. Field error: `tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text tw:reading:hidden`.
+**Text input in a sheet row** — editable at all times. Field error:
+`tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text`.
 
 ```
 tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2
 tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle
-tw:read-only:cursor-default tw:read-only:border-transparent tw:read-only:bg-transparent
 tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand
 ```
 
-A `select` cannot be read-only, so it uses `disabled` with the same look plus
-`tw:disabled:opacity-100 tw:disabled:text-ink
-tw:disabled:[-webkit-text-fill-color:currentcolor]` — without those, browsers grey out its text.
-Its chevron carries `tw:reading:hidden`.
+A `select` in a row is the same box plus `tw:appearance-none`, `tw:pr-9` and its own
+`bi-chevron-down` positioned inside. A sheet that cannot be edited at all renders both with
+`disabled`.
 
 **Standalone text input** — outside a row, with a label above
 (`tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink`).
@@ -402,6 +395,11 @@ Playwright's `check()` keep working.
 - `account/partials/_back_to_profile.html` — the back button of the pages behind the profile,
   hooked with `data-back-to-profile` because the side menu also links to the profile
 - `account/partials/_password_field.html` — password input with its reveal toggle
+- `shared_partials/_sheet_actions.html` — the save row of a sheet, disabled until something changed
+- `shared_partials/member_form.html` — the one-field "add a member" form, shared by the guest and
+  the existing-user page; every label reaches it as an already translated parameter
+- `room/_suggested_guest_list.html` and `room/_suggested_guest_card.html` — the pick-a-roommate
+  cards, on both the create and the add-member page
 - `room/partials/_room_sheet.html` — the room, read and edit in one markup
 - `room/partials/_room_status_section.html` — closing and reopening, with its confirmation dialog
 - `room/partials/_room_status_badge.html` — the open/closed pill

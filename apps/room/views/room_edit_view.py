@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views import generic
@@ -10,14 +11,16 @@ from apps.room.views.mixins.room_sheet_response import RoomSheetResponseMixin
 
 
 class RoomEditView(RoomSheetResponseMixin, RoomBaseContext, generic.UpdateView):
-    # The room is one page that switches between reading and editing in place, so this view
-    # renders the very same template — only with the sheet unlocked. A plain GET landing here is
-    # what carries editing without the bundle.
+    # The sheet is editable wherever it is shown, so this view has no page of its own: it is the
+    # POST target, and a GET on it belongs on the room.
     template_name = "room/detail.html"
     context_object_name = "room"
     slug_url_kwarg = "room_slug"
     model = Room
     form_class = RoomEditForm
+
+    def get(self, request, *args, **kwargs):
+        return redirect("room:detail", room_slug=kwargs[self.slug_url_kwarg])
 
     def get_success_url(self):
         return reverse("room:detail", kwargs={"room_slug": self.object.slug})
@@ -26,11 +29,6 @@ class RoomEditView(RoomSheetResponseMixin, RoomBaseContext, generic.UpdateView):
         form = super().get_form(form_class)
         form.user = self.request.user
         return form
-
-    @context
-    @cached_property
-    def room_is_editing(self):
-        return True
 
     @context
     @cached_property
@@ -43,9 +41,9 @@ class RoomEditView(RoomSheetResponseMixin, RoomBaseContext, generic.UpdateView):
         if not self.is_htmx_request():
             return response
 
-        return self.render_room_sheet(self.object, is_editing=False)
+        return self.render_room_sheet(self.object)
 
     def form_invalid(self, form):
         if self.is_htmx_request():
-            return self.render_room_sheet(self.object, is_editing=True, form=form)
+            return self.render_room_sheet(self.object, form=form)
         return super().form_invalid(form)

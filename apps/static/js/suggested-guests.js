@@ -1,31 +1,16 @@
 (function () {
+  // Delegated from the document: the cards are swapped in and out by htmx when a friend is
+  // toggled, so a listener bound to a button would be lost with the first swap.
+  if (window.__yamsaSuggestedGuestsReady) {
+    return;
+  }
+  window.__yamsaSuggestedGuestsReady = true;
+
   const INPUT_TARGET_SELECTOR = "[data-suggested-guest-inputs-target]";
-  const ADD_BUTTON_SELECTOR = "[data-suggested-guest-add]";
   const INPUT_NAME = "suggested_guest_emails";
 
-  const buildButtonContent = (iconClass, label) => {
-    return `<i class="bi ${iconClass} me-1"></i>${label}`;
-  };
-
-  const updateButtonState = (button, selected) => {
-    const addLabel = button.dataset.addLabel || "Add";
-    const addedLabel = button.dataset.addedLabel || "Added";
-
-    button.setAttribute("aria-pressed", String(selected));
-    button.classList.toggle("btn-success", selected);
-    button.classList.toggle("btn-outline-primary", !selected);
-
-    if (selected) {
-      button.innerHTML = buildButtonContent("bi-check-circle", addedLabel);
-    } else {
-      button.innerHTML = buildButtonContent("bi-plus-circle", addLabel);
-    }
-  };
-
-  const findContainer = () => document.querySelector(INPUT_TARGET_SELECTOR);
-
   document.addEventListener("click", (event) => {
-    const button = event.target.closest(ADD_BUTTON_SELECTOR);
+    const button = event.target.closest("[data-suggested-guest-add]");
     if (!button) {
       return;
     }
@@ -33,19 +18,17 @@
     event.preventDefault();
 
     const email = button.dataset.suggestedGuestEmail;
-    if (!email) {
-      return;
-    }
-
-    const container = findContainer();
-    if (!container) {
+    const container = document.querySelector(INPUT_TARGET_SELECTOR);
+    if (!email || !container) {
       return;
     }
 
     const existingInput = container.querySelector(`[data-suggested-guest-input="${email}"]`);
     if (existingInput) {
       existingInput.remove();
-      updateButtonState(button, false);
+      // aria-pressed is the whole state: both labels are already in the markup and the
+      // group-aria-pressed variants pick the matching one, so nothing here assembles HTML.
+      button.setAttribute("aria-pressed", "false");
       return;
     }
 
@@ -56,6 +39,6 @@
     hiddenInput.dataset.suggestedGuestInput = email;
     container.appendChild(hiddenInput);
 
-    updateButtonState(button, true);
+    button.setAttribute("aria-pressed", "true");
   });
 })();
