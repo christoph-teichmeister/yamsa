@@ -122,8 +122,7 @@ class TestSendNotificationOnTransactionCreate:
         body = mocked_notification.call_args.kwargs["payload"].body
         assert body == (
             f"{user.name} logged a payment of {parent_transaction.value}{parent_transaction.currency.sign} "
-            f'("{parent_transaction.description}")\n'
-            f"Have a look!"
+            f'("{parent_transaction.description}")'
         )
 
     def test_send_notification_on_transaction_create_body_when_creator_differs_from_payer(
@@ -158,8 +157,7 @@ class TestSendNotificationOnTransactionCreate:
         expected_body = (
             f"{another_user.name} logged that {user.name} paid "
             f"{parent_transaction.value}{parent_transaction.currency.sign} "
-            f'("{parent_transaction.description}")\n'
-            f"Have a look!"
+            f'("{parent_transaction.description}")'
         )
         assert mocked_notification.call_args_list
         for call in mocked_notification.call_args_list:
@@ -205,12 +203,10 @@ class TestSendNotificationOnTransactionCreate:
 
         assert body_by_recipient[guest_user] == (
             f"{another_user.name} hat eingetragen, dass {user.name} "
-            f'{parent_transaction.value}{parent_transaction.currency.sign} gezahlt hat ("{parent_transaction.description}")\n'  # noqa: E501
-            f"Schau vorbei!"
+            f'{parent_transaction.value}{parent_transaction.currency.sign} gezahlt hat ("{parent_transaction.description}")'  # noqa: E501
         )
         assert body_by_recipient[user] == (
             f"{another_user.name} logged that {user.name} paid "
             f"{parent_transaction.value}{parent_transaction.currency.sign} "
-            f'("{parent_transaction.description}")\n'
-            f"Have a look!"
+            f'("{parent_transaction.description}")'
         )

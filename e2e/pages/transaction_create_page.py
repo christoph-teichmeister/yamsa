@@ -45,7 +45,7 @@ class TransactionCreatePage(BasePage):
         self.description_input.fill(text)
 
     def choose_category(self, category_slug: str):
-        # The radio itself is visually hidden by .btn-check, so the click has to go to its label.
+        # The radio is stretched over the chip at opacity 0, so the click goes to the label.
         self.category_field.locator(f"label[data-category-slug='{category_slug}']").click()
 
     def fill_required_fields(self, *, description: str, amount: str):

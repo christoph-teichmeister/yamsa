@@ -48,10 +48,10 @@ def test_send_notification_on_transaction_update_localizes_body_per_recipient_la
     body_by_recipient = dict(zip(recipients, bodies, strict=True))
 
     assert body_by_recipient[guest_user] == (
-        f'{user.name} just updated a transaction ("{parent_transaction.description}")\nHave a look!'
+        f'{user.name} just updated a transaction ("{parent_transaction.description}")'
     )
     assert body_by_recipient[another_user] == (
-        f'{user.name} hat eine Transaktion aktualisiert ("{parent_transaction.description}")\nSchau vorbei!'
+        f'{user.name} hat eine Transaktion aktualisiert ("{parent_transaction.description}")'
     )
 
 
@@ -88,10 +88,10 @@ def test_send_notification_on_child_transaction_deleted_localizes_body_per_recip
     body_by_recipient = dict(zip(recipients, bodies, strict=True))
 
     assert body_by_recipient[guest_user] == (
-        f'{user.name} just deleted a transaction ("{parent_transaction.description}")\nHave a look!'
+        f'{user.name} just deleted a transaction ("{parent_transaction.description}")'
     )
     assert body_by_recipient[another_user] == (
-        f'{user.name} hat eine Transaktion gelöscht ("{parent_transaction.description}")\nSchau vorbei!'
+        f'{user.name} hat eine Transaktion gelöscht ("{parent_transaction.description}")'
     )
 
 

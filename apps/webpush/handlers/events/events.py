@@ -26,16 +26,14 @@ def send_notification_on_transaction_create(context: ParentTransactionCreated.Co
         language_code = get_language_code_for_user(user)
         with translation.override(language_code):
             if not parent_transaction.created_by or parent_transaction.created_by == parent_transaction.paid_by:
-                body = _('{payer} logged a payment of {amount}{currency} ("{description}")\nHave a look!').format(
+                body = _('{payer} logged a payment of {amount}{currency} ("{description}")').format(
                     payer=parent_transaction.paid_by.name,
                     amount=parent_transaction.value,
                     currency=parent_transaction.currency.sign,
                     description=parent_transaction.description,
                 )
             else:
-                body = _(
-                    '{creator} logged that {payer} paid {amount}{currency} ("{description}")\nHave a look!',
-                ).format(
+                body = _('{creator} logged that {payer} paid {amount}{currency} ("{description}")').format(
                     creator=parent_transaction.created_by.name,
                     payer=parent_transaction.paid_by.name,
                     amount=parent_transaction.value,
@@ -78,7 +76,7 @@ def send_notification_on_transaction_update(context: ParentTransactionUpdated.Co
 
     def build_notification_for_user(user: User) -> Notification:
         with translation.override(get_language_code_for_user(user)):
-            body = _('{editor} just updated a transaction ("{description}")\nHave a look!').format(
+            body = _('{editor} just updated a transaction ("{description}")').format(
                 editor=parent_transaction.lastmodified_by.name,
                 description=parent_transaction.description,
             )
@@ -113,7 +111,7 @@ def send_notification_on_child_transaction_deleted(context: ParentTransactionDel
 
     def build_notification_for_user(user: User) -> Notification:
         with translation.override(get_language_code_for_user(user)):
-            body = _('{deleter} just deleted a transaction ("{description}")\nHave a look!').format(
+            body = _('{deleter} just deleted a transaction ("{description}")').format(
                 deleter=context.user_who_deleted.name,
                 description=parent_transaction.description,
             )
@@ -196,7 +194,7 @@ def send_notification_on_transactions_imported(context: TransactionsImported.Con
     for user in room.users.exclude(pk=importer.pk).exclude(is_guest=True):
         with translation.override(get_language_code_for_user(user)):
             head = _("Transactions imported")
-            body = _('{importer} imported {count} entries from {source} into "{room}"\nHave a look!').format(
+            body = _('{importer} imported {count} entries from {source} into "{room}"').format(
                 importer=importer.name,
                 count=total,
                 source=context.source_label,

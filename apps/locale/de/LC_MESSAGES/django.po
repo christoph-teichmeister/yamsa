@@ -1487,52 +1487,28 @@ msgstr "Füge Kategorien hinzu oder ordne sie neu, die der Art und Weise entspre
 msgid "For"
 msgstr "Für"
 
+msgid "Remove this share"
+msgstr "Diesen Anteil entfernen"
+
 msgid "Remove this participant?"
 msgstr "Diese:n Teilnehmer:in entfernen?"
-
-msgid "Child Transaction ID"
-msgstr "ID der Untertransaktion"
 
 msgid "New transaction"
 msgstr "Neue Transaktion"
 
 #, python-format
-msgid ""
-"\n"
-"                        Add transaction for \"%(room_name)s\"\n"
-"                    "
-msgstr ""
-"\n"
-"                        Eine Transaktion für \"%(room_name)s\" hinzufügen\n"
-"                    "
+msgid "Add transaction for \"%(room_name)s\""
+msgstr "Transaktion für \"%(room_name)s\" hinzufügen"
 
 #, python-format
-msgid ""
-"\n"
-"                        %(member_count)s member\n"
-"                    "
-msgid_plural ""
-"\n"
-"                        %(member_count)s members\n"
-"                    "
-msgstr[0] ""
-"\n"
-"                        %(member_count)s Mitglied\n"
-"                    "
-msgstr[1] ""
-"\n"
-"                        %(member_count)s Mitglieder\n"
-"                    "
+msgid "%(member_count)s member"
+msgid_plural "%(member_count)s members"
+msgstr[0] "%(member_count)s Mitglied"
+msgstr[1] "%(member_count)s Mitglieder"
 
 #, python-format
-msgid ""
-"\n"
-"                        %(currency_sign)s preferred\n"
-"                    "
-msgstr ""
-"\n"
-"                        %(currency_sign)s bevorzugt\n"
-"                    "
+msgid "%(currency_sign)s preferred"
+msgstr "%(currency_sign)s bevorzugt"
 
 msgid "Unable to add transaction"
 msgstr "Transaktion konnte nicht hinzugefügt werden"
@@ -1573,9 +1549,6 @@ msgstr "Optional"
 msgid "More details"
 msgstr "Weitere Details"
 
-msgid "Show fields"
-msgstr "Felder anzeigen"
-
 msgid "Paid at"
 msgstr "Bezahlt am"
 
@@ -1602,9 +1575,6 @@ msgstr "Lade Belege als PDF oder Bild hoch (maximal 5 MB pro Datei)."
 
 msgid "Add transaction"
 msgstr "Transaktion hinzufügen"
-
-msgid "Room Slug"
-msgstr "Raum-Slug"
 
 msgid "Groceries"
 msgstr "Lebensmittel"
@@ -1699,44 +1669,17 @@ msgid "Are you sure you wish to delete this transaction?"
 msgstr "Bist du sicher, dass du diese Transaktion löschen möchtest?"
 
 #, python-format
-msgid ""
-"\n"
-"                                    Current split: %(split_total)s%(split_currency)s\n"
-"                                "
-msgstr ""
-"\n"
-"                                    Aktuelle Aufteilung: %(split_total)s%(split_currency)s\n"
-"                                "
-
-msgid "Receipts stay on the detail page, so upload PDFs there instead of here."
-msgstr "Belege bleiben auf der Detailseite, lade PDFs dort statt hier hoch."
-
-msgid "You can continue editing this transaction; switch to the detail view if you need to manage uploads."
-msgstr "Du kannst diese Transaktion weiter bearbeiten; wechsle zur Detailansicht, wenn du Uploads verwalten möchtest."
-
-msgid "Open detail view"
-msgstr "Detailansicht öffnen"
+msgid "Current split: %(split_total)s%(split_currency)s"
+msgstr "Aktueller Split: %(split_total)s%(split_currency)s"
 
 msgid "Update each share or remove it entirely."
 msgstr "Aktualisiere jeden Anteil oder entferne ihn vollständig."
 
 #, python-format
-msgid ""
-"\n"
-"                                    %(participant_count)s person\n"
-"                                "
-msgid_plural ""
-"\n"
-"                                    %(participant_count)s people\n"
-"                                "
-msgstr[0] ""
-"\n"
-"                                    %(participant_count)s Person\n"
-"                                "
-msgstr[1] ""
-"\n"
-"                                    %(participant_count)s Personen\n"
-"                                "
+msgid "%(participant_count)s person"
+msgid_plural "%(participant_count)s people"
+msgstr[0] "%(participant_count)s Person"
+msgstr[1] "%(participant_count)s Personen"
 
 msgid "⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically."
 msgstr "⚠️ Gesamte Änderungen sperren einzelne Anteile; das Backend gleicht die Splits automatisch aus."
@@ -1750,20 +1693,35 @@ msgstr "Teilnehmer hinzufügen"
 msgid "Add extra notes here"
 msgstr "Hier zusätzliche Notizen hinzufügen"
 
+msgid "Open detail view"
+msgstr "Detailansicht öffnen"
+
+msgid "Receipts stay on the detail page, so upload PDFs there instead of here."
+msgstr "Belege bleiben auf der Detailseite, lade PDFs dort statt hier hoch."
+
 msgid "Import done. Share this room with the others instead of letting them import their own export — otherwise the same history ends up in two rooms."
 msgstr "Import fertig. Teile diesen Raum mit den anderen, statt dass sie ihren eigenen Export hochladen — sonst landet dieselbe Historie in zwei Räumen."
 
 msgid "Copy share link"
 msgstr "Link zum Teilen kopieren"
 
+msgid "Expenses"
+msgstr "Ausgaben"
+
 msgid "Room transactions"
 msgstr "Raumtransaktionen"
 
-msgid "Click a row to explore the full breakdown."
-msgstr "Klicke eine Zeile, um die vollständige Aufschlüsselung zu sehen."
+msgid "Pick a row to explore the full breakdown."
+msgstr "Wähle eine Zeile, um die vollständige Aufschlüsselung zu sehen."
 
 msgid "Record your first expense to see the running history here."
 msgstr "Erfasse deine erste Ausgabe, um den Verlauf hier anzuzeigen."
+
+#, python-format
+msgid "%(transaction_count)s transaction"
+msgid_plural "%(transaction_count)s transactions"
+msgstr[0] "%(transaction_count)s Transaktion"
+msgstr[1] "%(transaction_count)s Transaktionen"
 
 msgid "This room is closed, so transactions are read-only."
 msgstr "Dieser Raum ist geschlossen, daher sind Transaktionen nur lesbar."
@@ -1780,17 +1738,11 @@ msgstr "Suche"
 msgid "Filter by payer or description"
 msgstr "Nach Zahler:in oder Beschreibung filtern"
 
-msgid "Actions"
-msgstr "Aktionen"
-
 msgid "Nothing to show yet"
 msgstr "Noch nichts zu zeigen"
 
 msgid "Start by logging an expense to build your history."
 msgstr "Erfasse zuerst eine Ausgabe, um deinen Verlauf aufzubauen."
-
-msgid "Room snapshot"
-msgstr "Raumzusammenfassung"
 
 msgid "Transactions logged"
 msgstr "Erfasste Transaktionen"
@@ -1807,11 +1759,11 @@ msgstr "Tipps"
 msgid "Use the search field to filter by payer or description."
 msgstr "Nutze das Suchfeld, um nach Zahler:in oder Beschreibung zu filtern."
 
-msgid "Tap a row or the eye icon to review the split details."
-msgstr "Tippe eine Zeile oder das Augensymbol an, um die Split-Details anzusehen."
+msgid "Pick a row to review the split details."
+msgstr "Wähle eine Zeile, um die Split-Details anzusehen."
 
-msgid "The floating button above the list lets you capture a new transaction."
-msgstr "Der schwebende Button über der Liste ermöglicht dir, eine neue Transaktion zu erfassen."
+msgid "The floating button lets you capture a new transaction."
+msgstr "Der schwebende Button ermöglicht dir, eine neue Transaktion zu erfassen."
 
 msgid "Category"
 msgstr "Kategorie"
@@ -1996,25 +1948,6 @@ msgstr "Reihenfolge für diese Kategorie speichern"
 msgid "No room-specific categories yet. Create one to override the shared baseline."
 msgstr "Noch keine raumspezifischen Kategorien vorhanden. Erstelle eine, um die gemeinsame Basislinie zu überschreiben."
 
-msgid "Paid on"
-msgstr "Bezahlt am"
-
-#, python-format
-msgid ""
-"\n"
-"                                %(delta)s ago\n"
-"                            "
-msgstr ""
-"\n"
-"                                Vor %(delta)s\n"
-"                            "
-
-msgid "Payer"
-msgstr "Zahler:in"
-
-msgid "View split details"
-msgstr "Split-Details ansehen"
-
 #, python-format
 msgid "No transactions match \"%(query)s\"."
 msgstr "Keine Transaktionen entsprechen \"%(query)s\"."
@@ -2051,39 +1984,23 @@ msgid "transactions"
 msgstr "transaktionen"
 
 #, python-brace-format
-msgid ""
-"{payer} logged a payment of {amount}{currency} (\"{description}\")\n"
-"Have a look!"
-msgstr ""
-"{payer} hat eine Zahlung über {amount}{currency} eingetragen (\"{description}\")\n"
-"Schau vorbei!"
+msgid "{payer} logged a payment of {amount}{currency} (\"{description}\")"
+msgstr "{payer} hat eine Zahlung über {amount}{currency} eingetragen (\"{description}\")"
 
 #, python-brace-format
-msgid ""
-"{creator} logged that {payer} paid {amount}{currency} (\"{description}\")\n"
-"Have a look!"
-msgstr ""
-"{creator} hat eingetragen, dass {payer} {amount}{currency} gezahlt hat (\"{description}\")\n"
-"Schau vorbei!"
+msgid "{creator} logged that {payer} paid {amount}{currency} (\"{description}\")"
+msgstr "{creator} hat eingetragen, dass {payer} {amount}{currency} gezahlt hat (\"{description}\")"
 
 #, python-brace-format
-msgid ""
-"{editor} just updated a transaction (\"{description}\")\n"
-"Have a look!"
-msgstr ""
-"{editor} hat eine Transaktion aktualisiert (\"{description}\")\n"
-"Schau vorbei!"
+msgid "{editor} just updated a transaction (\"{description}\")"
+msgstr "{editor} hat eine Transaktion aktualisiert (\"{description}\")"
 
 msgid "Transaction updated"
 msgstr "Transaktion aktualisiert"
 
 #, python-brace-format
-msgid ""
-"{deleter} just deleted a transaction (\"{description}\")\n"
-"Have a look!"
-msgstr ""
-"{deleter} hat eine Transaktion gelöscht (\"{description}\")\n"
-"Schau vorbei!"
+msgid "{deleter} just deleted a transaction (\"{description}\")"
+msgstr "{deleter} hat eine Transaktion gelöscht (\"{description}\")"
 
 #, python-brace-format
 msgid "{debitor} just settled their debt of {amount}{currency} to you"
@@ -2101,14 +2018,6 @@ msgstr "Nutzer:in entfernt"
 
 msgid "Transactions imported"
 msgstr "Transaktionen importiert"
-
-#, python-brace-format
-msgid ""
-"{importer} imported {count} entries from {source} into \"{room}\"\n"
-"Have a look!"
-msgstr ""
-"{importer} hat {count} Einträge aus {source} in „{room}“ importiert\n"
-"Schau mal rein!"
 
 #, python-brace-format
 msgid "Webpush Information for {user}"

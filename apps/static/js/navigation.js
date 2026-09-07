@@ -288,6 +288,14 @@ window.bootstrap = bootstrap;
         splitRow.remove();
       }
     }
+
+    const dismissButton = event.target.closest('[data-dismiss]');
+    if (dismissButton) {
+      const dismissable = dismissButton.closest('[data-dismissable]');
+      if (dismissable) {
+        dismissable.remove();
+      }
+    }
   };
 
   const init = () => {

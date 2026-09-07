@@ -5,6 +5,7 @@ from decimal import Decimal
 from unittest.mock import patch
 
 import pytest
+from bs4 import BeautifulSoup
 from django.urls import reverse
 from freezegun import freeze_time
 
@@ -56,24 +57,22 @@ class TestTransactionCreateView:
 
     def test_get_renders_a_chip_per_category_without_preselecting_one(self, authenticated_client, room):
         response = authenticated_client.get(reverse("transaction:create", kwargs={"room_slug": room.slug}))
-        markup = self._category_field_markup(response)
+        category_field = self._category_field(response)
 
         categories = list(RoomCategoryService(room=room).get_category_queryset())
         assert categories
         for category in categories:
-            assert category.name in markup
-            assert category.emoji in markup
+            assert category.name in category_field.get_text()
+            assert category.emoji in category_field.get_text()
 
-        # The response is minified, so count the radios rather than match their attribute quoting.
-        assert markup.count("btn-check") == len(categories)
+        assert len(category_field.select("input[type='radio'][data-category-slug]")) == len(categories)
         # Nothing is preselected: the user has to pick a category deliberately.
-        assert "checked" not in markup
+        assert category_field.select("input[type='radio'][checked]") == []
 
     @staticmethod
-    def _category_field_markup(response) -> str:
-        content = response.content.decode()
-        start = content.index("data-category-field")
-        return content[start : content.index("</fieldset>", start)]
+    def _category_field(response):
+        soup = BeautifulSoup(response.content.decode(), "html.parser")
+        return soup.select_one("[data-category-field]")
 
     def test_get_offers_a_way_into_the_category_manager(self, authenticated_client, room):
         response = authenticated_client.get(reverse("transaction:create", kwargs={"room_slug": room.slug}))
