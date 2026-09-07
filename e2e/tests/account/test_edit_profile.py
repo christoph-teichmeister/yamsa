@@ -5,31 +5,25 @@ from apps.account.tests.test_utils import build_image_bytes
 
 @pytest.mark.e2e
 class TestEditProfile:
-    def test_entering_edit_mode_unlocks_the_fields_without_reloading(self, logged_in_profile_detail_page):
-        logged_in_profile_detail_page.expect_fields_locked()
-        logged_in_profile_detail_page.mark_sheet("before-edit")
-
-        logged_in_profile_detail_page.enter_edit_mode()
-
+    def test_the_actions_stay_disabled_until_a_field_changes(self, logged_in_profile_detail_page):
         logged_in_profile_detail_page.expect_fields_editable()
-        # A marker set before the click can only survive if the very same element is still there,
-        # so this fails the moment entering edit mode starts fetching a new page or fragment.
-        assert logged_in_profile_detail_page.read_sheet_marker() == "before-edit"
+        # Nothing has changed yet, so there is nothing to save or to throw away.
+        logged_in_profile_detail_page.expect_actions_disabled()
 
-    def test_entering_edit_mode_does_not_move_the_rows(self, logged_in_profile_detail_page):
-        # A phone viewport stacks the header, where the swap from one button to two shows up as
-        # height: it caught a 2px shift that the desktop layout hid.
-        logged_in_profile_detail_page.page.set_viewport_size({"width": 390, "height": 844})
-        offset_before = logged_in_profile_detail_page.profile_section_offset()
+        logged_in_profile_detail_page.fill_name("Updated E2E Name")
 
-        logged_in_profile_detail_page.enter_edit_mode()
+        logged_in_profile_detail_page.expect_actions_enabled()
 
-        # Anything the header only shows while editing would push every row down the page.
-        assert logged_in_profile_detail_page.profile_section_offset() == offset_before
+    def test_typing_never_leaves_the_page(self, logged_in_profile_detail_page):
+        logged_in_profile_detail_page.mark_sheet("before-typing")
+
+        logged_in_profile_detail_page.fill_name("Updated E2E Name")
+
+        # A marker set before typing can only survive if the very same element is still there, so
+        # this fails the moment editing starts fetching a page or a fragment.
+        assert logged_in_profile_detail_page.read_sheet_marker() == "before-typing"
 
     def test_user_can_edit_name_and_email(self, logged_in_profile_detail_page, profile_user, profile_detail_path):
-        logged_in_profile_detail_page.enter_edit_mode()
-
         new_name = "Updated E2E Name"
         new_email = "updated-e2e@yamsa.local"
         logged_in_profile_detail_page.fill_name(new_name)
@@ -38,7 +32,7 @@ class TestEditProfile:
 
         # Saving swaps the sheet in place — the profile URL never changes.
         assert logged_in_profile_detail_page.page.url.endswith(profile_detail_path)
-        logged_in_profile_detail_page.expect_fields_locked()
+        logged_in_profile_detail_page.expect_actions_disabled()
         logged_in_profile_detail_page.expect_name(new_name)
         logged_in_profile_detail_page.expect_email(new_email)
 
@@ -46,14 +40,14 @@ class TestEditProfile:
         assert profile_user.name == new_name
         assert profile_user.email == new_email
 
-    def test_cancelling_restores_the_stored_values(self, logged_in_profile_detail_page, profile_user):
+    def test_discarding_restores_the_stored_values(self, logged_in_profile_detail_page, profile_user):
         original_name = profile_user.name
 
-        logged_in_profile_detail_page.enter_edit_mode()
         logged_in_profile_detail_page.fill_name("Discarded Name")
-        logged_in_profile_detail_page.cancel_edit_mode()
+        logged_in_profile_detail_page.expect_actions_enabled()
+        logged_in_profile_detail_page.discard()
 
-        logged_in_profile_detail_page.expect_fields_locked()
+        logged_in_profile_detail_page.expect_actions_disabled()
         logged_in_profile_detail_page.expect_name(original_name)
 
         profile_user.refresh_from_db()
@@ -65,7 +59,6 @@ class TestEditProfile:
         new_preference = not current_preference
 
         logged_in_profile_detail_page.expect_notifications_radio_checked(wants_notifications=current_preference)
-        logged_in_profile_detail_page.enter_edit_mode()
 
         logged_in_profile_detail_page.choose_wants_notifications(wants_notifications=new_preference)
         logged_in_profile_detail_page.save()
@@ -84,8 +77,8 @@ class TestEditProfile:
         logged_in_profile_detail_page.upload_photo_from_dialog("avatar.png", build_image_bytes())
 
         logged_in_profile_detail_page.expect_photo_present()
-        # The photo has its own cycle: it neither needs edit mode nor saves the rest of the sheet.
-        logged_in_profile_detail_page.expect_fields_locked()
+        # The photo has its own cycle, so the sheet around it is untouched and still pristine.
+        logged_in_profile_detail_page.expect_actions_disabled()
 
         profile_user.refresh_from_db()
         assert profile_user.profile_picture
@@ -127,8 +120,8 @@ class TestEditProfile:
         # overlay covering the photo from then on.
         logged_in_profile_detail_page.expect_photo_hover_hint(visible=False)
 
-    def test_guest_has_no_edit_option_on_own_profile(self, logged_in_guest_detail_page):
-        logged_in_guest_detail_page.expect_edit_button_hidden()
+    def test_a_guest_gets_no_editable_sheet_of_their_own(self, logged_in_guest_detail_page):
+        logged_in_guest_detail_page.expect_actions_absent()
 
     def test_navigating_from_the_security_rows_morphs_instead_of_replacing(self, logged_in_profile_detail_page):
         # The security rows ask for hx-swap="morph:innerHTML". That only takes effect while the

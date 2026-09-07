@@ -1,0 +1,26 @@
+{% load i18n %}
+{% comment %}
+  The save row of a sheet, directly after the last editable section.
+
+  Both buttons render enabled on purpose: a disabled submit would leave the sheet unsubmittable
+  whenever sheet.js never runs, which is the one state the server cannot detect. The bundle
+  disables them as soon as it has the pristine snapshot and re-enables them the moment a field
+  differs from it.
+
+  Parameters:
+    save_button_id     id of the submit button (required)
+    discard_button_id  id of the discard button (required)
+{% endcomment %}
+<div class="tw:flex tw:flex-col tw:gap-2 tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:flex-row tw:@md:items-center tw:@md:justify-end tw:@md:px-6">
+  <button id="{{ discard_button_id }}"
+          class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-4 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:disabled:cursor-not-allowed tw:disabled:opacity-50"
+          type="button"
+          data-sheet-discard>{% trans "Discard changes" %}</button>
+  <button id="{{ save_button_id }}"
+          class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:cursor-not-allowed tw:disabled:opacity-50 tw:disabled:shadow-none"
+          type="submit"
+          data-sheet-save>
+    <i class="bi bi-check2" aria-hidden="true"></i>
+    {% trans "Save changes" %}
+  </button>
+</div>

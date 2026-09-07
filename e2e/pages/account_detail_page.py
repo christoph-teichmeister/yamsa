@@ -4,24 +4,27 @@ from e2e.pages.base_page import BasePage
 
 
 class AccountDetailPage(BasePage):
-    """The profile page, which reads and edits in the same place.
+    """The profile page, editable wherever it is shown.
 
-    Entering edit mode is a pure client-side flip: there is no request to wait for, so the
-    assertions below check the controls themselves rather than a navigation.
+    There is no edit mode: the action row after the last editable section is disabled until
+    something differs from what was rendered, so the assertions below read that row.
     """
 
-    def enter_edit_mode(self):
-        self.page.locator("#edit-profile-button").click()
-        expect(self.page.locator("#save-profile-button")).to_be_visible()
-
-    def cancel_edit_mode(self):
-        self.page.locator("#cancel-profile-button").click()
-        expect(self.page.locator("#edit-profile-button")).to_be_visible()
+    def discard(self):
+        self.page.locator("#discard-profile-button").click()
 
     def save(self):
         with self.page.expect_response(lambda response: "/update/" in response.url):
             self.page.locator("#save-profile-button").click()
-        expect(self.page.locator("#edit-profile-button")).to_be_visible()
+        self.expect_actions_disabled()
+
+    def expect_actions_disabled(self):
+        expect(self.page.locator("#save-profile-button")).to_be_disabled()
+        expect(self.page.locator("#discard-profile-button")).to_be_disabled()
+
+    def expect_actions_enabled(self):
+        expect(self.page.locator("#save-profile-button")).to_be_enabled()
+        expect(self.page.locator("#discard-profile-button")).to_be_enabled()
 
     def mark_sheet(self, marker: str):
         """Tag the sheet element so a later read proves whether it survived or was replaced."""
@@ -32,12 +35,12 @@ class AccountDetailPage(BasePage):
         return self.page.locator("#profile-sheet").evaluate("(sheet) => sheet.dataset.e2eMarker || null")
 
     def open_photo_dialog(self):
-        self.page.locator("button[data-profile-photo-open]").click()
-        expect(self.page.locator("[data-profile-photo-dialog]")).to_be_visible()
+        self.page.locator("button[data-dialog-open]").click()
+        expect(self.page.locator("#profile-photo-dialog")).to_be_visible()
 
     def open_photo_dialog_via_badge(self):
-        self.page.locator("span[data-profile-photo-open]").click()
-        expect(self.page.locator("[data-profile-photo-dialog]")).to_be_visible()
+        self.page.locator("span[data-dialog-open]").click()
+        expect(self.page.locator("#profile-photo-dialog")).to_be_visible()
 
     def expect_photo_hover_hint(self, *, visible: bool):
         """The camera overlay may only show while the avatar is hovered.
@@ -56,8 +59,8 @@ class AccountDetailPage(BasePage):
         self.page.mouse.move(0, 0)
 
     def close_photo_dialog(self):
-        self.page.locator("[data-profile-photo-close]").click()
-        expect(self.page.locator("[data-profile-photo-dialog]")).not_to_be_visible()
+        self.page.locator("[data-dialog-close]").click()
+        expect(self.page.locator("#profile-photo-dialog")).not_to_be_visible()
 
     def expect_photo_dialog_offers(self, *, delete: bool):
         expect(self.page.locator("label[for='profile-picture-input']")).to_be_visible()
@@ -77,16 +80,10 @@ class AccountDetailPage(BasePage):
             self.page.locator("[data-profile-photo-delete]").click()
 
     def expect_photo_present(self):
-        expect(self.page.locator("[data-profile-photo-open] img")).to_be_visible()
+        expect(self.page.locator("#profile-photo button img")).to_be_visible()
 
     def expect_no_photo(self):
-        expect(self.page.locator("[data-profile-photo-open] img")).to_have_count(0)
-
-    def profile_section_offset(self) -> float:
-        """Where the first settings row sits, to catch the sheet growing on a mode switch."""
-
-        box = self.page.locator("#name").bounding_box()
-        return box["y"]
+        expect(self.page.locator("#profile-photo button img")).to_have_count(0)
 
     def fill_name(self, name: str):
         self.page.fill("#name", name)
@@ -116,21 +113,17 @@ class AccountDetailPage(BasePage):
 
         expect(self.page.locator("#profile-name")).to_have_text(name)
 
-    def expect_fields_locked(self):
-        expect(self.page.locator("#name")).to_have_attribute("readonly", "")
-        expect(self.page.locator("#id_language")).to_be_disabled()
-        expect(self.page.locator("#save-profile-button")).to_be_hidden()
-
     def expect_fields_editable(self):
-        expect(self.page.locator("#name")).not_to_have_attribute("readonly", "")
+        expect(self.page.locator("#name")).to_be_editable()
         expect(self.page.locator("#id_language")).to_be_enabled()
-        expect(self.page.locator("#edit-profile-button")).to_be_hidden()
 
-    def expect_edit_button_visible(self):
-        expect(self.page.locator("#edit-profile-button")).to_be_visible()
+    def expect_actions_present(self):
+        expect(self.page.locator("#save-profile-button")).to_have_count(1)
 
-    def expect_edit_button_hidden(self):
-        expect(self.page.locator("#edit-profile-button")).to_have_count(0)
+    def expect_actions_absent(self):
+        """Someone else's profile carries no editable field, so it carries no action row."""
+
+        expect(self.page.locator("#save-profile-button")).to_have_count(0)
 
     def expect_security_section_visible(self):
         expect(self.page.locator("#security-section")).to_be_visible()

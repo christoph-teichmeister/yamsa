@@ -34,10 +34,8 @@ class UserDetailView(mixins.LoginRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.id == self.object.id:
-            # Own profile: every value is rendered as its own form control so the page can switch
-            # to editing without another round trip.
+            # Own profile: every value is rendered as its own form control, editable right away.
             context["form"] = EditUserForm(instance=self.object)
-            context["profile_is_editing"] = False
         return context
 
     def get(self, request, *args, **kwargs):

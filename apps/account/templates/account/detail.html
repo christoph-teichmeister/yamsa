@@ -66,15 +66,16 @@
         <div class="tw:border-t tw:border-line">
           <div class="tw:divide-y tw:divide-line">
             {% trans "Email address" as email_label %}
-            {% include "account/partials/_profile_value_row.html" with row_label=email_label row_value=user.email %}
+            {% include "shared_partials/_sheet_value_row.html" with row_label=email_label row_value=user.email %}
             {% trans "PayPal.me username" as paypal_label %}
-            {% include "account/partials/_profile_value_row.html" with row_label=paypal_label row_value=user.paypal_me_username row_prefix="@" row_placeholder=no_paypal_label %}
+            {% include "shared_partials/_sheet_value_row.html" with row_label=paypal_label row_value=user.paypal_me_username row_prefix="@" row_placeholder=no_paypal_label %}
             {% trans "Preferred language" as language_label %}
-            {% include "account/partials/_profile_value_row.html" with row_label=language_label row_value=user.get_language_display row_placeholder=not_set_label %}
+            {% include "shared_partials/_sheet_value_row.html" with row_label=language_label row_value=user.get_language_display row_placeholder=not_set_label %}
           </div>
         </div>
       </div>
     {% endif %}
   </section>
-  {% render_bundle "profile-sheet" attrs="defer" %}
+  {% render_bundle "sheet" attrs="defer" %}
+  {% render_bundle "dialog" attrs="defer" %}
 {% endblock content %}

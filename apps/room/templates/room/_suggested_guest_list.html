@@ -1,15 +1,15 @@
-<div id="suggested-guests-list" class="row g-3">
+{% load i18n %}
+<div id="suggested-guests-list"
+     class="tw:@container tw:grid tw:grid-cols-1 tw:gap-3 tw:@lg:grid-cols-2">
   {% with suggested_guest_context=suggested_guest_context|default:"create" %}
     {% if suggested_guests %}
       {% for guest in suggested_guests %}
-        <div class="col-12 col-md-6">
-          {% include "room/_suggested_guest_card.html" with guest=guest suggested_guest_context=suggested_guest_context add_inline_form=add_inline_form|default:False add_inline_form_action_url=add_inline_form_action_url|default:"" add_inline_room_slug=add_inline_room_slug|default:"" %}
-        </div>
+        {% include "room/_suggested_guest_card.html" with guest=guest suggested_guest_context=suggested_guest_context add_inline_form=add_inline_form|default:False add_inline_form_action_url=add_inline_form_action_url|default:"" add_inline_room_slug=add_inline_room_slug|default:"" %}
       {% endfor %}
     {% else %}
-      <div class="col-12">
-        <p class="mb-0 small text-muted">No frequent collaborators yet—create more rooms to surface suggestions.</p>
-      </div>
+      <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">
+        {% trans "No frequent collaborators yet — create more rooms to surface suggestions." %}
+      </p>
     {% endif %}
   {% endwith %}
 </div>

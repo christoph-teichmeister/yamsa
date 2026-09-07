@@ -15,6 +15,9 @@ class RoomFactory(factory.django.DjangoModelFactory):
     slug = LazyFunction(uuid.uuid4)
     share_hash = LazyFunction(Room.generate_share_hash)
     name = Faker("company")
-    description = Faker("paragraph")
+    # Room.description is a TextField(max_length=50), which only the forms enforce — a longer
+    # fixture is data the app itself would reject, and every test editing such a room fails
+    # on a field it never touched.
+    description = Faker("sentence", nb_words=4)
     created_by = SubFactory(UserFactory)
     preferred_currency = SubFactory(CurrencyFactory)

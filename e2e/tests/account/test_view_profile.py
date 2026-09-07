@@ -13,7 +13,7 @@ class TestViewProfile:
     def test_user_can_view_own_profile(self, logged_in_profile_detail_page, profile_user):
         logged_in_profile_detail_page.expect_name(profile_user.name)
         logged_in_profile_detail_page.expect_email(profile_user.email)
-        logged_in_profile_detail_page.expect_edit_button_visible()
+        logged_in_profile_detail_page.expect_actions_present()
         logged_in_profile_detail_page.expect_security_section_visible()
 
     def test_user_can_view_profile_of_roommate(
@@ -28,7 +28,7 @@ class TestViewProfile:
         detail_page.navigate()
 
         detail_page.expect_member_name(roommate.name)
-        detail_page.expect_edit_button_hidden()
+        detail_page.expect_actions_absent()
         detail_page.expect_security_section_hidden()
 
     def test_user_cannot_view_profile_of_unrelated_user(

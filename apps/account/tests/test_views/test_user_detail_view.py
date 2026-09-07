@@ -28,7 +28,9 @@ def test_get_as_registered_user_own_profile(authenticated_client, user):
     assert user.name in content
     assert user.email in content
     assert contains_attribute(content, "value", user.paypal_me_username)
-    assert contains_attribute(content, "data-profile-mode", "reading")
+    # No edit mode: every field of the own profile is editable straight away.
+    assert "readonly" not in content
+    assert contains_attribute(content, "id", "save-profile-button")
     assert not has_superuser_admin_link(content)
 
 

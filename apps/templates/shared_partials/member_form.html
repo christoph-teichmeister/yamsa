@@ -1,199 +1,120 @@
-{% load room_tags %}
 {% load i18n %}
-<style nonce="{{ csp_nonce }}">
-    .member-form-wrap {
-        max-width: 640px;
-        margin: 2rem auto;
-        padding-bottom: 3rem;
-    }
+{% comment %}
+  The one-field form behind "add a member": a guest by name, or an existing user by email.
 
-    .member-hero-card {
-        border-radius: 1.25rem;
-        padding: 1.75rem;
-        background: linear-gradient(145deg, var(--yamsa-brand-soft), transparent);
-        border: 1px solid rgb(var(--yamsa-brand-rgb), 0.2);
-        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.15);
-        color: var(--bs-body-color);
-    }
+  Shared by account/create_guest.html and room/userconnectiontoroom_create.html, so every label
+  and every hint comes in as a parameter — and every caller has to pass them already translated.
 
-    .member-hero-card h2 {
-        font-weight: 600;
-        margin-bottom: 0.35rem;
-    }
+  Renders the back button and the sheet as siblings, without a page section of its own: the pages
+  that include it put other sections beside it.
 
-    .member-hero-card p {
-        margin-bottom: 0;
-        color: var(--yamsa-ink-muted);
-    }
-
-    .member-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.3rem 0.9rem;
-        border-radius: 999px;
-        font-size: 0.75rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        background: var(--yamsa-brand-soft);
-        color: var(--yamsa-brand-text);
-    }
-
-    .member-form-card {
-        margin-top: 1.5rem;
-        border-radius: 1.25rem;
-        border: 1px solid var(--yamsa-line);
-        padding: 2rem;
-        background: var(--yamsa-surface);
-        box-shadow: 0 25px 45px rgba(15, 23, 42, 0.08);
-    }
-
-    .member-field-label {
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-bottom: 0.4rem;
-    }
-
-    .member-input {
-        border-radius: 0.85rem;
-        border: 1px solid var(--yamsa-line-strong);
-        color: var(--yamsa-ink);
-
-        padding: 0.85rem 1rem;
-        width: 100%;
-        background: var(--yamsa-surface-sunken);
-    }
-
-    .member-input:focus {
-        border-color: var(--yamsa-brand);
-        box-shadow: 0 0 0 0.2rem rgb(var(--yamsa-brand-rgb), 0.25);
-        outline: none;
-    }
-
-    .member-helper {
-        font-size: 0.85rem;
-        margin-top: 0.35rem;
-        color: var(--yamsa-ink-muted);
-    }
-
-    .member-errors {
-        margin-bottom: 1rem;
-        border-radius: 0.85rem;
-        padding: 0.85rem 1rem;
-        background: var(--yamsa-danger-soft);
-        border: 1px solid rgb(239 68 68 / 0.4);
-        color: var(--yamsa-danger-text);
-    }
-
-    .member-submit {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        border-radius: 999px;
-        padding: 0.85rem 1.75rem;
-        font-weight: 600;
-        min-width: 200px;
-    }
-
-    .member-tip {
-        margin-top: 1rem;
-        font-size: 0.85rem;
-        color: var(--yamsa-ink-muted);
-    }
-</style>
-<div class="member-form-wrap">
-  {% if back_url %}
-    {% trans "Back" as default_back_label %}
-    <button type="button"
-            class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center"
-            aria-label="{{ back_label|default:default_back_label }}"
-            hx-get="{{ back_url }}"
-            hx-target="#body"
-            hx-indicator="#body-loading-spinner"
-            hx-swap="morph:innerHTML"
-            hx-push-url="true">
-      <i class="bi bi-arrow-left" aria-hidden="true"></i>
-    </button>
-  {% endif %}
-  <div class="member-hero-card mb-4">
-    <div class="d-flex justify-content-between flex-wrap gap-3">
-      <div>
-        <p class="text-uppercase text-muted small mb-1">
-          {% if hero_context %}
-            {{ hero_context }}
-          {% else %}
-            {% trans "Room access" %}
-          {% endif %}
-        </p>
-        <h2>{{ hero_title }}</h2>
-        <p>{{ hero_subtitle }}</p>
-      </div>
-      <div class="text-end">
-        <div class="member-badge">
-          <i class="bi {{ hero_badge_icon|default:'bi-people' }}"></i>
-          {% if hero_badge_label %}
-            {{ hero_badge_label }}
-          {% else %}
-            {% trans "New member" %}
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
-  <form class="member-form-card"
-        hx-post="{{ form_action }}"
-        hx-target="#body"
-        hx-indicator="#body-loading-spinner"
-        hx-swap="morph:innerHTML"
-        hx-push-url="true">
-    {% csrf_token %}
-    <input type="hidden" name="room_slug" value="{{ room_slug_value }}">
-    {% if form.non_field_errors %}
-      <div class="member-errors">
-        {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
-      </div>
-    {% endif %}
-    <div class="mb-3">
-      <label class="member-field-label" for="{{ field.id_for_label }}">{{ field_label }}</label>
-      <input id="{{ field.id_for_label }}"
-             name="{{ field.name }}"
-             type="{{ field_type|default:'text' }}"
-             class="member-input"
-             placeholder="{{ field_placeholder }}"
-             value="{{ field.value|default_if_none:'' }}"
-             {% if field.field.required %}required{% endif %}
-             autocomplete="{{ field_autocomplete|default:'off' }}">
-      {% if field.errors %}
-        <div class="member-errors mt-2">
-          {% for error in field.errors %}<div>{{ error }}</div>{% endfor %}
-        </div>
-      {% endif %}
-      {% if helper_text %}<div class="member-helper">{{ helper_text }}</div>{% endif %}
-    </div>
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-      <p class="member-tip mb-0">
-        {% if tip_text %}
-          {{ tip_text }}
+  Parameters:
+    form, field        the bound form and the single field it renders (required)
+    form_action        where to post (required)
+    room_slug_value    posted alongside, so the view knows the room
+    hero_context       eyebrow above the title
+    hero_title         the title (required)
+    hero_subtitle      one line under the title
+    hero_badge_label   text of the pill, hero_badge_icon its bootstrap-icon class
+    field_label        label of the field (required)
+    field_type         input type, default "text"
+    field_placeholder  placeholder of the field
+    field_autocomplete autocomplete token, default "off"
+    helper_text        hint under the field
+    tip_text           hint next to the submit button
+    submit_label       text of the submit button, submit_icon its bootstrap-icon class
+    submit_disabled    renders the form read-only and says why
+    back_url           where the back button leads, back_label its aria-label
+{% endcomment %}
+{% if back_url %}
+  {% trans "Back" as default_back_label %}
+  {# An anchor, not a button: the back link then works without the bundle and can be opened in a new tab. #}
+  <a class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-1.5 tw:self-start tw:rounded-lg tw:border-0 tw:bg-transparent tw:px-1 tw:py-1 tw:text-sm tw:font-semibold tw:text-ink-muted tw:no-underline tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+     href="{{ back_url }}"
+     hx-get="{{ back_url }}"
+     hx-target="#body"
+     hx-indicator="#body-loading-spinner"
+     hx-swap="morph:innerHTML"
+     hx-push-url="true">
+    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+    {{ back_label|default:default_back_label }}
+  </a>
+{% endif %}
+<form class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+      method="post"
+      action="{{ form_action }}"
+      hx-post="{{ form_action }}"
+      hx-target="#body"
+      hx-indicator="#body-loading-spinner"
+      hx-swap="morph:innerHTML"
+      hx-push-url="true">
+  {% csrf_token %}
+  <input type="hidden" name="room_slug" value="{{ room_slug_value }}">
+  <div class="tw:flex tw:flex-col tw:gap-3 tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:flex-row tw:@md:items-start tw:@md:px-6">
+    <div class="tw:min-w-0 tw:flex-1">
+      <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">
+        {% if hero_context %}
+          {{ hero_context }}
         {% else %}
-          {% trans "We'll notify members automatically." %}
+          {% trans "Room access" %}
         {% endif %}
       </p>
-      <button type="submit"
-              class="btn btn-primary member-submit {% if submit_disabled %}disabled{% endif %}"
-              {% if submit_disabled %}disabled aria-disabled="true"{% endif %}>
-        <i class="bi {{ submit_icon|default:'bi-check-lg' }}"></i>
-        {% if submit_label %}
-          {{ submit_label }}
-        {% else %}
-          {% trans "Submit" %}
-        {% endif %}
-      </button>
+      <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">{{ hero_title }}</h1>
+      {% if hero_subtitle %}<p class="tw:m-0 tw:text-sm tw:text-ink-muted">{{ hero_subtitle }}</p>{% endif %}
     </div>
-    {% if submit_disabled %}
-      <div class="member-helper text-danger-emphasis fw-semibold mt-2">
-        {% trans "This room is closed, so new members cannot be added." %}
+    <span class="tw:inline-flex tw:shrink-0 tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-brand-text">
+      <i class="bi {{ hero_badge_icon|default:'bi-people' }}"
+         aria-hidden="true"></i>
+      {% if hero_badge_label %}
+        {{ hero_badge_label }}
+      {% else %}
+        {% trans "New member" %}
+      {% endif %}
+    </span>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-4 tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
+    {% if form.non_field_errors %}
+      <div class="tw:rounded-xl tw:border tw:border-danger-text/60 tw:bg-danger-soft tw:px-4 tw:py-3 tw:text-sm tw:text-danger-text">
+        {% for error in form.non_field_errors %}<p class="tw:m-0">{{ error }}</p>{% endfor %}
       </div>
     {% endif %}
-  </form>
-</div>
+    <div>
+      <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+             for="{{ field.id_for_label }}">{{ field_label }}</label>
+      <input id="{{ field.id_for_label }}"
+             class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand tw:disabled:cursor-not-allowed tw:disabled:opacity-60"
+             name="{{ field.name }}"
+             type="{{ field_type|default:'text' }}"
+             placeholder="{{ field_placeholder }}"
+             value="{{ field.value|default_if_none:'' }}"
+             autocomplete="{{ field_autocomplete|default:'off' }}"
+             {% if field.field.required %}required{% endif %}
+             {% if submit_disabled %}disabled{% endif %}>
+      {% for error in field.errors %}
+        <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error }}</p>
+      {% endfor %}
+      {% if helper_text %}<p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{{ helper_text }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="tw:flex tw:flex-col tw:gap-3 tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:flex-row tw:@md:items-center tw:@md:justify-between tw:@md:px-6">
+    <p class="tw:m-0 tw:min-w-0 tw:flex-1 tw:text-sm tw:text-ink-subtle">
+      {% if submit_disabled %}
+        {% trans "This room is closed, so new members cannot be added." %}
+      {% elif tip_text %}
+        {{ tip_text }}
+      {% else %}
+        {% trans "We'll notify members automatically." %}
+      {% endif %}
+    </p>
+    <button class="tw:inline-flex tw:shrink-0 tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:cursor-not-allowed tw:disabled:opacity-60 tw:disabled:shadow-none"
+            type="submit"
+            {% if submit_disabled %}disabled aria-disabled="true"{% endif %}>
+      <i class="bi {{ submit_icon|default:'bi-check-lg' }}" aria-hidden="true"></i>
+      {% if submit_label %}
+        {{ submit_label }}
+      {% else %}
+        {% trans "Submit" %}
+      {% endif %}
+    </button>
+  </div>
+</form>

@@ -19,6 +19,7 @@ from e2e.pages.account_detail_page import AccountDetailPage
 from e2e.pages.account_security_page import AccountSecurityPage
 from e2e.pages.change_password_page import ChangePasswordPage
 from e2e.pages.login_page import LoginPage
+from e2e.pages.room_detail_page import RoomDetailPage
 
 
 def pytest_unconfigure(config):
@@ -124,6 +125,31 @@ def logged_in_profile_detail_page(page, base_url, profile_detail_path, profile_u
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
     detail_page = AccountDetailPage(page, base_url, profile_detail_path)
+    detail_page.navigate()
+    return detail_page
+
+
+@pytest.fixture
+def room_with_open_debt(shared_room, profile_user, roommate):
+    from decimal import Decimal
+
+    from apps.debt.models import Debt
+
+    Debt.objects.create(
+        room=shared_room,
+        debitor=roommate,
+        creditor=profile_user,
+        value=Decimal("12.50"),
+        currency=shared_room.preferred_currency,
+    )
+    return shared_room
+
+
+@pytest.fixture
+def logged_in_room_detail_page(page, base_url, profile_user, shared_room):
+    _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
+
+    detail_page = RoomDetailPage(page, base_url, reverse("room:detail", kwargs={"room_slug": shared_room.slug}))
     detail_page.navigate()
     return detail_page
 

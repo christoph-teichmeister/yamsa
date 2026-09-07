@@ -26,7 +26,7 @@ class TestRoomCreateView:
         hx_get_fragment = f'hx-get="{dashboard_url}"'
         hx_get_fragment_unquoted = f"hx-get={dashboard_url}"
 
+        # An href as well as the hx-get: the link has to work when the bundle never runs.
         assert href_fragment in content or href_fragment_unquoted in content
         assert hx_get_fragment in content or hx_get_fragment_unquoted in content
-        assert "bi-arrow-left" in content
         assert "Back to dashboard" in content

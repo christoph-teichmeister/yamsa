@@ -13,7 +13,7 @@ class ProfilePartialResponseMixin:
     def is_htmx_request(self) -> bool:
         return self.request.headers.get("HX-Request") == "true"
 
-    def render_profile_sheet(self, user, *, is_editing: bool, form=None) -> HttpResponse:
+    def render_profile_sheet(self, user, *, form=None) -> HttpResponse:
         """Answer with just the sheet, so the browser keeps the page it is already on."""
 
         return HttpResponse(
@@ -22,7 +22,6 @@ class ProfilePartialResponseMixin:
                 {
                     "user": user,
                     "form": form if form is not None else EditUserForm(instance=user),
-                    "profile_is_editing": is_editing,
                 },
                 request=self.request,
             )
