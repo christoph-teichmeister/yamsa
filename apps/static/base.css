@@ -213,28 +213,16 @@ body {
 }
 
 
-.toast.show {
-    display: flex;
-    justify-content: center;
-}
-
-.toast-container.yamsa-toast-container {
-    pointer-events: none;
-    max-height: calc(100% - 1rem);
-    z-index: 1400;
-}
-
+/* The container around it is click-through, so that a toast at the bottom edge does not take
+   the taps meant for the page underneath; the toast itself has to take its own. */
 .toast-yamsa-inner {
     background: var(--yamsa-surface-raised);
     color: var(--yamsa-ink);
     border-top: 4px solid transparent;
     pointer-events: auto;
     border-radius: 0.9rem;
-    transition: transform 0.25s ease, opacity 0.25s ease;
     min-height: 3.5rem;
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
-    width: 100%;
-    max-width: none;
 }
 
 .toast-yamsa-inner.toast-primary {

@@ -1,11 +1,12 @@
 {% load i18n %}
 {% comment %}
-Layout and visibility belong to .loading-indicator-overlay: Bootstrap's display utilities carry
-!important and would defeat the display toggle the overlay is switched with.
+Layout and visibility belong to .loading-indicator-overlay: the overlay is switched by `display`,
+and a utility for it here would be the second declaration of the same thing.
 {% endcomment %}
 <div id="{{ spinner_id }}"
      class="htmx-indicator loading-indicator-overlay">
-  <div class="spinner-grow" role="status">
-    <span class="visually-hidden">{% trans "Loading..." %}</span>
+  <div class="tw:inline-block tw:size-8 tw:animate-spinner-grow tw:rounded-full tw:bg-current tw:opacity-0"
+       role="status">
+    <span class="tw:sr-only">{% trans "Loading..." %}</span>
   </div>
 </div>

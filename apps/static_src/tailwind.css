@@ -166,11 +166,41 @@
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
   --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.08), 0 14px 32px rgb(0 0 0 / 0.14);
   --shadow-brand: 0 8px 20px rgb(var(--yamsa-brand-rgb), 0.28);
+
+  /* The pulsing dot every loading indicator in the app is built from. `animate-ping` is the
+     nearest thing Tailwind ships and it is not the same shape: it ends at twice the size, so a
+     row of them overlaps. This one starts at nothing and rests at its own size. */
+  --animate-spinner-grow: spinner-grow 0.75s linear infinite;
+
+  @keyframes spinner-grow {
+    0% {
+      transform: scale(0);
+    }
+
+    50% {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 /* Tailwind's spacing scale cannot express the notch insets. */
 @utility pb-safe {
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+/* The app's single content column, shared by the page body, the top bar and both bottom navs so
+   the chrome stays aligned with what it frames. Half the viewport from the tablet breakpoint up:
+   the layouts inside are built for a phone, and a full-width column stretches them past reading
+   width on a desktop. */
+@utility app-container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 0.75rem;
+
+  @media (width >= 768px) {
+    width: 50%;
+  }
 }
 
 /* The auth hero's ground. A utility rather than two tokens because its far end is a value of the
