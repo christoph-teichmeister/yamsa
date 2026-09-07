@@ -68,11 +68,19 @@ apart. Tailwind exposes the tokens via `@theme inline`; **prefer them over `dark
 | `brand`, `brand-hover`, `brand-text`           | brand fill, its hover, brand-colored text on a surface    |
 | `brand-soft`                                   | tinted brand background (badges, icon tiles, gradients)   |
 | `on-brand`                                     | text and icons on a brand fill                            |
+| `scrim`, `on-scrim`                            | the loading overlay's dimming layer, and what stands on it |
 | `success-*`, `warning-*`, `danger-*`           | `-text`, `-soft` and `-border` triples for status         |
 
 These tokens are the palette in full. There is no second, theme-independent ramp beside them —
 one existed, went unused, and would only have drifted from the tokens that do the work. A colour
 that must not shift with the theme is a colour that has not been thought through yet.
+
+`brand-strong`, `scrim` and `on-scrim` are the three that genuinely do not switch, and each has to
+argue for it. A scrim does not sit on the canvas but on whatever the page happens to show, and its
+job is the same on either theme: push that behind a white spinner. Which also fixes what a
+theme-following spinner colour cost — `brand-text` on the old `rgba(0, 0, 0, 0.4)` measured
+**2.10:1** on the light theme, under even the 3:1 a graphical object owes; white on `scrim` is
+5.82:1 there and 18.63:1 on the dark theme.
 
 Two tokens are kept as bare triplets, `--yamsa-brand-rgb` and `--yamsa-link-rgb`, because Bootstrap
 composes its own colors from `--bs-primary-rgb` and `--bs-link-color-rgb`: a link colour set only as
