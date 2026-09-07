@@ -1,6 +1,8 @@
 {% load i18n %}
-{# Layout and visibility belong to .loading-indicator-overlay: Bootstrap's display utilities carry
-   !important and would defeat the display toggle the overlay is switched with. #}
+{% comment %}
+Layout and visibility belong to .loading-indicator-overlay: Bootstrap's display utilities carry
+!important and would defeat the display toggle the overlay is switched with.
+{% endcomment %}
 <div id="{{ spinner_id }}"
      class="htmx-indicator loading-indicator-overlay">
   <div class="spinner-grow" role="status">

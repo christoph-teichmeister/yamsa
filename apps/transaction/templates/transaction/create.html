@@ -1,276 +1,291 @@
 {% extends "room/dashboard.html" %}
-{% load static room_tags i18n %}
+{% load room_tags i18n %}
 {% load render_bundle from webpack_loader %}
 {% now "Y-m-d\TH:i" as current_datetime %}
 {% block tab_content %}
-  <section class="container px-2 px-md-4 px-lg-5 py-4">
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-      <div>
-        <p class="text-uppercase text-muted small fw-semibold mb-1">{% trans "New transaction" %}</p>
-        <h2 class="fs-4 fw-semibold mb-0">
-          {% blocktrans with room_name=current_room.name %}
-                        Add transaction for "{{ room_name }}"
-                    {% endblocktrans %}
-        </h2>
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+    {% trans "Back to transactions" as back_to_list_label %}
+    {# An anchor, not a button: the back link then works without the bundle and can be opened in a new tab. #}
+    <a class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-1.5 tw:self-start tw:rounded-lg tw:border-0 tw:bg-transparent tw:px-1 tw:py-1 tw:text-sm tw:font-semibold tw:text-ink-muted tw:no-underline tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+       href="{% room_url 'transaction:list' %}"
+       hx-get="{% room_url 'transaction:list' %}"
+       hx-target="#body"
+       hx-indicator="#body-loading-spinner"
+       hx-swap="morph:innerHTML"
+       hx-push-url="true">
+      <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      {{ back_to_list_label }}
+    </a>
+    {# `action` next to `hx-post` so the form still submits without the bundle. #}
+    <form class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+          method="post"
+          action="{% room_url 'transaction:create' %}"
+          enctype="multipart/form-data"
+          hx-post="{% room_url 'transaction:create' %}"
+          hx-target="#body"
+          hx-indicator="#body-loading-spinner"
+          hx-swap="morph:innerHTML"
+          hx-push-url="true">
+      {% csrf_token %}
+      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "New transaction" %}</p>
+        <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">
+          {% blocktrans with room_name=current_room.name %}Add transaction for "{{ room_name }}"{% endblocktrans %}
+        </h1>
+        <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
+          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-brand-text">
+            <i class="bi bi-people" aria-hidden="true"></i>
+            {% blocktrans count member_count=current_room.users|length %}{{ member_count }} member{% plural %}{{ member_count }} members{% endblocktrans %}
+          </span>
+          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">
+            <i class="bi bi-currency-exchange" aria-hidden="true"></i>
+            {% blocktrans with currency_sign=current_room.preferred_currency.sign %}{{ currency_sign }} preferred{% endblocktrans %}
+          </span>
+        </div>
       </div>
-      <div class="d-flex flex-wrap gap-2">
-        <span class="badge text-bg-dark rounded-pill px-3 py-2">
-          <i class="bi bi-people me-1"></i>
-          {% blocktrans count member_count=current_room.users|length %}
-                        {{ member_count }} member
-                    {% plural %}
-                        {{ member_count }} members
-                    {% endblocktrans %}
-        </span>
-        <span class="badge bg-body-secondary rounded-pill px-3 py-2">
-          <i class="bi bi-currency-exchange me-1"></i>
-          {% blocktrans with currency_sign=current_room.preferred_currency.sign %}
-                        {{ currency_sign }} preferred
-                    {% endblocktrans %}
-        </span>
-      </div>
-    </div>
-    <div class="card border-0 rounded-4 shadow-sm">
-      <div class="card-body p-4 p-lg-5">
-        <form hx-post="{% room_url 'transaction:create' %}"
-              hx-target="#body"
-              hx-indicator="#body-loading-spinner"
-              hx-swap="morph:innerHTML"
-              hx-push-url="true"
-              enctype="multipart/form-data"
-              class="d-flex flex-column gap-5 fs-6">
-          {% csrf_token %}
-          {% if form.errors %}
-            <div class="alert alert-danger rounded-4 shadow-sm border-0 px-4 py-3">
-              <p class="fw-semibold mb-2">{% trans "Unable to add transaction" %}</p>
-              <ul class="mb-0 small">
-                {% for field_errors in form.errors.values %}
-                  {% for error in field_errors %}<li>{{ error }}</li>{% endfor %}
-                {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
-          <fieldset class="d-flex flex-column gap-4">
-            <legend class="fw-semibold h6 text-muted mb-0">{% trans "Required details" %}</legend>
-            <div class="row g-4">
-              <div class="col-12 col-lg-8">
-                <label for="description" class="form-label fw-semibold">{% trans "What was this?" %}</label>
-                {% with description_field=form.description %}
-                  <input id="description"
-                         name="description"
-                         type="text"
-                         class="form-control{% if description_field.errors %} is-invalid{% endif %}"
-                         maxlength="50"
-                         minlength="1"
-                         list="descriptionSuggestions"
-                         placeholder="{% trans "e.g., Grocery run" %}"
-                         value="{{ description_field.value|default:'' }}"
-                         required />
-                  {% if description_field.errors %}
-                    <div class="invalid-feedback d-block">{{ description_field.errors.0 }}</div>
-                  {% endif %}
-                {% endwith %}
-                <div class="form-text">{% trans "Maximum 50 characters." %}</div>
+      {% if form.errors %}
+        <div class="tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
+          <div class="tw:rounded-2xl tw:border tw:border-danger-text/40 tw:bg-danger-soft tw:px-4 tw:py-3"
+               role="alert">
+            <p class="tw:mt-0 tw:mb-1 tw:font-semibold tw:text-danger-text">{% trans "Unable to add transaction" %}</p>
+            <ul class="tw:m-0 tw:flex tw:list-none tw:flex-col tw:gap-1 tw:text-sm tw:text-danger-text">
+              {% for field_errors in form.errors.values %}
+                {% for error in field_errors %}<li>{{ error }}</li>{% endfor %}
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+      <div class="tw:border-t tw:border-line">
+        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Required details" %}</p>
+        <div class="tw:grid tw:grid-cols-1 tw:gap-4 tw:px-5 tw:pt-2 tw:pb-5 tw:@lg:grid-cols-2 tw:@md:px-6">
+          <div class="tw:@lg:col-span-2">
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="description">{% trans "What was this?" %}</label>
+            {% with description_field=form.description %}
+              <input id="description"
+                     class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                     type="text"
+                     name="description"
+                     maxlength="50"
+                     minlength="1"
+                     list="descriptionSuggestions"
+                     placeholder="{% trans "e.g., Grocery run" %}"
+                     value="{{ description_field.value|default:'' }}"
+                     required>
+              {% for error_message in description_field.errors %}
+                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+              {% endfor %}
+            {% endwith %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Maximum 50 characters." %}</p>
+          </div>
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="value">{% trans "Amount paid" %}</label>
+            {% with value_field=form.value %}
+              <div class="tw:relative">
+                <span class="tw:pointer-events-none tw:absolute tw:top-1/2 tw:left-4 tw:-translate-y-1/2 tw:text-ink-subtle">{{ current_room.preferred_currency.sign }}</span>
+                <input id="value"
+                       class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-4 tw:pl-9 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                       type="number"
+                       name="value"
+                       min="0"
+                       step="0.01"
+                       max="99999999"
+                       placeholder="0.00"
+                       value="{{ value_field.value|default:'' }}"
+                       required>
               </div>
-              <div class="col-12 col-lg-4">
-                <label for="value" class="form-label fw-semibold">{% trans "Amount paid" %}</label>
-                {% with value_field=form.value %}
-                  <div class="input-group">
-                    <span class="input-group-text bg-body-secondary text-muted">{{ current_room.preferred_currency.sign }}</span>
-                    <input id="value"
-                           name="value"
-                           type="number"
-                           class="form-control{% if value_field.errors %} is-invalid{% endif %}"
-                           min="0"
-                           step="0.01"
-                           max="99999999"
-                           required
-                           placeholder="0.00"
-                           value="{{ value_field.value|default:'' }}" />
-                  </div>
-                  {% if value_field.errors %}<div class="invalid-feedback d-block">{{ value_field.errors.0 }}</div>{% endif %}
-                {% endwith %}
-                <small class="text-muted">{% trans "Total paid in the selected currency." %}</small>
-              </div>
-            </div>
+              {% for error_message in value_field.errors %}
+                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+              {% endfor %}
+            {% endwith %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Total paid in the selected currency." %}</p>
+          </div>
+          <div class="tw:@lg:col-span-2">
             {% include "transaction/partials/_category_field.html" with category_field=form.category %}
-            <div class="row g-4">
-              <div class="col-12 col-lg-6">
-                <label for="paidBySelect" class="form-label fw-semibold">{% trans "Who paid?" %}</label>
-                {% with paid_by_field=form.paid_by %}
-                  <select name="paid_by"
-                          class="form-select{% if paid_by_field.errors %} is-invalid{% endif %}"
-                          id="paidBySelect"
-                          required>
-                    <option value="{{ request.user.id }}"
-                            {% if selected_paid_by == request.user.id|stringformat:"s" %}selected{% endif %}>
-                      {{ request.user.name }}
-                    </option>
-                    {% for room_user in current_room.users %}
-                      {% if room_user.id != request.user.id %}
-                        <option value="{{ room_user.id }}"
-                                {% if selected_paid_by == room_user.id|stringformat:"s" %}selected{% endif %}>
-                          {{ room_user.name }}
-                        </option>
-                      {% endif %}
-                    {% endfor %}
-                  </select>
-                  {% if paid_by_field.errors %}<div class="invalid-feedback d-block">{{ paid_by_field.errors.0 }}</div>{% endif %}
-                {% endwith %}
-                <small class="text-muted">{% trans "Person covering this expense." %}</small>
-              </div>
-              <div class="col-12 col-lg-6">
-                <label for="paidForSelect" class="form-label fw-semibold">{% trans "Split between" %}</label>
-                {% with paid_for_field=form.paid_for %}
-                  <select name="paid_for"
-                          multiple
-                          class="form-select{% if paid_for_field.errors %} is-invalid{% endif %}"
-                          id="paidForSelect"
-                          required>
-                    {% for room_user in current_room.users %}
+          </div>
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="paidBySelect">{% trans "Who paid?" %}</label>
+            {% with paid_by_field=form.paid_by %}
+              <div class="tw:relative">
+                <select id="paidBySelect"
+                        class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                        name="paid_by"
+                        required>
+                  <option value="{{ request.user.id }}"
+                          {% if selected_paid_by == request.user.id|stringformat:"s" %}selected{% endif %}>
+                    {{ request.user.name }}
+                  </option>
+                  {% for room_user in current_room.users %}
+                    {% if room_user.id != request.user.id %}
                       <option value="{{ room_user.id }}"
-                              {% if room_user.id|stringformat:"s" in selected_paid_for %}selected{% endif %}>
+                              {% if selected_paid_by == room_user.id|stringformat:"s" %}selected{% endif %}>
                         {{ room_user.name }}
                       </option>
-                    {% endfor %}
-                  </select>
-                  {% if paid_for_field.errors %}<div class="invalid-feedback d-block">{{ paid_for_field.errors.0 }}</div>{% endif %}
-                {% endwith %}
-                <small class="text-muted">{% trans "Hold Cmd/Ctrl to adjust beneficiaries." %}</small>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+                <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-4 tw:-translate-y-1/2 tw:text-ink-subtle"
+                   aria-hidden="true"></i>
               </div>
-            </div>
-          </fieldset>
-          <div class="d-flex flex-column gap-3">
-            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-              <div>
-                <span class="badge bg-body-secondary text-body-emphasis me-2">{% trans "Optional" %}</span>
-                <span class="fw-semibold">{% trans "More details" %}</span>
-              </div>
-              <button class="btn btn-link text-decoration-none px-0 d-flex align-items-center gap-2"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#optionalDetails"
-                      aria-expanded="false"
-                      aria-controls="optionalDetails">
-                <span class="fw-semibold">{% trans "Show fields" %}</span>
-                <i class="bi bi-chevron-down"></i>
-              </button>
-            </div>
-            <div class="collapse" id="optionalDetails">
-              <div class="row g-4">
-                <div class="col-12 col-lg-6">
-                  <label for="paid_at_input" class="form-label fw-semibold">{% trans "Paid at" %}</label>
-                  {% with paid_at_field=form.paid_at %}
-                    {% with paid_at_value=paid_at_field.value %}
-                      <input id="paid_at_input"
-                             name="paid_at"
-                             class="form-control{% if paid_at_field.errors %} is-invalid{% endif %}"
-                             type="datetime-local"
-                             value="{% if paid_at_value %}{{ paid_at_value|date:'Y-m-d\\TH:i' }}{% else %}{{ current_datetime }}{% endif %}"
-                             min="2018-04-04T00:00"
-                             max="2099-12-31T00:00" />
-                    {% endwith %}
-                    {% if paid_at_field.errors %}<div class="invalid-feedback d-block">{{ paid_at_field.errors.0 }}</div>{% endif %}
-                  {% endwith %}
-                  <small class="text-muted">{% trans "Use if the expense occurred earlier." %}</small>
-                </div>
-                <div class="col-12 col-lg-6">
-                  <label for="currencySelect" class="form-label fw-semibold">{% trans "Currency" %}</label>
-                  {% with currency_field=form.currency %}
-                    <select name="currency"
-                            class="form-select{% if currency_field.errors %} is-invalid{% endif %}"
-                            id="currencySelect"
-                            required>
-                      <option value="{{ current_room.preferred_currency.id }}"
-                              {% if current_room.preferred_currency.id|stringformat:"s" == selected_currency %}selected{% endif %}>
-                        {{ current_room.preferred_currency.sign }}
-                      </option>
-                      {% for currency in all_currencies %}
-                        {% if currency != current_room.preferred_currency %}
-                          <option value="{{ currency.id }}"
-                                  {% if currency.id|stringformat:"s" == selected_currency %}selected{% endif %}>
-                            {{ currency.sign }}
-                          </option>
-                        {% endif %}
-                      {% endfor %}
-                    </select>
-                    {% if currency_field.errors %}<div class="invalid-feedback d-block">{{ currency_field.errors.0 }}</div>{% endif %}
-                  {% endwith %}
-                  <small class="text-muted">{% trans "Defaults to the room preference." %}</small>
-                </div>
-              </div>
-              <div class="mt-4">
-                <label for="further_notes" class="form-label fw-semibold">{% trans "Notes" %}</label>
-                {% with notes_field=form.further_notes %}
-                  <textarea id="further_notes"
-                            name="further_notes"
-                            class="form-control{% if notes_field.errors %} is-invalid{% endif %}"
-                            rows="3"
-                            maxlength="5000"
-                            minlength="1"
-                            placeholder="{% trans "Add split details, receipts, or reminders" %}">{{ notes_field.value|default:'' }}</textarea>
-                  {% if notes_field.errors %}<div class="invalid-feedback d-block">{{ notes_field.errors.0 }}</div>{% endif %}
-                {% endwith %}
-                <div class="form-text">{% trans "Up to 5000 characters." %}</div>
-              </div>
-              <div class="mt-3">
-                <label for="receipts" class="form-label fw-semibold">{% trans "Receipts" %}</label>
-                {% with receipts_field=form.receipts %}
-                  <input id="receipts"
-                         name="receipts"
-                         type="file"
-                         class="form-control{% if receipts_field.errors %} is-invalid{% endif %}"
-                         multiple
-                         accept="image/png,image/jpeg,image/webp,image/gif,application/pdf" />
-                  {% if receipts_field.errors %}
-                    <div class="invalid-feedback d-block">{{ receipts_field.errors.0 }}</div>
-                  {% endif %}
-                {% endwith %}
-                <div class="form-text">{% trans "Upload receipts as PDF or image (max 5 MB each)." %}</div>
-              </div>
-            </div>
+              {% for error_message in paid_by_field.errors %}
+                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+              {% endfor %}
+            {% endwith %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Person covering this expense." %}</p>
           </div>
-          <div class="d-flex flex-column flex-md-row gap-2 pt-2">
-            <button type="submit"
-                    class="btn btn-primary d-flex align-items-center justify-content-center gap-2 w-100 w-md-auto">
-              <i class="bi bi-plus-circle"></i>
-              {% trans "Add transaction" %}
-            </button>
-            <a class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 w-100 w-md-auto"
-               href="{% room_url 'transaction:list' %}"
-               hx-boost="true">
-              <i class="bi bi-arrow-left"></i>
-              {% trans "Cancel" %}
-            </a>
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="paidForSelect">{% trans "Split between" %}</label>
+            {% with paid_for_field=form.paid_for %}
+              {# A native multi-select: `required` then makes the browser insist on at least one beneficiary. #}
+              <select id="paidForSelect"
+                      class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-2 tw:py-2 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                      name="paid_for"
+                      size="4"
+                      multiple
+                      required>
+                {% for room_user in current_room.users %}
+                  <option value="{{ room_user.id }}"
+                          {% if room_user.id|stringformat:"s" in selected_paid_for %}selected{% endif %}>
+                    {{ room_user.name }}
+                  </option>
+                {% endfor %}
+              </select>
+              {% for error_message in paid_for_field.errors %}
+                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+              {% endfor %}
+            {% endwith %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Hold Cmd/Ctrl to adjust beneficiaries." %}</p>
           </div>
-          <div class="form-group" hidden>
-            <label for="room_slug" class="form-label">{% trans "Room Slug" %}</label>
-            <input id="room_slug"
-                   name="room_slug"
-                   type="text"
-                   class="form-control"
-                   required
-                   value="{{ current_room.slug }}" />
-          </div>
-          <div class="form-group" hidden>
-            <label for="room" class="form-label">{% trans "Room" %}</label>
-            <input id="room"
-                   name="room"
-                   type="number"
-                   class="form-control"
-                   required
-                   value="{{ current_room.id }}" />
-          </div>
-          <datalist id="descriptionSuggestions">
-            <option value='{% trans "Groceries" %}'></option>
-            <option value='{% trans "Utilities" %}'></option>
-            <option value='{% trans "Dinner" %}'></option>
-            <option value='{% trans "Ride share" %}'></option>
-            <option value='{% trans "House supplies" %}'></option>
-          </datalist>
-        </form>
+        </div>
       </div>
-    </div>
+      {% comment %}
+      A native <details>, not a Bootstrap collapse: the optional fields then open without any
+      bundle having run, and they stay in the DOM either way, so they post with the form.
+      {% endcomment %}
+      <details class="tw:group tw:border-t tw:border-line">
+        <summary class="tw:flex tw:cursor-pointer tw:list-none tw:items-center tw:gap-3 tw:px-5 tw:py-4 tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand tw:@md:px-6 tw:[&::-webkit-details-marker]:hidden">
+          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">{% trans "Optional" %}</span>
+          <span class="tw:min-w-0 tw:flex-1 tw:font-semibold tw:text-ink">{% trans "More details" %}</span>
+          <i class="bi bi-chevron-down tw:shrink-0 tw:text-ink-subtle tw:transition-transform tw:group-open:rotate-180"
+             aria-hidden="true"></i>
+        </summary>
+        <div class="tw:grid tw:grid-cols-1 tw:gap-4 tw:px-5 tw:pb-5 tw:@lg:grid-cols-2 tw:@md:px-6">
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="paid_at_input">{% trans "Paid at" %}</label>
+            {% with paid_at_field=form.paid_at %}
+              {% with paid_at_value=paid_at_field.value %}
+                <input id="paid_at_input"
+                       class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                       type="datetime-local"
+                       name="paid_at"
+                       value="{% if paid_at_value %}{{ paid_at_value|date:'Y-m-d\\TH:i' }}{% else %}{{ current_datetime }}{% endif %}"
+                       min="2018-04-04T00:00"
+                       max="2099-12-31T00:00">
+              {% endwith %}
+              {% for error_message in paid_at_field.errors %}
+                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+              {% endfor %}
+            {% endwith %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Use if the expense occurred earlier." %}</p>
+          </div>
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="currencySelect">{% trans "Currency" %}</label>
+            {% with currency_field=form.currency %}
+              <div class="tw:relative">
+                <select id="currencySelect"
+                        class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                        name="currency"
+                        required>
+                  <option value="{{ current_room.preferred_currency.id }}"
+                          {% if current_room.preferred_currency.id|stringformat:"s" == selected_currency %}selected{% endif %}>
+                    {{ current_room.preferred_currency.sign }}
+                  </option>
+                  {% for currency in all_currencies %}
+                    {% if currency != current_room.preferred_currency %}
+                      <option value="{{ currency.id }}"
+                              {% if currency.id|stringformat:"s" == selected_currency %}selected{% endif %}>
+                        {{ currency.sign }}
+                      </option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+                <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-4 tw:-translate-y-1/2 tw:text-ink-subtle"
+                   aria-hidden="true"></i>
+              </div>
+              {% for error_message in currency_field.errors %}
+                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+              {% endfor %}
+            {% endwith %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Defaults to the room preference." %}</p>
+          </div>
+          <div class="tw:@lg:col-span-2">
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="further_notes">{% trans "Notes" %}</label>
+            {% with notes_field=form.further_notes %}
+              <textarea id="further_notes"
+                        class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                        name="further_notes"
+                        rows="3"
+                        maxlength="5000"
+                        minlength="1"
+                        placeholder="{% trans "Add split details, receipts, or reminders" %}">{{ notes_field.value|default:'' }}</textarea>
+              {% for error_message in notes_field.errors %}
+                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+              {% endfor %}
+            {% endwith %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Up to 5000 characters." %}</p>
+          </div>
+          <div class="tw:@lg:col-span-2">
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="receipts">{% trans "Receipts" %}</label>
+            {% with receipts_field=form.receipts %}
+              <input id="receipts"
+                     class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:file:mr-3 tw:file:cursor-pointer tw:file:rounded-lg tw:file:border-0 tw:file:bg-brand-soft tw:file:px-3 tw:file:py-1.5 tw:file:text-sm tw:file:font-semibold tw:file:text-brand-text tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                     type="file"
+                     name="receipts"
+                     multiple
+                     accept="image/png,image/jpeg,image/webp,image/gif,application/pdf">
+              {% for error_message in receipts_field.errors %}
+                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+              {% endfor %}
+            {% endwith %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Upload receipts as PDF or image (max 5 MB each)." %}</p>
+          </div>
+        </div>
+      </details>
+      <div class="tw:flex tw:flex-col tw:gap-2 tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:flex-row tw:@md:items-center tw:@md:justify-end tw:@md:px-6">
+        <a class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-4 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-ink tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+           href="{% room_url 'transaction:list' %}"
+           hx-boost="true">
+          <i class="bi bi-arrow-left" aria-hidden="true"></i>
+          {% trans "Cancel" %}
+        </a>
+        <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+                type="submit">
+          <i class="bi bi-plus-circle" aria-hidden="true"></i>
+          {% trans "Add transaction" %}
+        </button>
+      </div>
+      {# The room the transaction belongs to is not the user's to choose; the view reads both keys. #}
+      <input id="room_slug"
+             type="hidden"
+             name="room_slug"
+             value="{{ current_room.slug }}">
+      <input id="room" type="hidden" name="room" value="{{ current_room.id }}">
+      <datalist id="descriptionSuggestions">
+        <option value='{% trans "Groceries" %}'></option>
+        <option value='{% trans "Utilities" %}'></option>
+        <option value='{% trans "Dinner" %}'></option>
+        <option value='{% trans "Ride share" %}'></option>
+        <option value='{% trans "House supplies" %}'></option>
+      </datalist>
+    </form>
   </section>
   {% render_bundle "category-suggestion" attrs="defer" %}
 {% endblock tab_content %}

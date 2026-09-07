@@ -3,37 +3,45 @@
 Shared by the transaction create and edit forms so both offer the same control.
 Expects "category_field" (a bound form field); "category_suggestion_index" is optional and
 switches on the suggestion markup static/js/category-suggestion.js drives.
+
+Each chip is a label wrapping its own radio: the input stays a real, hit-testable control
+stretched across the chip (`opacity-0`, not `sr-only`), so keyboard, screen readers and
+Playwright keep working, and the label reacts to it through `has-checked` instead of a class
+some script would have to maintain.
 {% endcomment %}
-<fieldset data-category-field
+<fieldset class="tw:m-0 tw:border-0 tw:p-0"
+          data-category-field
           {% if category_suggestion_index %}data-category-suggestion-index="{{ category_suggestion_index }}"{% endif %}>
-  <legend class="form-label fw-semibold fs-6 mb-1">{% trans "Category" %}</legend>
-  <p class="text-muted small mb-2">{% trans "Groups this expense in the room's charts and filters." %}</p>
-  <div class="d-flex flex-wrap gap-2">
+  <legend class="tw:float-none tw:mb-1 tw:w-full tw:p-0 tw:text-sm tw:font-semibold tw:text-ink">{% trans "Category" %}</legend>
+  <p class="tw:mt-0 tw:mb-2 tw:text-sm tw:text-ink-muted">{% trans "Groups this expense in the room's charts and filters." %}</p>
+  <div class="tw:flex tw:flex-wrap tw:gap-2">
     {% for category in category_field.field.queryset %}
-      <input type="radio"
-             class="btn-check"
-             name="{{ category_field.html_name }}"
-             id="{{ category_field.auto_id }}_{{ category.id }}"
-             value="{{ category.id }}"
-             autocomplete="off"
-             data-category-slug="{{ category.slug }}"
-             required
-             {% if category.id|stringformat:"s" == category_field.value|stringformat:"s" %}checked{% endif %} />
-      <label class="btn btn-outline-secondary rounded-pill d-inline-flex align-items-center gap-2"
+      <label class="tw:relative tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-2 tw:rounded-full tw:border tw:border-line-strong tw:bg-transparent tw:px-3.5 tw:py-1.5 tw:text-sm tw:font-semibold tw:text-ink tw:transition tw:hover:bg-surface-hover tw:has-checked:border-brand tw:has-checked:bg-brand-soft tw:has-checked:text-brand-text tw:has-focus-visible:outline-2 tw:has-focus-visible:outline-offset-2 tw:has-focus-visible:outline-brand"
              data-category-slug="{{ category.slug }}"
              for="{{ category_field.auto_id }}_{{ category.id }}">
+        <input id="{{ category_field.auto_id }}_{{ category.id }}"
+               class="tw:absolute tw:inset-0 tw:m-0 tw:size-full tw:cursor-pointer tw:appearance-none tw:bg-transparent tw:opacity-0"
+               type="radio"
+               name="{{ category_field.html_name }}"
+               value="{{ category.id }}"
+               autocomplete="off"
+               data-category-slug="{{ category.slug }}"
+               required
+               {% if category.id|stringformat:"s" == category_field.value|stringformat:"s" %}checked{% endif %}>
         <span aria-hidden="true">{{ category.emoji }}</span>
         <span>{{ category.name }}</span>
       </label>
     {% endfor %}
   </div>
-  {% if category_field.errors %}
-    <div class="invalid-feedback d-block">{{ category_field.errors.0 }}</div>
-  {% endif %}
+  {% for error_message in category_field.errors %}
+    <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+  {% endfor %}
   {% if category_suggestion_index %}
-    <p class="form-text text-primary-emphasis d-none mb-0 mt-2"
-       data-category-suggestion-hint>
-      <i class="bi bi-lightbulb me-1" aria-hidden="true"></i>
+    {# Hidden through the attribute, not a utility class: category-suggestion.js reveals it by clearing that attribute. #}
+    <p class="tw:mt-2 tw:mb-0 tw:text-sm tw:text-brand-text"
+       data-category-suggestion-hint
+       hidden>
+      <i class="bi bi-lightbulb tw:mr-1" aria-hidden="true"></i>
       {% trans "Suggested from your description — pick another one any time." %}
     </p>
   {% endif %}
@@ -41,11 +49,11 @@ switches on the suggestion markup static/js/category-suggestion.js drives.
   Opens in a new tab on purpose: the manager replaces #body via htmx, which would
   discard everything already typed into this form.
   {% endcomment %}
-  <a class="btn btn-link btn-sm px-0 text-decoration-none"
+  <a class="tw:mt-3 tw:inline-flex tw:items-center tw:gap-1.5 tw:text-sm tw:font-semibold tw:text-brand-text tw:no-underline tw:transition tw:hover:text-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
      href="{% room_url 'transaction:category-manager' %}"
      target="_blank"
      rel="noopener">
-    <i class="bi bi-gear me-1" aria-hidden="true"></i>
+    <i class="bi bi-gear" aria-hidden="true"></i>
     {% trans "Manage categories" %}
   </a>
 </fieldset>

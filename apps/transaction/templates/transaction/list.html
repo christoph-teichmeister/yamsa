@@ -1,367 +1,183 @@
 {% extends "room/dashboard.html" %}
-{% load static room_tags i18n %}
+{% load room_tags i18n %}
 {% block tab_content %}
-  {% if show_import_share_hint %}
-    <div class="alert alert-info alert-dismissible fade show rounded-4 border-0 shadow-sm d-flex align-items-start gap-2"
-         role="alert">
-      <i class="bi bi-people" aria-hidden="true"></i>
-      <div class="flex-grow-1 small">
-        {% trans "Import done. Share this room with the others instead of letting them import their own export — otherwise the same history ends up in two rooms." %}
-        {% if current_room.is_open %}
-          <button type="button"
-                  class="btn btn-sm btn-outline-primary mt-2 d-block"
-                  data-copy-share-url="true"
-                  data-share-url="{{ current_room.share_url }}">{% trans "Copy share link" %}</button>
-        {% endif %}
-      </div>
-      <button type="button"
-              class="btn-close"
-              data-bs-dismiss="alert"
-              aria-label="{% trans 'Close' %}"></button>
-    </div>
-  {% endif %}
-  <style nonce="{{ csp_nonce }}">
-        .transaction-label {
-            display: inline-block;
-            font-size: 0.65rem;
-            letter-spacing: 0.08em;
-            color: var(--bs-secondary-color, #6c757d);
-        }
-
-        .transaction-meta {
-            font-size: 0.68rem;
-            color: var(--bs-secondary-color, #6c757d);
-        }
-
-        .transaction-row {
-            --transaction-row-x: 0rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .transaction-row.px-0 {
-            --transaction-row-x: 0;
-        }
-
-        .transaction-row.px-1 {
-            --transaction-row-x: 0.25rem;
-        }
-
-        .transaction-row.px-2 {
-            --transaction-row-x: 0.5rem;
-        }
-
-        .transaction-row.px-3 {
-            --transaction-row-x: 1rem;
-        }
-
-        .transaction-row.px-4 {
-            --transaction-row-x: 1.5rem;
-        }
-
-        .transaction-row.px-5 {
-            --transaction-row-x: 3rem;
-        }
-
-        .transaction-table tbody tr {
-            border-bottom: 1px solid rgba(var(--bs-body-color-rgb, 248, 249, 250), 0.08);
-        }
-
-        .transaction-table tbody tr:first-child {
-            border-top: 1px solid rgba(var(--bs-body-color-rgb, 248, 249, 250), 0.25);
-        }
-
-        .transaction-table tbody tr:last-child {
-            border-bottom: 1px solid rgba(var(--bs-body-color-rgb, 248, 249, 250), 0.25);
-        }
-
-        .transaction-table tbody tr td {
-            padding: 0.85rem var(--transaction-row-x, 0rem) !important;
-            text-align: left !important;
-            vertical-align: top !important;
-        }
-
-        .transaction-grid {
-            --bs-gutter-x: 0.85rem;
-            --bs-gutter-y: 0.85rem;
-        }
-
-        /* Clears the fixed bottom nav (~5rem tall) and stacks above it, but below the offcanvas
-           menu (1200) and the toasts (1400). */
-        .transaction-add-fab {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
-            z-index: 1050;
-            width: fit-content;
-            max-width: calc(100% - 2rem);
-            margin-inline: auto;
-            border-radius: 999px;
-            padding: 0.6rem 1.35rem;
-            font-weight: 600;
-            white-space: nowrap;
-            box-shadow: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.35);
-        }
-
-        /* The list ends behind the pill otherwise. */
-        .transaction-list-shell {
-            padding-bottom: 4rem;
-        }
-
-        @media (max-width: 359.98px) {
-            .transaction-grid > * {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .transaction-row {
-                --transaction-row-x: 0.75rem;
-            }
-
-            .transaction-label {
-                display: none;
-            }
-
-            .transaction-table tbody tr {
-                border-bottom: none;
-            }
-
-            .transaction-table tbody tr td {
-                padding: 1rem var(--transaction-row-x, 0.75rem) !important;
-            }
-
-            .transaction-table tbody tr td + td {
-                border-top: none;
-                padding-top: 1rem !important;
-            }
-
-        }
-
-        .transaction-row::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background-color: rgba(255, 255, 255, 0.12);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .transaction-row.transaction-highlight::after {
-            animation: transactionBlink 1.2s ease-in-out 2;
-        }
-
-        .transaction-load-row td {
-            border-top: none;
-            padding: 1.5rem !important;
-        }
-
-        .transaction-loading-indicator,
-        #transaction-search-indicator {
-            display: none;
-        }
-
-        .transaction-loading-indicator.htmx-request,
-        #transaction-search-indicator.htmx-request {
-            display: block;
-        }
-
-        .transaction-loading-indicator .placeholder,
-        #transaction-search-indicator .placeholder,
-        .placeholder-row .placeholder {
-            background-color: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.08);
-        }
-
-        @keyframes transactionBlink {
-            0% {
-                opacity: 0;
-            }
-            25% {
-                opacity: 0.3;
-            }
-            50% {
-                opacity: 0.55;
-            }
-            100% {
-                opacity: 0;
-            }
-        }
-  </style>
-  <div class="container-fluid px-0 px-md-2 mt-3 transaction-list-shell">
-    <div class="col-12">
-      <div class="mb-3">
-        <h4 class="mb-1">{% trans "Room transactions" %}</h4>
-        {% if transactions_available %}
-          <p class="text-muted small mb-0">{% trans "Click a row to explore the full breakdown." %}</p>
-        {% else %}
-          <p class="text-muted small mb-0">{% trans "Record your first expense to see the running history here." %}</p>
-        {% endif %}
-      </div>
-      {% if current_room.is_closed %}
-        <div class="alert alert-warning small mb-3" role="alert">
-          {% trans "This room is closed, so transactions are read-only." %}
-        </div>
-      {% endif %}
-      <div class="card border-0 shadow-sm">
-        <div class="card-body pb-0">
-          {% if transaction_filter_active %}
-            <div class="d-flex flex-wrap align-items-center gap-2 mb-3"
-                 id="transaction-active-filters">
-              <span class="text-muted small text-uppercase">{% trans "Filtered by" %}</span>
-              {% if transaction_filter_category_label %}
-                <span class="badge rounded-pill text-bg-secondary">{{ transaction_filter_category_label }}</span>
-              {% endif %}
-              {% if transaction_filter_currency_label %}
-                <span class="badge rounded-pill text-bg-secondary">{{ transaction_filter_currency_label }}</span>
-              {% endif %}
-              <button type="button"
-                      class="btn btn-link btn-sm p-0 text-decoration-none"
-                      hx-get="{% room_url 'transaction:list' %}"
-                      hx-target="#body"
-                      hx-indicator="#body-loading-spinner"
-                      hx-swap="morph:innerHTML"
-                      hx-push-url="true">
-                <i class="bi bi-x-lg me-1"></i>{% trans "Clear filter" %}
-              </button>
-            </div>
-          {% endif %}
-          {% comment %}
-          Always rendered, even with no filter: hx-include logs a console error for a selector
-          that matches nothing, and the unfiltered list is the common case.
-          {% endcomment %}
-          <div class="transaction-feed-filters">
-            {% if transaction_category_filter %}
-              <input type="hidden"
-                     name="category"
-                     value="{{ transaction_category_filter }}">
-            {% endif %}
-            {% if transaction_currency_filter %}
-              <input type="hidden"
-                     name="currency"
-                     value="{{ transaction_currency_filter }}">
-            {% endif %}
-          </div>
-          <label for="transaction-search" class="form-label text-muted small mb-1">{% trans "Search" %}</label>
-          <input type="search"
-                 id="transaction-search"
-                 class="form-control form-control-sm mb-3"
-                 name="q"
-                 value="{{ transaction_search_query }}"
-                 placeholder="{% trans "Filter by payer or description" %}"
-                 autocomplete="off"
-                 hx-get="{% room_url 'transaction:feed' %}"
-                 hx-trigger="input changed delay:400ms, search"
-                 hx-target="#transaction-table-body"
-                 hx-swap="innerHTML"
-                 hx-include=".transaction-feed-filters"
-                 hx-indicator="#transaction-search-indicator"
-                 {% if not transactions_available %}disabled{% endif %}>
-        </div>
-        {% if transactions_available %}
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0 transaction-table">
-              <thead class="text-muted text-uppercase small d-none d-md-table-header-group">
-                <tr>
-                  <th scope="col">{% trans "Details" %}</th>
-                  <th scope="col" class="text-end">{% trans "Actions" %}</th>
-                </tr>
-              </thead>
-              <tbody id="transaction-table-body"
-                     hx-get="{% room_url 'transaction:feed' %}"
-                     hx-trigger="load"
-                     hx-swap="innerHTML"
-                     hx-include="#transaction-search, .transaction-feed-filters">
-                <tr>
-                  <td colspan="2" class="p-0 border-0">
-                    {% include "shared_partials/_list_loader.html" with loader_id="transaction-table-body" skeleton_count=5 %}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div id="transaction-search-indicator"
-               class="transaction-loading-indicator htmx-indicator mt-3"
-               aria-hidden="true">
-            {% for _ in "123" %}
-              <div class="placeholder-row mb-3">
-                <div class="placeholder-glow mb-2">
-                  <span class="placeholder col-4"></span>
-                </div>
-                <div class="placeholder-glow mb-1">
-                  <span class="placeholder col-8"></span>
-                </div>
-                <div class="placeholder-glow">
-                  <span class="placeholder col-6"></span>
-                </div>
-              </div>
-            {% endfor %}
-          </div>
-        {% else %}
-          <div class="p-5 text-center text-muted" id="transaction-empty-placeholder">
-            <p class="fw-semibold mb-1">{% trans "Nothing to show yet" %}</p>
-            <p class="small mb-0">{% trans "Start by logging an expense to build your history." %}</p>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-    <div class="col-12 col-lg-4">
-      <div class="card border-0 shadow-sm mb-3">
-        <div class="card-body">
-          <h6 class="text-uppercase text-muted small mb-3">{% trans "Room snapshot" %}</h6>
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-muted small">{% trans "Status" %}</span>
-            <span class="badge {% if current_room.is_closed %}bg-body-secondary text-body-emphasis{% else %}bg-success-subtle text-success-emphasis{% endif %}">
-              {% if current_room.is_closed %}
-                {% trans "Closed" %}
-              {% else %}
-                {% trans "Open" %}
-              {% endif %}
-            </span>
-          </div>
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-muted small">{% trans "Transactions logged" %}</span>
-            <span class="fw-semibold">{{ transactions_total_count }}</span>
-          </div>
-          {% if latest_transaction %}
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="text-muted small">{% trans "Last transaction" %}</span>
-              <span class="fw-semibold">{{ latest_transaction.paid_at|date }}</span>
-            </div>
-          {% else %}
-            <p class="text-muted small mb-0">{% trans "Invite your roommates to start sharing expenses." %}</p>
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4 tw:pb-16">
+    {% if show_import_share_hint %}
+      <div class="tw:flex tw:items-start tw:gap-3 tw:rounded-2xl tw:border tw:border-line tw:bg-brand-soft tw:px-4 tw:py-3"
+           role="status"
+           data-dismissable>
+        <i class="bi bi-people tw:mt-0.5 tw:shrink-0 tw:text-brand-text"
+           aria-hidden="true"></i>
+        <div class="tw:min-w-0 tw:flex-1">
+          <p class="tw:m-0 tw:text-sm tw:text-ink">
+            {% trans "Import done. Share this room with the others instead of letting them import their own export — otherwise the same history ends up in two rooms." %}
+          </p>
+          {% if current_room.is_open %}
+            <button class="tw:mt-2 tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-brand tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-brand-text tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+                    type="button"
+                    data-copy-share-url="true"
+                    data-share-url="{{ current_room.share_url }}">{% trans "Copy share link" %}</button>
           {% endif %}
         </div>
+        <button class="tw:shrink-0 tw:cursor-pointer tw:rounded-lg tw:border-0 tw:bg-transparent tw:p-1 tw:text-ink-subtle tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                type="button"
+                aria-label="{% trans "Close" %}"
+                data-dismiss>
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
       </div>
-      <div class="card border-0 shadow-sm">
-        <div class="card-body">
-          <h6 class="text-uppercase text-muted small mb-3">{% trans "Tips" %}</h6>
-          <ul class="list-unstyled mb-0 small text-muted">
-            <li>{% trans "Use the search field to filter by payer or description." %}</li>
-            <li>{% trans "Tap a row or the eye icon to review the split details." %}</li>
-            <li>{% trans "The floating button above the list lets you capture a new transaction." %}</li>
-          </ul>
+    {% endif %}
+    <div class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
+      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Expenses" %}</p>
+        <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Room transactions" %}</h1>
+        {% if transactions_available %}
+          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Pick a row to explore the full breakdown." %}</p>
+        {% else %}
+          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Record your first expense to see the running history here." %}</p>
+        {% endif %}
+        <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
+          {% include "room/partials/_room_status_badge.html" %}
+          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-brand-text">
+            <i class="bi bi-receipt" aria-hidden="true"></i>
+            {% blocktrans count transaction_count=transactions_total_count %}{{ transaction_count }} transaction{% plural %}{{ transaction_count }} transactions{% endblocktrans %}
+          </span>
+        </div>
+        {% if current_room.is_closed %}
+          <p class="tw:mt-3 tw:mb-0 tw:text-sm tw:text-warning-text">{% trans "This room is closed, so transactions are read-only." %}</p>
+        {% endif %}
+      </div>
+      <div class="tw:flex tw:flex-col tw:gap-3 tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
+        {% if transaction_filter_active %}
+          <div class="tw:flex tw:flex-wrap tw:items-center tw:gap-2"
+               id="transaction-active-filters">
+            <span class="tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Filtered by" %}</span>
+            {% if transaction_filter_category_label %}
+              <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">{{ transaction_filter_category_label }}</span>
+            {% endif %}
+            {% if transaction_filter_currency_label %}
+              <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">{{ transaction_filter_currency_label }}</span>
+            {% endif %}
+            <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-1.5 tw:rounded-lg tw:border-0 tw:bg-transparent tw:px-1 tw:py-1 tw:text-sm tw:font-semibold tw:text-brand-text tw:transition tw:hover:text-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                    type="button"
+                    hx-get="{% room_url 'transaction:list' %}"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true">
+              <i class="bi bi-x-lg" aria-hidden="true"></i>
+              {% trans "Clear filter" %}
+            </button>
+          </div>
+        {% endif %}
+        {% comment %}
+        Always rendered, even with no filter: hx-include logs a console error for a selector
+        that matches nothing, and the unfiltered list is the common case.
+        {% endcomment %}
+        <div class="transaction-feed-filters">
+          {% if transaction_category_filter %}
+            <input type="hidden"
+                   name="category"
+                   value="{{ transaction_category_filter }}">
+          {% endif %}
+          {% if transaction_currency_filter %}
+            <input type="hidden"
+                   name="currency"
+                   value="{{ transaction_currency_filter }}">
+          {% endif %}
+        </div>
+        <div>
+          <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                 for="transaction-search">{% trans "Search" %}</label>
+          <div class="tw:relative">
+            <i class="bi bi-search tw:pointer-events-none tw:absolute tw:top-1/2 tw:left-4 tw:-translate-y-1/2 tw:text-ink-subtle"
+               aria-hidden="true"></i>
+            <input id="transaction-search"
+                   class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-4 tw:pl-10 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand tw:disabled:cursor-not-allowed tw:disabled:opacity-50"
+                   type="search"
+                   name="q"
+                   value="{{ transaction_search_query }}"
+                   placeholder="{% trans "Filter by payer or description" %}"
+                   autocomplete="off"
+                   hx-get="{% room_url 'transaction:feed' %}"
+                   hx-trigger="input changed delay:400ms, search"
+                   hx-target="#transaction-feed"
+                   hx-swap="innerHTML"
+                   hx-include=".transaction-feed-filters"
+                   hx-indicator="#transaction-search-indicator"
+                   {% if not transactions_available %}disabled{% endif %}>
+          </div>
         </div>
       </div>
       {% if transactions_available %}
-        <div class="w-full d-flex justify-content-center">
-          <a href="{% room_url 'transaction:export' %}"
-             class="btn btn-outline-secondary d-inline-flex align-items-center gap-1"
+        {% comment %}
+        The indicator is hidden by `display`, not by the shared .htmx-indicator opacity rule:
+        an invisible box would keep the feed pushed down by three skeleton rows. htmx sets the
+        `htmx-request` class on it for the duration of the request.
+        {% endcomment %}
+        <div id="transaction-search-indicator"
+             class="tw:hidden tw:flex-col tw:gap-4 tw:border-t tw:border-line tw:px-5 tw:py-4 tw:[&.htmx-request]:flex"
+             aria-hidden="true">
+          {% for _ in "123" %}
+            <div class="tw:flex tw:flex-col tw:gap-2">
+              <div class="tw:h-3 tw:w-1/3 tw:animate-pulse tw:rounded-full tw:bg-surface-hover"></div>
+              <div class="tw:h-3 tw:w-2/3 tw:animate-pulse tw:rounded-full tw:bg-surface-hover"></div>
+            </div>
+          {% endfor %}
+        </div>
+        <div id="transaction-feed"
+             class="tw:divide-y tw:divide-line tw:border-t tw:border-line"
+             hx-get="{% room_url 'transaction:feed' %}"
+             hx-trigger="load"
+             hx-swap="innerHTML"
+             hx-include="#transaction-search, .transaction-feed-filters">
+          <div class="tw:px-5 tw:py-4">
+            {% include "shared_partials/_list_loader.html" with loader_id="transaction-feed" skeleton_count=5 %}
+          </div>
+        </div>
+        <div class="tw:flex tw:justify-end tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
+          <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+             href="{% room_url 'transaction:export' %}"
              title="{% trans "Export CSV" %}">
-            <i class="bi bi-download"></i>
+            <i class="bi bi-download" aria-hidden="true"></i>
             {% trans "Export CSV" %}
           </a>
         </div>
+      {% else %}
+        <div class="tw:border-t tw:border-line tw:px-5 tw:py-10 tw:text-center"
+             id="transaction-empty-placeholder">
+          <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "Nothing to show yet" %}</p>
+          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Start by logging an expense to build your history." %}</p>
+        </div>
       {% endif %}
+      <div class="tw:border-t tw:border-line">
+        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Overview" %}</p>
+        <div class="tw:divide-y tw:divide-line">
+          {% trans "Transactions logged" as transactions_logged_label %}
+          {% include "shared_partials/_sheet_value_row.html" with row_label=transactions_logged_label row_value=transactions_total_count %}
+          {% trans "Last transaction" as last_transaction_label %}
+          {% if latest_transaction %}
+            {% include "shared_partials/_sheet_value_row.html" with row_label=last_transaction_label row_value=latest_transaction.paid_at|date %}
+          {% else %}
+            {% trans "Invite your roommates to start sharing expenses." as no_transaction_hint %}
+            {% include "shared_partials/_sheet_value_row.html" with row_label=last_transaction_label row_placeholder=no_transaction_hint %}
+          {% endif %}
+        </div>
+      </div>
+      <div class="tw:border-t tw:border-line">
+        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Tips" %}</p>
+        <ul class="tw:m-0 tw:flex tw:list-none tw:flex-col tw:gap-1 tw:px-5 tw:pt-1 tw:pb-4 tw:text-sm tw:text-ink-muted">
+          <li>{% trans "Use the search field to filter by payer or description." %}</li>
+          <li>{% trans "Pick a row to review the split details." %}</li>
+          <li>{% trans "The floating button lets you capture a new transaction." %}</li>
+        </ul>
+      </div>
     </div>
-  </div>
+  </section>
   {% if not current_room.is_closed %}
-    <button type="button"
-            class="btn btn-primary transaction-add-fab d-inline-flex align-items-center gap-2"
+    {# Clears the fixed bottom nav (~5rem) and stacks above it, but below the offcanvas menu (1200) and the toasts (1400). #}
+    <button class="tw:fixed tw:inset-x-0 tw:bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] tw:z-[1050] tw:mx-auto tw:inline-flex tw:w-fit tw:max-w-[calc(100%-2rem)] tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-full tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+            type="button"
             hx-get="{% room_url 'transaction:create' %}"
             hx-target="#body"
             hx-indicator="#body-loading-spinner"
@@ -371,20 +187,22 @@
       <span>{% trans "Add transaction" %}</span>
     </button>
   {% endif %}
-  <!-- Observer to scroll to correct element when anchor tags are in url -->
   <script type="text/javascript" nonce="{{ csp_nonce }}">
+      // A transaction linked with #transaction-<id> has to be found and pointed out after the
+      // feed has been swapped in, which is why this cannot be a scroll-margin and a :target rule.
       function highlightTransactionRow(target) {
         if (!target) {
           return;
         }
 
-        target.classList.remove('transaction-highlight');
+        // The attribute, not a class: the row's own utilities decide what a highlight looks like.
+        target.removeAttribute('data-highlight');
         // force reflow
         void target.offsetWidth;
-        target.classList.add('transaction-highlight');
+        target.setAttribute('data-highlight', '');
 
         window.setTimeout(function () {
-          target.classList.remove('transaction-highlight');
+          target.removeAttribute('data-highlight');
         }, 2400);
       }
 
