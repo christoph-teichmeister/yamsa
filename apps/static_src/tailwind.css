@@ -208,3 +208,42 @@
 @utility auth-hero-surface {
   background: linear-gradient(135deg, var(--yamsa-brand-strong), #113881);
 }
+
+/* The side menu's slide-in, on a modal <dialog>. None of this is expressible as a utility: the
+   opening half needs @starting-style, and both halves need `display` and `overlay` to animate
+   discretely - without the `overlay` transition the dialog leaves the top layer on the first
+   frame of the close and the panel disappears instead of sliding out. */
+@utility side-panel {
+  translate: -100% 0;
+  transition:
+    translate 0.3s ease-out,
+    display 0.3s allow-discrete,
+    overlay 0.3s allow-discrete;
+
+  &[open] {
+    translate: 0 0;
+  }
+
+  &::backdrop {
+    background: rgb(0 0 0 / 0.5);
+    opacity: 0;
+    transition:
+      opacity 0.3s ease-out,
+      display 0.3s allow-discrete,
+      overlay 0.3s allow-discrete;
+  }
+
+  &[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    &[open] {
+      translate: -100% 0;
+    }
+
+    &[open]::backdrop {
+      opacity: 0;
+    }
+  }
+}

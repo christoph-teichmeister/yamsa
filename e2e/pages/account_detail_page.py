@@ -35,11 +35,11 @@ class AccountDetailPage(BasePage):
         return self.page.locator("#profile-sheet").evaluate("(sheet) => sheet.dataset.e2eMarker || null")
 
     def open_photo_dialog(self):
-        self.page.locator("button[data-dialog-open]").click()
+        self.page.locator("button[data-dialog-open='profile-photo-dialog']").click()
         expect(self.page.locator("#profile-photo-dialog")).to_be_visible()
 
     def open_photo_dialog_via_badge(self):
-        self.page.locator("span[data-dialog-open]").click()
+        self.page.locator("span[data-dialog-open='profile-photo-dialog']").click()
         expect(self.page.locator("#profile-photo-dialog")).to_be_visible()
 
     def expect_photo_hover_hint(self, *, visible: bool):
@@ -59,7 +59,7 @@ class AccountDetailPage(BasePage):
         self.page.mouse.move(0, 0)
 
     def close_photo_dialog(self):
-        self.page.locator("[data-dialog-close]").click()
+        self.page.locator("#profile-photo-dialog [data-dialog-close]").click()
         expect(self.page.locator("#profile-photo-dialog")).not_to_be_visible()
 
     def expect_photo_dialog_offers(self, *, delete: bool):

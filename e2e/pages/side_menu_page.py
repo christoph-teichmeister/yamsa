@@ -7,8 +7,9 @@ class SideMenuPage(BasePage):
     """The side menu, which is where the theme is switched."""
 
     def open_menu(self):
-        self.page.locator(".navbar-toggler").click()
-        self.page.locator("#offcanvasNavbar.show").wait_for(state="visible")
+        self.page.locator('[data-dialog-open="side-menu-panel"]').click()
+        # The panel animates in from off-screen, so being attached is not yet being usable.
+        self.page.locator("#side-menu-panel[open]").wait_for(state="visible")
 
     def theme_button(self, preference: str) -> Locator:
         return self.page.locator(f'[data-theme-value="{preference}"]')

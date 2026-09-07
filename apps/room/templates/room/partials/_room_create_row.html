@@ -1,13 +1,11 @@
 {% load i18n %}
 {% comment %}
-  The "new room" affordance of the overview, in the overview's own design language.
-
-  Deliberately not room/partials/_room_create_callout.html: that one is a row of the side menu's
-  still-Bootstrap room list and takes its look from .room-entry there. Once the side menu is
-  migrated the two collapse back into one partial.
+  The one "new room" affordance, in the overview and in the side menu's room list. The menu passes
+  dismiss_side_menu so the panel slides shut before htmx swaps the page underneath it.
 {% endcomment %}
 <button class="tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:gap-3 tw:rounded-2xl tw:border tw:border-dashed tw:border-brand/45 tw:bg-transparent tw:px-3.5 tw:py-3 tw:text-left tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
         type="button"
+        {% if dismiss_side_menu %}data-dialog-close hx-trigger="click delay:300ms"{% endif %}
         hx-get="{{ create_url }}"
         hx-target="#body"
         hx-indicator="#body-loading-spinner"
