@@ -2,18 +2,7 @@
   <div class="card-body d-flex flex-column gap-3">
     <div class="d-flex justify-content-between align-items-start gap-3">
       <div class="d-flex align-items-center gap-3">
-        <div class="suggested-guest-avatar rounded-circle d-flex align-items-center justify-content-center bg-secondary bg-opacity-10">
-          {% if guest.profile_picture_url %}
-            <img src="{{ guest.profile_picture_url }}"
-                 alt="{{ guest.name }}"
-                 class="rounded-circle"
-                 loading="lazy"
-                 width="48"
-                 height="48">
-          {% else %}
-            <span class="fw-semibold text-uppercase text-muted small">{{ guest.initials }}</span>
-          {% endif %}
-        </div>
+        {% include "shared_partials/_user_avatar.html" with avatar_url=guest.avatar_url avatar_name=guest.name avatar_initials=guest.initials avatar_class="avatar-lg" %}
         <div>
           <h5 class="mb-1">{{ guest.name }}</h5>
           <p class="mb-0 small text-muted">

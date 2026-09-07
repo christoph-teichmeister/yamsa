@@ -1,6 +1,7 @@
 import http
 
 import pytest
+from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -13,6 +14,23 @@ pytestmark = pytest.mark.django_db
 
 
 class TestDebtListView:
+    def test_debt_row_shows_both_sides_of_the_debt(self, client, room, user, guest_user, attach_profile_picture):
+        attach_profile_picture(user)
+        create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+        client.force_login(user)
+
+        response = client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))
+
+        assert response.status_code == http.HTTPStatus.OK
+        pair = BeautifulSoup(response.content.decode(), "html.parser").select_one(".avatar-pair")
+        assert pair is not None
+
+        debitor_avatar, creditor_avatar = pair.select(".avatar")
+        # The guest has no picture, the creditor does - the row shows an initial next to a photo.
+        assert debitor_avatar.find("img") is None
+        assert debitor_avatar.get_text(strip=True) == guest_user.name[:1].upper()
+        assert creditor_avatar.find("img")["src"] == user.avatar_url
+
     def test_debt_list_renders_outstanding_debt_and_counts(self, client, room, user, guest_user):
         create_parent_transaction_with_optimisation(
             room=room,

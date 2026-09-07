@@ -5,21 +5,7 @@
   <article class="people-card {% if not user.is_guest %}people-card--interactive{% endif %}"
            {% if not user.is_guest %} hx-trigger="click" hx-get="{% url 'account:detail' pk=user.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" hx-sync=".people-remove-action:abort" {% endif %}>
     <div class="d-flex align-items-start gap-3">
-      <div class="people-avatar">
-        {% with avatar_source=user.name|default:user.email %}
-          {% if user.profile_picture %}
-            <img src="{{ user.profile_picture_url }}"
-                 data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
-                 alt="{{ user.name }}"
-                 class="w-100 h-100 object-fit-cover rounded-3"
-                 loading="lazy"
-                 width="48"
-                 height="48">
-          {% else %}
-            <span class="text-uppercase small fw-semibold">{{ avatar_source|slice:':1'|upper }}</span>
-          {% endif %}
-        {% endwith %}
-      </div>
+      {% include "shared_partials/_user_avatar.html" with avatar_url=user.avatar_url avatar_name=user.name|default:user.email avatar_fallback_url=user.profile_picture_fallback_url avatar_class="avatar-lg avatar-square" %}
       <div class="flex-grow-1">
         <div class="d-flex justify-content-between gap-2">
           <div>

@@ -1,7 +1,9 @@
 from io import BytesIO
 from time import time
+from unittest import mock
 
 import pytest
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.db import IntegrityError
@@ -9,7 +11,7 @@ from django.test import override_settings
 from freezegun import freeze_time
 from PIL import Image
 
-from apps.account.models import UserFriendship
+from apps.account.models import User, UserFriendship
 from apps.room.models import UserConnectionToRoom
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.tests.factories import ParentTransactionFactory
@@ -147,6 +149,54 @@ def test_profile_picture_url_falls_back_when_file_missing(user, tmp_path):
 
         fallback_url = user.profile_picture_fallback_url
         assert user.profile_picture_url == fallback_url
+
+
+def test_avatar_url_is_none_without_a_picture(user):
+    assert user.avatar_url is None
+
+
+def test_avatar_url_returns_the_stored_url(user):
+    user.profile_picture.save("avatar.png", ContentFile(_build_image_bytes()), save=True)
+
+    assert user.avatar_url == user.profile_picture.url
+
+
+def test_avatar_url_is_none_when_the_file_is_gone(user):
+    user.profile_picture.save("avatar.png", ContentFile(_build_image_bytes()), save=True)
+    user.profile_picture.storage.delete(user.profile_picture.name)
+    user.refresh_from_db()
+
+    assert user.avatar_url is None
+
+
+def test_avatar_url_narrows_a_cloudinary_url(user):
+    cloudinary_url = "https://res.cloudinary.com/yamsa/image/upload/v1/account/user/profile_picture/uuid-avatar"
+
+    narrowed_url = user._as_avatar_url(cloudinary_url)
+
+    assert narrowed_url == (
+        "https://res.cloudinary.com/yamsa/image/upload/"
+        f"{user.AVATAR_TRANSFORMATION}/v1/account/user/profile_picture/uuid-avatar"
+    )
+
+
+def test_avatar_url_leaves_a_non_cloudinary_url_alone(user):
+    assert user._as_avatar_url("http://media.testserver/avatar.png") == "http://media.testserver/avatar.png"
+
+
+def test_the_storage_is_asked_once_per_stored_file(user):
+    """Regression test: MediaCloudinaryStorage.exists() is an HTTP call, and a list asks per row."""
+    cache.clear()
+    user.profile_picture.save("avatar.png", ContentFile(_build_image_bytes()), save=True)
+    storage = user.profile_picture.storage
+
+    with mock.patch.object(storage, "exists", wraps=storage.exists) as exists_mock:
+        for _ in range(3):
+            # A fresh instance per round: a list holds one per row, so an instance-level cache
+            # would not help there.
+            assert User.objects.get(pk=user.pk).avatar_url
+
+        assert exists_mock.call_count == 1
 
 
 def test_cannot_friend_self(user):

@@ -8,7 +8,7 @@ class SuggestedGuest:
     name: str
     email: str
     initials: str
-    profile_picture_url: str | None
+    avatar_url: str | None
     is_friend: bool
     rooms_together: int
 
@@ -28,7 +28,7 @@ class SuggestedGuest:
             name=user.name,
             email=user.email,
             initials=cls.derive_initials(user.name),
-            profile_picture_url=user.profile_picture_url,
+            avatar_url=user.avatar_url,
             is_friend=is_friend,
             rooms_together=rooms_together,
         )
