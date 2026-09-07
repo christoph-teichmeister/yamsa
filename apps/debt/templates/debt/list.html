@@ -57,8 +57,8 @@
       <h4 class="mb-1">{% trans "Unoptimised debts" %}</h4>
       <p class="text-muted small mb-3">{% trans "One repayment per expense, exactly as the money was spent." %}</p>
     {% endif %}
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-      {% if has_transactions %}
+    {% if has_transactions %}
+      <div class="mb-3">
         <div class="btn-group btn-group-sm"
              role="group"
              aria-label="{% trans "Debt display" %}">
@@ -83,30 +83,29 @@
              hx-swap="morph:innerHTML"
              hx-push-url="true">{% trans "Unoptimised" %}</a>
         </div>
-      {% endif %}
-      <div class="d-flex flex-wrap align-items-center gap-2 ms-auto">
-        {% if debts and showing_optimised_debts %}
-          {% if active_debt_count %}
-            <span class="badge bg-warning-subtle text-warning-emphasis">
-              {% blocktrans count active_debt_count=active_debt_count %}
+      </div>
+    {% endif %}
+    {% comment %}
+      Everything above the list stays in one left-aligned column - heading, switch, badge, hint.
+      A right-aligned control in that band competes with the switch for the eye and, once it
+      wraps on a phone, sits under the switch offset to the right, which reads as two rows
+      colliding.
+    {% endcomment %}
+    {% if debts and showing_optimised_debts %}
+      <div class="mb-3">
+        {% if active_debt_count %}
+          <span class="badge bg-warning-subtle text-warning-emphasis">
+            {% blocktrans count active_debt_count=active_debt_count %}
                             {{ active_debt_count }} pending debt
                         {% plural %}
                             {{ active_debt_count }} pending debts
                         {% endblocktrans %}
-            </span>
-          {% else %}
-            <span class="badge bg-success-subtle text-success-emphasis">{% trans "All settled" %}</span>
-          {% endif %}
-        {% endif %}
-        {% if has_transactions %}
-          <a href="{% room_url 'debt:export' %}"
-             class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2">
-            <i class="bi bi-download" aria-hidden="true"></i>
-            {% trans "Export CSV" %}
-          </a>
+          </span>
+        {% else %}
+          <span class="badge bg-success-subtle text-success-emphasis">{% trans "All settled" %}</span>
         {% endif %}
       </div>
-    </div>
+    {% endif %}
     {% if not showing_optimised_debts %}
       <div class="alert alert-warning d-flex align-items-start gap-2 py-2 small mb-4"
            role="note">
@@ -209,5 +208,19 @@
         {% endfor %}
       </div>
     </div>
+    {% if has_transactions %}
+      {% comment %}
+        Below the list, not next to the switch: exporting is what you do after reading, and the
+        CSV always holds the optimised debts - beside the switch it looked like it followed the
+        selected mode.
+      {% endcomment %}
+      <div class="d-flex justify-content-end mt-3">
+        <a href="{% room_url 'debt:export' %}"
+           class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2">
+          <i class="bi bi-download" aria-hidden="true"></i>
+          {% trans "Export CSV" %}
+        </a>
+      </div>
+    {% endif %}
   </div>
 {% endblock tab_content %}

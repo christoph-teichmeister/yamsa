@@ -537,9 +537,6 @@ msgstr[1] ""
 msgid "All settled"
 msgstr "Alles beglichen"
 
-msgid "Export CSV"
-msgstr "CSV exportieren"
-
 msgid "For comparison only: these are gross amounts that ignore payments already made. Settle your debts in the optimised view."
 msgstr "Nur zum Vergleich: Das sind Bruttobeträge, bereits geleistete Zahlungen sind nicht berücksichtigt. Begleiche deine Schulden in der optimierten Ansicht."
 
@@ -582,6 +579,9 @@ msgstr "Noch keine Schulden"
 
 msgid "As expenses are added, we will surface who owes whom here."
 msgstr "Wenn Ausgaben hinzukommen, zeigen wir hier, wer wem etwas schuldet."
+
+msgid "Export CSV"
+msgstr "CSV exportieren"
 
 msgid "Settled"
 msgstr "Beglichen"
