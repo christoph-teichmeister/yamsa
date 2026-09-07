@@ -5,27 +5,27 @@ The chart's own SVG rules stay in a stylesheet: d3 generates .trend-line-path, .
 {% endcomment %}
 <link rel="stylesheet"
       href="{% static 'components/transaction/money-spent-trend.css' %}">
-<div class="tw:@container tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5">
-  <div class="tw:flex tw:flex-col tw:gap-3 tw:@2xl:flex-row tw:@2xl:justify-between">
-    <div class="tw:min-w-0">
-      <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Spending over time" %}</p>
-      <p class="tw:mt-0.5 tw:mb-1 tw:font-semibold tw:text-ink">{% trans "Expense build-up" %}</p>
-      <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+<div class="@container rounded-2xl border border-line bg-surface p-5">
+  <div class="flex flex-col gap-3 @2xl:flex-row @2xl:justify-between">
+    <div class="min-w-0">
+      <p class="m-0 text-sm text-ink-muted">{% trans "Spending over time" %}</p>
+      <p class="mt-0.5 mb-1 font-semibold text-ink">{% trans "Expense build-up" %}</p>
+      <p class="m-0 text-sm text-ink-muted">
         {% blocktrans trimmed with period=trend_period_label|lower start=trend_range_start|date:"SHORT_DATE_FORMAT" end=trend_range_end|date:"SHORT_DATE_FORMAT" %}
           Showing {{ period }} ({{ start }} – {{ end }}).
         {% endblocktrans %}
       </p>
     </div>
-    <div class="tw:flex tw:flex-col tw:items-start tw:gap-2 tw:@2xl:items-end">
+    <div class="flex flex-col items-start gap-2 @2xl:items-end">
       {% comment %}
         One segmented control, so the ranges read as one choice. The wide option gets three shares
         of the track because its label is a date range rather than a single letter.
       {% endcomment %}
-      <div class="tw:flex tw:w-full tw:overflow-hidden tw:rounded-full tw:border tw:border-line tw:bg-surface-sunken"
+      <div class="flex w-full overflow-hidden rounded-full border border-line bg-surface-sunken"
            role="group"
            aria-label="{% trans "Spending trend ranges" %}">
         {% for option in period_options %}
-          <button class="tw:inline-flex tw:min-w-0 tw:cursor-pointer tw:items-center tw:justify-center tw:border-0 tw:px-3.5 tw:py-1.5 tw:text-[0.65rem] tw:tracking-[0.08em] tw:uppercase tw:transition tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand {% if option.is_wide %}tw:flex-3 tw:text-[0.6rem] tw:tracking-[0.04em]{% else %}tw:flex-1{% endif %} {% if option.active %}tw:bg-brand tw:text-on-brand{% else %}tw:bg-transparent tw:text-ink-muted tw:hover:bg-surface-hover{% endif %}"
+          <button class="inline-flex min-w-0 cursor-pointer items-center justify-center border-0 px-3.5 py-1.5 text-[0.65rem] tracking-[0.08em] uppercase transition focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand {% if option.is_wide %}flex-3 text-[0.6rem] tracking-[0.04em]{% else %}flex-1{% endif %} {% if option.active %}bg-brand text-on-brand{% else %}bg-transparent text-ink-muted hover:bg-surface-hover{% endif %}"
                   type="button"
                   title="{{ option.label }}"
                   aria-pressed="{% if option.active %}true{% else %}false{% endif %}"
@@ -37,22 +37,22 @@ The chart's own SVG rules stay in a stylesheet: d3 generates .trend-line-path, .
       </div>
       {# Switched by display, not the shared .htmx-indicator opacity rule, so it keeps no empty box. #}
       <div id="spending-trend-indicator"
-           class="tw:hidden tw:items-center tw:gap-2 tw:text-sm tw:text-ink-muted tw:[&.htmx-request]:flex">
-        <span class="tw:size-4 tw:animate-spin tw:rounded-full tw:border-2 tw:border-line tw:border-t-brand"
+           class="hidden items-center gap-2 text-sm text-ink-muted [&.htmx-request]:flex">
+        <span class="size-4 animate-spin rounded-full border-2 border-line border-t-brand"
               aria-hidden="true"></span>
         {% trans "Updating..." %}
       </div>
     </div>
   </div>
   {% if trend_series %}
-    <div class="tw:relative tw:mt-4 tw:w-full">
+    <div class="relative mt-4 w-full">
       <div id="trend-line-chart" class="trend-line-chart"></div>
     </div>
     {{ trend_chart_data|json_script:"trend-chart-data" }}
   {% else %}
-    <div class="tw:mt-3 tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-6 tw:text-center">
-      <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "No data available" %}</p>
-      <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Add a few expenses to unlock the timeline." %}</p>
+    <div class="mt-3 rounded-2xl border border-dashed border-line-strong px-6 py-6 text-center">
+      <p class="m-0 font-semibold text-ink">{% trans "No data available" %}</p>
+      <p class="m-0 text-sm text-ink-muted">{% trans "Add a few expenses to unlock the timeline." %}</p>
     </div>
   {% endif %}
 </div>

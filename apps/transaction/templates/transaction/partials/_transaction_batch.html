@@ -8,43 +8,43 @@ needs. `.transaction-row` stays as the hook the highlight script and the e2e sui
 {% endcomment %}
 {% for parent_transaction in parent_transactions %}
   <button id="transaction-{{ parent_transaction.id }}"
-          class="transaction-row tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:duration-500 tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand tw:data-highlight:bg-brand-soft"
+          class="transaction-row flex w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-5 py-3 text-left transition duration-500 hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand data-highlight:bg-brand-soft"
           type="button"
           hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
           hx-target="#body"
           hx-indicator="#body-loading-spinner"
           hx-swap="morph:innerHTML"
           hx-push-url="true">
-    <span class="tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-brand-soft"
+    <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft"
           title="{{ parent_transaction.category.name }}">
       <span aria-hidden="true">{{ parent_transaction.category.emoji }}</span>
-      <span class="tw:sr-only">{{ parent_transaction.category.name }}</span>
+      <span class="sr-only">{{ parent_transaction.category.name }}</span>
     </span>
-    <span class="tw:min-w-0 tw:flex-1">
+    <span class="min-w-0 flex-1">
       {% with description_value=parent_transaction.description|default:_("No description") %}
-        <span class="tw:block tw:truncate tw:font-medium tw:text-ink">{{ description_value|truncatechars:70 }}</span>
+        <span class="block truncate font-medium text-ink">{{ description_value|truncatechars:70 }}</span>
       {% endwith %}
       {# Payer on the left, date under the amount: on a phone the two would otherwise wrap into each other. #}
-      <span class="tw:mt-1 tw:flex tw:min-w-0 tw:items-center tw:gap-1.5 tw:text-sm tw:text-ink-subtle">
+      <span class="mt-1 flex min-w-0 items-center gap-1.5 text-sm text-ink-subtle">
         {% include "shared_partials/_user_avatar.html" with avatar_url=parent_transaction.paid_by.avatar_url avatar_name=parent_transaction.paid_by.name avatar_fallback_url=parent_transaction.paid_by.profile_picture_fallback_url %}
-        <span class="tw:truncate">
+        <span class="truncate">
           {% autoescape off %}
             {% parse_user_text parent_transaction.paid_by.name True %}
           {% endautoescape %}
         </span>
       </span>
     </span>
-    <span class="tw:shrink-0 tw:text-right">
-      <span class="tw:block tw:font-semibold tw:whitespace-nowrap tw:text-brand-text">
+    <span class="shrink-0 text-right">
+      <span class="block font-semibold whitespace-nowrap text-brand-text">
         {{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value|format_with_thousands }}
       </span>
-      <span class="tw:mt-1 tw:block tw:text-xs tw:whitespace-nowrap tw:text-ink-subtle">{{ parent_transaction.paid_at|date }}</span>
+      <span class="mt-1 block text-xs whitespace-nowrap text-ink-subtle">{{ parent_transaction.paid_at|date }}</span>
     </span>
-    <i class="bi bi-chevron-right tw:shrink-0 tw:text-ink-subtle"
+    <i class="bi bi-chevron-right shrink-0 text-ink-subtle"
        aria-hidden="true"></i>
   </button>
 {% empty %}
-  <p class="tw:m-0 tw:px-5 tw:py-6 tw:text-center tw:text-sm tw:text-ink-muted">
+  <p class="m-0 px-5 py-6 text-center text-sm text-ink-muted">
     {% if transaction_search_query %}
       {% blocktrans with query=transaction_search_query %}No transactions match "{{ query }}".{% endblocktrans %}
     {% elif transaction_category_filter or transaction_currency_filter %}
@@ -56,12 +56,12 @@ needs. `.transaction-row` stays as the hook the highlight script and the e2e sui
 {% endfor %}
 {% if transaction_next_cursor %}
   <div id="transaction-batch-trigger"
-       class="tw:px-5 tw:py-4"
+       class="px-5 py-4"
        hx-get="{% room_url 'transaction:feed' %}?cursor_id={{ transaction_next_cursor.id }}&cursor_paid_at={{ transaction_next_cursor.paid_at|date:'c'|urlencode }}{% if transaction_feed_query_string %}&{{ transaction_feed_query_string }}{% endif %}"
        hx-trigger="revealed"
        hx-swap="outerHTML">
     {% include "shared_partials/_list_loader.html" with loader_id="transaction-batch-loader" skeleton_count=3 target_id="transaction-batch-trigger" %}
   </div>
 {% elif parent_transactions %}
-  <p class="tw:m-0 tw:px-5 tw:py-4 tw:text-center tw:text-sm tw:text-ink-subtle">{% trans "You're all caught up." %}</p>
+  <p class="m-0 px-5 py-4 text-center text-sm text-ink-subtle">{% trans "You're all caught up." %}</p>
 {% endif %}

@@ -28,7 +28,7 @@ class TestThemeSwitching:
 
         menu.navigate()
 
-        expect(menu.html()).to_have_attribute("data-bs-theme", "light")
+        expect(menu.html()).to_have_attribute("data-theme", "light")
 
     def test_it_follows_the_system_until_a_theme_is_chosen(self, page, base_url, profile_user):
         menu = self._menu(page, base_url, profile_user)
@@ -36,11 +36,11 @@ class TestThemeSwitching:
 
         menu.navigate()
 
-        expect(menu.html()).to_have_attribute("data-bs-theme", "light")
+        expect(menu.html()).to_have_attribute("data-theme", "light")
 
         page.emulate_media(color_scheme="dark")
 
-        expect(menu.html()).to_have_attribute("data-bs-theme", "dark")
+        expect(menu.html()).to_have_attribute("data-theme", "dark")
 
     def test_a_chosen_theme_survives_a_reload_and_ignores_the_system(self, page, base_url, profile_user):
         menu = self._menu(page, base_url, profile_user)
@@ -50,11 +50,11 @@ class TestThemeSwitching:
 
         menu.choose_theme("dark")
 
-        expect(menu.html()).to_have_attribute("data-bs-theme", "dark")
+        expect(menu.html()).to_have_attribute("data-theme", "dark")
 
         page.reload()
 
-        expect(menu.html()).to_have_attribute("data-bs-theme", "dark")
+        expect(menu.html()).to_have_attribute("data-theme", "dark")
 
     def test_the_system_option_hands_the_theme_back(self, page, base_url, profile_user):
         menu = self._menu(page, base_url, profile_user)
@@ -62,15 +62,15 @@ class TestThemeSwitching:
         menu.navigate()
         menu.open_menu()
         menu.choose_theme("dark")
-        expect(menu.html()).to_have_attribute("data-bs-theme", "dark")
+        expect(menu.html()).to_have_attribute("data-theme", "dark")
 
         menu.choose_theme("auto")
 
-        expect(menu.html()).to_have_attribute("data-bs-theme", "light")
+        expect(menu.html()).to_have_attribute("data-theme", "light")
 
         page.emulate_media(color_scheme="dark")
 
-        expect(menu.html()).to_have_attribute("data-bs-theme", "dark")
+        expect(menu.html()).to_have_attribute("data-theme", "dark")
 
     def test_the_chosen_preference_is_marked_on_its_button(self, page, base_url, profile_user):
         menu = self._menu(page, base_url, profile_user)

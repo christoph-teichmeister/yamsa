@@ -1,7 +1,3 @@
-import * as bootstrap from "bootstrap";
-
-window.bootstrap = bootstrap;
-
 (function () {
   if (window.__yamsaNavigationInitialized) {
     return;
@@ -65,14 +61,12 @@ window.bootstrap = bootstrap;
   // system flips the page between light and dark.
   const applyThemeToggleState = (preference) => {
     document.querySelectorAll('[data-theme-value]').forEach((button) => {
-      const isSelected = button.dataset.themeValue === preference;
-      button.setAttribute('aria-pressed', String(isSelected));
-      button.classList.toggle('active', isSelected);
+      button.setAttribute('aria-pressed', String(button.dataset.themeValue === preference));
     });
   };
 
   const applyPreference = (preference) => {
-    document.documentElement.setAttribute('data-bs-theme', resolveTheme(preference));
+    document.documentElement.setAttribute('data-theme', resolveTheme(preference));
     applyBrowserThemeColor();
     applyThemeToggleState(preference);
   };
@@ -125,32 +119,6 @@ window.bootstrap = bootstrap;
       navigator.clipboard.writeText(shareUrl).catch((error) => {
         console.error('Failed to copy share URL', error);
       });
-    });
-  };
-
-  const initOffcanvasCleanup = () => {
-    const removeExcessBackdrops = () => {
-      const backdrops = document.getElementsByClassName('offcanvas-backdrop');
-      while (backdrops.length > 1) {
-        const target = backdrops[0];
-        if (target && target.parentNode) {
-          target.parentNode.removeChild(target);
-        } else {
-          break;
-        }
-      }
-    };
-
-    document.addEventListener('shown.bs.offcanvas', (event) => {
-      if (event.target.id === 'offcanvasNavbar') {
-        removeExcessBackdrops();
-      }
-    });
-
-    document.addEventListener('hidden.bs.offcanvas', (event) => {
-      if (event.target.id === 'offcanvasNavbar') {
-        removeExcessBackdrops();
-      }
     });
   };
 
@@ -301,7 +269,6 @@ window.bootstrap = bootstrap;
   const init = () => {
     initThemeToggle();
     initShareButtons();
-    initOffcanvasCleanup();
     initRoomNavigationScrollReset();
     refreshDynamicElements();
     document.addEventListener('click', handleNavigationClick);

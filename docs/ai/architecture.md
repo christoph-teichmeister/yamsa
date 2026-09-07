@@ -13,7 +13,7 @@ and `entrypoint.sh`. Documentation, including AI prompt history, lives in `docs/
 Follow Python's 4-space indentation and keep modules typed where practical. Use `snake_case` for functions, `PascalCase`
 for classes, and `SCREAMING_SNAKE_CASE` for settings. Run `uv run ruff check --fix .` before committing; it handles
 import order, linting, and selected auto-fixes. Templates must pass `uv run djlint apps --reformat`; lean on
-Bootstrap 5 utility classes (`d-flex`, `px-2`, `gap-2`, etc.) and HTMX attributes instead of custom CSS whenever
+Tailwind utilities (`flex`, `px-2`, `gap-2`, etc.) and HTMX attributes instead of custom CSS whenever
 possible. Keep static JS modular inside `static/js/` and co-locate SCSS/CSS with the component it styles. **Edit
 canonical static assets under `apps/static/…` (e.g., `apps/static/js/navigation.js`) and let hashed copies
 in `static/`/`staticfiles/` be generated artifacts.**
@@ -24,16 +24,16 @@ root (e.g., `from apps.transaction import models`).
 
 ## Design System & UI Concepts
 
-- Bootstrap 5 provides the base; lean on utility classes, cards, badges, and offcanvas components before reaching for
-  custom CSS.
-- Layouts should feel airy: use `container` + responsive padding (`px-2 px-md-4 px-lg-5`), `rounded-4` cards, and
-  `shadow-sm`/`shadow` for emphasis.
+- Tailwind CSS 4 is the design system, and [`design.md`](design.md) is its reference: the palette, the canonical
+  class strings for every pattern, and the rules a page has to follow. Reach for a utility before custom CSS.
+- Layouts should feel airy: a page section is `@container mx-auto flex w-full max-w-3xl flex-col gap-4`, its
+  contents sit in a sheet or in cards, and emphasis comes from `shadow-card`.
 - Primary CTAs are full-width or paired buttons with icons (`bi` set) and consistent spacing (`gap-2`). Avoid duplicate
   actions; prefer a single, well-labeled button per task.
-- Content blocks typically use stacked cards or responsive grids (`row g-4`) so desktop and mobile share the same
-  markup.
-- Keep typography calm: headings use `fw-semibold`, supportive text uses `text-muted` small copy; badge colors convey
-  status (e.g., `text-bg-dark` for elevated roles).
+- Content blocks stack, and widen with a container query (`@lg:grid-cols-2`) rather than a viewport breakpoint, so a
+  partial reads the space it was actually given.
+- Keep typography calm: headings use `font-semibold`, supportive text is `text-sm text-ink-muted`; badge colours
+  convey status through the `success-*`/`warning-*`/`danger-*` token pairs.
 - When using HTMX, ensure loaders target `#body`, and actions that mimic navigation also manage scroll restoration (see
   `apps/static/js/navigation.js`).
 - Wherever a user's name appears, their avatar comes from `shared_partials/_user_avatar.html` (classes `.avatar`,

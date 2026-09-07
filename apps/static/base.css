@@ -1,240 +1,36 @@
-/* Colours come from the palette in apps/static_src/tailwind.css: its tokens already switch with
-   the theme, so Bootstrap's variables are mapped onto them once here instead of once per theme.
-   Only what genuinely differs between the themes is repeated below. */
-:root {
-    --bs-body-bg: var(--yamsa-canvas);
-    --bs-body-color: var(--yamsa-ink);
-    --bs-heading-color: var(--yamsa-ink-strong);
-    --bs-primary: var(--yamsa-brand);
-    --bs-primary-rgb: var(--yamsa-brand-rgb);
-    --bs-primary-text-emphasis: var(--yamsa-brand-text);
-    --bs-link-color: var(--yamsa-link);
-    /* Bootstrap colours every `a` from the triplet, not from --bs-link-color; setting only the
-       latter leaves the links at their Bootstrap default. */
-    --bs-link-color-rgb: var(--yamsa-link-rgb);
-    --bs-border-color: var(--yamsa-line);
-    /* Bootstrap's own neutrals and status tints. Without these its components - badges, subtle
-       backgrounds, .text-body-secondary, every `rgba(var(--bs-body-color-rgb), …)` in this
-       project's CSS - would keep painting from Bootstrap's palette next to ours. */
-    --bs-body-color-rgb: var(--yamsa-ink-rgb);
-    --bs-emphasis-color: var(--yamsa-ink-strong);
-    --bs-secondary-color: var(--yamsa-ink-muted);
-    --bs-secondary-bg: var(--yamsa-surface-hover);
-    --bs-tertiary-bg: var(--yamsa-surface-sunken);
-    --bs-success-text-emphasis: var(--yamsa-success-text);
-    --bs-warning-text-emphasis: var(--yamsa-warning-text);
-    --bs-danger-text-emphasis: var(--yamsa-danger-text);
-    --bs-primary-bg-subtle: var(--yamsa-brand-soft);
-    --bs-success-bg-subtle: var(--yamsa-success-soft);
-    --bs-warning-bg-subtle: var(--yamsa-warning-soft);
-    --bs-danger-bg-subtle: var(--yamsa-danger-soft);
-    --bs-primary-border-subtle: var(--yamsa-brand-border);
-    --bs-success-border-subtle: var(--yamsa-success-border);
-    --bs-warning-border-subtle: var(--yamsa-warning-border);
-    --bs-danger-border-subtle: var(--yamsa-danger-border);
-
-    --offcanvas-and-nav-bg: var(--yamsa-surface-sunken);
-    --offcanvas-and-nav-color: var(--yamsa-ink);
-    --offcanvas-and-nav-text-muted: var(--yamsa-ink-subtle);
-    --nav-active-color: var(--yamsa-link);
-    --list-group-border-color: var(--yamsa-line-strong);
-}
-
-[data-bs-theme=dark] {
-    /* The list group reads better on the plain line than on the stronger one. */
-    --list-group-border-color: var(--yamsa-line);
-}
-
-[data-bs-theme=light] .navbar-nav .p-e-color {
-    color: var(--offcanvas-and-nav-color);
-}
-
-[data-bs-theme=light] .navbar-nav .p-e-color:hover {
-    color: var(--nav-active-color);
-}
-
-/* Sits on the app chrome rather than on a page. Bootstrap's .btn-light is a fixed colour and
-   stays white on the dark theme. */
-.btn-surface {
-    --bs-btn-bg: var(--yamsa-surface);
-    --bs-btn-border-color: var(--yamsa-line-strong);
-    --bs-btn-color: var(--yamsa-ink);
-    --bs-btn-hover-bg: var(--yamsa-surface-hover);
-    --bs-btn-hover-border-color: var(--yamsa-line-strong);
-    --bs-btn-hover-color: var(--yamsa-ink);
-    --bs-btn-active-bg: var(--yamsa-surface-hover);
-    --bs-btn-active-border-color: var(--yamsa-line-strong);
-    --bs-btn-active-color: var(--yamsa-ink);
-}
-
-/* The same literals reach further than the buttons: every focus ring in the app, the checked
-   state of a checkbox and the active list-group row are Bootstrap's own blue, not ours. Only the
-   components this project actually uses are mapped here. */
-.form-control:focus,
-.form-select:focus,
-.form-check-input:focus {
-    border-color: var(--yamsa-brand);
-    box-shadow: 0 0 0 0.25rem rgb(var(--yamsa-brand-rgb), 0.25);
-}
-
-/* The tick and the switch knob inside are a white SVG that Bootstrap does not theme, so this fill
-   has to carry white on both themes - the same reason the auth hero uses it. */
-.form-check-input:checked,
-.form-check-input[type=checkbox]:indeterminate {
-    background-color: var(--yamsa-brand-strong);
-    border-color: var(--yamsa-brand-strong);
-}
-
-.nav-link:focus-visible {
-    box-shadow: 0 0 0 0.25rem rgb(var(--yamsa-brand-rgb), 0.25);
-}
-
-.btn-close {
-    --bs-btn-close-focus-shadow: 0 0 0 0.25rem rgb(var(--yamsa-brand-rgb), 0.25);
-}
-
-.list-group {
-    --bs-list-group-active-bg: var(--yamsa-brand);
-    --bs-list-group-active-border-color: var(--yamsa-brand);
-    --bs-list-group-active-color: var(--yamsa-on-brand);
-}
-
-/* Bootstrap writes every one of these as the literal #0d6efd rather than reading --bs-primary,
-   so an outline button was a third blue next to the brand and the text tone. */
-.btn-outline-primary {
-    --bs-btn-color: var(--yamsa-brand-text);
-    --bs-btn-border-color: var(--yamsa-brand-text);
-    --bs-btn-hover-color: var(--yamsa-on-brand);
-    --bs-btn-hover-bg: var(--yamsa-brand);
-    --bs-btn-hover-border-color: var(--yamsa-brand);
-    --bs-btn-active-color: var(--yamsa-on-brand);
-    --bs-btn-active-bg: var(--yamsa-brand);
-    --bs-btn-active-border-color: var(--yamsa-brand);
-    --bs-btn-focus-shadow-rgb: var(--yamsa-brand-rgb);
-    --bs-btn-disabled-color: var(--yamsa-brand-text);
-    --bs-btn-disabled-border-color: var(--yamsa-brand-text);
-}
-
-/* Same literals, same problem: #6c757d reads at 3.23:1 on a dark surface. */
-.btn-outline-secondary {
-    --bs-btn-color: var(--yamsa-ink-muted);
-    --bs-btn-border-color: var(--yamsa-line-strong);
-    --bs-btn-hover-color: var(--yamsa-ink);
-    --bs-btn-hover-bg: var(--yamsa-surface-hover);
-    --bs-btn-hover-border-color: var(--yamsa-line-strong);
-    --bs-btn-active-color: var(--yamsa-ink);
-    --bs-btn-active-bg: var(--yamsa-surface-hover);
-    --bs-btn-active-border-color: var(--yamsa-line-strong);
-    --bs-btn-disabled-color: var(--yamsa-ink-subtle);
-    --bs-btn-disabled-border-color: var(--yamsa-line);
-}
-
-.btn-primary {
-    --bs-btn-bg: var(--yamsa-brand);
-    --bs-btn-border-color: var(--yamsa-brand);
-    --bs-btn-hover-bg: var(--yamsa-brand-hover);
-    --bs-btn-hover-border-color: var(--yamsa-brand-hover);
-    --bs-btn-color: var(--yamsa-on-brand);
-    --bs-btn-hover-color: var(--yamsa-on-brand);
-    --bs-btn-active-bg: var(--yamsa-brand-hover);
-    --bs-btn-active-border-color: var(--yamsa-brand-hover);
-    --bs-btn-active-color: var(--yamsa-on-brand);
-    --bs-btn-disabled-bg: var(--yamsa-brand);
-    --bs-btn-disabled-border-color: var(--yamsa-brand);
-    --bs-btn-disabled-color: var(--yamsa-on-brand);
-    --bs-btn-focus-shadow-rgb: var(--yamsa-brand-rgb);
-}
-
-:root {
-    --bs-nav-link-font-size: 1.3rem;
-    --bs-tooltip-zindex: 10000;
-}
-
-/* Breakpoint px values:
-    --bs-breakpoint-xs: 0;
-    --bs-breakpoint-sm: 576px;
-    --bs-breakpoint-md: 768px;
-    --bs-breakpoint-lg: 992px;
-    --bs-breakpoint-xl: 1200px;
-    --bs-breakpoint-xxl: 1400px;
- */
-
+/* The stack is written down here rather than left to whichever reset is loaded: the app's
+   proportions - where a label wraps, how wide a pill sits - were drawn against this one, and
+   Preflight's own leads with -apple-system where Reboot led with system-ui, which resolves to a
+   different face outside Apple's platforms. */
 html {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     scroll-behavior: smooth;
 }
 
+/* Preflight paints neither, and `color-scheme` alone only gets the page a browser's idea of a
+   dark ground - close enough to hide that the palette is not being used at all. */
 body {
+    background-color: var(--yamsa-canvas);
+    color: var(--yamsa-ink);
     padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
 }
 
-.list-group {
-    --bs-list-group-border-color: var(--list-group-border-color);
+/* Reboot gave every heading its own colour; Preflight lets them inherit the body's. */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--yamsa-ink-strong);
 }
 
-.offcanvas {
-    --bs-offcanvas-bg: var(--offcanvas-and-nav-bg);
-    --bs-offcanvas-color: var(--offcanvas-and-nav-color);
-
-    --bs-offcanvas-width: 75%;
-}
-
-/* Bootstrap gives .offcanvas-body an overflow-y of auto, which per spec turns the visible
-   overflow-x into auto as well: any child wider than the panel silently makes the whole menu
-   scrollable sideways, with nothing to see at the end of that scroll. The rows above are built to
-   fit, so a sideways scroll here can only ever be a bug. */
-.offcanvas-body {
-    overflow-x: hidden;
-}
-
-@media (min-width: 768px) {
-    .offcanvas {
-        --bs-offcanvas-width: 30%;
-    }
-
-    .container-fluid {
-        width: 50%;
-    }
-}
-
-.error {
-    color: red;
-}
-
-.offcanvas {
-    z-index: 1200;
-}
-
-.offcanvas-backdrop {
-    z-index: 1100;
-}
-
-.navbar.fixed-top {
-    z-index: 1300;
-}
-
-
-.toast.show {
-    display: flex;
-    justify-content: center;
-}
-
-.toast-container.yamsa-toast-container {
-    pointer-events: none;
-    max-height: calc(100% - 1rem);
-    z-index: 1400;
-}
-
+/* The toast's own ground and the four tones it is raised in. The container around it is
+   click-through, so that a toast at the bottom edge does not take the taps meant for the page
+   underneath; the toast itself has to take its own. */
 .toast-yamsa-inner {
     background: var(--yamsa-surface-raised);
     color: var(--yamsa-ink);
     border-top: 4px solid transparent;
     pointer-events: auto;
     border-radius: 0.9rem;
-    transition: transform 0.25s ease, opacity 0.25s ease;
     min-height: 3.5rem;
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
-    width: 100%;
-    max-width: none;
 }
 
 .toast-yamsa-inner.toast-primary {

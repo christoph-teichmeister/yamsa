@@ -15,7 +15,7 @@
   {% trans "We'll drop them right into this room." as tip_text %}
   {% trans "Add guest" as submit_label %}
   {% trans "Back to people" as back_label %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% include "shared_partials/member_form.html" with form=form field=form.name form_action=guest_create_action room_slug_value=current_room.slug hero_context=hero_context hero_title=guest_title hero_subtitle=hero_subtitle hero_badge_label=hero_badge_label hero_badge_icon="bi-person-plus" field_label=field_label field_placeholder=field_placeholder helper_text=helper_text tip_text=tip_text submit_label=submit_label submit_icon="bi-check-circle" back_url=roster_url back_label=back_label submit_disabled=current_room.is_closed %}
   </section>
 {% endblock tab_content %}

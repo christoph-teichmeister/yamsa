@@ -1,26 +1,26 @@
 {% extends "core/base.html" %}
 {% load i18n %}
 {% block content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
-    <form class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
+    <form class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card"
           action="{% url 'importer:upload' %}"
           method="post"
           enctype="multipart/form-data">
       {% csrf_token %}
-      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Import" %}</p>
-        <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Import transactions" %}</h1>
-        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+      <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Import" %}</p>
+        <h1 class="mt-1 mb-1 text-xl font-semibold text-ink">{% trans "Import transactions" %}</h1>
+        <p class="m-0 text-sm text-ink-muted">
           {% trans "Upload your export from another app. The import always creates a new room." %}
         </p>
       </div>
-      <div class="tw:flex tw:flex-col tw:gap-4 tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
+      <div class="flex flex-col gap-4 border-t border-line px-5 py-5 @md:px-6">
         <div>
-          <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+          <label class="mb-1.5 block text-sm font-semibold text-ink"
                  for="{{ form.source.id_for_label }}">{{ form.source.label }}</label>
-          <div class="tw:relative">
+          <div class="relative">
             <select id="{{ form.source.id_for_label }}"
-                    class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand {% if form.source.errors %}tw:border-danger-text/60{% else %}tw:border-line-strong{% endif %}"
+                    class="w-full appearance-none rounded-xl border bg-surface-sunken py-2.5 pr-10 pl-4 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand {% if form.source.errors %}border-danger-text/60{% else %}border-line-strong{% endif %}"
                     name="{{ form.source.html_name }}"
                     required>
               {% for value, label in form.fields.source.choices %}
@@ -28,41 +28,41 @@
                         {% if form.source.value == value %}selected{% endif %}>{{ label }}</option>
               {% endfor %}
             </select>
-            <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
+            <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle"
                aria-hidden="true"></i>
           </div>
           {% for error_message in form.source.errors %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
           {% endfor %}
         </div>
         <div>
-          <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+          <label class="mb-1.5 block text-sm font-semibold text-ink"
                  for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
           {# The file picker's own button is styled through the file: variant - an input[type=file] takes no padding of its own. #}
           <input id="{{ form.file.id_for_label }}"
-                 class="tw:w-full tw:rounded-xl tw:border tw:bg-surface-sunken tw:py-2 tw:pr-4 tw:pl-2 tw:text-sm tw:text-ink tw:transition tw:file:mr-3 tw:file:cursor-pointer tw:file:rounded-lg tw:file:border-0 tw:file:bg-brand-soft tw:file:px-3 tw:file:py-1.5 tw:file:text-sm tw:file:font-semibold tw:file:text-brand-text tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand {% if form.file.errors %}tw:border-danger-text/60{% else %}tw:border-line-strong{% endif %}"
+                 class="w-full rounded-xl border bg-surface-sunken py-2 pr-4 pl-2 text-sm text-ink transition file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-brand-soft file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-brand-text focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand {% if form.file.errors %}border-danger-text/60{% else %}border-line-strong{% endif %}"
                  type="file"
                  name="{{ form.file.html_name }}"
                  accept=".csv"
                  required>
-          <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">
+          <p class="mt-1.5 mb-0 text-sm text-ink-subtle">
             {% blocktrans with limit=max_file_size_mb %}CSV file, max. {{ limit }} MB.{% endblocktrans %}
           </p>
           {% for error_message in form.file.errors %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
           {% endfor %}
         </div>
         {% if form.non_field_errors %}
-          <div class="tw:rounded-2xl tw:border tw:border-danger-text/40 tw:bg-danger-soft tw:px-4 tw:py-3"
+          <div class="rounded-2xl border border-danger-text/40 bg-danger-soft px-4 py-3"
                role="alert">
-            <ul class="tw:m-0 tw:flex tw:list-none tw:flex-col tw:gap-1 tw:text-sm tw:text-danger-text">
+            <ul class="m-0 flex list-none flex-col gap-1 text-sm text-danger-text">
               {% for error_message in form.non_field_errors %}<li>{{ error_message }}</li>{% endfor %}
             </ul>
           </div>
         {% endif %}
       </div>
-      <div class="tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
-        <button class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+      <div class="border-t border-line px-5 py-4 @md:px-6">
+        <button class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                 type="submit">
           <i class="bi bi-upload" aria-hidden="true"></i>
           {% trans "Read file" %}
@@ -70,9 +70,9 @@
       </div>
     </form>
     {# A card, not a section of the sheet: the steps describe the whole flow, not the form above them. #}
-    <div class="tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5">
-      <h2 class="tw:mt-0 tw:mb-2 tw:text-sm tw:font-semibold tw:text-ink">{% trans "How it works" %}</h2>
-      <ol class="tw:m-0 tw:flex tw:list-decimal tw:flex-col tw:gap-1 tw:pl-5 tw:text-sm tw:text-ink-muted">
+    <div class="rounded-2xl border border-line bg-surface p-5">
+      <h2 class="mt-0 mb-2 text-sm font-semibold text-ink">{% trans "How it works" %}</h2>
+      <ol class="m-0 flex list-decimal flex-col gap-1 pl-5 text-sm text-ink-muted">
         <li>{% trans "Upload your export file." %}</li>
         <li>{% trans "Say which of the people in the file is you, and check the categories." %}</li>
         <li>{% trans "Confirm — a new room is created with all transactions." %}</li>

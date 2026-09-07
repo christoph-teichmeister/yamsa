@@ -1,38 +1,38 @@
 {% extends "room/dashboard.html" %}
 {% load i18n %}
 {% block tab_content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% if is_member %}
-      <div class="tw:grid tw:grid-cols-1 tw:gap-3 tw:@lg:grid-cols-2">
+      <div class="grid grid-cols-1 gap-3 @lg:grid-cols-2">
         {% trans "Add existing user" as add_existing_label %}
         {% include "account/partials/_people_action.html" with action_viewname="room:userconnectiontoroom-create" action_label=add_existing_label action_icon="bi-person-plus-fill" %}
         {% trans "Add guest" as add_guest_label %}
         {% include "account/partials/_people_action.html" with action_viewname="account:guest-create" action_label=add_guest_label action_icon="bi-person-plus" %}
       </div>
-      <div class="tw:grid tw:grid-cols-1 tw:gap-3 tw:@lg:grid-cols-2">
+      <div class="grid grid-cols-1 gap-3 @lg:grid-cols-2">
         {% csrf_token %}
         {% for user in user_qs_for_room %}
           {% include "shared_partials/user_card.html" with user=user %}
         {% empty %}
-          <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-8 tw:text-center tw:@lg:col-span-2">
-            <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "No one here yet" %}</p>
-            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
+          <div class="rounded-2xl border border-dashed border-line-strong px-6 py-8 text-center @lg:col-span-2">
+            <p class="m-0 font-semibold text-ink">{% trans "No one here yet" %}</p>
+            <p class="m-0 text-sm text-ink-muted">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
           </div>
         {% endfor %}
       </div>
     {% else %}
-      <div class="tw:@container tw:rounded-3xl tw:border tw:border-brand/20 tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-6 tw:text-center tw:@md:px-6">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Guest access" %}</p>
-        <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">
+      <div class="@container rounded-3xl border border-brand/20 bg-gradient-to-br from-brand-soft to-transparent px-5 py-6 text-center @md:px-6">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Guest access" %}</p>
+        <h1 class="mt-1 mb-1 text-xl font-semibold break-words text-ink">
           {% with current_room.name as room_name %}
             {% blocktrans %}Limited view of {{ room_name }}{% endblocktrans %}
           {% endwith %}
         </h1>
-        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Room members keep the roster private. Join the room to see who helps run this space." %}</p>
+        <p class="m-0 text-sm text-ink-muted">{% trans "Room members keep the roster private. Join the room to see who helps run this space." %}</p>
       </div>
-      <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-8 tw:text-center">
-        <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "Guest access" %}</p>
-        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Request access or register to interact with this room." %}</p>
+      <div class="rounded-2xl border border-dashed border-line-strong px-6 py-8 text-center">
+        <p class="m-0 font-semibold text-ink">{% trans "Guest access" %}</p>
+        <p class="m-0 text-sm text-ink-muted">{% trans "Request access or register to interact with this room." %}</p>
       </div>
     {% endif %}
   </section>

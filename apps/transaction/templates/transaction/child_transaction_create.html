@@ -4,15 +4,15 @@ One more share on the edit form, swapped in place of #add-child-transaction-cont
 mirror the split rows that template renders, down to the `.split-row` hook the remove handler in
 navigation.js and the total-lock script address.
 {% endcomment %}
-<div class="split-row tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken/40 tw:p-4 tw:transition tw:hover:border-brand/40">
-  <div class="tw:grid tw:grid-cols-1 tw:items-end tw:gap-3 tw:@md:grid-cols-[1fr_1fr_auto]">
+<div class="split-row rounded-2xl border border-line bg-surface-sunken/40 p-4 transition hover:border-brand/40">
+  <div class="grid grid-cols-1 items-end gap-3 @md:grid-cols-[1fr_1fr_auto]">
     <div>
-      <label class="tw:mb-1.5 tw:block tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase"
+      <label class="mb-1.5 block text-xs font-semibold tracking-wider text-ink-subtle uppercase"
              for="value_input_new">{% trans "Amount" %}</label>
-      <div class="tw:relative">
-        <span class="tw:pointer-events-none tw:absolute tw:top-1/2 tw:left-3 tw:-translate-y-1/2 tw:text-ink-subtle">{{ parent_transaction.currency.sign }}</span>
+      <div class="relative">
+        <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-subtle">{{ parent_transaction.currency.sign }}</span>
         <input id="value_input_new"
-               class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface tw:py-2 tw:pr-3 tw:pl-8 tw:font-medium tw:text-ink tw:transition tw:read-only:cursor-not-allowed tw:read-only:opacity-75 tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+               class="w-full rounded-lg border border-line-strong bg-surface py-2 pr-3 pl-8 font-medium text-ink transition read-only:cursor-not-allowed read-only:opacity-75 focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                type="number"
                name="value"
                min="0.01"
@@ -23,20 +23,20 @@ navigation.js and the total-lock script address.
       </div>
     </div>
     <div>
-      <label class="tw:mb-1.5 tw:block tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase"
+      <label class="mb-1.5 block text-xs font-semibold tracking-wider text-ink-subtle uppercase"
              for="paid_for_select_new">{% trans "For" %}</label>
-      <div class="tw:relative">
+      <div class="relative">
         <select id="paid_for_select_new"
-                class="tw:w-full tw:appearance-none tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface tw:py-2 tw:pr-9 tw:pl-3 tw:font-medium tw:text-ink tw:transition tw:aria-disabled:pointer-events-none tw:aria-disabled:opacity-75 tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                class="w-full appearance-none rounded-lg border border-line-strong bg-surface py-2 pr-9 pl-3 font-medium text-ink transition aria-disabled:pointer-events-none aria-disabled:opacity-75 focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                 name="paid_for"
                 required>
           {% for user in room_users %}<option value="{{ user.id }}">{{ user.name }}</option>{% endfor %}
         </select>
-        <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
+        <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle"
            aria-hidden="true"></i>
       </div>
     </div>
-    <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:justify-self-end tw:rounded-lg tw:border tw:border-danger-text/60 tw:bg-transparent tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:disabled:cursor-not-allowed tw:disabled:opacity-50"
+    <button class="inline-flex cursor-pointer items-center justify-center gap-2 justify-self-end rounded-lg border border-danger-text/60 bg-transparent px-3 py-2 text-sm font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50"
             type="button"
             aria-label="{% trans "Remove this share" %}"
             hx-confirm="{% trans "Remove this participant?" %}"

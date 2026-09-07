@@ -1,6 +1,6 @@
 {% load i18n %}
 {# An anchor, not a button: the back link then works without the bundle and can be opened in a new tab. #}
-<a class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-1.5 tw:self-start tw:rounded-lg tw:border-0 tw:bg-transparent tw:px-1 tw:py-1 tw:text-sm tw:font-semibold tw:text-ink-muted tw:no-underline tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+<a class="inline-flex cursor-pointer items-center gap-1.5 self-start rounded-lg border-0 bg-transparent px-1 py-1 text-sm font-semibold text-ink-muted no-underline transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
    href="{% url 'account:detail' pk=user.id %}"
    data-back-to-profile
    hx-get="{% url 'account:detail' pk=user.id %}"

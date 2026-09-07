@@ -4,29 +4,29 @@
   yamsa | {% trans "Payment reminders" %}
 {% endblock title %}
 {% block content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
-    <div class="tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:px-6 tw:py-10 tw:text-center tw:shadow-card">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
+    <div class="rounded-3xl border border-line bg-surface px-6 py-10 text-center shadow-card">
       {% if success %}
-        <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-success-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-success-text tw:uppercase">{% trans "Unsubscribed" %}</span>
-        <h1 class="tw:mt-3 tw:mb-3 tw:text-xl tw:font-semibold tw:text-ink">{% trans "You’re no longer receiving payment reminders." %}</h1>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-success-soft px-2.5 py-1 text-xs font-semibold tracking-wider text-success-text uppercase">{% trans "Unsubscribed" %}</span>
+        <h1 class="mt-3 mb-3 text-xl font-semibold text-ink">{% trans "You’re no longer receiving payment reminders." %}</h1>
       {% else %}
-        <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-danger-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-danger-text tw:uppercase">{% trans "Oops" %}</span>
-        <h1 class="tw:mt-3 tw:mb-3 tw:text-xl tw:font-semibold tw:text-ink">{% trans "We couldn’t process the unsubscribe." %}</h1>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-danger-soft px-2.5 py-1 text-xs font-semibold tracking-wider text-danger-text uppercase">{% trans "Oops" %}</span>
+        <h1 class="mt-3 mb-3 text-xl font-semibold text-ink">{% trans "We couldn’t process the unsubscribe." %}</h1>
       {% endif %}
-      <p class="tw:mt-0 tw:mb-4 tw:text-ink-muted">{{ message }}</p>
+      <p class="mt-0 mb-4 text-ink-muted">{{ message }}</p>
       {% if user_email %}
-        <p class="tw:mt-0 tw:mb-4 tw:text-sm tw:text-ink-subtle">{% trans "Email" %}: {{ user_email }}</p>
+        <p class="mt-0 mb-4 text-sm text-ink-subtle">{% trans "Email" %}: {{ user_email }}</p>
       {% endif %}
-      <div class="tw:flex tw:flex-wrap tw:justify-center tw:gap-3">
-        <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:no-underline tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+      <div class="flex flex-wrap justify-center gap-3">
+        <a class="inline-flex items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand no-underline shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
            href="{% url 'account:login' %}">{% trans "Sign in" %}</a>
         {% if request.user.is_authenticated %}
-          <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+          <a class="inline-flex items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-5 py-2.5 text-sm font-semibold text-ink no-underline transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
              href="{% url 'account:detail' pk=request.user.id %}">{% trans "Account settings" %}</a>
         {% endif %}
       </div>
       {% if not request.user.is_authenticated %}
-        <p class="tw:mt-4 tw:mb-0 tw:text-sm tw:text-ink-subtle">
+        <p class="mt-4 mb-0 text-sm text-ink-subtle">
           {% trans "You can always re-enable reminders from your notification settings." %}
         </p>
       {% endif %}

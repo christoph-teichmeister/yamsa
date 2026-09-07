@@ -3,9 +3,9 @@
 {% load render_bundle from webpack_loader %}
 {% block auth_hero %}
   <div>
-    <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-white/70 tw:uppercase">{% trans "Join yamsa" %}</p>
-    <h2 class="tw:mt-2 tw:mb-3 tw:text-xl tw:font-semibold tw:text-white">{% trans "Create shared clarity in your rooms" %}</h2>
-    <p class="tw:m-0 tw:text-sm tw:text-white/70">
+    <p class="m-0 text-xs font-semibold tracking-wider text-white/70 uppercase">{% trans "Join yamsa" %}</p>
+    <h2 class="mt-2 mb-3 text-xl font-semibold text-white">{% trans "Create shared clarity in your rooms" %}</h2>
+    <p class="m-0 text-sm text-white/70">
       {% blocktrans %}Registering takes a minute and keeps every room, bill, and settlement in sync.{% endblocktrans %}
     </p>
   </div>
@@ -16,7 +16,7 @@
 {% endblock auth_hero %}
 {% block auth_form %}
   {# `action` next to `hx-post` so the form still submits without the bundle. #}
-  <form class="tw:flex tw:flex-col tw:gap-4"
+  <form class="flex flex-col gap-4"
         method="post"
         action="{% url 'account:register' %}"
         hx-post="{% url 'account:register' %}"
@@ -26,34 +26,32 @@
         hx-push-url="true">
     {% csrf_token %}
     <div>
-      <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Start now" %}</p>
-      <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Register" %}</h1>
+      <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Start now" %}</p>
+      <h1 class="mt-1 mb-0 text-xl font-semibold text-ink">{% trans "Register" %}</h1>
     </div>
     <div>
-      <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
-             for="name">{% trans "Name" %}</label>
+      <label class="mb-1.5 block text-sm font-semibold text-ink" for="name">{% trans "Name" %}</label>
       <input id="name"
-             class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+             class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
              type="text"
              name="name"
              autocomplete="name"
              required>
       {% for error_message in form.errors.name.data %}
-        <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+        <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
       {% endfor %}
     </div>
     <div>
-      <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
-             for="email">{% trans "Email address" %}</label>
+      <label class="mb-1.5 block text-sm font-semibold text-ink" for="email">{% trans "Email address" %}</label>
       <input id="email"
-             class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+             class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
              type="email"
              name="email"
              value="{{ form.initial.email|default_if_none:'' }}"
              autocomplete="email"
              required>
       {% for error_message in form.errors.email.data %}
-        <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+        <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
       {% endfor %}
     </div>
     {% include "account/partials/_password_field.html" with field_id="password" field_label=form.fields.password.label field_errors=form.errors.password field_autocomplete="new-password" %}
@@ -70,7 +68,7 @@
            name="room_slug"
            type="hidden"
            value="{{ shared_room_slug|default:'' }}" />
-    <button class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+    <button class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
             type="submit">{% trans "Register now" %}</button>
   </form>
   {% render_bundle "password-visibility" attrs="defer" %}

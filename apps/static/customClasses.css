@@ -1,37 +1,29 @@
 .me-involved {
     font-weight: bold;
-    color: var(--bs-primary-text-emphasis);
-}
-
-.p-e-color {
-    color: var(--bs-body-color);
-}
-
-.w-90 {
-    width: 90%;
-}
-
-.cursor-pointer {
-    cursor: pointer;
+    color: var(--yamsa-brand-text);
 }
 
 .room-entry {
     /* Queried below: how much of the row fits depends on the menu panel, not on the viewport -
        the panel is 75% of a phone screen and 30% of a desktop one. */
     container-type: inline-size;
+    display: flex;
+    align-items: center;
     border-radius: 1rem;
     background-color: transparent;
     padding: 0.5rem 0.75rem;
     gap: 0.75rem;
+    box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 0.075);
+    cursor: pointer;
     transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .room-entry:hover {
-    background-color: rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.08);
+    background-color: rgb(var(--yamsa-ink-rgb) / 0.08);
 }
 
-.room-entry.active {
-    background-color: rgba(var(--bs-primary-rgb, 47, 111, 228), 0.15);
+.room-entry[data-active] {
+    background-color: rgb(var(--yamsa-brand-rgb) / 0.15);
 }
 
 .room-entry-ghost {
@@ -40,7 +32,7 @@
 }
 
 .room-entry-callout {
-    border: 1px dashed rgba(var(--bs-primary-rgb, 47, 111, 228), 0.35);
+    border: 1px dashed rgb(var(--yamsa-brand-rgb) / 0.35);
 }
 
 .room-group {
@@ -68,13 +60,17 @@
 
 .room-entry .room-description {
     font-size: 0.75rem;
-    color: rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.65);
+    color: rgb(var(--yamsa-ink-rgb) / 0.65);
     display: block;
 }
 
 /* Never shrinks and never wraps: a status label has no shorter form, only a hidden one. */
 .room-status-badge {
+    display: inline-flex;
+    align-items: center;
     font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1;
     border-radius: 999px;
     padding: 0.2rem 0.65rem;
     flex: 0 0 auto;
@@ -93,8 +89,12 @@
     letter-spacing: 0.08em;
 }
 
+/* Written out rather than left to the base stylesheet's `hr`: Reboot dimmed every rule to
+   opacity .25, which took this one down to a fortieth of the alpha it asks for. */
 .room-list-divider hr {
-    border-color: rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.15);
+    border: 0;
+    border-top: 1px solid rgb(var(--yamsa-ink-rgb) / 0.15);
+    opacity: 1;
 }
 
 .room-circle {
@@ -102,7 +102,7 @@
     height: 3.25rem;
     border-radius: 50%;
     border: none;
-    background: rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.1);
+    background: rgb(var(--yamsa-ink-rgb) / 0.1);
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.15);
     display: flex;
     align-items: center;
@@ -114,18 +114,18 @@
     min-height: 3.25rem;
 }
 
-.room-circle.selected {
+.room-circle[data-selected] {
     background: linear-gradient(145deg, var(--yamsa-brand-hover), var(--yamsa-brand));
     color: var(--yamsa-on-brand);
     box-shadow: 0 12px 28px rgb(var(--yamsa-brand-rgb), 0.35);
 }
 
-.room-circle.closed {
+.room-circle[data-closed] {
     background: var(--yamsa-danger-soft);
     color: var(--yamsa-danger-text);
 }
 
-.room-circle.closed.selected {
+.room-circle[data-closed][data-selected] {
     background: linear-gradient(145deg, #c84757, #a1293d);
     color: #fff;
     box-shadow: 0 12px 28px rgba(199, 55, 74, 0.35);
@@ -133,7 +133,6 @@
 
 .room-card {
     border-radius: 1.25rem;
-    padding: 0;
 }
 
 .profile-avatar {
@@ -266,9 +265,9 @@
 /* Skeleton Screen (placeholder animation) */
 .skeleton-item {
     background: linear-gradient(90deg,
-        rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.05),
-        rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.12),
-        rgba(var(--bs-body-color-rgb, 31, 35, 42), 0.05));
+        rgb(var(--yamsa-ink-rgb) / 0.05),
+        rgb(var(--yamsa-ink-rgb) / 0.12),
+        rgb(var(--yamsa-ink-rgb) / 0.05));
     background-size: 200% 100%;
     animation: skeleton-loading 1.5s ease-in-out infinite;
     border-radius: 0.5rem;

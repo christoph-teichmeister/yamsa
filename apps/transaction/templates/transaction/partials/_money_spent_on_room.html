@@ -2,10 +2,10 @@
 {% load room_tags i18n core_tags %}
 {% load render_bundle from webpack_loader %}
 {% block tab_content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
-    <div class="tw:flex tw:items-center tw:gap-3">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
+    <div class="flex items-center gap-3">
       {% trans "Back to debts" as back_to_debts_label %}
-      <button class="tw:inline-flex tw:shrink-0 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-3 tw:py-2 tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+      <button class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-xl border border-line-strong bg-transparent px-3 py-2 text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               type="button"
               aria-label="{{ back_to_debts_label }}"
               hx-trigger="click"
@@ -16,38 +16,38 @@
               hx-push-url="true">
         <i class="bi bi-arrow-left" aria-hidden="true"></i>
       </button>
-      <div class="tw:min-w-0">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Room spending overview" %}</p>
-        <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Who paid what" %}</h1>
+      <div class="min-w-0">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Room spending overview" %}</p>
+        <h1 class="mt-1 mb-0 text-xl font-semibold text-ink">{% trans "Who paid what" %}</h1>
       </div>
     </div>
-    <div class="tw:grid tw:grid-cols-1 tw:gap-3 tw:@lg:grid-cols-3">
+    <div class="grid grid-cols-1 gap-3 @lg:grid-cols-3">
       {% for total_money_spent_entry in total_money_spent %}
-        <div class="tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5">
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+        <div class="rounded-2xl border border-line bg-surface p-5">
+          <p class="m-0 text-sm text-ink-muted">
             {% blocktrans trimmed with currency_sign=total_money_spent_entry.currency_sign %}
               Total spent ({{ currency_sign }})
             {% endblocktrans %}
           </p>
-          <p class="tw:mt-1 tw:mb-0 tw:text-2xl tw:font-semibold tw:tabular-nums tw:text-ink">{{ total_money_spent_entry.total_spent|format_with_thousands }}</p>
+          <p class="mt-1 mb-0 text-2xl font-semibold tabular-nums text-ink">{{ total_money_spent_entry.total_spent|format_with_thousands }}</p>
         </div>
       {% empty %}
-        <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-6 tw:text-center tw:@lg:col-span-3">
-          <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "No spending yet" %}</p>
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Add expenses to populate this dashboard." %}</p>
+        <div class="rounded-2xl border border-dashed border-line-strong px-6 py-6 text-center @lg:col-span-3">
+          <p class="m-0 font-semibold text-ink">{% trans "No spending yet" %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Add expenses to populate this dashboard." %}</p>
         </div>
       {% endfor %}
     </div>
-    <div class="tw:grid tw:grid-cols-1 tw:gap-4 tw:@2xl:grid-cols-2">
-      <div class="tw:flex tw:flex-col tw:gap-3 tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5">
-        <div class="tw:flex tw:items-start tw:justify-between tw:gap-3">
-          <div class="tw:min-w-0">
-            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Money spent by members" %}</p>
-            <p class="tw:mt-0.5 tw:mb-0 tw:font-semibold tw:text-ink">{% trans "Who covered the bills" %}</p>
+    <div class="grid grid-cols-1 gap-4 @2xl:grid-cols-2">
+      <div class="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-5">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="m-0 text-sm text-ink-muted">{% trans "Money spent by members" %}</p>
+            <p class="mt-0.5 mb-0 font-semibold text-ink">{% trans "Who covered the bills" %}</p>
           </div>
-          <span class="tw:inline-flex tw:shrink-0 tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-3 tw:py-1.5 tw:text-sm tw:text-brand-text">
+          <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1.5 text-sm text-brand-text">
             <i class="bi bi-graph-up" aria-hidden="true"></i>
-            <span class="tw:tabular-nums">
+            <span class="tabular-nums">
               {% for total_entry in total_money_spent %}
                 {{ total_entry.total_spent|format_with_thousands }}&nbsp;{{ total_entry.currency_sign }}
                 {% if not forloop.last %}&thinsp;/&thinsp;{% endif %}
@@ -58,18 +58,18 @@
           </span>
         </div>
         {% for money_spent in money_spent_per_person_qs %}
-          <div class="tw:flex tw:flex-col tw:gap-1.5">
-            <div class="tw:flex tw:items-center tw:justify-between tw:gap-3">
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-center justify-between gap-3">
               {# .graph-label stays as the hook test_money_spent_on_room_view_avatars.py addresses. #}
-              <p class="graph-label tw:m-0 tw:flex tw:min-w-0 tw:items-center tw:gap-2 tw:font-semibold tw:text-ink">
+              <p class="graph-label m-0 flex min-w-0 items-center gap-2 font-semibold text-ink">
                 {% include "shared_partials/_user_avatar.html" with avatar_url=room_member_avatars|get_item:money_spent.parent_transaction__paid_by_id avatar_name=money_spent.paid_by_name %}
-                <span class="tw:truncate">
+                <span class="truncate">
                   {% autoescape off %}
                     {% parse_user_text money_spent.paid_by_name True %}
                   {% endautoescape %}
                 </span>
               </p>
-              <p class="tw:m-0 tw:shrink-0 tw:font-semibold tw:tabular-nums tw:whitespace-nowrap tw:text-ink">
+              <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap text-ink">
                 {{ money_spent.total_spent_per_person|format_with_thousands }} {{ money_spent.currency_sign }}
               </p>
             </div>
@@ -81,37 +81,37 @@
             {% endfor %}
           </div>
         {% empty %}
-          <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-6 tw:text-center">
-            <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "No payments recorded yet" %}</p>
-            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "As soon as someone logs an expense, their share appears here." %}</p>
+          <div class="rounded-2xl border border-dashed border-line-strong px-6 py-6 text-center">
+            <p class="m-0 font-semibold text-ink">{% trans "No payments recorded yet" %}</p>
+            <p class="m-0 text-sm text-ink-muted">{% trans "As soon as someone logs an expense, their share appears here." %}</p>
           </div>
         {% endfor %}
       </div>
-      <div class="tw:flex tw:flex-col tw:gap-3 tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5">
-        <div class="tw:flex tw:items-start tw:justify-between tw:gap-3">
-          <div class="tw:min-w-0">
-            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Money still owed" %}</p>
-            <p class="tw:mt-0.5 tw:mb-0 tw:font-semibold tw:text-ink">{% trans "Who needs to settle up" %}</p>
+      <div class="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-5">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="m-0 text-sm text-ink-muted">{% trans "Money still owed" %}</p>
+            <p class="mt-0.5 mb-0 font-semibold text-ink">{% trans "Who needs to settle up" %}</p>
           </div>
-          <span class="tw:inline-flex tw:shrink-0 tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-3 tw:py-1.5 tw:text-sm tw:text-brand-text">
+          <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1.5 text-sm text-brand-text">
             <i class="bi bi-cash-coin" aria-hidden="true"></i>
             {% trans "Pending balances" %}
           </span>
         </div>
         {% if open_debts_per_person_qs %}
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Open debt (after optimisation)" %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Open debt (after optimisation)" %}</p>
           {% for debt_row in open_debts_per_person_qs %}
-            <div class="tw:flex tw:flex-col tw:gap-1.5">
-              <div class="tw:flex tw:items-center tw:justify-between tw:gap-3">
-                <p class="graph-label tw:m-0 tw:flex tw:min-w-0 tw:items-center tw:gap-2 tw:font-semibold tw:text-ink">
+            <div class="flex flex-col gap-1.5">
+              <div class="flex items-center justify-between gap-3">
+                <p class="graph-label m-0 flex min-w-0 items-center gap-2 font-semibold text-ink">
                   {% include "shared_partials/_user_avatar.html" with avatar_url=room_member_avatars|get_item:debt_row.debitor_id avatar_name=debt_row.debitor_name %}
-                  <span class="tw:truncate">
+                  <span class="truncate">
                     {% autoescape off %}
                       {% parse_user_text debt_row.debitor_name True %}
                     {% endautoescape %}
                   </span>
                 </p>
-                <p class="tw:m-0 tw:shrink-0 tw:font-semibold tw:tabular-nums tw:whitespace-nowrap tw:text-ink">{{ debt_row.total_open_debt }} {{ debt_row.currency_sign }}</p>
+                <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap text-ink">{{ debt_row.total_open_debt }} {{ debt_row.currency_sign }}</p>
               </div>
               {% with max_val=max_open_debt_per_currency|get_item:debt_row.currency_sign %}
                 {% if max_val %}
@@ -124,26 +124,26 @@
             </div>
           {% endfor %}
         {% else %}
-          <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-6 tw:text-center">
-            <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "Nothing owed right now" %}</p>
-            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "All participants are even for the tracked expenses." %}</p>
+          <div class="rounded-2xl border border-dashed border-line-strong px-6 py-6 text-center">
+            <p class="m-0 font-semibold text-ink">{% trans "Nothing owed right now" %}</p>
+            <p class="m-0 text-sm text-ink-muted">{% trans "All participants are even for the tracked expenses." %}</p>
           </div>
         {% endif %}
         {% if money_covered_for_person_qs %}
-          <div class="tw:mt-1 tw:flex tw:flex-col tw:gap-3 tw:border-t tw:border-line tw:pt-3">
-            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Covered by others (gross)" %}</p>
+          <div class="mt-1 flex flex-col gap-3 border-t border-line pt-3">
+            <p class="m-0 text-sm text-ink-muted">{% trans "Covered by others (gross)" %}</p>
             {% for covered in money_covered_for_person_qs %}
-              <div class="tw:flex tw:flex-col tw:gap-1.5">
-                <div class="tw:flex tw:items-center tw:justify-between tw:gap-3">
-                  <p class="graph-label tw:m-0 tw:flex tw:min-w-0 tw:items-center tw:gap-2 tw:font-semibold tw:text-ink">
+              <div class="flex flex-col gap-1.5">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="graph-label m-0 flex min-w-0 items-center gap-2 font-semibold text-ink">
                     {% include "shared_partials/_user_avatar.html" with avatar_url=room_member_avatars|get_item:covered.paid_for_id avatar_name=covered.paid_for__name %}
-                    <span class="tw:truncate">
+                    <span class="truncate">
                       {% autoescape off %}
                         {% parse_user_text covered.paid_for__name True %}
                       {% endautoescape %}
                     </span>
                   </p>
-                  <p class="tw:m-0 tw:shrink-0 tw:font-semibold tw:tabular-nums tw:whitespace-nowrap tw:text-ink">{{ covered.total_covered_for_person }} {{ covered.currency_sign }}</p>
+                  <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap text-ink">{{ covered.total_covered_for_person }} {{ covered.currency_sign }}</p>
                 </div>
                 {# Scaled against the currency's total spend, so the three groups share one reading. #}
                 {% for total_entry in total_money_spent %}
@@ -163,10 +163,10 @@
          hx-trigger="revealed once"
          hx-target="#spending-trend"
          hx-swap="innerHTML">
-      <div class="tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:px-5 tw:py-8 tw:text-center">
-        <div class="tw:mx-auto tw:mb-2 tw:size-6 tw:animate-spin tw:rounded-full tw:border-2 tw:border-line tw:border-t-brand"
+      <div class="rounded-2xl border border-line bg-surface px-5 py-8 text-center">
+        <div class="mx-auto mb-2 size-6 animate-spin rounded-full border-2 border-line border-t-brand"
              role="status"></div>
-        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Loading spending timeline…" %}</p>
+        <p class="m-0 text-sm text-ink-muted">{% trans "Loading spending timeline…" %}</p>
       </div>
     </div>
   </section>
@@ -205,7 +205,7 @@
             container.innerHTML = ""
 
             if (!series.length) {
-                container.innerHTML = "<p class='text-muted small mb-0'>" + notEnoughDataMessage + "</p>"
+                container.innerHTML = "<p class='m-0 text-sm text-ink-muted'>" + notEnoughDataMessage + "</p>"
                 return
             }
 
@@ -228,7 +228,7 @@
                 if (series.length > 1) {
                     section
                         .append("p")
-                        .attr("class", "trend-series-label tw:mb-1 tw:text-sm tw:text-ink-muted")
+                        .attr("class", "trend-series-label mb-1 text-sm text-ink-muted")
                         .style("color", `rgb(var(${rgbVar}))`)
                         .text(currency)
                 }

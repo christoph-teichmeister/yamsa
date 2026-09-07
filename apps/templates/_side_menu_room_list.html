@@ -1,33 +1,38 @@
 {% load room_tags %}
 {% load i18n %}
+{% comment %}
+The rows stay inline rather than going into a partial of their own: the `room_url` tag binds its
+slug to `room` for this template by file name, and would resolve `current_room` anywhere else.
+{% endcomment %}
 {% if current_user.open_room_qs_for_list %}
   {% include "side_menu_components/room_list_title.html" with title=_("Open") %}
   <section class="room-group">
     {% for room in current_user.open_room_qs_for_list %}
-      <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm{% if current_room and current_room.slug == room.slug %} active{% endif %}"
+      <div class="room-entry"
+           {% if current_room and current_room.slug == room.slug %}data-active{% endif %}
            role="button"
            tabindex="0"
            data-keyboard-click
-           data-bs-dismiss="offcanvas"
-           data-bs-target="#offcanvasNavbar"
+           data-dialog-close
            hx-trigger="click delay:300ms"
            hx-get="{% room_url 'transaction:list' %}"
            hx-target="#body"
            hx-indicator="#body-loading-spinner"
            hx-swap="innerHTML"
            hx-push-url="true">
-        <div class="room-circle{% if current_room and current_room.slug == room.slug %} selected{% endif %}">
+        <div class="room-circle"
+             {% if current_room and current_room.slug == room.slug %}data-selected{% endif %}>
           {{ room.capitalised_initials }}
         </div>
-        <div class="room-entry-text flex-grow-1 text-start">
-          <div class="room-name fw-semibold mb-0">{{ room.name }}</div>
+        <div class="room-entry-text min-w-0 flex-1 text-left">
+          <div class="room-name m-0 font-semibold">{{ room.name }}</div>
           {% if room.description %}
             <small class="room-description">{{ room.description|truncatechars:45 }}</small>
           {% else %}
-            <small class="room-description text-muted">{{ room.status|room_status_label }}</small>
+            <small class="room-description">{{ room.status|room_status_label }}</small>
           {% endif %}
         </div>
-        <span class="badge room-status-badge bg-body-secondary text-body-emphasis">{{ room.status|room_status_label }}</span>
+        <span class="room-status-badge bg-surface-hover text-ink-strong">{{ room.status|room_status_label }}</span>
       </div>
     {% endfor %}
   </section>
@@ -35,57 +40,60 @@
 {% include "side_menu_components/room_list_title.html" with title=_("New") %}
 <section class="room-group">
   {% url 'room:create' as create_url %}
-  {% include "room/partials/_room_create_callout.html" with create_url=create_url dismiss_offcanvas=True %}
-  <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm room-entry-callout{% if request.path == "/import/upload/" %} active{% endif %}"
+  {% include "room/partials/_room_create_row.html" with create_url=create_url dismiss_side_menu=True %}
+  <div class="room-entry room-entry-callout"
+       {% if request.path == "/import/upload/" %}data-active{% endif %}
        role="button"
        tabindex="0"
        data-keyboard-click
-       data-bs-dismiss="offcanvas"
-       data-bs-target="#offcanvasNavbar"
+       data-dialog-close
        hx-trigger="click delay:300ms"
        hx-get="{% url 'importer:upload' %}"
        hx-indicator="#body-loading-spinner"
        hx-target="#body"
        hx-swap="innerHTML"
        hx-push-url="true">
-    <div class="room-circle{% if request.path == "/import/upload/" %} selected{% endif %}">
-      <i class="bi bi-box-arrow-in-down"></i>
+    <div class="room-circle"
+         {% if request.path == "/import/upload/" %}data-selected{% endif %}>
+      <i class="bi bi-box-arrow-in-down" aria-hidden="true"></i>
     </div>
-    <div class="room-entry-text flex-grow-1 text-start">
-      <div class="room-name fw-semibold mb-0">{% trans "Import" %}</div>
-      <small class="room-description text-muted">{% trans "Bring your data from another app" %}</small>
+    <div class="room-entry-text min-w-0 flex-1 text-left">
+      <div class="room-name m-0 font-semibold">{% trans "Import" %}</div>
+      <small class="room-description">{% trans "Bring your data from another app" %}</small>
     </div>
-    <span class="badge room-status-badge bg-body-secondary text-body-emphasis">{% trans "New" %}</span>
+    <span class="room-status-badge bg-surface-hover text-ink-strong">{% trans "New" %}</span>
   </div>
 </section>
 {% if current_user.closed_room_qs_for_list %}
   {% include "side_menu_components/room_list_title.html" with title=_("Closed") %}
   <section class="room-group">
     {% for room in current_user.closed_room_qs_for_list %}
-      <div class="room-entry d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm{% if current_room and current_room.slug == room.slug %} active{% endif %}"
+      <div class="room-entry"
+           {% if current_room and current_room.slug == room.slug %}data-active{% endif %}
            role="button"
            tabindex="0"
            data-keyboard-click
-           data-bs-dismiss="offcanvas"
-           data-bs-target="#offcanvasNavbar"
+           data-dialog-close
            hx-trigger="click delay:300ms"
            hx-get="{% room_url 'room:detail' %}"
            hx-target="#body"
            hx-indicator="#body-loading-spinner"
            hx-swap="innerHTML"
            hx-push-url="true">
-        <div class="room-circle closed{% if current_room and current_room.slug == room.slug %} selected{% endif %}">
+        <div class="room-circle"
+             data-closed
+             {% if current_room and current_room.slug == room.slug %}data-selected{% endif %}>
           {{ room.capitalised_initials }}
         </div>
-        <div class="room-entry-text flex-grow-1 text-start">
-          <div class="room-name fw-semibold mb-0">{{ room.name }}</div>
+        <div class="room-entry-text min-w-0 flex-1 text-left">
+          <div class="room-name m-0 font-semibold">{{ room.name }}</div>
           {% if room.description %}
             <small class="room-description">{{ room.description|truncatechars:45 }}</small>
           {% else %}
-            <small class="room-description text-muted">{{ room.status|room_status_label }}</small>
+            <small class="room-description">{{ room.status|room_status_label }}</small>
           {% endif %}
         </div>
-        <span class="badge room-status-badge bg-danger-subtle text-danger-emphasis">{{ room.status|room_status_label }}</span>
+        <span class="room-status-badge bg-danger-soft text-danger-text">{{ room.status|room_status_label }}</span>
       </div>
     {% endfor %}
   </section>
@@ -94,30 +102,32 @@
   {% include "side_menu_components/room_list_title.html" with title=_("Other") %}
   <section class="room-group">
     {% for room in current_user.other_rooms_qs_for_list %}
-      <div class="room-entry room-entry-ghost fst-italic text-muted d-flex align-items-center gap-3 px-3 py-2 rounded-4 shadow-sm{% if current_room and current_room.slug == room.slug %} active{% endif %}"
+      <div class="room-entry room-entry-ghost text-ink-muted"
+           {% if current_room and current_room.slug == room.slug %}data-active{% endif %}
            role="button"
            tabindex="0"
            data-keyboard-click
-           data-bs-dismiss="offcanvas"
-           data-bs-target="#offcanvasNavbar"
+           data-dialog-close
            hx-trigger="click delay:300ms"
            {% if room.status == ROOM_STATUS_CLOSED %} hx-get="{% room_url 'room:detail' %}" {% else %} hx-get="{% room_url 'transaction:list' %}" {% endif %}
            hx-target="#body"
            hx-indicator="#body-loading-spinner"
            hx-swap="innerHTML"
            hx-push-url="true">
-        <div class="room-circle{% if room.status == ROOM_STATUS_CLOSED %} closed{% endif %}{% if current_room and current_room.slug == room.slug %} selected{% endif %}">
+        <div class="room-circle"
+             {% if room.status == ROOM_STATUS_CLOSED %}data-closed{% endif %}
+             {% if current_room and current_room.slug == room.slug %}data-selected{% endif %}>
           {{ room.capitalised_initials }}
         </div>
-        <div class="room-entry-text flex-grow-1 text-start">
-          <div class="room-name fw-semibold mb-0">{{ room.name }}</div>
+        <div class="room-entry-text min-w-0 flex-1 text-left">
+          <div class="room-name m-0 font-semibold">{{ room.name }}</div>
           {% if room.description %}
             <small class="room-description">{{ room.description|truncatechars:45 }}</small>
           {% else %}
-            <small class="room-description text-muted">{{ room.status|room_status_label }}</small>
+            <small class="room-description">{{ room.status|room_status_label }}</small>
           {% endif %}
         </div>
-        <span class="badge room-status-badge bg-body-secondary text-body-emphasis">{{ room.status|room_status_label }}</span>
+        <span class="room-status-badge bg-surface-hover text-ink-strong">{{ room.status|room_status_label }}</span>
       </div>
     {% endfor %}
   </section>

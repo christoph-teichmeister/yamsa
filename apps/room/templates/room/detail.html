@@ -1,9 +1,8 @@
 {% extends "room/dashboard.html" %}
 {% load render_bundle from webpack_loader %}
 {% block tab_content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% include "room/partials/_room_sheet.html" %}
   </section>
   {% render_bundle "sheet" attrs="defer" %}
-  {% render_bundle "dialog" attrs="defer" %}
 {% endblock tab_content %}

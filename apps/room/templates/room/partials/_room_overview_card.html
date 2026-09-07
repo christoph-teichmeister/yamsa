@@ -9,7 +9,7 @@ address; the layout is in the utilities.
 The card is its own container: how much of the meta line fits depends on the card, not on the
 viewport - the same card is full width on a phone and half a column wide on a desktop.
 {% endcomment %}
-<button class="room-overview-card tw:@container tw:flex tw:h-full tw:w-full tw:cursor-pointer tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken tw:px-3.5 tw:py-3 tw:text-left tw:transition tw:hover:-translate-y-0.5 tw:hover:border-brand/55 tw:hover:shadow-card-hover tw:focus-visible:-translate-y-0.5 tw:focus-visible:border-brand/55 tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:motion-reduce:transition-none tw:motion-reduce:hover:translate-y-0 tw:motion-reduce:focus-visible:translate-y-0{% if entry.is_closed %} tw:opacity-85{% endif %}{% if not entry.user_is_in_room %} tw:italic{% endif %}"
+<button class="room-overview-card @container flex h-full w-full cursor-pointer rounded-2xl border border-line bg-surface-sunken px-3.5 py-3 text-left transition hover:-translate-y-0.5 hover:border-brand/55 hover:shadow-card-hover focus-visible:-translate-y-0.5 focus-visible:border-brand/55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:focus-visible:translate-y-0{% if entry.is_closed %} opacity-85{% endif %}{% if not entry.user_is_in_room %} italic{% endif %}"
         type="button"
         aria-label="{{ entry.name }}"
         hx-get="{{ entry.target_url }}"
@@ -18,34 +18,34 @@ viewport - the same card is full width on a phone and half a column wide on a de
         hx-swap="morph:innerHTML"
         hx-push-url="true">
   {% if tile %}
-    <span class="room-overview-card-tile tw:flex tw:min-w-0 tw:flex-1 tw:flex-col tw:gap-1">
-      <span class="tw:mb-1 tw:flex tw:items-center tw:justify-between tw:gap-2">
+    <span class="room-overview-card-tile flex min-w-0 flex-1 flex-col gap-1">
+      <span class="mb-1 flex items-center justify-between gap-2">
         {% include "room/partials/_room_overview_circle.html" with entry=entry %}
         {% if entry.last_transaction_at %}
-          <span class="room-overview-activity tw:shrink-0 tw:text-xs tw:tabular-nums tw:text-ink-subtle"
+          <span class="room-overview-activity shrink-0 text-xs tabular-nums text-ink-subtle"
                 title="{{ entry.last_transaction_at }}">{{ entry.last_transaction_at|room_last_used }}</span>
         {% endif %}
       </span>
       {# At most two lines: the name gets the full tile, but a long one must not outgrow the tile beside it. #}
-      <span class="room-overview-name tw:line-clamp-2 tw:font-semibold tw:[overflow-wrap:anywhere] tw:text-ink">{{ entry.name }}</span>
+      <span class="room-overview-name line-clamp-2 font-semibold [overflow-wrap:anywhere] text-ink">{{ entry.name }}</span>
       {# A closed room is settled and done with; its balance would only be noise on the tile. #}
       {% if entry.meta_text %}
-        <span class="room-overview-meta tw:block tw:truncate tw:text-sm tw:text-ink-subtle">{{ entry.meta_text }}</span>
+        <span class="room-overview-meta block truncate text-sm text-ink-subtle">{{ entry.meta_text }}</span>
       {% endif %}
       {% if not entry.user_is_in_room %}
         {# Pushed to the bottom so the badges of two tiles in a row line up despite different name heights. #}
-        <span class="room-overview-tile-status tw:mt-auto tw:flex tw:pt-1.5">
+        <span class="room-overview-tile-status mt-auto flex pt-1.5">
           {% include "room/partials/_room_overview_status_badge.html" with entry=entry %}
         </span>
       {% endif %}
     </span>
   {% else %}
-    <span class="tw:flex tw:min-w-0 tw:flex-1 tw:items-center tw:gap-3">
+    <span class="flex min-w-0 flex-1 items-center gap-3">
       {% include "room/partials/_room_overview_circle.html" with entry=entry %}
-      <span class="tw:min-w-0 tw:flex-1">
-        <span class="room-overview-name tw:block tw:truncate tw:font-semibold tw:text-ink">{{ entry.name }}</span>
+      <span class="min-w-0 flex-1">
+        <span class="room-overview-name block truncate font-semibold text-ink">{{ entry.name }}</span>
         {% if entry.meta_text or entry.last_transaction_at %}
-          <span class="room-overview-meta tw:flex tw:min-w-0 tw:items-baseline tw:gap-2 tw:text-sm tw:whitespace-nowrap tw:text-ink-subtle">
+          <span class="room-overview-meta flex min-w-0 items-baseline gap-2 text-sm whitespace-nowrap text-ink-subtle">
             {% comment %}
               The description shrinks all the way to nothing on a narrow card - it is the part of
               this line a room can be recognised without, and below 20rem a stub like "K…" says
@@ -53,11 +53,11 @@ viewport - the same card is full width on a phone and half a column wide on a de
               dangle in front of the time, so the gap is the only separator.
             {% endcomment %}
             {% if entry.meta_text %}
-              <span class="room-overview-meta-text tw:min-w-0 tw:truncate tw:@max-[20rem]:hidden">{{ entry.meta_text }}</span>
+              <span class="room-overview-meta-text min-w-0 truncate @max-[20rem]:hidden">{{ entry.meta_text }}</span>
             {% endif %}
             {# Never shrinks: it explains why the row sits where it sits in the list. #}
             {% if entry.last_transaction_at %}
-              <span class="room-overview-activity tw:shrink-0 tw:text-xs tw:tabular-nums"
+              <span class="room-overview-activity shrink-0 text-xs tabular-nums"
                     title="{{ entry.last_transaction_at }}">{{ entry.last_transaction_at|room_last_used }}</span>
             {% endif %}
           </span>

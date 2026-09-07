@@ -19,7 +19,7 @@ module.exports = {
     sheet: path.resolve(staticJsPath, "sheet.js"),
     dialog: path.resolve(staticJsPath, "dialog.js"),
     "password-visibility": path.resolve(staticJsPath, "password-visibility.js"),
-    styles: path.resolve(staticJsPath, "styles.js"),
+    icons: path.resolve(staticJsPath, "icons.js"),
     tailwind: path.resolve(staticSrcPath, "tailwind.js"),
     htmx: path.resolve(staticJsPath, "htmx.js"),
   },

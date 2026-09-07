@@ -8,22 +8,22 @@ has no profile to open, so only a member's card is interactive - and only then d
 pointer, the lift and data-keyboard-click.
 {% endcomment %}
 {% trans "Remove from room" as remove_from_room_label %}
-<article class="tw:flex tw:h-full tw:gap-3 tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken tw:p-5{% if not user.is_guest %} tw:cursor-pointer tw:transition tw:hover:-translate-y-1 tw:hover:border-brand/35 tw:hover:shadow-card-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:motion-reduce:transition-none tw:motion-reduce:hover:translate-y-0{% endif %}"
+<article class="flex h-full gap-3 rounded-2xl border border-line bg-surface-sunken p-5{% if not user.is_guest %} cursor-pointer transition hover:-translate-y-1 hover:border-brand/35 hover:shadow-card-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand motion-reduce:transition-none motion-reduce:hover:translate-y-0{% endif %}"
          {% if not user.is_guest %} tabindex="0" role="button" data-keyboard-click="true" aria-label="{{ user.name }}" hx-trigger="click" hx-get="{% url 'account:detail' pk=user.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" hx-sync=".people-remove-action:abort" {% endif %}>
   {% include "shared_partials/_user_avatar.html" with avatar_url=user.avatar_url avatar_name=user.name|default:user.email avatar_fallback_url=user.profile_picture_fallback_url avatar_class="avatar-lg avatar-square" %}
-  <div class="tw:flex tw:min-w-0 tw:flex-1 tw:flex-col tw:gap-2">
-    <div class="tw:flex tw:min-w-0 tw:items-start tw:justify-between tw:gap-2">
-      <div class="tw:min-w-0">
-        <p class="tw:mt-0 tw:mb-1.5 tw:font-semibold tw:break-words tw:text-ink">{{ user.name }}</p>
-        <div class="tw:flex tw:flex-wrap tw:gap-2">
-          <span class="tw:inline-flex tw:items-center tw:gap-1 tw:rounded-full tw:px-2.5 tw:py-1 tw:text-[0.7rem] tw:font-semibold tw:tracking-[0.08em] tw:uppercase {% if user.is_guest %}tw:bg-warning-soft tw:text-warning-text{% else %}tw:bg-brand-soft tw:text-brand-text{% endif %}">
+  <div class="flex min-w-0 flex-1 flex-col gap-2">
+    <div class="flex min-w-0 items-start justify-between gap-2">
+      <div class="min-w-0">
+        <p class="mt-0 mb-1.5 font-semibold break-words text-ink">{{ user.name }}</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase {% if user.is_guest %}bg-warning-soft text-warning-text{% else %}bg-brand-soft text-brand-text{% endif %}">
             {% if user.is_guest %}
               {% trans "Guest" %}
             {% else %}
               {% trans "Member" %}
             {% endif %}
           </span>
-          <span class="tw:inline-flex tw:items-center tw:gap-1 tw:rounded-full tw:bg-surface-hover tw:px-2.5 tw:py-1 tw:text-[0.7rem] tw:font-semibold tw:tracking-[0.08em] tw:text-ink-muted tw:uppercase">
+          <span class="inline-flex items-center gap-1 rounded-full bg-surface-hover px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] text-ink-muted uppercase">
             {% if user.user_has_seen_this_room %}
               <i class="bi bi-check2" aria-hidden="true"></i>
               {% trans "Seen room" %}
@@ -39,7 +39,7 @@ pointer, the lift and data-keyboard-click.
       {% else %}
         {% trans "Are you sure you wish to remove this user from this room?" as remove_confirm_message %}
       {% endif %}
-      <button class="people-remove-action tw:shrink-0 tw:cursor-pointer tw:rounded-lg tw:border-0 tw:bg-transparent tw:p-1 tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+      <button class="people-remove-action shrink-0 cursor-pointer rounded-lg border-0 bg-transparent p-1 text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               type="button"
               title="{{ remove_from_room_label }}"
               aria-label="{{ remove_from_room_label }}"
@@ -53,7 +53,7 @@ pointer, the lift and data-keyboard-click.
         <i class="bi bi-x-octagon" aria-hidden="true"></i>
       </button>
     </div>
-    <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+    <p class="m-0 text-sm text-ink-muted">
       {% if user.is_guest %}
         {% trans "Guest access with limited features" %}
       {% else %}
@@ -61,7 +61,7 @@ pointer, the lift and data-keyboard-click.
       {% endif %}
     </p>
     {% if user.is_guest %}
-      <div class="tw:text-sm tw:text-ink-subtle" id="invitation-email-div">
+      <div class="text-sm text-ink-subtle" id="invitation-email-div">
         {% if request.user.id != user.id %}
           {% if user.invitation_email_can_be_sent %}
             {% include "shared_partials/invitation_email_not_yet_sent.html" %}
@@ -71,7 +71,7 @@ pointer, the lift and data-keyboard-click.
         {% endif %}
       </div>
     {% else %}
-      <p class="tw:m-0 tw:inline-flex tw:items-center tw:gap-1.5 tw:text-sm tw:text-ink-subtle">
+      <p class="m-0 inline-flex items-center gap-1.5 text-sm text-ink-subtle">
         <i class="bi bi-person-check" aria-hidden="true"></i>
         {% trans "Joined as a full member of this room." %}
       </p>

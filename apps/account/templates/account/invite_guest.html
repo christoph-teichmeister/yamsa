@@ -1,9 +1,9 @@
 {% extends "room/dashboard.html" %}
 {% load i18n %}
 {% block tab_content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {# `action` next to `hx-post` so the form still submits without the bundle. #}
-    <form class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+    <form class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card"
           method="post"
           action="{% room_url 'account:guest-send-invitation-email' pk=user.id %}"
           hx-post="{% room_url 'account:guest-send-invitation-email' pk=user.id %}"
@@ -12,30 +12,28 @@
           hx-swap="morph:innerHTML"
           hx-push-url="true">
       {% csrf_token %}
-      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Invitation" %}</p>
-        <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">
+      <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Invitation" %}</p>
+        <h1 class="mt-1 mb-0 text-xl font-semibold break-words text-ink">
           {% blocktrans with invitee=user.name room=current_room.name trimmed %}
             Invite {{ invitee }} to "{{ room }}"
           {% endblocktrans %}
         </h1>
       </div>
-      <div class="tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
-        <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
-               for="email">{{ form.fields.email.label }}</label>
+      <div class="border-t border-line px-5 py-5 @md:px-6">
+        <label class="mb-1.5 block text-sm font-semibold text-ink" for="email">{{ form.fields.email.label }}</label>
         <input id="email"
-               class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+               class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                type="email"
                name="email"
                autocomplete="email"
                required />
         {% for error_message in form.errors.email.data %}
-          <p id="emailError"
-             class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+          <p id="emailError" class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
         {% endfor %}
       </div>
-      <div class="tw:flex tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:justify-end tw:@md:px-6">
-        <button class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:@md:w-auto"
+      <div class="flex border-t border-line px-5 py-4 @md:justify-end @md:px-6">
+        <button class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 @md:w-auto"
                 type="submit">
           <i class="bi bi-envelope" aria-hidden="true"></i>
           {% trans "Send invite" %}

@@ -12,12 +12,12 @@
     error_note            optional second, quieter line
     error_action_template optional template rendered under the card
 {% endcomment %}
-<section class="tw:@container tw:mx-auto tw:flex tw:min-h-[60vh] tw:w-full tw:max-w-3xl tw:flex-col tw:items-center tw:justify-center tw:gap-4">
-  <div class="tw:w-full tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:px-6 tw:py-10 tw:text-center tw:shadow-card">
-    <p class="tw:m-0 tw:text-5xl tw:leading-none" aria-hidden="true">{{ error_emoji }}</p>
-    <h1 class="tw:mt-4 tw:mb-0 tw:text-xl tw:font-semibold tw:text-ink">{{ error_headline }}</h1>
-    {% if error_hint %}<p class="tw:mt-2 tw:mb-0 tw:text-ink-muted">{{ error_hint }}</p>{% endif %}
-    {% if error_note %}<p class="tw:mt-1 tw:mb-0 tw:text-sm tw:text-ink-subtle">{{ error_note }}</p>{% endif %}
+<section class="@container mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col items-center justify-center gap-4">
+  <div class="w-full rounded-3xl border border-line bg-surface px-6 py-10 text-center shadow-card">
+    <p class="m-0 text-5xl leading-none" aria-hidden="true">{{ error_emoji }}</p>
+    <h1 class="mt-4 mb-0 text-xl font-semibold text-ink">{{ error_headline }}</h1>
+    {% if error_hint %}<p class="mt-2 mb-0 text-ink-muted">{{ error_hint }}</p>{% endif %}
+    {% if error_note %}<p class="mt-1 mb-0 text-sm text-ink-subtle">{{ error_note }}</p>{% endif %}
   </div>
   {% if error_action_template %}
     {% include error_action_template %}

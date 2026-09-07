@@ -2,7 +2,7 @@
 {% load room_tags i18n %}
 {% load render_bundle from webpack_loader %}
 {% block tab_content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     <style nonce="{{ csp_nonce }}">
       /* The swatch colour is data, painted per row by the chart script; the pie's focus ring is
          on a <path> d3 generates, which no utility can reach from here. */
@@ -28,9 +28,9 @@
       grow-item centres it in the *leftover* space, so the title's midpoint shifts right by half
       the back button.
     {% endcomment %}
-    <div class="tw:grid tw:grid-cols-[1fr_auto_1fr] tw:items-center tw:gap-3">
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
       {% trans "Back to transactions" as back_to_transactions_label %}
-      <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:justify-self-start tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-3 tw:py-2 tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+      <button class="inline-flex cursor-pointer items-center justify-center justify-self-start rounded-xl border border-line-strong bg-transparent px-3 py-2 text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               type="button"
               aria-label="{{ back_to_transactions_label }}"
               hx-get="{% room_url 'transaction:list' %}#transaction-section"
@@ -40,45 +40,45 @@
               hx-push-url="true">
         <i class="bi bi-arrow-left" aria-hidden="true"></i>
       </button>
-      <div class="tw:justify-self-center tw:text-center">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Category breakdown" %}</p>
-        <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:text-ink">{% trans "All recorded spend" %}</h1>
-        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+      <div class="justify-self-center text-center">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Category breakdown" %}</p>
+        <h1 class="mt-1 mb-1 text-xl font-semibold text-ink">{% trans "All recorded spend" %}</h1>
+        <p class="m-0 text-sm text-ink-muted">
           {% blocktrans with period=category_breakdown_period %}Showing {{ period }}.{% endblocktrans %}
         </p>
       </div>
     </div>
     {% if category_breakdown_by_currency %}
       {% for breakdown in category_breakdown_by_currency %}
-        <div class="tw:@container tw:flex tw:flex-col tw:gap-4 tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5">
-          <div class="tw:flex tw:flex-wrap tw:items-start tw:justify-between tw:gap-3">
-            <div class="tw:min-w-0">
-              <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Currency breakdown" %}</p>
-              <p class="tw:mt-1 tw:mb-0 tw:font-semibold tw:text-ink">
+        <div class="@container flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Currency breakdown" %}</p>
+              <p class="mt-1 mb-0 font-semibold text-ink">
                 {{ breakdown.currency.name }}
-                <span class="tw:ml-2 tw:text-sm tw:font-normal tw:text-ink-subtle tw:uppercase">{{ breakdown.currency.code }}</span>
+                <span class="ml-2 text-sm font-normal text-ink-subtle uppercase">{{ breakdown.currency.code }}</span>
               </p>
-              <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{{ breakdown.currency.sign }}</p>
+              <p class="m-0 text-sm text-ink-muted">{{ breakdown.currency.sign }}</p>
             </div>
-            <span class="tw:shrink-0 tw:text-sm tw:text-ink-muted">
+            <span class="shrink-0 text-sm text-ink-muted">
               {% blocktrans count category_count=breakdown.categories|length %}{{ category_count }} category{% plural %}{{ category_count }} categories{% endblocktrans %}
             </span>
           </div>
-          <div class="tw:grid tw:grid-cols-1 tw:gap-4 tw:@2xl:grid-cols-[7fr_5fr]">
-            <div class="tw:flex tw:items-center tw:justify-center"
+          <div class="grid grid-cols-1 gap-4 @2xl:grid-cols-[7fr_5fr]">
+            <div class="flex items-center justify-center"
                  id="{{ breakdown.chart_container_id }}"
                  data-transaction-category-chart
                  data-transaction-category-chart-dataset-id="{{ breakdown.chart_data_id }}"></div>
             {{ breakdown.chart_data|json_script:breakdown.chart_data_id }}
-            <div class="tw:min-w-0">
-              <div class="tw:mb-1 tw:flex tw:items-center tw:justify-between tw:gap-2">
-                <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "Legend" %}</p>
-                <span class="tw:text-sm tw:text-ink-muted">
+            <div class="min-w-0">
+              <div class="mb-1 flex items-center justify-between gap-2">
+                <p class="m-0 font-semibold text-ink">{% trans "Legend" %}</p>
+                <span class="text-sm text-ink-muted">
                   {% blocktrans count category_count=breakdown.categories|length %}{{ category_count }} category{% plural %}{{ category_count }} categories{% endblocktrans %}
                 </span>
               </div>
-              <p class="tw:mt-0 tw:mb-3 tw:text-sm tw:text-ink-muted">{% trans "Tap a category to see its transactions." %}</p>
-              <div class="tw:divide-y tw:divide-line" data-category-legend>
+              <p class="mt-0 mb-3 text-sm text-ink-muted">{% trans "Tap a category to see its transactions." %}</p>
+              <div class="divide-y divide-line" data-category-legend>
                 {% for category in breakdown.categories %}
                   {% blocktrans asvar show_category_transactions_label with category_name=category.name %}Show transactions for {{ category_name }}{% endblocktrans %}
                   {% comment %}
@@ -86,7 +86,7 @@
                     neither a keyup trigger nor hx-on - both of which htmx compiles with new Function()
                     and the project's CSP (script-src without unsafe-eval) refuses to run.
                   {% endcomment %}
-                  <a class="tw:flex tw:items-center tw:justify-between tw:gap-2 tw:py-2 tw:text-inherit tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+                  <a class="flex items-center justify-between gap-2 py-2 text-inherit no-underline transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
                      data-category-legend-item
                      data-category-slug="{{ category.slug }}"
                      title="{{ show_category_transactions_label }}"
@@ -96,20 +96,20 @@
                      hx-indicator="#body-loading-spinner"
                      hx-swap="morph:innerHTML"
                      hx-push-url="true">
-                    <span class="tw:flex tw:min-w-0 tw:items-center tw:gap-3">
-                      <span class="category-swatch tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:text-white"
+                    <span class="flex min-w-0 items-center gap-3">
+                      <span class="category-swatch flex size-9 shrink-0 items-center justify-center rounded-full text-white"
                             data-category-color="{{ category.color|default:'' }}"
                             aria-hidden="true">{{ category.emoji }}</span>
-                      <span class="tw:min-w-0">
-                        <span class="tw:block tw:truncate tw:font-semibold tw:text-ink">{{ category.name }}</span>
-                        <span class="tw:block tw:truncate tw:text-sm tw:text-ink-muted"
+                      <span class="min-w-0">
+                        <span class="block truncate font-semibold text-ink">{{ category.name }}</span>
+                        <span class="block truncate text-sm text-ink-muted"
                               data-category-slug-label>{{ category.slug|title }}</span>
                       </span>
                     </span>
-                    <span class="tw:flex tw:shrink-0 tw:items-center tw:gap-2">
-                      <span class="tw:font-semibold tw:tabular-nums tw:whitespace-nowrap tw:text-ink"
+                    <span class="flex shrink-0 items-center gap-2">
+                      <span class="font-semibold tabular-nums whitespace-nowrap text-ink"
                             data-category-amount>{{ category.total_amount|format_with_thousands }}{{ breakdown.currency.sign }}</span>
-                      <i class="bi bi-chevron-right tw:text-ink-subtle" aria-hidden="true"></i>
+                      <i class="bi bi-chevron-right text-ink-subtle" aria-hidden="true"></i>
                     </span>
                   </a>
                 {% endfor %}
@@ -119,8 +119,8 @@
         </div>
       {% endfor %}
     {% else %}
-      <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-8 tw:text-center">
-        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+      <div class="rounded-2xl border border-dashed border-line-strong px-6 py-8 text-center">
+        <p class="m-0 text-sm text-ink-muted">
           {% trans "No tracked expenses yet. Add a transaction to populate the breakdown." %}
         </p>
       </div>
@@ -179,7 +179,7 @@
             const renderSingleChart = (container, dataset) => {
                 container.innerHTML = "";
                 if (!dataset.length) {
-                    container.innerHTML = "<p class='text-muted small mb-0'>" + emptyBreakdownMessage + "</p>";
+                    container.innerHTML = "<p class='m-0 text-sm text-ink-muted'>" + emptyBreakdownMessage + "</p>";
                     return;
                 }
 

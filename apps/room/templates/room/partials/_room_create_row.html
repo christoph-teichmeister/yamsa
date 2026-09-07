@@ -1,24 +1,22 @@
 {% load i18n %}
 {% comment %}
-  The "new room" affordance of the overview, in the overview's own design language.
-
-  Deliberately not room/partials/_room_create_callout.html: that one is a row of the side menu's
-  still-Bootstrap room list and takes its look from .room-entry there. Once the side menu is
-  migrated the two collapse back into one partial.
+  The one "new room" affordance, in the overview and in the side menu's room list. The menu passes
+  dismiss_side_menu so the panel slides shut before htmx swaps the page underneath it.
 {% endcomment %}
-<button class="tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:gap-3 tw:rounded-2xl tw:border tw:border-dashed tw:border-brand/45 tw:bg-transparent tw:px-3.5 tw:py-3 tw:text-left tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+<button class="flex w-full cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-brand/45 bg-transparent px-3.5 py-3 text-left transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
         type="button"
+        {% if dismiss_side_menu %}data-dialog-close hx-trigger="click delay:300ms"{% endif %}
         hx-get="{{ create_url }}"
         hx-target="#body"
         hx-indicator="#body-loading-spinner"
         hx-swap="morph:innerHTML"
         hx-push-url="true">
-  <span class="tw:flex tw:size-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-brand-soft tw:text-lg tw:font-semibold tw:text-brand-text"
+  <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-lg font-semibold text-brand-text"
         aria-hidden="true">+</span>
-  <span class="tw:min-w-0 tw:flex-1">
-    <span class="tw:block tw:truncate tw:font-semibold tw:text-ink">{% trans "New room" %}</span>
-    <span class="tw:block tw:truncate tw:text-sm tw:text-ink-subtle">{% trans "Start a new group with friends" %}</span>
+  <span class="min-w-0 flex-1">
+    <span class="block truncate font-semibold text-ink">{% trans "New room" %}</span>
+    <span class="block truncate text-sm text-ink-subtle">{% trans "Start a new group with friends" %}</span>
   </span>
-  <i class="bi bi-chevron-right tw:shrink-0 tw:text-ink-subtle"
+  <i class="bi bi-chevron-right shrink-0 text-ink-subtle"
      aria-hidden="true"></i>
 </button>

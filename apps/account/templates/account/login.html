@@ -3,9 +3,9 @@
 {% load render_bundle from webpack_loader %}
 {% block auth_hero %}
   <div>
-    <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-white/70 tw:uppercase">{% trans "Welcome back" %}</p>
-    <h2 class="tw:mt-2 tw:mb-3 tw:text-xl tw:font-semibold tw:text-white">{% trans "Keep your shared finances moving" %}</h2>
-    <p class="tw:m-0 tw:text-sm tw:text-white/70">
+    <p class="m-0 text-xs font-semibold tracking-wider text-white/70 uppercase">{% trans "Welcome back" %}</p>
+    <h2 class="mt-2 mb-3 text-xl font-semibold text-white">{% trans "Keep your shared finances moving" %}</h2>
+    <p class="m-0 text-sm text-white/70">
       {% blocktrans %}Stay in the flow: avoid surprising logouts and finish your next journal in one session.{% endblocktrans %}
     </p>
   </div>
@@ -15,7 +15,7 @@
 {% endblock auth_hero %}
 {% block auth_form %}
   {# `action` next to `hx-post` so the form still submits without the bundle. #}
-  <form class="tw:flex tw:flex-col tw:gap-4"
+  <form class="flex flex-col gap-4"
         method="post"
         action="{% url 'account:login' %}"
         hx-post="{% url 'account:login' %}"
@@ -25,23 +25,22 @@
         hx-push-url="true">
     {% csrf_token %}
     <div>
-      <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Secure login" %}</p>
-      <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Login" %}</h1>
+      <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Secure login" %}</p>
+      <h1 class="mt-1 mb-0 text-xl font-semibold text-ink">{% trans "Login" %}</h1>
     </div>
     {% if errors and errors.auth_failed %}
       {# The id is the hook: role="alert" alone is ambiguous, the shell's toast carries one too. #}
       <div id="login-error"
-           class="tw:rounded-2xl tw:border tw:border-danger-text/40 tw:bg-danger-soft tw:px-4 tw:py-3"
+           class="rounded-2xl border border-danger-text/40 bg-danger-soft px-4 py-3"
            role="alert">
-        <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ errors.auth_failed }}</p>
+        <p class="m-0 text-sm text-danger-text">{{ errors.auth_failed }}</p>
       </div>
     {% endif %}
     {# Django's own ids: e2e/pages/login_page.py fills #id_email and #id_password. #}
     <div>
-      <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
-             for="id_email">{% trans "Email address" %}</label>
+      <label class="mb-1.5 block text-sm font-semibold text-ink" for="id_email">{% trans "Email address" %}</label>
       <input id="id_email"
-             class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+             class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
              type="email"
              name="email"
              value="{{ form.email.value|default_if_none:'' }}"
@@ -50,26 +49,26 @@
              autofocus
              required>
       {% for error in form.email.errors %}
-        <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error }}</p>
+        <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error }}</p>
       {% endfor %}
     </div>
     {% trans "Password" as password_label %}
     {% include "account/partials/_password_field.html" with field_id="id_password" field_name="password" field_label=password_label field_errors=form.errors.password field_autocomplete="current-password" %}
-    <div class="tw:flex tw:flex-col tw:gap-3 tw:@lg:flex-row tw:@lg:items-start tw:@lg:justify-between">
-      <div class="tw:min-w-0">
-        <label class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-2 tw:text-sm tw:font-semibold tw:text-ink"
+    <div class="flex flex-col gap-3 @lg:flex-row @lg:items-start @lg:justify-between">
+      <div class="min-w-0">
+        <label class="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink"
                for="rememberMe">
           <input id="rememberMe"
-                 class="tw:size-4 tw:shrink-0 tw:cursor-pointer tw:accent-brand"
+                 class="size-4 shrink-0 cursor-pointer accent-brand"
                  type="checkbox"
                  name="remember_me">
           {% trans "Stay signed in for 30 days" %}
         </label>
-        <p class="tw:mt-1 tw:mb-0 tw:text-sm tw:text-ink-muted">
+        <p class="mt-1 mb-0 text-sm text-ink-muted">
           {% blocktrans %}Your session stays active as long as you keep using the app.{% endblocktrans %}
         </p>
       </div>
-      <a class="tw:shrink-0 tw:text-sm tw:font-semibold tw:text-brand-text tw:no-underline tw:transition tw:hover:text-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+      <a class="shrink-0 text-sm font-semibold text-brand-text no-underline transition hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
          href="{% url 'account:forgot-password' %}"
          hx-get="{% url 'account:forgot-password' %}"
          hx-target="#body"
@@ -80,21 +79,21 @@
     <div>
       <input type="hidden" name="passkeys" id="passkeys" value="">
       <button id="login-submit-button"
-              class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+              class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
               type="submit">{% trans "Log in" %}</button>
-      <div class="tw:my-4 tw:flex tw:items-center tw:gap-3">
-        <span class="tw:h-px tw:flex-1 tw:bg-line"></span>
-        <span class="tw:text-sm tw:text-ink-subtle">{% trans "or" %}</span>
-        <span class="tw:h-px tw:flex-1 tw:bg-line"></span>
+      <div class="my-4 flex items-center gap-3">
+        <span class="h-px flex-1 bg-line"></span>
+        <span class="text-sm text-ink-subtle">{% trans "or" %}</span>
+        <span class="h-px flex-1 bg-line"></span>
       </div>
-      {# The `hidden` attribute, not tw:hidden: passkey-login.js reveals this by clearing it. #}
+      {# The `hidden` attribute, not hidden: passkey-login.js reveals this by clearing it. #}
       <p id="passkey-login-error"
-         class="tw:mt-0 tw:mb-2 tw:text-sm tw:text-danger-text"
+         class="mt-0 mb-2 text-sm text-danger-text"
          hidden></p>
       <button id="passkey-login-btn"
-              class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+              class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
               type="button">{% trans "Sign in with passkey" %}</button>
-      <p class="tw:mt-4 tw:mb-0 tw:text-sm tw:text-ink-subtle">
+      <p class="mt-4 mb-0 text-sm text-ink-subtle">
         {% blocktrans %}We renew your cookie while you stay active so normal usage does not log you out, and checking "Stay signed in" keeps you signed in for 30 days.{% endblocktrans %}
       </p>
     </div>
