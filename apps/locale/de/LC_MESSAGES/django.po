@@ -495,6 +495,9 @@ msgstr "Erinnerungsprotokoll"
 msgid "Reminder logs"
 msgstr "Erinnerungsprotokolle"
 
+msgid "Debts"
+msgstr "Schulden"
+
 msgid "Optimised debts"
 msgstr "Optimierte Schulden"
 
@@ -517,22 +520,10 @@ msgid "Unoptimised"
 msgstr "Unoptimiert"
 
 #, python-format
-msgid ""
-"\n"
-"                            %(active_debt_count)s pending debt\n"
-"                        "
-msgid_plural ""
-"\n"
-"                            %(active_debt_count)s pending debts\n"
-"                        "
-msgstr[0] ""
-"\n"
-"                        %(active_debt_count)s ausstehende Schuld\n"
-"                    "
-msgstr[1] ""
-"\n"
-"                        %(active_debt_count)s ausstehende Schulden\n"
-"                    "
+msgid "%(active_debt_count)s pending debt"
+msgid_plural "%(active_debt_count)s pending debts"
+msgstr[0] "%(active_debt_count)s ausstehende Schuld"
+msgstr[1] "%(active_debt_count)s ausstehende Schulden"
 
 msgid "All settled"
 msgstr "Alles beglichen"
@@ -545,6 +536,9 @@ msgid "Instead of %(simple_count)s repayments, %(counter)s payment is enough."
 msgid_plural "Instead of %(simple_count)s repayments, %(counter)s payments are enough."
 msgstr[0] "Statt %(simple_count)s Rückzahlungen genügt %(counter)s Zahlung."
 msgstr[1] "Statt %(simple_count)s Rückzahlungen genügen %(counter)s Zahlungen."
+
+msgid "Insights"
+msgstr "Auswertungen"
 
 msgid "Who paid what"
 msgstr "Wer hat was bezahlt"
@@ -592,6 +586,9 @@ msgstr "Mit PayPal bezahlen"
 msgid "Mark as paid"
 msgstr "Als bezahlt markieren"
 
+msgid "Settle debt"
+msgstr "Schuld begleichen"
+
 #, python-format
 msgid "Your debt to %(creditor_name)s"
 msgstr "Deine Schuld an %(creditor_name)s"
@@ -600,18 +597,18 @@ msgstr "Deine Schuld an %(creditor_name)s"
 msgid "Are you sure that you have settled your debt (%(debt_value)s%(debt_currency)s) to %(creditor_name)s?"
 msgstr "Bist du sicher, dass du deine Schuld (%(debt_value)s%(debt_currency)s) bei %(creditor_name)s beglichen hast?"
 
-msgid "Yes, I paid this"
-msgstr "Ja, ist bezahlt"
-
-msgid "Cancel"
-msgstr "Abbrechen"
-
 msgid "Not paid yet?"
 msgstr "Noch nicht bezahlt?"
 
 #, python-format
 msgid "Pay %(creditor_name)s via PayPal"
 msgstr "%(creditor_name)s über PayPal bezahlen"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Yes, I paid this"
+msgstr "Ja, ist bezahlt"
 
 msgid "Debitor"
 msgstr "Schuldner"

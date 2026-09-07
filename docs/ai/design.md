@@ -16,6 +16,10 @@ Migrated so far:
 - `transaction/list.html` with `transaction/partials/_transaction_batch.html` — the expense feed
 - `transaction/create.html` and `transaction/edit.html`, with
   `transaction/partials/_category_field.html` and `transaction/child_transaction_create.html`
+- `debt/list.html` with `debt/partials/_debt_row_actions.html` — the debt list, its two readings
+  and the per-row settle actions
+- `debt/settle.html` — the confirmation behind "Mark as paid"
+- `importer/upload.html` and `importer/preview.html` — the two steps of an import
 
 Everything else is still Bootstrap and follows the Bootstrap notes in
 [`architecture.md`](architecture.md) § Design System & UI Concepts.
@@ -494,6 +498,8 @@ A dismissible notice carries `data-dismissable` and its close button `data-dismi
   edit form
 - `transaction/partials/_transaction_batch.html` — one batch of the expense feed and its
   reveal-triggered link to the next
+- `debt/partials/_debt_row_actions.html` — what one debt row offers: settled badge, PayPal link,
+  settle button, or its bare status
 - `transaction/child_transaction_create.html` — one more share on the edit form; it must mirror
   that template's split rows down to the `.split-row` hook
 

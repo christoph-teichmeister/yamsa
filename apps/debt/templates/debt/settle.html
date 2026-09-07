@@ -1,28 +1,12 @@
 {% extends "room/dashboard.html" %}
 {% load room_tags i18n l10n %}
 {% block tab_content %}
-  <div class="container-fluid px-0 px-md-2 mt-3">
-    {% comment %}
-      The creditor's face is the anchor of the confirmation: it is the one thing that tells the
-      reader at a glance whom they are about to mark as paid.
-    {% endcomment %}
-    <div class="d-flex align-items-center gap-3 mb-1">
-      {% include "shared_partials/_user_avatar.html" with avatar_url=debt.creditor.avatar_url avatar_name=debt.creditor.name avatar_fallback_url=debt.creditor.profile_picture_fallback_url avatar_class="avatar-lg" %}
-      <h4 class="mb-0">
-        {% blocktrans with creditor_name=debt.creditor.name trimmed %}
-          Your debt to {{ creditor_name }}
-        {% endblocktrans %}
-      </h4>
-    </div>
-    <p class="text-muted small mb-4">
-      {% blocktrans with creditor_name=debt.creditor.name debt_value=debt.value|format_with_thousands debt_currency=debt.currency.sign trimmed %}
-        Are you sure that you have settled your debt ({{ debt_value }}{{ debt_currency }}) to {{ creditor_name }}?
-      {% endblocktrans %}
-    </p>
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
     {% comment %}
       method/action next to hx-post so the confirmation still submits when the bundle never runs.
     {% endcomment %}
-    <form method="post"
+    <form class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+          method="post"
           action="{% room_url 'debt:settle' pk=debt.id %}"
           hx-post="{% room_url 'debt:settle' pk=debt.id %}"
           hx-target="#body"
@@ -32,32 +16,56 @@
       {% csrf_token %}
       {# The form's only editable field; absent from the POST it would mark the debt unsettled. #}
       <input type="hidden" name="settled" value="true" />
-      <div class="d-flex flex-wrap gap-2">
-        <button type="submit"
-                class="btn btn-success d-inline-flex align-items-center gap-2">
-          <i class="bi bi-piggy-bank" aria-hidden="true"></i>
-          {% trans "Yes, I paid this" %}
-        </button>
-        <button type="button"
-                class="btn btn-outline-secondary"
+      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Settle debt" %}</p>
+        {% comment %}
+          The creditor's face is the anchor of the confirmation: it is the one thing that tells the
+          reader at a glance whom they are about to mark as paid.
+        {% endcomment %}
+        <div class="tw:mt-2 tw:flex tw:items-center tw:gap-3">
+          {% include "shared_partials/_user_avatar.html" with avatar_url=debt.creditor.avatar_url avatar_name=debt.creditor.name avatar_fallback_url=debt.creditor.profile_picture_fallback_url avatar_class="avatar-lg" %}
+          <h1 class="tw:m-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">
+            {% blocktrans with creditor_name=debt.creditor.name trimmed %}
+              Your debt to {{ creditor_name }}
+            {% endblocktrans %}
+          </h1>
+        </div>
+      </div>
+      <div class="tw:flex tw:flex-col tw:gap-3 tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
+        <p class="tw:m-0 tw:text-ink">
+          {% blocktrans with creditor_name=debt.creditor.name debt_value=debt.value|format_with_thousands debt_currency=debt.currency.sign trimmed %}
+            Are you sure that you have settled your debt ({{ debt_value }}{{ debt_currency }}) to {{ creditor_name }}?
+          {% endblocktrans %}
+        </p>
+        {% if debt.creditor.paypal_me_username %}
+          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+            {% trans "Not paid yet?" %}
+            <a class="tw:font-semibold tw:text-brand-text tw:no-underline tw:transition tw:hover:text-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+               href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
+               target="_blank"
+               rel="noopener">
+              {% blocktrans with creditor_name=debt.creditor.name trimmed %}
+                Pay {{ creditor_name }} via PayPal
+              {% endblocktrans %}
+            </a>
+          </p>
+        {% endif %}
+      </div>
+      <div class="tw:flex tw:flex-col tw:gap-2 tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:flex-row tw:@md:items-center tw:@md:justify-end tw:@md:px-6">
+        <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-4 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                type="button"
                 hx-get="{% room_url 'debt:list' %}"
                 hx-target="#body"
                 hx-indicator="#body-loading-spinner"
                 hx-swap="morph:innerHTML"
                 hx-push-url="true">{% trans "Cancel" %}</button>
+        {# Status-toned, matching the row's own "Mark as paid" the reader came from. #}
+        <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-success-text/60 tw:bg-success-soft tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-success-text tw:transition tw:hover:border-success-text tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+                type="submit">
+          <i class="bi bi-piggy-bank" aria-hidden="true"></i>
+          {% trans "Yes, I paid this" %}
+        </button>
       </div>
     </form>
-    {% if debt.creditor.paypal_me_username %}
-      <p class="text-muted small mt-4 mb-0">
-        {% trans "Not paid yet?" %}
-        <a href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
-           target="_blank"
-           rel="noopener">
-          {% blocktrans with creditor_name=debt.creditor.name trimmed %}
-            Pay {{ creditor_name }} via PayPal
-          {% endblocktrans %}
-        </a>
-      </p>
-    {% endif %}
-  </div>
+  </section>
 {% endblock tab_content %}

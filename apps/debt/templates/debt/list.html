@@ -1,173 +1,138 @@
 {% extends "room/dashboard.html" %}
 {% load room_tags i18n %}
 {% block tab_content %}
-  <style nonce="{{ csp_nonce }}">
-        .debt-card {
-            border: none;
-            border-radius: 1rem;
-        }
-
-        .debt-row {
-            border-radius: 0.75rem;
-            border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.08);
-            padding: 1rem;
-        }
-
-        .debt-row + .debt-row {
-            margin-top: 0.75rem;
-        }
-
-        .debt-row-settled {
-            background-color: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.03);
-        }
-
-        .debt-amount {
-            /* Lining figures so the amounts of stacked rows line up on the decimal point. */
-            font-variant-numeric: tabular-nums;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .insight-list {
-            border-radius: 0.9rem;
-            overflow: hidden;
-        }
-
-        .insight-row {
-            padding: 0.9rem 1rem;
-        }
-
-        .insight-icon {
-            display: flex;
-            flex: 0 0 auto;
-            width: 2.25rem;
-            height: 2.25rem;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0.75rem;
-            background-color: rgb(var(--yamsa-brand-rgb), 0.1);
-            color: var(--yamsa-brand-text);
-        }
-  </style>
-  <div class="container-fluid px-0 px-md-2 mt-3">
-    {% if showing_optimised_debts %}
-      <h4 class="mb-1">{% trans "Optimised debts" %}</h4>
-      <p class="text-muted small mb-3">{% trans "The fewest payments that settle this room - we cancel out who owes whom." %}</p>
-    {% else %}
-      <h4 class="mb-1">{% trans "Unoptimised debts" %}</h4>
-      <p class="text-muted small mb-3">{% trans "One repayment per expense, exactly as the money was spent." %}</p>
-    {% endif %}
-    {% if has_transactions %}
-      <div class="mb-3">
-        <div class="btn-group btn-group-sm"
-             role="group"
-             aria-label="{% trans "Debt display" %}">
-          {% comment %}
-            Real links, not buttons: the mode belongs in the URL so a shared or bookmarked link
-            reopens the same reading, and the page still switches without HTMX.
-          {% endcomment %}
-          <a href="{% room_url 'debt:list' %}"
-             class="btn {% if showing_optimised_debts %}btn-primary{% else %}btn-outline-secondary{% endif %}"
-             aria-current="{% if showing_optimised_debts %}page{% else %}false{% endif %}"
-             hx-get="{% room_url 'debt:list' %}"
-             hx-target="#body"
-             hx-indicator="#body-loading-spinner"
-             hx-swap="morph:innerHTML"
-             hx-push-url="true">{% trans "Optimised" %}</a>
-          <a href="{% room_url 'debt:list' %}?mode=simple"
-             class="btn {% if showing_optimised_debts %}btn-outline-secondary{% else %}btn-primary{% endif %}"
-             aria-current="{% if showing_optimised_debts %}false{% else %}page{% endif %}"
-             hx-get="{% room_url 'debt:list' %}?mode=simple"
-             hx-target="#body"
-             hx-indicator="#body-loading-spinner"
-             hx-swap="morph:innerHTML"
-             hx-push-url="true">{% trans "Unoptimised" %}</a>
-        </div>
-      </div>
-    {% endif %}
-    {% comment %}
-      Everything above the list stays in one left-aligned column - heading, switch, badge, hint.
-      A right-aligned control in that band competes with the switch for the eye and, once it
-      wraps on a phone, sits under the switch offset to the right, which reads as two rows
-      colliding.
-    {% endcomment %}
-    {% if debts and showing_optimised_debts %}
-      <div class="mb-3">
-        {% if active_debt_count %}
-          <span class="badge bg-warning-subtle text-warning-emphasis">
-            {% blocktrans count active_debt_count=active_debt_count %}
-                            {{ active_debt_count }} pending debt
-                        {% plural %}
-                            {{ active_debt_count }} pending debts
-                        {% endblocktrans %}
-          </span>
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+    <div class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
+      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Debts" %}</p>
+        {% if showing_optimised_debts %}
+          <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Optimised debts" %}</h1>
+          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "The fewest payments that settle this room - we cancel out who owes whom." %}</p>
         {% else %}
-          <span class="badge bg-success-subtle text-success-emphasis">{% trans "All settled" %}</span>
+          <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Unoptimised debts" %}</h1>
+          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "One repayment per expense, exactly as the money was spent." %}</p>
+        {% endif %}
+        {% comment %}
+          Everything above the list stays in one left-aligned column - heading, switch, badge, hint.
+          A right-aligned control in that band competes with the switch for the eye and, once it
+          wraps on a phone, sits under the switch offset to the right, which reads as two rows
+          colliding.
+        {% endcomment %}
+        {% if has_transactions %}
+          <div class="tw:mt-3 tw:inline-flex tw:gap-0.5 tw:rounded-full tw:border tw:border-line-strong tw:p-0.5"
+               role="group"
+               aria-label="{% trans "Debt display" %}">
+            {% comment %}
+              Real links, not buttons: the mode belongs in the URL so a shared or bookmarked link
+              reopens the same reading, and the page still switches without HTMX.
+            {% endcomment %}
+            <a href="{% room_url 'debt:list' %}"
+               class="tw:inline-flex tw:cursor-pointer tw:items-center tw:rounded-full tw:px-4 tw:py-1.5 tw:text-sm tw:font-semibold tw:no-underline tw:transition tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand {% if showing_optimised_debts %}tw:bg-brand tw:text-on-brand{% else %}tw:text-ink tw:hover:bg-surface-hover{% endif %}"
+               aria-current="{% if showing_optimised_debts %}page{% else %}false{% endif %}"
+               hx-get="{% room_url 'debt:list' %}"
+               hx-target="#body"
+               hx-indicator="#body-loading-spinner"
+               hx-swap="morph:innerHTML"
+               hx-push-url="true">{% trans "Optimised" %}</a>
+            <a href="{% room_url 'debt:list' %}?mode=simple"
+               class="tw:inline-flex tw:cursor-pointer tw:items-center tw:rounded-full tw:px-4 tw:py-1.5 tw:text-sm tw:font-semibold tw:no-underline tw:transition tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand {% if showing_optimised_debts %}tw:text-ink tw:hover:bg-surface-hover{% else %}tw:bg-brand tw:text-on-brand{% endif %}"
+               aria-current="{% if showing_optimised_debts %}false{% else %}page{% endif %}"
+               hx-get="{% room_url 'debt:list' %}?mode=simple"
+               hx-target="#body"
+               hx-indicator="#body-loading-spinner"
+               hx-swap="morph:innerHTML"
+               hx-push-url="true">{% trans "Unoptimised" %}</a>
+          </div>
+        {% endif %}
+        {% if debts and showing_optimised_debts %}
+          <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
+            {% if active_debt_count %}
+              <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-warning-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-warning-text">
+                {% blocktrans count active_debt_count=active_debt_count %}{{ active_debt_count }} pending debt{% plural %}{{ active_debt_count }} pending debts{% endblocktrans %}
+              </span>
+            {% else %}
+              <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-success-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-success-text">{% trans "All settled" %}</span>
+            {% endif %}
+          </div>
         {% endif %}
       </div>
-    {% endif %}
-    {% if not showing_optimised_debts %}
-      <div class="alert alert-warning d-flex align-items-start gap-2 py-2 small mb-4"
-           role="note">
-        <i class="bi bi-info-circle-fill mt-1" aria-hidden="true"></i>
-        <span>{% trans "For comparison only: these are gross amounts that ignore payments already made. Settle your debts in the optimised view." %}</span>
-      </div>
-    {% elif payment_count_comparison %}
-      <p class="text-muted small mb-4">
-        {% blocktrans count counter=payment_count_comparison.optimised with simple_count=payment_count_comparison.simple trimmed %}
-          Instead of {{ simple_count }} repayments, {{ counter }} payment is enough.
-        {% plural %}
-          Instead of {{ simple_count }} repayments, {{ counter }} payments are enough.
-        {% endblocktrans %}
-      </p>
-    {% endif %}
-    {% if has_transactions %}
-      <div class="list-group insight-list shadow-sm mb-4">
-        <button type="button"
-                class="list-group-item list-group-item-action insight-row d-flex align-items-center gap-3 text-start"
-                hx-get="{% room_url 'debt:money-spent-on-room' %}"
-                hx-target="#body"
-                hx-indicator="#body-loading-spinner"
-                hx-swap="morph:innerHTML"
-                hx-push-url="true">
-          <span class="insight-icon"><i class="bi bi-people-fill" aria-hidden="true"></i></span>
-          <span class="flex-grow-1">
-            <span class="d-block fw-semibold">{% trans "Who paid what" %}</span>
-            <span class="d-block text-muted small">{% trans "Totals and open balances per person." %}</span>
-          </span>
-          <i class="bi bi-chevron-right text-muted" aria-hidden="true"></i>
-        </button>
-        <button type="button"
-                class="list-group-item list-group-item-action insight-row d-flex align-items-center gap-3 text-start"
-                hx-get="{% room_url 'transaction:category-breakdown' %}"
-                hx-target="#body"
-                hx-indicator="#body-loading-spinner"
-                hx-swap="morph:innerHTML"
-                hx-push-url="true">
-          <span class="insight-icon"><i class="bi bi-pie-chart-fill" aria-hidden="true"></i></span>
-          <span class="flex-grow-1">
-            <span class="d-block fw-semibold">{% trans "Category breakdown" %}</span>
-            <span class="d-block text-muted small">{% trans "Where the money went, by category." %}</span>
-          </span>
-          <i class="bi bi-chevron-right text-muted" aria-hidden="true"></i>
-        </button>
-      </div>
-    {% endif %}
-    <div class="card debt-card shadow-sm">
-      <div class="card-body">
+      {% if not showing_optimised_debts %}
+        <div class="tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
+          <div class="tw:flex tw:items-start tw:gap-2 tw:rounded-2xl tw:border tw:border-warning-text/40 tw:bg-warning-soft tw:px-4 tw:py-3"
+               role="note">
+            <i class="bi bi-info-circle-fill tw:mt-0.5 tw:shrink-0 tw:text-warning-text"
+               aria-hidden="true"></i>
+            <p class="tw:m-0 tw:text-sm tw:text-warning-text">
+              {% trans "For comparison only: these are gross amounts that ignore payments already made. Settle your debts in the optimised view." %}
+            </p>
+          </div>
+        </div>
+      {% elif payment_count_comparison %}
+        <div class="tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
+          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+            {% blocktrans count counter=payment_count_comparison.optimised with simple_count=payment_count_comparison.simple trimmed %}
+              Instead of {{ simple_count }} repayments, {{ counter }} payment is enough.
+            {% plural %}
+              Instead of {{ simple_count }} repayments, {{ counter }} payments are enough.
+            {% endblocktrans %}
+          </p>
+        </div>
+      {% endif %}
+      {% if has_transactions %}
+        <div class="tw:border-t tw:border-line">
+          <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Insights" %}</p>
+          <div class="tw:divide-y tw:divide-line">
+            <button class="tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+                    type="button"
+                    hx-get="{% room_url 'debt:money-spent-on-room' %}"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true">
+              <span class="tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-brand-soft tw:text-brand-text">
+                <i class="bi bi-people-fill" aria-hidden="true"></i>
+              </span>
+              <span class="tw:min-w-0 tw:flex-1">
+                <span class="tw:block tw:font-medium tw:text-ink">{% trans "Who paid what" %}</span>
+                <span class="tw:block tw:text-sm tw:text-ink-subtle">{% trans "Totals and open balances per person." %}</span>
+              </span>
+              <i class="bi bi-chevron-right tw:shrink-0 tw:text-ink-subtle"
+                 aria-hidden="true"></i>
+            </button>
+            <button class="tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+                    type="button"
+                    hx-get="{% room_url 'transaction:category-breakdown' %}"
+                    hx-target="#body"
+                    hx-indicator="#body-loading-spinner"
+                    hx-swap="morph:innerHTML"
+                    hx-push-url="true">
+              <span class="tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-brand-soft tw:text-brand-text">
+                <i class="bi bi-pie-chart-fill" aria-hidden="true"></i>
+              </span>
+              <span class="tw:min-w-0 tw:flex-1">
+                <span class="tw:block tw:font-medium tw:text-ink">{% trans "Category breakdown" %}</span>
+                <span class="tw:block tw:text-sm tw:text-ink-subtle">{% trans "Where the money went, by category." %}</span>
+              </span>
+              <i class="bi bi-chevron-right tw:shrink-0 tw:text-ink-subtle"
+                 aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      {% endif %}
+      <div class="tw:divide-y tw:divide-line tw:border-t tw:border-line">
         {% for debt in debts %}
-          <div class="debt-row{% if debt.settled %} debt-row-settled{% endif %}">
+          <div class="tw:flex tw:flex-col tw:gap-2 tw:px-5 tw:py-4{% if debt.settled %} tw:bg-surface-sunken{% endif %}">
             {% comment %}
               Centred rather than baseline-aligned: the debtor/creditor pair on the left is taller
               than the sentence it belongs to.
             {% endcomment %}
-            <div class="d-flex justify-content-between align-items-center gap-3">
-              <div class="d-flex align-items-center gap-2">
+            <div class="tw:flex tw:items-center tw:justify-between tw:gap-3">
+              <div class="tw:flex tw:min-w-0 tw:items-center tw:gap-2">
                 <span class="avatar-pair">
                   {% include "shared_partials/_user_avatar.html" with avatar_url=debt.debitor.avatar_url avatar_name=debt.debitor.name avatar_fallback_url=debt.debitor.profile_picture_fallback_url %}
                   {% include "shared_partials/_user_avatar.html" with avatar_url=debt.creditor.avatar_url avatar_name=debt.creditor.name avatar_fallback_url=debt.creditor.profile_picture_fallback_url %}
                 </span>
-                <p class="mb-0">
+                <p class="tw:m-0 tw:min-w-0 tw:text-ink">
                   {% if debt.viewer_is_debitor %}
                     {% blocktrans with creditor_name=debt.creditor.name trimmed %}
                       You owe <strong>{{ creditor_name }}</strong>
@@ -183,44 +148,46 @@
                   {% endif %}
                 </p>
               </div>
-              <p class="debt-amount mb-0 {% if debt.settled %}text-muted{% elif debt.viewer_is_debitor %}text-danger-emphasis{% elif debt.viewer_is_creditor %}text-success-emphasis{% endif %}">
+              {# Lining figures so the amounts of stacked rows line up on the decimal point. #}
+              <p class="tw:m-0 tw:shrink-0 tw:font-semibold tw:tabular-nums tw:whitespace-nowrap {% if debt.settled %}tw:text-ink-muted{% elif debt.viewer_is_debitor %}tw:text-danger-text{% elif debt.viewer_is_creditor %}tw:text-success-text{% else %}tw:text-ink{% endif %}">
                 {{ debt.value|format_with_thousands }}&nbsp;{{ debt.currency.sign }}
               </p>
             </div>
             {% if debt.settled %}
-              <p class="text-success-emphasis small mb-0 mt-1">
+              <p class="tw:m-0 tw:text-sm tw:text-success-text">
                 {% blocktrans with settled_at=debt.settled_at|date trimmed %}
                   Settled on {{ settled_at }}
                 {% endblocktrans %}
               </p>
             {% endif %}
             {% if showing_optimised_debts %}
-              <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+              <div class="tw:flex tw:flex-wrap tw:items-center tw:gap-2">
                 {% include "debt/partials/_debt_row_actions.html" with debt=debt %}
               </div>
             {% endif %}
           </div>
         {% empty %}
-          <div class="text-center py-5">
-            <p class="fw-semibold mb-1">{% trans "No debts yet" %}</p>
-            <p class="text-muted small mb-0">{% trans "As expenses are added, we will surface who owes whom here." %}</p>
+          <div class="tw:px-5 tw:py-10 tw:text-center">
+            <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "No debts yet" %}</p>
+            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "As expenses are added, we will surface who owes whom here." %}</p>
           </div>
         {% endfor %}
       </div>
+      {% if has_transactions %}
+        {% comment %}
+          Below the list, not next to the switch: exporting is what you do after reading, and the
+          CSV always holds the optimised debts - beside the switch it looked like it followed the
+          selected mode.
+        {% endcomment %}
+        <div class="tw:flex tw:justify-end tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
+          <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+             href="{% room_url 'debt:export' %}"
+             title="{% trans "Export CSV" %}">
+            <i class="bi bi-download" aria-hidden="true"></i>
+            {% trans "Export CSV" %}
+          </a>
+        </div>
+      {% endif %}
     </div>
-    {% if has_transactions %}
-      {% comment %}
-        Below the list, not next to the switch: exporting is what you do after reading, and the
-        CSV always holds the optimised debts - beside the switch it looked like it followed the
-        selected mode.
-      {% endcomment %}
-      <div class="d-flex justify-content-end mt-3">
-        <a href="{% room_url 'debt:export' %}"
-           class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2">
-          <i class="bi bi-download" aria-hidden="true"></i>
-          {% trans "Export CSV" %}
-        </a>
-      </div>
-    {% endif %}
-  </div>
+  </section>
 {% endblock tab_content %}
