@@ -153,3 +153,33 @@ def test_profile_picture_fallbacks_to_default_when_missing(tmp_path, authenticat
     assert response.status_code == http.HTTPStatus.OK
     fallback_url = user.profile_picture_fallback_url
     assert user.profile_picture_url == fallback_url
+
+
+def test_other_profile_picture_opens_a_full_size_dialog(tmp_path, authenticated_client, settings, room, superuser):
+    media_root = tmp_path / "media"
+    media_root.mkdir()
+    settings.MEDIA_ROOT = str(media_root)
+
+    room.users.add(superuser)
+    superuser.profile_picture.save("avatar.png", ContentFile(build_image_bytes()), save=True)
+
+    response = authenticated_client.get(reverse("account:detail", args=(superuser.id,)))
+
+    assert response.status_code == http.HTTPStatus.OK
+    content = response.content.decode()
+    assert contains_attribute(content, "data-dialog-open", "profile-photo-preview-dialog")
+    assert contains_attribute(content, "id", "profile-photo-preview-dialog")
+    # The dialog shows the stored picture, not the placeholder. An upload is named by a uuid4, so
+    # this URL is the only handle on it — the e2e locator matches on it.
+    assert contains_attribute(content, "src", superuser.profile_picture_url)
+
+
+def test_other_profile_without_picture_offers_no_dialog(authenticated_client, room, superuser):
+    room.users.add(superuser)
+
+    response = authenticated_client.get(reverse("account:detail", args=(superuser.id,)))
+
+    assert response.status_code == http.HTTPStatus.OK
+    content = response.content.decode()
+    # An initial has nothing to enlarge, so it stays a plain avatar rather than a dead control.
+    assert "profile-photo-preview-dialog" not in content

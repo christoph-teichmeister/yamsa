@@ -188,25 +188,6 @@ msgstr "Lade %(invitee)s zu \"%(room)s\" ein"
 msgid "Send invite"
 msgstr "Einladung senden"
 
-msgid "Room roster"
-msgstr "Raumteilnehmerliste"
-
-#, python-format
-msgid "Everyone in %(room_name)s"
-msgstr "Alle in %(room_name)s"
-
-msgid "Invite roommates, add guests, and keep tabs on who has already viewed the room."
-msgstr "Lade Mitbewohner ein, füge Gäste hinzu und behalte im Blick, wer den Raum bereits angesehen hat."
-
-msgid "Status"
-msgstr "Status"
-
-msgid "Room closed"
-msgstr "Raum geschlossen"
-
-msgid "Room open"
-msgstr "Raum geöffnet"
-
 msgid "Add existing user"
 msgstr "Bestehenden Nutzer hinzufügen"
 
@@ -324,6 +305,10 @@ msgstr "Foto entfernen"
 
 msgid "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB."
 msgstr "Wir ändern automatisch die Größe und komprimieren PNG-/JPEG-Uploads, damit sie unter 3 MB bleiben."
+
+#, python-format
+msgid "Show the photo of %(user_name)s at full size"
+msgstr "Foto von %(user_name)s in voller Größe anzeigen"
 
 msgid "Your account overview"
 msgstr "Deine Kontenübersicht"
@@ -1047,6 +1032,9 @@ msgstr "Bevorzugte Währung"
 msgid "This room still has open debts and can not be closed"
 msgstr "Dieser Raum hat noch offene Schulden und kann nicht geschlossen werden"
 
+msgid "Room closed"
+msgstr "Raum geschlossen"
+
 #, python-brace-format
 msgid "{editor} closed \"{room}\""
 msgstr "{editor} hat \"{room}\" geschlossen"
@@ -1198,6 +1186,9 @@ msgstr "Tracking-Kategorien anpassen"
 
 msgid "Add room-specific categories and control their order without touching the global defaults."
 msgstr "Füge raumspezifische Kategorien hinzu und steuere deren Reihenfolge, ohne die globalen Standardeinstellungen zu verändern."
+
+msgid "Status"
+msgstr "Status"
 
 msgid "All debts are settled. You can close the room."
 msgstr "Alle Schulden sind beglichen. Du kannst den Raum schließen."

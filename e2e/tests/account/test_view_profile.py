@@ -1,9 +1,11 @@
 import re
 
 import pytest
+from django.core.files.base import ContentFile
 from django.urls import reverse
 from playwright.sync_api import expect
 
+from apps.account.tests.test_utils import build_image_bytes
 from e2e.pages.account_detail_page import AccountDetailPage
 from e2e.pages.login_page import LoginPage
 
@@ -30,6 +32,36 @@ class TestViewProfile:
         detail_page.expect_member_name(roommate.name)
         detail_page.expect_actions_absent()
         detail_page.expect_security_section_hidden()
+
+    def test_user_can_look_at_the_photo_of_a_roommate_full_size(
+        self, page, base_url, profile_user, roommate, shared_room, user_password
+    ):
+        roommate.profile_picture.save("avatar.png", ContentFile(build_image_bytes()), save=True)
+
+        login_page = LoginPage(page, base_url, reverse("account:login"))
+        login_page.navigate()
+        login_page.login(profile_user.email, user_password)
+
+        roommate_path = reverse("account:detail", kwargs={"pk": roommate.id})
+        detail_page = AccountDetailPage(page, base_url, roommate_path)
+        detail_page.navigate()
+
+        detail_page.open_photo_preview_dialog()
+        detail_page.expect_photo_preview_is_larger_than_the_avatar()
+        detail_page.close_photo_preview_dialog()
+
+    def test_a_roommate_without_a_photo_offers_no_preview(
+        self, page, base_url, profile_user, roommate, shared_room, user_password
+    ):
+        login_page = LoginPage(page, base_url, reverse("account:login"))
+        login_page.navigate()
+        login_page.login(profile_user.email, user_password)
+
+        roommate_path = reverse("account:detail", kwargs={"pk": roommate.id})
+        detail_page = AccountDetailPage(page, base_url, roommate_path)
+        detail_page.navigate()
+
+        detail_page.expect_no_photo_preview()
 
     def test_user_cannot_view_profile_of_unrelated_user(
         self, page, base_url, profile_user, unrelated_user, user_password

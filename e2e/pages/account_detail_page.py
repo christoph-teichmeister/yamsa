@@ -79,6 +79,37 @@ class AccountDetailPage(BasePage):
         with self.page.expect_response(lambda response: "/profile-picture/delete/" in response.url):
             self.page.locator("[data-profile-photo-delete]").click()
 
+    def open_photo_preview_dialog(self):
+        self.page.locator("button[data-dialog-open='profile-photo-preview-dialog']").click()
+        expect(self.page.locator("#profile-photo-preview-dialog")).to_be_visible()
+
+    def close_photo_preview_dialog(self):
+        self.page.locator("#profile-photo-preview-dialog [data-dialog-close]").click()
+        expect(self.page.locator("#profile-photo-preview-dialog")).not_to_be_visible()
+
+    def expect_photo_preview_is_larger_than_the_avatar(self):
+        """The dialog shows the picture bigger than the avatar — that is what it is for.
+
+        Not which picture: MEDIA_URL does not resolve under the test settings, so navigation.js
+        swaps every profile picture for the placeholder before a browser can read its src. That
+        the rendered src is the stored picture is pinned in the view test instead.
+        """
+
+        avatar = self.page.locator("button[data-dialog-open='profile-photo-preview-dialog'] img")
+        preview = self.page.locator("#profile-photo-preview-dialog img")
+        expect(preview).to_be_visible()
+
+        avatar_box = avatar.bounding_box()
+        preview_box = preview.bounding_box()
+        assert preview_box["width"] > avatar_box["width"], (
+            f"preview {preview_box['width']}px is not bigger than the avatar {avatar_box['width']}px"
+        )
+
+    def expect_no_photo_preview(self):
+        """An avatar that is only an initial has nothing to enlarge and offers no dialog."""
+
+        expect(self.page.locator("#profile-photo-preview-dialog")).to_have_count(0)
+
     def expect_photo_present(self):
         expect(self.page.locator("#profile-photo button img")).to_be_visible()
 

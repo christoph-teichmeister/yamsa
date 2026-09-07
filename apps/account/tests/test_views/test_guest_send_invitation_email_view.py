@@ -49,7 +49,6 @@ def test_post_regular(authenticated_client, guest_send_invitation_url, monkeypat
 
     assert response.template_name[0] == UserListForRoomView.template_name
     content = response.content.decode()
-    assert "Room roster" in content
     assert "Add guest" in content
     assert response.context_data["active_tab"] == "people"
 
