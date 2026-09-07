@@ -24,7 +24,9 @@ def _entries_grids(content: str) -> list[str]:
 
 
 def _entries_layout(grid: str) -> str:
-    return "tile" if " tw:grid-cols-2" in grid else "row"
+    # Any two-column variant at all counts as a tile grid: the open section is one per row at
+    # every width, so re-adding an @md:grid-cols-2 there has to fail this.
+    return "tile" if "grid-cols-2" in grid else "row"
 
 
 pytestmark = pytest.mark.django_db

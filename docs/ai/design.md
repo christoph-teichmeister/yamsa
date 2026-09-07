@@ -536,7 +536,8 @@ A dismissible notice carries `data-dismissable` and its close button `data-dismi
   `error_action_template` is the optional slot under it, which only the offline page fills
 - `shared_partials/_news_card_content.html` — the inside of a news card, shared by its linked and
   its dead variant, which differ only in the box around it
-- `room/partials/_room_overview_section.html` — one group of the overview, collapsible or not
+- `room/partials/_room_overview_section.html` — one group of the overview, collapsible or not. The
+  open group is one card per row at every width; only the tile groups go two per row
 - `room/partials/_room_overview_card.html` with `_room_overview_circle.html`,
   `_room_overview_amounts.html` and `_room_overview_status_badge.html` — one room, as a row or as
   a tile
