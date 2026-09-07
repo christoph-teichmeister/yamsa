@@ -223,8 +223,10 @@
 
 /* Loading Indicators (Issue #144) */
 .loading-indicator-overlay {
-    /* Removed position: fixed — now used as local/relative overlay */
-    position: absolute;
+    /* Fixed, not absolute: the only instance is #body-loading-spinner, a direct child of <body>,
+       and body is not positioned - an absolute overlay would anchor to the initial containing
+       block and scroll off the screen instead of covering the viewport. */
+    position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
