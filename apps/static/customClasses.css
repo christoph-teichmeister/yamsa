@@ -306,20 +306,6 @@
     text-align: center;
 }
 
-.receipt-delete-button {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
-}
-
-.receipt-delete-icon {
-    height: 20px;
-}
-
-.receipt-preview-img {
-    object-fit: cover;
-}
-
 /* Skeleton container for list loader */
 .skeleton-container {
     display: flex;

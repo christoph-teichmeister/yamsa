@@ -33,6 +33,16 @@ Migrated so far:
 - `account/list.html` with `shared_partials/user_card.html` and the two
   `shared_partials/invitation_email_*.html` — the room's people
 - `account/invite_guest.html` and `account/payment_reminder_unsubscribe.html`
+- `transaction/detail.html` with `transaction/partials/_receipts_section.html` — one expense, its
+  split and its documents
+- `transaction/category_breakdown.html` and `debt`'s `_money_spent_on_room.html` /
+  `_money_spent_trend.html` — the three chart pages
+- `transaction/category_manager.html` with `transaction/partials/_room_category_creation_form.html`
+  and `_room_category_list.html` — the room's categories
+
+Everything left is the shell: `core/base.html`, the side menu and its room list,
+`shared_partials/toast.html`, the three loader partials and `room/partials/_dashboard_nav.html`.
+`mail/email_base.html` has its own inline CSS for mail clients and is not Bootstrap at all.
 
 Everything else is still Bootstrap and follows the Bootstrap notes in
 [`architecture.md`](architecture.md) § Design System & UI Concepts.
@@ -538,6 +548,9 @@ A dismissible notice carries `data-dismissable` and its close button `data-dismi
 - `account/partials/_people_action.html` — one of the two ways to add somebody to a room. It takes
   the *view name*, not the URL: `{% room_url %}` rewrites its own token to append the room slug and
   so cannot be assigned with `as`
+- `transaction/partials/_spend_bar.html` — one proportional bar of the spending overview, in three
+  tones. Its fill is an inner element with an inline width rather than a `::after` and a custom
+  property: a percentage is data, and this way the track and the fill are both plain utilities
 - `transaction/child_transaction_create.html` — one more share on the edit form; it must mirror
   that template's split rows down to the `.split-row` hook
 
@@ -564,6 +577,13 @@ largest: `.room-overview-card`, `-name`, `-meta`, `-meta-text`, `-activity`, `-a
 `.room-balance-tile.owing|.receiving`, `.room-balance-value` and `.room-status-badge` are what
 `e2e/pages/dashboard_page.py` and `apps/core/tests/test_views/test_welcome_partial_view.py` look for.
 None of them carries CSS of its own any more.
+
+The transaction pages keep three more: `.transaction-meta` (the first one must name the category —
+`e2e/pages/transaction_detail_page.py`), `.transaction-breakdown-item` and `.graph-label`. The
+category legend moved the other way: its tests used to select `.list-group-item`, `p.text-muted.small`
+and `span.fw-semibold`, and now read `[data-category-legend]`, `[data-category-legend-item]`,
+`[data-category-slug-label]` and `[data-category-amount]` — a hook that says what it is beats a
+class that says how it looks.
 
 `.room-status-badge` is the one that still has a rule in `customClasses.css`, because the side menu's
 room rows use it too. That rule hides the badge below an 18 rem container — written for the menu
@@ -592,3 +612,20 @@ an `@utility auth-hero-surface` in `tailwind.css` — a utility rather than a se
 far end is a value of that gradient and of nothing else, and this file stays the only place a colour
 is written down. Everything standing on the hero takes `tw:text-white` (or `tw:text-white/70`)
 outright: the ground is the same on both themes, so a theme-following token would be wrong there.
+
+## What a chart page keeps in CSS
+
+Three pages draw with d3, and utilities cannot reach an element a script creates. So the rule is:
+the box around a chart is utilities, what d3 generates is a stylesheet.
+
+- `components/transaction/money-spent-trend.css` is down to `.trend-series` and the three
+  `.trend-line-*` rules. Its card, its range switch and its empty state are utilities in
+  `_money_spent_trend.html` now.
+- `category_breakdown.html` keeps a short inline `<style>`: the legend swatch's colour is *data*
+  (`navigation.js` writes `--category-color` from `data-category-color`), and the pie's focus ring
+  sits on a `<path>` d3 appends.
+
+Both had a literal `#fff` where they meant the card they sit on — the slice separators and the line
+chart's dots. Those are `var(--yamsa-surface)` now, so they read as holes in the shape on either
+theme rather than white lines on a dark card. And a d3 colour has to be set with `.style()`, never
+`.attr()` — see § Colors.

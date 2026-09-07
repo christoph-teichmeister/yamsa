@@ -1,25 +1,19 @@
 {% extends "room/dashboard.html" %}
-{% load static room_tags i18n %}
+{% load i18n %}
 {% block tab_content %}
-  <section class="container px-2 px-md-4 px-lg-5 py-4">
-    <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
-      <div>
-        <p class="text-uppercase text-muted small fw-semibold mb-1">{% trans "Room settings" %}</p>
-        <h2 class="fw-semibold mb-0">
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+    <div class="tw:flex tw:flex-col tw:gap-2 tw:@xl:flex-row tw:@xl:items-start tw:@xl:justify-between">
+      <div class="tw:min-w-0">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Room settings" %}</p>
+        <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">
           {% blocktrans trimmed with room_name=current_room.name %}
             Manage categories for "{{ room_name }}"
           {% endblocktrans %}
-        </h2>
+        </h1>
       </div>
-      <p class="text-muted small mb-0">{% trans "Add or reorder categories that match how your group tracks spending." %}</p>
+      <p class="tw:m-0 tw:shrink-0 tw:text-sm tw:text-ink-muted tw:@xl:max-w-64 tw:@xl:text-right">{% trans "Add or reorder categories that match how your group tracks spending." %}</p>
     </div>
-    <div class="row g-4">
-      <div class="col-12 col-xl-5">
-        {% include "transaction/partials/_room_category_creation_form.html" with category_creation_form=category_creation_form category_creation_success_message=category_creation_success_message %}
-      </div>
-      <div class="col-12 col-xl-7">
-        {% include "transaction/partials/_room_category_list.html" with room_category_update_form=room_category_update_form failed_room_category_id=failed_room_category_id %}
-      </div>
-    </div>
+    {% include "transaction/partials/_room_category_creation_form.html" with category_creation_form=category_creation_form category_creation_success_message=category_creation_success_message %}
+    {% include "transaction/partials/_room_category_list.html" with room_category_update_form=room_category_update_form failed_room_category_id=failed_room_category_id %}
   </section>
 {% endblock tab_content %}

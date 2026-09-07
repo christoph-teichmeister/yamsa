@@ -82,14 +82,14 @@ class TestTransactionCategoryBreakdownView:
 
         currency_sign = room.preferred_currency.sign
         soup = BeautifulSoup(response.content.decode(), "html.parser")
-        legend_list = soup.select_one(".list-group.list-group-flush")
-        legend_items = legend_list.select(".list-group-item")
+        legend_list = soup.select_one("[data-category-legend]")
+        legend_items = legend_list.select("[data-category-legend-item]")
         assert len(legend_items) == 2
 
         rendered_amounts_by_slug = {}
         for item in legend_items:
-            slug = item.select_one("p.text-muted.small").get_text(strip=True).lower()
-            amount_span = item.select_one("span.fw-semibold")
+            slug = item.select_one("[data-category-slug-label]").get_text(strip=True).lower()
+            amount_span = item.select_one("[data-category-amount]")
             rendered_amounts_by_slug[slug] = amount_span.get_text(strip=True)
 
         expected_amounts = {
@@ -201,7 +201,7 @@ class TestTransactionCategoryBreakdownView:
         # No aria-label either: it would override the row's content as the accessible name and hide
         # the amount from assistive tech.
         assert "aria-label" not in legend_item.attrs
-        assert legend_item.select_one("span.fw-semibold").get_text(strip=True)
+        assert legend_item.select_one("[data-category-amount]").get_text(strip=True)
 
     def test_category_breakdown_chart_data_carries_formatted_amount(self, authenticated_client, room, user):
         groceries = Category.objects.get(slug="groceries")

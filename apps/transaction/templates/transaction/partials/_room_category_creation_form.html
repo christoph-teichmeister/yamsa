@@ -1,147 +1,97 @@
 {% load room_tags i18n %}
 <div id="room-category-creation"
      {% if is_oob %}hx-swap-oob="true"{% endif %}>
-  <div class="card border-0 rounded-4 shadow-sm">
-    <div class="card-body p-4">
-      <div class="mb-3">
-        <p class="text-muted small mb-1">{% trans "Create new category" %}</p>
-        <h5 class="fw-semibold mb-0">{% trans "Room-only categories" %}</h5>
+  <div class="tw:@container tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5">
+    <div class="tw:mb-4">
+      <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Create new category" %}</p>
+      <p class="tw:mt-1 tw:mb-0 tw:font-semibold tw:text-ink">{% trans "Room-only categories" %}</p>
+    </div>
+    <form id="room-category-creation-form"
+          class="tw:flex tw:flex-col tw:gap-4"
+          hx-post="{% room_url 'transaction:category-manager' %}"
+          hx-target="#room-category-list"
+          hx-indicator="#body-loading-spinner"
+          hx-swap="outerHTML"
+          {% if is_oob %}hx-swap-oob="true"{% endif %}>
+      {% csrf_token %}
+      <input type="hidden" name="action" value="create" />
+      <div>
+        <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+               for="category-name">{% trans "Name" %}</label>
+        <input id="category-name"
+               class="tw:w-full tw:rounded-xl tw:border tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand {% if category_creation_form.name.errors %}tw:border-danger-text/60{% else %}tw:border-line-strong{% endif %}"
+               type="text"
+               name="name"
+               maxlength="100"
+               value="{{ category_creation_form.name.value|default_if_none:'' }}"
+               required />
+        {% if category_creation_form.name.errors %}
+          <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ category_creation_form.name.errors.0 }}</p>
+        {% endif %}
       </div>
-      <form id="room-category-creation-form"
-            hx-post="{% room_url 'transaction:category-manager' %}"
-            hx-target="#room-category-list"
-            hx-indicator="#body-loading-spinner"
-            hx-swap="outerHTML"
-            class="d-flex flex-column gap-3"
-            {% if is_oob %}hx-swap-oob="true"{% endif %}>
-        {% csrf_token %}
-        <input type="hidden" name="action" value="create" />
+      <div class="tw:grid tw:grid-cols-2 tw:gap-4">
         <div>
-          <label class="form-label fw-semibold" for="category-name">{% trans "Name" %}</label>
-          <input id="category-name"
-                 name="name"
+          <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                 for="category-emoji">{% trans "Emoji" %}</label>
+          <input id="category-emoji"
+                 class="tw:w-full tw:rounded-xl tw:border tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand {% if category_creation_form.emoji.errors %}tw:border-danger-text/60{% else %}tw:border-line-strong{% endif %}"
                  type="text"
-                 maxlength="100"
-                 class="form-control{% if category_creation_form.name.errors %} is-invalid{% endif %}"
-                 value="{{ category_creation_form.name.value|default_if_none:'' }}"
+                 name="emoji"
+                 maxlength="10"
+                 value="{{ category_creation_form.emoji.value|default_if_none:'' }}"
                  required />
-          {% if category_creation_form.name.errors %}
-            <div class="invalid-feedback d-block">{{ category_creation_form.name.errors.0 }}</div>
+          {% if category_creation_form.emoji.errors %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ category_creation_form.emoji.errors.0 }}</p>
           {% endif %}
         </div>
-        <div class="row g-3">
-          <div class="col-6">
-            <label class="form-label fw-semibold" for="category-emoji">{% trans "Emoji" %}</label>
-            <input id="category-emoji"
-                   name="emoji"
-                   type="text"
-                   maxlength="10"
-                   class="form-control{% if category_creation_form.emoji.errors %} is-invalid{% endif %}"
-                   value="{{ category_creation_form.emoji.value|default_if_none:'' }}"
-                   required />
-            {% if category_creation_form.emoji.errors %}
-              <div class="invalid-feedback d-block">{{ category_creation_form.emoji.errors.0 }}</div>
-            {% endif %}
-          </div>
-          <div class="col-6">
-            <label class="form-label fw-semibold" for="category-color">{% trans "Color" %}</label>
-            <input id="category-color"
-                   name="color"
-                   type="text"
-                   maxlength="7"
-                   class="form-control{% if category_creation_form.color.errors %} is-invalid{% endif %}"
-                   placeholder="#RRGGBB"
-                   value="{{ category_creation_form.color.value|default_if_none:'' }}" />
-            {% if category_creation_form.color.errors %}
-              <div class="invalid-feedback d-block">{{ category_creation_form.color.errors.0 }}</div>
-            {% endif %}
-          </div>
+        <div>
+          <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                 for="category-color">{% trans "Color" %}</label>
+          <input id="category-color"
+                 class="tw:w-full tw:rounded-xl tw:border tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand {% if category_creation_form.color.errors %}tw:border-danger-text/60{% else %}tw:border-line-strong{% endif %}"
+                 type="text"
+                 name="color"
+                 maxlength="7"
+                 placeholder="#RRGGBB"
+                 value="{{ category_creation_form.color.value|default_if_none:'' }}" />
+          {% if category_creation_form.color.errors %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ category_creation_form.color.errors.0 }}</p>
+          {% endif %}
         </div>
-        <div class="d-flex flex-wrap gap-3 align-items-center">
-          <div class="flex-grow-1">
-            <label class="form-label fw-semibold" for="category-order">{% trans "Order index" %}</label>
-            <input id="category-order"
-                   name="order_index"
-                   type="number"
-                   min="0"
-                   class="form-control{% if category_creation_form.order_index.errors %} is-invalid{% endif %}"
-                   value="{{ category_creation_form.order_index.value|default_if_none:'' }}" />
-            {% if category_creation_form.order_index.errors %}
-              <div class="invalid-feedback d-block">{{ category_creation_form.order_index.errors.0 }}</div>
-            {% endif %}
-          </div>
-          <div class="form-check form-switch mb-0">
-            <input class="form-check-input"
-                   type="checkbox"
-                   role="switch"
-                   id="category-default"
-                   name="make_default"
-                   {% if category_creation_form.make_default.value %}checked{% endif %}
-                   value="true" />
-            <label class="form-check-label small" for="category-default">{% trans "Set as default" %}</label>
-          </div>
+      </div>
+      <div class="tw:flex tw:flex-wrap tw:items-end tw:gap-4">
+        <div class="tw:min-w-0 tw:flex-1">
+          <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                 for="category-order">{% trans "Order index" %}</label>
+          <input id="category-order"
+                 class="tw:w-full tw:rounded-xl tw:border tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:tabular-nums tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand {% if category_creation_form.order_index.errors %}tw:border-danger-text/60{% else %}tw:border-line-strong{% endif %}"
+                 type="number"
+                 name="order_index"
+                 min="0"
+                 value="{{ category_creation_form.order_index.value|default_if_none:'' }}" />
+          {% if category_creation_form.order_index.errors %}
+            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ category_creation_form.order_index.errors.0 }}</p>
+          {% endif %}
         </div>
-        <button type="submit"
-                class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
-          <i class="bi bi-plus-circle"></i>
-          {% trans "Add category" %}
-        </button>
-        {% if category_creation_form.non_field_errors %}
-          <div class="alert alert-danger rounded-4 px-3 py-2 mb-0">
-            {% for error in category_creation_form.non_field_errors %}<p class="mb-0 small">{{ error }}</p>{% endfor %}
-          </div>
-        {% endif %}
-      </form>
-      {% if category_creation_success_message %}
-        <script type="module" nonce="{{ csp_nonce }}">
-                (function () {
-                    const form = document.getElementById("room-category-creation-form")
-                    const successMessage = "{{ category_creation_success_message|escapejs }}"
-
-                    if (!form || !successMessage) {
-                        return
-                    }
-
-                    const normalizeToastPayloads = (payload) => {
-                        if (!payload) {
-                            return []
-                        }
-                        if (Array.isArray(payload)) {
-                            return payload.flatMap(normalizeToastPayloads)
-                        }
-                        if (payload.triggerToast) {
-                            return normalizeToastPayloads(payload.triggerToast)
-                        }
-                        if (payload.value !== undefined) {
-                            return normalizeToastPayloads(payload.value)
-                        }
-                        if (payload.message) {
-                            return [payload]
-                        }
-                        return []
-                    }
-
-                    const hasMatchingToast = (payloads) =>
-                        payloads.some((entry) => entry?.message === successMessage)
-
-                    const handleToast = (event) => {
-                        const payloads = normalizeToastPayloads(event.detail)
-                        if (!hasMatchingToast(payloads)) {
-                            return
-                        }
-                        form.reset()
-                        form.querySelectorAll(".is-invalid").forEach((element) =>
-                            element.classList.remove("is-invalid")
-                        )
-                        form.querySelectorAll(".invalid-feedback").forEach((element) =>
-                            element.remove()
-                        )
-                    }
-
-                    document.body.addEventListener("triggerToast", handleToast)
-                })()
-        </script>
+        {% trans "Set as default" as set_as_default_label %}
+        <div class="tw:flex tw:items-center tw:gap-2 tw:pb-2.5">
+          {% include "shared_partials/_toggle_switch.html" with toggle_id="category-default" toggle_name="make_default" toggle_checked=category_creation_form.make_default.value toggle_editable=True toggle_aria_label=set_as_default_label %}
+          <span class="tw:text-sm tw:whitespace-nowrap tw:text-ink">{{ set_as_default_label }}</span>
+        </div>
+      </div>
+      <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+              type="submit">
+        <i class="bi bi-plus-circle" aria-hidden="true"></i>
+        {% trans "Add category" %}
+      </button>
+      {% if category_creation_form.non_field_errors %}
+        <div class="tw:rounded-2xl tw:border tw:border-danger-text/40 tw:bg-danger-soft tw:px-4 tw:py-3"
+             role="alert">
+          <ul class="tw:m-0 tw:flex tw:list-none tw:flex-col tw:gap-1 tw:text-sm tw:text-danger-text">
+            {% for error in category_creation_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+        </div>
       {% endif %}
-    </div>
+    </form>
   </div>
 </div>

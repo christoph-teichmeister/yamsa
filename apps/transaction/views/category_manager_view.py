@@ -106,16 +106,10 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
             request=self.request,
         )
 
-    def _render_category_creation_form_fragment(self, form, *, is_oob=False, success_message=None):
-        if success_message is None:
-            success_message = self._get_category_creation_success_message()
+    def _render_category_creation_form_fragment(self, form, *, is_oob=False):
         return render_to_string(
             "transaction/partials/_room_category_creation_form.html",
-            {
-                "category_creation_form": form,
-                "category_creation_success_message": success_message,
-                "is_oob": is_oob,
-            },
+            {"category_creation_form": form, "is_oob": is_oob},
             request=self.request,
         )
 
@@ -124,7 +118,6 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
         return {
             "category_creation_form": category_creation_form or RoomCategoryCreateForm(),
             "room_categories": service.get_categories(),
-            "category_creation_success_message": self._get_category_creation_success_message(),
             "room_category_update_form": category_update_form,
             "failed_room_category_id": failed_room_category_id,
         }
