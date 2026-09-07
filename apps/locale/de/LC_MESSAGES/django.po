@@ -499,9 +499,7 @@ msgid "Optimised debts"
 msgstr "Optimierte Schulden"
 
 msgid "The fewest payments that settle this room - we cancel out who owes whom."
-msgstr ""
-"Die wenigsten Zahlungen, die diesen Raum ausgleichen – wir rechnen "
-"gegenseitige Schulden gegeneinander auf."
+msgstr "Die wenigsten Zahlungen, die diesen Raum ausgleichen – wir rechnen gegenseitige Schulden gegeneinander auf."
 
 msgid "Unoptimised debts"
 msgstr "Unoptimierte Schulden"
@@ -517,22 +515,6 @@ msgstr "Optimiert"
 
 msgid "Unoptimised"
 msgstr "Unoptimiert"
-
-msgid ""
-"For comparison only: these are gross amounts that ignore payments already "
-"made. Settle your debts in the optimised view."
-msgstr ""
-"Nur zum Vergleich: Das sind Bruttobeträge, bereits geleistete Zahlungen "
-"sind nicht berücksichtigt. Begleiche deine Schulden in der optimierten "
-"Ansicht."
-
-#, python-format
-msgid "Instead of %(simple_count)s repayments, %(counter)s payment is enough."
-msgid_plural ""
-"Instead of %(simple_count)s repayments, %(counter)s payments are enough."
-msgstr[0] "Statt %(simple_count)s Rückzahlungen genügt %(counter)s Zahlung."
-msgstr[1] ""
-"Statt %(simple_count)s Rückzahlungen genügen %(counter)s Zahlungen."
 
 #, python-format
 msgid ""
@@ -557,6 +539,15 @@ msgstr "Alles beglichen"
 
 msgid "Export CSV"
 msgstr "CSV exportieren"
+
+msgid "For comparison only: these are gross amounts that ignore payments already made. Settle your debts in the optimised view."
+msgstr "Nur zum Vergleich: Das sind Bruttobeträge, bereits geleistete Zahlungen sind nicht berücksichtigt. Begleiche deine Schulden in der optimierten Ansicht."
+
+#, python-format
+msgid "Instead of %(simple_count)s repayments, %(counter)s payment is enough."
+msgid_plural "Instead of %(simple_count)s repayments, %(counter)s payments are enough."
+msgstr[0] "Statt %(simple_count)s Rückzahlungen genügt %(counter)s Zahlung."
+msgstr[1] "Statt %(simple_count)s Rückzahlungen genügen %(counter)s Zahlungen."
 
 msgid "Who paid what"
 msgstr "Wer hat was bezahlt"
