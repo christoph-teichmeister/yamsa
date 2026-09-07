@@ -57,6 +57,11 @@
   --yamsa-ink-rgb: 27, 32, 39;
   --yamsa-ink-muted: #4d5665;
   --yamsa-ink-subtle: #606a7f;
+  /* The fill is dark enough to carry white here; on the dark theme it is the other way round.
+     Each is the tone that reads as an action against its own ground. */
+  --yamsa-brand-rgb: 47, 111, 228;
+  --yamsa-brand-hover: #2660cc;
+  --yamsa-on-brand: #ffffff;
   --yamsa-brand-text: #1f5bbf;
   --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.12);
   /* A triplet, because Bootstrap builds every link colour from --bs-link-color-rgb. */
@@ -83,8 +88,15 @@
   --yamsa-ink-rgb: 232, 235, 242;
   --yamsa-ink-muted: #aab3c2;
   --yamsa-ink-subtle: #959daf;
+  /* The fill is the same tone as the text here, so a button, a link and an amount read as one
+     colour. It is too light for a white label, which is why `on-brand` is dark on this theme. */
+  --yamsa-brand-rgb: 143, 184, 255;
+  --yamsa-brand-hover: #a9c9ff;
+  --yamsa-on-brand: #0b1b33;
   --yamsa-brand-text: #8fb8ff;
-  --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.18);
+  /* Thinner than the status tints on this theme: the brand is a light blue here, so the same
+     alpha would lift the tint until its own label no longer reads on it. */
+  --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.14);
   --yamsa-link-rgb: 143, 184, 255;
   --yamsa-success-text: #5fd6a4;
   --yamsa-success-soft: rgb(var(--yamsa-success-rgb), 0.18);
@@ -97,15 +109,14 @@
 /* Identical in both themes. Kept out of the blocks above so that a value which does not switch
    cannot be given two definitions that drift. */
 :root {
-  --yamsa-brand-rgb: 47, 111, 228;
   --yamsa-brand: rgb(var(--yamsa-brand-rgb));
-  /* The fill darkens on hover in both themes: lightening it on the dark theme drops the white
-     label below 4.5:1, and the label may not change with the state. */
-  --yamsa-brand-hover: #2660cc;
   --yamsa-link: rgb(var(--yamsa-link-rgb));
   --yamsa-ink: rgb(var(--yamsa-ink-rgb));
-  /* Reads on a brand-filled surface. */
-  --yamsa-on-brand: #ffffff;
+
+  /* The one brand tone that does not switch, for the surfaces that are the same on both themes
+     and have to carry white either way: the auth hero and the button standing on it. Everything
+     else takes `brand`, which follows the theme. */
+  --yamsa-brand-strong: #1b5acd;
 
   /* The status hues do not change with the theme - only how strongly they are mixed into it
      does, which is what the `-soft` tints above do. The border step is the same in both: enough
