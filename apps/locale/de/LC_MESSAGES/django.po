@@ -306,6 +306,10 @@ msgstr "Foto entfernen"
 msgid "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB."
 msgstr "Wir ändern automatisch die Größe und komprimieren PNG-/JPEG-Uploads, damit sie unter 3 MB bleiben."
 
+#, python-format
+msgid "Show the photo of %(user_name)s at full size"
+msgstr "Foto von %(user_name)s in voller Größe anzeigen"
+
 msgid "Your account overview"
 msgstr "Deine Kontenübersicht"
 

@@ -1,0 +1,64 @@
+{% load i18n %}
+{% comment %}
+  The photo of someone else, view-only: the avatar opens a dialog that shows the picture at full
+  size, so a face rendered at 80px can actually be looked at.
+
+  Only a real picture becomes a button. An initial has nothing to enlarge, and a control that
+  promises a closer look at a letter is a control that lies.
+
+  The dialog shares its mechanics with the own-profile one (`dialog.js`, `data-dialog*`) but none
+  of its actions: a viewer may look, never upload or delete.
+
+  Params: user (the profile being viewed).
+{% endcomment %}
+{% if user.profile_picture %}
+  {% blocktrans trimmed with user_name=user.name asvar photo_preview_label %}
+    Show the photo of {{ user_name }} at full size
+  {% endblocktrans %}
+  <div class="tw:group tw:relative tw:size-20 tw:shrink-0">
+    <button class="tw:relative tw:flex tw:size-20 tw:cursor-zoom-in tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-full tw:border-0 tw:bg-brand-soft tw:p-0 tw:ring-2 tw:ring-brand/40 tw:transition tw:hover:ring-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+            type="button"
+            aria-haspopup="dialog"
+            aria-label="{{ photo_preview_label }}"
+            title="{{ photo_preview_label }}"
+            data-dialog-open="profile-photo-preview-dialog">
+      <img class="tw:h-full tw:w-full tw:object-cover"
+           src="{{ user.profile_picture_url }}"
+           data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
+           alt="{{ user.name }}"
+           loading="lazy"
+           width="80"
+           height="80">
+      <span class="tw:pointer-events-none tw:absolute tw:inset-0 tw:flex tw:items-center tw:justify-center tw:bg-black/45 tw:text-lg tw:text-white tw:opacity-0 tw:transition-opacity tw:group-hover:opacity-100 tw:group-has-focus-visible:opacity-100"
+            aria-hidden="true">
+        <i class="bi bi-zoom-in"></i>
+      </span>
+    </button>
+    <dialog id="profile-photo-preview-dialog"
+            class="tw:m-auto tw:w-[min(34rem,calc(100vw-2rem))] tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:p-0 tw:text-ink tw:backdrop:bg-black/60"
+            data-dialog>
+      <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:border-b tw:border-line tw:px-5 tw:py-3">
+        <p class="tw:m-0 tw:min-w-0 tw:truncate tw:font-semibold tw:text-ink">{{ user.name }}</p>
+        <button class="tw:flex tw:size-8 tw:shrink-0 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-lg tw:border-0 tw:bg-transparent tw:text-ink-subtle tw:transition tw:hover:bg-surface-hover tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                type="button"
+                aria-label="{% trans "Close" %}"
+                data-dialog-close>
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+      {# Contained, not cropped: the point of the dialog is the part the round avatar cuts away. #}
+      <div class="tw:flex tw:items-center tw:justify-center tw:bg-surface-sunken tw:p-5">
+        <img class="tw:max-h-[70vh] tw:w-auto tw:max-w-full tw:rounded-2xl tw:object-contain"
+             src="{{ user.profile_picture_url }}"
+             data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
+             alt="{{ user.name }}">
+      </div>
+    </dialog>
+  </div>
+{% else %}
+  <span class="tw:flex tw:size-20 tw:shrink-0 tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-full tw:bg-brand-soft tw:ring-2 tw:ring-brand/40">
+    {% with avatar_source=user.name|default:user.email %}
+      <span class="tw:text-3xl tw:font-semibold tw:tracking-wider tw:text-brand-text">{{ avatar_source|slice:':1'|upper }}</span>
+    {% endwith %}
+  </span>
+{% endif %}

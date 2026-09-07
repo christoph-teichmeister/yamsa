@@ -79,6 +79,22 @@ class AccountDetailPage(BasePage):
         with self.page.expect_response(lambda response: "/profile-picture/delete/" in response.url):
             self.page.locator("[data-profile-photo-delete]").click()
 
+    def open_photo_preview_dialog(self):
+        self.page.locator("button[data-dialog-open='profile-photo-preview-dialog']").click()
+        expect(self.page.locator("#profile-photo-preview-dialog")).to_be_visible()
+
+    def close_photo_preview_dialog(self):
+        self.page.locator("#profile-photo-preview-dialog [data-dialog-close]").click()
+        expect(self.page.locator("#profile-photo-preview-dialog")).not_to_be_visible()
+
+    def expect_photo_preview_shows(self, source_fragment: str):
+        expect(self.page.locator(f"#profile-photo-preview-dialog img[src*='{source_fragment}']")).to_be_visible()
+
+    def expect_no_photo_preview(self):
+        """An avatar that is only an initial has nothing to enlarge and offers no dialog."""
+
+        expect(self.page.locator("#profile-photo-preview-dialog")).to_have_count(0)
+
     def expect_photo_present(self):
         expect(self.page.locator("#profile-photo button img")).to_be_visible()
 
