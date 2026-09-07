@@ -1,7 +1,9 @@
 import json
 
 from django.conf import settings
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views import generic
+from webpack_loader.utils import get_files
 
 
 class ServiceWorkerView(generic.TemplateView):
@@ -30,9 +32,17 @@ class ServiceWorkerView(generic.TemplateView):
         if offline_url:
             urls.add(str(offline_url))
 
-        for url in cache_settings.get("precache_urls", []):
-            if url:
-                urls.add(str(url))
+        # Both lookups go through what the templates use, because only those answer with the URL
+        # the browser will actually ask for: the storage hashes a static file's name, the webpack
+        # loader reads the bundle's URL out of the stats file.
+        for name in cache_settings.get("precache_static", []):
+            if name:
+                urls.add(staticfiles_storage.url(name))
+
+        for bundle_name, extension in cache_settings.get("precache_bundles", {}).items():
+            if not bundle_name:
+                continue
+            urls.update(chunk["url"] for chunk in get_files(bundle_name, extension))
 
         for icon in manifest.get("icons", []):
             src = icon.get("src")
