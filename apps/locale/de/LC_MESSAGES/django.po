@@ -2027,39 +2027,23 @@ msgid "transactions"
 msgstr "transaktionen"
 
 #, python-brace-format
-msgid ""
-"{payer} logged a payment of {amount}{currency} (\"{description}\")\n"
-"Have a look!"
-msgstr ""
-"{payer} hat eine Zahlung über {amount}{currency} eingetragen (\"{description}\")\n"
-"Schau vorbei!"
+msgid "{payer} logged a payment of {amount}{currency} (\"{description}\")"
+msgstr "{payer} hat eine Zahlung über {amount}{currency} eingetragen (\"{description}\")"
 
 #, python-brace-format
-msgid ""
-"{creator} logged that {payer} paid {amount}{currency} (\"{description}\")\n"
-"Have a look!"
-msgstr ""
-"{creator} hat eingetragen, dass {payer} {amount}{currency} gezahlt hat (\"{description}\")\n"
-"Schau vorbei!"
+msgid "{creator} logged that {payer} paid {amount}{currency} (\"{description}\")"
+msgstr "{creator} hat eingetragen, dass {payer} {amount}{currency} gezahlt hat (\"{description}\")"
 
 #, python-brace-format
-msgid ""
-"{editor} just updated a transaction (\"{description}\")\n"
-"Have a look!"
-msgstr ""
-"{editor} hat eine Transaktion aktualisiert (\"{description}\")\n"
-"Schau vorbei!"
+msgid "{editor} just updated a transaction (\"{description}\")"
+msgstr "{editor} hat eine Transaktion aktualisiert (\"{description}\")"
 
 msgid "Transaction updated"
 msgstr "Transaktion aktualisiert"
 
 #, python-brace-format
-msgid ""
-"{deleter} just deleted a transaction (\"{description}\")\n"
-"Have a look!"
-msgstr ""
-"{deleter} hat eine Transaktion gelöscht (\"{description}\")\n"
-"Schau vorbei!"
+msgid "{deleter} just deleted a transaction (\"{description}\")"
+msgstr "{deleter} hat eine Transaktion gelöscht (\"{description}\")"
 
 #, python-brace-format
 msgid "{debitor} just settled their debt of {amount}{currency} to you"
@@ -2077,14 +2061,6 @@ msgstr "Nutzer:in entfernt"
 
 msgid "Transactions imported"
 msgstr "Transaktionen importiert"
-
-#, python-brace-format
-msgid ""
-"{importer} imported {count} entries from {source} into \"{room}\"\n"
-"Have a look!"
-msgstr ""
-"{importer} hat {count} Einträge aus {source} in „{room}“ importiert\n"
-"Schau mal rein!"
 
 #, python-brace-format
 msgid "Webpush Information for {user}"
