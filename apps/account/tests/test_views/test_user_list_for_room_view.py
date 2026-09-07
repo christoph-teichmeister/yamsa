@@ -33,7 +33,7 @@ def test_get_for_user_of_room_and_for_superuser_not_of_room(
 
         content = response.content.decode()
         if should_show_room_roster:
-            assert "Room roster" in content
+            assert "Add existing user" in content
             assert user.name in content
             assert "Registered roommate" in content
             assert "Seen room" in content

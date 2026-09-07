@@ -25,10 +25,6 @@
             color: var(--bs-secondary-color, #6c757d);
         }
 
-        .people-actions {
-            margin-top: 1.75rem;
-        }
-
         .people-action-btn {
             border-radius: 1rem;
             padding: 1rem 1.25rem;
@@ -118,30 +114,7 @@
   </style>
   {% if is_member %}
     <div class="people-wrap">
-      <div class="people-hero">
-        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
-          <div>
-            <p class="text-uppercase text-muted small mb-1">{% trans "Room roster" %}</p>
-            <h3 class="mb-1">
-              {% with current_room.name as room_name %}
-                {% blocktrans %}Everyone in {{ room_name }}{% endblocktrans %}
-              {% endwith %}
-            </h3>
-            <p class="mb-0">{% trans "Invite roommates, add guests, and keep tabs on who has already viewed the room." %}</p>
-          </div>
-          <div class="text-md-end">
-            <p class="mb-1 small text-muted">{% trans "Status" %}</p>
-            <span class="badge {% if current_room.is_closed %}bg-body-secondary text-body-emphasis{% else %}bg-success-subtle text-success-emphasis{% endif %}">
-              {% if current_room.is_closed %}
-                {% trans "Room closed" %}
-              {% else %}
-                {% trans "Room open" %}
-              {% endif %}
-            </span>
-          </div>
-        </div>
-      </div>
-      <div class="row people-actions g-3">
+      <div class="row g-3">
         <div class="col-12 col-md-6">
           <button class="w-100 people-action-btn d-flex align-items-center justify-content-between {% if current_room.is_closed %}disabled{% endif %}"
                   type="button"
