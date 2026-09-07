@@ -87,8 +87,11 @@ class AccountDetailPage(BasePage):
         self.page.locator("#profile-photo-preview-dialog [data-dialog-close]").click()
         expect(self.page.locator("#profile-photo-preview-dialog")).not_to_be_visible()
 
-    def expect_photo_preview_shows(self, source_fragment: str):
-        expect(self.page.locator(f"#profile-photo-preview-dialog img[src*='{source_fragment}']")).to_be_visible()
+    def expect_photo_preview_shows(self, source_url: str):
+        """The stored picture, not the placeholder — an upload is named by a uuid4, so only the
+        model's own URL identifies it."""
+
+        expect(self.page.locator(f"#profile-photo-preview-dialog img[src='{source_url}']")).to_be_visible()
 
     def expect_no_photo_preview(self):
         """An avatar that is only an initial has nothing to enlarge and offers no dialog."""

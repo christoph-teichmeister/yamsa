@@ -169,6 +169,9 @@ def test_other_profile_picture_opens_a_full_size_dialog(tmp_path, authenticated_
     content = response.content.decode()
     assert contains_attribute(content, "data-dialog-open", "profile-photo-preview-dialog")
     assert contains_attribute(content, "id", "profile-photo-preview-dialog")
+    # The dialog shows the stored picture, not the placeholder. An upload is named by a uuid4, so
+    # this URL is the only handle on it — the e2e locator matches on it.
+    assert contains_attribute(content, "src", superuser.profile_picture_url)
 
 
 def test_other_profile_without_picture_offers_no_dialog(authenticated_client, room, superuser):
