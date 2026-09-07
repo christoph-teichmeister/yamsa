@@ -1047,6 +1047,12 @@ msgstr "Noch keine Aktualisierungen"
 msgid "Once roommates start logging expenses or changes, they will appear here."
 msgstr "Sobald Mitbewohner Ausgaben oder Änderungen erfassen, erscheinen sie hier."
 
+msgid "Preferred currency"
+msgstr "Bevorzugte Währung"
+
+msgid "This room still has open debts and can not be closed"
+msgstr "Dieser Raum hat noch offene Schulden und kann nicht geschlossen werden"
+
 #, python-brace-format
 msgid "{editor} closed \"{room}\""
 msgstr "{editor} hat \"{room}\" geschlossen"
@@ -1093,145 +1099,6 @@ msgstr "Lade häufige Mitwirkende ein"
 msgid "Add past roommates with one tap. Mark your go-to teammates as friends to pin them to the top."
 msgstr "Füge frühere Mitbewohner mit einem Tippen hinzu. Markiere deine bevorzugten Teammitglieder als Freunde, um sie oben anzupinnen."
 
-msgid "Room overview"
-msgstr "Raumübersicht"
-
-msgid "No description added yet."
-msgstr "Noch keine Beschreibung hinzugefügt."
-
-msgid "Preferred currency"
-msgstr "Bevorzugte Währung"
-
-msgid "Edit room"
-msgstr "Raum bearbeiten"
-
-msgid "Used as the default for new transactions."
-msgstr "Wird als Standard für neue Transaktionen verwendet."
-
-msgid "Members"
-msgstr "Mitglieder"
-
-msgid "Roommates and guests currently connected."
-msgstr "Derzeit verbundene Mitbewohner und Gäste."
-
-msgid "Closing readiness"
-msgstr "Schließbereitschaft"
-
-msgid "Ready to close"
-msgstr "Bereit zum Schließen"
-
-msgid "No unsettled debts remain."
-msgstr "Es bleiben keine offenen Schulden."
-
-msgid "Outstanding balances"
-msgstr "Ausstehende Salden"
-
-msgid "Settle open debts before closing."
-msgstr "Begleiche offene Schulden vor dem Schließen."
-
-msgid "Keep logging expenses and invite more people whenever you need to."
-msgstr "Erfasse weiterhin Ausgaben und lade bei Bedarf weitere Menschen ein."
-
-msgid "This room is locked for editing. Reopen it from the edit screen if you need to make changes."
-msgstr "Dieser Raum ist zur Bearbeitung gesperrt. Öffne ihn auf dem Bearbeitungsbildschirm, wenn du Änderungen brauchst."
-
-msgid "Back to room"
-msgstr "Zurück zum Raum"
-
-msgid "Save room details"
-msgstr "Raumdetails speichern"
-
-msgid "Room settings"
-msgstr "Raumeinstellungen"
-
-#, python-format
-msgid "Edit \"%(room_name)s\""
-msgstr "\"%(room_name)s\" bearbeiten"
-
-msgid "Basics"
-msgstr "Grundlagen"
-
-msgid "Name, description & currency"
-msgstr "Name, Beschreibung & Währung"
-
-msgid "Please fix the highlighted errors in the form."
-msgstr "Bitte behebe die markierten Fehler im Formular."
-
-msgid "Room status"
-msgstr "Raumstatus"
-
-msgid "All debts are settled. You can close the room."
-msgstr "Alle Schulden sind beglichen. Du kannst den Raum schließen."
-
-#, python-format
-msgid ""
-"\n"
-"                                            There is still %(debt_count)s open debt.\n"
-"                                        "
-msgid_plural ""
-"\n"
-"                                            There are still %(debt_count)s open debts.\n"
-"                                        "
-msgstr[0] ""
-"\n"
-"                                            Es gibt noch %(debt_count)s offene Schuld.\n"
-"                                        "
-msgstr[1] ""
-"\n"
-"                                            Es gibt noch %(debt_count)s offene Schulden.\n"
-"                                        "
-
-msgid "The room is closed and can be reopened."
-msgstr "Der Raum ist geschlossen und kann wieder geöffnet werden."
-
-msgid "Close room"
-msgstr "Raum schließen"
-
-msgid "Reopen room"
-msgstr "Raum wieder öffnen"
-
-msgid "Category manager"
-msgstr "Kategorie-Manager"
-
-msgid "Customize tracking categories"
-msgstr "Tracking-Kategorien anpassen"
-
-msgid "Add room-specific categories and control their order without touching the global defaults."
-msgstr "Füge raumspezifische Kategorien hinzu und steuere deren Reihenfolge, ohne die globalen Standardeinstellungen zu verändern."
-
-msgid "Open manager"
-msgstr "Manager öffnen"
-
-msgid "Outstanding debts"
-msgstr "Ausstehende Schulden"
-
-msgid "This room still has outstanding payments."
-msgstr "Dieser Raum hat noch ausstehende Zahlungen."
-
-#, python-format
-msgid ""
-"\n"
-"                                    There is still %(debt_count)s open debt. Closing the room anyway will mark it as settled.\n"
-"                                "
-msgid_plural ""
-"\n"
-"                                    There are still %(debt_count)s open debts. Closing the room anyway will mark them as settled.\n"
-"                                "
-msgstr[0] ""
-"\n"
-"                                    Es gibt noch %(debt_count)s offene Schuld. Wenn du den Raum trotzdem schließt, wird sie als beglichen markiert.\n"
-"                                "
-msgstr[1] ""
-"\n"
-"                                    Es gibt noch %(debt_count)s offene Schulden. Wenn du den Raum trotzdem schließt, werden sie als beglichen markiert.\n"
-"                                "
-
-msgid "Use this option only if you want to skip manual settlement."
-msgstr "Nutze diese Option nur, wenn du die manuelle Abrechnung überspringen möchtest."
-
-msgid "Close anyway"
-msgstr "Trotzdem schließen"
-
 msgid "Open to guests"
 msgstr "Für Gäste offen"
 
@@ -1274,6 +1141,75 @@ msgstr "Starte eine neue Gruppe mit Freunden"
 #, python-format
 msgid "Balanced (%(currency)s)"
 msgstr "Ausgeglichen (%(currency)s)"
+
+msgid "Room overview"
+msgstr "Raumübersicht"
+
+msgid "Edit room"
+msgstr "Raum bearbeiten"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "No description added yet."
+msgstr "Noch keine Beschreibung hinzugefügt."
+
+msgid "Overview"
+msgstr "Übersicht"
+
+msgid "Members"
+msgstr "Mitglieder"
+
+msgid "Closing readiness"
+msgstr "Schließbereitschaft"
+
+msgid "No unsettled debts remain."
+msgstr "Es bleiben keine offenen Schulden."
+
+msgid "Settle open debts before closing."
+msgstr "Begleiche offene Schulden vor dem Schließen."
+
+msgid "Customize tracking categories"
+msgstr "Tracking-Kategorien anpassen"
+
+msgid "Add room-specific categories and control their order without touching the global defaults."
+msgstr "Füge raumspezifische Kategorien hinzu und steuere deren Reihenfolge, ohne die globalen Standardeinstellungen zu verändern."
+
+msgid "All debts are settled. You can close the room."
+msgstr "Alle Schulden sind beglichen. Du kannst den Raum schließen."
+
+#, python-format
+msgid "There is still %(debt_count)s open debt."
+msgid_plural "There are still %(debt_count)s open debts."
+msgstr[0] "Es gibt noch %(debt_count)s offene Schuld."
+msgstr[1] "Es gibt noch %(debt_count)s offene Schulden."
+
+msgid "The room is closed and can be reopened."
+msgstr "Der Raum ist geschlossen und kann wieder geöffnet werden."
+
+msgid "Close room"
+msgstr "Raum schließen"
+
+msgid "Reopen room"
+msgstr "Raum wieder öffnen"
+
+msgid "Outstanding debts"
+msgstr "Ausstehende Schulden"
+
+msgid "This room still has outstanding payments."
+msgstr "Dieser Raum hat noch ausstehende Zahlungen."
+
+#, python-format
+msgid "There is still %(debt_count)s open debt. Closing the room anyway will mark it as settled."
+msgid_plural "There are still %(debt_count)s open debts. Closing the room anyway will mark them as settled."
+msgstr[0] "Es gibt noch %(debt_count)s offene Schuld. Wenn du den Raum trotzdem schließt, wird sie als beglichen markiert."
+msgstr[1] "Es gibt noch %(debt_count)s offene Schulden. Wenn du den Raum trotzdem schließt, werden sie als beglichen markiert."
+
+msgid "Use this option only if you want to skip manual settlement."
+msgstr "Nutze diese Option nur, wenn du die manuelle Abrechnung überspringen möchtest."
+
+msgid "Close anyway"
+msgstr "Trotzdem schließen"
 
 #, python-format
 msgid "%(timesince)s ago"
@@ -1464,6 +1400,9 @@ msgstr "Füge Ausgaben hinzu, um die Aufschlüsselung freizuschalten."
 
 msgid "Tap a slice"
 msgstr "Tippe auf ein Segment"
+
+msgid "Room settings"
+msgstr "Raumeinstellungen"
 
 #, python-format
 msgid "Manage categories for \"%(room_name)s\""
@@ -1767,9 +1706,6 @@ msgstr "Suche"
 
 msgid "Filter by payer or description"
 msgstr "Nach Zahler:in oder Beschreibung filtern"
-
-msgid "Details"
-msgstr "Details"
 
 msgid "Actions"
 msgstr "Aktionen"

@@ -32,12 +32,12 @@ class AccountDetailPage(BasePage):
         return self.page.locator("#profile-sheet").evaluate("(sheet) => sheet.dataset.e2eMarker || null")
 
     def open_photo_dialog(self):
-        self.page.locator("button[data-profile-photo-open]").click()
-        expect(self.page.locator("[data-profile-photo-dialog]")).to_be_visible()
+        self.page.locator("button[data-dialog-open]").click()
+        expect(self.page.locator("#profile-photo-dialog")).to_be_visible()
 
     def open_photo_dialog_via_badge(self):
-        self.page.locator("span[data-profile-photo-open]").click()
-        expect(self.page.locator("[data-profile-photo-dialog]")).to_be_visible()
+        self.page.locator("span[data-dialog-open]").click()
+        expect(self.page.locator("#profile-photo-dialog")).to_be_visible()
 
     def expect_photo_hover_hint(self, *, visible: bool):
         """The camera overlay may only show while the avatar is hovered.
@@ -56,8 +56,8 @@ class AccountDetailPage(BasePage):
         self.page.mouse.move(0, 0)
 
     def close_photo_dialog(self):
-        self.page.locator("[data-profile-photo-close]").click()
-        expect(self.page.locator("[data-profile-photo-dialog]")).not_to_be_visible()
+        self.page.locator("[data-dialog-close]").click()
+        expect(self.page.locator("#profile-photo-dialog")).not_to_be_visible()
 
     def expect_photo_dialog_offers(self, *, delete: bool):
         expect(self.page.locator("label[for='profile-picture-input']")).to_be_visible()
@@ -77,10 +77,10 @@ class AccountDetailPage(BasePage):
             self.page.locator("[data-profile-photo-delete]").click()
 
     def expect_photo_present(self):
-        expect(self.page.locator("[data-profile-photo-open] img")).to_be_visible()
+        expect(self.page.locator("#profile-photo button img")).to_be_visible()
 
     def expect_no_photo(self):
-        expect(self.page.locator("[data-profile-photo-open] img")).to_have_count(0)
+        expect(self.page.locator("#profile-photo button img")).to_have_count(0)
 
     def profile_section_offset(self) -> float:
         """Where the first settings row sits, to catch the sheet growing on a mode switch."""

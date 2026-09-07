@@ -1,67 +1,32 @@
 from django import forms
-from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from apps.account.models import User
-from apps.core.event_loop.runner import handle_message
-from apps.room.messages.events.room_status_changed import RoomStatusChanged
 from apps.room.models import Room
 
 
 class RoomEditForm(forms.ModelForm):
-    """
-    Form that lets room admins update the core metadata and flip the room status via the dashboard controls.
-    """
+    """Update a room's own metadata.
 
-    # Hidden flag driven by the modal to allow forcing a room closure when debts exist.
-    force_close = forms.BooleanField(
-        required=False,
-        initial=False,
-        widget=forms.HiddenInput(attrs={"id": "force-close-flag"}),
-    )
+    The status is not in here: closing and reopening a room has consequences of its own — open
+    debts, a confirmation, an event — and runs on its own cycle through RoomStatusForm.
+    """
 
     user: User = None
 
     class Meta:
         model = Room
-        fields = ("name", "description", "preferred_currency", "status")
-
-    def clean(self):
-        """Ensure status transitions respect open debts unless the force flag is set."""
-        cleaned_data = super().clean()
-        new_status = cleaned_data.get("status")
-        old_status = self.instance.status
-        force_close = cleaned_data.get("force_close")
-
-        if new_status is None:
-            return cleaned_data
-
-        if (
-            new_status != old_status
-            and new_status == Room.StatusChoices.CLOSED
-            and not self.instance.can_be_closed
-            and not force_close
-        ):
-            msg = "This room still has open debts and can not be closed"
-            raise ValidationError({"status": ValidationError(msg, code="invalid")})
-
-        return cleaned_data
+        fields = ("name", "description", "preferred_currency")
+        # The model fields carry no verbose_name, so without these the sheet would label them in
+        # English on a German page. Same pattern as EditUserForm.
+        labels = {
+            "name": _("Name"),
+            "description": _("Description"),
+            "preferred_currency": _("Preferred currency"),
+        }
 
     def save(self, commit=True):
-        """Apply force closes, broadcast the status event, and keep audit fields in sync."""
-        new_status = self.cleaned_data.get("status")
-        force_close = self.cleaned_data.get("force_close")
-
-        if "status" in self.changed_data:
-            if force_close and new_status == Room.StatusChoices.CLOSED:
-                today = timezone.localdate()
-                self.instance.debts.filter(settled=False).update(settled=True, settled_at=today)
-
-            # Notify listeners that the room status changed (open ↔ closed).
-            handle_message(RoomStatusChanged(context_data={"room": self.instance}))
-
-        # Set lastmodified fields
         self.instance.lastmodified_by = self.user
         self.instance.lastmodified_at = timezone.now()
-
         return super().save(commit)

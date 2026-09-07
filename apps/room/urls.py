@@ -30,6 +30,7 @@ urlpatterns = [
             path("dashboard", views.RoomDashboardView.as_view(), name="dashboard"),
             path("detail", views.RoomDetailView.as_view(), name="detail"),
             path("edit", views.RoomEditView.as_view(), name="edit"),
+            path("status", views.RoomStatusUpdateView.as_view(), name="status"),
             path(
                 "userconnectiontoroom/create",
                 UserConnectionToRoomCreateView.as_view(),

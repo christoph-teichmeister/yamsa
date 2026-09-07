@@ -3,7 +3,7 @@
   The viewer's own profile as one continuous sheet: identity header, then a labelled row per
   setting. Reading and editing are the same markup — every value is already its own form control,
   read-only until the sheet switches to edit mode, so entering edit mode needs no request and
-  nothing moves on screen. `profile-sheet.js` flips `data-profile-mode` and unlocks the controls;
+  nothing moves on screen. `sheet.js` flips `data-sheet-mode` and unlocks the controls;
   the `tw:reading:` / `tw:editing:` variants show the matching actions.
 
   Saving posts the sheet and swaps it back in place, so the response of UserUpdateView must be
@@ -16,12 +16,12 @@
       class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
       method="post"
       action="{% url 'account:update' pk=user.id %}"
-      data-profile-sheet
-      data-profile-mode="{% if profile_is_editing %}editing{% else %}reading{% endif %}"
+      data-sheet
+      data-sheet-mode="{% if profile_is_editing %}editing{% else %}reading{% endif %}"
       hx-post="{% url 'account:update' pk=user.id %}"
       hx-target="this"
       hx-swap="outerHTML"
-      hx-disabled-elt="find [data-profile-save]">
+      hx-disabled-elt="find [data-sheet-save]">
   {% csrf_token %}
   <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:p-5 tw:@md:p-6">
     <div class="tw:flex tw:flex-col tw:gap-4 tw:@md:flex-row tw:@md:items-center">
@@ -35,18 +35,18 @@
         <button id="edit-profile-button"
                 class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:editing:hidden"
                 type="button"
-                data-profile-edit>
+                data-sheet-edit>
           <i class="bi bi-pencil" aria-hidden="true"></i>
           {% trans "Edit profile" %}
         </button>
         <button id="cancel-profile-button"
                 class="tw:hidden tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-4 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:editing:inline-flex"
                 type="button"
-                data-profile-cancel>{% trans "Cancel" %}</button>
+                data-sheet-cancel>{% trans "Cancel" %}</button>
         <button id="save-profile-button"
                 class="tw:hidden tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:opacity-60 tw:editing:inline-flex"
                 type="submit"
-                data-profile-save>{% trans "Save changes" %}</button>
+                data-sheet-save>{% trans "Save changes" %}</button>
       </div>
     </div>
     <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">

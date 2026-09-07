@@ -51,7 +51,7 @@ class TestUserUpdateView:
         assert UserUpdateView.template_name == UserDetailView.template_name
 
         content = response.content.decode()
-        assert contains_attribute(content, "data-profile-mode", "editing")
+        assert contains_attribute(content, "data-sheet-mode", "editing")
         assert "readonly" not in content
 
     def test_post_answers_with_the_locked_sheet_alone(self, authenticated_client, user):
@@ -67,7 +67,7 @@ class TestUserUpdateView:
         # Only the sheet, so the browser keeps the page it is on instead of reloading it.
         assert contains_attribute(content, "id", "profile-sheet")
         assert "<html" not in content
-        assert contains_attribute(content, "data-profile-mode", "reading")
+        assert contains_attribute(content, "data-sheet-mode", "reading")
 
         user.refresh_from_db()
         assert user.name == new_name
@@ -93,7 +93,7 @@ class TestUserUpdateView:
         assert response.status_code == http.HTTPStatus.OK
         content = response.content.decode()
         # A rejected save has to leave the fields editable, or the corrections cannot be typed.
-        assert contains_attribute(content, "data-profile-mode", "editing")
+        assert contains_attribute(content, "data-sheet-mode", "editing")
         assert "Enter a valid email address." in content
 
         user.refresh_from_db()

@@ -9,6 +9,7 @@ Migrated so far:
 - `account/detail.html` — the profile page, which reads and edits in the same place
 - `account/security.html` — the security settings behind the profile's security rows
 - `account/change_password.html` — the password form behind those settings
+- `room/detail.html` — the room, which reads and edits in the same place
 
 Everything else is still Bootstrap and follows the Bootstrap notes in
 [`architecture.md`](architecture.md) § Design System & UI Concepts.
@@ -188,7 +189,14 @@ leaves the browser on the redirect target rather than on the form.
 
 ## Editing in place
 
-The profile sheet does not have a separate edit page. Every value is already its own form control,
+Two sheets work this way, the profile and the room, and they share one implementation:
+`apps/static/js/sheet.js` keyed off `data-sheet`, `data-sheet-mode`, `data-sheet-edit`,
+`data-sheet-cancel` and `data-sheet-save`. Dialogs inside them share `apps/static/js/dialog.js`
+(`data-dialog`, `data-dialog-open="<id>"`, `data-dialog-close`), which also re-opens a dialog that
+an htmx swap brought back with the `open` attribute. Neither bundle knows which page it is on — a
+second copy of this logic would drift from the first.
+
+The sheet does not have a separate edit page. Every value is already its own form control,
 `readonly` (or `disabled`, for controls that have no readonly state) until the sheet switches to
 edit mode. So:
 
@@ -221,8 +229,13 @@ Both custom variants are written without `:where()`, which gives them the extra 
 the plain utility they override (`tw:hidden tw:editing:flex`) whatever the utility order is.
 
 Server and client must agree on the starting state: the template renders `readonly`/`disabled` and
-the `data-profile-mode` attribute from `profile_is_editing`, so there is no unlocked flash before
-the bundle runs and the page works when it never runs.
+the `data-sheet-mode` attribute from `profile_is_editing` / `room_is_editing`, so there is no
+unlocked flash before the bundle runs and the page works when it never runs. That is also what a
+plain GET on the edit URL is for — `UserUpdateView` and `RoomEditView` render the very same
+template with the sheet unlocked, which is the whole of editing without the bundle.
+
+A sheet whose object cannot be edited at all offers **no edit mode**, rather than one that unlocks
+nothing: a closed room renders without an edit button, and only its status section stays live.
 
 Do not add a loading indicator for a swap this small. The save button is disabled for the duration
 (`hx-disabled-elt`) and that is the whole feedback; an `htmx-indicator` also keeps its box at
@@ -252,8 +265,20 @@ this way:
   construction rather than by a filter someone has to maintain.
 
 A `<dialog>` swapped back in with the `open` attribute is *not* in the top layer, so the backdrop
-and Escape are dead. `profile-sheet.js` re-opens it with `showModal()` after the swap; check
-`:modal`, not the attribute, to tell the two apart.
+and Escape are dead. `dialog.js` re-opens it with `showModal()` after the swap; check `:modal`, not
+the attribute, to tell the two apart.
+
+The room's status is the second sub-cycle. Closing a room settles debts, fires an event and decides
+whether the fields above it can be edited at all, so it is not a field of the sheet: it posts to
+`room:status` with `RoomStatusForm`, which owns `status` and `force_close` and nothing else. Two
+details generalise from it:
+
+- **Its trigger carries the payload in `hx-vals`, not in hidden inputs.** A nested `<form>` is
+  invalid inside the sheet's own form, and htmx sends the enclosing form's fields along anyway —
+  which the narrow form ignores by construction, the same way the photo's does.
+- **The event and the debt settlement live in the view's `form_valid()`**, never in the form's
+  `save()` — see AGENTS.md § Hard rules. The form only says *whether* this post is the closing
+  transition (`closes_the_room`); acting on that is the view's job.
 
 ## Component patterns
 
@@ -372,9 +397,14 @@ Playwright's `check()` keep working.
 
 - `shared_partials/_toggle_switch.html` — switch-styled checkbox; read-only unless
   `toggle_editable` is passed
+- `shared_partials/_sheet_value_row.html` — static label/value row, for a value the viewer cannot
+  edit in place
 - `account/partials/_back_to_profile.html` — the back button of the pages behind the profile,
   hooked with `data-back-to-profile` because the side menu also links to the profile
 - `account/partials/_password_field.html` — password input with its reveal toggle
+- `room/partials/_room_sheet.html` — the room, read and edit in one markup
+- `room/partials/_room_status_section.html` — closing and reopening, with its confirmation dialog
+- `room/partials/_room_status_badge.html` — the open/closed pill
 - `account/partials/_profile_sheet.html` — the own profile, read and edit in one markup
 - `account/partials/_profile_photo.html` — the avatar, its dialog and its own upload cycle
 - `account/partials/_profile_value_row.html` — static label/value row
