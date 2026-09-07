@@ -42,12 +42,20 @@
 .timeline-chart {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 5;
 }
 
 .trend-line-chart {
     width: 100%;
-    min-height: 220px;
+}
+
+/* One chart per currency: a EUR and a HUF total share no scale, so they never share an axis. */
+.trend-series + .trend-series {
+    margin-top: 1.25rem;
+}
+
+.trend-series-label {
+    font-weight: 600;
+    letter-spacing: 0.04em;
 }
 
 .trend-line-chart svg {
@@ -57,7 +65,7 @@
 
 .trend-line-path {
     fill: none;
-    stroke: rgb(var(--yamsa-brand-rgb), 0.9);
+    stroke: rgb(var(--yamsa-link-rgb), 0.9);
     stroke-width: 1.9;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -69,7 +77,7 @@
 
 .trend-line-dot {
     fill: #fff;
-    stroke: rgb(var(--yamsa-brand-rgb), 0.9);
+    stroke: rgb(var(--yamsa-link-rgb), 0.9);
     stroke-width: 1.25;
 }
 

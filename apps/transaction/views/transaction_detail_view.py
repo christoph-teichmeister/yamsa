@@ -23,7 +23,8 @@ class TransactionDetailView(TransactionBaseContext, generic.DetailView):
     @context
     @cached_property
     def child_transactions(self):
-        return self.object.child_transactions.all()
+        # Every row prints the name and the avatar of the person it is for.
+        return self.object.child_transactions.select_related("paid_for")
 
     @context
     @cached_property

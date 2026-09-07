@@ -36,6 +36,11 @@ root (e.g., `from apps.transaction import models`).
   status (e.g., `text-bg-dark` for elevated roles).
 - When using HTMX, ensure loaders target `#body`, and actions that mimic navigation also manage scroll restoration (see
   `apps/static/js/navigation.js`).
+- Wherever a user's name appears, their avatar comes from `shared_partials/_user_avatar.html` (classes `.avatar`,
+  `.avatar-sm|-lg|-square|-pair` in `apps/static/customClasses.css`). It takes values, not a user, and falls back to the
+  initial when `avatar_url` is empty. Read the picture through `User.avatar_url` — never `profile_picture.url` — because
+  that property caches the storage existence check and narrows the Cloudinary URL to thumbnail size; `profile_picture_url`
+  stays the full-size variant for the profile page.
 
 ## Forms vs Views — Separation of Concerns
 

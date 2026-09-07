@@ -2,11 +2,18 @@
 {% load room_tags i18n l10n %}
 {% block tab_content %}
   <div class="container-fluid px-0 px-md-2 mt-3">
-    <h4 class="mb-1">
-      {% blocktrans with creditor_name=debt.creditor.name trimmed %}
-        Your debt to {{ creditor_name }}
-      {% endblocktrans %}
-    </h4>
+    {% comment %}
+      The creditor's face is the anchor of the confirmation: it is the one thing that tells the
+      reader at a glance whom they are about to mark as paid.
+    {% endcomment %}
+    <div class="d-flex align-items-center gap-3 mb-1">
+      {% include "shared_partials/_user_avatar.html" with avatar_url=debt.creditor.avatar_url avatar_name=debt.creditor.name avatar_fallback_url=debt.creditor.profile_picture_fallback_url avatar_class="avatar-lg" %}
+      <h4 class="mb-0">
+        {% blocktrans with creditor_name=debt.creditor.name trimmed %}
+          Your debt to {{ creditor_name }}
+        {% endblocktrans %}
+      </h4>
+    </div>
     <p class="text-muted small mb-4">
       {% blocktrans with creditor_name=debt.creditor.name debt_value=debt.value|format_with_thousands debt_currency=debt.currency.sign trimmed %}
         Are you sure that you have settled your debt ({{ debt_value }}{{ debt_currency }}) to {{ creditor_name }}?

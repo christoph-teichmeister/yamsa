@@ -1,0 +1,29 @@
+{% comment %}
+  The avatar of one user, wherever their name appears.
+
+  Takes values rather than a user, because the suggested-guest list renders a dataclass and not a
+  model instance. An empty `avatar_url` means "no picture": the initial then fills exactly the box
+  the picture would have, so a list of members with and without one keeps its rhythm.
+
+  Decorative by construction - every caller prints the name next to it, and a screen reader that
+  announced the avatar too would read every row twice.
+
+  The wrapper carries the size, so the image needs no width/height of its own to keep the layout
+  from shifting.
+
+  Params: avatar_url, avatar_name, avatar_initials (optional, defaults to the first letter of
+          avatar_name), avatar_fallback_url (optional), avatar_class (optional extra classes,
+          e.g. avatar-lg or avatar-square).
+{% endcomment %}
+<span class="avatar {{ avatar_class|default:'avatar-sm' }}"
+      aria-hidden="true">
+  {% if avatar_url %}
+    <img src="{{ avatar_url }}"
+         {% if avatar_fallback_url %}data-profile-picture-fallback-url="{{ avatar_fallback_url }}"{% endif %}
+         alt=""
+         loading="lazy"
+         decoding="async">
+  {% else %}
+    <span>{% firstof avatar_initials avatar_name|slice:":1"|upper %}</span>
+  {% endif %}
+</span>

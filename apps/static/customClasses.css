@@ -152,13 +152,58 @@
     background: var(--yamsa-brand-soft);
 }
 
-.profile-avatar img,
-.people-avatar img {
+.profile-avatar img {
     object-fit: cover;
 }
 
-.people-avatar span {
+/* The avatar of a user, wherever their name shows up. The size lives on the wrapper so the
+   initial fallback occupies the same box as a picture and a mixed list keeps its rhythm. */
+.avatar {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%;
+    background: rgb(var(--yamsa-brand-rgb), 0.1);
+    color: var(--yamsa-brand-text);
+    font-weight: 600;
     letter-spacing: 0.08em;
+    line-height: 1;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-sm {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.75rem;
+}
+
+.avatar-lg {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.3rem;
+}
+
+.avatar-square {
+    border-radius: 0.85rem;
+}
+
+/* Debitor and creditor of one debt, read left to right. The ring separates the two where they
+   overlap, whatever the row underneath them is filled with. */
+.avatar-pair {
+    display: inline-flex;
+    align-items: center;
+}
+
+.avatar-pair > .avatar + .avatar {
+    margin-left: -0.6rem;
+    box-shadow: 0 0 0 2px var(--yamsa-surface);
 }
 
 .debug-banner {

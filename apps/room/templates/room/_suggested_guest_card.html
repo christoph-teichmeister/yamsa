@@ -10,18 +10,8 @@
 <article class="tw:flex tw:h-full tw:flex-col tw:gap-3 tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-4">
   <div class="tw:flex tw:items-start tw:justify-between tw:gap-3">
     <div class="tw:flex tw:min-w-0 tw:items-center tw:gap-3">
-      <span class="tw:flex tw:size-12 tw:shrink-0 tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-full tw:bg-brand-soft">
-        {% if guest.profile_picture_url %}
-          <img class="tw:h-full tw:w-full tw:object-cover"
-               src="{{ guest.profile_picture_url }}"
-               alt="{{ guest.name }}"
-               loading="lazy"
-               width="48"
-               height="48">
-        {% else %}
-          <span class="tw:text-sm tw:font-semibold tw:tracking-wider tw:text-brand-text tw:uppercase">{{ guest.initials }}</span>
-        {% endif %}
-      </span>
+      {# main gave every avatar one partial; the .avatar classes are token-based plain CSS. #}
+      {% include "shared_partials/_user_avatar.html" with avatar_url=guest.avatar_url avatar_name=guest.name avatar_initials=guest.initials avatar_class="avatar-lg" %}
       <div class="tw:min-w-0">
         <p class="tw:m-0 tw:font-medium tw:break-words tw:text-ink">{{ guest.name }}</p>
         <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">

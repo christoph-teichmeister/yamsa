@@ -110,22 +110,32 @@
       <div class="card-body">
         {% for debt in debts %}
           <div class="debt-row{% if debt.settled %} debt-row-settled{% endif %}">
-            <div class="d-flex justify-content-between align-items-baseline gap-3">
-              <p class="mb-0">
-                {% if debt.viewer_is_debitor %}
-                  {% blocktrans with creditor_name=debt.creditor.name trimmed %}
-                    You owe <strong>{{ creditor_name }}</strong>
-                  {% endblocktrans %}
-                {% elif debt.viewer_is_creditor %}
-                  {% blocktrans with debitor_name=debt.debitor.name trimmed %}
-                    <strong>{{ debitor_name }}</strong> owes you
-                  {% endblocktrans %}
-                {% else %}
-                  {% blocktrans with debitor_name=debt.debitor.name creditor_name=debt.creditor.name trimmed %}
-                    <strong>{{ debitor_name }}</strong> owes <strong>{{ creditor_name }}</strong>
-                  {% endblocktrans %}
-                {% endif %}
-              </p>
+            {% comment %}
+              Centred rather than baseline-aligned: the debtor/creditor pair on the left is taller
+              than the sentence it belongs to.
+            {% endcomment %}
+            <div class="d-flex justify-content-between align-items-center gap-3">
+              <div class="d-flex align-items-center gap-2">
+                <span class="avatar-pair">
+                  {% include "shared_partials/_user_avatar.html" with avatar_url=debt.debitor.avatar_url avatar_name=debt.debitor.name avatar_fallback_url=debt.debitor.profile_picture_fallback_url %}
+                  {% include "shared_partials/_user_avatar.html" with avatar_url=debt.creditor.avatar_url avatar_name=debt.creditor.name avatar_fallback_url=debt.creditor.profile_picture_fallback_url %}
+                </span>
+                <p class="mb-0">
+                  {% if debt.viewer_is_debitor %}
+                    {% blocktrans with creditor_name=debt.creditor.name trimmed %}
+                      You owe <strong>{{ creditor_name }}</strong>
+                    {% endblocktrans %}
+                  {% elif debt.viewer_is_creditor %}
+                    {% blocktrans with debitor_name=debt.debitor.name trimmed %}
+                      <strong>{{ debitor_name }}</strong> owes you
+                    {% endblocktrans %}
+                  {% else %}
+                    {% blocktrans with debitor_name=debt.debitor.name creditor_name=debt.creditor.name trimmed %}
+                      <strong>{{ debitor_name }}</strong> owes <strong>{{ creditor_name }}</strong>
+                    {% endblocktrans %}
+                  {% endif %}
+                </p>
+              </div>
               <p class="debt-amount mb-0 {% if debt.settled %}text-muted{% elif debt.viewer_is_debitor %}text-danger-emphasis{% elif debt.viewer_is_creditor %}text-success-emphasis{% endif %}">
                 {{ debt.value|format_with_thousands }}&nbsp;{{ debt.currency.sign }}
               </p>

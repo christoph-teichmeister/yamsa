@@ -1,10 +1,13 @@
 from datetime import timedelta
+from io import BytesIO
 
 import pytest
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.test import RequestFactory
 from django.test.client import Client
 from django.utils import timezone
+from PIL import Image
 
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.tests.factories import GuestUserFactory, SuperuserFactory, UserFactory
@@ -89,3 +92,16 @@ def room_with_stale_activity(room, user):
     timestamp = timezone.now() - timedelta(days=settings.INACTIVITY_REMINDER_DAYS + 4)
     ParentTransaction.objects.filter(pk=transaction.pk).update(lastmodified_at=timestamp)
     return room
+
+
+@pytest.fixture
+def attach_profile_picture():
+    """Give a user a real picture, so their avatar renders as an image rather than as an initial."""
+
+    def _attach(user_instance):
+        buffer = BytesIO()
+        Image.new("RGB", (64, 64), color=(255, 255, 255)).save(buffer, format="PNG")
+        user_instance.profile_picture.save("avatar.png", ContentFile(buffer.getvalue()), save=True)
+        return user_instance
+
+    return _attach

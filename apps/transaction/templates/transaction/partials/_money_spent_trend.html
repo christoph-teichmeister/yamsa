@@ -8,7 +8,7 @@
         <p class="text-muted small mb-1">{% trans "Spending over time" %}</p>
         <h5 class="mb-1">{% trans "Expense build-up" %}</h5>
         <p class="text-muted small mb-0">
-          {% blocktrans with period=trend_period_label|lower start=trend_range_start|date:"MONTH_DAY_FORMAT" end=trend_range_end|date:"MONTH_DAY_FORMAT" %}
+          {% blocktrans with period=trend_period_label|lower start=trend_range_start|date:"SHORT_DATE_FORMAT" end=trend_range_end|date:"SHORT_DATE_FORMAT" %}
                                 Showing {{ period }} ({{ start }} – {{ end }}).
                             {% endblocktrans %}
         </p>
@@ -29,18 +29,17 @@
         </div>
         <div class="htmx-indicator d-flex align-items-center gap-2 text-muted small"
              id="spending-trend-indicator">
-          <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+          <div class="spinner-border spinner-border-sm text-primary-emphasis"
+               role="status"></div>
           {% trans "Updating..." %}
         </div>
       </div>
     </div>
-    {% if timeseries and timeseries_max_value %}
+    {% if trend_series %}
       <div class="timeline-chart mt-4">
-        <div id="trend-line-chart"
-             class="trend-line-chart"
-             data-currency="{{ trend_currency_sign }}"></div>
+        <div id="trend-line-chart" class="trend-line-chart"></div>
       </div>
-      {{ trend_chart_points|json_script:"trend-chart-data" }}
+      {{ trend_chart_data|json_script:"trend-chart-data" }}
     {% else %}
       <div class="timeline-empty mt-3">
         <p class="fw-semibold mb-1">{% trans "No data available" %}</p>
