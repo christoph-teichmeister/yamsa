@@ -50,9 +50,7 @@ class TestTransactionListViewFiltering:
 
         # Without this the filter is dropped as soon as the user types in the search field.
         assert soup.select_one("#transaction-search")["hx-include"] == ".transaction-feed-filters"
-        assert soup.select_one("#transaction-table-body")["hx-include"] == (
-            "#transaction-search, .transaction-feed-filters"
-        )
+        assert soup.select_one("#transaction-feed")["hx-include"] == "#transaction-search, .transaction-feed-filters"
         # The wrapper is rendered even unfiltered: htmx logs a console error for an hx-include
         # selector that matches nothing, and unfiltered is the common case.
         assert soup.select_one(".transaction-feed-filters") is not None

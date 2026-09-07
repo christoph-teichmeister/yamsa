@@ -46,10 +46,12 @@
     return null;
   };
 
+  // The hint is hidden through the attribute rather than a utility class: a class would leave
+  // whichever framework the field is styled with in charge of whether the hint is visible.
   const toggleHint = (field, visible) => {
     const hint = field.querySelector(HINT_SELECTOR);
     if (hint) {
-      hint.classList.toggle("d-none", !visible);
+      hint.hidden = !visible;
     }
   };
 

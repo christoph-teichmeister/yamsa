@@ -13,6 +13,9 @@ Migrated so far:
 - `room/create.html` — the new-room form and its suggested guests
 - `room/userconnectiontoroom_create.html` and `account/create_guest.html` — adding a member,
   both through `shared_partials/member_form.html`
+- `transaction/list.html` with `transaction/partials/_transaction_batch.html` — the expense feed
+- `transaction/create.html` and `transaction/edit.html`, with
+  `transaction/partials/_category_field.html` and `transaction/child_transaction_create.html`
 
 Everything else is still Bootstrap and follows the Bootstrap notes in
 [`architecture.md`](architecture.md) § Design System & UI Concepts.
@@ -69,7 +72,12 @@ apart. Tailwind exposes the tokens via `@theme inline`; **prefer them over `dark
 | `brand-soft`                                   | tinted brand background (badges, icon tiles, gradients)   |
 | `on-brand`                                     | text and icons on a brand fill                            |
 | `scrim`, `on-scrim`                            | the loading overlay's dimming layer, and what stands on it |
-| `success-*`, `warning-*`, `danger-*`           | `-text`, `-soft` and `-border` triples for status         |
+| `success-*`, `warning-*`, `danger-*`           | `-text` and `-soft` pairs for status                      |
+
+The `--yamsa-*-border` variables in `tailwind.css` are deliberately **not** in `@theme inline`:
+they exist for the Bootstrap mapping in `base.css`, so `tw:border-danger-border` does not compile.
+The border of a status control takes the text token at an alpha instead —
+`tw:border-danger-text/60`, as the room's close button and the split rows' remove button do.
 
 These tokens are the palette in full. There is no second, theme-independent ramp beside them —
 one existed, went unused, and would only have drifted from the tokens that do the work. A colour
@@ -411,6 +419,56 @@ trailing `bi-chevron-right`.
 (`opacity-0`, stretched across the track) instead of `sr-only`, so keyboard, screen readers and
 Playwright's `check()` keep working.
 
+**Radio chip** — `transaction/partials/_category_field.html`. The label *wraps* its own radio and
+reacts to it with `tw:has-checked:`; the radio is stretched across the chip at `opacity-0`, the
+same trade as the switch. Two things follow from wrapping rather than pairing: the hit target of a
+click on the chip is a descendant of the label, which is what Playwright's `click()` requires, and
+no script has to keep a class in sync with `:checked`.
+
+```
+tw:relative tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-2 tw:rounded-full tw:border
+tw:border-line-strong tw:bg-transparent tw:px-3.5 tw:py-1.5 tw:text-sm tw:font-semibold tw:text-ink
+tw:transition tw:hover:bg-surface-hover tw:has-checked:border-brand tw:has-checked:bg-brand-soft
+tw:has-checked:text-brand-text tw:has-focus-visible:outline-2
+tw:has-focus-visible:outline-offset-2 tw:has-focus-visible:outline-brand
+```
+
+**Disclosure section** — a native `<details>`, not a Bootstrap collapse: the optional fields of the
+transaction form open without any bundle having run, and they stay in the DOM either way, so they
+post with the form. The summary hides both marker forms (`tw:list-none` plus
+`tw:[&::-webkit-details-marker]:hidden`) and the chevron turns with `tw:group-open:rotate-180`.
+
+## A feed inside a sheet
+
+The transaction list is one sheet whose middle section is an htmx target: `#transaction-feed`
+loads `transaction/partials/_transaction_batch.html` on `load` and swaps the next batch in when
+the trailing `#transaction-batch-trigger` is `revealed`. Four things about it generalise:
+
+- **A row is a `<button>`**, of the same navigation-row shape as the rows that lead somewhere out
+  of a sheet — icon tile, text column, trailing chevron — so Enter and Space need no
+  `data-keyboard-click` shim, and it cannot contain a second button. Which is why the eye button
+  the Bootstrap table carried is gone: the row *is* the affordance.
+- **The batch renders plain elements, not table rows.** A `<table>` whose single cell held a grid
+  needed a stylesheet of `!important` paddings to look like a list; `tw:divide-y tw:divide-line`
+  on the feed container is the whole of it now.
+- **The search indicator is switched by `display`.** The shared `.htmx-indicator` rule only sets
+  `opacity`, which would keep three skeleton rows' worth of empty box above the feed forever, so
+  the indicator is `tw:hidden` and reveals itself with `tw:[&.htmx-request]:flex` — htmx sets that
+  class on whatever `hx-indicator` names.
+- **The anchor highlight is an attribute.** Landing on `…/transactions#transaction-<id>` scrolls
+  the row into view and marks it with `data-highlight` for 2.4 s; `tw:data-highlight:bg-brand-soft`
+  plus a slow `tw:transition` fades the tint in and out. No keyframes, and the script stays free of
+  framework classes.
+
+The "add" affordance is a **floating pill**, fixed above the dashboard's bottom nav
+(`tw:bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] tw:z-[1050]`) and below the offcanvas menu
+(1200) and the toasts (1400); the page section reserves `tw:pb-16` so the sheet does not end
+underneath it.
+
+A dismissible notice carries `data-dismissable` and its close button `data-dismiss`;
+`navigation.js` removes the enclosing element, the same way it removes a `.split-row`. Bootstrap's
+`data-bs-dismiss` is not available to a migrated page — it expects an `.alert`.
+
 ## Shared partials
 
 - `shared_partials/_toggle_switch.html` — switch-styled checkbox; read-only unless
@@ -432,11 +490,23 @@ Playwright's `check()` keep working.
 - `account/partials/_profile_photo.html` — the avatar, its dialog and its own upload cycle
 - `account/partials/_profile_value_row.html` — static label/value row
 - `account/partials/_profile_badges.html` — role and PayPal pills
+- `transaction/partials/_category_field.html` — the category chips, shared by the create and the
+  edit form
+- `transaction/partials/_transaction_batch.html` — one batch of the expense feed and its
+  reveal-triggered link to the next
+- `transaction/child_transaction_create.html` — one more share on the edit form; it must mirror
+  that template's split rows down to the `.split-row` hook
+
+`_list_loader.html`, `_loading_overlay.html` and `_user_avatar.html` take their layout and their
+colours from `customClasses.css` and the tokens, so a migrated page includes them unchanged — only
+the overlay's spinner is still a Bootstrap one, and it is shared with every unmigrated list.
 
 State a script toggles must be expressed the way that script expects. `#passkey-reg-result` is
 hidden with the `hidden` attribute rather than `tw:hidden`, because `passkey-register.js` reveals
 it by clearing that attribute — a utility class would leave the error invisible whatever the script
-does.
+does. The category suggestion hint and the transaction form's split-lock hint follow the same rule,
+and the lock itself sets only real state — `readOnly`, `aria-disabled`, `disabled` — which
+`tw:read-only:`, `tw:aria-disabled:` and `tw:disabled:` then render.
 
 Icons stay on bootstrap-icons (`<i class="bi bi-…" aria-hidden="true">`); that font is independent of
 Bootstrap's CSS and outlives the migration.

@@ -1,49 +1,53 @@
 {% load i18n %}
-<div class="split-row">
-  <div class="row g-3 align-items-center">
-    <div class="col-md-5">
-      <label class="form-label transaction-label" for="value_input_new">{% trans "Amount" %}</label>
-      <div class="input-group">
+{% comment %}
+One more share on the edit form, swapped in place of #add-child-transaction-container. It must
+mirror the split rows that template renders, down to the `.split-row` hook the remove handler in
+navigation.js and the total-lock script address.
+{% endcomment %}
+<div class="split-row tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken/40 tw:p-4 tw:transition tw:hover:border-brand/40">
+  <div class="tw:grid tw:grid-cols-1 tw:items-end tw:gap-3 tw:@md:grid-cols-[1fr_1fr_auto]">
+    <div>
+      <label class="tw:mb-1.5 tw:block tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase"
+             for="value_input_new">{% trans "Amount" %}</label>
+      <div class="tw:relative">
+        <span class="tw:pointer-events-none tw:absolute tw:top-1/2 tw:left-3 tw:-translate-y-1/2 tw:text-ink-subtle">{{ parent_transaction.currency.sign }}</span>
         <input id="value_input_new"
-               name="value"
+               class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface tw:py-2 tw:pr-3 tw:pl-8 tw:font-medium tw:text-ink tw:transition tw:read-only:cursor-not-allowed tw:read-only:opacity-75 tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
                type="number"
-               class="form-control"
+               name="value"
                min="0.01"
                step="0.01"
                max="99999999"
-               required
-               value="{{ form.fields.value }}" />
-        <span class="input-group-text">{{ parent_transaction.currency.sign }}</span>
+               value="{{ form.fields.value }}"
+               required>
       </div>
     </div>
-    <div class="col-md-5">
-      <label class="form-label transaction-label" for="paid_for_select_new">{% trans "For" %}</label>
-      <select name="paid_for" class="form-select" id="paid_for_select_new" required>
-        {% for user in room_users %}<option value="{{ user.id }}">{{ user.name }}</option>{% endfor %}
-      </select>
+    <div>
+      <label class="tw:mb-1.5 tw:block tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase"
+             for="paid_for_select_new">{% trans "For" %}</label>
+      <div class="tw:relative">
+        <select id="paid_for_select_new"
+                class="tw:w-full tw:appearance-none tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface tw:py-2 tw:pr-9 tw:pl-3 tw:font-medium tw:text-ink tw:transition tw:aria-disabled:pointer-events-none tw:aria-disabled:opacity-75 tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                name="paid_for"
+                required>
+          {% for user in room_users %}<option value="{{ user.id }}">{{ user.name }}</option>{% endfor %}
+        </select>
+        <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
+           aria-hidden="true"></i>
+      </div>
     </div>
-    <div class="col-md-2 d-flex align-items-end justify-content-md-end">
-      <button type="button"
-              class="btn btn-outline-danger w-100"
-              hx-trigger="click"
-              hx-confirm="{% trans "Remove this participant?" %}"
-              hx-swap="none"
-              data-split-row-remove="true">
-        <i class="bi bi-trash"></i>
-      </button>
-    </div>
+    <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:justify-self-end tw:rounded-lg tw:border tw:border-danger-text/60 tw:bg-transparent tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:disabled:cursor-not-allowed tw:disabled:opacity-50"
+            type="button"
+            aria-label="{% trans "Remove this share" %}"
+            hx-confirm="{% trans "Remove this participant?" %}"
+            hx-swap="none"
+            data-split-row-remove="true">
+      <i class="bi bi-trash" aria-hidden="true"></i>
+    </button>
   </div>
-  <div class="form-group" hidden>
-    <label class="visually-hidden" for="child_transaction_id_input_new">{% trans "Child Transaction ID" %}</label>
-    <input id="child_transaction_id_input_new"
-           name="child_transaction_id"
-           type="number"
-           class="form-control"
-           min="0"
-           step="0.01"
-           max="99999999"
-           required
-           value="0" />
-  </div>
+  <input id="child_transaction_id_input_new"
+         type="hidden"
+         name="child_transaction_id"
+         value="0">
 </div>
 <span id="add-child-transaction-container"></span>
