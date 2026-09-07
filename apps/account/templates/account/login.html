@@ -29,7 +29,9 @@
       <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Login" %}</h1>
     </div>
     {% if errors and errors.auth_failed %}
-      <div class="tw:rounded-2xl tw:border tw:border-danger-text/40 tw:bg-danger-soft tw:px-4 tw:py-3"
+      {# The id is the hook: role="alert" alone is ambiguous, the shell's toast carries one too. #}
+      <div id="login-error"
+           class="tw:rounded-2xl tw:border tw:border-danger-text/40 tw:bg-danger-soft tw:px-4 tw:py-3"
            role="alert">
         <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ errors.auth_failed }}</p>
       </div>
