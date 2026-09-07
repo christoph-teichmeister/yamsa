@@ -1,190 +1,39 @@
 {% extends "room/dashboard.html" %}
-{% load static i18n %}
-{% load room_tags %}
+{% load i18n %}
 {% block tab_content %}
-  <style nonce="{{ csp_nonce }}">
-        .people-wrap {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 1rem 0 3rem;
-        }
-
-        .people-hero {
-            border-radius: 1.25rem;
-            padding: 1.75rem;
-            background: linear-gradient(135deg, var(--yamsa-brand-soft), transparent);
-            border: 1px solid rgb(var(--yamsa-brand-rgb), 0.15);
-            box-shadow: 0 25px 45px rgb(var(--yamsa-brand-rgb), 0.12);
-        }
-
-        .people-hero h3 {
-            font-weight: 600;
-        }
-
-        .people-hero p {
-            color: var(--bs-secondary-color, #6c757d);
-        }
-
-        .people-action-btn {
-            border-radius: 1rem;
-            padding: 1rem 1.25rem;
-            font-weight: 600;
-            border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.12);
-            background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.02);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .people-action-btn:hover:not(.disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-            background: rgb(var(--yamsa-brand-rgb), 0.08);
-        }
-
-        .people-grid {
-            margin-top: 2rem;
-        }
-
-        .people-empty {
-            border: 1px dashed rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.2);
-            border-radius: 1rem;
-            padding: 2rem;
-            text-align: center;
-            color: var(--bs-secondary-color, #6c757d);
-        }
-
-        .people-card {
-            border-radius: 1.1rem;
-            border: 1px solid rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.12);
-            background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.03);
-            padding: 1.25rem 1.35rem;
-            height: 100%;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-        }
-
-        .people-card--interactive:hover {
-            transform: translateY(-4px);
-            border-color: rgb(var(--yamsa-brand-rgb), 0.35);
-            box-shadow: 0 20px 45px rgb(var(--yamsa-brand-rgb), 0.15);
-            cursor: pointer;
-        }
-
-        .people-card h5 {
-            margin-bottom: 0.35rem;
-        }
-
-        .people-meta {
-            font-size: 0.85rem;
-            color: var(--bs-secondary-color, #6c757d);
-        }
-
-        .people-pill {
-            display: inline-flex;
-            gap: 0.25rem;
-            align-items: center;
-            font-size: 0.7rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            border-radius: 999px;
-            padding: 0.2rem 0.65rem;
-            background: rgb(var(--yamsa-brand-rgb), 0.15);
-            color: var(--yamsa-brand-text);
-        }
-
-        .people-pill-guest {
-            background: var(--yamsa-warning-soft);
-            color: var(--yamsa-warning-text);
-        }
-
-        .people-pill-muted {
-            background: rgba(var(--bs-body-color-rgb, 33, 37, 41), 0.08);
-            color: var(--bs-secondary-color, #6c757d);
-        }
-
-        .people-remove-btn {
-            border: none;
-            background: transparent;
-            color: var(--bs-danger, #dc3545);
-            padding: 0.25rem;
-        }
-
-        .people-remove-btn:hover {
-            color: #b02a37;
-        }
-
-  </style>
-  {% if is_member %}
-    <div class="people-wrap">
-      <div class="row g-3">
-        <div class="col-12 col-md-6">
-          <button class="w-100 people-action-btn d-flex align-items-center justify-content-between {% if current_room.is_closed %}disabled{% endif %}"
-                  type="button"
-                  {% if current_room.is_closed %}disabled aria-disabled="true"{% endif %}
-                  hx-get="{% room_url 'room:userconnectiontoroom-create' %}"
-                  hx-target="#body"
-                  hx-indicator="#body-loading-spinner"
-                  hx-swap="morph:innerHTML"
-                  hx-push-url="true">
-            <span class="d-flex align-items-center gap-2">
-              <i class="bi bi-person-plus-fill"></i>
-              {% trans "Add existing user" %}
-            </span>
-            <i class="bi bi-arrow-up-right"></i>
-          </button>
-        </div>
-        <div class="col-12 col-md-6">
-          <button class="w-100 people-action-btn d-flex align-items-center justify-content-between {% if current_room.is_closed %}disabled{% endif %}"
-                  type="button"
-                  {% if current_room.is_closed %}disabled aria-disabled="true"{% endif %}
-                  hx-get="{% room_url 'account:guest-create' %}"
-                  hx-target="#body"
-                  hx-indicator="#body-loading-spinner"
-                  hx-swap="morph:innerHTML"
-                  hx-push-url="true">
-            <span class="d-flex align-items-center gap-2">
-              <i class="bi bi-person-plus"></i>
-              {% trans "Add guest" %}
-            </span>
-            <i class="bi bi-arrow-up-right"></i>
-          </button>
-        </div>
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+    {% if is_member %}
+      <div class="tw:grid tw:grid-cols-1 tw:gap-3 tw:@lg:grid-cols-2">
+        {% trans "Add existing user" as add_existing_label %}
+        {% include "account/partials/_people_action.html" with action_viewname="room:userconnectiontoroom-create" action_label=add_existing_label action_icon="bi-person-plus-fill" %}
+        {% trans "Add guest" as add_guest_label %}
+        {% include "account/partials/_people_action.html" with action_viewname="account:guest-create" action_label=add_guest_label action_icon="bi-person-plus" %}
       </div>
-      <div class="people-grid row row-cols-1 row-cols-md-2 g-3">
+      <div class="tw:grid tw:grid-cols-1 tw:gap-3 tw:@lg:grid-cols-2">
         {% csrf_token %}
-        {% if user_qs_for_room %}
-          {% for user in user_qs_for_room %}
-            {% include "shared_partials/user_card.html" with user=user %}
-          {% endfor %}
-        {% else %}
-          <div class="col">
-            <div class="people-empty">
-              <p class="fw-semibold mb-1">{% trans "No one here yet" %}</p>
-              <p class="mb-0 small">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
-            </div>
+        {% for user in user_qs_for_room %}
+          {% include "shared_partials/user_card.html" with user=user %}
+        {% empty %}
+          <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-8 tw:text-center tw:@lg:col-span-2">
+            <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "No one here yet" %}</p>
+            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
           </div>
-        {% endif %}
+        {% endfor %}
       </div>
-    </div>
-  {% else %}
-    <div class="people-wrap text-center">
-      <div class="people-hero">
-        <div class="d-flex flex-column align-items-center gap-2">
-          <p class="text-uppercase text-muted small mb-1">{% trans "Guest access" %}</p>
-          <h3 class="mb-1">
-            {% with current_room.name as room_name %}
-              {% blocktrans %}Limited view of {{ room_name }}{% endblocktrans %}
-            {% endwith %}
-          </h3>
-          <p class="mb-0">{% trans "Room members keep the roster private. Join the room to see who helps run this space." %}</p>
-        </div>
+    {% else %}
+      <div class="tw:@container tw:rounded-3xl tw:border tw:border-brand/20 tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-6 tw:text-center tw:@md:px-6">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Guest access" %}</p>
+        <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">
+          {% with current_room.name as room_name %}
+            {% blocktrans %}Limited view of {{ room_name }}{% endblocktrans %}
+          {% endwith %}
+        </h1>
+        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Room members keep the roster private. Join the room to see who helps run this space." %}</p>
       </div>
-      <div class="people-grid row row-cols-1 g-3">
-        <div class="col">
-          <div class="people-empty">
-            <p class="fw-semibold mb-1">{% trans "Guest access" %}</p>
-            <p class="mb-0 small">{% trans "Request access or register to interact with this room." %}</p>
-          </div>
-        </div>
+      <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-8 tw:text-center">
+        <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "Guest access" %}</p>
+        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Request access or register to interact with this room." %}</p>
       </div>
-    </div>
-  {% endif %}
+    {% endif %}
+  </section>
 {% endblock tab_content %}

@@ -1,0 +1,28 @@
+{% comment %}
+  One of the two ways to add somebody to a room. Disabled while the room is closed, which the
+  utilities render off the real `disabled` attribute rather than a class.
+
+  The view name rather than the URL, because {% room_url %} rewrites its own token to append
+  the room slug and so cannot be assigned with `as`.
+
+  Parameters:
+    action_viewname the room-scoped view it leads to (required)
+    action_label    its text (required)
+    action_icon     a bootstrap-icons name (required)
+{% endcomment %}
+<button class="tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-between tw:gap-3 tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken tw:px-5 tw:py-4 tw:text-left tw:text-sm tw:font-semibold tw:text-ink tw:transition tw:hover:-translate-y-0.5 tw:hover:border-brand/45 tw:hover:bg-brand-soft tw:hover:shadow-card-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:disabled:cursor-not-allowed tw:disabled:opacity-50 tw:disabled:hover:translate-y-0 tw:disabled:hover:border-line tw:disabled:hover:bg-surface-sunken tw:disabled:hover:shadow-none tw:motion-reduce:transition-none tw:motion-reduce:hover:translate-y-0"
+        type="button"
+        {% if current_room.is_closed %}disabled aria-disabled="true"{% endif %}
+        hx-get="{% room_url action_viewname %}"
+        hx-target="#body"
+        hx-indicator="#body-loading-spinner"
+        hx-swap="morph:innerHTML"
+        hx-push-url="true">
+  <span class="tw:flex tw:min-w-0 tw:items-center tw:gap-2">
+    <i class="bi {{ action_icon }} tw:shrink-0 tw:text-brand-text"
+       aria-hidden="true"></i>
+    <span class="tw:truncate">{{ action_label }}</span>
+  </span>
+  <i class="bi bi-arrow-up-right tw:shrink-0 tw:text-ink-subtle"
+     aria-hidden="true"></i>
+</button>

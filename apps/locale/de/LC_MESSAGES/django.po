@@ -181,6 +181,9 @@ msgstr "Möchtest du dein Passwort zurücksetzen?"
 msgid "Request a new password"
 msgstr "Neues Passwort anfordern"
 
+msgid "Invitation"
+msgstr "Einladung"
+
 #, python-format
 msgid "Invite %(invitee)s to \"%(room)s\""
 msgstr "Lade %(invitee)s zu \"%(room)s\" ein"
@@ -384,12 +387,6 @@ msgstr "Registrieren"
 
 msgid "Name"
 msgstr "Name"
-
-msgid "User ID"
-msgstr "Benutzer-ID"
-
-msgid "Is Guest"
-msgstr "Ist Gast"
 
 msgid "Register now"
 msgstr "Jetzt registrieren"
@@ -874,9 +871,6 @@ msgstr "Melde dich mit deinem neuen Passwort an, indem du auf den Button unten k
 msgid "(And don't forget to change your password afterwards!)"
 msgstr "(Und vergiss nicht, dein Passwort danach zu ändern!)"
 
-msgid "Invitation"
-msgstr "Einladung"
-
 #, python-format
 msgid "You have been invited by %(inviter)s to join your friends on yamsa"
 msgstr "Du wurdest von %(inviter)s eingeladen, dich deinen Freunden auf yamsa anzuschließen"
@@ -1350,6 +1344,15 @@ msgstr "Änderungen verwerfen"
 
 msgid "Save changes"
 msgstr "Änderungen speichern"
+
+msgid "Send invitation email"
+msgstr "Einladungs-E-Mail senden"
+
+msgid "Invitation email sent"
+msgstr "Einladungs-E-Mail gesendet"
+
+msgid "You can resend an invitation email five minutes after one has been sent."
+msgstr "Du kannst eine Einladungs-E-Mail fünf Minuten nach dem Versand erneut senden."
 
 msgid "Back"
 msgstr "Zurück"

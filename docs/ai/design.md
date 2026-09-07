@@ -28,6 +28,11 @@ Migrated so far:
   `room/partials/_room_balance_summary.html` and `room/partials/_room_create_row.html` — the room
   overview
 - `room/partials/_detail_who_are_you.html` — what a room shows someone who is not a member of it
+- `account/login.html`, `account/register.html` and `account/forgot_password.html` — the three auth
+  pages, all through `account/_auth_base.html`
+- `account/list.html` with `shared_partials/user_card.html` and the two
+  `shared_partials/invitation_email_*.html` — the room's people
+- `account/invite_guest.html` and `account/payment_reminder_unsubscribe.html`
 
 Everything else is still Bootstrap and follows the Bootstrap notes in
 [`architecture.md`](architecture.md) § Design System & UI Concepts.
@@ -408,6 +413,10 @@ a button next to the field would shrink the field on the narrow content column. 
 both labels as data attributes so `password-visibility.js` can swap them without hard-coding
 translated text.
 
+Every password input in the app is this partial now — login, register and change-password. Its
+`field_name` parameter exists for login alone, whose input must keep Django's own `id_password`
+while still posting as `password`, because `e2e/pages/login_page.py` fills it by that id.
+
 **Badge**
 
 ```
@@ -523,6 +532,12 @@ A dismissible notice carries `data-dismissable` and its close button `data-dismi
   a tile
 - `room/partials/_room_balance_summary.html` — the open-balance tiles above the overview
 - `room/partials/_room_create_row.html` — the overview's "new room" affordance
+- `account/_auth_base.html` — the auth pages' shell. Template inheritance rather than an include,
+  because both halves are content and an include cannot take two slots
+- `account/partials/_auth_hero_cta.html` — the hero's one link out, filled or outlined
+- `account/partials/_people_action.html` — one of the two ways to add somebody to a room. It takes
+  the *view name*, not the URL: `{% room_url %}` rewrites its own token to append the room slug and
+  so cannot be assigned with `as`
 - `transaction/child_transaction_create.html` — one more share on the edit form; it must mirror
   that template's split rows down to the `.split-row` hook
 
@@ -566,3 +581,14 @@ room list would not match the rows above it.
 
 Three page stylesheets went away with these pages and have no replacement:
 `components/shared/page-shell.css`, `components/room/overview.css` and `components/news/list.css`.
+The auth helpers (`.auth-card`, `.auth-hero`, `.auth-form`, `.hero-cta`, `.auth-page-shell`) and
+`.htmx-a` went out of `base.css` and `customClasses.css` with the auth pages, and
+`account/list.html` lost the inline `<style>` block that held every `.people-*` rule.
+
+## The auth hero is the one surface that does not follow the theme
+
+`brand-strong` is now in `@theme inline` as `tw:*-brand-strong`, and the hero's two-stop gradient is
+an `@utility auth-hero-surface` in `tailwind.css` — a utility rather than a second token because its
+far end is a value of that gradient and of nothing else, and this file stays the only place a colour
+is written down. Everything standing on the hero takes `tw:text-white` (or `tw:text-white/70`)
+outright: the ground is the same on both themes, so a theme-following token would be wrong there.
