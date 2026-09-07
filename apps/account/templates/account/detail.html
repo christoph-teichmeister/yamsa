@@ -44,9 +44,7 @@
             <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Member profile" %}</p>
             <h1 id="profile-name"
                 class="mt-1 mb-0 text-xl font-semibold break-words text-ink">{{ user.name }}</h1>
-            <div class="mt-2 flex flex-wrap gap-2">
-              {% include "account/partials/_profile_badges.html" with user=user %}
-            </div>
+            <div class="mt-2 flex flex-wrap gap-2">{% include "account/partials/_profile_badges.html" with user=user %}</div>
           </div>
         </div>
         <div class="border-t border-line">

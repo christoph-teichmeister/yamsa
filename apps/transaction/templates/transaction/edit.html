@@ -127,8 +127,7 @@
                    max="2099-12-31T00:00">
           </div>
           <div class="@lg:col-span-2">
-            <label class="mb-1.5 block text-sm font-semibold text-ink"
-                   for="description">{% trans "Description" %}</label>
+            <label class="mb-1.5 block text-sm font-semibold text-ink" for="description">{% trans "Description" %}</label>
             <textarea id="description"
                       class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                       name="description"
@@ -153,9 +152,7 @@
             </span>
           </div>
           {# Hidden through the attribute, not a utility class: the script below reveals it by clearing that attribute. #}
-          <p id="split-lock-hint"
-             class="m-0 text-sm text-warning-text"
-             hidden>
+          <p id="split-lock-hint" class="m-0 text-sm text-warning-text" hidden>
             {% trans "⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically." %}
           </p>
           {% for child_transaction in child_transaction_qs %}

@@ -29,8 +29,7 @@
         <p class="m-0 text-sm text-ink-subtle">{% trans "The room is closed and can be reopened." %}</p>
       {% endif %}
       {% for error_message in status_form.errors.status.data %}
-        <p id="room-status-error"
-           class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+        <p id="room-status-error" class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
       {% endfor %}
     </div>
     <div class="shrink-0">

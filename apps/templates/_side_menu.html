@@ -66,7 +66,8 @@ in the app, the toasts included - a toast raised while the menu is open waits be
         data-dialog>
   <div class="flex h-full flex-col gap-4 px-4 pt-10 pb-6">
     <div class="flex items-center justify-between gap-3">
-      <h5 class="m-0 text-xl font-semibold text-ink-strong" id="side-menu-panel-label">{% trans "Menu" %}</h5>
+      <h5 class="m-0 text-xl font-semibold text-ink-strong"
+          id="side-menu-panel-label">{% trans "Menu" %}</h5>
       <button type="button"
               class="inline-flex size-9 cursor-pointer items-center justify-center rounded-full border border-transparent bg-transparent text-ink-muted transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               aria-label="{% trans "Close" %}"
@@ -187,7 +188,8 @@ in the app, the toasts included - a toast raised while the menu is open waits be
          hx-target="#body"
          hx-swap="morph:innerHTML"
          hx-push-url="true">
-      <div class="room-circle" {% if request.path == news_url %}data-selected{% endif %}>
+      <div class="room-circle"
+           {% if request.path == news_url %}data-selected{% endif %}>
         <i class="bi bi-newspaper" aria-hidden="true"></i>
       </div>
       <div class="room-entry-text min-w-0 flex-1 text-left">

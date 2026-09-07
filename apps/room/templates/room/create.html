@@ -27,8 +27,7 @@
       </div>
       <div class="flex flex-col gap-4 border-t border-line px-5 py-5 @md:px-6">
         <div>
-          <label class="mb-1.5 block text-sm font-semibold text-ink"
-                 for="name">{{ form.fields.name.label }}</label>
+          <label class="mb-1.5 block text-sm font-semibold text-ink" for="name">{{ form.fields.name.label }}</label>
           <input id="name"
                  class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                  type="text"
@@ -36,8 +35,7 @@
                  value="{{ form.name.value|default_if_none:'' }}"
                  required>
           {% for error_message in form.errors.name.data %}
-            <p id="nameError"
-               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p id="nameError" class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
         <div>
@@ -63,8 +61,7 @@
           {% endfor %}
         </div>
         <div>
-          <label class="mb-1.5 block text-sm font-semibold text-ink"
-                 for="description">{{ form.fields.description.label }}</label>
+          <label class="mb-1.5 block text-sm font-semibold text-ink" for="description">{{ form.fields.description.label }}</label>
           {# An input, not a textarea: the field is capped at 50 characters, the same as the sheet's. #}
           <input id="description"
                  class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
@@ -76,8 +73,7 @@
                  minlength="1"
                  required>
           {% for error_message in form.errors.description.data %}
-            <p id="descriptionError"
-               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p id="descriptionError" class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
         {# The suggested-guest buttons below write their picks in here, so they post with the room. #}

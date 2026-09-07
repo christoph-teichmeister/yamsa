@@ -21,8 +21,7 @@
         </h1>
       </div>
       <div class="border-t border-line px-5 py-5 @md:px-6">
-        <label class="mb-1.5 block text-sm font-semibold text-ink"
-               for="email">{{ form.fields.email.label }}</label>
+        <label class="mb-1.5 block text-sm font-semibold text-ink" for="email">{{ form.fields.email.label }}</label>
         <input id="email"
                class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                type="email"
@@ -30,8 +29,7 @@
                autocomplete="email"
                required />
         {% for error_message in form.errors.email.data %}
-          <p id="emailError"
-             class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+          <p id="emailError" class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
         {% endfor %}
       </div>
       <div class="flex border-t border-line px-5 py-4 @md:justify-end @md:px-6">
