@@ -15,7 +15,7 @@
   {% trans "Add existing user" as submit_label %}
   {% trans "Back to people" as back_label %}
   <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
-    {% include "shared_partials/member_form.html" with form=form field=form.email form_action=add_member_action room_slug_value=current_room.slug hero_context=hero_context hero_title=add_title hero_subtitle=hero_subtitle hero_badge_label=hero_badge_label hero_badge_icon="bi-at" field_label=field_label field_type="email" field_placeholder="name@example.com" field_autocomplete="email" helper_text=helper_text tip_text=tip_text submit_label=submit_label submit_icon="bi-send-check" back_url=roster_url back_label=back_label submit_disabled=current_room.is_closed %}
+    {% include "shared_partials/member_form.html" with form=form field=form.email form_action=add_member_action room_slug_value=current_room.slug hero_context=hero_context hero_title=add_title hero_subtitle=hero_subtitle hero_badge_label=hero_badge_label hero_badge_icon="at" field_label=field_label field_type="email" field_placeholder="name@example.com" field_autocomplete="email" helper_text=helper_text tip_text=tip_text submit_label=submit_label submit_icon="send-check" back_url=roster_url back_label=back_label submit_disabled=current_room.is_closed %}
     <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
       <div class="px-5 py-5 @md:px-6">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Suggested guests" %}</p>

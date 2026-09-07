@@ -20,7 +20,7 @@ transaction feed sits at 1050 on the assumption that it clears it.
            hx-target="#body"
            hx-swap="morph:innerHTML"
            hx-push-url="true">
-          <i class="{{ tab.icon_class }}" aria-hidden="true"></i>
+          {% icon tab.icon_name %}
           <span class="sr-only">{{ tab.name }}</span>
         </a>
       {% endfor %}

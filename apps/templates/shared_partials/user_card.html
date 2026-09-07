@@ -25,10 +25,10 @@ pointer, the lift and data-keyboard-click.
           </span>
           <span class="inline-flex items-center gap-1 rounded-full bg-surface-hover px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] text-ink-muted uppercase">
             {% if user.user_has_seen_this_room %}
-              <i class="bi bi-check2" aria-hidden="true"></i>
+              {% icon "check2" %}
               {% trans "Seen room" %}
             {% else %}
-              <i class="bi bi-eye-slash" aria-hidden="true"></i>
+              {% icon "eye-slash" %}
               {% trans "Not seen yet" %}
             {% endif %}
           </span>
@@ -49,9 +49,7 @@ pointer, the lift and data-keyboard-click.
               hx-target="#body"
               hx-indicator="#body-loading-spinner"
               hx-swap="innerHTML"
-              hx-confirm="{{ remove_confirm_message }}">
-        <i class="bi bi-x-octagon" aria-hidden="true"></i>
-      </button>
+              hx-confirm="{{ remove_confirm_message }}">{% icon "x-octagon" %}</button>
     </div>
     <p class="m-0 text-sm text-ink-muted">
       {% if user.is_guest %}
@@ -72,7 +70,7 @@ pointer, the lift and data-keyboard-click.
       </div>
     {% else %}
       <p class="m-0 inline-flex items-center gap-1.5 text-sm text-ink-subtle">
-        <i class="bi bi-person-check" aria-hidden="true"></i>
+        {% icon "person-check" %}
         {% trans "Joined as a full member of this room." %}
       </p>
     {% endif %}

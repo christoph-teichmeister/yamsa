@@ -81,7 +81,7 @@
       </div>
       <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
               type="submit">
-        <i class="bi bi-plus-circle" aria-hidden="true"></i>
+        {% icon "plus-circle" %}
         {% trans "Add category" %}
       </button>
       {% if category_creation_form.non_field_errors %}

@@ -19,10 +19,8 @@
         hx-swap="morph:innerHTML"
         hx-push-url="true">
   <span class="flex min-w-0 items-center gap-2">
-    <i class="bi {{ action_icon }} shrink-0 text-brand-text"
-       aria-hidden="true"></i>
+    {% icon action_icon "shrink-0 text-brand-text" %}
     <span class="truncate">{{ action_label }}</span>
   </span>
-  <i class="bi bi-arrow-up-right shrink-0 text-ink-subtle"
-     aria-hidden="true"></i>
+  {% icon "arrow-up-right" "shrink-0 text-ink-subtle" %}
 </button>

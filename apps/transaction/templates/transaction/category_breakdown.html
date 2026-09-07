@@ -37,9 +37,7 @@
               hx-target="#body"
               hx-indicator="#body-loading-spinner"
               hx-swap="morph:innerHTML"
-              hx-push-url="true">
-        <i class="bi bi-arrow-left" aria-hidden="true"></i>
-      </button>
+              hx-push-url="true">{% icon "arrow-left" %}</button>
       <div class="justify-self-center text-center">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Category breakdown" %}</p>
         <h1 class="mt-1 mb-1 text-xl font-semibold text-ink">{% trans "All recorded spend" %}</h1>
@@ -109,7 +107,7 @@
                     <span class="flex shrink-0 items-center gap-2">
                       <span class="font-semibold tabular-nums whitespace-nowrap text-ink"
                             data-category-amount>{{ category.total_amount|format_with_thousands }}{{ breakdown.currency.sign }}</span>
-                      <i class="bi bi-chevron-right text-ink-subtle" aria-hidden="true"></i>
+                      {% icon "chevron-right" "text-ink-subtle" %}
                     </span>
                   </a>
                 {% endfor %}

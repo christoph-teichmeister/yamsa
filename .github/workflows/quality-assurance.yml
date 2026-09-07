@@ -27,6 +27,11 @@ jobs:
       - name: Run Ruff
         run: uv run ruff check --output-format=github .
 
+      - name: Check the icon sprite is in sync
+        run: uv run python manage.py sync_icons --check
+        env:
+          DJANGO_SECRET_KEY: "an-asd8a9e72399eruQASd-insecure-asd7e38a549d8asdad)))-secretkey"
+
       - name: Run Django system checks
         env:
           DJANGO_SECRET_KEY: 'ci-insecure-key'

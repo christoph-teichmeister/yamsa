@@ -54,9 +54,7 @@ slug to `room` for this template by file name, and would resolve `current_room` 
        hx-swap="innerHTML"
        hx-push-url="true">
     <div class="room-circle"
-         {% if request.path == "/import/upload/" %}data-selected{% endif %}>
-      <i class="bi bi-box-arrow-in-down" aria-hidden="true"></i>
-    </div>
+         {% if request.path == "/import/upload/" %}data-selected{% endif %}>{% icon "box-arrow-in-down" %}</div>
     <div class="room-entry-text min-w-0 flex-1 text-left">
       <div class="room-name m-0 font-semibold">{% trans "Import" %}</div>
       <small class="room-description">{% trans "Bring your data from another app" %}</small>

@@ -32,8 +32,7 @@ navigation.js and the total-lock script address.
                 required>
           {% for user in room_users %}<option value="{{ user.id }}">{{ user.name }}</option>{% endfor %}
         </select>
-        <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle"
-           aria-hidden="true"></i>
+        {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle" %}
       </div>
     </div>
     <button class="inline-flex cursor-pointer items-center justify-center gap-2 justify-self-end rounded-lg border border-danger-text/60 bg-transparent px-3 py-2 text-sm font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50"
@@ -41,9 +40,7 @@ navigation.js and the total-lock script address.
             aria-label="{% trans "Remove this share" %}"
             hx-confirm="{% trans "Remove this participant?" %}"
             hx-swap="none"
-            data-split-row-remove="true">
-      <i class="bi bi-trash" aria-hidden="true"></i>
-    </button>
+            data-split-row-remove="true">{% icon "trash" %}</button>
   </div>
   <input id="child_transaction_id_input_new"
          type="hidden"

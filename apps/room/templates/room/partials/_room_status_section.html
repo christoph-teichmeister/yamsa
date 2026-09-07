@@ -42,7 +42,7 @@
                   hx-vals='{"status": "{{ ROOM_STATUS_CLOSED }}"}'
                   hx-target="#room-sheet"
                   hx-swap="outerHTML">
-            <i class="bi bi-lock" aria-hidden="true"></i>
+            {% icon "lock" %}
             {% trans "Close room" %}
           </button>
         {% else %}
@@ -51,7 +51,7 @@
                   type="button"
                   aria-haspopup="dialog"
                   data-dialog-open="force-close-dialog">
-            <i class="bi bi-lock" aria-hidden="true"></i>
+            {% icon "lock" %}
             {% trans "Close room" %}
           </button>
         {% endif %}
@@ -63,7 +63,7 @@
                 hx-vals='{"status": "{{ ROOM_STATUS_OPEN }}"}'
                 hx-target="#room-sheet"
                 hx-swap="outerHTML">
-          <i class="bi bi-unlock" aria-hidden="true"></i>
+          {% icon "unlock" %}
           {% trans "Reopen room" %}
         </button>
       {% endif %}
@@ -81,9 +81,7 @@
         <button class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-ink-subtle transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 type="button"
                 aria-label="{% trans "Close" %}"
-                data-dialog-close>
-          <i class="bi bi-x-lg" aria-hidden="true"></i>
-        </button>
+                data-dialog-close>{% icon "x-lg" %}</button>
       </div>
       <div class="flex flex-col gap-3 p-5">
         <p class="m-0 text-ink">

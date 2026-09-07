@@ -12,7 +12,7 @@
        hx-indicator="#body-loading-spinner"
        hx-swap="morph:innerHTML"
        hx-push-url="true">
-      <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      {% icon "chevron-left" %}
       {{ back_to_dashboard_label }}
     </a>
     <form id="room-create-form"
@@ -53,8 +53,7 @@
                 </option>
               {% endfor %}
             </select>
-            <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle"
-               aria-hidden="true"></i>
+            {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle" %}
           </div>
           {% for error_message in form.errors.preferred_currency.data %}
             <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
@@ -83,7 +82,7 @@
         <button id="create-room-button"
                 class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                 type="submit">
-          <i class="bi bi-plus-circle" aria-hidden="true"></i>
+          {% icon "plus-circle" %}
           {% trans "Create" %}
         </button>
       </div>

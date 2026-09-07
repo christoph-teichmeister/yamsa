@@ -34,7 +34,7 @@
                 <input type="hidden" name="id" value="{{ passkey.id }}">
                 <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-danger-text/60 bg-transparent px-4 py-2 text-sm font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                         type="submit">
-                  <i class="bi bi-trash" aria-hidden="true"></i>
+                  {% icon "trash" %}
                   {% trans "Delete" %}
                 </button>
               </form>
@@ -57,7 +57,7 @@
               <button id="passkey-reg-btn"
                       class="inline-flex cursor-pointer items-center justify-center gap-2 self-start rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                       type="button">
-                <i class="bi bi-fingerprint" aria-hidden="true"></i>
+                {% icon "fingerprint" %}
                 {% trans "Register passkey" %}
               </button>
             </div>
@@ -76,14 +76,12 @@
                 hx-swap="morph:innerHTML"
                 hx-push-url="true">
           <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text"
-                aria-hidden="true">
-            <i class="bi bi-key"></i>
-          </span>
+                aria-hidden="true">{% icon "key" %}</span>
           <span class="min-w-0 flex-1">
             <span class="block font-medium text-ink">{% trans "Change your password" %}</span>
             <span class="block text-sm text-ink-subtle">{% trans "Choose a unique password to keep your rooms safe." %}</span>
           </span>
-          <i class="bi bi-chevron-right text-ink-subtle" aria-hidden="true"></i>
+          {% icon "chevron-right" "text-ink-subtle" %}
         </button>
       </div>
     </div>

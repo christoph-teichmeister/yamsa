@@ -12,9 +12,7 @@
               hx-target="#body"
               hx-indicator="#body-loading-spinner"
               hx-swap="morph:innerHTML"
-              hx-push-url="true">
-        <i class="bi bi-arrow-left" aria-hidden="true"></i>
-      </button>
+              hx-push-url="true">{% icon "arrow-left" %}</button>
       <div class="min-w-0 flex-1 text-center">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Expense" %}</p>
         <p class="m-0 flex items-center justify-center gap-2 text-ink">
@@ -37,15 +35,14 @@
               title="{% trans "Edit transaction" %}"
               {% if current_room.is_closed %}disabled aria-disabled="true"{% endif %}
               {% if current_room.is_open %} hx-trigger="click" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
-        <i class="bi bi-pencil-square" aria-hidden="true"></i>
+        {% icon "pencil-square" %}
         {% trans "Edit expense" %}
       </button>
     </div>
     {% if current_room.is_closed %}
       <div class="flex items-start gap-2 rounded-2xl border border-warning-text/40 bg-warning-soft px-4 py-3"
            role="note">
-        <i class="bi bi-info-circle-fill mt-0.5 shrink-0 text-warning-text"
-           aria-hidden="true"></i>
+        {% icon "info-circle-fill" "mt-0.5 shrink-0 text-warning-text" %}
         <p class="m-0 text-sm text-warning-text">{% trans "This room is closed, so the breakdown is read-only." %}</p>
       </div>
     {% endif %}

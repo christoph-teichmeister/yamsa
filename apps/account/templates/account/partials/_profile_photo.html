@@ -30,15 +30,11 @@
       </span>
     {% endif %}
     <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/45 text-lg text-white opacity-0 transition-opacity group-hover:opacity-100 group-has-focus-visible:opacity-100"
-          aria-hidden="true">
-      <i class="bi bi-camera"></i>
-    </span>
+          aria-hidden="true">{% icon "camera" %}</span>
   </button>
   <span class="absolute -right-1 -bottom-1 flex size-7 cursor-pointer items-center justify-center rounded-full border-2 border-surface bg-brand text-xs text-on-brand shadow-sm transition group-hover:bg-brand-hover"
         aria-hidden="true"
-        data-dialog-open="profile-photo-dialog">
-    <i class="bi bi-camera"></i>
-  </span>
+        data-dialog-open="profile-photo-dialog">{% icon "camera" %}</span>
   <dialog id="profile-photo-dialog"
           class="m-auto w-[min(24rem,calc(100vw-2rem))] rounded-3xl border border-line bg-surface p-0 text-ink backdrop:bg-black/60"
           data-dialog
@@ -48,9 +44,7 @@
       <button class="flex size-8 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-ink-subtle transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               type="button"
               aria-label="{% trans "Close" %}"
-              data-dialog-close>
-        <i class="bi bi-x-lg" aria-hidden="true"></i>
-      </button>
+              data-dialog-close>{% icon "x-lg" %}</button>
     </div>
     <div class="flex flex-col gap-4 p-5">
       {# Square only with a picture in it: an initial does not need that much room. #}
@@ -72,7 +66,7 @@
       <div class="flex flex-col gap-2">
         <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover"
                for="profile-picture-input">
-          <i class="bi bi-upload" aria-hidden="true"></i>
+          {% icon "upload" %}
           {% trans "Upload a new photo" %}
         </label>
         {# The input posts itself: htmx sends the chosen file straight away and swaps this unit. #}
@@ -94,7 +88,7 @@
                   hx-target="#profile-photo"
                   hx-swap="outerHTML"
                   hx-confirm="{% trans "Remove your profile picture?" %}">
-            <i class="bi bi-trash" aria-hidden="true"></i>
+            {% icon "trash" %}
             {% trans "Remove photo" %}
           </button>
         {% endif %}

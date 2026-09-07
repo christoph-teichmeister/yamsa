@@ -14,8 +14,7 @@ open state is the details element's own and needs no aria-expanded to mirror it.
         <summary class="room-overview-toggle flex cursor-pointer list-none items-center justify-between gap-2 py-1 [&::-webkit-details-marker]:hidden"
                  aria-controls="{{ section_id }}">
           <span class="text-xs font-semibold tracking-[0.08em] text-ink-subtle uppercase">{% trans title %} ({{ entries|length }})</span>
-          <i class="bi bi-chevron-down room-overview-toggle-icon text-ink-subtle transition-transform group-open:rotate-180 motion-reduce:transition-none"
-             aria-hidden="true"></i>
+          {% icon "chevron-down" "room-overview-toggle-icon text-ink-subtle transition-transform group-open:rotate-180 motion-reduce:transition-none" %}
         </summary>
         <div class="room-overview-entries mt-2 grid grid-cols-2 gap-2 @md:gap-3"
              id="{{ section_id }}">

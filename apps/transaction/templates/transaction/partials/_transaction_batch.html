@@ -40,8 +40,7 @@ needs. `.transaction-row` stays as the hook the highlight script and the e2e sui
       </span>
       <span class="mt-1 block text-xs whitespace-nowrap text-ink-subtle">{{ parent_transaction.paid_at|date }}</span>
     </span>
-    <i class="bi bi-chevron-right shrink-0 text-ink-subtle"
-       aria-hidden="true"></i>
+    {% icon "chevron-right" "shrink-0 text-ink-subtle" %}
   </button>
 {% empty %}
   <p class="m-0 px-5 py-6 text-center text-sm text-ink-muted">

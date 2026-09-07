@@ -11,7 +11,7 @@
        hx-indicator="#body-loading-spinner"
        hx-swap="morph:innerHTML"
        hx-push-url="true">
-      <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      {% icon "chevron-left" %}
       {{ back_to_list_label }}
     </a>
     {# `action` next to `hx-post` so the form still submits without the bundle. #}
@@ -46,7 +46,7 @@
                   hx-indicator="#body-loading-spinner"
                   hx-swap="morph:innerHTML"
                   hx-push-url="true">
-            <i class="bi bi-trash" aria-hidden="true"></i>
+            {% icon "trash" %}
             {% trans "Delete" %}
           </button>
         </div>
@@ -67,8 +67,7 @@
                           {% if user.id == form.initial.paid_by %}selected{% endif %}>{{ user.name }}</option>
                 {% endfor %}
               </select>
-              <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle"
-                 aria-hidden="true"></i>
+              {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle" %}
             </div>
           </div>
           <div>
@@ -84,8 +83,7 @@
                           {% if currency.id == form.initial.currency %}selected{% endif %}>{{ currency.sign }}</option>
                 {% endfor %}
               </select>
-              <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle"
-                 aria-hidden="true"></i>
+              {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle" %}
             </div>
           </div>
           <div>
@@ -147,7 +145,7 @@
           <div class="flex flex-wrap items-center gap-2">
             <p class="m-0 min-w-0 flex-1 text-sm text-ink-muted">{% trans "Update each share or remove it entirely." %}</p>
             <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
-              <i class="bi bi-people" aria-hidden="true"></i>
+              {% icon "people" %}
               {% blocktrans count participant_count=child_transaction_qs|length %}{{ participant_count }} person{% plural %}{{ participant_count }} people{% endblocktrans %}
             </span>
           </div>
@@ -191,8 +189,7 @@
                                 {% if user == child_transaction.paid_for %}selected{% endif %}>{{ user.name }}</option>
                       {% endfor %}
                     </select>
-                    <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle"
-                       aria-hidden="true"></i>
+                    {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle" %}
                   </div>
                 </div>
                 <button class="inline-flex cursor-pointer items-center justify-center gap-2 justify-self-end rounded-lg border border-danger-text/60 bg-transparent px-3 py-2 text-sm font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50"
@@ -204,9 +201,7 @@
                         hx-target="#body"
                         hx-indicator="#body-loading-spinner"
                         hx-swap="morph:innerHTML"
-                        hx-push-url="true">
-                  <i class="bi bi-trash" aria-hidden="true"></i>
-                </button>
+                        hx-push-url="true">{% icon "trash" %}</button>
               </div>
               <input id="child_transaction_id_input_{{ forloop.counter }}"
                      type="hidden"
@@ -223,7 +218,7 @@
                   hx-target="#add-child-transaction-container"
                   hx-swap="morph:outerHTML"
                   hx-push-url="false">
-            <i class="bi bi-plus-circle" aria-hidden="true"></i>
+            {% icon "plus-circle" %}
             {% trans "Add participant" %}
           </button>
         </div>
@@ -255,21 +250,18 @@
                 hx-swap="morph:innerHTML"
                 hx-push-url="true">
           <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text"
-                aria-hidden="true">
-            <i class="bi bi-file-earmark-text"></i>
-          </span>
+                aria-hidden="true">{% icon "file-earmark-text" %}</span>
           <span class="min-w-0 flex-1">
             <span class="block font-medium text-ink">{% trans "Open detail view" %}</span>
             <span class="block text-sm text-ink-subtle">{% trans "Receipts stay on the detail page, so upload PDFs there instead of here." %}</span>
           </span>
-          <i class="bi bi-chevron-right shrink-0 text-ink-subtle"
-             aria-hidden="true"></i>
+          {% icon "chevron-right" "shrink-0 text-ink-subtle" %}
         </button>
       </div>
       <div class="flex justify-end border-t border-line px-5 py-4 @md:px-6">
         <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                 type="submit">
-          <i class="bi bi-check2-circle" aria-hidden="true"></i>
+          {% icon "check2-circle" %}
           {% trans "Save changes" %}
         </button>
       </div>

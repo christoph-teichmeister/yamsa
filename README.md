@@ -49,7 +49,8 @@ The Django stack is managed through `uv` with a `.venv` stored beside the projec
 - Run `yarn build` whenever any of `apps/static/js/vendor/d3-entry.js`, `navigation.js`, or `suggested-guests.js` changes; the build drops the `.bundle.js` files inside `apps/static/bundles/` and rewrites `webpack-stats.json`.
 - Start `yarn watch` during front-end development to keep the bundles in sync automatically while editing those entry files (the command runs Webpack in development mode, watches sources, and logs colored output).
 - Templates render the bundles with `django-webpack-loader` (`render_bundle "d3"`, `render_bundle "navigation"`, `render_bundle "suggested-guests"`), so run `yarn build` before hitting those pages locally or in production.
-- Tailwind, Bootstrap Icons, HTMX, and Idiomorph are bundled through Webpack (see `apps/static_src/tailwind.css`, `apps/static/js/icons.js` and `apps/static/js/htmx.js`), so rebuild after touching those entry files or their dependencies.
+- Tailwind, HTMX, and Idiomorph are bundled through Webpack (see `apps/static_src/tailwind.css` and `apps/static/js/htmx.js`), so rebuild after touching those entry files or their dependencies.
+- Icons are a committed sprite built from the bootstrap-icons devDependency; after adding an `{% icon %}` call, run `python manage.py sync_icons` and commit `apps/static/icons/sprite.svg`.
 - The transaction charts still try the local D3 bundle first and fall back to `https://cdn.jsdelivr.net/npm/d3@7` when the bundle is missing.
 
 

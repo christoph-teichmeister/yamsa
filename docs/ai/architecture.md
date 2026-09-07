@@ -28,7 +28,7 @@ root (e.g., `from apps.transaction import models`).
   class strings for every pattern, and the rules a page has to follow. Reach for a utility before custom CSS.
 - Layouts should feel airy: a page section is `@container mx-auto flex w-full max-w-3xl flex-col gap-4`, its
   contents sit in a sheet or in cards, and emphasis comes from `shadow-card`.
-- Primary CTAs are full-width or paired buttons with icons (`bi` set) and consistent spacing (`gap-2`). Avoid duplicate
+- Primary CTAs are full-width or paired buttons with icons (`{% icon %}`) and consistent spacing (`gap-2`). Avoid duplicate
   actions; prefer a single, well-labeled button per task.
 - Content blocks stack, and widen with a container query (`@lg:grid-cols-2`) rather than a viewport breakpoint, so a
   partial reads the space it was actually given.

@@ -14,25 +14,25 @@ class DashboardTabService:
         return [
             DashboardTab(
                 name="transaction",
-                icon_class="bi bi-wallet",
+                icon_name="wallet",
                 room=self.room,
                 get_url=reverse("transaction:list", kwargs={"room_slug": self.room.slug}),
             ),
             DashboardTab(
                 name="debt",
-                icon_class="bi bi-piggy-bank",
+                icon_name="piggy-bank",
                 room=self.room,
                 get_url=reverse("debt:list", kwargs={"room_slug": self.room.slug}),
             ),
             DashboardTab(
                 name="people",
-                icon_class="bi bi-people",
+                icon_name="people",
                 room=self.room,
                 get_url=reverse("account:list", kwargs={"room_slug": self.room.slug}),
             ),
             DashboardTab(
                 name="room",
-                icon_class="bi bi-gear",
+                icon_name="gear",
                 room=self.room,
                 get_url=reverse("room:detail", kwargs={"room_slug": self.room.slug}),
             ),

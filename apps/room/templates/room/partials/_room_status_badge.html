@@ -1,12 +1,12 @@
 {% load i18n %}
 {% if current_room.is_closed %}
   <span class="inline-flex items-center gap-1.5 rounded-full bg-danger-soft px-2.5 py-1 text-xs font-semibold text-danger-text">
-    <i class="bi bi-lock-fill" aria-hidden="true"></i>
+    {% icon "lock-fill" %}
     {% trans "Closed" %}
   </span>
 {% else %}
   <span class="inline-flex items-center gap-1.5 rounded-full bg-success-soft px-2.5 py-1 text-xs font-semibold text-success-text">
-    <i class="bi bi-unlock" aria-hidden="true"></i>
+    {% icon "unlock" %}
     {% trans "Open" %}
   </span>
 {% endif %}

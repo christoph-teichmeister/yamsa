@@ -1,19 +1,19 @@
 {% load i18n %}
 {% if user.is_superuser %}
   <span class="inline-flex items-center gap-1.5 rounded-full border border-line-strong bg-surface-sunken px-2.5 py-1 text-xs font-semibold text-ink">
-    <i class="bi bi-shield-lock" aria-hidden="true"></i>
+    {% icon "shield-lock" %}
     {% trans "Superuser" %}
   </span>
 {% endif %}
 {% if user.is_staff %}
   <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
-    <i class="bi bi-people" aria-hidden="true"></i>
+    {% icon "people" %}
     {% trans "Staff" %}
   </span>
 {% endif %}
 {% if user.paypal_me_username %}
   <span class="inline-flex items-center gap-1.5 rounded-full bg-success-soft px-2.5 py-1 text-xs font-semibold text-success-text">
-    <i class="bi bi-check-circle" aria-hidden="true"></i>
+    {% icon "check-circle" %}
     {% trans "PayPal linked" %}
   </span>
 {% endif %}

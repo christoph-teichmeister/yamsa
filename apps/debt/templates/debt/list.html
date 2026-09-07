@@ -60,8 +60,7 @@
         <div class="border-t border-line px-5 py-4 @md:px-6">
           <div class="flex items-start gap-2 rounded-2xl border border-warning-text/40 bg-warning-soft px-4 py-3"
                role="note">
-            <i class="bi bi-info-circle-fill mt-0.5 shrink-0 text-warning-text"
-               aria-hidden="true"></i>
+            {% icon "info-circle-fill" "mt-0.5 shrink-0 text-warning-text" %}
             <p class="m-0 text-sm text-warning-text">
               {% trans "For comparison only: these are gross amounts that ignore payments already made. Settle your debts in the optimised view." %}
             </p>
@@ -90,14 +89,13 @@
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
               <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text">
-                <i class="bi bi-people-fill" aria-hidden="true"></i>
+                {% icon "people-fill" %}
               </span>
               <span class="min-w-0 flex-1">
                 <span class="block font-medium text-ink">{% trans "Who paid what" %}</span>
                 <span class="block text-sm text-ink-subtle">{% trans "Totals and open balances per person." %}</span>
               </span>
-              <i class="bi bi-chevron-right shrink-0 text-ink-subtle"
-                 aria-hidden="true"></i>
+              {% icon "chevron-right" "shrink-0 text-ink-subtle" %}
             </button>
             <button class="flex w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-5 py-3 text-left transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
                     type="button"
@@ -107,14 +105,13 @@
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
               <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text">
-                <i class="bi bi-pie-chart-fill" aria-hidden="true"></i>
+                {% icon "pie-chart-fill" %}
               </span>
               <span class="min-w-0 flex-1">
                 <span class="block font-medium text-ink">{% trans "Category breakdown" %}</span>
                 <span class="block text-sm text-ink-subtle">{% trans "Where the money went, by category." %}</span>
               </span>
-              <i class="bi bi-chevron-right shrink-0 text-ink-subtle"
-                 aria-hidden="true"></i>
+              {% icon "chevron-right" "shrink-0 text-ink-subtle" %}
             </button>
           </div>
         </div>
@@ -183,7 +180,7 @@
           <a class="inline-flex items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-5 py-2.5 text-sm font-semibold text-ink no-underline transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
              href="{% room_url 'debt:export' %}"
              title="{% trans "Export CSV" %}">
-            <i class="bi bi-download" aria-hidden="true"></i>
+            {% icon "download" %}
             {% trans "Export CSV" %}
           </a>
         </div>

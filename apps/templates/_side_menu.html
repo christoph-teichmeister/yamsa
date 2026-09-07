@@ -20,9 +20,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
                 aria-haspopup="dialog"
                 aria-controls="side-menu-panel"
                 aria-label="{{ offcanvas_toggle_label }}"
-                data-dialog-open="side-menu-panel">
-          <i class="bi bi-list" aria-hidden="true"></i>
-        </button>
+                data-dialog-open="side-menu-panel">{% icon "list" %}</button>
       </div>
       {% if current_room %}
         <div class="min-w-0 flex-1 text-center">
@@ -47,9 +45,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
-                    hx-push-url="true">
-              <i class="bi bi-dash-circle" aria-hidden="true"></i>
-            </button>
+                    hx-push-url="true">{% icon "dash-circle" %}</button>
           {% endif %}
         </div>
       {% else %}
@@ -71,9 +67,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
       <button type="button"
               class="inline-flex size-9 cursor-pointer items-center justify-center rounded-full border border-transparent bg-transparent text-ink-muted transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               aria-label="{% trans "Close" %}"
-              data-dialog-close>
-        <i class="bi bi-x-lg" aria-hidden="true"></i>
-      </button>
+              data-dialog-close>{% icon "x-lg" %}</button>
     </div>
     <div class="flex justify-center gap-2"
          role="group"
@@ -87,25 +81,19 @@ in the app, the toasts included - a toast raised while the menu is open waits be
               data-theme-value="light"
               aria-pressed="false"
               title="{{ light_theme_label }}"
-              aria-label="{{ light_theme_label }}">
-        <i class="bi bi-sun-fill" aria-hidden="true"></i>
-      </button>
+              aria-label="{{ light_theme_label }}">{% icon "sun-fill" %}</button>
       <button type="button"
               class="inline-flex cursor-pointer items-center justify-center rounded-lg border border-brand bg-transparent px-3 py-1.5 text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand aria-pressed:bg-brand aria-pressed:text-on-brand"
               data-theme-value="dark"
               aria-pressed="false"
               title="{{ dark_theme_label }}"
-              aria-label="{{ dark_theme_label }}">
-        <i class="bi bi-moon-fill" aria-hidden="true"></i>
-      </button>
+              aria-label="{{ dark_theme_label }}">{% icon "moon-fill" %}</button>
       <button type="button"
               class="inline-flex cursor-pointer items-center justify-center rounded-lg border border-brand bg-transparent px-3 py-1.5 text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand aria-pressed:bg-brand aria-pressed:text-on-brand"
               data-theme-value="auto"
               aria-pressed="false"
               title="{{ system_theme_label }}"
-              aria-label="{{ system_theme_label }}">
-        <i class="bi bi-circle-half" aria-hidden="true"></i>
-      </button>
+              aria-label="{{ system_theme_label }}">{% icon "circle-half" %}</button>
     </div>
     <div class="room-card bg-surface px-3 py-3 text-center shadow-card">
       {% with sidebar_avatar_source=request.user.name|default:request.user.email %}
@@ -166,9 +154,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
          hx-swap="morph:innerHTML"
          hx-push-url="true">
       <div class="room-circle"
-           {% if request.path == "/welcome/" %}data-selected{% endif %}>
-        <i class="bi bi-house" aria-hidden="true"></i>
-      </div>
+           {% if request.path == "/welcome/" %}data-selected{% endif %}>{% icon "house" %}</div>
       <div class="room-entry-text min-w-0 flex-1 text-left">
         <div class="room-name m-0 font-semibold">{% trans "Home" %}</div>
         <small class="room-description">{% trans "Back to home" %}</small>
@@ -189,9 +175,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
          hx-swap="morph:innerHTML"
          hx-push-url="true">
       <div class="room-circle"
-           {% if request.path == news_url %}data-selected{% endif %}>
-        <i class="bi bi-newspaper" aria-hidden="true"></i>
-      </div>
+           {% if request.path == news_url %}data-selected{% endif %}>{% icon "newspaper" %}</div>
       <div class="room-entry-text min-w-0 flex-1 text-left">
         <div class="room-name m-0 font-semibold">{% trans "News" %}</div>
         <small class="room-description">{% trans "What happened in your rooms" %}</small>
