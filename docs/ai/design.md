@@ -20,6 +20,14 @@ Migrated so far:
   and the per-row settle actions
 - `debt/settle.html` — the confirmation behind "Mark as paid"
 - `importer/upload.html` and `importer/preview.html` — the two steps of an import
+- `403.html`, `404.html`, `500.html` and `core/_maintenance_or_offline.html` — the error and
+  stand-in pages, all four through `shared_partials/_error_page.html`
+- `news/list.html` with `shared_partials/news_card.html`, `shared_partials/_news_card_content.html`
+  and `shared_partials/news_batch.html` — the activity timeline
+- `core/_welcome.html` with the `room/partials/_room_overview_*` partials,
+  `room/partials/_room_balance_summary.html` and `room/partials/_room_create_row.html` — the room
+  overview
+- `room/partials/_detail_who_are_you.html` — what a room shows someone who is not a member of it
 
 Everything else is still Bootstrap and follows the Bootstrap notes in
 [`architecture.md`](architecture.md) § Design System & UI Concepts.
@@ -442,6 +450,11 @@ transaction form open without any bundle having run, and they stay in the DOM ei
 post with the form. The summary hides both marker forms (`tw:list-none` plus
 `tw:[&::-webkit-details-marker]:hidden`) and the chevron turns with `tw:group-open:rotate-180`.
 
+The room overview's collapsed groups and the guest page's "Not seeing your name?" hint are the same
+element. Two things the overview's version shows: the `<summary>` keeps the `.room-overview-toggle`
+class and `aria-controls` the e2e suite clicks, and it carries **no** `aria-expanded` — the details
+element owns that state, and a static attribute would only ever be a stale copy of it.
+
 ## A feed inside a sheet
 
 The transaction list is one sheet whose middle section is an htmx target: `#transaction-feed`
@@ -500,6 +513,16 @@ A dismissible notice carries `data-dismissable` and its close button `data-dismi
   reveal-triggered link to the next
 - `debt/partials/_debt_row_actions.html` — what one debt row offers: settled badge, PayPal link,
   settle button, or its bare status
+- `shared_partials/_error_page.html` — the centred card of the error and stand-in pages;
+  `error_action_template` is the optional slot under it, which only the offline page fills
+- `shared_partials/_news_card_content.html` — the inside of a news card, shared by its linked and
+  its dead variant, which differ only in the box around it
+- `room/partials/_room_overview_section.html` — one group of the overview, collapsible or not
+- `room/partials/_room_overview_card.html` with `_room_overview_circle.html`,
+  `_room_overview_amounts.html` and `_room_overview_status_badge.html` — one room, as a row or as
+  a tile
+- `room/partials/_room_balance_summary.html` — the open-balance tiles above the overview
+- `room/partials/_room_create_row.html` — the overview's "new room" affordance
 - `transaction/child_transaction_create.html` — one more share on the edit form; it must mirror
   that template's split rows down to the `.split-row` hook
 
@@ -516,3 +539,30 @@ and the lock itself sets only real state — `readOnly`, `aria-disabled`, `disab
 
 Icons stay on bootstrap-icons (`<i class="bi bi-…" aria-hidden="true">`); that font is independent of
 Bootstrap's CSS and outlives the migration.
+
+## Class hooks the tests hold on to
+
+A semantic class survives the migration wherever a test or a script addresses it; the styling moves
+to utilities beside it. `.transaction-row` is the first of them, and the room overview is the
+largest: `.room-overview-card`, `-name`, `-meta`, `-meta-text`, `-activity`, `-amount(-label|-value)`,
+`-toggle`, `-toggle-icon`, `-entries`, `-status`, `.room-overview-card-tile`, `.room-balance-summary`,
+`.room-balance-tile.owing|.receiving`, `.room-balance-value` and `.room-status-badge` are what
+`e2e/pages/dashboard_page.py` and `apps/core/tests/test_views/test_welcome_partial_view.py` look for.
+None of them carries CSS of its own any more.
+
+`.room-status-badge` is the one that still has a rule in `customClasses.css`, because the side menu's
+room rows use it too. That rule hides the badge below an 18 rem container — written for the menu
+panel, but the overview card declared a container as well, so the badge disappeared on exactly the
+tiles it is load-bearing for. The migrated badge sets its own `tw:inline-flex`, which wins on order,
+and it is visible at every card width now.
+
+## Two partials for one affordance, until the side menu follows
+
+`room/partials/_room_create_row.html` (Tailwind, the overview) and
+`room/partials/_room_create_callout.html` (`.room-entry`, the side menu) are the same "new room"
+affordance in the two design systems the app currently has. Merging them back into one partial is
+part of migrating the side menu, not something to do earlier: a Tailwind row dropped into the menu's
+room list would not match the rows above it.
+
+Three page stylesheets went away with these pages and have no replacement:
+`components/shared/page-shell.css`, `components/room/overview.css` and `components/news/list.css`.

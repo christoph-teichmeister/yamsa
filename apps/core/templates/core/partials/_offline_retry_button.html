@@ -1,0 +1,15 @@
+{% comment %}
+  The one action the offline page has. Its own template because _error_page.html renders it as
+  the optional slot under the card.
+{% endcomment %}
+<button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+        type="button"
+        hx-trigger="click"
+        hx-get="{% url 'core:welcome' %}"
+        hx-target="#body"
+        hx-indicator="#body-loading-spinner"
+        hx-swap="morph:innerHTML"
+        hx-push-url="true">
+  <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+  Retry for internet
+</button>

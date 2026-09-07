@@ -3,17 +3,18 @@
   {% include "shared_partials/news_card.html" with news=news_object %}
 {% empty %}
   {% if news_initial_render %}
-    <p class="text-center text-muted small py-3 mb-0">{% trans "No updates yet." %}</p>
+    <p class="tw:m-0 tw:py-3 tw:text-center tw:text-sm tw:text-ink-muted">{% trans "No updates yet." %}</p>
   {% endif %}
 {% endfor %}
 {% if news_next_cursor %}
+  {# min-height so `revealed` has a box to observe: an empty div is never intersected. #}
   <div id="news-batch-trigger"
-       class="news-load-trigger"
+       class="tw:min-h-px"
        hx-get="{% url 'news:feed' %}?cursor={{ news_next_cursor }}"
        hx-trigger="revealed"
        hx-swap="outerHTML">
     {% include "shared_partials/_list_loader.html" with loader_id="news-batch-loader" skeleton_count=3 target_id="news-batch-trigger" %}
   </div>
 {% elif news or not news_initial_render %}
-  <div class="news-feed-end text-center text-muted small py-4">{% trans "You are all caught up." %}</div>
+  <p class="tw:m-0 tw:py-4 tw:text-center tw:text-sm tw:text-ink-subtle">{% trans "You are all caught up." %}</p>
 {% endif %}

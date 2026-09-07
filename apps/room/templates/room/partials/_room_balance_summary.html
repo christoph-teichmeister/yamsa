@@ -1,18 +1,22 @@
 {% load i18n %}
+{% comment %}
+  One tile per direction and currency - amounts of different currencies are never merged.
+{% endcomment %}
 {% if totals %}
   {% trans "Your open balance" as summary_label %}
-  <section class="room-balance-summary" aria-label="{{ summary_label }}">
+  <section class="room-balance-summary tw:flex tw:flex-wrap tw:gap-2"
+           aria-label="{{ summary_label }}">
     {% for total in totals %}
       {% if total.owed_by_user %}
-        <div class="room-balance-tile owing">
-          <span class="room-balance-caption">{% trans "You owe" %}</span>
-          <span class="room-balance-value">{{ total.owed_by_user|format_with_thousands }}{{ total.currency_sign }}</span>
+        <div class="room-balance-tile owing tw:flex tw:min-w-0 tw:max-w-64 tw:flex-1 tw:basis-32 tw:flex-col tw:gap-0.5 tw:rounded-2xl tw:border tw:border-warning-text/40 tw:bg-warning-soft tw:px-3.5 tw:py-2.5">
+          <span class="room-balance-caption tw:text-[0.65rem] tw:tracking-[0.06em] tw:text-ink-subtle tw:uppercase">{% trans "You owe" %}</span>
+          <span class="room-balance-value tw:text-lg tw:font-bold tw:tabular-nums tw:text-warning-text">{{ total.owed_by_user|format_with_thousands }}{{ total.currency_sign }}</span>
         </div>
       {% endif %}
       {% if total.owed_to_user %}
-        <div class="room-balance-tile receiving">
-          <span class="room-balance-caption">{% trans "You get back" %}</span>
-          <span class="room-balance-value">{{ total.owed_to_user|format_with_thousands }}{{ total.currency_sign }}</span>
+        <div class="room-balance-tile receiving tw:flex tw:min-w-0 tw:max-w-64 tw:flex-1 tw:basis-32 tw:flex-col tw:gap-0.5 tw:rounded-2xl tw:border tw:border-success-text/40 tw:bg-success-soft tw:px-3.5 tw:py-2.5">
+          <span class="room-balance-caption tw:text-[0.65rem] tw:tracking-[0.06em] tw:text-ink-subtle tw:uppercase">{% trans "You get back" %}</span>
+          <span class="room-balance-value tw:text-lg tw:font-bold tw:tabular-nums tw:text-success-text">{{ total.owed_to_user|format_with_thousands }}{{ total.currency_sign }}</span>
         </div>
       {% endif %}
     {% endfor %}

@@ -1,4 +1,11 @@
-{# The Open and Closed headings already name the status; only the mixed "Other" section needs it. #}
-<span class="badge room-status-badge room-overview-status {% if entry.is_closed %}bg-danger-subtle text-danger-emphasis{% else %}bg-body-secondary text-body-emphasis{% endif %}">
+{% comment %}
+  The Open and Closed headings already name the status; only the mixed "Other" section needs it.
+
+  Shown at every card width on purpose. The old .room-status-badge rule hid it below an 18rem
+  container - written for the side menu's room rows, but the overview card declared a container
+  too, so the badge vanished on exactly the tiles it is load-bearing for: which of the two a
+  foreign tile is decides where a click on it lands.
+{% endcomment %}
+<span class="room-overview-status room-status-badge tw:inline-flex tw:shrink-0 tw:items-center tw:rounded-full tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:whitespace-nowrap {% if entry.is_closed %}tw:bg-danger-soft tw:text-danger-text{% else %}tw:bg-surface-sunken tw:text-ink{% endif %}">
   {{ entry.status_label }}
 </span>
