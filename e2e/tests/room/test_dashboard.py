@@ -201,6 +201,48 @@ class TestDashboardRoomList:
     def test_a_user_without_open_balances_gets_no_summary(self, shared_room, open_dashboard):
         open_dashboard().expect_no_summary()
 
+    def test_open_rooms_are_one_per_row_while_closed_ones_pair_up(
+        self, profile_user, roommate, euro, page, open_dashboard
+    ):
+        now = timezone.now()
+        open_rooms = [
+            _room_with_balance(
+                name=f"Open Room {index}",
+                owner=profile_user,
+                roommate=roommate,
+                currency=euro,
+                owed_by_owner=Decimal("12.50"),
+                last_transaction_at=now - timedelta(days=index),
+            )
+            for index in (1, 2)
+        ]
+        closed_rooms = [
+            _room_with_balance(
+                name=f"Closed Room {index}",
+                owner=profile_user,
+                roommate=roommate,
+                currency=euro,
+                status=Room.StatusChoices.CLOSED,
+                last_transaction_at=now - timedelta(days=30 + index),
+            )
+            for index in (1, 2)
+        ]
+
+        dashboard = open_dashboard()
+        dashboard.expand_section("closedRooms")
+
+        # An open row carries a balance and a last-used time next to the name, so two of them side
+        # by side push the name into an ellipsis; a closed tile carries neither and pairs up fine.
+        # col-md-6 used to split the open ones from a 768px viewport - which is exactly where the
+        # shell narrows the content column to 50%, leaving the pair ~184px each.
+        dashboard.expect_one_per_row(*(_url_of(room) for room in open_rooms))
+        dashboard.expect_side_by_side(*(_url_of(room) for room in closed_rooms))
+
+        # Wide enough that any viewport-based two-column rule would have fired by now.
+        page.set_viewport_size({"width": 1600, "height": 900})
+        dashboard.expect_one_per_row(*(_url_of(room) for room in open_rooms))
+        dashboard.expect_side_by_side(*(_url_of(room) for room in closed_rooms))
+
     def test_foreign_rooms_are_shown_two_per_row_with_their_status(
         self, profile_user, roommate, euro, superuser, open_dashboard
     ):

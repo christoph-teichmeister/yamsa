@@ -1,3 +1,5 @@
+import itertools
+
 from playwright.sync_api import expect
 
 from e2e.pages.base_page import BasePage
@@ -32,6 +34,20 @@ class DashboardPage(BasePage):
 
     def expect_status_badge(self, target_url: str, label: str):
         expect(self.card_for(target_url).locator(".room-status-badge")).to_have_text(label)
+
+    def expect_one_per_row(self, *target_urls: str):
+        """Every named card sits on a row of its own, all at the same left edge and width."""
+        boxes = [self.card_for(url).bounding_box() for url in target_urls]
+        tops = sorted(box["y"] for box in boxes)
+        # A pixel of tolerance, as in expect_side_by_side below: consecutive rows are tens of
+        # pixels apart, so anything within a pixel means two cards share one.
+        for upper, lower in itertools.pairwise(tops):
+            assert lower - upper > 1, f"two of these cards share a row: {tops}"
+
+        lefts = {round(box["x"]) for box in boxes}
+        widths = {round(box["width"]) for box in boxes}
+        assert len(lefts) == 1, f"the cards do not form one column: left edges {sorted(lefts)}"
+        assert len(widths) == 1, f"the cards are not all the same width: {sorted(widths)}"
 
     def expect_side_by_side(self, left_target_url: str, right_target_url: str):
         left = self.card_for(left_target_url).bounding_box()
