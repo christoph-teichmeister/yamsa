@@ -87,11 +87,23 @@ class AccountDetailPage(BasePage):
         self.page.locator("#profile-photo-preview-dialog [data-dialog-close]").click()
         expect(self.page.locator("#profile-photo-preview-dialog")).not_to_be_visible()
 
-    def expect_photo_preview_shows(self, source_url: str):
-        """The stored picture, not the placeholder — an upload is named by a uuid4, so only the
-        model's own URL identifies it."""
+    def expect_photo_preview_is_larger_than_the_avatar(self):
+        """The dialog shows the picture bigger than the avatar — that is what it is for.
 
-        expect(self.page.locator(f"#profile-photo-preview-dialog img[src='{source_url}']")).to_be_visible()
+        Not which picture: MEDIA_URL does not resolve under the test settings, so navigation.js
+        swaps every profile picture for the placeholder before a browser can read its src. That
+        the rendered src is the stored picture is pinned in the view test instead.
+        """
+
+        avatar = self.page.locator("button[data-dialog-open='profile-photo-preview-dialog'] img")
+        preview = self.page.locator("#profile-photo-preview-dialog img")
+        expect(preview).to_be_visible()
+
+        avatar_box = avatar.bounding_box()
+        preview_box = preview.bounding_box()
+        assert preview_box["width"] > avatar_box["width"], (
+            f"preview {preview_box['width']}px is not bigger than the avatar {avatar_box['width']}px"
+        )
 
     def expect_no_photo_preview(self):
         """An avatar that is only an initial has nothing to enlarge and offers no dialog."""

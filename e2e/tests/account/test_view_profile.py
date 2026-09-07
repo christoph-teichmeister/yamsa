@@ -47,7 +47,7 @@ class TestViewProfile:
         detail_page.navigate()
 
         detail_page.open_photo_preview_dialog()
-        detail_page.expect_photo_preview_shows(roommate.profile_picture_url)
+        detail_page.expect_photo_preview_is_larger_than_the_avatar()
         detail_page.close_photo_preview_dialog()
 
     def test_a_roommate_without_a_photo_offers_no_preview(
