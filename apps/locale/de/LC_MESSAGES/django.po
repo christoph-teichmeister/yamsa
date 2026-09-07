@@ -1282,6 +1282,9 @@ msgstr "Navigation umschalten"
 msgid "Copy the rooms URL to your clipboard to send it to your friends"
 msgstr "Kopiere die Raum-URL in die Zwischenablage, um sie deinen Freunden zu schicken"
 
+msgid "Room settings"
+msgstr "Raumeinstellungen"
+
 msgid "Theme"
 msgstr "Design"
 
@@ -1461,9 +1464,6 @@ msgstr "Füge Ausgaben hinzu, um die Aufschlüsselung freizuschalten."
 
 msgid "Tap a slice"
 msgstr "Tippe auf ein Segment"
-
-msgid "Room settings"
-msgstr "Raumeinstellungen"
 
 #, python-format
 msgid "Manage categories for \"%(room_name)s\""
