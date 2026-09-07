@@ -161,8 +161,8 @@
         </div>
       </div>
       {% comment %}
-      A native <details>, not a Bootstrap collapse: the optional fields then open without any
-      bundle having run, and they stay in the DOM either way, so they post with the form.
+      A native <details>: the optional fields open without any bundle having run, and they stay
+      in the DOM while closed, so they post with the form either way.
       {% endcomment %}
       <details class="group border-t border-line">
         <summary class="flex cursor-pointer list-none items-center gap-3 px-5 py-4 transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand @md:px-6 [&::-webkit-details-marker]:hidden">

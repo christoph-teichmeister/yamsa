@@ -59,8 +59,8 @@
             </div>
           </div>
           {% comment %}
-            A native <details>, not a Bootstrap popover: the explanation is real text either way,
-            so it needs no visually-hidden duplicate for a screen reader and no bundle to open.
+            The explanation is real text rather than a tooltip's payload, so it needs no
+            visually-hidden duplicate for a screen reader - and a <details> opens with no bundle.
           {% endcomment %}
           <details class="group">
             <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-sm text-ink-muted transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden">

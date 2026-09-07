@@ -29,8 +29,8 @@
         </p>
       </div>
       {% comment %}
-        A closed room has nothing to edit, so the button carries the real `disabled` attribute and
-        the utilities render it - rather than Bootstrap's .disabled class, which only looks the part.
+        A closed room has nothing to edit, so the button carries the real `disabled` attribute -
+        which makes it inert, not merely dimmed - and the `disabled:` utilities render that state.
       {% endcomment %}
       <button class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-4 py-2 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
               type="button"

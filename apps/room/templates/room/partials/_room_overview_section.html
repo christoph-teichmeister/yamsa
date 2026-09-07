@@ -1,8 +1,8 @@
 {% load i18n %}
 {% comment %}
-A group of the room overview. The collapsible ones are a native <details>, not a Bootstrap
-collapse: the closed sections open without any bundle having run, and #{{ section_id }} is then
-genuinely hidden rather than merely unstyled.
+A group of the room overview. The collapsible ones are a native <details>: a closed section
+opens without any bundle having run, and #{{ section_id }} is genuinely hidden while it is closed
+rather than merely unstyled.
 
 <summary> keeps .room-overview-toggle and aria-controls as the hooks the e2e suite clicks; the
 open state is the details element's own and needs no aria-expanded to mirror it.
