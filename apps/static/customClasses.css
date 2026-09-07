@@ -223,22 +223,49 @@
 
 /* Loading Indicators (Issue #144) */
 .loading-indicator-overlay {
-    /* Removed position: fixed — now used as local/relative overlay */
-    position: absolute;
+    /* Fixed, not absolute: the only instance is #body-loading-spinner, a direct child of <body>,
+       and body is not positioned - an absolute overlay would anchor to the initial containing
+       block and scroll off the screen instead of covering the viewport. */
+    position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: var(--yamsa-scrim);
     z-index: 50;
-    pointer-events: none;
     display: none;
 }
 
 .loading-indicator-overlay.htmx-request {
     display: flex;
+    color: var(--yamsa-on-scrim);
     align-items: center;
     justify-content: center;
+    cursor: progress;
+    /* The reveal is what the delay is for: most requests here answer well inside 250ms, and a
+       full-screen scrim that flashes for 80ms reads as a glitch - worse now that it also
+       swallows the clicks made during it. `both` holds the keyframe's from-state through the
+       delay, so the overlay is transparent and click-through until the request has earned it.
+       display cannot be transitioned, which is why this is an animation and not the transition
+       htmxIndicatorRequest.css declares. */
+    animation: loading-overlay-reveal 150ms ease-in 250ms both;
+}
+
+@keyframes loading-overlay-reveal {
+    from {
+        opacity: 0;
+        /* Swallows clicks for the duration of the request: the dimmed page still resolved every
+           click underneath, so a second click on the same link or submit button sent a second
+           request. htmx drops .htmx-request on load, error, abort and timeout alike, so the
+           block cannot outlive the request. Keyboard activation is not covered - the overlay is
+           a scrim, not a modal. */
+        pointer-events: none;
+    }
+
+    to {
+        opacity: 1;
+        pointer-events: auto;
+    }
 }
 
 /* Skeleton Screen (placeholder animation) */
@@ -266,7 +293,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: var(--yamsa-scrim);
     z-index: 50;
     display: flex;
     align-items: center;
@@ -280,7 +307,7 @@
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    color: #fff;
+    color: var(--yamsa-on-scrim);
     text-align: center;
 }
 

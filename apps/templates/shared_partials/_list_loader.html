@@ -2,7 +2,7 @@
 ListLoader Component (Issue #144)
 Unified loading experience for list views with skeleton screens + delayed overlay.
 
-Shows skeleton immediately, switches to overlay after 800ms if loading persists.
+Shows skeleton immediately, dims it with the overlay after 800ms if loading persists.
 
 Usage in a list container:
   <div id="transaction-list" hx-get="..." hx-swap="innerHTML">
@@ -19,18 +19,16 @@ Args:
 
 The loader auto-manages:
   - Show skeleton immediately on request start
-  - Switch to overlay after 800ms
-  - Hide overlay on request complete
+  - Lay the overlay over it after 800ms
+  - Hide both on request complete
 {% endcomment %}
 {% load i18n %}
 <div id="{{ loader_id }}-loader-container" class="position-relative w-100">
-  <!-- Skeleton Screen (shown 0-800ms) -->
   <div id="{{ loader_id }}-skeleton"
        class="skeleton-container"
        style="display: none">
     {% for _ in "x"|rjust:skeleton_count %}<div class="skeleton-item"></div>{% endfor %}
   </div>
-  <!-- Delayed Overlay (shown >800ms) -->
   {% include "shared_partials/_loading_overlay.html" with loader_id=loader_id %}
 </div>
 <script type="text/javascript" nonce="{{ csp_nonce }}">
@@ -78,11 +76,10 @@ The loader auto-manages:
             isLoading = true;
             showSkeleton();
             
-            // Schedule overlay to appear after 800ms
-            overlayTimer = setTimeout(() => {
-                hideSkeleton();
-                showOverlay();
-            }, 800);
+            // The skeleton stays behind the overlay: it is the only thing giving the
+            // container height, so hiding it would collapse the absolutely positioned
+            // overlay to zero height.
+            overlayTimer = setTimeout(showOverlay, 800);
         }
     };
     

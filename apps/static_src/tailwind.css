@@ -111,6 +111,14 @@
      else takes `brand`, which follows the theme. */
   --yamsa-brand-strong: #1b5acd;
 
+  /* The scrim of the loading overlays. One value for both themes, because it does not sit on
+     the canvas but on whatever the page happens to show, and it has one job on either theme:
+     push that behind a white spinner. Measured over both canvases it carries `on-scrim` at
+     5.8:1 (light) and 18.6:1 (dark); a lighter scrim on the light theme dropped the spinner to
+     3.2:1. Its hue is 217 deg, inside the neutral family the rest of the palette keeps. */
+  --yamsa-scrim: rgb(9 12 17 / 0.62);
+  --yamsa-on-scrim: #ffffff;
+
   /* The status hues do not change with the theme - only how strongly they are mixed into it
      does, which is what the `-soft` tints above do. The border step is the same in both: enough
      to define a card's edge, not enough to shout. */
@@ -140,6 +148,8 @@
   --color-brand-text: var(--yamsa-brand-text);
   --color-brand-soft: var(--yamsa-brand-soft);
   --color-on-brand: var(--yamsa-on-brand);
+  --color-scrim: var(--yamsa-scrim);
+  --color-on-scrim: var(--yamsa-on-scrim);
   --color-success-text: var(--yamsa-success-text);
   --color-success-soft: var(--yamsa-success-soft);
   --color-warning-text: var(--yamsa-warning-text);
