@@ -26,7 +26,12 @@ open state is the details element's own and needs no aria-expanded to mirror it.
       </details>
     {% else %}
       <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-[0.08em] tw:text-ink-subtle tw:uppercase">{% trans title %}</p>
-      <div class="room-overview-entries tw:grid tw:grid-cols-1 tw:gap-2 tw:@md:grid-cols-2 tw:@md:gap-3">
+      {% comment %}
+        One per row at every width, unlike the tile sections above. An open room carries a balance
+        and a last-used time next to its name; two of those side by side is what pushed the name
+        into an ellipsis on anything but a wide desktop.
+      {% endcomment %}
+      <div class="room-overview-entries tw:grid tw:grid-cols-1 tw:gap-2 tw:@md:gap-3">
         {% for entry in entries %}
           {% include "room/partials/_room_overview_card.html" with entry=entry tile=tile %}
         {% endfor %}
