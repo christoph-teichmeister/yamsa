@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.utils.translation import gettext
 
 from apps.account.tests.factories import UserFactory
+from apps.currency.tests.factories import CurrencyFactory
 from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 
 pytestmark = pytest.mark.django_db
@@ -100,3 +101,100 @@ class TestDebtListView:
         context_dict = context.flatten() if hasattr(context, "flatten") else dict(context)
         rendered_html = render_to_string("debt/list.html", context_dict, request=response.wsgi_request)
         assert gettext("No debts yet") in rendered_html
+
+    def test_debt_list_defaults_to_the_optimised_mode(self, authenticated_client, room, user, guest_user):
+        create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+
+        response = authenticated_client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))
+
+        assert response.status_code == http.HTTPStatus.OK
+        assert response.context_data["debt_mode"] == "optimised"
+        assert response.context_data["showing_optimised_debts"] is True
+
+    def test_unknown_mode_falls_back_to_the_optimised_mode(self, authenticated_client, room, user, guest_user):
+        create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+
+        response = authenticated_client.get(
+            reverse("debt:list", kwargs={"room_slug": room.slug}), data={"mode": "nonsense"}
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        assert response.context_data["showing_optimised_debts"] is True
+
+    def test_simple_mode_lists_the_unnetted_debts(self, authenticated_client, room, user, guest_user):
+        """Two expenses that cancel each other out leave no optimised debt, but two simple rows."""
+        currency = CurrencyFactory()
+        create_parent_transaction_with_optimisation(
+            room=room,
+            paid_by=user,
+            paid_for_tuple=(guest_user,),
+            parent_transaction_kwargs={"currency": currency},
+        )
+        create_parent_transaction_with_optimisation(
+            room=room,
+            paid_by=guest_user,
+            paid_for_tuple=(user,),
+            parent_transaction_kwargs={"currency": currency},
+        )
+        assert room.debts.count() == 0
+
+        response = authenticated_client.get(
+            reverse("debt:list", kwargs={"room_slug": room.slug}), data={"mode": "simple"}
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        assert response.context_data["showing_optimised_debts"] is False
+        rows = list(response.context_data["debts"])
+        assert {(row.debitor.id, row.creditor.id) for row in rows} == {
+            (guest_user.id, user.id),
+            (user.id, guest_user.id),
+        }
+
+    def test_simple_mode_offers_no_settle_action(self, authenticated_client, room, user, guest_user):
+        create_parent_transaction_with_optimisation(room=room, paid_by=guest_user, paid_for_tuple=(user,))
+        list_url = reverse("debt:list", kwargs={"room_slug": room.slug})
+
+        optimised_html = authenticated_client.get(list_url).content.decode()
+        simple_html = authenticated_client.get(list_url, data={"mode": "simple"}).content.decode()
+
+        # The viewer owes money in both readings, so the settle button is missing because of the
+        # mode - not because there is nothing of theirs to settle.
+        assert gettext("Mark as paid") in optimised_html
+        assert gettext("Mark as paid") not in simple_html
+
+    def test_payment_count_comparison_counts_both_readings(self, authenticated_client, room, user, guest_user):
+        third_user = UserFactory()
+        room.users.add(third_user)
+        currency = CurrencyFactory()
+        # user fronts both shares, then guest_user covers third_user - which nets guest_user out
+        # entirely and turns the three direct repayments into a single one.
+        create_parent_transaction_with_optimisation(
+            room=room,
+            paid_by=user,
+            paid_for_tuple=(guest_user, third_user),
+            parent_transaction_kwargs={"currency": currency},
+        )
+        create_parent_transaction_with_optimisation(
+            room=room,
+            paid_by=guest_user,
+            paid_for_tuple=(third_user,),
+            parent_transaction_kwargs={"currency": currency},
+        )
+
+        response = authenticated_client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))
+
+        comparison = response.context_data["payment_count_comparison"]
+        assert comparison == {"optimised": 1, "simple": 3}
+
+    def test_payment_count_comparison_is_dropped_once_a_debt_is_settled(
+        self, authenticated_client, room, user, guest_user
+    ):
+        create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+        debt = room.debts.get()
+        debt.settled = True
+        debt.settled_at = timezone.now().date()
+        debt.save()
+
+        response = authenticated_client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))
+
+        assert response.context_data["payment_count_comparison"] is None

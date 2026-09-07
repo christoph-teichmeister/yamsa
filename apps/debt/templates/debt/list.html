@@ -50,10 +50,49 @@
         }
   </style>
   <div class="container-fluid px-0 px-md-2 mt-3">
-    <h4 class="mb-1">{% trans "Optimised debts" %}</h4>
-    <p class="text-muted small mb-3">{% trans "Track what is left to settle inside this room." %}</p>
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
-      {% if debts %}
+    {% if showing_optimised_debts %}
+      <h4 class="mb-1">{% trans "Optimised debts" %}</h4>
+      <p class="text-muted small mb-3">{% trans "The fewest payments that settle this room - we cancel out who owes whom." %}</p>
+    {% else %}
+      <h4 class="mb-1">{% trans "Unoptimised debts" %}</h4>
+      <p class="text-muted small mb-3">{% trans "One repayment per expense, exactly as the money was spent." %}</p>
+    {% endif %}
+    {% if has_transactions %}
+      <div class="mb-3">
+        <div class="btn-group btn-group-sm"
+             role="group"
+             aria-label="{% trans "Debt display" %}">
+          {% comment %}
+            Real links, not buttons: the mode belongs in the URL so a shared or bookmarked link
+            reopens the same reading, and the page still switches without HTMX.
+          {% endcomment %}
+          <a href="{% room_url 'debt:list' %}"
+             class="btn {% if showing_optimised_debts %}btn-primary{% else %}btn-outline-secondary{% endif %}"
+             aria-current="{% if showing_optimised_debts %}page{% else %}false{% endif %}"
+             hx-get="{% room_url 'debt:list' %}"
+             hx-target="#body"
+             hx-indicator="#body-loading-spinner"
+             hx-swap="morph:innerHTML"
+             hx-push-url="true">{% trans "Optimised" %}</a>
+          <a href="{% room_url 'debt:list' %}?mode=simple"
+             class="btn {% if showing_optimised_debts %}btn-outline-secondary{% else %}btn-primary{% endif %}"
+             aria-current="{% if showing_optimised_debts %}false{% else %}page{% endif %}"
+             hx-get="{% room_url 'debt:list' %}?mode=simple"
+             hx-target="#body"
+             hx-indicator="#body-loading-spinner"
+             hx-swap="morph:innerHTML"
+             hx-push-url="true">{% trans "Unoptimised" %}</a>
+        </div>
+      </div>
+    {% endif %}
+    {% comment %}
+      Everything above the list stays in one left-aligned column - heading, switch, badge, hint.
+      A right-aligned control in that band competes with the switch for the eye and, once it
+      wraps on a phone, sits under the switch offset to the right, which reads as two rows
+      colliding.
+    {% endcomment %}
+    {% if debts and showing_optimised_debts %}
+      <div class="mb-3">
         {% if active_debt_count %}
           <span class="badge bg-warning-subtle text-warning-emphasis">
             {% blocktrans count active_debt_count=active_debt_count %}
@@ -65,15 +104,23 @@
         {% else %}
           <span class="badge bg-success-subtle text-success-emphasis">{% trans "All settled" %}</span>
         {% endif %}
-      {% endif %}
-      {% if has_transactions %}
-        <a href="{% room_url 'debt:export' %}"
-           class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2 ms-auto">
-          <i class="bi bi-download" aria-hidden="true"></i>
-          {% trans "Export CSV" %}
-        </a>
-      {% endif %}
-    </div>
+      </div>
+    {% endif %}
+    {% if not showing_optimised_debts %}
+      <div class="alert alert-warning d-flex align-items-start gap-2 py-2 small mb-4"
+           role="note">
+        <i class="bi bi-info-circle-fill mt-1" aria-hidden="true"></i>
+        <span>{% trans "For comparison only: these are gross amounts that ignore payments already made. Settle your debts in the optimised view." %}</span>
+      </div>
+    {% elif payment_count_comparison %}
+      <p class="text-muted small mb-4">
+        {% blocktrans count counter=payment_count_comparison.optimised with simple_count=payment_count_comparison.simple trimmed %}
+          Instead of {{ simple_count }} repayments, {{ counter }} payment is enough.
+        {% plural %}
+          Instead of {{ simple_count }} repayments, {{ counter }} payments are enough.
+        {% endblocktrans %}
+      </p>
+    {% endif %}
     {% if has_transactions %}
       <div class="list-group insight-list shadow-sm mb-4">
         <button type="button"
@@ -147,9 +194,11 @@
                 {% endblocktrans %}
               </p>
             {% endif %}
-            <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
-              {% include "debt/partials/_debt_row_actions.html" with debt=debt %}
-            </div>
+            {% if showing_optimised_debts %}
+              <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                {% include "debt/partials/_debt_row_actions.html" with debt=debt %}
+              </div>
+            {% endif %}
           </div>
         {% empty %}
           <div class="text-center py-5">
@@ -159,5 +208,19 @@
         {% endfor %}
       </div>
     </div>
+    {% if has_transactions %}
+      {% comment %}
+        Below the list, not next to the switch: exporting is what you do after reading, and the
+        CSV always holds the optimised debts - beside the switch it looked like it followed the
+        selected mode.
+      {% endcomment %}
+      <div class="d-flex justify-content-end mt-3">
+        <a href="{% room_url 'debt:export' %}"
+           class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2">
+          <i class="bi bi-download" aria-hidden="true"></i>
+          {% trans "Export CSV" %}
+        </a>
+      </div>
+    {% endif %}
   </div>
 {% endblock tab_content %}
