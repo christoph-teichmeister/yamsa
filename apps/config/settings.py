@@ -604,23 +604,30 @@ EMAIL_DEFAULT_REPLY_TO_ADDRESS = env("DJANGO_EMAIL_DEFAULT_REPLY_TO_ADDRESS", de
 # ------------------------------------------------------------------------------
 
 
-def _pwa_static(path: str) -> str:
-    return f"{STATIC_URL}{path.lstrip('/')}"
-
-
 PWA_CACHE_VERSION = re.sub(r"[^0-9A-Za-z_-]", "-", env("SENTRY_RELEASE"))
 PWA_OFFLINE_URL = reverse_lazy("core:offline")
 PWA_SERVICE_WORKER = {
     "cache_name": f"yamsa-static-cache-{PWA_CACHE_VERSION}",
     "cache_prefix": "yamsa-static-cache",
     "offline_url": PWA_OFFLINE_URL,
-    "precache_urls": [
-        PWA_OFFLINE_URL,
-        _pwa_static("js/navigation.js"),
-        _pwa_static("base.css"),
-        _pwa_static("customClasses.css"),
-        _pwa_static("htmxIndicatorRequest.css"),
+    # Names, not URLs. What a name is served under is only known once the app registry stands, and
+    # the two kinds do not agree: ManifestStaticFilesStorage hashes a static file, render_bundle
+    # leaves a bundle unhashed. ServiceWorkerView therefore resolves each kind through the same
+    # machinery the templates use - a precached URL the page never requests caches nothing.
+    "precache_static": [
+        "base.css",
+        "customClasses.css",
+        "htmxIndicatorRequest.css",
+        "icons/sprite.svg",
     ],
+    # The extension per bundle mirrors what base.html asks for: `tailwind` also emits a .js stub
+    # that no page loads.
+    "precache_bundles": {
+        "tailwind": "css",
+        "htmx": "js",
+        "navigation": "js",
+        "dialog": "js",
+    },
     "static_url_prefix": STATIC_URL,
 }
 
