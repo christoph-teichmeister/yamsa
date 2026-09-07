@@ -14,7 +14,7 @@
 @source "../*/templates/**/*.html";
 @source "../static/js/**/*.js";
 
-@custom-variant dark ([data-bs-theme="dark"] &);
+@custom-variant dark ([data-theme="dark"] &);
 
 /* The palette of the whole app.
    The tokens switch with the theme, which is why templates need no `dark:` variant for them -
@@ -26,7 +26,7 @@
    The neutrals of both themes sit on the same hue as the brand (~219°); a warm neutral under a
    cold brand is what made the old dark theme look muddy. */
 :root,
-[data-bs-theme="light"] {
+[data-theme="light"] {
   /* Scrollbars, form controls and every other native widget follow the theme only through this. */
   color-scheme: light;
 
@@ -62,7 +62,7 @@
   --yamsa-danger-soft: rgb(var(--yamsa-danger-rgb), 0.12);
 }
 
-[data-bs-theme="dark"] {
+[data-theme="dark"] {
   color-scheme: dark;
 
   --yamsa-canvas: #1b1e24;

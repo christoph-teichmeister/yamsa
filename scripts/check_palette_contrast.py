@@ -96,14 +96,14 @@ def read_themes(css: str) -> dict[str, dict[str, str]]:
 
     for match in BLOCK_PATTERN.finditer(COMMENT_PATTERN.sub("", css)):
         # Everything up to the last statement is an at-rule that happens to precede this block -
-        # `@custom-variant dark ([data-bs-theme="dark"] &);` would otherwise read as the selector.
+        # `@custom-variant dark ([data-theme="dark"] &);` would otherwise read as the selector.
         selector = match.group("selector").split(";")[-1]
         declarations = dict(DECLARATION_PATTERN.findall(match.group("body")))
         if not declarations:
             continue
-        if 'data-bs-theme="dark"' in selector:
+        if 'data-theme="dark"' in selector:
             themes["dark"].update(declarations)
-        elif 'data-bs-theme="light"' in selector:
+        elif 'data-theme="light"' in selector:
             themes["light"].update(declarations)
         elif ":root" in selector:
             shared.update(declarations)

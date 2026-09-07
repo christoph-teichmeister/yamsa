@@ -197,14 +197,14 @@ Both themes are first-class; neither is a filter over the other. Three things ca
 - **The theme is applied before the first paint** by the inline script in
   `core/base.html`'s `<head>` — a deferred bundle would show every reader on the other theme a full
   page of the wrong one first. That script does the minimum (read the preference, set
-  `data-bs-theme`) and nothing else; it deliberately sits before the stylesheets so it never waits
+  `data-theme`) and nothing else; it deliberately sits before the stylesheets so it never waits
   for them.
 - **`color-scheme` is declared per theme**, next to the tokens. Scrollbars, form controls and every
   other native widget follow the theme through that property alone. The browser's own chrome
   follows `<meta name="theme-color">`, which `navigation.js` re-points at `--yamsa-canvas` on every
   switch.
 
-`dark:…` keys off `[data-bs-theme="dark"]`, the attribute all of this sets.
+`dark:…` keys off `[data-theme="dark"]`, the attribute all of this sets.
 
 Radius, spacing and type scale are Tailwind's defaults — they already match the intended scale, so
 they are deliberately **not** redefined. Only `--shadow-card`, `--shadow-card-hover` and

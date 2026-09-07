@@ -5,7 +5,7 @@
 {% trans "yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications." as yamsa_meta_description %}
 {% trans "yamsa, shared expenses, roommate app, bill splitting, dashboards" as yamsa_meta_keywords %}
 <!DOCTYPE html>
-<html lang="{{ request.LANGUAGE_CODE|default:'en' }}" data-bs-theme="dark">
+<html lang="{{ request.LANGUAGE_CODE|default:'en' }}" data-theme="dark">
   <head>
     <meta charset="utf-8">
     <meta name="viewport"
@@ -43,7 +43,7 @@
             : 'dark';
         }
 
-        document.documentElement.setAttribute('data-bs-theme', preference);
+        document.documentElement.setAttribute('data-theme', preference);
       })();
     </script>
     {% include "core/partials/_head_links_and_scripts.html" %}

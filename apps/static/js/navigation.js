@@ -66,7 +66,7 @@
   };
 
   const applyPreference = (preference) => {
-    document.documentElement.setAttribute('data-bs-theme', resolveTheme(preference));
+    document.documentElement.setAttribute('data-theme', resolveTheme(preference));
     applyBrowserThemeColor();
     applyThemeToggleState(preference);
   };
