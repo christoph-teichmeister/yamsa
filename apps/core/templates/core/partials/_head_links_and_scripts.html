@@ -1,9 +1,7 @@
 {% load static %}
 {% load render_bundle from webpack_loader %}
-{% render_bundle "styles" %}
+{% render_bundle "icons" %}
 <link rel="stylesheet" href="{% static 'base.css' %}">
-<link rel="stylesheet" href="{% static 'components/navbar/navbar.css' %}">
 <link rel="stylesheet" href="{% static 'customClasses.css' %}">
 <link rel="stylesheet" href="{% static 'htmxIndicatorRequest.css' %}">
-<!-- Loaded last on purpose: the Tailwind utilities of migrated pages must win over Bootstrap. -->
 {% render_bundle "tailwind" "css" %}

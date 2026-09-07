@@ -1,28 +1,22 @@
-/* Tailwind runs next to Bootstrap for the duration of the redesign, which forces two
-   constraints that must not be relaxed before the last Bootstrap template is gone:
+/* The three parts of `@import "tailwindcss"`, imported by hand for one reason: the utilities
+   must stay OUT of a cascade layer. Every layered rule loses to every unlayered one whatever
+   its specificity, and apps/static/customClasses.css is unlayered - `@layer utilities` would
+   put a utility behind each of its component rules instead of in front of it.
 
-   1. No Preflight. Bootstrap Reboot stays the base reset; loading a second one would
-      re-style every element on the pages that are still on Bootstrap.
-   2. Every utility carries the `tw:` prefix. Bootstrap and Tailwind share class names
-      with different values (`p-3`, `gap-4`, `border`, `rounded`, `shadow-sm`, …), and
-      this bundle loads last — unprefixed utilities would silently override their
-      Bootstrap namesakes app-wide.
-
-   Dropping Bootstrap means: swap these two imports for `@import "tailwindcss";`, strip
-   the `tw:` prefixes from the templates, and point `dark` at its own selector. */
+   Preflight, on the other hand, belongs in `base` precisely so those component rules win over
+   it. It is the app's only reset since Bootstrap Reboot went; the two must never be loaded
+   together, and neither must be absent. */
 @import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" prefix(tw);
 
 @source "../templates/**/*.html";
 @source "../*/templates/**/*.html";
 @source "../static/js/**/*.js";
 
-/* The theme is picked by Bootstrap's attribute on <html>, so both frameworks stay in sync. */
 @custom-variant dark ([data-bs-theme="dark"] &);
 
-/* The palette of the whole app, both frameworks. Bootstrap does not get its own values:
-   apps/static/base.css maps `--bs-*` onto these tokens, so every colour has exactly one
-   definition per theme and the two systems cannot drift apart.
+/* The palette of the whole app.
    The tokens switch with the theme, which is why templates need no `dark:` variant for them -
    `tw:bg-surface` is already correct in both.
 
@@ -46,7 +40,8 @@
      than the decorative `line`. */
   --yamsa-line-strong: #8895b0;
   --yamsa-ink-strong: #0f1319;
-  /* A triplet as well: Bootstrap tints its own neutrals from --bs-body-color-rgb. */
+  /* A triplet, because customClasses.css tints the neutrals at several alphas - a row's
+     hover ground, the skeleton shimmer, the divider. */
   --yamsa-ink-rgb: 27, 32, 39;
   --yamsa-ink-muted: #4d5665;
   --yamsa-ink-subtle: #606a7f;
@@ -57,7 +52,7 @@
   --yamsa-on-brand: #ffffff;
   --yamsa-brand-text: #1f5bbf;
   --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.12);
-  /* A triplet, because Bootstrap builds every link colour from --bs-link-color-rgb. */
+  /* A triplet, because the trend chart strokes its line at 0.9 alpha. */
   --yamsa-link-rgb: 31, 91, 191;
   --yamsa-success-text: #0c7047;
   --yamsa-success-soft: rgb(var(--yamsa-success-rgb), 0.14);
