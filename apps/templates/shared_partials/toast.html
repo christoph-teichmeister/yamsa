@@ -1,17 +1,17 @@
 {% load i18n core_tags %}
 {% trans "Close" as toast_close_label %}
-<div class="yamsa-toast-container tw:pointer-events-none tw:fixed tw:bottom-0 tw:left-1/2 tw:z-[1400] tw:mb-12 tw:max-h-[calc(100%-1rem)] tw:w-full tw:-translate-x-1/2 tw:px-1 tw:pb-12">
-  <div class="tw:translate-y-2 tw:opacity-0 tw:transition tw:duration-250 tw:data-visible:translate-y-0 tw:data-visible:opacity-100"
+<div class="yamsa-toast-container pointer-events-none fixed bottom-0 left-1/2 z-[1400] mb-12 max-h-[calc(100%-1rem)] w-full -translate-x-1/2 px-1 pb-12">
+  <div class="translate-y-2 opacity-0 transition duration-250 data-visible:translate-y-0 data-visible:opacity-100"
        id="toast-id"
        role="alert"
        aria-live="assertive"
        aria-atomic="true"
        hidden>
     <div id="toast-type-div"
-         class="toast-yamsa-inner tw:flex tw:w-full tw:items-center tw:justify-between tw:gap-3 tw:px-4 tw:py-3">
-      <span id="toast-message-span" class="tw:min-w-0 tw:flex-1 tw:truncate tw:font-semibold"></span>
+         class="toast-yamsa-inner flex w-full items-center justify-between gap-3 px-4 py-3">
+      <span id="toast-message-span" class="min-w-0 flex-1 truncate font-semibold"></span>
       <button type="button"
-              class="tw:inline-flex tw:size-8 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:border tw:border-transparent tw:bg-transparent tw:text-ink-muted tw:transition tw:hover:bg-surface-hover tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+              class="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-transparent bg-transparent text-ink-muted transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               data-toast-dismiss
               aria-label="{{ toast_close_label }}">
         <i class="bi bi-x-lg" aria-hidden="true"></i>
@@ -28,7 +28,7 @@
 {% endif %}
 {% trans "Something went wrong" as something_went_wrong %}
 <script type="module" nonce="{{ csp_nonce }}">
-    // Must match `tw:duration-250` on #toast-id: the queue waits out the fade before it shows the
+    // Must match `duration-250` on #toast-id: the queue waits out the fade before it shows the
     // next toast, and a transitionend listener would never fire for a reader on reduced motion.
     const TRANSITION_MS = 250
     const AUTOHIDE_MS = 5000

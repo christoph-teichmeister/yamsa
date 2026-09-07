@@ -11,11 +11,11 @@ The panel is a modal <dialog>, which brings the focus trap, Escape and the backd
 Bootstrap offcanvas needed a component for. Being in the top layer it also outranks every z-index
 in the app, the toasts included - a toast raised while the menu is open waits behind the scrim.
 {% endcomment %}
-<nav class="tw:fixed tw:inset-x-0 tw:top-0 tw:z-[1300] tw:bg-surface-sunken tw:pt-6 tw:pb-2">
-  <div class="tw:app-container tw:pt-6">
-    <div class="tw:flex tw:w-full tw:items-center tw:justify-between tw:gap-2">
-      <div class="tw:flex tw:w-10 tw:shrink-0 tw:items-center">
-        <button class="tw:inline-flex tw:size-10 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-xl tw:border tw:border-transparent tw:bg-transparent tw:text-2xl tw:text-brand-text tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+<nav class="fixed inset-x-0 top-0 z-[1300] bg-surface-sunken pt-6 pb-2">
+  <div class="app-container pt-6">
+    <div class="flex w-full items-center justify-between gap-2">
+      <div class="flex w-10 shrink-0 items-center">
+        <button class="inline-flex size-10 cursor-pointer items-center justify-center rounded-xl border border-transparent bg-transparent text-2xl text-brand-text transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 type="button"
                 aria-haspopup="dialog"
                 aria-controls="side-menu-panel"
@@ -25,13 +25,13 @@ in the app, the toasts included - a toast raised while the menu is open waits be
         </button>
       </div>
       {% if current_room %}
-        <div class="tw:min-w-0 tw:flex-1 tw:text-center">
-          <h6 class="tw:m-0 tw:truncate tw:text-base tw:font-semibold tw:text-ink-strong">{{ current_room.name }}</h6>
-          <span class="tw:block tw:truncate tw:text-sm tw:text-ink-subtle">{{ current_room.description|truncatechars:50 }}</span>
+        <div class="min-w-0 flex-1 text-center">
+          <h6 class="m-0 truncate text-base font-semibold text-ink-strong">{{ current_room.name }}</h6>
+          <span class="block truncate text-sm text-ink-subtle">{{ current_room.description|truncatechars:50 }}</span>
         </div>
-        <div class="tw:flex tw:w-10 tw:shrink-0 tw:items-center tw:justify-end">
+        <div class="flex w-10 shrink-0 items-center justify-end">
           {% if current_room.is_open %}
-            <button class="tw:inline-flex tw:size-10 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface tw:text-lg tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+            <button class="inline-flex size-10 cursor-pointer items-center justify-center rounded-xl border border-line-strong bg-surface text-lg text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                     type="button"
                     data-copy-share-url="true"
                     data-share-url="{{ current_room.share_url }}"
@@ -40,7 +40,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
                     hx-get="{% url 'room:htmx-checked-clipboard' %}"
                     hx-swap="morph:innerHTML">{% include "shared_partials/clipboard_icon_unchecked.html" %}</button>
           {% elif current_room.is_closed %}
-            <button class="tw:inline-flex tw:size-10 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-xl tw:border tw:border-transparent tw:bg-transparent tw:text-2xl tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+            <button class="inline-flex size-10 cursor-pointer items-center justify-center rounded-xl border border-transparent bg-transparent text-2xl text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                     type="button"
                     aria-label="{{ reopen_room_label }}"
                     hx-get="{% room_url 'room:detail' %}"
@@ -53,28 +53,28 @@ in the app, the toasts included - a toast raised while the menu is open waits be
           {% endif %}
         </div>
       {% else %}
-        <div class="tw:flex tw:flex-1 tw:items-center tw:justify-end">
-          <h3 class="tw:m-0 tw:text-3xl tw:font-semibold tw:text-ink-strong">yamsa</h3>
+        <div class="flex flex-1 items-center justify-end">
+          <h3 class="m-0 text-3xl font-semibold text-ink-strong">yamsa</h3>
         </div>
       {% endif %}
     </div>
   </div>
 </nav>
 <dialog id="side-menu-panel"
-        class="tw:side-panel tw:fixed tw:inset-y-0 tw:left-0 tw:m-0 tw:h-full tw:max-h-none tw:w-3/4 tw:max-w-none tw:overflow-x-hidden tw:overflow-y-auto tw:border-0 tw:bg-surface-sunken tw:p-0 tw:text-ink tw:md:w-[30%]"
+        class="side-panel fixed inset-y-0 left-0 m-0 h-full max-h-none w-3/4 max-w-none overflow-x-hidden overflow-y-auto border-0 bg-surface-sunken p-0 text-ink md:w-[30%]"
         aria-labelledby="side-menu-panel-label"
         data-dialog>
-  <div class="tw:flex tw:h-full tw:flex-col tw:gap-4 tw:px-4 tw:pt-10 tw:pb-6">
-    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3">
-      <h5 class="tw:m-0 tw:text-xl tw:font-semibold tw:text-ink-strong" id="side-menu-panel-label">{% trans "Menu" %}</h5>
+  <div class="flex h-full flex-col gap-4 px-4 pt-10 pb-6">
+    <div class="flex items-center justify-between gap-3">
+      <h5 class="m-0 text-xl font-semibold text-ink-strong" id="side-menu-panel-label">{% trans "Menu" %}</h5>
       <button type="button"
-              class="tw:inline-flex tw:size-9 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-full tw:border tw:border-transparent tw:bg-transparent tw:text-ink-muted tw:transition tw:hover:bg-surface-hover tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+              class="inline-flex size-9 cursor-pointer items-center justify-center rounded-full border border-transparent bg-transparent text-ink-muted transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               aria-label="{% trans "Close" %}"
               data-dialog-close>
         <i class="bi bi-x-lg" aria-hidden="true"></i>
       </button>
     </div>
-    <div class="tw:flex tw:justify-center tw:gap-2"
+    <div class="flex justify-center gap-2"
          role="group"
          aria-label="{{ theme_group_label }}">
       {% comment %}
@@ -82,7 +82,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
         buttons need no second, class-shaped copy of the same state.
       {% endcomment %}
       <button type="button"
-              class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-lg tw:border tw:border-brand tw:bg-transparent tw:px-3 tw:py-1.5 tw:text-brand-text tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:aria-pressed:bg-brand tw:aria-pressed:text-on-brand"
+              class="inline-flex cursor-pointer items-center justify-center rounded-lg border border-brand bg-transparent px-3 py-1.5 text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand aria-pressed:bg-brand aria-pressed:text-on-brand"
               data-theme-value="light"
               aria-pressed="false"
               title="{{ light_theme_label }}"
@@ -90,7 +90,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
         <i class="bi bi-sun-fill" aria-hidden="true"></i>
       </button>
       <button type="button"
-              class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-lg tw:border tw:border-brand tw:bg-transparent tw:px-3 tw:py-1.5 tw:text-brand-text tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:aria-pressed:bg-brand tw:aria-pressed:text-on-brand"
+              class="inline-flex cursor-pointer items-center justify-center rounded-lg border border-brand bg-transparent px-3 py-1.5 text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand aria-pressed:bg-brand aria-pressed:text-on-brand"
               data-theme-value="dark"
               aria-pressed="false"
               title="{{ dark_theme_label }}"
@@ -98,7 +98,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
         <i class="bi bi-moon-fill" aria-hidden="true"></i>
       </button>
       <button type="button"
-              class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-lg tw:border tw:border-brand tw:bg-transparent tw:px-3 tw:py-1.5 tw:text-brand-text tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:aria-pressed:bg-brand tw:aria-pressed:text-on-brand"
+              class="inline-flex cursor-pointer items-center justify-center rounded-lg border border-brand bg-transparent px-3 py-1.5 text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand aria-pressed:bg-brand aria-pressed:text-on-brand"
               data-theme-value="auto"
               aria-pressed="false"
               title="{{ system_theme_label }}"
@@ -106,29 +106,29 @@ in the app, the toasts included - a toast raised while the menu is open waits be
         <i class="bi bi-circle-half" aria-hidden="true"></i>
       </button>
     </div>
-    <div class="room-card tw:bg-surface tw:px-3 tw:py-3 tw:text-center tw:shadow-card">
+    <div class="room-card bg-surface px-3 py-3 text-center shadow-card">
       {% with sidebar_avatar_source=request.user.name|default:request.user.email %}
-        <div class="profile-avatar tw:mb-2">
+        <div class="profile-avatar mb-2">
           {% if request.user.profile_picture %}
             <img src="{{ request.user.profile_picture_url }}"
                  data-profile-picture-fallback-url="{{ request.user.profile_picture_fallback_url }}"
                  alt="{{ request.user.name }}"
-                 class="tw:size-full tw:rounded-2xl tw:object-cover"
+                 class="size-full rounded-2xl object-cover"
                  width="64"
                  height="64">
           {% else %}
-            <span class="tw:text-3xl tw:font-semibold tw:text-brand-text">{{ sidebar_avatar_source|slice:':1'|upper }}</span>
+            <span class="text-3xl font-semibold text-brand-text">{{ sidebar_avatar_source|slice:':1'|upper }}</span>
           {% endif %}
         </div>
       {% endwith %}
-      <div class="tw:font-semibold tw:text-ink">
+      <div class="font-semibold text-ink">
         {% if request.user.is_anonymous %}
           {% trans "Profile" %}
         {% else %}
           {{ request.user.name }}
         {% endif %}
       </div>
-      <div class="tw:text-sm tw:text-ink-muted">
+      <div class="text-sm text-ink-muted">
         {% if request.user.is_anonymous %}
           {% trans "Log in to access rooms" %}
         {% else %}
@@ -136,7 +136,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
         {% endif %}
       </div>
       <button type="button"
-              class="tw:mt-2 tw:cursor-pointer tw:border tw:border-transparent tw:bg-transparent tw:p-0 tw:font-medium tw:text-brand-text tw:underline tw:transition tw:hover:text-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+              class="mt-2 cursor-pointer border border-transparent bg-transparent p-0 font-medium text-brand-text underline transition hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               tabindex="-1"
               data-dialog-close
               hx-trigger="click delay:300ms"
@@ -168,11 +168,11 @@ in the app, the toasts included - a toast raised while the menu is open waits be
            {% if request.path == "/welcome/" %}data-selected{% endif %}>
         <i class="bi bi-house" aria-hidden="true"></i>
       </div>
-      <div class="room-entry-text tw:min-w-0 tw:flex-1 tw:text-left">
-        <div class="room-name tw:m-0 tw:font-semibold">{% trans "Home" %}</div>
+      <div class="room-entry-text min-w-0 flex-1 text-left">
+        <div class="room-name m-0 font-semibold">{% trans "Home" %}</div>
         <small class="room-description">{% trans "Back to home" %}</small>
       </div>
-      <span class="room-status-badge tw:bg-surface-hover tw:text-ink-strong">{% trans "Start" %}</span>
+      <span class="room-status-badge bg-surface-hover text-ink-strong">{% trans "Start" %}</span>
     </div>
     {% url 'news:list' as news_url %}
     <div class="room-entry"
@@ -190,16 +190,16 @@ in the app, the toasts included - a toast raised while the menu is open waits be
       <div class="room-circle" {% if request.path == news_url %}data-selected{% endif %}>
         <i class="bi bi-newspaper" aria-hidden="true"></i>
       </div>
-      <div class="room-entry-text tw:min-w-0 tw:flex-1 tw:text-left">
-        <div class="room-name tw:m-0 tw:font-semibold">{% trans "News" %}</div>
+      <div class="room-entry-text min-w-0 flex-1 text-left">
+        <div class="room-name m-0 font-semibold">{% trans "News" %}</div>
         <small class="room-description">{% trans "What happened in your rooms" %}</small>
       </div>
-      <span class="room-status-badge tw:bg-surface-hover tw:text-ink-strong">{% trans "Updates" %}</span>
+      <span class="room-status-badge bg-surface-hover text-ink-strong">{% trans "Updates" %}</span>
     </div>
     {% include "_side_menu_room_list.html" %}
-    <div class="tw:mt-auto">
+    <div class="mt-auto">
       <button type="button"
-              class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+              class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
               hx-trigger="click"
               hx-get="{% url 'account:logout' %}"
               hx-target="#body"

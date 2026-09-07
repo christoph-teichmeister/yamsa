@@ -7,14 +7,14 @@
   and never assembles markup or toggles a framework class — which also keeps the labels in here,
   where they can be translated.
 {% endcomment %}
-<article class="tw:flex tw:h-full tw:flex-col tw:gap-3 tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-4">
-  <div class="tw:flex tw:items-start tw:justify-between tw:gap-3">
-    <div class="tw:flex tw:min-w-0 tw:items-center tw:gap-3">
+<article class="flex h-full flex-col gap-3 rounded-2xl border border-line bg-surface p-4">
+  <div class="flex items-start justify-between gap-3">
+    <div class="flex min-w-0 items-center gap-3">
       {# main gave every avatar one partial; the .avatar classes are token-based plain CSS. #}
       {% include "shared_partials/_user_avatar.html" with avatar_url=guest.avatar_url avatar_name=guest.name avatar_initials=guest.initials avatar_class="avatar-lg" %}
-      <div class="tw:min-w-0">
-        <p class="tw:m-0 tw:font-medium tw:break-words tw:text-ink">{{ guest.name }}</p>
-        <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">
+      <div class="min-w-0">
+        <p class="m-0 font-medium break-words text-ink">{{ guest.name }}</p>
+        <p class="m-0 text-sm text-ink-subtle">
           {% blocktrans trimmed count room_count=guest.rooms_together %}
             {{ room_count }} room together
           {% plural %}
@@ -24,13 +24,13 @@
       </div>
     </div>
     {% if guest.is_friend %}
-      <span class="tw:inline-flex tw:shrink-0 tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-brand-text">
+      <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
         <i class="bi bi-star-fill" aria-hidden="true"></i>
         {% trans "Friend" %}
       </span>
     {% endif %}
   </div>
-  <div class="tw:mt-auto tw:flex tw:flex-col tw:gap-2">
+  <div class="mt-auto flex flex-col gap-2">
     <form hx-post="{% url 'room:htmx-suggested-guest-friend-toggle' %}"
           hx-target="#suggested-guests-list"
           hx-swap="innerHTML"
@@ -46,7 +46,7 @@
       <input type="hidden"
              name="suggested_guest_room_slug"
              value="{{ add_inline_room_slug|default:'' }}">
-      <button class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+      <button class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-3 py-2 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               type="submit">
         {% if guest.is_friend %}
           <i class="bi bi-star" aria-hidden="true"></i>
@@ -66,24 +66,24 @@
         {% csrf_token %}
         <input type="hidden" name="email" value="{{ guest.email }}">
         <input type="hidden" name="room_slug" value="{{ add_inline_room_slug }}">
-        <button class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+        <button class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-3 py-2 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                 type="submit">
           <i class="bi bi-plus-circle" aria-hidden="true"></i>
           {% trans "Add to room" %}
         </button>
       </form>
     {% else %}
-      <button class="tw:group tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:aria-pressed:border-success-text/60 tw:aria-pressed:bg-success-soft tw:aria-pressed:text-success-text tw:aria-pressed:shadow-none"
+      <button class="group inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-3 py-2 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand aria-pressed:border-success-text/60 aria-pressed:bg-success-soft aria-pressed:text-success-text aria-pressed:shadow-none"
               type="button"
               aria-pressed="false"
               data-suggested-guest-add
               data-suggested-guest-email="{{ guest.email }}">
-        <i class="bi bi-plus-circle tw:group-aria-pressed:hidden"
+        <i class="bi bi-plus-circle group-aria-pressed:hidden"
            aria-hidden="true"></i>
-        <i class="bi bi-check-circle tw:hidden tw:group-aria-pressed:inline-block"
+        <i class="bi bi-check-circle hidden group-aria-pressed:inline-block"
            aria-hidden="true"></i>
-        <span class="tw:group-aria-pressed:hidden">{% trans "Add" %}</span>
-        <span class="tw:hidden tw:group-aria-pressed:inline">{% trans "Added" %}</span>
+        <span class="group-aria-pressed:hidden">{% trans "Add" %}</span>
+        <span class="hidden group-aria-pressed:inline">{% trans "Added" %}</span>
       </button>
     {% endif %}
   </div>

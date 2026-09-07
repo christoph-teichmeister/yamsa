@@ -6,9 +6,9 @@
    Preflight, on the other hand, belongs in `base` precisely so those component rules win over
    it. It is the app's only reset since Bootstrap Reboot went; the two must never be loaded
    together, and neither must be absent. */
-@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
-@import "tailwindcss/utilities.css" prefix(tw);
+@import "tailwindcss/utilities.css";
 
 @source "../templates/**/*.html";
 @source "../*/templates/**/*.html";
@@ -18,7 +18,7 @@
 
 /* The palette of the whole app.
    The tokens switch with the theme, which is why templates need no `dark:` variant for them -
-   `tw:bg-surface` is already correct in both.
+   `bg-surface` is already correct in both.
 
    Every pair a reader has to make out is contrast-checked by scripts/check_palette_contrast.py:
    text on its ground at 4.5:1, control borders and the focus ring at 3:1. Change a value here and

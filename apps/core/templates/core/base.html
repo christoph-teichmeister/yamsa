@@ -54,7 +54,7 @@
   <body hx-ext="morph" id="body">
     {% if core.DEBUG %}
       <div class="debug-banner">
-        <h1 class="tw:m-0 tw:text-2xl">💀 Deadzone 💀</h1>
+        <h1 class="m-0 text-2xl">💀 Deadzone 💀</h1>
       </div>
     {% endif %}
     {% include "shared_partials/toast.html" %}
@@ -62,7 +62,7 @@
     {% if not is_in_maintenance and not called_by_offline_view and not request.user.is_anonymous %}
       {% include "_side_menu.html" %}
     {% endif %}
-    <div class="tw:app-container tw:my-12 tw:px-2 tw:py-12" id="base-content">
+    <div class="app-container my-12 px-2 py-12" id="base-content">
       {% block content %}
       {% endblock content %}
     </div>
@@ -71,10 +71,10 @@
     {% endif %}
     {% if not dashboard_tabs %}
       {% load room_tags %}
-      <nav class="tw:fixed tw:inset-x-0 tw:bottom-0 tw:z-0 tw:bg-surface-sunken tw:pt-2 tw:pb-6">
-        <div class="tw:app-container">
-          <div class="tw:flex tw:w-full tw:flex-row tw:justify-around">
-            <div class="tw:px-4 tw:py-2">
+      <nav class="fixed inset-x-0 bottom-0 z-0 bg-surface-sunken pt-2 pb-6">
+        <div class="app-container">
+          <div class="flex w-full flex-row justify-around">
+            <div class="px-4 py-2">
               <a href='https://ko-fi.com/K3K01EDQN8' target='_blank'>
                 <img height="36"
                      width="141"

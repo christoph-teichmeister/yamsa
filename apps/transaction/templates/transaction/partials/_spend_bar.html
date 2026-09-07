@@ -8,7 +8,7 @@
     bar_percent 0-100, already computed by the caller (required)
     bar_tone    "spent" (brand), "owed" (success) or "covered" (warning); defaults to spent
 {% endcomment %}
-<div class="tw:relative tw:h-2.5 tw:overflow-hidden tw:rounded-full tw:bg-surface-hover">
-  <span class="tw:absolute tw:inset-y-0 tw:left-0 tw:rounded-full tw:bg-gradient-to-r {% if bar_tone == 'owed' %}tw:from-success-text/70 tw:to-success-text{% elif bar_tone == 'covered' %}tw:from-warning-text/70 tw:to-warning-text{% else %}tw:from-brand tw:to-brand-hover{% endif %}"
+<div class="relative h-2.5 overflow-hidden rounded-full bg-surface-hover">
+  <span class="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r {% if bar_tone == 'owed' %}from-success-text/70 to-success-text{% elif bar_tone == 'covered' %}from-warning-text/70 to-warning-text{% else %}from-brand to-brand-hover{% endif %}"
         style="width: {{ bar_percent }}%"></span>
 </div>

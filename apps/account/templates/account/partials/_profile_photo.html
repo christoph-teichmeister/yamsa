@@ -10,15 +10,15 @@
   it" — and offers the two actions next to it.
 {% endcomment %}
 <div id="profile-photo"
-     class="tw:group tw:relative tw:size-20 tw:shrink-0">
-  <button class="tw:relative tw:flex tw:size-20 tw:cursor-pointer tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-full tw:border-0 tw:bg-brand-soft tw:p-0 tw:ring-2 tw:ring-brand/40 tw:transition tw:hover:ring-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+     class="group relative size-20 shrink-0">
+  <button class="relative flex size-20 cursor-pointer items-center justify-center overflow-hidden rounded-full border-0 bg-brand-soft p-0 ring-2 ring-brand/40 transition hover:ring-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           type="button"
           aria-haspopup="dialog"
           aria-label="{% trans "Change photo" %}"
           title="{% trans "Change photo" %}"
           data-dialog-open="profile-photo-dialog">
     {% if user.profile_picture %}
-      <img class="tw:h-full tw:w-full tw:object-cover"
+      <img class="h-full w-full object-cover"
            src="{{ user.profile_picture_url }}"
            data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
            alt="{% trans "Profile photo" %}"
@@ -26,59 +26,59 @@
            width="80"
            height="80">
     {% else %}
-      <span class="tw:text-3xl tw:font-semibold tw:tracking-wider tw:text-brand-text">
+      <span class="text-3xl font-semibold tracking-wider text-brand-text">
         {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
       </span>
     {% endif %}
-    <span class="tw:pointer-events-none tw:absolute tw:inset-0 tw:flex tw:items-center tw:justify-center tw:bg-black/45 tw:text-lg tw:text-white tw:opacity-0 tw:transition-opacity tw:group-hover:opacity-100 tw:group-has-focus-visible:opacity-100"
+    <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/45 text-lg text-white opacity-0 transition-opacity group-hover:opacity-100 group-has-focus-visible:opacity-100"
           aria-hidden="true">
       <i class="bi bi-camera"></i>
     </span>
   </button>
-  <span class="tw:absolute tw:-right-1 tw:-bottom-1 tw:flex tw:size-7 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-full tw:border-2 tw:border-surface tw:bg-brand tw:text-xs tw:text-on-brand tw:shadow-sm tw:transition tw:group-hover:bg-brand-hover"
+  <span class="absolute -right-1 -bottom-1 flex size-7 cursor-pointer items-center justify-center rounded-full border-2 border-surface bg-brand text-xs text-on-brand shadow-sm transition group-hover:bg-brand-hover"
         aria-hidden="true"
         data-dialog-open="profile-photo-dialog">
     <i class="bi bi-camera"></i>
   </span>
   <dialog id="profile-photo-dialog"
-          class="tw:m-auto tw:w-[min(24rem,calc(100vw-2rem))] tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:p-0 tw:text-ink tw:backdrop:bg-black/60"
+          class="m-auto w-[min(24rem,calc(100vw-2rem))] rounded-3xl border border-line bg-surface p-0 text-ink backdrop:bg-black/60"
           data-dialog
           {% if photo_dialog_is_open %}open{% endif %}>
-    <div class="tw:flex tw:items-center tw:justify-between tw:gap-3 tw:border-b tw:border-line tw:px-5 tw:py-3">
-      <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "Profile photo" %}</p>
-      <button class="tw:flex tw:size-8 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-lg tw:border-0 tw:bg-transparent tw:text-ink-subtle tw:transition tw:hover:bg-surface-hover tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+    <div class="flex items-center justify-between gap-3 border-b border-line px-5 py-3">
+      <p class="m-0 font-semibold text-ink">{% trans "Profile photo" %}</p>
+      <button class="flex size-8 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-ink-subtle transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               type="button"
               aria-label="{% trans "Close" %}"
               data-dialog-close>
         <i class="bi bi-x-lg" aria-hidden="true"></i>
       </button>
     </div>
-    <div class="tw:flex tw:flex-col tw:gap-4 tw:p-5">
+    <div class="flex flex-col gap-4 p-5">
       {# Square only with a picture in it: an initial does not need that much room. #}
-      <div class="tw:flex tw:w-full tw:items-center tw:justify-center tw:overflow-hidden tw:rounded-2xl tw:bg-surface-sunken {% if user.profile_picture %}tw:aspect-square{% else %}tw:h-32{% endif %}">
+      <div class="flex w-full items-center justify-center overflow-hidden rounded-2xl bg-surface-sunken {% if user.profile_picture %}aspect-square{% else %}h-32{% endif %}">
         {% if user.profile_picture %}
-          <img class="tw:h-full tw:w-full tw:object-cover"
+          <img class="h-full w-full object-cover"
                src="{{ user.profile_picture_url }}"
                data-profile-picture-fallback-url="{{ user.profile_picture_fallback_url }}"
                alt="{% trans "Profile photo" %}">
         {% else %}
-          <span class="tw:text-6xl tw:font-semibold tw:tracking-wider tw:text-brand-text">
+          <span class="text-6xl font-semibold tracking-wider text-brand-text">
             {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
           </span>
         {% endif %}
       </div>
       {% for error_message in picture_form.errors.profile_picture.data %}
-        <p class="tw:m-0 tw:rounded-lg tw:bg-danger-soft tw:px-3 tw:py-2 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+        <p class="m-0 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger-text">{{ error_message.message }}</p>
       {% endfor %}
-      <div class="tw:flex tw:flex-col tw:gap-2">
-        <label class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover"
+      <div class="flex flex-col gap-2">
+        <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover"
                for="profile-picture-input">
           <i class="bi bi-upload" aria-hidden="true"></i>
           {% trans "Upload a new photo" %}
         </label>
         {# The input posts itself: htmx sends the chosen file straight away and swaps this unit. #}
         <input id="profile-picture-input"
-               class="tw:hidden"
+               class="hidden"
                type="file"
                name="profile_picture"
                accept="image/*"
@@ -88,7 +88,7 @@
                hx-target="#profile-photo"
                hx-swap="outerHTML">
         {% if user.profile_picture %}
-          <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-danger-text/60 tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+          <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-danger-text/60 bg-transparent px-5 py-2.5 text-sm font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
                   data-profile-photo-delete
                   hx-post="{% url 'account:profile-picture-delete' %}"
@@ -100,7 +100,7 @@
           </button>
         {% endif %}
       </div>
-      <p class="tw:m-0 tw:text-xs tw:text-ink-subtle">
+      <p class="m-0 text-xs text-ink-subtle">
         {% trans "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB." %}
       </p>
     </div>

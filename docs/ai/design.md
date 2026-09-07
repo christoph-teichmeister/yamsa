@@ -54,30 +54,30 @@ Tailwind is compiled by `@tailwindcss/postcss` from `apps/static_src/tailwind.cs
 `core/partials/_head_links_and_scripts.html`. Two constraints follow from sharing a page with
 Bootstrap, and both are enforced by the CSS entrypoint:
 
-1. **Every utility carries the `tw:` prefix** — `tw:flex`, `tw:bg-surface`,
-   `tw:@lg:grid-cols-2`. The prefix comes first, before any variant. Bootstrap and Tailwind share
+1. **Every utility carries the `` prefix** — `flex`, `bg-surface`,
+   `@lg:grid-cols-2`. The prefix comes first, before any variant. Bootstrap and Tailwind share
    class names with different values (`p-3`, `gap-4`, `border`, `rounded`, `shadow-sm`, `container`),
    and since Tailwind loads last, unprefixed utilities would silently re-space every page that is
    still on Bootstrap.
 2. **Preflight is off.** Bootstrap Reboot is the base reset. Tailwind's would fight it on the
    Bootstrap pages — but it also means a migrated page gets no reset of its own, so it must be
    explicit about what Reboot already sets:
-   - headings keep Reboot's fluid font size and `margin-bottom` → always set `tw:text-*` and a
+   - headings keep Reboot's fluid font size and `margin-bottom` → always set `text-*` and a
      margin utility on `h1`–`h6`;
    - `p` keeps `margin-bottom: 1rem` → always set an explicit margin utility;
-   - `a` keeps Bootstrap's link color and underline → `tw:no-underline` plus a color utility for
+   - `a` keeps Bootstrap's link color and underline → `no-underline` plus a color utility for
      link-buttons;
    - `button` keeps the UA background **and its UA border** (`2px outset`; Bootstrap resets it
-     only in `.btn`) → outline and ghost buttons need `tw:bg-transparent`, and every button
-     needs a border of its own: `tw:border tw:border-transparent` on a filled one, so it has
+     only in `.btn`) → outline and ghost buttons need `bg-transparent`, and every button
+     needs a border of its own: `border border-transparent` on a filled one, so it has
      the same border box as the outlined button beside it and swapping them moves nothing;
    - `select` and `input` are unstyled without `.form-control` → style them fully, `select` needs
-     `tw:appearance-none` and its own chevron;
-   - `tw:border` sets width only (border color defaults to `currentColor` without Preflight) →
-     always pair it with a `tw:border-*` color.
+     `appearance-none` and its own chevron;
+   - `border` sets width only (border color defaults to `currentColor` without Preflight) →
+     always pair it with a `border-*` color.
 
 Dropping Bootstrap is a single step: replace the two imports in `tailwind.css` with
-`@import "tailwindcss";`, strip the `tw:` prefixes from the templates, and point the `dark` variant
+`@import "tailwindcss";`, strip the `` prefixes from the templates, and point the `dark` variant
 at its own selector.
 
 ## Colors
@@ -86,7 +86,7 @@ at its own selector.
 there are the only place a color is written down. Bootstrap has no values of its own:
 `apps/static/base.css` maps `--bs-*` onto the same tokens, once, so the two frameworks cannot drift
 apart. Tailwind exposes the tokens via `@theme inline`; **prefer them over `dark:` variants** —
-`tw:bg-surface` is already correct in both themes.
+`bg-surface` is already correct in both themes.
 
 | Token                                          | Use                                                       |
 |------------------------------------------------|-----------------------------------------------------------|
@@ -102,9 +102,9 @@ apart. Tailwind exposes the tokens via `@theme inline`; **prefer them over `dark
 | `success-*`, `warning-*`, `danger-*`           | `-text` and `-soft` pairs for status                      |
 
 The `--yamsa-*-border` variables in `tailwind.css` are deliberately **not** in `@theme inline`:
-they exist for the Bootstrap mapping in `base.css`, so `tw:border-danger-border` does not compile.
+they exist for the Bootstrap mapping in `base.css`, so `border-danger-border` does not compile.
 The border of a status control takes the text token at an alpha instead —
-`tw:border-danger-text/60`, as the room's close button and the split rows' remove button do.
+`border-danger-text/60`, as the room's close button and the split rows' remove button do.
 
 These tokens are the palette in full. There is no second, theme-independent ramp beside them —
 one existed, went unused, and would only have drifted from the tokens that do the work. A colour
@@ -204,7 +204,7 @@ Both themes are first-class; neither is a filter over the other. Three things ca
   follows `<meta name="theme-color">`, which `navigation.js` re-points at `--yamsa-canvas` on every
   switch.
 
-`tw:dark:…` keys off `[data-bs-theme="dark"]`, the attribute all of this sets.
+`dark:…` keys off `[data-bs-theme="dark"]`, the attribute all of this sets.
 
 Radius, spacing and type scale are Tailwind's defaults — they already match the intended scale, so
 they are deliberately **not** redefined. Only `--shadow-card`, `--shadow-card-hover` and
@@ -215,19 +215,19 @@ they are deliberately **not** redefined. Only `--shadow-card`, `--shadow-card-ho
 `#base-content` is a Bootstrap `.container-fluid`, which the app narrows to **50 % width from
 768 px up**. A viewport breakpoint therefore says nothing about the space a page actually has — at a
 768 px viewport the content column is only ~384 px wide, narrower than on a phone. Page sections
-declare `tw:@container` and use container-query variants:
+declare `@container` and use container-query variants:
 
 | Variant  | Container width | Typical use                          |
 |----------|-----------------|--------------------------------------|
-| `tw:@md` | ≥ 448 px        | stacked → row, wider card padding    |
-| `tw:@lg` | ≥ 512 px        | one column → two                     |
-| `tw:@xl` | ≥ 576 px        | text and an action side by side      |
+| `@md` | ≥ 448 px        | stacked → row, wider card padding    |
+| `@lg` | ≥ 512 px        | one column → two                     |
+| `@xl` | ≥ 576 px        | text and an action side by side      |
 
 ## Sheets, not tiles
 
 A settings-style page is **one sheet**, not a grid of cards: a header band with the identity, then
 sections of full-width label/value rows separated by hairlines. A row spans the sheet, puts its
-label in a fixed-width column (`tw:@md:w-44`) and its value next to it, so values line up down the
+label in a fixed-width column (`@md:w-44`) and its value next to it, so values line up down the
 page. A card grid says "these are separate things"; on a page where everything belongs to one
 object it only adds borders to read past.
 
@@ -243,7 +243,7 @@ above the sheet, then the sheet with its header band. It differs from the profil
   Edit/Cancel/Save because that is where the mode lives and the fields are sections away; a
   single-purpose form reads top to bottom and its action belongs after the fields.
 - **Labels go above their field**, not in a label column. `Confirm your new password` does not fit
-  a `tw:@md:w-44` column on the narrow content shell, and a form is filled in sequence rather than
+  a `@md:w-44` column on the narrow content shell, and a form is filled in sequence rather than
   scanned down a column of values.
 
 Give such a form `method="post"` and an `action` next to its `hx-post`, so it still submits without
@@ -303,15 +303,15 @@ this way:
 - **It has to look like a control.** A camera badge alone reads as a status dot — the visual
   language of presence and verified marks — so the avatar also darkens under a centred camera icon
   on hover, carries a `title`, and its `aria-label` names the action ("Change photo"), not the
-  object. Hover hints belong on `tw:group-hover:` and, if focus should count,
-  `tw:group-has-focus-visible:`; plain `group-focus-within:` fires on mouse focus too and leaves
+  object. Hover hints belong on `group-hover:` and, if focus should count,
+  `group-has-focus-visible:`; plain `group-focus-within:` fires on mouse focus too and leaves
   the hint stuck over the photo after every click.
 - **Its form ignores the rest of the post.** htmx sends the enclosing form's fields along, so the
   narrow form must have exactly the field it owns — every other key is then ignored by
   construction rather than by a filter someone has to maintain.
 - **State a script toggles belongs in an attribute, not in a class.** The suggested-guest "Add"
   button carries both labels and both icons and flips only `aria-pressed`; the
-  `tw:group-aria-pressed:` variants pick the matching half. `suggested-guests.js` therefore
+  `group-aria-pressed:` variants pick the matching half. `suggested-guests.js` therefore
   assembles no markup and touches no framework class, which is also what keeps those labels
   translatable.
 
@@ -338,87 +338,87 @@ Canonical class strings. Keep them in sync when a pattern changes.
 **Page section**
 
 ```
-tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4
+@container mx-auto flex w-full max-w-3xl flex-col gap-4
 ```
 
-**Sheet** — one object, sections inside it separated by `tw:border-t tw:border-line`, rows inside
-a section by `tw:divide-y tw:divide-line`. The header band adds
-`tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent`.
+**Sheet** — one object, sections inside it separated by `border-t border-line`, rows inside
+a section by `divide-y divide-line`. The header band adds
+`bg-gradient-to-br from-brand-soft to-transparent`.
 
 ```
-tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface
-tw:shadow-card
+@container overflow-hidden rounded-3xl border border-line bg-surface
+shadow-card
 ```
 
 **Card** — for genuinely separate things next to each other, not for the fields of one object.
 
 ```
-tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5
+rounded-2xl border border-line bg-surface p-5
 ```
 
 **Sheet row** — label column plus value, stacking below `@md`.
 
 ```
-tw:flex tw:flex-col tw:gap-1 tw:px-5 tw:py-3 tw:@md:flex-row tw:@md:items-center tw:@md:gap-4
+flex flex-col gap-1 px-5 py-3 @md:flex-row @md:items-center @md:gap-4
 ```
 
-with the label `tw:m-0 tw:text-sm tw:text-ink-muted tw:@md:w-44 tw:@md:shrink-0` and the value in a
-`tw:min-w-0 tw:flex-1` wrapper.
+with the label `m-0 text-sm text-ink-muted @md:w-44 @md:shrink-0` and the value in a
+`min-w-0 flex-1` wrapper.
 
 **Sheet action row** — `shared_partials/_sheet_actions.html`, right after the last editable
 section. Discard is the secondary button, Save the primary one, both with
-`tw:disabled:cursor-not-allowed tw:disabled:opacity-50`.
+`disabled:cursor-not-allowed disabled:opacity-50`.
 
 **Section caption**
 
 ```
-tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle
-tw:uppercase
+m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle
+uppercase
 ```
 
-**Primary button** — `tw:border tw:border-transparent` is load-bearing, see the Preflight notes.
+**Primary button** — `border border-transparent` is load-bearing, see the Preflight notes.
 
 ```
-tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border
-tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand
-tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2
-tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95
+inline-flex items-center justify-center gap-2 rounded-xl border
+border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand
+shadow-brand transition hover:bg-brand-hover focus-visible:outline-2
+focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95
 ```
 
-**Secondary button** — swap `tw:border-line-strong tw:text-ink tw:hover:bg-surface-hover` for
-`tw:border-brand tw:text-brand-text tw:hover:bg-brand-soft` to get the brand-outlined variant.
+**Secondary button** — swap `border-line-strong text-ink hover:bg-surface-hover` for
+`border-brand text-brand-text hover:bg-brand-soft` to get the brand-outlined variant.
 
 ```
-tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border
-tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink
-tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2
-tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95
+inline-flex items-center justify-center gap-2 rounded-xl border
+border-line-strong bg-transparent px-5 py-2.5 text-sm font-semibold text-ink
+transition hover:bg-surface-hover focus-visible:outline-2
+focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95
 ```
 
 **Text input in a sheet row** — editable at all times. Field error:
-`tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text`.
+`mt-1.5 mb-0 text-sm text-danger-text`.
 
 ```
-tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2
-tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle
-tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand
+w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2
+font-medium text-ink transition placeholder:text-ink-subtle
+focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand
 ```
 
-A `select` in a row is the same box plus `tw:appearance-none`, `tw:pr-9` and its own
+A `select` in a row is the same box plus `appearance-none`, `pr-9` and its own
 `bi-chevron-down` positioned inside. A sheet that cannot be edited at all renders both with
 `disabled`.
 
 **Standalone text input** — outside a row, with a label above
-(`tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink`).
+(`mb-1.5 block text-sm font-semibold text-ink`).
 
 ```
-tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5
-tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2
-tw:focus:outline-offset-0 tw:focus:outline-brand
+w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5
+text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2
+focus:outline-offset-0 focus:outline-brand
 ```
 
 **Password field** — `account/partials/_password_field.html`. The reveal toggle sits *inside* the
-field box (`tw:absolute tw:inset-y-0 tw:right-0 tw:w-12`) and the input reserves `tw:pr-12` for it;
+field box (`absolute inset-y-0 right-0 w-12`) and the input reserves `pr-12` for it;
 a button next to the field would shrink the field on the narrow content column. The toggle carries
 both labels as data attributes so `password-visibility.js` can swap them without hard-coding
 translated text.
@@ -430,20 +430,20 @@ while still posting as `password`, because `e2e/pages/login_page.py` fills it by
 **Badge**
 
 ```
-tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1
-tw:text-xs tw:font-semibold tw:text-brand-text
+inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1
+text-xs font-semibold text-brand-text
 ```
 
 **Navigation row** — a row that leads somewhere, instead of a card with a button in it.
 
 ```
-tw:flex tw:w-full tw:items-center tw:gap-3 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left
-tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2
-tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand
+flex w-full items-center gap-3 bg-transparent px-5 py-3 text-left
+transition hover:bg-surface-hover focus-visible:outline-2
+focus-visible:-outline-offset-2 focus-visible:outline-brand
 ```
 
-with an icon tile (`tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center
-tw:rounded-xl tw:bg-brand-soft tw:text-brand-text`), a `tw:min-w-0 tw:flex-1` text column and a
+with an icon tile (`flex size-9 shrink-0 items-center justify-center
+rounded-xl bg-brand-soft text-brand-text`), a `min-w-0 flex-1` text column and a
 trailing `bi-chevron-right`.
 
 **Switch** — `shared_partials/_toggle_switch.html`. The input stays a real, hit-testable checkbox
@@ -451,23 +451,23 @@ trailing `bi-chevron-right`.
 Playwright's `check()` keep working.
 
 **Radio chip** — `transaction/partials/_category_field.html`. The label *wraps* its own radio and
-reacts to it with `tw:has-checked:`; the radio is stretched across the chip at `opacity-0`, the
+reacts to it with `has-checked:`; the radio is stretched across the chip at `opacity-0`, the
 same trade as the switch. Two things follow from wrapping rather than pairing: the hit target of a
 click on the chip is a descendant of the label, which is what Playwright's `click()` requires, and
 no script has to keep a class in sync with `:checked`.
 
 ```
-tw:relative tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-2 tw:rounded-full tw:border
-tw:border-line-strong tw:bg-transparent tw:px-3.5 tw:py-1.5 tw:text-sm tw:font-semibold tw:text-ink
-tw:transition tw:hover:bg-surface-hover tw:has-checked:border-brand tw:has-checked:bg-brand-soft
-tw:has-checked:text-brand-text tw:has-focus-visible:outline-2
-tw:has-focus-visible:outline-offset-2 tw:has-focus-visible:outline-brand
+relative inline-flex cursor-pointer items-center gap-2 rounded-full border
+border-line-strong bg-transparent px-3.5 py-1.5 text-sm font-semibold text-ink
+transition hover:bg-surface-hover has-checked:border-brand has-checked:bg-brand-soft
+has-checked:text-brand-text has-focus-visible:outline-2
+has-focus-visible:outline-offset-2 has-focus-visible:outline-brand
 ```
 
 **Disclosure section** — a native `<details>`, not a Bootstrap collapse: the optional fields of the
 transaction form open without any bundle having run, and they stay in the DOM either way, so they
-post with the form. The summary hides both marker forms (`tw:list-none` plus
-`tw:[&::-webkit-details-marker]:hidden`) and the chevron turns with `tw:group-open:rotate-180`.
+post with the form. The summary hides both marker forms (`list-none` plus
+`[&::-webkit-details-marker]:hidden`) and the chevron turns with `group-open:rotate-180`.
 
 The room overview's collapsed groups and the guest page's "Not seeing your name?" hint are the same
 element. Two things the overview's version shows: the `<summary>` keeps the `.room-overview-toggle`
@@ -485,20 +485,20 @@ the trailing `#transaction-batch-trigger` is `revealed`. Four things about it ge
   `data-keyboard-click` shim, and it cannot contain a second button. Which is why the eye button
   the Bootstrap table carried is gone: the row *is* the affordance.
 - **The batch renders plain elements, not table rows.** A `<table>` whose single cell held a grid
-  needed a stylesheet of `!important` paddings to look like a list; `tw:divide-y tw:divide-line`
+  needed a stylesheet of `!important` paddings to look like a list; `divide-y divide-line`
   on the feed container is the whole of it now.
 - **The search indicator is switched by `display`.** The shared `.htmx-indicator` rule only sets
   `opacity`, which would keep three skeleton rows' worth of empty box above the feed forever, so
-  the indicator is `tw:hidden` and reveals itself with `tw:[&.htmx-request]:flex` — htmx sets that
+  the indicator is `hidden` and reveals itself with `[&.htmx-request]:flex` — htmx sets that
   class on whatever `hx-indicator` names.
 - **The anchor highlight is an attribute.** Landing on `…/transactions#transaction-<id>` scrolls
-  the row into view and marks it with `data-highlight` for 2.4 s; `tw:data-highlight:bg-brand-soft`
-  plus a slow `tw:transition` fades the tint in and out. No keyframes, and the script stays free of
+  the row into view and marks it with `data-highlight` for 2.4 s; `data-highlight:bg-brand-soft`
+  plus a slow `transition` fades the tint in and out. No keyframes, and the script stays free of
   framework classes.
 
 The "add" affordance is a **floating pill**, fixed above the dashboard's bottom nav
-(`tw:bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] tw:z-[1050]`) and below the offcanvas menu
-(1200) and the toasts (1400); the page section reserves `tw:pb-16` so the sheet does not end
+(`bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] z-[1050]`) and below the offcanvas menu
+(1200) and the toasts (1400); the page section reserves `pb-16` so the sheet does not end
 underneath it.
 
 A dismissible notice carries `data-dismissable` and its close button `data-dismiss`;
@@ -559,11 +559,11 @@ colours from `customClasses.css` and the tokens, so a migrated page includes the
 the overlay's spinner is still a Bootstrap one, and it is shared with every unmigrated list.
 
 State a script toggles must be expressed the way that script expects. `#passkey-reg-result` is
-hidden with the `hidden` attribute rather than `tw:hidden`, because `passkey-register.js` reveals
+hidden with the `hidden` attribute rather than `hidden`, because `passkey-register.js` reveals
 it by clearing that attribute — a utility class would leave the error invisible whatever the script
 does. The category suggestion hint and the transaction form's split-lock hint follow the same rule,
 and the lock itself sets only real state — `readOnly`, `aria-disabled`, `disabled` — which
-`tw:read-only:`, `tw:aria-disabled:` and `tw:disabled:` then render.
+`read-only:`, `aria-disabled:` and `disabled:` then render.
 
 Icons stay on bootstrap-icons (`<i class="bi bi-…" aria-hidden="true">`); that font is independent of
 Bootstrap's CSS and outlives the migration.
@@ -588,7 +588,7 @@ class that says how it looks.
 `.room-status-badge` is the one that still has a rule in `customClasses.css`, because the side menu's
 room rows use it too. That rule hides the badge below an 18 rem container — written for the menu
 panel, but the overview card declared a container as well, so the badge disappeared on exactly the
-tiles it is load-bearing for. The migrated badge sets its own `tw:inline-flex`, which wins on order,
+tiles it is load-bearing for. The migrated badge sets its own `inline-flex`, which wins on order,
 and it is visible at every card width now.
 
 ## Two partials for one affordance, until the side menu follows
@@ -607,10 +607,10 @@ The auth helpers (`.auth-card`, `.auth-hero`, `.auth-form`, `.hero-cta`, `.auth-
 
 ## The auth hero is the one surface that does not follow the theme
 
-`brand-strong` is now in `@theme inline` as `tw:*-brand-strong`, and the hero's two-stop gradient is
+`brand-strong` is now in `@theme inline` as `*-brand-strong`, and the hero's two-stop gradient is
 an `@utility auth-hero-surface` in `tailwind.css` — a utility rather than a second token because its
 far end is a value of that gradient and of nothing else, and this file stays the only place a colour
-is written down. Everything standing on the hero takes `tw:text-white` (or `tw:text-white/70`)
+is written down. Everything standing on the hero takes `text-white` (or `text-white/70`)
 outright: the ground is the same on both themes, so a theme-following token would be wrong there.
 
 ## What a chart page keeps in CSS

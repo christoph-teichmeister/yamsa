@@ -1,38 +1,38 @@
 {% extends "core/base.html" %}
 {% load static i18n %}
 {% block content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% include "account/partials/_back_to_profile.html" %}
-    <div class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
-      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Security" %}</p>
-        <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Security settings" %}</h1>
+    <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+      <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Security" %}</p>
+        <h1 class="mt-1 mb-0 text-xl font-semibold text-ink">{% trans "Security settings" %}</h1>
       </div>
-      <div class="tw:border-t tw:border-line">
-        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase tw:@md:px-6">
+      <div class="border-t border-line">
+        <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase @md:px-6">
           {% trans "Passkeys" %}
         </p>
-        <div class="tw:px-5 tw:pt-1 tw:pb-5 tw:@md:px-6">
-          <p class="tw:m-0 tw:font-medium tw:text-ink">{% trans "Biometric login" %}</p>
-          <p class="tw:mt-1 tw:mb-4 tw:text-sm tw:text-ink-muted">
+        <div class="px-5 pt-1 pb-5 @md:px-6">
+          <p class="m-0 font-medium text-ink">{% trans "Biometric login" %}</p>
+          <p class="mt-1 mb-4 text-sm text-ink-muted">
             {% trans "Log in with your fingerprint, face ID, or a hardware security key — no password required." %}
           </p>
           {% if has_passkey %}
-            <div class="tw:flex tw:flex-col tw:gap-3 tw:rounded-2xl tw:bg-surface-sunken tw:px-4 tw:py-3 tw:@md:flex-row tw:@md:items-center tw:@md:gap-4">
-              <div class="tw:min-w-0 tw:flex-1">
-                <p class="tw:m-0 tw:font-medium tw:break-words tw:text-ink">{{ passkey.name }}</p>
-                <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">
+            <div class="flex flex-col gap-3 rounded-2xl bg-surface-sunken px-4 py-3 @md:flex-row @md:items-center @md:gap-4">
+              <div class="min-w-0 flex-1">
+                <p class="m-0 font-medium break-words text-ink">{{ passkey.name }}</p>
+                <p class="m-0 text-sm text-ink-subtle">
                   {% trans "Added:" %} {{ passkey.added_on|date }}
                   {% if passkey.last_used %}· {% trans "Last used:" %} {{ passkey.last_used|date }}{% endif %}
                 </p>
               </div>
               <form id="passkey-delete-form"
-                    class="tw:shrink-0"
+                    class="shrink-0"
                     method="post"
                     action="{% url 'account:passkey-delete' %}">
                 {% csrf_token %}
                 <input type="hidden" name="id" value="{{ passkey.id }}">
-                <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-danger-text/60 tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-danger-text/60 bg-transparent px-4 py-2 text-sm font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                         type="submit">
                   <i class="bi bi-trash" aria-hidden="true"></i>
                   {% trans "Delete" %}
@@ -40,22 +40,22 @@
               </form>
             </div>
           {% else %}
-            <div class="tw:flex tw:flex-col tw:gap-3">
+            <div class="flex flex-col gap-3">
               <div>
-                <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                <label class="mb-1.5 block text-sm font-semibold text-ink"
                        for="passkey-name">{% trans "Passkey name" %}</label>
                 <input id="passkey-name"
-                       class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                       class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                        type="text"
                        placeholder="{% trans "e.g. MacBook Touch ID" %}"
                        maxlength="255">
               </div>
               {# hidden attribute, not a utility class: passkey-register.js reveals it by clearing it. #}
               <p id="passkey-reg-result"
-                 class="tw:m-0 tw:rounded-lg tw:bg-danger-soft tw:px-3 tw:py-2 tw:text-sm tw:text-danger-text"
+                 class="m-0 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger-text"
                  hidden></p>
               <button id="passkey-reg-btn"
-                      class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:self-start tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+                      class="inline-flex cursor-pointer items-center justify-center gap-2 self-start rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                       type="button">
                 <i class="bi bi-fingerprint" aria-hidden="true"></i>
                 {% trans "Register passkey" %}
@@ -64,26 +64,26 @@
           {% endif %}
         </div>
       </div>
-      <div class="tw:border-t tw:border-line">
-        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase tw:@md:px-6">
+      <div class="border-t border-line">
+        <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase @md:px-6">
           {% trans "Password" %}
         </p>
-        <button class="tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand tw:@md:px-6"
+        <button class="flex w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-5 py-3 text-left transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand @md:px-6"
                 type="button"
                 hx-get="{% url 'account:change-password' pk=user.id %}"
                 hx-target="#body"
                 hx-indicator="#body-loading-spinner"
                 hx-swap="morph:innerHTML"
                 hx-push-url="true">
-          <span class="tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-brand-soft tw:text-brand-text"
+          <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text"
                 aria-hidden="true">
             <i class="bi bi-key"></i>
           </span>
-          <span class="tw:min-w-0 tw:flex-1">
-            <span class="tw:block tw:font-medium tw:text-ink">{% trans "Change your password" %}</span>
-            <span class="tw:block tw:text-sm tw:text-ink-subtle">{% trans "Choose a unique password to keep your rooms safe." %}</span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-medium text-ink">{% trans "Change your password" %}</span>
+            <span class="block text-sm text-ink-subtle">{% trans "Choose a unique password to keep your rooms safe." %}</span>
           </span>
-          <i class="bi bi-chevron-right tw:text-ink-subtle" aria-hidden="true"></i>
+          <i class="bi bi-chevron-right text-ink-subtle" aria-hidden="true"></i>
         </button>
       </div>
     </div>

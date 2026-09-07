@@ -29,7 +29,7 @@
 {% if back_url %}
   {% trans "Back" as default_back_label %}
   {# An anchor, not a button: the back link then works without the bundle and can be opened in a new tab. #}
-  <a class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-1.5 tw:self-start tw:rounded-lg tw:border-0 tw:bg-transparent tw:px-1 tw:py-1 tw:text-sm tw:font-semibold tw:text-ink-muted tw:no-underline tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+  <a class="inline-flex cursor-pointer items-center gap-1.5 self-start rounded-lg border-0 bg-transparent px-1 py-1 text-sm font-semibold text-ink-muted no-underline transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
      href="{{ back_url }}"
      hx-get="{{ back_url }}"
      hx-target="#body"
@@ -40,7 +40,7 @@
     {{ back_label|default:default_back_label }}
   </a>
 {% endif %}
-<form class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+<form class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card"
       method="post"
       action="{{ form_action }}"
       hx-post="{{ form_action }}"
@@ -50,19 +50,19 @@
       hx-push-url="true">
   {% csrf_token %}
   <input type="hidden" name="room_slug" value="{{ room_slug_value }}">
-  <div class="tw:flex tw:flex-col tw:gap-3 tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:flex-row tw:@md:items-start tw:@md:px-6">
-    <div class="tw:min-w-0 tw:flex-1">
-      <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">
+  <div class="flex flex-col gap-3 bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:flex-row @md:items-start @md:px-6">
+    <div class="min-w-0 flex-1">
+      <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">
         {% if hero_context %}
           {{ hero_context }}
         {% else %}
           {% trans "Room access" %}
         {% endif %}
       </p>
-      <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">{{ hero_title }}</h1>
-      {% if hero_subtitle %}<p class="tw:m-0 tw:text-sm tw:text-ink-muted">{{ hero_subtitle }}</p>{% endif %}
+      <h1 class="mt-1 mb-1 text-xl font-semibold break-words text-ink">{{ hero_title }}</h1>
+      {% if hero_subtitle %}<p class="m-0 text-sm text-ink-muted">{{ hero_subtitle }}</p>{% endif %}
     </div>
-    <span class="tw:inline-flex tw:shrink-0 tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-brand-text">
+    <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
       <i class="bi {{ hero_badge_icon|default:'bi-people' }}"
          aria-hidden="true"></i>
       {% if hero_badge_label %}
@@ -72,17 +72,17 @@
       {% endif %}
     </span>
   </div>
-  <div class="tw:flex tw:flex-col tw:gap-4 tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
+  <div class="flex flex-col gap-4 border-t border-line px-5 py-5 @md:px-6">
     {% if form.non_field_errors %}
-      <div class="tw:rounded-xl tw:border tw:border-danger-text/60 tw:bg-danger-soft tw:px-4 tw:py-3 tw:text-sm tw:text-danger-text">
-        {% for error in form.non_field_errors %}<p class="tw:m-0">{{ error }}</p>{% endfor %}
+      <div class="rounded-xl border border-danger-text/60 bg-danger-soft px-4 py-3 text-sm text-danger-text">
+        {% for error in form.non_field_errors %}<p class="m-0">{{ error }}</p>{% endfor %}
       </div>
     {% endif %}
     <div>
-      <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+      <label class="mb-1.5 block text-sm font-semibold text-ink"
              for="{{ field.id_for_label }}">{{ field_label }}</label>
       <input id="{{ field.id_for_label }}"
-             class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand tw:disabled:cursor-not-allowed tw:disabled:opacity-60"
+             class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand disabled:cursor-not-allowed disabled:opacity-60"
              name="{{ field.name }}"
              type="{{ field_type|default:'text' }}"
              placeholder="{{ field_placeholder }}"
@@ -91,13 +91,13 @@
              {% if field.field.required %}required{% endif %}
              {% if submit_disabled %}disabled{% endif %}>
       {% for error in field.errors %}
-        <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error }}</p>
+        <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error }}</p>
       {% endfor %}
-      {% if helper_text %}<p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{{ helper_text }}</p>{% endif %}
+      {% if helper_text %}<p class="mt-1.5 mb-0 text-sm text-ink-subtle">{{ helper_text }}</p>{% endif %}
     </div>
   </div>
-  <div class="tw:flex tw:flex-col tw:gap-3 tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:flex-row tw:@md:items-center tw:@md:justify-between tw:@md:px-6">
-    <p class="tw:m-0 tw:min-w-0 tw:flex-1 tw:text-sm tw:text-ink-subtle">
+  <div class="flex flex-col gap-3 border-t border-line px-5 py-4 @md:flex-row @md:items-center @md:justify-between @md:px-6">
+    <p class="m-0 min-w-0 flex-1 text-sm text-ink-subtle">
       {% if submit_disabled %}
         {% trans "This room is closed, so new members cannot be added." %}
       {% elif tip_text %}
@@ -106,7 +106,7 @@
         {% trans "We'll notify members automatically." %}
       {% endif %}
     </p>
-    <button class="tw:inline-flex tw:shrink-0 tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:cursor-not-allowed tw:disabled:opacity-60 tw:disabled:shadow-none"
+    <button class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none"
             type="submit"
             {% if submit_disabled %}disabled aria-disabled="true"{% endif %}>
       <i class="bi {{ submit_icon|default:'bi-check-lg' }}" aria-hidden="true"></i>

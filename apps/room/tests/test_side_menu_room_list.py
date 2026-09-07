@@ -42,7 +42,7 @@ class TestSideMenuRoomList:
 
         html = render_side_menu(request)
 
-        assert "tw:bg-danger-soft" in element_classes(html, "room-status-badge", CLOSED_LABEL)
+        assert "bg-danger-soft" in element_classes(html, "room-status-badge", CLOSED_LABEL)
 
     def test_a_room_without_description_falls_back_to_the_status_label(self, rf, user, room):
         # Bypasses full_clean: description is a non-blank field, so an empty value can only
@@ -63,4 +63,4 @@ class TestSideMenuRoomList:
 
         html = render_side_menu(request)
 
-        assert '<div class="room-entry-text tw:min-w-0 tw:flex-1 tw:text-left">' in html
+        assert '<div class="room-entry-text min-w-0 flex-1 text-left">' in html

@@ -3,22 +3,22 @@
 One news event on the timeline.
 
 The highlight is carried as a data attribute rather than a class, so the card's own utilities
-decide what "highlighted" looks like and the pill inside can react to it with tw:group-data-*.
+decide what "highlighted" looks like and the pill inside can react to it with group-data-*.
 {% endcomment %}
 {% trans "Open related update" as news_open_label %}
 <article id="news-{{ news.id }}"
-         class="tw:group tw:relative tw:pl-5 tw:not-last:mb-7 tw:before:absolute tw:before:top-5 tw:before:-left-6 tw:before:h-px tw:before:w-6 tw:before:bg-line-strong tw:before:content-['']"
+         class="group relative pl-5 not-last:mb-7 before:absolute before:top-5 before:-left-6 before:h-px before:w-6 before:bg-line-strong before:content-['']"
          {% if news.highlighted %}data-highlighted{% endif %}>
   {% if news.deeplink %}
-    <a class="tw:block tw:text-inherit tw:no-underline"
+    <a class="block text-inherit no-underline"
        href="{{ news.deeplink }}"
        aria-label="{{ news_open_label }}">
-      <div class="tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:px-5 tw:py-4 tw:shadow-card tw:transition tw:group-hover:-translate-y-0.5 tw:group-hover:border-brand/35 tw:group-hover:shadow-card-hover tw:group-focus-visible:-translate-y-0.5 tw:group-focus-visible:border-brand/35 tw:group-focus-visible:shadow-card-hover tw:group-data-highlighted:border-transparent tw:group-data-highlighted:bg-warning-soft tw:motion-reduce:transition-none tw:motion-reduce:group-hover:translate-y-0">
+      <div class="rounded-2xl border border-line bg-surface px-5 py-4 shadow-card transition group-hover:-translate-y-0.5 group-hover:border-brand/35 group-hover:shadow-card-hover group-focus-visible:-translate-y-0.5 group-focus-visible:border-brand/35 group-focus-visible:shadow-card-hover group-data-highlighted:border-transparent group-data-highlighted:bg-warning-soft motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
         {% include "shared_partials/_news_card_content.html" with news=news %}
       </div>
     </a>
   {% else %}
-    <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line tw:bg-surface tw:px-5 tw:py-4 tw:opacity-85 tw:shadow-card tw:group-data-highlighted:border-transparent tw:group-data-highlighted:bg-warning-soft">
+    <div class="rounded-2xl border border-dashed border-line bg-surface px-5 py-4 opacity-85 shadow-card group-data-highlighted:border-transparent group-data-highlighted:bg-warning-soft">
       {% include "shared_partials/_news_card_content.html" with news=news %}
     </div>
   {% endif %}

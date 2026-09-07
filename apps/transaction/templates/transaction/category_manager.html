@@ -1,17 +1,17 @@
 {% extends "room/dashboard.html" %}
 {% load i18n %}
 {% block tab_content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
-    <div class="tw:flex tw:flex-col tw:gap-2 tw:@xl:flex-row tw:@xl:items-start tw:@xl:justify-between">
-      <div class="tw:min-w-0">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Room settings" %}</p>
-        <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
+    <div class="flex flex-col gap-2 @xl:flex-row @xl:items-start @xl:justify-between">
+      <div class="min-w-0">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Room settings" %}</p>
+        <h1 class="mt-1 mb-0 text-xl font-semibold break-words text-ink">
           {% blocktrans trimmed with room_name=current_room.name %}
             Manage categories for "{{ room_name }}"
           {% endblocktrans %}
         </h1>
       </div>
-      <p class="tw:m-0 tw:shrink-0 tw:text-sm tw:text-ink-muted tw:@xl:max-w-64 tw:@xl:text-right">{% trans "Add or reorder categories that match how your group tracks spending." %}</p>
+      <p class="m-0 shrink-0 text-sm text-ink-muted @xl:max-w-64 @xl:text-right">{% trans "Add or reorder categories that match how your group tracks spending." %}</p>
     </div>
     {% include "transaction/partials/_room_category_creation_form.html" with category_creation_form=category_creation_form category_creation_success_message=category_creation_success_message %}
     {% include "transaction/partials/_room_category_list.html" with room_category_update_form=room_category_update_form failed_room_category_id=failed_room_category_id %}

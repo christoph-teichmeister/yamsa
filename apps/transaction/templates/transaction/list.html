@@ -1,25 +1,25 @@
 {% extends "room/dashboard.html" %}
 {% load room_tags i18n %}
 {% block tab_content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4 tw:pb-16">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4 pb-16">
     {% if show_import_share_hint %}
-      <div class="tw:flex tw:items-start tw:gap-3 tw:rounded-2xl tw:border tw:border-line tw:bg-brand-soft tw:px-4 tw:py-3"
+      <div class="flex items-start gap-3 rounded-2xl border border-line bg-brand-soft px-4 py-3"
            role="status"
            data-dismissable>
-        <i class="bi bi-people tw:mt-0.5 tw:shrink-0 tw:text-brand-text"
+        <i class="bi bi-people mt-0.5 shrink-0 text-brand-text"
            aria-hidden="true"></i>
-        <div class="tw:min-w-0 tw:flex-1">
-          <p class="tw:m-0 tw:text-sm tw:text-ink">
+        <div class="min-w-0 flex-1">
+          <p class="m-0 text-sm text-ink">
             {% trans "Import done. Share this room with the others instead of letting them import their own export — otherwise the same history ends up in two rooms." %}
           </p>
           {% if current_room.is_open %}
-            <button class="tw:mt-2 tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-brand tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-brand-text tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+            <button class="mt-2 inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-brand bg-transparent px-4 py-2 text-sm font-semibold text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                     type="button"
                     data-copy-share-url="true"
                     data-share-url="{{ current_room.share_url }}">{% trans "Copy share link" %}</button>
           {% endif %}
         </div>
-        <button class="tw:shrink-0 tw:cursor-pointer tw:rounded-lg tw:border-0 tw:bg-transparent tw:p-1 tw:text-ink-subtle tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+        <button class="shrink-0 cursor-pointer rounded-lg border-0 bg-transparent p-1 text-ink-subtle transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 type="button"
                 aria-label="{% trans "Close" %}"
                 data-dismiss>
@@ -27,38 +27,38 @@
         </button>
       </div>
     {% endif %}
-    <div class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
-      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Expenses" %}</p>
-        <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Room transactions" %}</h1>
+    <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+      <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Expenses" %}</p>
+        <h1 class="mt-1 mb-1 text-xl font-semibold text-ink">{% trans "Room transactions" %}</h1>
         {% if transactions_available %}
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Pick a row to explore the full breakdown." %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Pick a row to explore the full breakdown." %}</p>
         {% else %}
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Record your first expense to see the running history here." %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Record your first expense to see the running history here." %}</p>
         {% endif %}
-        <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
+        <div class="mt-3 flex flex-wrap gap-2">
           {% include "room/partials/_room_status_badge.html" %}
-          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-brand-text">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
             <i class="bi bi-receipt" aria-hidden="true"></i>
             {% blocktrans count transaction_count=transactions_total_count %}{{ transaction_count }} transaction{% plural %}{{ transaction_count }} transactions{% endblocktrans %}
           </span>
         </div>
         {% if current_room.is_closed %}
-          <p class="tw:mt-3 tw:mb-0 tw:text-sm tw:text-warning-text">{% trans "This room is closed, so transactions are read-only." %}</p>
+          <p class="mt-3 mb-0 text-sm text-warning-text">{% trans "This room is closed, so transactions are read-only." %}</p>
         {% endif %}
       </div>
-      <div class="tw:flex tw:flex-col tw:gap-3 tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
+      <div class="flex flex-col gap-3 border-t border-line px-5 py-4 @md:px-6">
         {% if transaction_filter_active %}
-          <div class="tw:flex tw:flex-wrap tw:items-center tw:gap-2"
+          <div class="flex flex-wrap items-center gap-2"
                id="transaction-active-filters">
-            <span class="tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Filtered by" %}</span>
+            <span class="text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Filtered by" %}</span>
             {% if transaction_filter_category_label %}
-              <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">{{ transaction_filter_category_label }}</span>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-surface-sunken px-2.5 py-1 text-xs font-semibold text-ink">{{ transaction_filter_category_label }}</span>
             {% endif %}
             {% if transaction_filter_currency_label %}
-              <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">{{ transaction_filter_currency_label }}</span>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-surface-sunken px-2.5 py-1 text-xs font-semibold text-ink">{{ transaction_filter_currency_label }}</span>
             {% endif %}
-            <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-1.5 tw:rounded-lg tw:border-0 tw:bg-transparent tw:px-1 tw:py-1 tw:text-sm tw:font-semibold tw:text-brand-text tw:transition tw:hover:text-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+            <button class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border-0 bg-transparent px-1 py-1 text-sm font-semibold text-brand-text transition hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                     type="button"
                     hx-get="{% room_url 'transaction:list' %}"
                     hx-target="#body"
@@ -87,13 +87,13 @@
           {% endif %}
         </div>
         <div>
-          <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+          <label class="mb-1.5 block text-sm font-semibold text-ink"
                  for="transaction-search">{% trans "Search" %}</label>
-          <div class="tw:relative">
-            <i class="bi bi-search tw:pointer-events-none tw:absolute tw:top-1/2 tw:left-4 tw:-translate-y-1/2 tw:text-ink-subtle"
+          <div class="relative">
+            <i class="bi bi-search pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-subtle"
                aria-hidden="true"></i>
             <input id="transaction-search"
-                   class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-4 tw:pl-10 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand tw:disabled:cursor-not-allowed tw:disabled:opacity-50"
+                   class="w-full rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-4 pl-10 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand disabled:cursor-not-allowed disabled:opacity-50"
                    type="search"
                    name="q"
                    value="{{ transaction_search_query }}"
@@ -116,27 +116,27 @@
         `htmx-request` class on it for the duration of the request.
         {% endcomment %}
         <div id="transaction-search-indicator"
-             class="tw:hidden tw:flex-col tw:gap-4 tw:border-t tw:border-line tw:px-5 tw:py-4 tw:[&.htmx-request]:flex"
+             class="hidden flex-col gap-4 border-t border-line px-5 py-4 [&.htmx-request]:flex"
              aria-hidden="true">
           {% for _ in "123" %}
-            <div class="tw:flex tw:flex-col tw:gap-2">
-              <div class="tw:h-3 tw:w-1/3 tw:animate-pulse tw:rounded-full tw:bg-surface-hover"></div>
-              <div class="tw:h-3 tw:w-2/3 tw:animate-pulse tw:rounded-full tw:bg-surface-hover"></div>
+            <div class="flex flex-col gap-2">
+              <div class="h-3 w-1/3 animate-pulse rounded-full bg-surface-hover"></div>
+              <div class="h-3 w-2/3 animate-pulse rounded-full bg-surface-hover"></div>
             </div>
           {% endfor %}
         </div>
         <div id="transaction-feed"
-             class="tw:divide-y tw:divide-line tw:border-t tw:border-line"
+             class="divide-y divide-line border-t border-line"
              hx-get="{% room_url 'transaction:feed' %}"
              hx-trigger="load"
              hx-swap="innerHTML"
              hx-include="#transaction-search, .transaction-feed-filters">
-          <div class="tw:px-5 tw:py-4">
+          <div class="px-5 py-4">
             {% include "shared_partials/_list_loader.html" with loader_id="transaction-feed" skeleton_count=5 %}
           </div>
         </div>
-        <div class="tw:flex tw:justify-end tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
-          <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+        <div class="flex justify-end border-t border-line px-5 py-4 @md:px-6">
+          <a class="inline-flex items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-5 py-2.5 text-sm font-semibold text-ink no-underline transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
              href="{% room_url 'transaction:export' %}"
              title="{% trans "Export CSV" %}">
             <i class="bi bi-download" aria-hidden="true"></i>
@@ -144,15 +144,15 @@
           </a>
         </div>
       {% else %}
-        <div class="tw:border-t tw:border-line tw:px-5 tw:py-10 tw:text-center"
+        <div class="border-t border-line px-5 py-10 text-center"
              id="transaction-empty-placeholder">
-          <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "Nothing to show yet" %}</p>
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Start by logging an expense to build your history." %}</p>
+          <p class="m-0 font-semibold text-ink">{% trans "Nothing to show yet" %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Start by logging an expense to build your history." %}</p>
         </div>
       {% endif %}
-      <div class="tw:border-t tw:border-line">
-        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Overview" %}</p>
-        <div class="tw:divide-y tw:divide-line">
+      <div class="border-t border-line">
+        <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Overview" %}</p>
+        <div class="divide-y divide-line">
           {% trans "Transactions logged" as transactions_logged_label %}
           {% include "shared_partials/_sheet_value_row.html" with row_label=transactions_logged_label row_value=transactions_total_count %}
           {% trans "Last transaction" as last_transaction_label %}
@@ -164,9 +164,9 @@
           {% endif %}
         </div>
       </div>
-      <div class="tw:border-t tw:border-line">
-        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Tips" %}</p>
-        <ul class="tw:m-0 tw:flex tw:list-none tw:flex-col tw:gap-1 tw:px-5 tw:pt-1 tw:pb-4 tw:text-sm tw:text-ink-muted">
+      <div class="border-t border-line">
+        <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Tips" %}</p>
+        <ul class="m-0 flex list-none flex-col gap-1 px-5 pt-1 pb-4 text-sm text-ink-muted">
           <li>{% trans "Use the search field to filter by payer or description." %}</li>
           <li>{% trans "Pick a row to review the split details." %}</li>
           <li>{% trans "The floating button lets you capture a new transaction." %}</li>
@@ -176,7 +176,7 @@
   </section>
   {% if not current_room.is_closed %}
     {# Clears the fixed bottom nav (~5rem) and stacks above it, but below the offcanvas menu (1200) and the toasts (1400). #}
-    <button class="tw:fixed tw:inset-x-0 tw:bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] tw:z-[1050] tw:mx-auto tw:inline-flex tw:w-fit tw:max-w-[calc(100%-2rem)] tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-full tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+    <button class="fixed inset-x-0 bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] z-[1050] mx-auto inline-flex w-fit max-w-[calc(100%-2rem)] cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
             type="button"
             hx-get="{% room_url 'transaction:create' %}"
             hx-target="#body"

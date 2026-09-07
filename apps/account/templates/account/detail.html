@@ -2,32 +2,32 @@
 {% load i18n %}
 {% load render_bundle from webpack_loader %}
 {% block content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% if user.is_guest %}
       <div id="guest-mode-banner"
-           class="tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
-        <div class="tw:bg-gradient-to-br tw:from-warning-soft tw:to-transparent tw:px-5 tw:py-8 tw:text-center tw:@md:px-8">
-          <span class="tw:inline-flex tw:items-center tw:rounded-full tw:bg-warning-soft tw:px-3 tw:py-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-warning-text tw:uppercase">
+           class="overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+        <div class="bg-gradient-to-br from-warning-soft to-transparent px-5 py-8 text-center @md:px-8">
+          <span class="inline-flex items-center rounded-full bg-warning-soft px-3 py-1 text-xs font-semibold tracking-wider text-warning-text uppercase">
             {% trans "Guest Mode" %}
           </span>
-          <h1 class="tw:mt-5 tw:mb-2 tw:text-2xl tw:font-semibold tw:text-ink">
+          <h1 class="mt-5 mb-2 text-2xl font-semibold text-ink">
             {% blocktrans trimmed with user_name=user.name %}
               Hi {{ user_name }}
             {% endblocktrans %}
             👋
           </h1>
-          <p class="tw:mx-auto tw:mt-0 tw:mb-6 tw:max-w-md tw:text-ink-muted">
+          <p class="mx-auto mt-0 mb-6 max-w-md text-ink-muted">
             {% trans "Thanks for hopping into a room as a guest. Unlock reminders, push notifications, and richer history once you create a full account." %}
           </p>
-          <div class="tw:flex tw:flex-col tw:justify-center tw:gap-3 tw:@md:flex-row">
-            <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:no-underline tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+          <div class="flex flex-col justify-center gap-3 @md:flex-row">
+            <a class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand no-underline shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                href="{% url 'account:register' %}">{% trans "Create a free account" %}</a>
-            <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+            <a class="inline-flex items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-5 py-2.5 text-sm font-semibold text-ink no-underline transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                href="{% url 'account:login' %}">{% trans "I already have an account" %}</a>
           </div>
-          <p class="tw:mt-6 tw:mb-0 tw:text-sm tw:text-ink-subtle">
+          <p class="mt-6 mb-0 text-sm text-ink-subtle">
             {% trans "Not you?" %}
-            <a class="tw:font-semibold tw:text-brand-text tw:underline tw:underline-offset-2"
+            <a class="font-semibold text-brand-text underline underline-offset-2"
                href="{% url 'account:logout' %}">{% trans "Log out instead" %}</a>.
           </p>
         </div>
@@ -37,20 +37,20 @@
     {% else %}
       {% trans "Not set" as not_set_label %}
       {% trans "No PayPal link yet" as no_paypal_label %}
-      <div class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
-        <div class="tw:flex tw:flex-col tw:gap-4 tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:p-5 tw:@md:flex-row tw:@md:items-center tw:@md:p-6">
+      <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+        <div class="flex flex-col gap-4 bg-gradient-to-br from-brand-soft to-transparent p-5 @md:flex-row @md:items-center @md:p-6">
           {% include "account/partials/_profile_photo_preview.html" with user=user %}
-          <div class="tw:min-w-0 tw:flex-1">
-            <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Member profile" %}</p>
+          <div class="min-w-0 flex-1">
+            <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Member profile" %}</p>
             <h1 id="profile-name"
-                class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">{{ user.name }}</h1>
-            <div class="tw:mt-2 tw:flex tw:flex-wrap tw:gap-2">
+                class="mt-1 mb-0 text-xl font-semibold break-words text-ink">{{ user.name }}</h1>
+            <div class="mt-2 flex flex-wrap gap-2">
               {% include "account/partials/_profile_badges.html" with user=user %}
             </div>
           </div>
         </div>
-        <div class="tw:border-t tw:border-line">
-          <div class="tw:divide-y tw:divide-line">
+        <div class="border-t border-line">
+          <div class="divide-y divide-line">
             {% trans "Email address" as email_label %}
             {% include "shared_partials/_sheet_value_row.html" with row_label=email_label row_value=user.email %}
             {% trans "PayPal.me username" as paypal_label %}

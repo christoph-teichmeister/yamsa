@@ -1,10 +1,10 @@
 {% extends "room/dashboard.html" %}
 {% load room_tags i18n %}
 {% block tab_content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
-    <div class="tw:flex tw:flex-wrap tw:items-center tw:justify-between tw:gap-2">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
+    <div class="flex flex-wrap items-center justify-between gap-2">
       {% trans "Back to list" as back_to_list_label %}
-      <button class="tw:inline-flex tw:shrink-0 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-3 tw:py-2 tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+      <button class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-xl border border-line-strong bg-transparent px-3 py-2 text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               type="button"
               aria-label="{{ back_to_list_label }}"
               hx-trigger="click"
@@ -15,9 +15,9 @@
               hx-push-url="true">
         <i class="bi bi-arrow-left" aria-hidden="true"></i>
       </button>
-      <div class="tw:min-w-0 tw:flex-1 tw:text-center">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Expense" %}</p>
-        <p class="tw:m-0 tw:flex tw:items-center tw:justify-center tw:gap-2 tw:text-ink">
+      <div class="min-w-0 flex-1 text-center">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Expense" %}</p>
+        <p class="m-0 flex items-center justify-center gap-2 text-ink">
           {% include "shared_partials/_user_avatar.html" with avatar_url=parent_transaction.paid_by.avatar_url avatar_name=parent_transaction.paid_by.name avatar_fallback_url=parent_transaction.paid_by.profile_picture_fallback_url %}
           <span>
             {% autoescape off %}
@@ -32,7 +32,7 @@
         A closed room has nothing to edit, so the button carries the real `disabled` attribute and
         the utilities render it - rather than Bootstrap's .disabled class, which only looks the part.
       {% endcomment %}
-      <button class="tw:inline-flex tw:shrink-0 tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:cursor-not-allowed tw:disabled:opacity-50 tw:disabled:shadow-none"
+      <button class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-4 py-2 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
               type="button"
               title="{% trans "Edit transaction" %}"
               {% if current_room.is_closed %}disabled aria-disabled="true"{% endif %}
@@ -42,88 +42,88 @@
       </button>
     </div>
     {% if current_room.is_closed %}
-      <div class="tw:flex tw:items-start tw:gap-2 tw:rounded-2xl tw:border tw:border-warning-text/40 tw:bg-warning-soft tw:px-4 tw:py-3"
+      <div class="flex items-start gap-2 rounded-2xl border border-warning-text/40 bg-warning-soft px-4 py-3"
            role="note">
-        <i class="bi bi-info-circle-fill tw:mt-0.5 tw:shrink-0 tw:text-warning-text"
+        <i class="bi bi-info-circle-fill mt-0.5 shrink-0 text-warning-text"
            aria-hidden="true"></i>
-        <p class="tw:m-0 tw:text-sm tw:text-warning-text">{% trans "This room is closed, so the breakdown is read-only." %}</p>
+        <p class="m-0 text-sm text-warning-text">{% trans "This room is closed, so the breakdown is read-only." %}</p>
       </div>
     {% endif %}
-    <div class="tw:@container tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-6">
-      <div class="tw:flex tw:flex-col tw:justify-between tw:gap-3 tw:@md:flex-row">
-        <div class="tw:min-w-0">
-          <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Total amount" %}</p>
-          <p class="tw:mt-1 tw:mb-2 tw:text-[clamp(1.75rem,4vw,2.5rem)] tw:font-semibold tw:tabular-nums tw:text-ink">
+    <div class="@container rounded-2xl border border-line bg-surface p-6">
+      <div class="flex flex-col justify-between gap-3 @md:flex-row">
+        <div class="min-w-0">
+          <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Total amount" %}</p>
+          <p class="mt-1 mb-2 text-[clamp(1.75rem,4vw,2.5rem)] font-semibold tabular-nums text-ink">
             {{ parent_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}
           </p>
           {# .transaction-meta stays as the hook e2e/pages/transaction_detail_page.py reads first. #}
-          <p class="transaction-meta tw:mt-0 tw:mb-2 tw:text-sm tw:text-ink-muted">
-            <span class="tw:mr-1">{{ parent_transaction.category.emoji }}</span>
+          <p class="transaction-meta mt-0 mb-2 text-sm text-ink-muted">
+            <span class="mr-1">{{ parent_transaction.category.emoji }}</span>
             {{ parent_transaction.category.name }}
           </p>
-          <p class="transaction-meta tw:m-0 tw:text-sm tw:text-ink-muted">
+          <p class="transaction-meta m-0 text-sm text-ink-muted">
             {% trans "Paid by" %}
             {% autoescape off %}
               {% parse_user_text parent_transaction.paid_by.name True %}
             {% endautoescape %}
             {% trans "on" %} {{ parent_transaction.paid_at|date }}
           </p>
-          <p class="transaction-meta tw:m-0 tw:text-sm tw:text-ink-muted">
+          <p class="transaction-meta m-0 text-sm text-ink-muted">
             {% blocktrans with recorded_time=parent_transaction.paid_at|time %}Recorded at {{ recorded_time }}{% endblocktrans %}
           </p>
         </div>
-        <div class="tw:min-w-0 tw:@md:text-right">
+        <div class="min-w-0 @md:text-right">
           {% if parent_transaction.description %}
-            <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Description" %}</p>
-            <p class="tw:mt-1 tw:mb-0 tw:break-words tw:text-ink tw:italic">"{{ parent_transaction.description }}"</p>
+            <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Description" %}</p>
+            <p class="mt-1 mb-0 break-words text-ink italic">"{{ parent_transaction.description }}"</p>
           {% else %}
-            <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "No description" %}</p>
+            <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "No description" %}</p>
           {% endif %}
         </div>
       </div>
       {% if parent_transaction.further_notes %}
-        <div class="tw:mt-5 tw:border-t tw:border-line tw:pt-5">
-          <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Notes" %}</p>
-          <p class="tw:mt-1 tw:mb-0 tw:break-words tw:text-ink tw:italic">"{{ parent_transaction.further_notes }}"</p>
+        <div class="mt-5 border-t border-line pt-5">
+          <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Notes" %}</p>
+          <p class="mt-1 mb-0 break-words text-ink italic">"{{ parent_transaction.further_notes }}"</p>
         </div>
       {% endif %}
     </div>
-    <div class="tw:@container tw:overflow-hidden tw:rounded-2xl tw:border tw:border-line tw:bg-surface">
-      <div class="tw:flex tw:items-center tw:justify-between tw:gap-2 tw:px-5 tw:py-4">
-        <div class="tw:min-w-0">
-          <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Split between" %}</p>
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Tap a row to edit the breakdown." %}</p>
+    <div class="@container overflow-hidden rounded-2xl border border-line bg-surface">
+      <div class="flex items-center justify-between gap-2 px-5 py-4">
+        <div class="min-w-0">
+          <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Split between" %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Tap a row to edit the breakdown." %}</p>
         </div>
-        <span class="tw:inline-flex tw:shrink-0 tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">
+        <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-surface-sunken px-2.5 py-1 text-xs font-semibold text-ink">
           {% blocktrans count member_count=child_transactions|length %}{{ member_count }} person{% plural %}{{ member_count }} people{% endblocktrans %}
         </span>
       </div>
-      <div class="tw:divide-y tw:divide-line tw:border-t tw:border-line">
+      <div class="divide-y divide-line border-t border-line">
         {% for child_transaction in child_transactions %}
           {# .transaction-breakdown-item stays as the hook test_transaction_detail_view.py addresses. #}
-          <div class="transaction-breakdown-item tw:flex tw:flex-wrap tw:items-center tw:justify-between tw:gap-2 tw:px-5 tw:py-3 tw:transition{% if current_room.is_open %} tw:cursor-pointer tw:hover:translate-x-1 tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand tw:motion-reduce:transition-none tw:motion-reduce:hover:translate-x-0{% endif %}"
+          <div class="transaction-breakdown-item flex flex-wrap items-center justify-between gap-2 px-5 py-3 transition{% if current_room.is_open %} cursor-pointer hover:translate-x-1 hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand motion-reduce:transition-none motion-reduce:hover:translate-x-0{% endif %}"
                {% if current_room.is_open %} role="button" tabindex="0" data-keyboard-click hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
-            <div class="tw:flex tw:min-w-0 tw:items-center tw:gap-2">
+            <div class="flex min-w-0 items-center gap-2">
               {% include "shared_partials/_user_avatar.html" with avatar_url=child_transaction.paid_for.avatar_url avatar_name=child_transaction.paid_for.name avatar_fallback_url=child_transaction.paid_for.profile_picture_fallback_url %}
-              <div class="tw:min-w-0">
-                <p class="tw:mt-0 tw:mb-1 tw:truncate tw:font-semibold tw:text-ink">
+              <div class="min-w-0">
+                <p class="mt-0 mb-1 truncate font-semibold text-ink">
                   {% autoescape off %}
                     {% parse_user_text child_transaction.paid_for.name True %}
                   {% endautoescape %}
                 </p>
-                <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+                <p class="m-0 text-sm text-ink-muted">
                   {% blocktrans trimmed with owed_value=child_transaction.value owed_currency=parent_transaction.currency.sign %}
                     Owes {{ owed_value }}{{ owed_currency }}
                   {% endblocktrans %}
                 </p>
               </div>
             </div>
-            <span class="tw:inline-flex tw:shrink-0 tw:items-center tw:rounded-full tw:bg-brand-soft tw:px-3 tw:py-1.5 tw:font-semibold tw:tabular-nums tw:text-brand-text">
+            <span class="inline-flex shrink-0 items-center rounded-full bg-brand-soft px-3 py-1.5 font-semibold tabular-nums text-brand-text">
               {{ child_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}
             </span>
           </div>
         {% empty %}
-          <p class="tw:m-0 tw:px-5 tw:py-6 tw:text-center tw:text-sm tw:text-ink-muted">{% trans "No split data available for this transaction yet." %}</p>
+          <p class="m-0 px-5 py-6 text-center text-sm text-ink-muted">{% trans "No split data available for this transaction yet." %}</p>
         {% endfor %}
       </div>
     </div>

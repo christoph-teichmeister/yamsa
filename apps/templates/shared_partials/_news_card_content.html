@@ -3,8 +3,8 @@
   The inside of a news card, shared by its linked and its dead variant - the two differ only in
   the box around this.
 {% endcomment %}
-<div class="tw:mb-2 tw:flex tw:flex-wrap tw:items-center tw:gap-3 tw:text-xs tw:text-ink-muted">
-  <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1 tw:text-[0.7rem] tw:font-semibold tw:tracking-[0.08em] tw:text-brand-text tw:uppercase tw:group-data-highlighted:bg-warning-soft tw:group-data-highlighted:text-warning-text">
+<div class="mb-2 flex flex-wrap items-center gap-3 text-xs text-ink-muted">
+  <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] text-brand-text uppercase group-data-highlighted:bg-warning-soft group-data-highlighted:text-warning-text">
     {% if news.highlighted %}
       ✨
     {% else %}
@@ -14,5 +14,5 @@
   <span>{{ news.created_at|date:"SHORT_DATETIME_FORMAT" }}</span>
   <span>{% blocktrans with timesince=news.created_at|timesince %}{{ timesince }} ago{% endblocktrans %}</span>
 </div>
-<p class="tw:mt-0 tw:mb-1 tw:font-semibold tw:break-words tw:text-ink">{{ news.heading }}</p>
-<p class="tw:m-0 tw:text-sm tw:break-words tw:text-ink-muted">{{ news.message }}</p>
+<p class="mt-0 mb-1 font-semibold break-words text-ink">{{ news.heading }}</p>
+<p class="m-0 text-sm break-words text-ink-muted">{{ news.message }}</p>

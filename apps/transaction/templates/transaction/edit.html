@@ -1,10 +1,10 @@
 {% extends "room/dashboard.html" %}
 {% load room_tags i18n %}
 {% block tab_content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% trans "Back to list" as back_to_list_label %}
     {# An anchor, not a button: the back link then works without the bundle and can be opened in a new tab. #}
-    <a class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-1.5 tw:self-start tw:rounded-lg tw:border-0 tw:bg-transparent tw:px-1 tw:py-1 tw:text-sm tw:font-semibold tw:text-ink-muted tw:no-underline tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+    <a class="inline-flex cursor-pointer items-center gap-1.5 self-start rounded-lg border-0 bg-transparent px-1 py-1 text-sm font-semibold text-ink-muted no-underline transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
        href="{% room_url 'transaction:list' %}#transaction-{{ parent_transaction.id }}"
        hx-get="{% room_url 'transaction:list' %}#transaction-{{ parent_transaction.id }}"
        hx-target="#body"
@@ -15,7 +15,7 @@
       {{ back_to_list_label }}
     </a>
     {# `action` next to `hx-post` so the form still submits without the bundle. #}
-    <form class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+    <form class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card"
           method="post"
           action="{% room_url 'transaction:edit' pk=parent_transaction.id %}"
           hx-post="{% room_url 'transaction:edit' pk=parent_transaction.id %}"
@@ -24,20 +24,20 @@
           hx-swap="morph:innerHTML"
           hx-push-url="true">
       {% csrf_token %}
-      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
-        <div class="tw:flex tw:flex-col tw:gap-3 tw:@xl:flex-row tw:@xl:items-start">
-          <div class="tw:min-w-0 tw:flex-1">
-            <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Editing expense" %}</p>
-            <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">
+      <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
+        <div class="flex flex-col gap-3 @xl:flex-row @xl:items-start">
+          <div class="min-w-0 flex-1">
+            <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Editing expense" %}</p>
+            <h1 class="mt-1 mb-1 text-xl font-semibold break-words text-ink">
               {{ parent_transaction.description|default:_("No description") }}
             </h1>
-            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Adjust who paid and how it is split." %}</p>
+            <p class="m-0 text-sm text-ink-muted">{% trans "Adjust who paid and how it is split." %}</p>
           </div>
           {% comment %}
           The delete button posts on its own and must not submit the sheet, so it carries the
           token that hx-include picks up rather than sitting in a nested form.
           {% endcomment %}
-          <button class="tw:inline-flex tw:shrink-0 tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:self-start tw:rounded-xl tw:border tw:border-danger-text/60 tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+          <button class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 self-start rounded-xl border border-danger-text/60 bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
                   hx-post="{% room_url 'transaction:parent-transaction-delete' pk=parent_transaction.id %}"
                   hx-include="[name='csrfmiddlewaretoken']"
@@ -51,15 +51,15 @@
           </button>
         </div>
       </div>
-      <div class="tw:border-t tw:border-line">
-        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Details" %}</p>
-        <div class="tw:grid tw:grid-cols-1 tw:gap-4 tw:px-5 tw:pt-2 tw:pb-5 tw:@lg:grid-cols-2 tw:@md:px-6">
+      <div class="border-t border-line">
+        <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Details" %}</p>
+        <div class="grid grid-cols-1 gap-4 px-5 pt-2 pb-5 @lg:grid-cols-2 @md:px-6">
           <div>
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="paid_by_select">{% trans "Paid by" %}</label>
-            <div class="tw:relative">
+            <div class="relative">
               <select id="paid_by_select"
-                      class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                      class="w-full appearance-none rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-10 pl-4 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                       name="paid_by"
                       required>
                 {% for user in form.fields.paid_by.queryset %}
@@ -67,16 +67,16 @@
                           {% if user.id == form.initial.paid_by %}selected{% endif %}>{{ user.name }}</option>
                 {% endfor %}
               </select>
-              <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-4 tw:-translate-y-1/2 tw:text-ink-subtle"
+              <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle"
                  aria-hidden="true"></i>
             </div>
           </div>
           <div>
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="currency_select">{% trans "Currency" %}</label>
-            <div class="tw:relative">
+            <div class="relative">
               <select id="currency_select"
-                      class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                      class="w-full appearance-none rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-10 pl-4 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                       name="currency"
                       required>
                 {% for currency in form.fields.currency.queryset %}
@@ -84,20 +84,20 @@
                           {% if currency.id == form.initial.currency %}selected{% endif %}>{{ currency.sign }}</option>
                 {% endfor %}
               </select>
-              <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-4 tw:-translate-y-1/2 tw:text-ink-subtle"
+              <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle"
                  aria-hidden="true"></i>
             </div>
           </div>
           <div>
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="total_value_input">{% trans "Total" %}</label>
-            <div class="tw:relative">
-              <span class="tw:pointer-events-none tw:absolute tw:top-1/2 tw:left-4 tw:-translate-y-1/2 tw:text-ink-subtle">{{ parent_transaction.currency.sign }}</span>
+            <div class="relative">
+              <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-subtle">{{ parent_transaction.currency.sign }}</span>
               {% with normalized_total=form.initial.total_value|default_if_none:parent_transaction.value|default_if_none:0 %}
                 {% with safe_total=normalized_total|default:0 %}
                   {% with formatted_total=safe_total|stringformat:"0.2f" %}
                     <input id="total_value_input"
-                           class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-4 tw:pl-9 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                           class="w-full rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-4 pl-9 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                            type="number"
                            name="total_value"
                            data-initial-total="{{ formatted_total }}"
@@ -109,67 +109,67 @@
               {% endwith %}
             </div>
             {% for error_message in form.total_value.errors %}
-              <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+              <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
             {% endfor %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">
               {% blocktrans with split_total=parent_transaction.value split_currency=parent_transaction.currency.sign %}Current split: {{ split_total }}{{ split_currency }}{% endblocktrans %}
             </p>
           </div>
           <div>
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="paid_at_input">{% trans "Paid at" %}</label>
             <input id="paid_at_input"
-                   class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                   class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                    type="datetime-local"
                    name="paid_at"
                    value="{{ parent_transaction.paid_at|date:"Y-m-d" }}T{{ parent_transaction.paid_at|time:"H:i" }}"
                    min="2018-04-04T00:00"
                    max="2099-12-31T00:00">
           </div>
-          <div class="tw:@lg:col-span-2">
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+          <div class="@lg:col-span-2">
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="description">{% trans "Description" %}</label>
             <textarea id="description"
-                      class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                      class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                       name="description"
                       rows="2"
                       maxlength="50"
                       minlength="1">{{ parent_transaction.description }}</textarea>
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Maximum 50 characters." %}</p>
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Maximum 50 characters." %}</p>
           </div>
-          <div class="tw:@lg:col-span-2">
+          <div class="@lg:col-span-2">
             {% include "transaction/partials/_category_field.html" with category_field=form.category %}
           </div>
         </div>
       </div>
-      <div class="tw:border-t tw:border-line">
-        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Split between" %}</p>
-        <div class="tw:flex tw:flex-col tw:gap-3 tw:px-5 tw:pt-2 tw:pb-5 tw:@md:px-6">
-          <div class="tw:flex tw:flex-wrap tw:items-center tw:gap-2">
-            <p class="tw:m-0 tw:min-w-0 tw:flex-1 tw:text-sm tw:text-ink-muted">{% trans "Update each share or remove it entirely." %}</p>
-            <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-brand-text">
+      <div class="border-t border-line">
+        <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Split between" %}</p>
+        <div class="flex flex-col gap-3 px-5 pt-2 pb-5 @md:px-6">
+          <div class="flex flex-wrap items-center gap-2">
+            <p class="m-0 min-w-0 flex-1 text-sm text-ink-muted">{% trans "Update each share or remove it entirely." %}</p>
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
               <i class="bi bi-people" aria-hidden="true"></i>
               {% blocktrans count participant_count=child_transaction_qs|length %}{{ participant_count }} person{% plural %}{{ participant_count }} people{% endblocktrans %}
             </span>
           </div>
           {# Hidden through the attribute, not a utility class: the script below reveals it by clearing that attribute. #}
           <p id="split-lock-hint"
-             class="tw:m-0 tw:text-sm tw:text-warning-text"
+             class="m-0 text-sm text-warning-text"
              hidden>
             {% trans "⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically." %}
           </p>
           {% for child_transaction in child_transaction_qs %}
-            <div class="split-row tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken/40 tw:p-4 tw:transition tw:hover:border-brand/40">
-              <div class="tw:grid tw:grid-cols-1 tw:items-end tw:gap-3 tw:@md:grid-cols-[1fr_1fr_auto]">
+            <div class="split-row rounded-2xl border border-line bg-surface-sunken/40 p-4 transition hover:border-brand/40">
+              <div class="grid grid-cols-1 items-end gap-3 @md:grid-cols-[1fr_1fr_auto]">
                 <div>
-                  <label class="tw:mb-1.5 tw:block tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase"
+                  <label class="mb-1.5 block text-xs font-semibold tracking-wider text-ink-subtle uppercase"
                          for="value_input_{{ forloop.counter }}">{% trans "Amount" %}</label>
-                  <div class="tw:relative">
-                    <span class="tw:pointer-events-none tw:absolute tw:top-1/2 tw:left-3 tw:-translate-y-1/2 tw:text-ink-subtle">{{ parent_transaction.currency.sign }}</span>
+                  <div class="relative">
+                    <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-subtle">{{ parent_transaction.currency.sign }}</span>
                     {% with normalized_value=child_transaction.value|default_if_none:0 %}
                       {% with formatted_value=normalized_value|stringformat:"0.2f" %}
                         <input id="value_input_{{ forloop.counter }}"
-                               class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface tw:py-2 tw:pr-3 tw:pl-8 tw:font-medium tw:text-ink tw:transition tw:read-only:cursor-not-allowed tw:read-only:opacity-75 tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                               class="w-full rounded-lg border border-line-strong bg-surface py-2 pr-3 pl-8 font-medium text-ink transition read-only:cursor-not-allowed read-only:opacity-75 focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                                type="number"
                                name="value"
                                min="0.01"
@@ -182,11 +182,11 @@
                   </div>
                 </div>
                 <div>
-                  <label class="tw:mb-1.5 tw:block tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase"
+                  <label class="mb-1.5 block text-xs font-semibold tracking-wider text-ink-subtle uppercase"
                          for="paid_for_select_{{ forloop.counter }}">{% trans "For" %}</label>
-                  <div class="tw:relative">
+                  <div class="relative">
                     <select id="paid_for_select_{{ forloop.counter }}"
-                            class="tw:w-full tw:appearance-none tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface tw:py-2 tw:pr-9 tw:pl-3 tw:font-medium tw:text-ink tw:transition tw:aria-disabled:pointer-events-none tw:aria-disabled:opacity-75 tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                            class="w-full appearance-none rounded-lg border border-line-strong bg-surface py-2 pr-9 pl-3 font-medium text-ink transition aria-disabled:pointer-events-none aria-disabled:opacity-75 focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                             name="paid_for"
                             required>
                       {% for user in current_room.users %}
@@ -194,11 +194,11 @@
                                 {% if user == child_transaction.paid_for %}selected{% endif %}>{{ user.name }}</option>
                       {% endfor %}
                     </select>
-                    <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
+                    <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle"
                        aria-hidden="true"></i>
                   </div>
                 </div>
-                <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:justify-self-end tw:rounded-lg tw:border tw:border-danger-text/60 tw:bg-transparent tw:px-3 tw:py-2 tw:text-sm tw:font-semibold tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:disabled:cursor-not-allowed tw:disabled:opacity-50"
+                <button class="inline-flex cursor-pointer items-center justify-center gap-2 justify-self-end rounded-lg border border-danger-text/60 bg-transparent px-3 py-2 text-sm font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50"
                         type="button"
                         aria-label="{% trans "Remove this share" %}"
                         hx-post="{% room_url 'transaction:child-transaction-delete' pk=child_transaction.id %}"
@@ -217,10 +217,10 @@
                      value="{{ child_transaction.id }}">
             </div>
           {% empty %}
-            <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">{% trans "No split entries yet." %}</p>
+            <p class="m-0 text-sm text-ink-subtle">{% trans "No split entries yet." %}</p>
           {% endfor %}
           <span id="add-child-transaction-container"></span>
-          <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:self-center tw:rounded-xl tw:border tw:border-brand tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-brand-text tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+          <button class="inline-flex cursor-pointer items-center justify-center gap-2 self-center rounded-xl border border-brand bg-transparent px-4 py-2 text-sm font-semibold text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                   type="button"
                   hx-get="{% room_url 'transaction:child-transaction-create' %}"
                   hx-target="#add-child-transaction-container"
@@ -231,12 +231,12 @@
           </button>
         </div>
       </div>
-      <div class="tw:border-t tw:border-line">
-        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Notes" %}</p>
-        <div class="tw:px-5 tw:pt-2 tw:pb-5 tw:@md:px-6">
-          <label class="tw:sr-only" for="further_notes">{% trans "Notes" %}</label>
+      <div class="border-t border-line">
+        <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Notes" %}</p>
+        <div class="px-5 pt-2 pb-5 @md:px-6">
+          <label class="sr-only" for="further_notes">{% trans "Notes" %}</label>
           <textarea id="further_notes"
-                    class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                    class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                     name="further_notes"
                     rows="3"
                     maxlength="500"
@@ -248,29 +248,29 @@
       Receipts are managed on the detail page, so this is a row that leads there rather than a
       field of this form.
       {% endcomment %}
-      <div class="tw:border-t tw:border-line">
-        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Receipts" %}</p>
-        <button class="tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+      <div class="border-t border-line">
+        <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Receipts" %}</p>
+        <button class="flex w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-5 py-3 text-left transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
                 type="button"
                 hx-get="{% room_url 'transaction:detail' pk=parent_transaction.id %}"
                 hx-target="#body"
                 hx-indicator="#body-loading-spinner"
                 hx-swap="morph:innerHTML"
                 hx-push-url="true">
-          <span class="tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-brand-soft tw:text-brand-text"
+          <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text"
                 aria-hidden="true">
             <i class="bi bi-file-earmark-text"></i>
           </span>
-          <span class="tw:min-w-0 tw:flex-1">
-            <span class="tw:block tw:font-medium tw:text-ink">{% trans "Open detail view" %}</span>
-            <span class="tw:block tw:text-sm tw:text-ink-subtle">{% trans "Receipts stay on the detail page, so upload PDFs there instead of here." %}</span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-medium text-ink">{% trans "Open detail view" %}</span>
+            <span class="block text-sm text-ink-subtle">{% trans "Receipts stay on the detail page, so upload PDFs there instead of here." %}</span>
           </span>
-          <i class="bi bi-chevron-right tw:shrink-0 tw:text-ink-subtle"
+          <i class="bi bi-chevron-right shrink-0 text-ink-subtle"
              aria-hidden="true"></i>
         </button>
       </div>
-      <div class="tw:flex tw:justify-end tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
-        <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+      <div class="flex justify-end border-t border-line px-5 py-4 @md:px-6">
+        <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                 type="submit">
           <i class="bi bi-check2-circle" aria-hidden="true"></i>
           {% trans "Save changes" %}

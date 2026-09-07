@@ -4,35 +4,35 @@
   yamsa | {% trans "News" %}
 {% endblock title %}
 {% block content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
-    <div class="tw:@container tw:rounded-3xl tw:border tw:border-brand/20 tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-6 tw:@md:px-6">
-      <div class="tw:flex tw:flex-col tw:gap-3 tw:@xl:flex-row tw:@xl:items-start tw:@xl:justify-between">
-        <div class="tw:min-w-0">
-          <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Room activity timeline" %}</p>
-          <h1 class="tw:mt-1 tw:mb-2 tw:text-xl tw:font-semibold tw:text-ink">{% trans "See transactions and changes at a glance" %}</h1>
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
+    <div class="@container rounded-3xl border border-brand/20 bg-gradient-to-br from-brand-soft to-transparent px-5 py-6 @md:px-6">
+      <div class="flex flex-col gap-3 @xl:flex-row @xl:items-start @xl:justify-between">
+        <div class="min-w-0">
+          <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Room activity timeline" %}</p>
+          <h1 class="mt-1 mb-2 text-xl font-semibold text-ink">{% trans "See transactions and changes at a glance" %}</h1>
+          <p class="m-0 text-sm text-ink-muted">
             {% trans "Every room update - expenses logged, settlements, highlights - lands here so you never miss a beat." %}
           </p>
         </div>
-        <div class="tw:min-w-0 tw:shrink-0 tw:@xl:text-right">
-          <p class="tw:mt-0 tw:mb-1 tw:text-sm tw:font-semibold tw:text-ink">{% trans "Auto-updated feed" %}</p>
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Events appear in chronological order with the newest at the top." %}</p>
+        <div class="min-w-0 shrink-0 @xl:text-right">
+          <p class="mt-0 mb-1 text-sm font-semibold text-ink">{% trans "Auto-updated feed" %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Events appear in chronological order with the newest at the top." %}</p>
         </div>
       </div>
     </div>
     {% if highlighted_news or news %}
       {# The rail is the container's own ::before, so it spans exactly the events it belongs to. #}
       <div id="news-feed"
-           class="tw:relative tw:mt-4 tw:pl-10 tw:before:absolute tw:before:top-0 tw:before:bottom-0 tw:before:left-4 tw:before:w-0.5 tw:before:bg-gradient-to-b tw:before:from-line tw:before:to-line-strong tw:before:content-['']">
+           class="relative mt-4 pl-10 before:absolute before:top-0 before:bottom-0 before:left-4 before:w-0.5 before:bg-gradient-to-b before:from-line before:to-line-strong before:content-['']">
         {% if highlighted_news %}
           {% include "shared_partials/news_card.html" with news=highlighted_news %}
         {% endif %}
         {% include "shared_partials/news_batch.html" with news=news news_next_cursor=news_next_cursor news_initial_render=news_initial_render %}
       </div>
     {% else %}
-      <div class="tw:mt-4 tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-10 tw:text-center">
-        <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "No updates yet" %}</p>
-        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Once roommates start logging expenses or changes, they will appear here." %}</p>
+      <div class="mt-4 rounded-2xl border border-dashed border-line-strong px-6 py-10 text-center">
+        <p class="m-0 font-semibold text-ink">{% trans "No updates yet" %}</p>
+        <p class="m-0 text-sm text-ink-muted">{% trans "Once roommates start logging expenses or changes, they will appear here." %}</p>
       </div>
     {% endif %}
   </section>

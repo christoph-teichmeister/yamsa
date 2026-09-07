@@ -6,6 +6,6 @@
   too, so the badge vanished on exactly the tiles it is load-bearing for: which of the two a
   foreign tile is decides where a click on it lands.
 {% endcomment %}
-<span class="room-overview-status room-status-badge tw:inline-flex tw:shrink-0 tw:items-center tw:rounded-full tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:whitespace-nowrap {% if entry.is_closed %}tw:bg-danger-soft tw:text-danger-text{% else %}tw:bg-surface-sunken tw:text-ink{% endif %}">
+<span class="room-overview-status room-status-badge inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap {% if entry.is_closed %}bg-danger-soft text-danger-text{% else %}bg-surface-sunken text-ink{% endif %}">
   {{ entry.status_label }}
 </span>

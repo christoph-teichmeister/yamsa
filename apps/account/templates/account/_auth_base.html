@@ -14,13 +14,13 @@ hero and a form at exactly the viewport where it started doing it. 36rem is wher
 reaches ~336px, about a phone's width - the one the fields are laid out for.
 {% endcomment %}
 {% block content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-4xl tw:justify-center">
-    <div class="tw:grid tw:w-full tw:grid-cols-1 tw:overflow-hidden tw:rounded-3xl tw:shadow-card tw:@xl:grid-cols-[5fr_7fr]">
-      <div class="tw:auth-hero-surface tw:flex tw:flex-col tw:justify-between tw:gap-6 tw:px-6 tw:py-8 tw:@md:px-8">
+  <section class="@container mx-auto flex w-full max-w-4xl justify-center">
+    <div class="grid w-full grid-cols-1 overflow-hidden rounded-3xl shadow-card @xl:grid-cols-[5fr_7fr]">
+      <div class="auth-hero-surface flex flex-col justify-between gap-6 px-6 py-8 @md:px-8">
         {% block auth_hero %}
         {% endblock auth_hero %}
       </div>
-      <div class="tw:@container tw:flex tw:flex-col tw:justify-between tw:gap-6 tw:bg-surface tw:px-6 tw:py-8 tw:@md:px-8">
+      <div class="@container flex flex-col justify-between gap-6 bg-surface px-6 py-8 @md:px-8">
         {% block auth_form %}
         {% endblock auth_form %}
       </div>

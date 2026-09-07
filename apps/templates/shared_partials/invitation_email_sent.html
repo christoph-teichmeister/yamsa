@@ -3,15 +3,15 @@
   A native <details>, not a Bootstrap popover: the reason a resend is not offered yet is real text
   either way, and this way it needs no bundle to open.
 {% endcomment %}
-<details class="tw:group">
-  <summary class="tw:inline-flex tw:cursor-pointer tw:list-none tw:items-center tw:gap-1.5 tw:text-sm tw:text-ink-subtle tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:[&::-webkit-details-marker]:hidden"
+<details class="group">
+  <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-sm text-ink-subtle transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden"
            data-stop-propagation="true">
     <i class="bi bi-envelope-fill" aria-hidden="true"></i>
     {% trans "Invitation email sent" %}
-    <i class="bi bi-chevron-down tw:transition-transform tw:group-open:rotate-180 tw:motion-reduce:transition-none"
+    <i class="bi bi-chevron-down transition-transform group-open:rotate-180 motion-reduce:transition-none"
        aria-hidden="true"></i>
   </summary>
-  <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">
+  <p class="mt-1.5 mb-0 text-sm text-ink-subtle">
     {% trans "You can resend an invitation email five minutes after one has been sent." %}
   </p>
 </details>

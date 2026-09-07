@@ -1,5 +1,5 @@
 {% load i18n %}
-<button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-1.5 tw:rounded-lg tw:border-0 tw:bg-transparent tw:p-0 tw:text-sm tw:font-semibold tw:text-brand-text tw:transition tw:hover:text-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+<button class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border-0 bg-transparent p-0 text-sm font-semibold text-brand-text transition hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
         type="button"
         data-stop-propagation="true"
         hx-get="{% room_url 'account:guest-send-invitation-email' pk=user.id %}"

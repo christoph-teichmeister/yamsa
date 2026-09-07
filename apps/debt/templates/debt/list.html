@@ -1,16 +1,16 @@
 {% extends "room/dashboard.html" %}
 {% load room_tags i18n %}
 {% block tab_content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
-    <div class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
-      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Debts" %}</p>
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
+    <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+      <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Debts" %}</p>
         {% if showing_optimised_debts %}
-          <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Optimised debts" %}</h1>
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "The fewest payments that settle this room - we cancel out who owes whom." %}</p>
+          <h1 class="mt-1 mb-1 text-xl font-semibold text-ink">{% trans "Optimised debts" %}</h1>
+          <p class="m-0 text-sm text-ink-muted">{% trans "The fewest payments that settle this room - we cancel out who owes whom." %}</p>
         {% else %}
-          <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Unoptimised debts" %}</h1>
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "One repayment per expense, exactly as the money was spent." %}</p>
+          <h1 class="mt-1 mb-1 text-xl font-semibold text-ink">{% trans "Unoptimised debts" %}</h1>
+          <p class="m-0 text-sm text-ink-muted">{% trans "One repayment per expense, exactly as the money was spent." %}</p>
         {% endif %}
         {% comment %}
           Everything above the list stays in one left-aligned column - heading, switch, badge, hint.
@@ -19,7 +19,7 @@
           colliding.
         {% endcomment %}
         {% if has_transactions %}
-          <div class="tw:mt-3 tw:inline-flex tw:gap-0.5 tw:rounded-full tw:border tw:border-line-strong tw:p-0.5"
+          <div class="mt-3 inline-flex gap-0.5 rounded-full border border-line-strong p-0.5"
                role="group"
                aria-label="{% trans "Debt display" %}">
             {% comment %}
@@ -27,7 +27,7 @@
               reopens the same reading, and the page still switches without HTMX.
             {% endcomment %}
             <a href="{% room_url 'debt:list' %}"
-               class="tw:inline-flex tw:cursor-pointer tw:items-center tw:rounded-full tw:px-4 tw:py-1.5 tw:text-sm tw:font-semibold tw:no-underline tw:transition tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand {% if showing_optimised_debts %}tw:bg-brand tw:text-on-brand{% else %}tw:text-ink tw:hover:bg-surface-hover{% endif %}"
+               class="inline-flex cursor-pointer items-center rounded-full px-4 py-1.5 text-sm font-semibold no-underline transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand {% if showing_optimised_debts %}bg-brand text-on-brand{% else %}text-ink hover:bg-surface-hover{% endif %}"
                aria-current="{% if showing_optimised_debts %}page{% else %}false{% endif %}"
                hx-get="{% room_url 'debt:list' %}"
                hx-target="#body"
@@ -35,7 +35,7 @@
                hx-swap="morph:innerHTML"
                hx-push-url="true">{% trans "Optimised" %}</a>
             <a href="{% room_url 'debt:list' %}?mode=simple"
-               class="tw:inline-flex tw:cursor-pointer tw:items-center tw:rounded-full tw:px-4 tw:py-1.5 tw:text-sm tw:font-semibold tw:no-underline tw:transition tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand {% if showing_optimised_debts %}tw:text-ink tw:hover:bg-surface-hover{% else %}tw:bg-brand tw:text-on-brand{% endif %}"
+               class="inline-flex cursor-pointer items-center rounded-full px-4 py-1.5 text-sm font-semibold no-underline transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand {% if showing_optimised_debts %}text-ink hover:bg-surface-hover{% else %}bg-brand text-on-brand{% endif %}"
                aria-current="{% if showing_optimised_debts %}false{% else %}page{% endif %}"
                hx-get="{% room_url 'debt:list' %}?mode=simple"
                hx-target="#body"
@@ -45,31 +45,31 @@
           </div>
         {% endif %}
         {% if debts and showing_optimised_debts %}
-          <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
+          <div class="mt-3 flex flex-wrap gap-2">
             {% if active_debt_count %}
-              <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-warning-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-warning-text">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-warning-soft px-2.5 py-1 text-xs font-semibold text-warning-text">
                 {% blocktrans count active_debt_count=active_debt_count %}{{ active_debt_count }} pending debt{% plural %}{{ active_debt_count }} pending debts{% endblocktrans %}
               </span>
             {% else %}
-              <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-success-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-success-text">{% trans "All settled" %}</span>
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-success-soft px-2.5 py-1 text-xs font-semibold text-success-text">{% trans "All settled" %}</span>
             {% endif %}
           </div>
         {% endif %}
       </div>
       {% if not showing_optimised_debts %}
-        <div class="tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
-          <div class="tw:flex tw:items-start tw:gap-2 tw:rounded-2xl tw:border tw:border-warning-text/40 tw:bg-warning-soft tw:px-4 tw:py-3"
+        <div class="border-t border-line px-5 py-4 @md:px-6">
+          <div class="flex items-start gap-2 rounded-2xl border border-warning-text/40 bg-warning-soft px-4 py-3"
                role="note">
-            <i class="bi bi-info-circle-fill tw:mt-0.5 tw:shrink-0 tw:text-warning-text"
+            <i class="bi bi-info-circle-fill mt-0.5 shrink-0 text-warning-text"
                aria-hidden="true"></i>
-            <p class="tw:m-0 tw:text-sm tw:text-warning-text">
+            <p class="m-0 text-sm text-warning-text">
               {% trans "For comparison only: these are gross amounts that ignore payments already made. Settle your debts in the optimised view." %}
             </p>
           </div>
         </div>
       {% elif payment_count_comparison %}
-        <div class="tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+        <div class="border-t border-line px-5 py-4 @md:px-6">
+          <p class="m-0 text-sm text-ink-muted">
             {% blocktrans count counter=payment_count_comparison.optimised with simple_count=payment_count_comparison.simple trimmed %}
               Instead of {{ simple_count }} repayments, {{ counter }} payment is enough.
             {% plural %}
@@ -79,60 +79,60 @@
         </div>
       {% endif %}
       {% if has_transactions %}
-        <div class="tw:border-t tw:border-line">
-          <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Insights" %}</p>
-          <div class="tw:divide-y tw:divide-line">
-            <button class="tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+        <div class="border-t border-line">
+          <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Insights" %}</p>
+          <div class="divide-y divide-line">
+            <button class="flex w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-5 py-3 text-left transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
                     type="button"
                     hx-get="{% room_url 'debt:money-spent-on-room' %}"
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
-              <span class="tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-brand-soft tw:text-brand-text">
+              <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text">
                 <i class="bi bi-people-fill" aria-hidden="true"></i>
               </span>
-              <span class="tw:min-w-0 tw:flex-1">
-                <span class="tw:block tw:font-medium tw:text-ink">{% trans "Who paid what" %}</span>
-                <span class="tw:block tw:text-sm tw:text-ink-subtle">{% trans "Totals and open balances per person." %}</span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-medium text-ink">{% trans "Who paid what" %}</span>
+                <span class="block text-sm text-ink-subtle">{% trans "Totals and open balances per person." %}</span>
               </span>
-              <i class="bi bi-chevron-right tw:shrink-0 tw:text-ink-subtle"
+              <i class="bi bi-chevron-right shrink-0 text-ink-subtle"
                  aria-hidden="true"></i>
             </button>
-            <button class="tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+            <button class="flex w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-5 py-3 text-left transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
                     type="button"
                     hx-get="{% room_url 'transaction:category-breakdown' %}"
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
-              <span class="tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-brand-soft tw:text-brand-text">
+              <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text">
                 <i class="bi bi-pie-chart-fill" aria-hidden="true"></i>
               </span>
-              <span class="tw:min-w-0 tw:flex-1">
-                <span class="tw:block tw:font-medium tw:text-ink">{% trans "Category breakdown" %}</span>
-                <span class="tw:block tw:text-sm tw:text-ink-subtle">{% trans "Where the money went, by category." %}</span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-medium text-ink">{% trans "Category breakdown" %}</span>
+                <span class="block text-sm text-ink-subtle">{% trans "Where the money went, by category." %}</span>
               </span>
-              <i class="bi bi-chevron-right tw:shrink-0 tw:text-ink-subtle"
+              <i class="bi bi-chevron-right shrink-0 text-ink-subtle"
                  aria-hidden="true"></i>
             </button>
           </div>
         </div>
       {% endif %}
-      <div class="tw:divide-y tw:divide-line tw:border-t tw:border-line">
+      <div class="divide-y divide-line border-t border-line">
         {% for debt in debts %}
-          <div class="tw:flex tw:flex-col tw:gap-2 tw:px-5 tw:py-4{% if debt.settled %} tw:bg-surface-sunken{% endif %}">
+          <div class="flex flex-col gap-2 px-5 py-4{% if debt.settled %} bg-surface-sunken{% endif %}">
             {% comment %}
               Centred rather than baseline-aligned: the debtor/creditor pair on the left is taller
               than the sentence it belongs to.
             {% endcomment %}
-            <div class="tw:flex tw:items-center tw:justify-between tw:gap-3">
-              <div class="tw:flex tw:min-w-0 tw:items-center tw:gap-2">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex min-w-0 items-center gap-2">
                 <span class="avatar-pair">
                   {% include "shared_partials/_user_avatar.html" with avatar_url=debt.debitor.avatar_url avatar_name=debt.debitor.name avatar_fallback_url=debt.debitor.profile_picture_fallback_url %}
                   {% include "shared_partials/_user_avatar.html" with avatar_url=debt.creditor.avatar_url avatar_name=debt.creditor.name avatar_fallback_url=debt.creditor.profile_picture_fallback_url %}
                 </span>
-                <p class="tw:m-0 tw:min-w-0 tw:text-ink">
+                <p class="m-0 min-w-0 text-ink">
                   {% if debt.viewer_is_debitor %}
                     {% blocktrans with creditor_name=debt.creditor.name trimmed %}
                       You owe <strong>{{ creditor_name }}</strong>
@@ -149,27 +149,27 @@
                 </p>
               </div>
               {# Lining figures so the amounts of stacked rows line up on the decimal point. #}
-              <p class="tw:m-0 tw:shrink-0 tw:font-semibold tw:tabular-nums tw:whitespace-nowrap {% if debt.settled %}tw:text-ink-muted{% elif debt.viewer_is_debitor %}tw:text-danger-text{% elif debt.viewer_is_creditor %}tw:text-success-text{% else %}tw:text-ink{% endif %}">
+              <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap {% if debt.settled %}text-ink-muted{% elif debt.viewer_is_debitor %}text-danger-text{% elif debt.viewer_is_creditor %}text-success-text{% else %}text-ink{% endif %}">
                 {{ debt.value|format_with_thousands }}&nbsp;{{ debt.currency.sign }}
               </p>
             </div>
             {% if debt.settled %}
-              <p class="tw:m-0 tw:text-sm tw:text-success-text">
+              <p class="m-0 text-sm text-success-text">
                 {% blocktrans with settled_at=debt.settled_at|date trimmed %}
                   Settled on {{ settled_at }}
                 {% endblocktrans %}
               </p>
             {% endif %}
             {% if showing_optimised_debts %}
-              <div class="tw:flex tw:flex-wrap tw:items-center tw:gap-2">
+              <div class="flex flex-wrap items-center gap-2">
                 {% include "debt/partials/_debt_row_actions.html" with debt=debt %}
               </div>
             {% endif %}
           </div>
         {% empty %}
-          <div class="tw:px-5 tw:py-10 tw:text-center">
-            <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "No debts yet" %}</p>
-            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "As expenses are added, we will surface who owes whom here." %}</p>
+          <div class="px-5 py-10 text-center">
+            <p class="m-0 font-semibold text-ink">{% trans "No debts yet" %}</p>
+            <p class="m-0 text-sm text-ink-muted">{% trans "As expenses are added, we will surface who owes whom here." %}</p>
           </div>
         {% endfor %}
       </div>
@@ -179,8 +179,8 @@
           CSV always holds the optimised debts - beside the switch it looked like it followed the
           selected mode.
         {% endcomment %}
-        <div class="tw:flex tw:justify-end tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
-          <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+        <div class="flex justify-end border-t border-line px-5 py-4 @md:px-6">
+          <a class="inline-flex items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-5 py-2.5 text-sm font-semibold text-ink no-underline transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
              href="{% room_url 'debt:export' %}"
              title="{% trans "Export CSV" %}">
             <i class="bi bi-download" aria-hidden="true"></i>

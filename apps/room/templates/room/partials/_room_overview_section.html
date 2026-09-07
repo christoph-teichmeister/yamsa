@@ -8,16 +8,16 @@ genuinely hidden rather than merely unstyled.
 open state is the details element's own and needs no aria-expanded to mirror it.
 {% endcomment %}
 {% if entries %}
-  <section class="tw:flex tw:flex-col tw:gap-2">
+  <section class="flex flex-col gap-2">
     {% if collapsible %}
-      <details class="tw:group">
-        <summary class="room-overview-toggle tw:flex tw:cursor-pointer tw:list-none tw:items-center tw:justify-between tw:gap-2 tw:py-1 tw:[&::-webkit-details-marker]:hidden"
+      <details class="group">
+        <summary class="room-overview-toggle flex cursor-pointer list-none items-center justify-between gap-2 py-1 [&::-webkit-details-marker]:hidden"
                  aria-controls="{{ section_id }}">
-          <span class="tw:text-xs tw:font-semibold tw:tracking-[0.08em] tw:text-ink-subtle tw:uppercase">{% trans title %} ({{ entries|length }})</span>
-          <i class="bi bi-chevron-down room-overview-toggle-icon tw:text-ink-subtle tw:transition-transform tw:group-open:rotate-180 tw:motion-reduce:transition-none"
+          <span class="text-xs font-semibold tracking-[0.08em] text-ink-subtle uppercase">{% trans title %} ({{ entries|length }})</span>
+          <i class="bi bi-chevron-down room-overview-toggle-icon text-ink-subtle transition-transform group-open:rotate-180 motion-reduce:transition-none"
              aria-hidden="true"></i>
         </summary>
-        <div class="room-overview-entries tw:mt-2 tw:grid tw:grid-cols-2 tw:gap-2 tw:@md:gap-3"
+        <div class="room-overview-entries mt-2 grid grid-cols-2 gap-2 @md:gap-3"
              id="{{ section_id }}">
           {% for entry in entries %}
             {% include "room/partials/_room_overview_card.html" with entry=entry tile=tile %}
@@ -25,8 +25,8 @@ open state is the details element's own and needs no aria-expanded to mirror it.
         </div>
       </details>
     {% else %}
-      <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-[0.08em] tw:text-ink-subtle tw:uppercase">{% trans title %}</p>
-      <div class="room-overview-entries tw:grid tw:grid-cols-1 tw:gap-2 tw:@md:grid-cols-2 tw:@md:gap-3">
+      <p class="m-0 text-xs font-semibold tracking-[0.08em] text-ink-subtle uppercase">{% trans title %}</p>
+      <div class="room-overview-entries grid grid-cols-1 gap-2 @md:grid-cols-2 @md:gap-3">
         {% for entry in entries %}
           {% include "room/partials/_room_overview_card.html" with entry=entry tile=tile %}
         {% endfor %}

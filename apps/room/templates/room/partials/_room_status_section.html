@@ -8,16 +8,16 @@
   than in hidden inputs — a nested form is not allowed inside the sheet, and htmx sends the
   enclosing form's fields along anyway, which RoomStatusForm ignores by construction.
 {% endcomment %}
-<div class="tw:border-t tw:border-line">
-  <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Status" %}</p>
-  <div class="tw:flex tw:flex-col tw:gap-3 tw:px-5 tw:py-3 tw:@md:flex-row tw:@md:items-center tw:@md:gap-4">
-    <div class="tw:min-w-0 tw:flex-1">
-      <p id="room-status-label" class="tw:m-0 tw:font-medium tw:text-ink">{{ current_room.status|room_status_label }}</p>
+<div class="border-t border-line">
+  <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Status" %}</p>
+  <div class="flex flex-col gap-3 px-5 py-3 @md:flex-row @md:items-center @md:gap-4">
+    <div class="min-w-0 flex-1">
+      <p id="room-status-label" class="m-0 font-medium text-ink">{{ current_room.status|room_status_label }}</p>
       {% if current_room.is_open %}
         {% if current_room.can_be_closed %}
-          <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">{% trans "All debts are settled. You can close the room." %}</p>
+          <p class="m-0 text-sm text-ink-subtle">{% trans "All debts are settled. You can close the room." %}</p>
         {% else %}
-          <p class="tw:m-0 tw:text-sm tw:text-warning-text">
+          <p class="m-0 text-sm text-warning-text">
             {% blocktrans trimmed count debt_count=open_debt_count %}
               There is still {{ debt_count }} open debt.
             {% plural %}
@@ -26,18 +26,18 @@
           </p>
         {% endif %}
       {% else %}
-        <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">{% trans "The room is closed and can be reopened." %}</p>
+        <p class="m-0 text-sm text-ink-subtle">{% trans "The room is closed and can be reopened." %}</p>
       {% endif %}
       {% for error_message in status_form.errors.status.data %}
         <p id="room-status-error"
-           class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+           class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
       {% endfor %}
     </div>
-    <div class="tw:shrink-0">
+    <div class="shrink-0">
       {% if current_room.is_open %}
         {% if current_room.can_be_closed %}
           <button id="close-room-button"
-                  class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-danger-text/60 tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                  class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-danger-text/60 bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
                   hx-post="{% room_url 'room:status' %}"
                   hx-vals='{"status": "{{ ROOM_STATUS_CLOSED }}"}'
@@ -48,7 +48,7 @@
           </button>
         {% else %}
           <button id="close-room-button"
-                  class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-danger-text/60 tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-danger-text tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                  class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-danger-text/60 bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
                   aria-haspopup="dialog"
                   data-dialog-open="force-close-dialog">
@@ -58,7 +58,7 @@
         {% endif %}
       {% else %}
         <button id="reopen-room-button"
-                class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-4 py-2 text-sm font-semibold whitespace-nowrap text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 type="button"
                 hx-post="{% room_url 'room:status' %}"
                 hx-vals='{"status": "{{ ROOM_STATUS_OPEN }}"}'
@@ -72,35 +72,35 @@
   </div>
   {% if current_room.is_open and not current_room.can_be_closed %}
     <dialog id="force-close-dialog"
-            class="tw:m-auto tw:w-[min(28rem,calc(100vw-2rem))] tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:p-0 tw:text-ink tw:backdrop:bg-black/60"
+            class="m-auto w-[min(28rem,calc(100vw-2rem))] rounded-3xl border border-line bg-surface p-0 text-ink backdrop:bg-black/60"
             data-dialog>
-      <div class="tw:flex tw:items-start tw:justify-between tw:gap-3 tw:border-b tw:border-line tw:px-5 tw:py-3">
+      <div class="flex items-start justify-between gap-3 border-b border-line px-5 py-3">
         <div>
-          <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "Outstanding debts" %}</p>
-          <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">{% trans "This room still has outstanding payments." %}</p>
+          <p class="m-0 font-semibold text-ink">{% trans "Outstanding debts" %}</p>
+          <p class="m-0 text-sm text-ink-subtle">{% trans "This room still has outstanding payments." %}</p>
         </div>
-        <button class="tw:flex tw:size-8 tw:shrink-0 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-lg tw:border-0 tw:bg-transparent tw:text-ink-subtle tw:transition tw:hover:bg-surface-hover tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+        <button class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-ink-subtle transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 type="button"
                 aria-label="{% trans "Close" %}"
                 data-dialog-close>
           <i class="bi bi-x-lg" aria-hidden="true"></i>
         </button>
       </div>
-      <div class="tw:flex tw:flex-col tw:gap-3 tw:p-5">
-        <p class="tw:m-0 tw:text-ink">
+      <div class="flex flex-col gap-3 p-5">
+        <p class="m-0 text-ink">
           {% blocktrans trimmed count debt_count=open_debt_count %}
             There is still {{ debt_count }} open debt. Closing the room anyway will mark it as settled.
           {% plural %}
             There are still {{ debt_count }} open debts. Closing the room anyway will mark them as settled.
           {% endblocktrans %}
         </p>
-        <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">{% trans "Use this option only if you want to skip manual settlement." %}</p>
-        <div class="tw:mt-1 tw:flex tw:flex-col tw:gap-2 tw:@md:flex-row tw:@md:justify-end">
-          <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+        <p class="m-0 text-sm text-ink-subtle">{% trans "Use this option only if you want to skip manual settlement." %}</p>
+        <div class="mt-1 flex flex-col gap-2 @md:flex-row @md:justify-end">
+          <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
                   data-dialog-close>{% trans "Cancel" %}</button>
           <button id="force-close-confirm-button"
-                  class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-danger-text/60 tw:bg-danger-soft tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-danger-text tw:transition tw:hover:border-danger-text tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                  class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-danger-text/60 bg-danger-soft px-4 py-2 text-sm font-semibold text-danger-text transition hover:border-danger-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
                   hx-post="{% room_url 'room:status' %}"
                   hx-vals='{"status": "{{ ROOM_STATUS_CLOSED }}", "force_close": "true"}'

@@ -1,30 +1,30 @@
 {% load i18n %}
 {% if entry.user_is_in_room %}
   {# tabular-nums so the amounts of stacked rows line up on the decimal point. #}
-  <div class="room-overview-amounts tw:flex tw:shrink-0 tw:flex-col tw:items-end tw:gap-1 tw:text-right">
+  <div class="room-overview-amounts flex shrink-0 flex-col items-end gap-1 text-right">
     {% for balance in entry.balances %}
       {% if balance.is_balanced %}
-        <span class="room-overview-amount tw:flex tw:flex-col tw:items-end tw:leading-tight">
-          <span class="room-overview-amount-value tw:text-xs tw:font-medium tw:text-ink-subtle">
+        <span class="room-overview-amount flex flex-col items-end leading-tight">
+          <span class="room-overview-amount-value text-xs font-medium text-ink-subtle">
             {% blocktrans trimmed with currency=balance.currency_sign %}
               Balanced ({{ currency }})
             {% endblocktrans %}
           </span>
         </span>
       {% elif balance.user_owes %}
-        <span class="room-overview-amount tw:flex tw:flex-col tw:items-end tw:leading-tight">
-          <span class="room-overview-amount-label tw:text-[0.6rem] tw:tracking-[0.03em] tw:text-ink-subtle tw:uppercase">{% trans "You owe" %}</span>
-          <span class="room-overview-amount-value tw:text-sm tw:font-semibold tw:tabular-nums tw:text-warning-text">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
+        <span class="room-overview-amount flex flex-col items-end leading-tight">
+          <span class="room-overview-amount-label text-[0.6rem] tracking-[0.03em] text-ink-subtle uppercase">{% trans "You owe" %}</span>
+          <span class="room-overview-amount-value text-sm font-semibold tabular-nums text-warning-text">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
         </span>
       {% else %}
-        <span class="room-overview-amount tw:flex tw:flex-col tw:items-end tw:leading-tight">
-          <span class="room-overview-amount-label tw:text-[0.6rem] tw:tracking-[0.03em] tw:text-ink-subtle tw:uppercase">{% trans "You get back" %}</span>
-          <span class="room-overview-amount-value tw:text-sm tw:font-semibold tw:tabular-nums tw:text-success-text">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
+        <span class="room-overview-amount flex flex-col items-end leading-tight">
+          <span class="room-overview-amount-label text-[0.6rem] tracking-[0.03em] text-ink-subtle uppercase">{% trans "You get back" %}</span>
+          <span class="room-overview-amount-value text-sm font-semibold tabular-nums text-success-text">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
         </span>
       {% endif %}
     {% empty %}
-      <span class="room-overview-amount tw:flex tw:flex-col tw:items-end tw:leading-tight">
-        <span class="room-overview-amount-value tw:text-xs tw:font-medium tw:text-ink-subtle">{% trans "All settled" %}</span>
+      <span class="room-overview-amount flex flex-col items-end leading-tight">
+        <span class="room-overview-amount-value text-xs font-medium text-ink-subtle">{% trans "All settled" %}</span>
       </span>
     {% endfor %}
   </div>

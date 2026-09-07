@@ -24,7 +24,7 @@ def _entries_grids(content: str) -> list[str]:
 
 
 def _entries_layout(grid: str) -> str:
-    return "tile" if " tw:grid-cols-2" in grid else "row"
+    return "tile" if " grid-cols-2" in grid else "row"
 
 
 pytestmark = pytest.mark.django_db
@@ -270,7 +270,7 @@ class TestWelcomePartialView:
 
         assert content.count("room-overview-card-tile") == 1
         # One card per row for the open section, two per row for the tile sections. The breakpoint
-        # is a container query, so the open section reads "tw:grid-cols-1" and the tiles do not.
+        # is a container query, so the open section reads "grid-cols-1" and the tiles do not.
         assert [_entries_layout(grid) for grid in _entries_grids(content)] == ["row", "tile"]
 
     def test_every_foreign_room_is_listed(self, superuser_htmx_client, user, guest_user):

@@ -3,10 +3,10 @@
 {% load render_bundle from webpack_loader %}
 {% now "Y-m-d\TH:i" as current_datetime %}
 {% block tab_content %}
-  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% trans "Back to transactions" as back_to_list_label %}
     {# An anchor, not a button: the back link then works without the bundle and can be opened in a new tab. #}
-    <a class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-1.5 tw:self-start tw:rounded-lg tw:border-0 tw:bg-transparent tw:px-1 tw:py-1 tw:text-sm tw:font-semibold tw:text-ink-muted tw:no-underline tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+    <a class="inline-flex cursor-pointer items-center gap-1.5 self-start rounded-lg border-0 bg-transparent px-1 py-1 text-sm font-semibold text-ink-muted no-underline transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
        href="{% room_url 'transaction:list' %}"
        hx-get="{% room_url 'transaction:list' %}"
        hx-target="#body"
@@ -17,7 +17,7 @@
       {{ back_to_list_label }}
     </a>
     {# `action` next to `hx-post` so the form still submits without the bundle. #}
-    <form class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+    <form class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card"
           method="post"
           action="{% room_url 'transaction:create' %}"
           enctype="multipart/form-data"
@@ -27,28 +27,28 @@
           hx-swap="morph:innerHTML"
           hx-push-url="true">
       {% csrf_token %}
-      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "New transaction" %}</p>
-        <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">
+      <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "New transaction" %}</p>
+        <h1 class="mt-1 mb-0 text-xl font-semibold break-words text-ink">
           {% blocktrans with room_name=current_room.name %}Add transaction for "{{ room_name }}"{% endblocktrans %}
         </h1>
-        <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
-          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-brand-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-brand-text">
+        <div class="mt-3 flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
             <i class="bi bi-people" aria-hidden="true"></i>
             {% blocktrans count member_count=current_room.users|length %}{{ member_count }} member{% plural %}{{ member_count }} members{% endblocktrans %}
           </span>
-          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-surface-sunken px-2.5 py-1 text-xs font-semibold text-ink">
             <i class="bi bi-currency-exchange" aria-hidden="true"></i>
             {% blocktrans with currency_sign=current_room.preferred_currency.sign %}{{ currency_sign }} preferred{% endblocktrans %}
           </span>
         </div>
       </div>
       {% if form.errors %}
-        <div class="tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
-          <div class="tw:rounded-2xl tw:border tw:border-danger-text/40 tw:bg-danger-soft tw:px-4 tw:py-3"
+        <div class="border-t border-line px-5 py-4 @md:px-6">
+          <div class="rounded-2xl border border-danger-text/40 bg-danger-soft px-4 py-3"
                role="alert">
-            <p class="tw:mt-0 tw:mb-1 tw:font-semibold tw:text-danger-text">{% trans "Unable to add transaction" %}</p>
-            <ul class="tw:m-0 tw:flex tw:list-none tw:flex-col tw:gap-1 tw:text-sm tw:text-danger-text">
+            <p class="mt-0 mb-1 font-semibold text-danger-text">{% trans "Unable to add transaction" %}</p>
+            <ul class="m-0 flex list-none flex-col gap-1 text-sm text-danger-text">
               {% for field_errors in form.errors.values %}
                 {% for error in field_errors %}<li>{{ error }}</li>{% endfor %}
               {% endfor %}
@@ -56,15 +56,15 @@
           </div>
         </div>
       {% endif %}
-      <div class="tw:border-t tw:border-line">
-        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Required details" %}</p>
-        <div class="tw:grid tw:grid-cols-1 tw:gap-4 tw:px-5 tw:pt-2 tw:pb-5 tw:@lg:grid-cols-2 tw:@md:px-6">
-          <div class="tw:@lg:col-span-2">
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+      <div class="border-t border-line">
+        <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Required details" %}</p>
+        <div class="grid grid-cols-1 gap-4 px-5 pt-2 pb-5 @lg:grid-cols-2 @md:px-6">
+          <div class="@lg:col-span-2">
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="description">{% trans "What was this?" %}</label>
             {% with description_field=form.description %}
               <input id="description"
-                     class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                     class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                      type="text"
                      name="description"
                      maxlength="50"
@@ -74,19 +74,19 @@
                      value="{{ description_field.value|default:'' }}"
                      required>
               {% for error_message in description_field.errors %}
-                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
               {% endfor %}
             {% endwith %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Maximum 50 characters." %}</p>
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Maximum 50 characters." %}</p>
           </div>
           <div>
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="value">{% trans "Amount paid" %}</label>
             {% with value_field=form.value %}
-              <div class="tw:relative">
-                <span class="tw:pointer-events-none tw:absolute tw:top-1/2 tw:left-4 tw:-translate-y-1/2 tw:text-ink-subtle">{{ current_room.preferred_currency.sign }}</span>
+              <div class="relative">
+                <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-subtle">{{ current_room.preferred_currency.sign }}</span>
                 <input id="value"
-                       class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-4 tw:pl-9 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                       class="w-full rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-4 pl-9 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                        type="number"
                        name="value"
                        min="0"
@@ -97,21 +97,21 @@
                        required>
               </div>
               {% for error_message in value_field.errors %}
-                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
               {% endfor %}
             {% endwith %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Total paid in the selected currency." %}</p>
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Total paid in the selected currency." %}</p>
           </div>
-          <div class="tw:@lg:col-span-2">
+          <div class="@lg:col-span-2">
             {% include "transaction/partials/_category_field.html" with category_field=form.category %}
           </div>
           <div>
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="paidBySelect">{% trans "Who paid?" %}</label>
             {% with paid_by_field=form.paid_by %}
-              <div class="tw:relative">
+              <div class="relative">
                 <select id="paidBySelect"
-                        class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                        class="w-full appearance-none rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-10 pl-4 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                         name="paid_by"
                         required>
                   <option value="{{ request.user.id }}"
@@ -127,22 +127,22 @@
                     {% endif %}
                   {% endfor %}
                 </select>
-                <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-4 tw:-translate-y-1/2 tw:text-ink-subtle"
+                <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle"
                    aria-hidden="true"></i>
               </div>
               {% for error_message in paid_by_field.errors %}
-                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
               {% endfor %}
             {% endwith %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Person covering this expense." %}</p>
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Person covering this expense." %}</p>
           </div>
           <div>
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="paidForSelect">{% trans "Split between" %}</label>
             {% with paid_for_field=form.paid_for %}
               {# A native multi-select: `required` then makes the browser insist on at least one beneficiary. #}
               <select id="paidForSelect"
-                      class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-2 tw:py-2 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                      class="w-full rounded-xl border border-line-strong bg-surface-sunken px-2 py-2 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                       name="paid_for"
                       size="4"
                       multiple
@@ -155,10 +155,10 @@
                 {% endfor %}
               </select>
               {% for error_message in paid_for_field.errors %}
-                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
               {% endfor %}
             {% endwith %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Hold Cmd/Ctrl to adjust beneficiaries." %}</p>
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Hold Cmd/Ctrl to adjust beneficiaries." %}</p>
           </div>
         </div>
       </div>
@@ -166,21 +166,21 @@
       A native <details>, not a Bootstrap collapse: the optional fields then open without any
       bundle having run, and they stay in the DOM either way, so they post with the form.
       {% endcomment %}
-      <details class="tw:group tw:border-t tw:border-line">
-        <summary class="tw:flex tw:cursor-pointer tw:list-none tw:items-center tw:gap-3 tw:px-5 tw:py-4 tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand tw:@md:px-6 tw:[&::-webkit-details-marker]:hidden">
-          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">{% trans "Optional" %}</span>
-          <span class="tw:min-w-0 tw:flex-1 tw:font-semibold tw:text-ink">{% trans "More details" %}</span>
-          <i class="bi bi-chevron-down tw:shrink-0 tw:text-ink-subtle tw:transition-transform tw:group-open:rotate-180"
+      <details class="group border-t border-line">
+        <summary class="flex cursor-pointer list-none items-center gap-3 px-5 py-4 transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand @md:px-6 [&::-webkit-details-marker]:hidden">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-surface-sunken px-2.5 py-1 text-xs font-semibold text-ink">{% trans "Optional" %}</span>
+          <span class="min-w-0 flex-1 font-semibold text-ink">{% trans "More details" %}</span>
+          <i class="bi bi-chevron-down shrink-0 text-ink-subtle transition-transform group-open:rotate-180"
              aria-hidden="true"></i>
         </summary>
-        <div class="tw:grid tw:grid-cols-1 tw:gap-4 tw:px-5 tw:pb-5 tw:@lg:grid-cols-2 tw:@md:px-6">
+        <div class="grid grid-cols-1 gap-4 px-5 pb-5 @lg:grid-cols-2 @md:px-6">
           <div>
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="paid_at_input">{% trans "Paid at" %}</label>
             {% with paid_at_field=form.paid_at %}
               {% with paid_at_value=paid_at_field.value %}
                 <input id="paid_at_input"
-                       class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                       class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                        type="datetime-local"
                        name="paid_at"
                        value="{% if paid_at_value %}{{ paid_at_value|date:'Y-m-d\\TH:i' }}{% else %}{{ current_datetime }}{% endif %}"
@@ -188,18 +188,18 @@
                        max="2099-12-31T00:00">
               {% endwith %}
               {% for error_message in paid_at_field.errors %}
-                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
               {% endfor %}
             {% endwith %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Use if the expense occurred earlier." %}</p>
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Use if the expense occurred earlier." %}</p>
           </div>
           <div>
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="currencySelect">{% trans "Currency" %}</label>
             {% with currency_field=form.currency %}
-              <div class="tw:relative">
+              <div class="relative">
                 <select id="currencySelect"
-                        class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                        class="w-full appearance-none rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-10 pl-4 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                         name="currency"
                         required>
                   <option value="{{ current_room.preferred_currency.id }}"
@@ -215,58 +215,58 @@
                     {% endif %}
                   {% endfor %}
                 </select>
-                <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-4 tw:-translate-y-1/2 tw:text-ink-subtle"
+                <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle"
                    aria-hidden="true"></i>
               </div>
               {% for error_message in currency_field.errors %}
-                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
               {% endfor %}
             {% endwith %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Defaults to the room preference." %}</p>
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Defaults to the room preference." %}</p>
           </div>
-          <div class="tw:@lg:col-span-2">
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+          <div class="@lg:col-span-2">
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="further_notes">{% trans "Notes" %}</label>
             {% with notes_field=form.further_notes %}
               <textarea id="further_notes"
-                        class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                        class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                         name="further_notes"
                         rows="3"
                         maxlength="5000"
                         minlength="1"
                         placeholder="{% trans "Add split details, receipts, or reminders" %}">{{ notes_field.value|default:'' }}</textarea>
               {% for error_message in notes_field.errors %}
-                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
               {% endfor %}
             {% endwith %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Up to 5000 characters." %}</p>
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Up to 5000 characters." %}</p>
           </div>
-          <div class="tw:@lg:col-span-2">
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+          <div class="@lg:col-span-2">
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="receipts">{% trans "Receipts" %}</label>
             {% with receipts_field=form.receipts %}
               <input id="receipts"
-                     class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:file:mr-3 tw:file:cursor-pointer tw:file:rounded-lg tw:file:border-0 tw:file:bg-brand-soft tw:file:px-3 tw:file:py-1.5 tw:file:text-sm tw:file:font-semibold tw:file:text-brand-text tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                     class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-brand-soft file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-brand-text focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                      type="file"
                      name="receipts"
                      multiple
                      accept="image/png,image/jpeg,image/webp,image/gif,application/pdf">
               {% for error_message in receipts_field.errors %}
-                <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
               {% endfor %}
             {% endwith %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Upload receipts as PDF or image (max 5 MB each)." %}</p>
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Upload receipts as PDF or image (max 5 MB each)." %}</p>
           </div>
         </div>
       </details>
-      <div class="tw:flex tw:flex-col tw:gap-2 tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:flex-row tw:@md:items-center tw:@md:justify-end tw:@md:px-6">
-        <a class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-4 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-ink tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+      <div class="flex flex-col gap-2 border-t border-line px-5 py-4 @md:flex-row @md:items-center @md:justify-end @md:px-6">
+        <a class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-4 py-2.5 text-sm font-semibold whitespace-nowrap text-ink no-underline transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
            href="{% room_url 'transaction:list' %}"
            hx-boost="true">
           <i class="bi bi-arrow-left" aria-hidden="true"></i>
           {% trans "Cancel" %}
         </a>
-        <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+        <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                 type="submit">
           <i class="bi bi-plus-circle" aria-hidden="true"></i>
           {% trans "Add transaction" %}

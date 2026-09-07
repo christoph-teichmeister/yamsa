@@ -13,7 +13,7 @@
   The photo is not part of that cycle — see _profile_photo.html.
 {% endcomment %}
 <form id="profile-sheet"
-      class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+      class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card"
       method="post"
       action="{% url 'account:update' pk=user.id %}"
       data-sheet
@@ -22,171 +22,171 @@
       hx-swap="outerHTML"
       hx-disabled-elt="find [data-sheet-save]">
   {% csrf_token %}
-  <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:p-5 tw:@md:p-6">
-    <div class="tw:flex tw:flex-col tw:gap-4 tw:@md:flex-row tw:@md:items-center">
+  <div class="bg-gradient-to-br from-brand-soft to-transparent p-5 @md:p-6">
+    <div class="flex flex-col gap-4 @md:flex-row @md:items-center">
       {% include "account/partials/_profile_photo.html" %}
-      <div class="tw:min-w-0 tw:flex-1">
-        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Your account overview" %}</p>
+      <div class="min-w-0 flex-1">
+        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Your account overview" %}</p>
         <h1 id="profile-name"
-            class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">{{ user.name }}</h1>
+            class="mt-1 mb-0 text-xl font-semibold break-words text-ink">{{ user.name }}</h1>
       </div>
     </div>
-    <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
+    <div class="mt-3 flex flex-wrap gap-2">
       {% include "account/partials/_profile_badges.html" with user=user %}
     </div>
   </div>
-  <div class="tw:border-t tw:border-line">
-    <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Profile" %}</p>
-    <div class="tw:divide-y tw:divide-line">
-      <div class="tw:flex tw:flex-col tw:gap-1 tw:px-5 tw:py-3 tw:@md:flex-row tw:@md:items-center tw:@md:gap-4">
-        <label class="tw:m-0 tw:text-sm tw:text-ink-muted tw:@md:w-44 tw:@md:shrink-0"
+  <div class="border-t border-line">
+    <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Profile" %}</p>
+    <div class="divide-y divide-line">
+      <div class="flex flex-col gap-1 px-5 py-3 @md:flex-row @md:items-center @md:gap-4">
+        <label class="m-0 text-sm text-ink-muted @md:w-44 @md:shrink-0"
                for="name">{{ form.fields.name.label }}</label>
-        <div class="tw:min-w-0 tw:flex-1">
+        <div class="min-w-0 flex-1">
           <input id="name"
-                 class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                 class="w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                  type="text"
                  name="name"
                  autocomplete="name"
                  required
                  value="{{ form.name.value|default_if_none:user.name }}">
           {% for error_message in form.errors.name.data %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
-      <div class="tw:flex tw:flex-col tw:gap-1 tw:px-5 tw:py-3 tw:@md:flex-row tw:@md:items-center tw:@md:gap-4">
-        <label class="tw:m-0 tw:text-sm tw:text-ink-muted tw:@md:w-44 tw:@md:shrink-0"
+      <div class="flex flex-col gap-1 px-5 py-3 @md:flex-row @md:items-center @md:gap-4">
+        <label class="m-0 text-sm text-ink-muted @md:w-44 @md:shrink-0"
                for="email">{{ form.fields.email.label }}</label>
-        <div class="tw:min-w-0 tw:flex-1">
+        <div class="min-w-0 flex-1">
           <input id="email"
-                 class="tw:w-full tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:font-medium tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                 class="w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                  type="email"
                  name="email"
                  autocomplete="email"
                  required
                  value="{{ form.email.value|default_if_none:user.email }}">
           {% for error_message in form.errors.email.data %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
-      <div class="tw:flex tw:flex-col tw:gap-1 tw:px-5 tw:py-3 tw:@md:flex-row tw:@md:items-center tw:@md:gap-4">
-        <label class="tw:m-0 tw:text-sm tw:text-ink-muted tw:@md:w-44 tw:@md:shrink-0"
+      <div class="flex flex-col gap-1 px-5 py-3 @md:flex-row @md:items-center @md:gap-4">
+        <label class="m-0 text-sm text-ink-muted @md:w-44 @md:shrink-0"
                for="paypal_me_username">{{ form.fields.paypal_me_username.label }}</label>
-        <div class="tw:min-w-0 tw:flex-1">
-          <div class="tw:flex tw:items-center tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:transition tw:focus-within:border-brand tw:focus-within:outline-2 tw:focus-within:outline-offset-0 tw:focus-within:outline-brand">
-            <span class="tw:pl-3 tw:font-medium tw:text-ink-subtle" aria-hidden="true">@</span>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center rounded-lg border border-line-strong bg-surface-sunken transition focus-within:border-brand focus-within:outline-2 focus-within:outline-offset-0 focus-within:outline-brand">
+            <span class="pl-3 font-medium text-ink-subtle" aria-hidden="true">@</span>
             <input id="paypal_me_username"
-                   class="tw:w-full tw:min-w-0 tw:border-0 tw:bg-transparent tw:py-2 tw:pr-3 tw:pl-0 tw:font-medium tw:text-ink tw:outline-none tw:placeholder:text-ink-subtle"
+                   class="w-full min-w-0 border-0 bg-transparent py-2 pr-3 pl-0 font-medium text-ink outline-none placeholder:text-ink-subtle"
                    type="text"
                    name="paypal_me_username"
                    placeholder="{% trans "Not set" %}"
                    value="{{ form.paypal_me_username.value|default_if_none:user.paypal_me_username }}">
           </div>
           {% for error_message in form.errors.paypal_me_username.data %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
-      <div class="tw:flex tw:flex-col tw:gap-1 tw:px-5 tw:py-3 tw:@md:flex-row tw:@md:items-center tw:@md:gap-4">
-        <label class="tw:m-0 tw:text-sm tw:text-ink-muted tw:@md:w-44 tw:@md:shrink-0"
+      <div class="flex flex-col gap-1 px-5 py-3 @md:flex-row @md:items-center @md:gap-4">
+        <label class="m-0 text-sm text-ink-muted @md:w-44 @md:shrink-0"
                for="id_language">{{ form.fields.language.label }}</label>
-        <div class="tw:min-w-0 tw:flex-1">
-          <div class="tw:relative">
+        <div class="min-w-0 flex-1">
+          <div class="relative">
             <select id="id_language"
-                    class="tw:w-full tw:appearance-none tw:rounded-lg tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2 tw:pr-9 tw:pl-3 tw:font-medium tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                    class="w-full appearance-none rounded-lg border border-line-strong bg-surface-sunken py-2 pr-9 pl-3 font-medium text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                     name="language">
               {% for choice_value, choice_label in form.fields.language.choices %}
                 <option value="{{ choice_value }}"
                         {% if form.language.value == choice_value %}selected{% endif %}>{{ choice_label }}</option>
               {% endfor %}
             </select>
-            <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
+            <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle"
                aria-hidden="true"></i>
           </div>
           {% for error_message in form.errors.language.data %}
-            <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
     </div>
   </div>
-  <div class="tw:border-t tw:border-line">
-    <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Notifications" %}</p>
-    <p class="tw:mt-1 tw:mb-1 tw:px-5 tw:text-sm tw:text-ink-subtle">{% trans "Choose how you want to hear from us." %}</p>
-    <div class="tw:divide-y tw:divide-line">
-      <div class="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:px-5 tw:py-3">
-        <label class="tw:m-0 tw:text-sm tw:text-ink"
+  <div class="border-t border-line">
+    <p class="m-0 px-5 pt-4 pb-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Notifications" %}</p>
+    <p class="mt-1 mb-1 px-5 text-sm text-ink-subtle">{% trans "Choose how you want to hear from us." %}</p>
+    <div class="divide-y divide-line">
+      <div class="flex items-center justify-between gap-4 px-5 py-3">
+        <label class="m-0 text-sm text-ink"
                for="wants_to_receive_webpush_notifications">
           {{ form.fields.wants_to_receive_webpush_notifications.label }}
         </label>
         {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_webpush_notifications" toggle_name="wants_to_receive_webpush_notifications" toggle_checked=form.wants_to_receive_webpush_notifications.value|default_if_none:user.wants_to_receive_webpush_notifications toggle_editable=True %}
       </div>
-      <div class="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:px-5 tw:py-3">
-        <label class="tw:m-0 tw:text-sm tw:text-ink"
+      <div class="flex items-center justify-between gap-4 px-5 py-3">
+        <label class="m-0 text-sm text-ink"
                for="wants_to_receive_payment_reminders">
           {{ form.fields.wants_to_receive_payment_reminders.label }}
         </label>
         {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_payment_reminders" toggle_name="wants_to_receive_payment_reminders" toggle_checked=form.wants_to_receive_payment_reminders.value|default_if_none:user.wants_to_receive_payment_reminders toggle_editable=True %}
       </div>
-      <div class="tw:flex tw:items-center tw:justify-between tw:gap-4 tw:px-5 tw:py-3">
-        <label class="tw:m-0 tw:text-sm tw:text-ink"
+      <div class="flex items-center justify-between gap-4 px-5 py-3">
+        <label class="m-0 text-sm text-ink"
                for="wants_to_receive_room_reminders">{{ form.fields.wants_to_receive_room_reminders.label }}</label>
         {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_room_reminders" toggle_name="wants_to_receive_room_reminders" toggle_checked=form.wants_to_receive_room_reminders.value|default_if_none:user.wants_to_receive_room_reminders toggle_editable=True %}
       </div>
     </div>
   </div>
   {% include "shared_partials/_sheet_actions.html" with save_button_id="save-profile-button" discard_button_id="discard-profile-button" %}
-  <div id="security-section" class="tw:border-t tw:border-line">
-    <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Security" %}</p>
-    <div class="tw:divide-y tw:divide-line">
-      <button class="tw:flex tw:w-full tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+  <div id="security-section" class="border-t border-line">
+    <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Security" %}</p>
+    <div class="divide-y divide-line">
+      <button class="flex w-full items-center gap-3 border-0 bg-transparent px-5 py-3 text-left transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
               type="button"
               hx-get="{% url 'account:change-password' pk=user.id %}"
               hx-target="#body"
               hx-indicator="#body-loading-spinner"
               hx-swap="morph:innerHTML"
               hx-push-url="true">
-        <span class="tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-brand-soft tw:text-brand-text"
+        <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text"
               aria-hidden="true">
           <i class="bi bi-key"></i>
         </span>
-        <span class="tw:min-w-0 tw:flex-1">
-          <span class="tw:block tw:font-medium tw:text-ink">{% trans "Change your password" %}</span>
-          <span class="tw:block tw:text-sm tw:text-ink-subtle">{% trans "Choose a unique password to keep your rooms safe." %}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block font-medium text-ink">{% trans "Change your password" %}</span>
+          <span class="block text-sm text-ink-subtle">{% trans "Choose a unique password to keep your rooms safe." %}</span>
         </span>
-        <i class="bi bi-chevron-right tw:text-ink-subtle" aria-hidden="true"></i>
+        <i class="bi bi-chevron-right text-ink-subtle" aria-hidden="true"></i>
       </button>
-      <button class="tw:flex tw:w-full tw:items-center tw:gap-3 tw:border-0 tw:bg-transparent tw:px-5 tw:py-3 tw:text-left tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+      <button class="flex w-full items-center gap-3 border-0 bg-transparent px-5 py-3 text-left transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
               type="button"
               hx-get="{% url 'account:security' pk=user.id %}"
               hx-target="#body"
               hx-indicator="#body-loading-spinner"
               hx-swap="morph:innerHTML"
               hx-push-url="true">
-        <span class="tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-brand-soft tw:text-brand-text"
+        <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text"
               aria-hidden="true">
           <i class="bi bi-shield-check"></i>
         </span>
-        <span class="tw:min-w-0 tw:flex-1">
-          <span class="tw:block tw:font-medium tw:text-ink">{% trans "Security settings" %}</span>
-          <span class="tw:block tw:text-sm tw:text-ink-subtle">
+        <span class="min-w-0 flex-1">
+          <span class="block font-medium text-ink">{% trans "Security settings" %}</span>
+          <span class="block text-sm text-ink-subtle">
             {% trans "Log in with your fingerprint, face ID, or a hardware security key — no password required." %}
           </span>
         </span>
-        <i class="bi bi-chevron-right tw:text-ink-subtle" aria-hidden="true"></i>
+        <i class="bi bi-chevron-right text-ink-subtle" aria-hidden="true"></i>
       </button>
       {% if request.user.is_superuser and user.is_superuser %}
         <a id="superuser-admin-link"
-           class="tw:flex tw:w-full tw:items-center tw:gap-3 tw:px-5 tw:py-3 tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+           class="flex w-full items-center gap-3 px-5 py-3 no-underline transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
            href="{{ core.BACKEND_URL }}/{{ core.ADMIN_URL }}/login"
            target="_blank">
-          <span class="tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-xl tw:bg-surface-sunken tw:text-ink-muted"
+          <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-surface-sunken text-ink-muted"
                 aria-hidden="true">
             <i class="bi bi-terminal"></i>
           </span>
-          <span class="tw:min-w-0 tw:flex-1 tw:font-medium tw:text-ink">{% trans "Admin" %}</span>
-          <i class="bi bi-box-arrow-up-right tw:text-ink-subtle"
+          <span class="min-w-0 flex-1 font-medium text-ink">{% trans "Admin" %}</span>
+          <i class="bi bi-box-arrow-up-right text-ink-subtle"
              aria-hidden="true"></i>
         </a>
       {% endif %}

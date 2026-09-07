@@ -1,41 +1,41 @@
 {% load i18n %}
-<section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
-  <div class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
-    <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
-      <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Guest access" %}</p>
-      <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">{{ current_room.name }}</h1>
-      <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
+<section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
+  <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+    <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
+      <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Guest access" %}</p>
+      <h1 class="mt-1 mb-0 text-xl font-semibold break-words text-ink">{{ current_room.name }}</h1>
+      <div class="mt-3 flex flex-wrap gap-2">
         {% if current_room.is_closed %}
-          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-danger-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-danger-text">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-danger-soft px-2.5 py-1 text-xs font-semibold text-danger-text">
             <i class="bi bi-lock-fill" aria-hidden="true"></i>
             {% trans "Closed" %}
           </span>
         {% else %}
-          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-success-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-success-text">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-success-soft px-2.5 py-1 text-xs font-semibold text-success-text">
             <i class="bi bi-share-fill" aria-hidden="true"></i>
             {% trans "Open to guests" %}
           </span>
         {% endif %}
       </div>
     </div>
-    <div class="tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
-      <p class="tw:mt-0 tw:mb-3 tw:text-sm tw:text-ink-muted">
+    <div class="border-t border-line px-5 py-5 @md:px-6">
+      <p class="mt-0 mb-3 text-sm text-ink-muted">
         {% blocktrans trimmed %}
           Maybe register? A free account keeps your rooms, reminders, and history together.
         {% endblocktrans %}
       </p>
-      <div class="tw:flex tw:flex-col tw:gap-3 tw:rounded-2xl tw:border tw:border-brand/40 tw:bg-brand-soft tw:px-4 tw:py-4 tw:@md:flex-row tw:@md:items-start">
-        <i class="bi bi-person-plus-fill tw:shrink-0 tw:text-2xl tw:text-brand-text"
+      <div class="flex flex-col gap-3 rounded-2xl border border-brand/40 bg-brand-soft px-4 py-4 @md:flex-row @md:items-start">
+        <i class="bi bi-person-plus-fill shrink-0 text-2xl text-brand-text"
            aria-hidden="true"></i>
-        <div class="tw:min-w-0 tw:flex-1">
-          <p class="tw:mt-0 tw:mb-1 tw:font-semibold tw:text-ink">{% trans "Claim your invitation" %}</p>
-          <p class="tw:mt-0 tw:mb-3 tw:text-sm tw:text-ink-muted">
+        <div class="min-w-0 flex-1">
+          <p class="mt-0 mb-1 font-semibold text-ink">{% trans "Claim your invitation" %}</p>
+          <p class="mt-0 mb-3 text-sm text-ink-muted">
             {% trans "Guests who arrive via the shared link can register or log in here to confirm their spot." %}
           </p>
-          <div class="tw:flex tw:flex-wrap tw:gap-2">
-            <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-brand tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-brand-text tw:no-underline tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+          <div class="flex flex-wrap gap-2">
+            <a class="inline-flex items-center justify-center gap-2 rounded-xl border border-brand bg-transparent px-4 py-2 text-sm font-semibold text-brand-text no-underline transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                href="{% url 'account:register' %}?room_slug={{ current_room.slug }}">{% trans "Create a free account" %}</a>
-            <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-ink-muted tw:no-underline tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+            <a class="inline-flex items-center justify-center gap-2 rounded-xl border border-transparent bg-transparent px-4 py-2 text-sm font-semibold text-ink-muted no-underline transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                href="{% url 'account:login' %}">{% trans "Already have an account?" %}</a>
           </div>
         </div>
@@ -44,18 +44,18 @@
     {% if current_room.has_guests %}
       <form method="post" action="{% url 'account:guest-login' %}">
         {% csrf_token %}
-        <div class="tw:flex tw:flex-col tw:gap-3 tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
+        <div class="flex flex-col gap-3 border-t border-line px-5 py-5 @md:px-6">
           <div>
-            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="userSelect">{% trans "Who are you?" %}</label>
-            <div class="tw:relative">
+            <div class="relative">
               <select id="userSelect"
-                      class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                      class="w-full appearance-none rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-10 pl-4 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                       name="user_id"
                       required>
                 {% for guest_user in current_room.guest_users %}<option value="{{ guest_user.id }}">{{ guest_user.name }}</option>{% endfor %}
               </select>
-              <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
+              <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle"
                  aria-hidden="true"></i>
             </div>
           </div>
@@ -63,13 +63,13 @@
             A native <details>, not a Bootstrap popover: the explanation is real text either way,
             so it needs no visually-hidden duplicate for a screen reader and no bundle to open.
           {% endcomment %}
-          <details class="tw:group">
-            <summary class="tw:inline-flex tw:cursor-pointer tw:list-none tw:items-center tw:gap-1.5 tw:text-sm tw:text-ink-muted tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:[&::-webkit-details-marker]:hidden">
+          <details class="group">
+            <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-sm text-ink-muted transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden">
               {% trans "Not seeing your name?" %}
-              <i class="bi bi-chevron-down tw:transition-transform tw:group-open:rotate-180 tw:motion-reduce:transition-none"
+              <i class="bi bi-chevron-down transition-transform group-open:rotate-180 motion-reduce:transition-none"
                  aria-hidden="true"></i>
             </summary>
-            <p class="tw:mt-2 tw:mb-0 tw:text-sm tw:text-ink-subtle">
+            <p class="mt-2 mb-0 text-sm text-ink-subtle">
               {% blocktrans trimmed %}
                 Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in.
               {% endblocktrans %}
@@ -81,16 +81,16 @@
                  type="hidden"
                  value="{{ current_room.slug }}" />
         </div>
-        <div class="tw:flex tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:justify-end tw:@md:px-6">
-          <button class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:@md:w-auto"
+        <div class="flex border-t border-line px-5 py-4 @md:justify-end @md:px-6">
+          <button class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 @md:w-auto"
                   type="submit">{% trans "That's me!" %}</button>
         </div>
       </form>
     {% else %}
-      <div class="tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
-        <div class="tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken tw:px-4 tw:py-3"
+      <div class="border-t border-line px-5 py-5 @md:px-6">
+        <div class="rounded-2xl border border-line bg-surface-sunken px-4 py-3"
              role="note">
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+          <p class="m-0 text-sm text-ink-muted">
             {% trans "No guests have been invited yet. Create an account to add yourself to the room." %}
           </p>
         </div>

@@ -11,16 +11,16 @@
     toggle_editable   omit for a switch that only displays state and cannot be flipped
     toggle_aria_label accessible name when no visible <label> points at the input
 {% endcomment %}
-<label class="tw:relative tw:inline-flex tw:h-6 tw:w-11 tw:shrink-0 tw:items-center {% if toggle_editable %}tw:cursor-pointer{% endif %}"
+<label class="relative inline-flex h-6 w-11 shrink-0 items-center {% if toggle_editable %}cursor-pointer{% endif %}"
        for="{{ toggle_id }}">
   <input id="{{ toggle_id }}"
          {% if toggle_name %}name="{{ toggle_name }}"{% endif %}
-         class="tw:peer tw:absolute tw:inset-0 tw:z-10 tw:m-0 tw:h-full tw:w-full tw:appearance-none tw:opacity-0 {% if toggle_editable %}tw:cursor-pointer{% endif %}"
+         class="peer absolute inset-0 z-10 m-0 h-full w-full appearance-none opacity-0 {% if toggle_editable %}cursor-pointer{% endif %}"
          type="checkbox"
          role="switch"
          {% if toggle_aria_label %}aria-label="{{ toggle_aria_label }}"{% endif %}
          {% if toggle_checked %}checked{% endif %}
          {% if not toggle_editable %}disabled{% endif %}>
-  <span class="tw:h-6 tw:w-11 tw:rounded-full tw:border tw:border-line-strong tw:bg-surface-sunken tw:transition-colors tw:peer-checked:border-brand tw:peer-checked:bg-brand tw:peer-focus-visible:outline-2 tw:peer-focus-visible:outline-offset-2 tw:peer-focus-visible:outline-brand"></span>
-  <span class="tw:pointer-events-none tw:absolute tw:left-0.5 tw:size-5 tw:rounded-full tw:bg-surface tw:shadow-sm tw:transition-transform tw:peer-checked:translate-x-5"></span>
+  <span class="h-6 w-11 rounded-full border border-line-strong bg-surface-sunken transition-colors peer-checked:border-brand peer-checked:bg-brand peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand"></span>
+  <span class="pointer-events-none absolute left-0.5 size-5 rounded-full bg-surface shadow-sm transition-transform peer-checked:translate-x-5"></span>
 </label>

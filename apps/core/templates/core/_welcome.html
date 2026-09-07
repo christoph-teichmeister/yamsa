@@ -2,16 +2,16 @@
 {% load i18n %}
 {% block content %}
   {% if request.user.is_authenticated %}
-    <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+    <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
       {% if has_room_entries %}
         {% include "room/partials/_room_balance_summary.html" with totals=open_balance_totals %}
         {% include "room/partials/_room_overview_section.html" with entries=open_room_entries title=_("Open") %}
         {% include "room/partials/_room_overview_section.html" with entries=closed_room_entries title=_("Closed") collapsible=True section_id="closedRooms" tile=True %}
         {% include "room/partials/_room_overview_section.html" with entries=other_room_entries title=_("Other") collapsible=True section_id="otherRooms" tile=True %}
       {% else %}
-        <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-8 tw:text-center">
-          <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "No rooms yet" %}</p>
-          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Create a room to start splitting expenses with your friends." %}</p>
+        <div class="rounded-2xl border border-dashed border-line-strong px-6 py-8 text-center">
+          <p class="m-0 font-semibold text-ink">{% trans "No rooms yet" %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Create a room to start splitting expenses with your friends." %}</p>
         </div>
       {% endif %}
       {% url 'room:create' as create_url %}

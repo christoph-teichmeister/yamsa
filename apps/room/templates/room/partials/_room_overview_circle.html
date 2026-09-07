@@ -2,6 +2,6 @@
   The initials disc of an overview card. Smaller than the side menu's .room-circle, which is why
   it carries its own size rather than that class.
 {% endcomment %}
-<span class="tw:flex tw:size-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:text-sm tw:font-semibold tw:uppercase {% if entry.is_closed %}tw:bg-danger-soft tw:text-danger-text{% else %}tw:bg-brand-soft tw:text-brand-text{% endif %}">
+<span class="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold uppercase {% if entry.is_closed %}bg-danger-soft text-danger-text{% else %}bg-brand-soft text-brand-text{% endif %}">
   {{ entry.capitalised_initials }}
 </span>
