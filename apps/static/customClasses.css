@@ -233,7 +233,6 @@
     left: 0;
     background-color: rgba(0, 0, 0, 0.4);
     z-index: 50;
-    pointer-events: none;
     display: none;
 }
 
@@ -241,6 +240,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Swallows clicks for the duration of the request: the dimmed page still resolved every
+       click underneath, so a second click on the same link or submit button sent a second
+       request. htmx drops .htmx-request on load, error, abort and timeout alike, so the block
+       cannot outlive the request. Keyboard activation is not covered - the overlay is a scrim,
+       not a modal. */
+    pointer-events: auto;
+    cursor: progress;
 }
 
 /* Skeleton Screen (placeholder animation) */
