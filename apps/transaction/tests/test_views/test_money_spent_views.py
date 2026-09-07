@@ -127,9 +127,14 @@ class TestMoneySpentViews:
         )
 
         assert response.status_code == http.HTTPStatus.OK
-        totals = {entry["currency"]: entry["total"] for entry in response.context_data["trend_series"]}
+        series = response.context_data["trend_series"]
 
-        assert totals == {room.preferred_currency.sign: 10.0, "Ft": 2500.0}
+        assert {entry["currency"]: entry["total"] for entry in series} == {
+            room.preferred_currency.sign: 10.0,
+            "Ft": 2500.0,
+        }
+        # Totals across currencies are not comparable, so the room's own currency leads.
+        assert series[0]["currency"] == room.preferred_currency.sign
 
     def test_money_spent_trend_view_starts_from_spending_before_the_range(self, client, room, user, guest_user):
         """Regression: the running total restarted at zero whenever the window cut off older expenses."""

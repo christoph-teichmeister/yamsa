@@ -122,7 +122,10 @@ class MoneySpentTrendPartialView(RoomChildTransactionQuerysetMixin, DebtBaseCont
                     "total": float(cumulative),
                 }
             )
-        series.sort(key=lambda entry: (-entry["total"], entry["currency"]))
+        # Totals of different currencies are not comparable, so the room's own currency leads and
+        # the rest follow by sign - it also keeps the brand colour on the series that matters most.
+        preferred_sign = self.request.room.preferred_currency.sign
+        series.sort(key=lambda entry: (entry["currency"] != preferred_sign, entry["currency"]))
 
         return {
             "series": series,
