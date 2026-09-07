@@ -1,7 +1,7 @@
 {% load room_tags i18n %}
 {% trans "Toggle navigation" as offcanvas_toggle_label %}
 {% trans "Copy the rooms URL to your clipboard to send it to your friends" as copy_rooms_url_tooltip %}
-{% trans "Reopen this room" as reopen_room_label %}
+{% trans "Room settings" as room_settings_label %}
 {% trans "Theme" as theme_group_label %}
 {% trans "Light theme" as light_theme_label %}
 {% trans "Dark theme" as dark_theme_label %}
@@ -42,7 +42,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
           {% elif current_room.is_closed %}
             <button class="inline-flex size-10 cursor-pointer items-center justify-center rounded-xl border border-transparent bg-transparent text-2xl text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                     type="button"
-                    aria-label="{{ reopen_room_label }}"
+                    aria-label="{{ room_settings_label }}"
                     hx-get="{% room_url 'room:detail' %}"
                     hx-target="#body"
                     hx-indicator="#body-loading-spinner"
