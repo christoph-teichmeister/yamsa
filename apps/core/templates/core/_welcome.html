@@ -1,24 +1,21 @@
 {% extends "core/base.html" %}
-{% load static i18n %}
+{% load i18n %}
 {% block content %}
   {% if request.user.is_authenticated %}
-    <link rel="stylesheet"
-          href="{% static 'components/shared/page-shell.css' %}">
-    <link rel="stylesheet" href="{% static 'components/room/overview.css' %}">
-    <div class="page-wrap d-flex flex-column gap-4">
+    <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
       {% if has_room_entries %}
         {% include "room/partials/_room_balance_summary.html" with totals=open_balance_totals %}
         {% include "room/partials/_room_overview_section.html" with entries=open_room_entries title=_("Open") %}
         {% include "room/partials/_room_overview_section.html" with entries=closed_room_entries title=_("Closed") collapsible=True section_id="closedRooms" tile=True %}
         {% include "room/partials/_room_overview_section.html" with entries=other_room_entries title=_("Other") collapsible=True section_id="otherRooms" tile=True %}
       {% else %}
-        <div class="page-empty">
-          <p class="fw-semibold">{% trans "No rooms yet" %}</p>
-          <p class="text-muted mb-0">{% trans "Create a room to start splitting expenses with your friends." %}</p>
+        <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-8 tw:text-center">
+          <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "No rooms yet" %}</p>
+          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Create a room to start splitting expenses with your friends." %}</p>
         </div>
       {% endif %}
       {% url 'room:create' as create_url %}
-      {% include "room/partials/_room_create_callout.html" with create_url=create_url %}
-    </div>
+      {% include "room/partials/_room_create_row.html" with create_url=create_url %}
+    </section>
   {% endif %}
 {% endblock content %}

@@ -1,58 +1,37 @@
 {% extends "room/dashboard.html" %}
-{% load static room_tags i18n %}
+{% load room_tags i18n %}
 {% load render_bundle from webpack_loader %}
 {% block tab_content %}
-  <section class="container px-2 px-md-4 px-lg-5 py-4">
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
     <style nonce="{{ csp_nonce }}">
-            #transaction-category-breakdown-chart {
-                min-height: 280px;
-            }
+      /* The swatch colour is data, painted per row by the chart script; the pie's focus ring is
+         on a <path> d3 generates, which no utility can reach from here. */
+      .category-swatch {
+        background-color: var(--category-color, var(--yamsa-ink-subtle));
+      }
 
-            .category-swatch {
-                width: 2.25rem;
-                height: 2.25rem;
-                border-radius: 50%;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                background-color: var(--category-color, #6c757d);
-            }
+      #transaction-category-breakdown-chart {
+        min-height: 280px;
+      }
 
-            /*
-             * A plain flex "justify-content-between" row with only one flex-grow item centers
-             * that item within the *leftover* space, not the full row - so its midpoint shifts
-             * right by half the back-button's width. A symmetric 3-column grid (with an empty
-             * third column matching the first) keeps the title truly centered regardless of
-             * button/label width.
-             */
-            .category-breakdown-header {
-                display: grid;
-                grid-template-columns: 1fr auto 1fr;
-                align-items: center;
-                gap: 0.75rem;
-            }
+      [data-transaction-category-chart] svg path:focus {
+        outline: none;
+      }
 
-            .category-breakdown-header > :first-child {
-                justify-self: start;
-            }
-
-            .category-breakdown-header > :nth-child(2) {
-                justify-self: center;
-            }
-
-            [data-transaction-category-chart] svg path:focus {
-                outline: none;
-            }
-
-            [data-transaction-category-chart] svg path:focus-visible {
-                outline: 2px solid currentColor;
-                outline-offset: 2px;
-            }
+      [data-transaction-category-chart] svg path:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+      }
     </style>
-    <div class="category-breakdown-header mb-4">
+    {% comment %}
+      A symmetric three-column grid with an empty third column: a flex row that centres one
+      grow-item centres it in the *leftover* space, so the title's midpoint shifts right by half
+      the back button.
+    {% endcomment %}
+    <div class="tw:grid tw:grid-cols-[1fr_auto_1fr] tw:items-center tw:gap-3">
       {% trans "Back to transactions" as back_to_transactions_label %}
-      <button type="button"
-              class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center"
+      <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:justify-self-start tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-3 tw:py-2 tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+              type="button"
               aria-label="{{ back_to_transactions_label }}"
               hx-get="{% room_url 'transaction:list' %}#transaction-section"
               hx-target="#body"
@@ -61,101 +40,91 @@
               hx-push-url="true">
         <i class="bi bi-arrow-left" aria-hidden="true"></i>
       </button>
-      <div class="text-center">
-        <p class="text-uppercase text-muted small mb-1">{% trans "Category breakdown" %}</p>
-        <h2 class="fs-4 fw-semibold mb-1">{% trans "All recorded spend" %}</h2>
-        <p class="text-muted small mb-0">
+      <div class="tw:justify-self-center tw:text-center">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Category breakdown" %}</p>
+        <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:text-ink">{% trans "All recorded spend" %}</h1>
+        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
           {% blocktrans with period=category_breakdown_period %}Showing {{ period }}.{% endblocktrans %}
         </p>
       </div>
     </div>
-    <div class="card border-0 rounded-4 shadow-sm">
-      <div class="card-body">
-        {% if category_breakdown_by_currency %}
-          {% for breakdown in category_breakdown_by_currency %}
-            <div class="row g-4">
-              <div class="col-12">
-                <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
-                  <div>
-                    <p class="text-uppercase text-muted small mb-1">{% trans "Currency breakdown" %}</p>
-                    <h3 class="fs-5 fw-semibold mb-1">
-                      {{ breakdown.currency.name }}
-                      <span class="text-muted small text-uppercase ms-2">{{ breakdown.currency.code }}</span>
-                    </h3>
-                    <p class="text-muted small mb-0">{{ breakdown.currency.sign }}</p>
-                  </div>
-                  <span class="text-muted small">
-                    {% blocktrans count category_count=breakdown.categories|length %}
-                                            {{ category_count }} category
-                                        {% plural %}
-                                            {{ category_count }} categories
-                                        {% endblocktrans %}
-                  </span>
-                </div>
+    {% if category_breakdown_by_currency %}
+      {% for breakdown in category_breakdown_by_currency %}
+        <div class="tw:@container tw:flex tw:flex-col tw:gap-4 tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5">
+          <div class="tw:flex tw:flex-wrap tw:items-start tw:justify-between tw:gap-3">
+            <div class="tw:min-w-0">
+              <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Currency breakdown" %}</p>
+              <p class="tw:mt-1 tw:mb-0 tw:font-semibold tw:text-ink">
+                {{ breakdown.currency.name }}
+                <span class="tw:ml-2 tw:text-sm tw:font-normal tw:text-ink-subtle tw:uppercase">{{ breakdown.currency.code }}</span>
+              </p>
+              <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{{ breakdown.currency.sign }}</p>
+            </div>
+            <span class="tw:shrink-0 tw:text-sm tw:text-ink-muted">
+              {% blocktrans count category_count=breakdown.categories|length %}{{ category_count }} category{% plural %}{{ category_count }} categories{% endblocktrans %}
+            </span>
+          </div>
+          <div class="tw:grid tw:grid-cols-1 tw:gap-4 tw:@2xl:grid-cols-[7fr_5fr]">
+            <div class="tw:flex tw:items-center tw:justify-center"
+                 id="{{ breakdown.chart_container_id }}"
+                 data-transaction-category-chart
+                 data-transaction-category-chart-dataset-id="{{ breakdown.chart_data_id }}"></div>
+            {{ breakdown.chart_data|json_script:breakdown.chart_data_id }}
+            <div class="tw:min-w-0">
+              <div class="tw:mb-1 tw:flex tw:items-center tw:justify-between tw:gap-2">
+                <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "Legend" %}</p>
+                <span class="tw:text-sm tw:text-ink-muted">
+                  {% blocktrans count category_count=breakdown.categories|length %}{{ category_count }} category{% plural %}{{ category_count }} categories{% endblocktrans %}
+                </span>
               </div>
-              <div class="col-12 col-lg-7">
-                <div id="{{ breakdown.chart_container_id }}"
-                     class="d-flex align-items-center justify-content-center"
-                     data-transaction-category-chart
-                     data-transaction-category-chart-dataset-id="{{ breakdown.chart_data_id }}"></div>
-                {{ breakdown.chart_data|json_script:breakdown.chart_data_id }}
-              </div>
-              <div class="col-12 col-lg-5">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <p class="fw-semibold mb-0">{% trans "Legend" %}</p>
-                  <span class="text-muted small">
-                    {% blocktrans count category_count=breakdown.categories|length %}
-                                            {{ category_count }} category
-                                        {% plural %}
-                                            {{ category_count }} categories
-                                        {% endblocktrans %}
-                  </span>
-                </div>
-                <p class="text-muted small mb-3">{% trans "Tap a category to see its transactions." %}</p>
-                <div class="list-group list-group-flush">
-                  {% for category in breakdown.categories %}
-                    {% blocktrans asvar show_category_transactions_label with category_name=category.name %}Show transactions for {{ category_name }}{% endblocktrans %}
-                    {% comment %}
+              <p class="tw:mt-0 tw:mb-3 tw:text-sm tw:text-ink-muted">{% trans "Tap a category to see its transactions." %}</p>
+              <div class="tw:divide-y tw:divide-line" data-category-legend>
+                {% for category in breakdown.categories %}
+                  {% blocktrans asvar show_category_transactions_label with category_name=category.name %}Show transactions for {{ category_name }}{% endblocktrans %}
+                  {% comment %}
                     An anchor, not a div+role=button: Enter activates it natively, so the row needs
                     neither a keyup trigger nor hx-on - both of which htmx compiles with new Function()
                     and the project's CSP (script-src without unsafe-eval) refuses to run.
-                    {% endcomment %}
-                    <a class="list-group-item list-group-item-action border-0 px-0 py-2 d-flex justify-content-between align-items-center gap-2"
-                       data-category-legend-item
-                       data-category-slug="{{ category.slug }}"
-                       title="{{ show_category_transactions_label }}"
-                       href="{{ category.filter_url }}"
-                       hx-get="{{ category.filter_url }}"
-                       hx-target="#body"
-                       hx-indicator="#body-loading-spinner"
-                       hx-swap="morph:innerHTML"
-                       hx-push-url="true">
-                      <div class="d-flex align-items-center gap-3">
-                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white category-swatch"
-                              data-category-color="{{ category.color|default:'#6c757d' }}">{{ category.emoji }}</span>
-                        <div>
-                          <p class="mb-0 fw-semibold">{{ category.name }}</p>
-                          <p class="text-muted small mb-0">{{ category.slug|title }}</p>
-                        </div>
-                      </div>
-                      <div class="d-flex align-items-center gap-2">
-                        <span class="fw-semibold">{{ category.total_amount|format_with_thousands }}{{ breakdown.currency.sign }}</span>
-                        <i class="bi bi-chevron-right text-muted small" aria-hidden="true"></i>
-                      </div>
-                    </a>
-                  {% endfor %}
-                </div>
+                  {% endcomment %}
+                  <a class="tw:flex tw:items-center tw:justify-between tw:gap-2 tw:py-2 tw:text-inherit tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+                     data-category-legend-item
+                     data-category-slug="{{ category.slug }}"
+                     title="{{ show_category_transactions_label }}"
+                     href="{{ category.filter_url }}"
+                     hx-get="{{ category.filter_url }}"
+                     hx-target="#body"
+                     hx-indicator="#body-loading-spinner"
+                     hx-swap="morph:innerHTML"
+                     hx-push-url="true">
+                    <span class="tw:flex tw:min-w-0 tw:items-center tw:gap-3">
+                      <span class="category-swatch tw:flex tw:size-9 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:text-white"
+                            data-category-color="{{ category.color|default:'' }}"
+                            aria-hidden="true">{{ category.emoji }}</span>
+                      <span class="tw:min-w-0">
+                        <span class="tw:block tw:truncate tw:font-semibold tw:text-ink">{{ category.name }}</span>
+                        <span class="tw:block tw:truncate tw:text-sm tw:text-ink-muted"
+                              data-category-slug-label>{{ category.slug|title }}</span>
+                      </span>
+                    </span>
+                    <span class="tw:flex tw:shrink-0 tw:items-center tw:gap-2">
+                      <span class="tw:font-semibold tw:tabular-nums tw:whitespace-nowrap tw:text-ink"
+                            data-category-amount>{{ category.total_amount|format_with_thousands }}{{ breakdown.currency.sign }}</span>
+                      <i class="bi bi-chevron-right tw:text-ink-subtle" aria-hidden="true"></i>
+                    </span>
+                  </a>
+                {% endfor %}
               </div>
             </div>
-            {% if not forloop.last %}<hr class="my-4">{% endif %}
-          {% endfor %}
-        {% else %}
-          <div class="text-center text-muted small">
-            {% trans "No tracked expenses yet. Add a transaction to populate the breakdown." %}
           </div>
-        {% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-8 tw:text-center">
+        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+          {% trans "No tracked expenses yet. Add a transaction to populate the breakdown." %}
+        </p>
       </div>
-    </div>
+    {% endif %}
   </section>
   {% render_bundle "d3" %}
   <script nonce="{{ csp_nonce }}">
@@ -245,7 +214,7 @@
                     .attr("y1", 0)
                     .attr("x2", 0)
                     .attr("y2", 6)
-                    .attr("stroke", "#fff")
+                    .style("stroke", "var(--yamsa-surface)")
                     .attr("stroke-width", 2);
 
                 const slices = chartGroup
@@ -256,7 +225,7 @@
                     // The bucket carries no slug; hatching keeps it apart from a category that
                     // happens to be painted the same colour.
                     .attr("fill", d => (d.data.slug === null ? `url(#${bucketPatternId})` : d.data.color))
-                    .attr("stroke", "#fff")
+                    .style("stroke", "var(--yamsa-surface)")
                     .attr("stroke-width", 2)
                     .attr("cursor", "pointer")
                     .attr("tabindex", 0)

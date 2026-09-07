@@ -25,4 +25,6 @@ class LoginPage(BasePage):
         self.page.wait_for_url(lambda url: self.path not in url)
 
     def expect_auth_failed_error_visible(self):
-        expect(self.page.locator(".alert-danger")).to_be_visible()
+        # By id, not by a framework class and not by role: the shell's toast is a role="alert" too,
+        # so a role lookup would be ambiguous the moment one is on screen.
+        expect(self.page.locator("#login-error")).to_be_visible()

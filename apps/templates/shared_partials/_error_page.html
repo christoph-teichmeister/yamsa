@@ -1,0 +1,25 @@
+{% comment %}
+  The centred card the error and stand-in pages share.
+
+  Centred by min-height rather than absolute positioning: #base-content already carries the
+  shell's own padding, which an absolutely placed box would ignore and then overlap. Any action
+  belongs in the same centred column - below the card, not pinned to the bottom of the viewport.
+
+  Parameters:
+    error_emoji           the glyph above the headline (required)
+    error_headline        what happened (required)
+    error_hint            optional line below it
+    error_note            optional second, quieter line
+    error_action_template optional template rendered under the card
+{% endcomment %}
+<section class="tw:@container tw:mx-auto tw:flex tw:min-h-[60vh] tw:w-full tw:max-w-3xl tw:flex-col tw:items-center tw:justify-center tw:gap-4">
+  <div class="tw:w-full tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:px-6 tw:py-10 tw:text-center tw:shadow-card">
+    <p class="tw:m-0 tw:text-5xl tw:leading-none" aria-hidden="true">{{ error_emoji }}</p>
+    <h1 class="tw:mt-4 tw:mb-0 tw:text-xl tw:font-semibold tw:text-ink">{{ error_headline }}</h1>
+    {% if error_hint %}<p class="tw:mt-2 tw:mb-0 tw:text-ink-muted">{{ error_hint }}</p>{% endif %}
+    {% if error_note %}<p class="tw:mt-1 tw:mb-0 tw:text-sm tw:text-ink-subtle">{{ error_note }}</p>{% endif %}
+  </div>
+  {% if error_action_template %}
+    {% include error_action_template %}
+  {% endif %}
+</section>

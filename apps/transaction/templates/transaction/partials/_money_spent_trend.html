@@ -1,50 +1,58 @@
 {% load static room_tags i18n %}
+{% comment %}
+The chart's own SVG rules stay in a stylesheet: d3 generates .trend-line-path, .trend-line-area,
+.trend-line-dot and .trend-series, so no utility can reach them from here.
+{% endcomment %}
 <link rel="stylesheet"
       href="{% static 'components/transaction/money-spent-trend.css' %}">
-<div class="card timeline-card shadow-sm mt-4">
-  <div class="card-body">
-    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
-      <div>
-        <p class="text-muted small mb-1">{% trans "Spending over time" %}</p>
-        <h5 class="mb-1">{% trans "Expense build-up" %}</h5>
-        <p class="text-muted small mb-0">
-          {% blocktrans with period=trend_period_label|lower start=trend_range_start|date:"SHORT_DATE_FORMAT" end=trend_range_end|date:"SHORT_DATE_FORMAT" %}
-                                Showing {{ period }} ({{ start }} – {{ end }}).
-                            {% endblocktrans %}
-        </p>
+<div class="tw:@container tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5">
+  <div class="tw:flex tw:flex-col tw:gap-3 tw:@2xl:flex-row tw:@2xl:justify-between">
+    <div class="tw:min-w-0">
+      <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Spending over time" %}</p>
+      <p class="tw:mt-0.5 tw:mb-1 tw:font-semibold tw:text-ink">{% trans "Expense build-up" %}</p>
+      <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+        {% blocktrans trimmed with period=trend_period_label|lower start=trend_range_start|date:"SHORT_DATE_FORMAT" end=trend_range_end|date:"SHORT_DATE_FORMAT" %}
+          Showing {{ period }} ({{ start }} – {{ end }}).
+        {% endblocktrans %}
+      </p>
+    </div>
+    <div class="tw:flex tw:flex-col tw:items-start tw:gap-2 tw:@2xl:items-end">
+      {% comment %}
+        One segmented control, so the ranges read as one choice. The wide option gets three shares
+        of the track because its label is a date range rather than a single letter.
+      {% endcomment %}
+      <div class="tw:flex tw:w-full tw:overflow-hidden tw:rounded-full tw:border tw:border-line tw:bg-surface-sunken"
+           role="group"
+           aria-label="{% trans "Spending trend ranges" %}">
+        {% for option in period_options %}
+          <button class="tw:inline-flex tw:min-w-0 tw:cursor-pointer tw:items-center tw:justify-center tw:border-0 tw:px-3.5 tw:py-1.5 tw:text-[0.65rem] tw:tracking-[0.08em] tw:uppercase tw:transition tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand {% if option.is_wide %}tw:flex-3 tw:text-[0.6rem] tw:tracking-[0.04em]{% else %}tw:flex-1{% endif %} {% if option.active %}tw:bg-brand tw:text-on-brand{% else %}tw:bg-transparent tw:text-ink-muted tw:hover:bg-surface-hover{% endif %}"
+                  type="button"
+                  title="{{ option.label }}"
+                  aria-pressed="{% if option.active %}true{% else %}false{% endif %}"
+                  hx-get="{% room_url 'debt:money-spent-trend' %}?period={{ option.key }}"
+                  hx-target="#spending-trend"
+                  hx-swap="innerHTML"
+                  hx-indicator="#spending-trend-indicator">{{ option.button_label }}</button>
+        {% endfor %}
       </div>
-      <div class="d-flex flex-column align-items-start align-items-lg-end gap-2">
-        <div class="range-toggle"
-             role="group"
-             aria-label="{% trans "Spending trend ranges" %}">
-          {% for option in period_options %}
-            <button type="button"
-                    class="range-btn {% if option.is_wide %}range-btn-wide{% endif %} {% if option.active %}active{% endif %}"
-                    title="{{ option.label }}"
-                    hx-get="{% room_url 'debt:money-spent-trend' %}?period={{ option.key }}"
-                    hx-target="#spending-trend"
-                    hx-swap="innerHTML"
-                    hx-indicator="#spending-trend-indicator">{{ option.button_label }}</button>
-          {% endfor %}
-        </div>
-        <div class="htmx-indicator d-flex align-items-center gap-2 text-muted small"
-             id="spending-trend-indicator">
-          <div class="spinner-border spinner-border-sm text-primary-emphasis"
-               role="status"></div>
-          {% trans "Updating..." %}
-        </div>
+      {# Switched by display, not the shared .htmx-indicator opacity rule, so it keeps no empty box. #}
+      <div id="spending-trend-indicator"
+           class="tw:hidden tw:items-center tw:gap-2 tw:text-sm tw:text-ink-muted tw:[&.htmx-request]:flex">
+        <span class="tw:size-4 tw:animate-spin tw:rounded-full tw:border-2 tw:border-line tw:border-t-brand"
+              aria-hidden="true"></span>
+        {% trans "Updating..." %}
       </div>
     </div>
-    {% if trend_series %}
-      <div class="timeline-chart mt-4">
-        <div id="trend-line-chart" class="trend-line-chart"></div>
-      </div>
-      {{ trend_chart_data|json_script:"trend-chart-data" }}
-    {% else %}
-      <div class="timeline-empty mt-3">
-        <p class="fw-semibold mb-1">{% trans "No data available" %}</p>
-        <p class="text-muted small mb-0">{% trans "Add a few expenses to unlock the timeline." %}</p>
-      </div>
-    {% endif %}
   </div>
+  {% if trend_series %}
+    <div class="tw:relative tw:mt-4 tw:w-full">
+      <div id="trend-line-chart" class="trend-line-chart"></div>
+    </div>
+    {{ trend_chart_data|json_script:"trend-chart-data" }}
+  {% else %}
+    <div class="tw:mt-3 tw:rounded-2xl tw:border tw:border-dashed tw:border-line-strong tw:px-6 tw:py-6 tw:text-center">
+      <p class="tw:m-0 tw:font-semibold tw:text-ink">{% trans "No data available" %}</p>
+      <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Add a few expenses to unlock the timeline." %}</p>
+    </div>
+  {% endif %}
 </div>

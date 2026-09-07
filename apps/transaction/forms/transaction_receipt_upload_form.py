@@ -13,13 +13,10 @@ ACCEPTED_RECEIPT_TYPES = ",".join(RECEIPT_ACCEPTED_CONTENT_TYPES)
 
 
 class TransactionReceiptUploadForm(forms.Form):
+    # No class here: _receipts_section.html renders the input, which is what lets it be sr-only
+    # (focusable, so the label carries a focus ring) rather than display:none.
     receipt = forms.FileField(
-        widget=forms.ClearableFileInput(
-            attrs={
-                "class": "d-none",
-                "accept": ACCEPTED_RECEIPT_TYPES,
-            }
-        ),
+        widget=forms.ClearableFileInput(attrs={"accept": ACCEPTED_RECEIPT_TYPES}),
         required=True,
         help_text="Upload a PDF or image (max 5 MB).",
     )

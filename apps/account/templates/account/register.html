@@ -1,96 +1,77 @@
-{% extends "core/base.html" %}
-{% load static i18n %}
-{% block content %}
-  <div class="auth-page-shell">
-    <div class="container px-2 px-md-4 px-lg-5 my-0">
-      <div class="row g-4 justify-content-center">
-        <div class="col-lg-9">
-          <div class="card auth-card shadow-sm overflow-hidden border-0">
-            <div class="row g-0 align-items-stretch">
-              <div class="col-md-5 auth-hero d-flex flex-column justify-content-between p-4 p-md-5">
-                <div>
-                  <p class="text-uppercase text-white-50 small mb-2">{% trans "Join yamsa" %}</p>
-                  <h2 class="h4 fw-semibold text-white mb-3">{% trans "Create shared clarity in your rooms" %}</h2>
-                  <p class="text-white-50 mb-0">
-                    {% blocktrans %}Registering takes a minute and keeps every room, bill, and settlement in sync.{% endblocktrans %}
-                  </p>
-                </div>
-                <div class="mt-4">
-                  <small class="text-white-50 d-block mb-2">{% trans "Already have an account?" %}</small>
-                  <a class="btn btn-outline-light btn-sm fw-semibold hero-cta htmx-a w-100 text-center text-white"
-                     href="{% url 'account:login' %}"
-                     hx-get="{% url 'account:login' %}"
-                     hx-target="#body"
-                     hx-indicator="#body-loading-spinner"
-                     hx-swap="morph:innerHTML"
-                     hx-push-url="true">{% trans "Login here!" %}</a>
-                </div>
-              </div>
-              <div class="col-md-7 bg-body">
-                <form hx-post="{% url 'account:register' %}"
-                      hx-target="#body"
-                      hx-indicator="#body-loading-spinner"
-                      hx-swap="morph:innerHTML"
-                      hx-push-url="true"
-                      class="auth-form p-4 p-md-5 d-flex flex-column justify-content-between">
-                  {% csrf_token %}
-                  <div>
-                    <div class="mb-4">
-                      <p class="text-muted small mb-1">{% trans "Start now" %}</p>
-                      <h1 class="h3 fw-semibold mb-0">{% trans "Register" %}</h1>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label" for="name">{% trans "Name" %}</label>
-                      <input id="name"
-                             name="name"
-                             type="text"
-                             class="form-control"
-                             required
-                             autocomplete="name">
-                      {% for error_message in form.errors.name.data %}
-                        <small class="text-danger-emphasis d-block mt-1">{{ error_message.message }}</small>
-                      {% endfor %}
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label" for="email">{% trans "Email address" %}</label>
-                      <input id="email"
-                             name="email"
-                             type="email"
-                             class="form-control"
-                             required
-                             autocomplete="email"
-                             value="{% if form.initial.email %}{{ form.initial.email }}{% endif %}">
-                      {% for error_message in form.errors.email.data %}
-                        <small class="text-danger-emphasis d-block mt-1">{{ error_message.message }}</small>
-                      {% endfor %}
-                    </div>
-                    {% include "account/shared_partials/password_input_component.html" with password_autocomplete="new-password" %}
-                    <div class="form-group" hidden>
-                      <label for="id" class="form-label">{% trans "User ID" %}</label>
-                      <input id="id"
-                             name="id"
-                             type="number"
-                             class="form-control"
-                             value="{% if form.initial.id %}{{ form.initial.id }}{% elif not request.user.is_anonymous %}{{ request.user.id }}{% endif %}" />
-                    </div>
-                    <div class="form-group" hidden>
-                      <label for="is_guest" class="form-label">{% trans "Is Guest" %}</label>
-                      <input id="is_guest" name="is_guest" type="checkbox" class="form-control" />
-                    </div>
-                    <input id="room_slug"
-                           name="room_slug"
-                           type="hidden"
-                           value="{{ shared_room_slug|default:'' }}" />
-                  </div>
-                  <div>
-                    <button type="submit" class="btn btn-primary w-100 fw-semibold py-2">{% trans "Register now" %}</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+{% extends "account/_auth_base.html" %}
+{% load i18n %}
+{% load render_bundle from webpack_loader %}
+{% block auth_hero %}
+  <div>
+    <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-white/70 tw:uppercase">{% trans "Join yamsa" %}</p>
+    <h2 class="tw:mt-2 tw:mb-3 tw:text-xl tw:font-semibold tw:text-white">{% trans "Create shared clarity in your rooms" %}</h2>
+    <p class="tw:m-0 tw:text-sm tw:text-white/70">
+      {% blocktrans %}Registering takes a minute and keeps every room, bill, and settlement in sync.{% endblocktrans %}
+    </p>
   </div>
-{% endblock content %}
+  {% trans "Already have an account?" as have_account_label %}
+  {% trans "Login here!" as login_label %}
+  {% url 'account:login' as login_url %}
+  {% include "account/partials/_auth_hero_cta.html" with cta_url=login_url cta_label=login_label cta_hint=have_account_label %}
+{% endblock auth_hero %}
+{% block auth_form %}
+  {# `action` next to `hx-post` so the form still submits without the bundle. #}
+  <form class="tw:flex tw:flex-col tw:gap-4"
+        method="post"
+        action="{% url 'account:register' %}"
+        hx-post="{% url 'account:register' %}"
+        hx-target="#body"
+        hx-indicator="#body-loading-spinner"
+        hx-swap="morph:innerHTML"
+        hx-push-url="true">
+    {% csrf_token %}
+    <div>
+      <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Start now" %}</p>
+      <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Register" %}</h1>
+    </div>
+    <div>
+      <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+             for="name">{% trans "Name" %}</label>
+      <input id="name"
+             class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+             type="text"
+             name="name"
+             autocomplete="name"
+             required>
+      {% for error_message in form.errors.name.data %}
+        <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+      {% endfor %}
+    </div>
+    <div>
+      <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+             for="email">{% trans "Email address" %}</label>
+      <input id="email"
+             class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+             type="email"
+             name="email"
+             value="{{ form.initial.email|default_if_none:'' }}"
+             autocomplete="email"
+             required>
+      {% for error_message in form.errors.email.data %}
+        <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message.message }}</p>
+      {% endfor %}
+    </div>
+    {% include "account/partials/_password_field.html" with field_id="password" field_label=form.fields.password.label field_errors=form.errors.password field_autocomplete="new-password" %}
+    {% comment %}
+      Decided by the request, not by the person filling the form in: the id comes from the session
+      and the room from the invite link. Hidden inputs rather than a hidden fieldset with labels -
+      there is nothing here for anyone to read.
+    {% endcomment %}
+    <input id="id"
+           name="id"
+           type="hidden"
+           value="{% if form.initial.id %}{{ form.initial.id }}{% elif not request.user.is_anonymous %}{{ request.user.id }}{% endif %}" />
+    <input id="room_slug"
+           name="room_slug"
+           type="hidden"
+           value="{{ shared_room_slug|default:'' }}" />
+    <button class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+            type="submit">{% trans "Register now" %}</button>
+  </form>
+  {% render_bundle "password-visibility" attrs="defer" %}
+{% endblock auth_form %}

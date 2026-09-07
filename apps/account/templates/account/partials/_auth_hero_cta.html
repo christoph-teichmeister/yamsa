@@ -1,0 +1,20 @@
+{% comment %}
+  The hero's one link out. Two variants, both standing on brand-strong: the filled one carries the
+  page you are more likely to want next, the outlined one the way back.
+
+  Parameters:
+    cta_url    where it goes (required)
+    cta_label  its text (required)
+    cta_hint   optional line above it
+    cta_filled truthy for the white, filled variant
+{% endcomment %}
+<div>
+  {% if cta_hint %}<p class="tw:mt-0 tw:mb-2 tw:text-sm tw:text-white/70">{{ cta_hint }}</p>{% endif %}
+  <a class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-full tw:px-6 tw:py-2 tw:text-sm tw:font-semibold tw:tracking-[0.04em] tw:no-underline tw:transition tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-white {% if cta_filled %}tw:border tw:border-white tw:bg-white tw:text-brand-strong tw:hover:bg-white/90{% else %}tw:border tw:border-white/70 tw:bg-transparent tw:text-white tw:hover:bg-white/10{% endif %}"
+     href="{{ cta_url }}"
+     hx-get="{{ cta_url }}"
+     hx-target="#body"
+     hx-indicator="#body-loading-spinner"
+     hx-swap="morph:innerHTML"
+     hx-push-url="true">{{ cta_label }}</a>
+</div>

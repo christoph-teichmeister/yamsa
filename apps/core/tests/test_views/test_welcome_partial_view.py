@@ -17,6 +17,16 @@ from apps.room.tests.factories import RoomFactory
 from apps.transaction.models import ParentTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 
+
+def _entries_grids(content: str) -> list[str]:
+    """The utility strings of every room-overview-entries container, in document order."""
+    return re.findall(r'class="room-overview-entries([^"]*)"', content)
+
+
+def _entries_layout(grid: str) -> str:
+    return "tile" if " tw:grid-cols-2" in grid else "row"
+
+
 pytestmark = pytest.mark.django_db
 
 
@@ -212,11 +222,13 @@ class TestWelcomePartialView:
     def test_the_closed_section_hides_its_rooms_behind_a_toggle(self, authenticated_client, room, closed_room):
         content = authenticated_client.get(reverse("core:welcome")).content.decode()
 
-        # django_minify_html strips the quotes around attribute values, hence the optional ones.
-        toggle = re.search(r'<button[^>]*aria-controls="?closedRooms"?[^>]*>', content)
+        # A native <details>: the missing `open` attribute is what keeps the section shut, and the
+        # summary names the container it reveals. django_minify_html strips the quotes around
+        # attribute values, hence the optional ones.
+        toggle = re.search(r'<summary[^>]*aria-controls="?closedRooms"?[^>]*>', content)
         assert toggle is not None
-        assert re.search(r'aria-expanded="?false"?', toggle.group())
-        assert re.search(r'class="room-overview-entries collapse" id="?closedRooms"?', content)
+        assert "<details open" not in content
+        assert re.search(r'class="room-overview-entries[^"]*" id="?closedRooms"?', content)
         assert closed_room.name in content
 
     def test_the_closed_toggle_names_how_many_rooms_it_hides(self, authenticated_client, closed_room, user, guest_user):
@@ -230,10 +242,10 @@ class TestWelcomePartialView:
     def test_the_other_section_hides_its_rooms_behind_a_toggle(self, superuser_htmx_client, room, closed_room):
         content = superuser_htmx_client.get(reverse("core:welcome")).content.decode()
 
-        toggle = re.search(r'<button[^>]*aria-controls="?otherRooms"?[^>]*>', content)
+        toggle = re.search(r'<summary[^>]*aria-controls="?otherRooms"?[^>]*>', content)
         assert toggle is not None
-        assert re.search(r'aria-expanded="?false"?', toggle.group())
-        assert re.search(r'class="room-overview-entries collapse" id="?otherRooms"?', content)
+        assert "<details open" not in content
+        assert re.search(r'class="room-overview-entries[^"]*" id="?otherRooms"?', content)
         assert "Other (2)" in content
 
     def test_the_open_rooms_are_not_collapsed(self, authenticated_client, room, closed_room):
@@ -257,8 +269,9 @@ class TestWelcomePartialView:
         content = authenticated_client.get(reverse("core:welcome")).content.decode()
 
         assert content.count("room-overview-card-tile") == 1
-        assert content.count("class=col-6") == 1
-        assert 'class="col-12 col-md-6"' in content
+        # One card per row for the open section, two per row for the tile sections. The breakpoint
+        # is a container query, so the open section reads "tw:grid-cols-1" and the tiles do not.
+        assert [_entries_layout(grid) for grid in _entries_grids(content)] == ["row", "tile"]
 
     def test_every_foreign_room_is_listed(self, superuser_htmx_client, user, guest_user):
         rooms = [RoomFactory(created_by=user) for _ in range(12)]
@@ -276,8 +289,7 @@ class TestWelcomePartialView:
 
         # Both rooms belong to someone else, so the superuser sees them in the "Other" section alone.
         assert content.count("room-overview-card-tile") == 2
-        assert content.count("class=col-6") == 2
-        assert 'class="col-12 col-md-6"' not in content
+        assert [_entries_layout(grid) for grid in _entries_grids(content)] == ["tile"]
 
     def test_a_foreign_tile_keeps_naming_its_status(self, superuser_htmx_client, room, closed_room):
         content = superuser_htmx_client.get(reverse("core:welcome")).content.decode()

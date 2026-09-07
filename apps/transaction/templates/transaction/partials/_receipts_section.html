@@ -1,107 +1,120 @@
 {% load room_tags i18n %}
 <div id="transaction-receipts-section">
-  <div class="card shadow-sm border-0 mb-3">
-    <div class="card-header bg-transparent border-0 d-flex align-items-center justify-content-between">
-      <div>
-        <p class="transaction-label mb-1">{% trans "Receipts" %}</p>
-        <p class="mb-0 text-muted small">{% trans "Stored documents are linked to this transaction." %}</p>
+  <div class="tw:@container tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:p-5">
+    <div class="tw:mb-4 tw:flex tw:items-start tw:justify-between tw:gap-2">
+      <div class="tw:min-w-0">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Receipts" %}</p>
+        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Stored documents are linked to this transaction." %}</p>
       </div>
-      <span class="badge bg-body-secondary text-body-emphasis">{{ receipts|length }}</span>
+      <span class="tw:inline-flex tw:shrink-0 tw:items-center tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:tabular-nums tw:text-ink">{{ receipts|length }}</span>
     </div>
-    <div class="card-body">
-      <div class="row row-cols-2 g-3 mb-3">
-        {% for receipt in receipts %}
-          <div class="col">
-            <article class="card h-100 rounded-4 border-0 shadow-sm overflow-hidden position-relative">
-              {% if receipt.uploaded_by_id == request.user.id %}
-                <form hx-post="{% room_url 'transaction:receipt-delete' receipt_pk=receipt.id %}"
-                      hx-target="#transaction-receipts-section"
-                      hx-swap="outerHTML"
-                      hx-indicator="#body-loading-spinner"
-                      hx-confirm="{% trans "Permanently delete this receipt?" %}"
-                      class="position-absolute top-0 end-0 m-1 z-2">
-                  {% csrf_token %}
-                  <button type="submit"
-                          class="btn btn-sm btn-danger shadow-sm rounded-circle d-flex align-items-center justify-content-center p-2 receipt-delete-button"
-                          aria-label="{% trans "Delete receipt" %}"
-                          title="{% trans "Delete receipt" %}">
-                    <i class="bi bi-trash fs-6 receipt-delete-icon"></i>
-                  </button>
-                </form>
-              {% endif %}
-              <a class="d-flex flex-column h-100 text-decoration-none text-body"
-                 href="{{ receipt.file.url }}"
-                 target="_blank"
-                 rel="noreferrer noopener"
-                 download="{{ receipt.original_name }}">
-                {% if receipt.content_type|slice:":5" == "image" %}
-                  <div class="ratio ratio-4x3 bg-body-tertiary">
-                    <img class="w-100 h-100 receipt-preview-img"
-                         src="{{ receipt.file.url }}"
-                         alt="{{ receipt.original_name }}"
-                         width="400"
-                         height="300" />
-                  </div>
-                {% else %}
-                  <div class="ratio ratio-4x3 bg-body-tertiary overflow-hidden">
-                    <object class="w-100 h-100 border-0"
-                            data="{{ receipt.file.url }}#view=FitH&toolbar=0&navpanes=0"
-                            type="{{ receipt.content_type }}"
-                            aria-label="{% trans "PDF receipt preview" %}">
-                      <div class="w-100 h-100 d-flex align-items-center justify-content-center">
-                        <i class="bi bi-file-earmark-pdf fs-1 text-muted" aria-hidden="true"></i>
-                      </div>
-                    </object>
-                  </div>
-                {% endif %}
-                <div class="card-body d-flex flex-column gap-1 p-3">
-                  <p class="fw-semibold mb-1 text-break">{{ receipt.original_name }}</p>
-                  <p class="text-muted small mb-1">
-                    {% blocktrans with uploader=receipt.uploaded_by.name %}
-                                            Uploaded by {{ uploader }}
-                                        {% endblocktrans %}
-                  </p>
-                  <p class="text-muted small mb-0">{{ receipt.size|filesizeformat }}</p>
-                </div>
-              </a>
-            </article>
-          </div>
-        {% empty %}
-          <div class="col-12">
-            <p class="text-muted small mb-3">{% trans "No receipts have been attached to this transaction yet." %}</p>
-          </div>
-        {% endfor %}
-      </div>
-      {% if current_room.is_closed %}
-        <div class="alert alert-warning small" role="alert">
-          {% trans "Receipts cannot be uploaded after the room has been closed." %}
-        </div>
-      {% else %}
-        {% with receipt_field=receipt_upload_form.receipt %}
-          {% with receipt_input_id=receipt_field.id_for_label %}
-            <form hx-post="{% room_url 'transaction:receipt-upload' transaction_pk=parent_transaction.id %}"
+    <div class="tw:grid tw:grid-cols-2 tw:gap-3">
+      {% for receipt in receipts %}
+        <article class="tw:relative tw:flex tw:h-full tw:flex-col tw:overflow-hidden tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken">
+          {% if receipt.uploaded_by_id == request.user.id %}
+            <form class="tw:absolute tw:top-1 tw:right-1 tw:z-2"
+                  hx-post="{% room_url 'transaction:receipt-delete' receipt_pk=receipt.id %}"
                   hx-target="#transaction-receipts-section"
                   hx-swap="outerHTML"
                   hx-indicator="#body-loading-spinner"
-                  hx-trigger="change from:#{{ receipt_input_id }}"
-                  enctype="multipart/form-data"
-                  class="d-flex flex-column flex-sm-row gap-2 align-items-center mt-3">
+                  hx-confirm="{% trans "Permanently delete this receipt?" %}">
               {% csrf_token %}
-              {{ receipt_field }}
-              <label class="btn btn-outline-primary d-flex align-items-center gap-2"
-                     for="{{ receipt_input_id }}">
-                <i class="bi bi-file-earmark-arrow-up"></i>
-                {% trans "Upload receipt" %}
-              </label>
-              {% if receipt_field.errors %}<div class="invalid-feedback d-block small">{{ receipt_field.errors.0 }}</div>{% endif %}
-              {% if receipt_upload_form.non_field_errors %}
-                <div class="invalid-feedback d-block small">{{ receipt_upload_form.non_field_errors.0 }}</div>
-              {% endif %}
-              <small class="text-muted small mb-0">{% trans "PDF or PNG/JPEG/WebP/GIF (max 5 MB)." %}</small>
+              <button class="tw:inline-flex tw:size-8 tw:cursor-pointer tw:items-center tw:justify-center tw:rounded-full tw:border tw:border-danger-text/60 tw:bg-surface tw:text-danger-text tw:shadow-card tw:transition tw:hover:bg-danger-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+                      type="submit"
+                      aria-label="{% trans "Delete receipt" %}"
+                      title="{% trans "Delete receipt" %}">
+                <i class="bi bi-trash" aria-hidden="true"></i>
+              </button>
             </form>
-          {% endwith %}
-        {% endwith %}
-      {% endif %}
+          {% endif %}
+          <a class="tw:flex tw:h-full tw:flex-col tw:text-inherit tw:no-underline tw:focus-visible:outline-2 tw:focus-visible:-outline-offset-2 tw:focus-visible:outline-brand"
+             href="{{ receipt.file.url }}"
+             target="_blank"
+             rel="noreferrer noopener"
+             download="{{ receipt.original_name }}">
+            {% if receipt.content_type|slice:":5" == "image" %}
+              <div class="tw:aspect-4/3 tw:w-full tw:bg-surface-hover">
+                <img class="tw:size-full tw:object-cover"
+                     src="{{ receipt.file.url }}"
+                     alt="{{ receipt.original_name }}"
+                     width="400"
+                     height="300" />
+              </div>
+            {% else %}
+              <div class="tw:aspect-4/3 tw:w-full tw:overflow-hidden tw:bg-surface-hover">
+                <object class="tw:size-full tw:border-0"
+                        data="{{ receipt.file.url }}#view=FitH&toolbar=0&navpanes=0"
+                        type="{{ receipt.content_type }}"
+                        aria-label="{% trans "PDF receipt preview" %}">
+                  <div class="tw:flex tw:size-full tw:items-center tw:justify-center">
+                    <i class="bi bi-file-earmark-pdf tw:text-3xl tw:text-ink-subtle"
+                       aria-hidden="true"></i>
+                  </div>
+                </object>
+              </div>
+            {% endif %}
+            <div class="tw:flex tw:flex-col tw:gap-1 tw:p-3">
+              <p class="tw:m-0 tw:font-semibold tw:break-words tw:text-ink">{{ receipt.original_name }}</p>
+              <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+                {% blocktrans trimmed with uploader=receipt.uploaded_by.name %}
+                  Uploaded by {{ uploader }}
+                {% endblocktrans %}
+              </p>
+              <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">{{ receipt.size|filesizeformat }}</p>
+            </div>
+          </a>
+        </article>
+      {% empty %}
+        <p class="tw:col-span-2 tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "No receipts have been attached to this transaction yet." %}</p>
+      {% endfor %}
     </div>
+    {% if current_room.is_closed %}
+      <div class="tw:mt-4 tw:flex tw:items-start tw:gap-2 tw:rounded-2xl tw:border tw:border-warning-text/40 tw:bg-warning-soft tw:px-4 tw:py-3"
+           role="note">
+        <i class="bi bi-info-circle-fill tw:mt-0.5 tw:shrink-0 tw:text-warning-text"
+           aria-hidden="true"></i>
+        <p class="tw:m-0 tw:text-sm tw:text-warning-text">{% trans "Receipts cannot be uploaded after the room has been closed." %}</p>
+      </div>
+    {% else %}
+      {% with receipt_field=receipt_upload_form.receipt %}
+        {% with receipt_input_id=receipt_field.id_for_label %}
+          {% comment %}
+            The file input itself stays as the form renders it and is driven by the label instead:
+            hx-trigger fires on its change, so there is no submit button to style.
+          {% endcomment %}
+          <form class="tw:mt-4 tw:flex tw:flex-col tw:gap-2 tw:@md:flex-row tw:@md:items-center"
+                hx-post="{% room_url 'transaction:receipt-upload' transaction_pk=parent_transaction.id %}"
+                hx-target="#transaction-receipts-section"
+                hx-swap="outerHTML"
+                hx-indicator="#body-loading-spinner"
+                hx-trigger="change from:#{{ receipt_input_id }}"
+                enctype="multipart/form-data">
+            {% csrf_token %}
+            {% comment %}
+              The label wraps its own input, the way the category chips do: sr-only rather than
+              hidden keeps it focusable, and being a descendant is what lets the label render the
+              focus ring with tw:has-focus-visible. The id stays for hx-trigger's `from:` selector.
+            {% endcomment %}
+            <label class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-brand tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-brand-text tw:transition tw:hover:bg-brand-soft tw:has-focus-visible:outline-2 tw:has-focus-visible:outline-offset-2 tw:has-focus-visible:outline-brand">
+              <input id="{{ receipt_input_id }}"
+                     class="tw:sr-only"
+                     type="file"
+                     name="{{ receipt_field.html_name }}"
+                     accept="{{ receipt_field.field.widget.attrs.accept }}"
+                     required>
+              <i class="bi bi-file-earmark-arrow-up" aria-hidden="true"></i>
+              {% trans "Upload receipt" %}
+            </label>
+            <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">{% trans "PDF or PNG/JPEG/WebP/GIF (max 5 MB)." %}</p>
+            {% for error in receipt_field.errors %}
+              <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ error }}</p>
+            {% endfor %}
+            {% for error in receipt_upload_form.non_field_errors %}
+              <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ error }}</p>
+            {% endfor %}
+          </form>
+        {% endwith %}
+      {% endwith %}
+    {% endif %}
   </div>
 </div>

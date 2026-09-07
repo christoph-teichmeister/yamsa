@@ -16,6 +16,33 @@ Migrated so far:
 - `transaction/list.html` with `transaction/partials/_transaction_batch.html` — the expense feed
 - `transaction/create.html` and `transaction/edit.html`, with
   `transaction/partials/_category_field.html` and `transaction/child_transaction_create.html`
+- `debt/list.html` with `debt/partials/_debt_row_actions.html` — the debt list, its two readings
+  and the per-row settle actions
+- `debt/settle.html` — the confirmation behind "Mark as paid"
+- `importer/upload.html` and `importer/preview.html` — the two steps of an import
+- `403.html`, `404.html`, `500.html` and `core/_maintenance_or_offline.html` — the error and
+  stand-in pages, all four through `shared_partials/_error_page.html`
+- `news/list.html` with `shared_partials/news_card.html`, `shared_partials/_news_card_content.html`
+  and `shared_partials/news_batch.html` — the activity timeline
+- `core/_welcome.html` with the `room/partials/_room_overview_*` partials,
+  `room/partials/_room_balance_summary.html` and `room/partials/_room_create_row.html` — the room
+  overview
+- `room/partials/_detail_who_are_you.html` — what a room shows someone who is not a member of it
+- `account/login.html`, `account/register.html` and `account/forgot_password.html` — the three auth
+  pages, all through `account/_auth_base.html`
+- `account/list.html` with `shared_partials/user_card.html` and the two
+  `shared_partials/invitation_email_*.html` — the room's people
+- `account/invite_guest.html` and `account/payment_reminder_unsubscribe.html`
+- `transaction/detail.html` with `transaction/partials/_receipts_section.html` — one expense, its
+  split and its documents
+- `transaction/category_breakdown.html` and `debt`'s `_money_spent_on_room.html` /
+  `_money_spent_trend.html` — the three chart pages
+- `transaction/category_manager.html` with `transaction/partials/_room_category_creation_form.html`
+  and `_room_category_list.html` — the room's categories
+
+Everything left is the shell: `core/base.html`, the side menu and its room list,
+`shared_partials/toast.html`, the three loader partials and `room/partials/_dashboard_nav.html`.
+`mail/email_base.html` has its own inline CSS for mail clients and is not Bootstrap at all.
 
 Everything else is still Bootstrap and follows the Bootstrap notes in
 [`architecture.md`](architecture.md) § Design System & UI Concepts.
@@ -396,6 +423,10 @@ a button next to the field would shrink the field on the narrow content column. 
 both labels as data attributes so `password-visibility.js` can swap them without hard-coding
 translated text.
 
+Every password input in the app is this partial now — login, register and change-password. Its
+`field_name` parameter exists for login alone, whose input must keep Django's own `id_password`
+while still posting as `password`, because `e2e/pages/login_page.py` fills it by that id.
+
 **Badge**
 
 ```
@@ -437,6 +468,11 @@ tw:has-focus-visible:outline-offset-2 tw:has-focus-visible:outline-brand
 transaction form open without any bundle having run, and they stay in the DOM either way, so they
 post with the form. The summary hides both marker forms (`tw:list-none` plus
 `tw:[&::-webkit-details-marker]:hidden`) and the chevron turns with `tw:group-open:rotate-180`.
+
+The room overview's collapsed groups and the guest page's "Not seeing your name?" hint are the same
+element. Two things the overview's version shows: the `<summary>` keeps the `.room-overview-toggle`
+class and `aria-controls` the e2e suite clicks, and it carries **no** `aria-expanded` — the details
+element owns that state, and a static attribute would only ever be a stale copy of it.
 
 ## A feed inside a sheet
 
@@ -494,6 +530,27 @@ A dismissible notice carries `data-dismissable` and its close button `data-dismi
   edit form
 - `transaction/partials/_transaction_batch.html` — one batch of the expense feed and its
   reveal-triggered link to the next
+- `debt/partials/_debt_row_actions.html` — what one debt row offers: settled badge, PayPal link,
+  settle button, or its bare status
+- `shared_partials/_error_page.html` — the centred card of the error and stand-in pages;
+  `error_action_template` is the optional slot under it, which only the offline page fills
+- `shared_partials/_news_card_content.html` — the inside of a news card, shared by its linked and
+  its dead variant, which differ only in the box around it
+- `room/partials/_room_overview_section.html` — one group of the overview, collapsible or not
+- `room/partials/_room_overview_card.html` with `_room_overview_circle.html`,
+  `_room_overview_amounts.html` and `_room_overview_status_badge.html` — one room, as a row or as
+  a tile
+- `room/partials/_room_balance_summary.html` — the open-balance tiles above the overview
+- `room/partials/_room_create_row.html` — the overview's "new room" affordance
+- `account/_auth_base.html` — the auth pages' shell. Template inheritance rather than an include,
+  because both halves are content and an include cannot take two slots
+- `account/partials/_auth_hero_cta.html` — the hero's one link out, filled or outlined
+- `account/partials/_people_action.html` — one of the two ways to add somebody to a room. It takes
+  the *view name*, not the URL: `{% room_url %}` rewrites its own token to append the room slug and
+  so cannot be assigned with `as`
+- `transaction/partials/_spend_bar.html` — one proportional bar of the spending overview, in three
+  tones. Its fill is an inner element with an inline width rather than a `::after` and a custom
+  property: a percentage is data, and this way the track and the fill are both plain utilities
 - `transaction/child_transaction_create.html` — one more share on the edit form; it must mirror
   that template's split rows down to the `.split-row` hook
 
@@ -510,3 +567,65 @@ and the lock itself sets only real state — `readOnly`, `aria-disabled`, `disab
 
 Icons stay on bootstrap-icons (`<i class="bi bi-…" aria-hidden="true">`); that font is independent of
 Bootstrap's CSS and outlives the migration.
+
+## Class hooks the tests hold on to
+
+A semantic class survives the migration wherever a test or a script addresses it; the styling moves
+to utilities beside it. `.transaction-row` is the first of them, and the room overview is the
+largest: `.room-overview-card`, `-name`, `-meta`, `-meta-text`, `-activity`, `-amount(-label|-value)`,
+`-toggle`, `-toggle-icon`, `-entries`, `-status`, `.room-overview-card-tile`, `.room-balance-summary`,
+`.room-balance-tile.owing|.receiving`, `.room-balance-value` and `.room-status-badge` are what
+`e2e/pages/dashboard_page.py` and `apps/core/tests/test_views/test_welcome_partial_view.py` look for.
+None of them carries CSS of its own any more.
+
+The transaction pages keep three more: `.transaction-meta` (the first one must name the category —
+`e2e/pages/transaction_detail_page.py`), `.transaction-breakdown-item` and `.graph-label`. The
+category legend moved the other way: its tests used to select `.list-group-item`, `p.text-muted.small`
+and `span.fw-semibold`, and now read `[data-category-legend]`, `[data-category-legend-item]`,
+`[data-category-slug-label]` and `[data-category-amount]` — a hook that says what it is beats a
+class that says how it looks.
+
+`.room-status-badge` is the one that still has a rule in `customClasses.css`, because the side menu's
+room rows use it too. That rule hides the badge below an 18 rem container — written for the menu
+panel, but the overview card declared a container as well, so the badge disappeared on exactly the
+tiles it is load-bearing for. The migrated badge sets its own `tw:inline-flex`, which wins on order,
+and it is visible at every card width now.
+
+## Two partials for one affordance, until the side menu follows
+
+`room/partials/_room_create_row.html` (Tailwind, the overview) and
+`room/partials/_room_create_callout.html` (`.room-entry`, the side menu) are the same "new room"
+affordance in the two design systems the app currently has. Merging them back into one partial is
+part of migrating the side menu, not something to do earlier: a Tailwind row dropped into the menu's
+room list would not match the rows above it.
+
+Three page stylesheets went away with these pages and have no replacement:
+`components/shared/page-shell.css`, `components/room/overview.css` and `components/news/list.css`.
+The auth helpers (`.auth-card`, `.auth-hero`, `.auth-form`, `.hero-cta`, `.auth-page-shell`) and
+`.htmx-a` went out of `base.css` and `customClasses.css` with the auth pages, and
+`account/list.html` lost the inline `<style>` block that held every `.people-*` rule.
+
+## The auth hero is the one surface that does not follow the theme
+
+`brand-strong` is now in `@theme inline` as `tw:*-brand-strong`, and the hero's two-stop gradient is
+an `@utility auth-hero-surface` in `tailwind.css` — a utility rather than a second token because its
+far end is a value of that gradient and of nothing else, and this file stays the only place a colour
+is written down. Everything standing on the hero takes `tw:text-white` (or `tw:text-white/70`)
+outright: the ground is the same on both themes, so a theme-following token would be wrong there.
+
+## What a chart page keeps in CSS
+
+Three pages draw with d3, and utilities cannot reach an element a script creates. So the rule is:
+the box around a chart is utilities, what d3 generates is a stylesheet.
+
+- `components/transaction/money-spent-trend.css` is down to `.trend-series` and the three
+  `.trend-line-*` rules. Its card, its range switch and its empty state are utilities in
+  `_money_spent_trend.html` now.
+- `category_breakdown.html` keeps a short inline `<style>`: the legend swatch's colour is *data*
+  (`navigation.js` writes `--category-color` from `data-category-color`), and the pie's focus ring
+  sits on a `<path>` d3 appends.
+
+Both had a literal `#fff` where they meant the card they sit on — the slice separators and the line
+chart's dots. Those are `var(--yamsa-surface)` now, so they read as holes in the shape on either
+theme rather than white lines on a dark card. And a d3 colour has to be set with `.style()`, never
+`.attr()` — see § Colors.

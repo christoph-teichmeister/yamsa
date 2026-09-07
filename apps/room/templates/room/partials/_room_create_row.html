@@ -1,0 +1,24 @@
+{% load i18n %}
+{% comment %}
+  The "new room" affordance of the overview, in the overview's own design language.
+
+  Deliberately not room/partials/_room_create_callout.html: that one is a row of the side menu's
+  still-Bootstrap room list and takes its look from .room-entry there. Once the side menu is
+  migrated the two collapse back into one partial.
+{% endcomment %}
+<button class="tw:flex tw:w-full tw:cursor-pointer tw:items-center tw:gap-3 tw:rounded-2xl tw:border tw:border-dashed tw:border-brand/45 tw:bg-transparent tw:px-3.5 tw:py-3 tw:text-left tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+        type="button"
+        hx-get="{{ create_url }}"
+        hx-target="#body"
+        hx-indicator="#body-loading-spinner"
+        hx-swap="morph:innerHTML"
+        hx-push-url="true">
+  <span class="tw:flex tw:size-10 tw:shrink-0 tw:items-center tw:justify-center tw:rounded-full tw:bg-brand-soft tw:text-lg tw:font-semibold tw:text-brand-text"
+        aria-hidden="true">+</span>
+  <span class="tw:min-w-0 tw:flex-1">
+    <span class="tw:block tw:truncate tw:font-semibold tw:text-ink">{% trans "New room" %}</span>
+    <span class="tw:block tw:truncate tw:text-sm tw:text-ink-subtle">{% trans "Start a new group with friends" %}</span>
+  </span>
+  <i class="bi bi-chevron-right tw:shrink-0 tw:text-ink-subtle"
+     aria-hidden="true"></i>
+</button>

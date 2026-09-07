@@ -1,6 +1,6 @@
 {% load room_tags i18n l10n %}
 {% if debt.settled %}
-  <span class="badge bg-success-subtle text-success-emphasis d-inline-flex align-items-center gap-1">
+  <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-success-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-success-text">
     <i class="bi bi-piggy-bank-fill" aria-hidden="true"></i>
     {% trans "Settled" %}
   </span>
@@ -10,7 +10,7 @@
       paypal.me parses the amount itself, so it must stay unlocalised - a German viewer would
       otherwise send "42,50" into the URL and land on a broken PayPal page.
     {% endcomment %}
-    <a class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-2"
+    <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-brand tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-brand-text tw:no-underline tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
        href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
        target="_blank"
        rel="noopener">
@@ -18,8 +18,9 @@
       {% trans "Pay with PayPal" %}
     </a>
   {% endif %}
-  <button type="button"
-          class="btn btn-sm btn-success d-inline-flex align-items-center gap-2"
+  {# Status-toned rather than brand-filled, the way the room's close button is: settling is a state change, not the page's primary action. #}
+  <button class="tw:inline-flex tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-success-text/60 tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:whitespace-nowrap tw:text-success-text tw:transition tw:hover:bg-success-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+          type="button"
           hx-get="{% room_url 'debt:settle' pk=debt.id %}"
           hx-target="#body"
           hx-indicator="#body-loading-spinner"
@@ -33,5 +34,5 @@
     Whose debt it is now comes from the row's own wording ("<name> owes you"), so a debt the
     viewer cannot settle only needs its status - not a second sentence repeating the name.
   {% endcomment %}
-  <span class="badge bg-secondary-subtle text-secondary-emphasis">{% trans "Open" %}</span>
+  <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">{% trans "Open" %}</span>
 {% endif %}

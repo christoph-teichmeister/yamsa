@@ -1,39 +1,35 @@
 {% extends "core/base.html" %}
-{% load static i18n %}
+{% load i18n %}
 {% block title %}
   yamsa | {% trans "Payment reminders" %}
 {% endblock title %}
 {% block content %}
-  <section class="container px-2 px-md-4 px-lg-5 my-5">
-    <div class="row justify-content-center">
-      <div class="col-12 col-md-10 col-lg-8">
-        <div class="card border-0 shadow-sm rounded-4">
-          <div class="card-body text-center p-5">
-            {% if success %}
-              <span class="badge bg-success-subtle text-success-emphasis text-uppercase mb-3">{% trans "Unsubscribed" %}</span>
-              <h1 class="h4 fw-semibold mb-3">{% trans "You’re no longer receiving payment reminders." %}</h1>
-            {% else %}
-              <span class="badge bg-danger-subtle text-danger-emphasis text-uppercase mb-3">{% trans "Oops" %}</span>
-              <h1 class="h4 fw-semibold mb-3">{% trans "We couldn’t process the unsubscribe." %}</h1>
-            {% endif %}
-            <p class="text-muted mb-4">{{ message }}</p>
-            {% if user_email %}
-              <p class="text-muted small mb-4">{% trans "Email" %}: {{ user_email }}</p>
-            {% endif %}
-            <div class="d-flex justify-content-center gap-3 flex-wrap">
-              <a class="btn btn-primary px-4" href="{% url 'account:login' %}">{% trans "Sign in" %}</a>
-              {% if request.user.is_authenticated %}
-                <a class="btn btn-outline-secondary px-4"
-                   href="{% url 'account:detail' pk=request.user.id %}">{% trans "Account settings" %}</a>
-              {% else %}
-                <p class="small text-muted mt-4 mb-0">
-                  {% trans "You can always re-enable reminders from your notification settings." %}
-                </p>
-              {% endif %}
-            </div>
-          </div>
-        </div>
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+    <div class="tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:px-6 tw:py-10 tw:text-center tw:shadow-card">
+      {% if success %}
+        <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-success-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-success-text tw:uppercase">{% trans "Unsubscribed" %}</span>
+        <h1 class="tw:mt-3 tw:mb-3 tw:text-xl tw:font-semibold tw:text-ink">{% trans "You’re no longer receiving payment reminders." %}</h1>
+      {% else %}
+        <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-danger-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-danger-text tw:uppercase">{% trans "Oops" %}</span>
+        <h1 class="tw:mt-3 tw:mb-3 tw:text-xl tw:font-semibold tw:text-ink">{% trans "We couldn’t process the unsubscribe." %}</h1>
+      {% endif %}
+      <p class="tw:mt-0 tw:mb-4 tw:text-ink-muted">{{ message }}</p>
+      {% if user_email %}
+        <p class="tw:mt-0 tw:mb-4 tw:text-sm tw:text-ink-subtle">{% trans "Email" %}: {{ user_email }}</p>
+      {% endif %}
+      <div class="tw:flex tw:flex-wrap tw:justify-center tw:gap-3">
+        <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:no-underline tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+           href="{% url 'account:login' %}">{% trans "Sign in" %}</a>
+        {% if request.user.is_authenticated %}
+          <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink tw:no-underline tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+             href="{% url 'account:detail' pk=request.user.id %}">{% trans "Account settings" %}</a>
+        {% endif %}
       </div>
+      {% if not request.user.is_authenticated %}
+        <p class="tw:mt-4 tw:mb-0 tw:text-sm tw:text-ink-subtle">
+          {% trans "You can always re-enable reminders from your notification settings." %}
+        </p>
+      {% endif %}
     </div>
   </section>
 {% endblock content %}

@@ -67,6 +67,8 @@ function showPasskeyLoginError(msg) {
     const el = document.getElementById("passkey-login-error");
     if (el) {
         el.textContent = msg;
-        el.classList.remove("d-none");
+        // The attribute, not a class: the box is hidden with `hidden` so it stays invisible
+        // whatever the stylesheet does - the same way passkey-register.js reveals its result.
+        el.hidden = false;
     }
 }

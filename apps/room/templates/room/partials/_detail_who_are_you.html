@@ -1,96 +1,100 @@
 {% load i18n %}
-<div class="row justify-content-center">
-  <div class="col-12 col-lg-10 col-xl-8">
-    <div class="card shadow-sm border-0 rounded-4 px-3 px-md-5 py-5">
-      <div class="card-body">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-4">
-          <div>
-            <p class="text-uppercase text-muted small mb-1">{% trans "Guest access" %}</p>
-            <h2 class="fw-semibold mb-1">{{ current_room.name }}</h2>
-          </div>
-          <span class="badge rounded-pill {{ current_room.is_closed|yesno:'bg-danger-subtle text-danger-emphasis,bg-success-subtle text-success-emphasis' }} py-2 px-3">
-            {% if current_room.is_closed %}
-              <i class="bi bi-lock-fill me-1"></i>{% trans "Closed" %}
-            {% else %}
-              <i class="bi bi-share-fill me-1"></i>{% trans "Open to guests" %}
-            {% endif %}
+<section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+  <div class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card">
+    <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
+      <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Guest access" %}</p>
+      <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:break-words tw:text-ink">{{ current_room.name }}</h1>
+      <div class="tw:mt-3 tw:flex tw:flex-wrap tw:gap-2">
+        {% if current_room.is_closed %}
+          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-danger-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-danger-text">
+            <i class="bi bi-lock-fill" aria-hidden="true"></i>
+            {% trans "Closed" %}
           </span>
-        </div>
-        <p class="text-muted small mb-3">
-          {% blocktrans trimmed %}
-            Maybe register? A free account keeps your rooms, reminders, and history together.
-          {% endblocktrans %}
-        </p>
-        <div class="alert alert-primary rounded-4 px-4 py-3 mb-4 d-flex flex-column flex-md-row align-items-start gap-3">
-          <div class="fs-3 text-primary-emphasis">
-            <i class="bi bi-person-plus-fill"></i>
-          </div>
-          <div class="flex-grow-1">
-            <p class="fw-semibold mb-1">{% trans "Claim your invitation" %}</p>
-            <p class="mb-2 small text-muted">
-              {% trans "Guests who arrive via the shared link can register or log in here to confirm their spot." %}
-            </p>
-            <div class="d-flex flex-wrap gap-2 justify-content-center">
-              <a class="btn btn-sm btn-outline-light px-3"
-                 href="{% url 'account:register' %}?room_slug={{ current_room.slug }}">{% trans "Create a free account" %}</a>
-              <a class="btn btn-sm btn-link px-3" href="{% url 'account:login' %}">{% trans "Already have an account?" %}</a>
-            </div>
-          </div>
-        </div>
-        {% if current_room.has_guests %}
-          <form action="{% url 'account:guest-login' %}" method="post">
-            {% csrf_token %}
-            <div class="mb-4 form-group">
-              <div class="row px-2 mt-2 align-items-center">
-                <div class="col">
-                  <h5 class="mb-0">
-                    <label for="userSelect" class="form-label">{% trans "Who are you?" %}</label>
-                  </h5>
-                </div>
-              </div>
-              <select name="user_id"
-                      class="form-control form-select mb-1"
-                      id="userSelect"
-                      required>
-                {% for guest_user in current_room.guest_users %}
-                  <option value="{{ guest_user.id }}">{{ guest_user.name }}</option>
-                {% endfor %}
-              </select>
-              <div class="text-muted small d-flex justify-content-start px-2 mb-3">
-                <button type="button"
-                        class="cursor-pointer border-0 bg-transparent p-0 small text-muted d-inline-flex align-items-center gap-1"
-                        data-bs-toggle="popover"
-                        data-bs-placement="top"
-                        data-bs-content="{% blocktrans trimmed %}Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in.{% endblocktrans %}"
-                        aria-describedby="guest-access-popover-desc">
-                  {% trans "Not seeing your name?" %} <i class="bi bi-question-circle"></i>
-                </button>
-                <span id="guest-access-popover-desc" class="visually-hidden">
-                  {% blocktrans trimmed %}
-                    Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in.
-                  {% endblocktrans %}
-                </span>
-              </div>
-            </div>
-            <div class="form-group" hidden>
-              <label for="room_slug" class="form-label">{% trans "Room" %}</label>
-              <input id="room_slug"
-                     name="room_slug"
-                     type="text"
-                     class="form-control"
-                     required
-                     value="{{ current_room.slug }}" />
-            </div>
-            <div class="d-flex justify-content-center">
-              <button type="submit" class="btn btn-primary px-4 py-2">{% trans "That's me!" %}</button>
-            </div>
-          </form>
         {% else %}
-          <div class="alert alert-info rounded-4 px-4 py-3 mb-3 text-muted small">
-            {% trans "No guests have been invited yet. Create an account to add yourself to the room." %}
-          </div>
+          <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-success-soft tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-success-text">
+            <i class="bi bi-share-fill" aria-hidden="true"></i>
+            {% trans "Open to guests" %}
+          </span>
         {% endif %}
       </div>
     </div>
+    <div class="tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
+      <p class="tw:mt-0 tw:mb-3 tw:text-sm tw:text-ink-muted">
+        {% blocktrans trimmed %}
+          Maybe register? A free account keeps your rooms, reminders, and history together.
+        {% endblocktrans %}
+      </p>
+      <div class="tw:flex tw:flex-col tw:gap-3 tw:rounded-2xl tw:border tw:border-brand/40 tw:bg-brand-soft tw:px-4 tw:py-4 tw:@md:flex-row tw:@md:items-start">
+        <i class="bi bi-person-plus-fill tw:shrink-0 tw:text-2xl tw:text-brand-text"
+           aria-hidden="true"></i>
+        <div class="tw:min-w-0 tw:flex-1">
+          <p class="tw:mt-0 tw:mb-1 tw:font-semibold tw:text-ink">{% trans "Claim your invitation" %}</p>
+          <p class="tw:mt-0 tw:mb-3 tw:text-sm tw:text-ink-muted">
+            {% trans "Guests who arrive via the shared link can register or log in here to confirm their spot." %}
+          </p>
+          <div class="tw:flex tw:flex-wrap tw:gap-2">
+            <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-brand tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-brand-text tw:no-underline tw:transition tw:hover:bg-brand-soft tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+               href="{% url 'account:register' %}?room_slug={{ current_room.slug }}">{% trans "Create a free account" %}</a>
+            <a class="tw:inline-flex tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-transparent tw:px-4 tw:py-2 tw:text-sm tw:font-semibold tw:text-ink-muted tw:no-underline tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+               href="{% url 'account:login' %}">{% trans "Already have an account?" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% if current_room.has_guests %}
+      <form method="post" action="{% url 'account:guest-login' %}">
+        {% csrf_token %}
+        <div class="tw:flex tw:flex-col tw:gap-3 tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="userSelect">{% trans "Who are you?" %}</label>
+            <div class="tw:relative">
+              <select id="userSelect"
+                      class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                      name="user_id"
+                      required>
+                {% for guest_user in current_room.guest_users %}<option value="{{ guest_user.id }}">{{ guest_user.name }}</option>{% endfor %}
+              </select>
+              <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
+                 aria-hidden="true"></i>
+            </div>
+          </div>
+          {% comment %}
+            A native <details>, not a Bootstrap popover: the explanation is real text either way,
+            so it needs no visually-hidden duplicate for a screen reader and no bundle to open.
+          {% endcomment %}
+          <details class="tw:group">
+            <summary class="tw:inline-flex tw:cursor-pointer tw:list-none tw:items-center tw:gap-1.5 tw:text-sm tw:text-ink-muted tw:transition tw:hover:text-ink tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:[&::-webkit-details-marker]:hidden">
+              {% trans "Not seeing your name?" %}
+              <i class="bi bi-chevron-down tw:transition-transform tw:group-open:rotate-180 tw:motion-reduce:transition-none"
+                 aria-hidden="true"></i>
+            </summary>
+            <p class="tw:mt-2 tw:mb-0 tw:text-sm tw:text-ink-subtle">
+              {% blocktrans trimmed %}
+                Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in.
+              {% endblocktrans %}
+            </p>
+          </details>
+          {# The room the guest is claiming a seat in; hidden because it is decided by the URL, not by them. #}
+          <input id="room_slug"
+                 name="room_slug"
+                 type="hidden"
+                 value="{{ current_room.slug }}" />
+        </div>
+        <div class="tw:flex tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:justify-end tw:@md:px-6">
+          <button class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:@md:w-auto"
+                  type="submit">{% trans "That's me!" %}</button>
+        </div>
+      </form>
+    {% else %}
+      <div class="tw:border-t tw:border-line tw:px-5 tw:py-5 tw:@md:px-6">
+        <div class="tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken tw:px-4 tw:py-3"
+             role="note">
+          <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+            {% trans "No guests have been invited yet. Create an account to add yourself to the room." %}
+          </p>
+        </div>
+      </div>
+    {% endif %}
   </div>
-</div>
+</section>

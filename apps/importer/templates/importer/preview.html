@@ -1,241 +1,249 @@
 {% extends "core/base.html" %}
 {% load i18n %}
 {% block content %}
-  <div class="container-fluid py-4 px-2 px-md-4 px-lg-5">
-    <form action="{% url 'importer:preview' %}" method="post">
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-3xl tw:flex-col tw:gap-4">
+    <form class="tw:@container tw:overflow-hidden tw:rounded-3xl tw:border tw:border-line tw:bg-surface tw:shadow-card"
+          action="{% url 'importer:preview' %}"
+          method="post">
       {% csrf_token %}
       <input type="hidden" name="token" value="{{ import_token }}">
-      <div class="row g-4">
-        <div class="col-12 col-lg-7">
-          <div class="card border-0 shadow-sm rounded-4 mb-4">
-            <div class="card-body">
-              <h1 class="h3 fw-semibold mb-1">{% trans "Check the import" %}</h1>
-              <p class="text-muted small mb-0">
-                {% blocktrans with source=source_label %}Read from your {{ source }} export.{% endblocktrans %}
-              </p>
-            </div>
-          </div>
-          <div class="card border-0 shadow-sm rounded-4 mb-4">
-            <div class="card-body">
-              <h2 class="h6 fw-semibold mb-1">{% trans "Who is who?" %}</h2>
-              <p class="text-muted small">
-                {% trans "Mark exactly one row as yourself. People you already share a room with are preselected so nobody is created twice." %}
-              </p>
-              {% for person, choice_field, name_field in form.person_rows %}
-                <div class="row g-2 align-items-center mb-2">
-                  <div class="col-12 col-md-4">
-                    <span class="fw-semibold">{{ person }}</span>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <select name="{{ choice_field.html_name }}"
-                            id="{{ choice_field.id_for_label }}"
-                            aria-label="{% blocktrans with name=person %}Assignment for {{ name }}{% endblocktrans %}"
-                            class="form-select form-select-sm">
-                      {% for value, label in choice_field.field.choices %}
-                        <option value="{{ value }}"
-                                {% if choice_field.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
-                          {{ label }}
-                        </option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <input type="text"
-                           name="{{ name_field.html_name }}"
-                           id="{{ name_field.id_for_label }}"
-                           aria-label="{% blocktrans with name=person %}Guest name for {{ name }}{% endblocktrans %}"
-                           class="form-control form-control-sm"
-                           value="{{ name_field.value|default_if_none:'' }}"
-                           placeholder="{% trans 'Guest name' %}">
-                    <div class="form-text">{% trans "Only used for a new guest." %}</div>
-                  </div>
-                  {% for error_message in choice_field.errors %}
-                    <div class="col-12">
-                      <small class="text-danger-emphasis">{{ error_message }}</small>
-                    </div>
-                  {% endfor %}
-                  {% for error_message in name_field.errors %}
-                    <div class="col-12">
-                      <small class="text-danger-emphasis">{{ error_message }}</small>
-                    </div>
-                  {% endfor %}
-                </div>
-              {% endfor %}
-            </div>
-          </div>
-          <div class="card border-0 shadow-sm rounded-4 mb-4">
-            <div class="card-body">
-              <h2 class="h6 fw-semibold mb-1">{% trans "Categories" %}</h2>
-              <p class="text-muted small">
-                {% trans "Each category from the file is mapped onto one of yours — or created as a new category in this room." %}
-              </p>
-              {% for category, choice_field, name_field, emoji_field in form.category_rows %}
-                <div class="row g-2 align-items-center mb-2">
-                  <div class="col-12 col-md-4">
-                    <span class="fw-semibold">{{ category.label }}</span>
-                    <span class="text-muted small">({{ category.transaction_count }})</span>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <select name="{{ choice_field.html_name }}"
-                            id="{{ choice_field.id_for_label }}"
-                            aria-label="{% blocktrans with name=category.label %}Target category for {{ name }}{% endblocktrans %}"
-                            class="form-select form-select-sm">
-                      {% for value, label in choice_field.field.choices %}
-                        <option value="{{ value }}"
-                                {% if choice_field.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
-                          {{ label }}
-                        </option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                  <div class="col-8 col-md-3">
-                    <input type="text"
-                           name="{{ name_field.html_name }}"
-                           id="{{ name_field.id_for_label }}"
-                           aria-label="{% blocktrans with name=category.label %}New category name for {{ name }}{% endblocktrans %}"
-                           class="form-control form-control-sm"
-                           value="{{ name_field.value|default_if_none:'' }}"
-                           placeholder="{% trans 'Category name' %}">
-                  </div>
-                  <div class="col-4 col-md-1">
-                    <input type="text"
-                           name="{{ emoji_field.html_name }}"
-                           id="{{ emoji_field.id_for_label }}"
-                           aria-label="{% blocktrans with name=category.label %}Emoji for {{ name }}{% endblocktrans %}"
-                           class="form-control form-control-sm text-center"
-                           value="{{ emoji_field.value|default_if_none:'' }}"
-                           placeholder="🏷️"
-                           maxlength="10">
-                  </div>
-                  {% for error_message in choice_field.errors %}
-                    <div class="col-12">
-                      <small class="text-danger-emphasis">{{ error_message }}</small>
-                    </div>
-                  {% endfor %}
-                  {% for error_message in name_field.errors %}
-                    <div class="col-12">
-                      <small class="text-danger-emphasis">{{ error_message }}</small>
-                    </div>
-                  {% endfor %}
-                  {% for error_message in emoji_field.errors %}
-                    <div class="col-12">
-                      <small class="text-danger-emphasis">{{ error_message }}</small>
-                    </div>
-                  {% endfor %}
-                  <div class="col-12">
-                    <div class="form-text">{% trans "Name and emoji are only used when creating a new category." %}</div>
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-lg-5">
-          <div class="card border-0 shadow-sm rounded-4 mb-4">
-            <div class="card-body">
-              <h2 class="h6 fw-semibold mb-3">{% trans "New room" %}</h2>
-              <div class="mb-3">
-                <label class="form-label" for="{{ form.room_name.id_for_label }}">{{ form.room_name.label }}</label>
-                <input type="text"
-                       name="{{ form.room_name.html_name }}"
-                       class="form-control{% if form.room_name.errors %} is-invalid{% endif %}"
-                       id="{{ form.room_name.id_for_label }}"
-                       value="{{ form.room_name.value|default_if_none:'' }}"
-                       maxlength="100"
-                       required>
-                {% for error_message in form.room_name.errors %}<div class="invalid-feedback d-block">{{ error_message }}</div>{% endfor %}
-              </div>
-              <div class="mb-3">
-                <label class="form-label" for="{{ form.room_description.id_for_label }}">{{ form.room_description.label }}</label>
-                <input type="text"
-                       name="{{ form.room_description.html_name }}"
-                       class="form-control{% if form.room_description.errors %} is-invalid{% endif %}"
-                       id="{{ form.room_description.id_for_label }}"
-                       value="{{ form.room_description.value|default_if_none:'' }}"
-                       maxlength="50"
-                       required>
-                {% for error_message in form.room_description.errors %}
-                  <div class="invalid-feedback d-block">{{ error_message }}</div>
-                {% endfor %}
-              </div>
-              <div class="mb-0">
-                <label class="form-label" for="{{ form.preferred_currency.id_for_label }}">{{ form.preferred_currency.label }}</label>
-                <select name="{{ form.preferred_currency.html_name }}"
-                        class="form-select"
-                        id="{{ form.preferred_currency.id_for_label }}"
-                        required>
-                  {% for value, label in form.fields.preferred_currency.choices %}
-                    {% if value %}
+      <div class="tw:bg-gradient-to-br tw:from-brand-soft tw:to-transparent tw:px-5 tw:py-5 tw:@md:px-6">
+        <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Import" %}</p>
+        <h1 class="tw:mt-1 tw:mb-1 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Check the import" %}</h1>
+        <p class="tw:m-0 tw:text-sm tw:text-ink-muted">
+          {% blocktrans with source=source_label %}Read from your {{ source }} export.{% endblocktrans %}
+        </p>
+      </div>
+      <div class="tw:border-t tw:border-line">
+        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Who is who?" %}</p>
+        <p class="tw:mt-0 tw:mb-0 tw:px-5 tw:pb-3 tw:text-sm tw:text-ink-muted">
+          {% trans "Mark exactly one row as yourself. People you already share a room with are preselected so nobody is created twice." %}
+        </p>
+        <div class="tw:divide-y tw:divide-line tw:border-t tw:border-line">
+          {% for person, choice_field, name_field in form.person_rows %}
+            <div class="tw:flex tw:flex-col tw:gap-2 tw:px-5 tw:py-4 tw:@lg:flex-row tw:@lg:items-start tw:@lg:gap-4">
+              <p class="tw:m-0 tw:font-semibold tw:break-words tw:text-ink tw:@lg:w-32 tw:@lg:shrink-0 tw:@lg:pt-2">{{ person }}</p>
+              <div class="tw:flex tw:min-w-0 tw:flex-1 tw:flex-col tw:gap-2">
+                <div class="tw:relative">
+                  <select id="{{ choice_field.id_for_label }}"
+                          class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2 tw:pr-9 tw:pl-3 tw:text-sm tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                          name="{{ choice_field.html_name }}"
+                          aria-label="{% blocktrans with name=person %}Assignment for {{ name }}{% endblocktrans %}">
+                    {% for value, label in choice_field.field.choices %}
                       <option value="{{ value }}"
-                              {% if form.preferred_currency.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
+                              {% if choice_field.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
                         {{ label }}
                       </option>
-                    {% endif %}
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="card border-0 shadow-sm rounded-4 mb-4">
-            <div class="card-body">
-              <h2 class="h6 fw-semibold mb-3">{% trans "What will be imported" %}</h2>
-              <ul class="list-unstyled small mb-0">
-                <li class="d-flex justify-content-between">
-                  <span class="text-muted">{% trans "Transactions" %}</span>
-                  <span class="fw-semibold">{{ parsed.transactions|length }}</span>
-                </li>
-                <li class="d-flex justify-content-between">
-                  <span class="text-muted">{% trans "Settlements" %}</span>
-                  <span class="fw-semibold">{{ parsed.settlements|length }}</span>
-                </li>
-                <li class="d-flex justify-content-between">
-                  <span class="text-muted">{% trans "Skipped rows" %}</span>
-                  <span class="fw-semibold">{{ parsed.skipped_rows|length }}</span>
-                </li>
-                {% if date_range %}
-                  <li class="d-flex justify-content-between">
-                    <span class="text-muted">{% trans "Period" %}</span>
-                    <span class="fw-semibold">{{ date_range.0 }} – {{ date_range.1 }}</span>
-                  </li>
-                {% endif %}
-                {% for code, total in totals_by_currency.items %}
-                  <li class="d-flex justify-content-between">
-                    <span class="text-muted">{% trans "Total" %} {{ code }}</span>
-                    <span class="fw-semibold">{{ total }}</span>
-                  </li>
+                    {% endfor %}
+                  </select>
+                  <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
+                     aria-hidden="true"></i>
+                </div>
+                <div>
+                  <input id="{{ name_field.id_for_label }}"
+                         class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:text-sm tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                         type="text"
+                         name="{{ name_field.html_name }}"
+                         value="{{ name_field.value|default_if_none:'' }}"
+                         placeholder="{% trans 'Guest name' %}"
+                         aria-label="{% blocktrans with name=person %}Guest name for {{ name }}{% endblocktrans %}">
+                  <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-ink-subtle">{% trans "Only used for a new guest." %}</p>
+                </div>
+                {% for error_message in choice_field.errors %}
+                  <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
                 {% endfor %}
-              </ul>
-            </div>
-          </div>
-          {% if parsed.skipped_rows %}
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-              <div class="card-body">
-                <h2 class="h6 fw-semibold mb-3">{% trans "Skipped rows" %}</h2>
-                <ul class="list-unstyled small mb-0">
-                  {% for row in parsed.skipped_rows %}
-                    <li class="mb-2">
-                      <span class="badge bg-body-secondary text-body-emphasis">{% trans "Row" %} {{ row.row_number }}</span>
-                      <span class="text-muted">{{ row.reason }}</span>
-                      <div class="text-muted opacity-75">{{ row.excerpt }}</div>
-                    </li>
-                  {% endfor %}
-                </ul>
+                {% for error_message in name_field.errors %}
+                  <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                {% endfor %}
               </div>
             </div>
-          {% endif %}
-          {% if unknown_currency_codes %}
-            <div class="alert alert-warning rounded-4 border-0 small" role="alert">
-              {% blocktrans with codes=unknown_currency_codes|join:", " %}These currencies are unknown here and will be booked in the room currency: {{ codes }}. Their amounts land in the same balance, so the resulting debts will be wrong.{% endblocktrans %}
-            </div>
-          {% endif %}
-          <button type="submit"
-                  data-disable-on-submit="true"
-                  class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
-            <i class="bi bi-check2-circle" aria-hidden="true"></i>
-            {% trans "Import now" %}
-          </button>
+          {% endfor %}
         </div>
       </div>
+      <div class="tw:border-t tw:border-line">
+        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Categories" %}</p>
+        <p class="tw:mt-0 tw:mb-0 tw:px-5 tw:pb-3 tw:text-sm tw:text-ink-muted">
+          {% trans "Each category from the file is mapped onto one of yours — or created as a new category in this room." %}
+        </p>
+        <div class="tw:divide-y tw:divide-line tw:border-t tw:border-line">
+          {% for category, choice_field, name_field, emoji_field in form.category_rows %}
+            <div class="tw:flex tw:flex-col tw:gap-2 tw:px-5 tw:py-4 tw:@lg:flex-row tw:@lg:items-start tw:@lg:gap-4">
+              <p class="tw:m-0 tw:font-semibold tw:break-words tw:text-ink tw:@lg:w-32 tw:@lg:shrink-0 tw:@lg:pt-2">
+                {{ category.label }}
+                <span class="tw:font-normal tw:text-ink-subtle">({{ category.transaction_count }})</span>
+              </p>
+              <div class="tw:flex tw:min-w-0 tw:flex-1 tw:flex-col tw:gap-2">
+                <div class="tw:relative">
+                  <select id="{{ choice_field.id_for_label }}"
+                          class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2 tw:pr-9 tw:pl-3 tw:text-sm tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                          name="{{ choice_field.html_name }}"
+                          aria-label="{% blocktrans with name=category.label %}Target category for {{ name }}{% endblocktrans %}">
+                    {% for value, label in choice_field.field.choices %}
+                      <option value="{{ value }}"
+                              {% if choice_field.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
+                        {{ label }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                  <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
+                     aria-hidden="true"></i>
+                </div>
+                <div class="tw:flex tw:gap-2">
+                  <input id="{{ name_field.id_for_label }}"
+                         class="tw:min-w-0 tw:flex-1 tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-3 tw:py-2 tw:text-sm tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                         type="text"
+                         name="{{ name_field.html_name }}"
+                         value="{{ name_field.value|default_if_none:'' }}"
+                         placeholder="{% trans 'Category name' %}"
+                         aria-label="{% blocktrans with name=category.label %}New category name for {{ name }}{% endblocktrans %}">
+                  <input id="{{ emoji_field.id_for_label }}"
+                         class="tw:w-16 tw:shrink-0 tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-2 tw:py-2 tw:text-center tw:text-sm tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                         type="text"
+                         name="{{ emoji_field.html_name }}"
+                         value="{{ emoji_field.value|default_if_none:'' }}"
+                         placeholder="🏷️"
+                         maxlength="10"
+                         aria-label="{% blocktrans with name=category.label %}Emoji for {{ name }}{% endblocktrans %}">
+                </div>
+                <p class="tw:m-0 tw:text-sm tw:text-ink-subtle">{% trans "Name and emoji are only used when creating a new category." %}</p>
+                {% for error_message in choice_field.errors %}
+                  <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                {% endfor %}
+                {% for error_message in name_field.errors %}
+                  <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                {% endfor %}
+                {% for error_message in emoji_field.errors %}
+                  <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="tw:border-t tw:border-line">
+        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "New room" %}</p>
+        <div class="tw:flex tw:flex-col tw:gap-4 tw:px-5 tw:pt-2 tw:pb-5 tw:@md:px-6">
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="{{ form.room_name.id_for_label }}">{{ form.room_name.label }}</label>
+            <input id="{{ form.room_name.id_for_label }}"
+                   class="tw:w-full tw:rounded-xl tw:border tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand {% if form.room_name.errors %}tw:border-danger-text/60{% else %}tw:border-line-strong{% endif %}"
+                   type="text"
+                   name="{{ form.room_name.html_name }}"
+                   value="{{ form.room_name.value|default_if_none:'' }}"
+                   maxlength="100"
+                   required>
+            {% for error_message in form.room_name.errors %}
+              <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+            {% endfor %}
+          </div>
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="{{ form.room_description.id_for_label }}">{{ form.room_description.label }}</label>
+            <input id="{{ form.room_description.id_for_label }}"
+                   class="tw:w-full tw:rounded-xl tw:border tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand {% if form.room_description.errors %}tw:border-danger-text/60{% else %}tw:border-line-strong{% endif %}"
+                   type="text"
+                   name="{{ form.room_description.html_name }}"
+                   value="{{ form.room_description.value|default_if_none:'' }}"
+                   maxlength="50"
+                   required>
+            {% for error_message in form.room_description.errors %}
+              <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error_message }}</p>
+            {% endfor %}
+          </div>
+          <div>
+            <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+                   for="{{ form.preferred_currency.id_for_label }}">{{ form.preferred_currency.label }}</label>
+            <div class="tw:relative">
+              <select id="{{ form.preferred_currency.id_for_label }}"
+                      class="tw:w-full tw:appearance-none tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:py-2.5 tw:pr-10 tw:pl-4 tw:text-ink tw:transition tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+                      name="{{ form.preferred_currency.html_name }}"
+                      required>
+                {% for value, label in form.fields.preferred_currency.choices %}
+                  {% if value %}
+                    <option value="{{ value }}"
+                            {% if form.preferred_currency.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>
+                      {{ label }}
+                    </option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+              <i class="bi bi-chevron-down tw:pointer-events-none tw:absolute tw:top-1/2 tw:right-3 tw:-translate-y-1/2 tw:text-ink-subtle"
+                 aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tw:border-t tw:border-line">
+        <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "What will be imported" %}</p>
+        {% comment %}
+          Written out rather than through _sheet_value_row.html: that partial falls back to its
+          placeholder for an empty value, and a count of 0 skipped rows has to stay readable.
+        {% endcomment %}
+        <div class="tw:divide-y tw:divide-line">
+          <div class="tw:flex tw:items-baseline tw:justify-between tw:gap-4 tw:px-5 tw:py-3">
+            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Transactions" %}</p>
+            <p class="tw:m-0 tw:font-medium tw:tabular-nums tw:text-ink">{{ parsed.transactions|length }}</p>
+          </div>
+          <div class="tw:flex tw:items-baseline tw:justify-between tw:gap-4 tw:px-5 tw:py-3">
+            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Settlements" %}</p>
+            <p class="tw:m-0 tw:font-medium tw:tabular-nums tw:text-ink">{{ parsed.settlements|length }}</p>
+          </div>
+          <div class="tw:flex tw:items-baseline tw:justify-between tw:gap-4 tw:px-5 tw:py-3">
+            <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Skipped rows" %}</p>
+            <p class="tw:m-0 tw:font-medium tw:tabular-nums tw:text-ink">{{ parsed.skipped_rows|length }}</p>
+          </div>
+          {% if date_range %}
+            <div class="tw:flex tw:items-baseline tw:justify-between tw:gap-4 tw:px-5 tw:py-3">
+              <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Period" %}</p>
+              <p class="tw:m-0 tw:font-medium tw:text-ink">{{ date_range.0 }} – {{ date_range.1 }}</p>
+            </div>
+          {% endif %}
+          {% for code, total in totals_by_currency.items %}
+            <div class="tw:flex tw:items-baseline tw:justify-between tw:gap-4 tw:px-5 tw:py-3">
+              <p class="tw:m-0 tw:text-sm tw:text-ink-muted">{% trans "Total" %} {{ code }}</p>
+              <p class="tw:m-0 tw:font-medium tw:tabular-nums tw:text-ink">{{ total }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% if parsed.skipped_rows %}
+        <div class="tw:border-t tw:border-line">
+          <p class="tw:m-0 tw:px-5 tw:pt-4 tw:pb-1 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Skipped rows" %}</p>
+          <ul class="tw:m-0 tw:flex tw:list-none tw:flex-col tw:gap-3 tw:px-5 tw:pt-2 tw:pb-5">
+            {% for row in parsed.skipped_rows %}
+              <li class="tw:flex tw:flex-col tw:gap-1">
+                <span class="tw:flex tw:flex-wrap tw:items-center tw:gap-2">
+                  <span class="tw:inline-flex tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-surface-sunken tw:px-2.5 tw:py-1 tw:text-xs tw:font-semibold tw:text-ink">{% trans "Row" %} {{ row.row_number }}</span>
+                  <span class="tw:text-sm tw:text-ink-muted">{{ row.reason }}</span>
+                </span>
+                <span class="tw:text-sm tw:break-words tw:text-ink-subtle">{{ row.excerpt }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      {% if unknown_currency_codes %}
+        {# Directly above the submit: it is the last thing to read before the import is confirmed. #}
+        <div class="tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
+          <div class="tw:flex tw:items-start tw:gap-2 tw:rounded-2xl tw:border tw:border-warning-text/40 tw:bg-warning-soft tw:px-4 tw:py-3"
+               role="alert">
+            <i class="bi bi-exclamation-triangle-fill tw:mt-0.5 tw:shrink-0 tw:text-warning-text"
+               aria-hidden="true"></i>
+            <p class="tw:m-0 tw:text-sm tw:text-warning-text">
+              {% blocktrans with codes=unknown_currency_codes|join:", " %}These currencies are unknown here and will be booked in the room currency: {{ codes }}. Their amounts land in the same balance, so the resulting debts will be wrong.{% endblocktrans %}
+            </p>
+          </div>
+        </div>
+      {% endif %}
+      <div class="tw:border-t tw:border-line tw:px-5 tw:py-4 tw:@md:px-6">
+        <button class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95 tw:disabled:cursor-not-allowed tw:disabled:opacity-50 tw:disabled:shadow-none"
+                type="submit"
+                data-disable-on-submit="true">
+          <i class="bi bi-check2-circle" aria-hidden="true"></i>
+          {% trans "Import now" %}
+        </button>
+      </div>
     </form>
-  </div>
+  </section>
 {% endblock content %}

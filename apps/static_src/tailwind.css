@@ -156,6 +156,9 @@
   --color-warning-soft: var(--yamsa-warning-soft);
   --color-danger-text: var(--yamsa-danger-text);
   --color-danger-soft: var(--yamsa-danger-soft);
+  /* The one brand tone that does not switch: the auth hero, and the label of the white button
+     standing on it. */
+  --color-brand-strong: var(--yamsa-brand-strong);
 }
 
 @theme {
@@ -168,4 +171,10 @@
 /* Tailwind's spacing scale cannot express the notch insets. */
 @utility pb-safe {
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+/* The auth hero's ground. A utility rather than two tokens because its far end is a value of the
+   gradient and of nothing else - and this file is the only place a colour is written down. */
+@utility auth-hero-surface {
+  background: linear-gradient(135deg, var(--yamsa-brand-strong), #113881);
 }

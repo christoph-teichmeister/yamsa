@@ -1,49 +1,69 @@
-{% load i18n %}
-<div class="card room-overview-card shadow-sm rounded-4 h-100{% if tile %} room-overview-card-tile{% endif %}{% if entry.is_closed %} room-overview-card-closed{% endif %}{% if not entry.user_is_in_room %} room-overview-card-ghost{% endif %}"
-     role="button"
-     tabindex="0"
-     data-keyboard-click
-     aria-label="{{ entry.name }}"
-     hx-get="{{ entry.target_url }}"
-     hx-target="#body"
-     hx-indicator="#body-loading-spinner"
-     hx-swap="morph:innerHTML"
-     hx-push-url="true">
+{% comment %}
+One room in the overview, as a real <button> of the navigation-row shape - so Enter and Space
+work without the data-keyboard-click shim a div with role="button" needs. A button takes only
+phrasing content, which is why the name is a <span> and not a heading.
+
+.room-overview-card and the class hooks inside it are what the e2e suite and the view tests
+address; the layout is in the utilities.
+
+The card is its own container: how much of the meta line fits depends on the card, not on the
+viewport - the same card is full width on a phone and half a column wide on a desktop.
+{% endcomment %}
+<button class="room-overview-card tw:@container tw:flex tw:h-full tw:w-full tw:cursor-pointer tw:rounded-2xl tw:border tw:border-line tw:bg-surface-sunken tw:px-3.5 tw:py-3 tw:text-left tw:transition tw:hover:-translate-y-0.5 tw:hover:border-brand/55 tw:hover:shadow-card-hover tw:focus-visible:-translate-y-0.5 tw:focus-visible:border-brand/55 tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:motion-reduce:transition-none tw:motion-reduce:hover:translate-y-0 tw:motion-reduce:focus-visible:translate-y-0{% if entry.is_closed %} tw:opacity-85{% endif %}{% if not entry.user_is_in_room %} tw:italic{% endif %}"
+        type="button"
+        aria-label="{{ entry.name }}"
+        hx-get="{{ entry.target_url }}"
+        hx-target="#body"
+        hx-indicator="#body-loading-spinner"
+        hx-swap="morph:innerHTML"
+        hx-push-url="true">
   {% if tile %}
-    <div class="card-body room-overview-body d-flex flex-column text-start">
-      <div class="room-overview-head d-flex align-items-center justify-content-between gap-2">
-        <div class="room-circle room-overview-circle{% if entry.is_closed %} closed{% endif %}">{{ entry.capitalised_initials }}</div>
+    <span class="room-overview-card-tile tw:flex tw:min-w-0 tw:flex-1 tw:flex-col tw:gap-1">
+      <span class="tw:mb-1 tw:flex tw:items-center tw:justify-between tw:gap-2">
+        {% include "room/partials/_room_overview_circle.html" with entry=entry %}
         {% if entry.last_transaction_at %}
-          <span class="room-overview-activity"
+          <span class="room-overview-activity tw:shrink-0 tw:text-xs tw:tabular-nums tw:text-ink-subtle"
                 title="{{ entry.last_transaction_at }}">{{ entry.last_transaction_at|room_last_used }}</span>
         {% endif %}
-      </div>
-      <h5 class="card-title room-overview-name">{{ entry.name }}</h5>
+      </span>
+      {# At most two lines: the name gets the full tile, but a long one must not outgrow the tile beside it. #}
+      <span class="room-overview-name tw:line-clamp-2 tw:font-semibold tw:[overflow-wrap:anywhere] tw:text-ink">{{ entry.name }}</span>
       {# A closed room is settled and done with; its balance would only be noise on the tile. #}
-      {% if entry.meta_text %}<p class="room-overview-meta text-muted small">{{ entry.meta_text }}</p>{% endif %}
+      {% if entry.meta_text %}
+        <span class="room-overview-meta tw:block tw:truncate tw:text-sm tw:text-ink-subtle">{{ entry.meta_text }}</span>
+      {% endif %}
       {% if not entry.user_is_in_room %}
         {# Pushed to the bottom so the badges of two tiles in a row line up despite different name heights. #}
-        <div class="room-overview-tile-status mt-auto">
+        <span class="room-overview-tile-status tw:mt-auto tw:flex tw:pt-1.5">
           {% include "room/partials/_room_overview_status_badge.html" with entry=entry %}
-        </div>
+        </span>
       {% endif %}
-    </div>
+    </span>
   {% else %}
-    <div class="card-body room-overview-body d-flex align-items-center gap-3">
-      <div class="room-circle room-overview-circle{% if entry.is_closed %} closed{% endif %}">{{ entry.capitalised_initials }}</div>
-      <div class="room-overview-text flex-grow-1 text-start">
-        <h5 class="card-title room-overview-name mb-0">{{ entry.name }}</h5>
+    <span class="tw:flex tw:min-w-0 tw:flex-1 tw:items-center tw:gap-3">
+      {% include "room/partials/_room_overview_circle.html" with entry=entry %}
+      <span class="tw:min-w-0 tw:flex-1">
+        <span class="room-overview-name tw:block tw:truncate tw:font-semibold tw:text-ink">{{ entry.name }}</span>
         {% if entry.meta_text or entry.last_transaction_at %}
-          <p class="room-overview-meta text-muted small mb-0">
-            {% if entry.meta_text %}<span class="room-overview-meta-text">{{ entry.meta_text }}</span>{% endif %}
+          <span class="room-overview-meta tw:flex tw:min-w-0 tw:items-baseline tw:gap-2 tw:text-sm tw:whitespace-nowrap tw:text-ink-subtle">
+            {% comment %}
+              The description shrinks all the way to nothing on a narrow card - it is the part of
+              this line a room can be recognised without, and below 20rem a stub like "K…" says
+              less than the time it crowds out. A separator glyph would survive that collapse and
+              dangle in front of the time, so the gap is the only separator.
+            {% endcomment %}
+            {% if entry.meta_text %}
+              <span class="room-overview-meta-text tw:min-w-0 tw:truncate tw:@max-[20rem]:hidden">{{ entry.meta_text }}</span>
+            {% endif %}
+            {# Never shrinks: it explains why the row sits where it sits in the list. #}
             {% if entry.last_transaction_at %}
-              <span class="room-overview-activity"
+              <span class="room-overview-activity tw:shrink-0 tw:text-xs tw:tabular-nums"
                     title="{{ entry.last_transaction_at }}">{{ entry.last_transaction_at|room_last_used }}</span>
             {% endif %}
-          </p>
+          </span>
         {% endif %}
-      </div>
+      </span>
       {% include "room/partials/_room_overview_amounts.html" with entry=entry %}
-    </div>
+    </span>
   {% endif %}
-</div>
+</button>

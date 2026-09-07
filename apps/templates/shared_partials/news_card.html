@@ -1,46 +1,25 @@
+{% load i18n %}
+{% comment %}
+One news event on the timeline.
+
+The highlight is carried as a data attribute rather than a class, so the card's own utilities
+decide what "highlighted" looks like and the pill inside can react to it with tw:group-data-*.
+{% endcomment %}
+{% trans "Open related update" as news_open_label %}
 <article id="news-{{ news.id }}"
-         class="timeline-event {% if news.highlighted %}timeline-event-highlight{% endif %}">
-  {% load i18n %}
-  {% trans "Open related update" as news_open_label %}
+         class="tw:group tw:relative tw:pl-5 tw:not-last:mb-7 tw:before:absolute tw:before:top-5 tw:before:-left-6 tw:before:h-px tw:before:w-6 tw:before:bg-line-strong tw:before:content-['']"
+         {% if news.highlighted %}data-highlighted{% endif %}>
   {% if news.deeplink %}
-    <a href="{{ news.deeplink }}"
-       class="timeline-card-link"
+    <a class="tw:block tw:text-inherit tw:no-underline"
+       href="{{ news.deeplink }}"
        aria-label="{{ news_open_label }}">
-      <div class="timeline-card timeline-card-interactive">
-        <div class="timeline-card-meta mb-2">
-          <span class="timeline-card-pill">
-            {% if news.highlighted %}
-              ✨
-            {% else %}
-              {% trans "Update" %}
-            {% endif %}
-          </span>
-          <span>{{ news.created_at|date:"SHORT_DATETIME_FORMAT" }}</span>
-          {% blocktrans with timesince=news.created_at|timesince %}{{ timesince }} ago{% endblocktrans %}
-        </div>
-        <h5 class="timeline-card-title">{{ news.heading }}</h5>
-        <div class="timeline-card-body">
-          <p>{{ news.message }}</p>
-        </div>
+      <div class="tw:rounded-2xl tw:border tw:border-line tw:bg-surface tw:px-5 tw:py-4 tw:shadow-card tw:transition tw:group-hover:-translate-y-0.5 tw:group-hover:border-brand/35 tw:group-hover:shadow-card-hover tw:group-focus-visible:-translate-y-0.5 tw:group-focus-visible:border-brand/35 tw:group-focus-visible:shadow-card-hover tw:group-data-highlighted:border-transparent tw:group-data-highlighted:bg-warning-soft tw:motion-reduce:transition-none tw:motion-reduce:group-hover:translate-y-0">
+        {% include "shared_partials/_news_card_content.html" with news=news %}
       </div>
     </a>
   {% else %}
-    <div class="timeline-card timeline-card-disabled">
-      <div class="timeline-card-meta mb-2">
-        <span class="timeline-card-pill">
-          {% if news.highlighted %}
-            ✨
-          {% else %}
-            {% trans "Update" %}
-          {% endif %}
-        </span>
-        <span>{{ news.created_at|date:"SHORT_DATETIME_FORMAT" }}</span>
-        {% blocktrans with timesince=news.created_at|timesince %}{{ timesince }} ago{% endblocktrans %}
-      </div>
-      <h5 class="timeline-card-title">{{ news.heading }}</h5>
-      <div class="timeline-card-body">
-        <p>{{ news.message }}</p>
-      </div>
+    <div class="tw:rounded-2xl tw:border tw:border-dashed tw:border-line tw:bg-surface tw:px-5 tw:py-4 tw:opacity-85 tw:shadow-card tw:group-data-highlighted:border-transparent tw:group-data-highlighted:bg-warning-soft">
+      {% include "shared_partials/_news_card_content.html" with news=news %}
     </div>
   {% endif %}
 </article>

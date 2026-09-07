@@ -181,6 +181,9 @@ msgstr "Möchtest du dein Passwort zurücksetzen?"
 msgid "Request a new password"
 msgstr "Neues Passwort anfordern"
 
+msgid "Invitation"
+msgstr "Einladung"
+
 #, python-format
 msgid "Invite %(invitee)s to \"%(room)s\""
 msgstr "Lade %(invitee)s zu \"%(room)s\" ein"
@@ -385,12 +388,6 @@ msgstr "Registrieren"
 msgid "Name"
 msgstr "Name"
 
-msgid "User ID"
-msgstr "Benutzer-ID"
-
-msgid "Is Guest"
-msgstr "Ist Gast"
-
 msgid "Register now"
 msgstr "Jetzt registrieren"
 
@@ -495,6 +492,9 @@ msgstr "Erinnerungsprotokoll"
 msgid "Reminder logs"
 msgstr "Erinnerungsprotokolle"
 
+msgid "Debts"
+msgstr "Schulden"
+
 msgid "Optimised debts"
 msgstr "Optimierte Schulden"
 
@@ -517,22 +517,10 @@ msgid "Unoptimised"
 msgstr "Unoptimiert"
 
 #, python-format
-msgid ""
-"\n"
-"                            %(active_debt_count)s pending debt\n"
-"                        "
-msgid_plural ""
-"\n"
-"                            %(active_debt_count)s pending debts\n"
-"                        "
-msgstr[0] ""
-"\n"
-"                        %(active_debt_count)s ausstehende Schuld\n"
-"                    "
-msgstr[1] ""
-"\n"
-"                        %(active_debt_count)s ausstehende Schulden\n"
-"                    "
+msgid "%(active_debt_count)s pending debt"
+msgid_plural "%(active_debt_count)s pending debts"
+msgstr[0] "%(active_debt_count)s ausstehende Schuld"
+msgstr[1] "%(active_debt_count)s ausstehende Schulden"
 
 msgid "All settled"
 msgstr "Alles beglichen"
@@ -545,6 +533,9 @@ msgid "Instead of %(simple_count)s repayments, %(counter)s payment is enough."
 msgid_plural "Instead of %(simple_count)s repayments, %(counter)s payments are enough."
 msgstr[0] "Statt %(simple_count)s Rückzahlungen genügt %(counter)s Zahlung."
 msgstr[1] "Statt %(simple_count)s Rückzahlungen genügen %(counter)s Zahlungen."
+
+msgid "Insights"
+msgstr "Auswertungen"
 
 msgid "Who paid what"
 msgstr "Wer hat was bezahlt"
@@ -592,6 +583,9 @@ msgstr "Mit PayPal bezahlen"
 msgid "Mark as paid"
 msgstr "Als bezahlt markieren"
 
+msgid "Settle debt"
+msgstr "Schuld begleichen"
+
 #, python-format
 msgid "Your debt to %(creditor_name)s"
 msgstr "Deine Schuld an %(creditor_name)s"
@@ -600,18 +594,18 @@ msgstr "Deine Schuld an %(creditor_name)s"
 msgid "Are you sure that you have settled your debt (%(debt_value)s%(debt_currency)s) to %(creditor_name)s?"
 msgstr "Bist du sicher, dass du deine Schuld (%(debt_value)s%(debt_currency)s) bei %(creditor_name)s beglichen hast?"
 
-msgid "Yes, I paid this"
-msgstr "Ja, ist bezahlt"
-
-msgid "Cancel"
-msgstr "Abbrechen"
-
 msgid "Not paid yet?"
 msgstr "Noch nicht bezahlt?"
 
 #, python-format
 msgid "Pay %(creditor_name)s via PayPal"
 msgstr "%(creditor_name)s über PayPal bezahlen"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Yes, I paid this"
+msgstr "Ja, ist bezahlt"
 
 msgid "Debitor"
 msgstr "Schuldner"
@@ -876,9 +870,6 @@ msgstr "Melde dich mit deinem neuen Passwort an, indem du auf den Button unten k
 
 msgid "(And don't forget to change your password afterwards!)"
 msgstr "(Und vergiss nicht, dein Passwort danach zu ändern!)"
-
-msgid "Invitation"
-msgstr "Einladung"
 
 #, python-format
 msgid "You have been invited by %(inviter)s to join your friends on yamsa"
@@ -1153,11 +1144,11 @@ msgstr "Gäste, die über den geteilten Link kommen, können sich hier registrie
 msgid "Who are you?"
 msgstr "Wer bist du?"
 
-msgid "Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in."
-msgstr "Nur Gastnutzer:innen des Raums werden hier angezeigt. Wenn du deinen Namen nicht siehst, bist du entweder nicht Teil dieses Raums oder hast bereits ein Konto. Wenn du schon ein Konto hast, versuche dich einzuloggen."
-
 msgid "Not seeing your name?"
 msgstr "Siehst du deinen Namen nicht?"
+
+msgid "Only Guest Users of the room are shown here. If you do not see your name, that means that you either are not part of this room or that you already have an account. If you already have an account, try logging in."
+msgstr "Nur Gastnutzer:innen des Raums werden hier angezeigt. Wenn du deinen Namen nicht siehst, bist du entweder nicht Teil dieses Raums oder hast bereits ein Konto. Wenn du schon ein Konto hast, versuche dich einzuloggen."
 
 msgid "That's me!"
 msgstr "Das bin ich!"
@@ -1345,11 +1336,23 @@ msgstr "Wird geladen..."
 msgid "This is taking longer than expected!"
 msgstr "Das dauert länger als geplant!"
 
+msgid "Update"
+msgstr "Aktualisierung"
+
 msgid "Discard changes"
 msgstr "Änderungen verwerfen"
 
 msgid "Save changes"
 msgstr "Änderungen speichern"
+
+msgid "Send invitation email"
+msgstr "Einladungs-E-Mail senden"
+
+msgid "Invitation email sent"
+msgstr "Einladungs-E-Mail gesendet"
+
+msgid "You can resend an invitation email five minutes after one has been sent."
+msgstr "Du kannst eine Einladungs-E-Mail fünf Minuten nach dem Versand erneut senden."
 
 msgid "Back"
 msgstr "Zurück"
@@ -1377,9 +1380,6 @@ msgstr "Du bist auf dem Laufenden."
 
 msgid "Open related update"
 msgstr "Verwandtes Update öffnen"
-
-msgid "Update"
-msgstr "Aktualisierung"
 
 msgid "Something went wrong"
 msgstr "Etwas ist schiefgelaufen"
@@ -1438,22 +1438,10 @@ msgid "Currency breakdown"
 msgstr "Währungsaufteilung"
 
 #, python-format
-msgid ""
-"\n"
-"                                            %(category_count)s category\n"
-"                                        "
-msgid_plural ""
-"\n"
-"                                            %(category_count)s categories\n"
-"                                        "
-msgstr[0] ""
-"\n"
-"                                            %(category_count)s Kategorie\n"
-"                                        "
-msgstr[1] ""
-"\n"
-"                                            %(category_count)s Kategorien\n"
-"                                        "
+msgid "%(category_count)s category"
+msgid_plural "%(category_count)s categories"
+msgstr[0] "%(category_count)s Kategorie"
+msgstr[1] "%(category_count)s Kategorien"
 
 msgid "Legend"
 msgstr "Legende"
@@ -1629,32 +1617,14 @@ msgid "Tap a row to edit the breakdown."
 msgstr "Tippe auf eine Zeile, um die Aufschlüsselung zu bearbeiten."
 
 #, python-format
-msgid ""
-"\n"
-"                        %(member_count)s person\n"
-"                    "
-msgid_plural ""
-"\n"
-"                        %(member_count)s people\n"
-"                    "
-msgstr[0] ""
-"\n"
-"                        %(member_count)s Person\n"
-"                    "
-msgstr[1] ""
-"\n"
-"                        %(member_count)s Personen\n"
-"                    "
+msgid "%(member_count)s person"
+msgid_plural "%(member_count)s people"
+msgstr[0] "%(member_count)s Person"
+msgstr[1] "%(member_count)s Personen"
 
 #, python-format
-msgid ""
-"\n"
-"                                    Owes %(owed_value)s%(owed_currency)s\n"
-"                                "
-msgstr ""
-"\n"
-"                                    Schuldet %(owed_value)s%(owed_currency)s\n"
-"                                "
+msgid "Owes %(owed_value)s%(owed_currency)s"
+msgstr "Schuldet %(owed_value)s%(owed_currency)s"
 
 msgid "No split data available for this transaction yet."
 msgstr "Für diese Transaktion liegen noch keine Splits-Daten vor."
@@ -1784,14 +1754,8 @@ msgid "Room spending overview"
 msgstr "Übersicht der Raumausgaben"
 
 #, python-format
-msgid ""
-"\n"
-"                                    Total spent (%(currency_sign)s)\n"
-"                                "
-msgstr ""
-"\n"
-"                                    Insgesamt ausgegeben (%(currency_sign)s)\n"
-"                                "
+msgid "Total spent (%(currency_sign)s)"
+msgstr "Insgesamt ausgegeben (%(currency_sign)s)"
 
 msgid "No spending yet"
 msgstr "Noch keine Ausgaben"
@@ -1845,14 +1809,8 @@ msgid "Expense build-up"
 msgstr "Ausgabenaufbau"
 
 #, python-format
-msgid ""
-"\n"
-"                                Showing %(period)s (%(start)s – %(end)s).\n"
-"                            "
-msgstr ""
-"\n"
-"                                Zeigt %(period)s (%(start)s – %(end)s).\n"
-"                            "
+msgid "Showing %(period)s (%(start)s – %(end)s)."
+msgstr "Zeigt %(period)s (%(start)s – %(end)s)."
 
 msgid "Spending trend ranges"
 msgstr "Ausgabentrend-Intervalle"
@@ -1879,14 +1837,8 @@ msgid "PDF receipt preview"
 msgstr "PDF-Beleg-Vorschau"
 
 #, python-format
-msgid ""
-"\n"
-"                                            Uploaded by %(uploader)s\n"
-"                                        "
-msgstr ""
-"\n"
-"                                            Hochgeladen von %(uploader)s\n"
-"                                        "
+msgid "Uploaded by %(uploader)s"
+msgstr "Hochgeladen von %(uploader)s"
 
 msgid "No receipts have been attached to this transaction yet."
 msgstr "Dieser Transaktion wurden noch keine Belege beigefügt."
@@ -1924,11 +1876,11 @@ msgstr "Verfügbare Kategorien"
 msgid "Room catalog"
 msgstr "Raum Katalog"
 
-msgid "Global defaults"
-msgstr "Globale Standards"
-
 msgid "Customized"
 msgstr "Angepasst"
+
+msgid "Global defaults"
+msgstr "Globale Standards"
 
 msgid "Remove"
 msgstr "Entfernen"

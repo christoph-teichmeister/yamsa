@@ -1,0 +1,29 @@
+{% extends "core/base.html" %}
+{% comment %}
+The shell the three auth pages share: a hero band and the form beside it, one card.
+
+Template inheritance rather than an include, because both halves are content and an include
+cannot take two slots.
+
+The hero is the same on both themes - brand-strong is the one brand tone that does not switch -
+so everything standing on it takes white outright rather than a theme-following token.
+
+The two halves sit side by side from a 36rem container, not from a viewport breakpoint. The shell
+narrows #base-content to 50% from 768px up, so col-md-5/col-md-7 used to split 384px between a
+hero and a form at exactly the viewport where it started doing it. 36rem is where the form half
+reaches ~336px, about a phone's width - the one the fields are laid out for.
+{% endcomment %}
+{% block content %}
+  <section class="tw:@container tw:mx-auto tw:flex tw:w-full tw:max-w-4xl tw:justify-center">
+    <div class="tw:grid tw:w-full tw:grid-cols-1 tw:overflow-hidden tw:rounded-3xl tw:shadow-card tw:@xl:grid-cols-[5fr_7fr]">
+      <div class="tw:auth-hero-surface tw:flex tw:flex-col tw:justify-between tw:gap-6 tw:px-6 tw:py-8 tw:@md:px-8">
+        {% block auth_hero %}
+        {% endblock auth_hero %}
+      </div>
+      <div class="tw:@container tw:flex tw:flex-col tw:justify-between tw:gap-6 tw:bg-surface tw:px-6 tw:py-8 tw:@md:px-8">
+        {% block auth_form %}
+        {% endblock auth_form %}
+      </div>
+    </div>
+  </section>
+{% endblock content %}

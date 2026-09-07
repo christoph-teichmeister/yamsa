@@ -1,103 +1,105 @@
-{% extends "core/base.html" %}
+{% extends "account/_auth_base.html" %}
 {% load static i18n %}
-{% block content %}
-  <div class="auth-page-shell">
-    <div class="container px-2 px-md-4 px-lg-5 my-0">
-      <div class="row g-4 justify-content-center">
-        <div class="col-lg-9">
-          <div class="card auth-card shadow-sm overflow-hidden border-0">
-            <div class="row g-0 align-items-stretch">
-              <div class="col-md-5 auth-hero d-flex flex-column justify-content-between p-4 p-md-5">
-                <div>
-                  <p class="text-uppercase text-white-50 small mb-2">{% trans "Welcome back" %}</p>
-                  <h2 class="h4 fw-semibold text-white mb-3">{% trans "Keep your shared finances moving" %}</h2>
-                  <p class="text-white-50 mb-0">
-                    {% blocktrans %}Stay in the flow: avoid surprising logouts and finish your next journal in one session.{% endblocktrans %}
-                  </p>
-                </div>
-                <div class="mt-4">
-                  <a class="btn btn-light btn-sm fw-semibold hero-cta htmx-a w-100 text-center"
-                     hx-get="{% url 'account:register' %}"
-                     hx-target="#body"
-                     hx-indicator="#body-loading-spinner"
-                     hx-swap="morph:innerHTML"
-                     hx-push-url="true">{% trans "Create an account" %}</a>
-                </div>
-              </div>
-              <div class="col-md-7 bg-body">
-                <form hx-post="{% url 'account:login' %}"
-                      hx-target="#body"
-                      hx-indicator="#body-loading-spinner"
-                      hx-swap="morph:innerHTML"
-                      hx-push-url="true"
-                      class="auth-form p-4 p-md-5 d-flex flex-column justify-content-between">
-                  {% csrf_token %}
-                  <div>
-                    <div class="mb-4">
-                      <p class="text-muted small mb-1">{% trans "Secure login" %}</p>
-                      <h1 class="h3 fw-semibold mb-0">{% trans "Login" %}</h1>
-                    </div>
-                    {% if errors and errors.auth_failed %}
-                      <div class="alert alert-danger small mb-3" role="alert">{{ errors.auth_failed }}</div>
-                    {% endif %}
-                    <div class="mb-3">
-                      <label class="form-label" for="{{ form.email.id_for_label }}">{% trans "Email address" %}</label>
-                      {{ form.email }}
-                      {% for error in form.email.errors %}<small class="text-danger-emphasis d-block mt-1">{{ error }}</small>{% endfor %}
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label" for="{{ form.password.id_for_label }}">{% trans "Password" %}</label>
-                      {{ form.password }}
-                      {% for error in form.password.errors %}<small class="text-danger-emphasis d-block mt-1">{{ error }}</small>{% endfor %}
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                      <div class="form-check">
-                        {{ form.remember_me }}
-                        <label class="form-check-label fw-semibold" for="rememberMe">{% trans "Stay signed in for 30 days" %}</label>
-                        <p class="text-muted small mb-0 mt-1">
-                          {% blocktrans %}Your session stays active as long as you keep using the app.{% endblocktrans %}
-                        </p>
-                      </div>
-                      <small class="text-muted">
-                        <a class="htmx-a text-decoration-none"
-                           href="{% url 'account:forgot-password' %}"
-                           hx-get="{% url 'account:forgot-password' %}"
-                           hx-target="#body"
-                           hx-indicator="#body-loading-spinner"
-                           hx-swap="morph:innerHTML"
-                           hx-push-url="true">{% trans "Forgot password?" %}</a>
-                      </small>
-                    </div>
-                  </div>
-                  <div>
-                    <input type="hidden" name="passkeys" id="passkeys" value="">
-                    <button type="submit"
-                            id="login-submit-button"
-                            class="btn btn-primary w-100 fw-semibold py-2">{% trans "Log in" %}</button>
-                    <div class="d-flex align-items-center gap-2 my-3">
-                      <hr class="flex-grow-1 m-0">
-                      <span class="text-muted small">{% trans "or" %}</span>
-                      <hr class="flex-grow-1 m-0">
-                    </div>
-                    <div id="passkey-login-error"
-                         class="text-danger-emphasis small mb-2 d-none"></div>
-                    <button type="button"
-                            id="passkey-login-btn"
-                            class="btn btn-outline-secondary w-100 fw-semibold py-2">
-                      {% trans "Sign in with passkey" %}
-                    </button>
-                    <p class="mt-3 small text-muted">
-                      {% blocktrans %}We renew your cookie while you stay active so normal usage does not log you out, and checking "Stay signed in" keeps you signed in for 30 days.{% endblocktrans %}
-                    </p>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+{% load render_bundle from webpack_loader %}
+{% block auth_hero %}
+  <div>
+    <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-white/70 tw:uppercase">{% trans "Welcome back" %}</p>
+    <h2 class="tw:mt-2 tw:mb-3 tw:text-xl tw:font-semibold tw:text-white">{% trans "Keep your shared finances moving" %}</h2>
+    <p class="tw:m-0 tw:text-sm tw:text-white/70">
+      {% blocktrans %}Stay in the flow: avoid surprising logouts and finish your next journal in one session.{% endblocktrans %}
+    </p>
   </div>
+  {% trans "Create an account" as create_account_label %}
+  {% url 'account:register' as register_url %}
+  {% include "account/partials/_auth_hero_cta.html" with cta_url=register_url cta_label=create_account_label cta_filled=True %}
+{% endblock auth_hero %}
+{% block auth_form %}
+  {# `action` next to `hx-post` so the form still submits without the bundle. #}
+  <form class="tw:flex tw:flex-col tw:gap-4"
+        method="post"
+        action="{% url 'account:login' %}"
+        hx-post="{% url 'account:login' %}"
+        hx-target="#body"
+        hx-indicator="#body-loading-spinner"
+        hx-swap="morph:innerHTML"
+        hx-push-url="true">
+    {% csrf_token %}
+    <div>
+      <p class="tw:m-0 tw:text-xs tw:font-semibold tw:tracking-wider tw:text-ink-subtle tw:uppercase">{% trans "Secure login" %}</p>
+      <h1 class="tw:mt-1 tw:mb-0 tw:text-xl tw:font-semibold tw:text-ink">{% trans "Login" %}</h1>
+    </div>
+    {% if errors and errors.auth_failed %}
+      {# The id is the hook: role="alert" alone is ambiguous, the shell's toast carries one too. #}
+      <div id="login-error"
+           class="tw:rounded-2xl tw:border tw:border-danger-text/40 tw:bg-danger-soft tw:px-4 tw:py-3"
+           role="alert">
+        <p class="tw:m-0 tw:text-sm tw:text-danger-text">{{ errors.auth_failed }}</p>
+      </div>
+    {% endif %}
+    {# Django's own ids: e2e/pages/login_page.py fills #id_email and #id_password. #}
+    <div>
+      <label class="tw:mb-1.5 tw:block tw:text-sm tw:font-semibold tw:text-ink"
+             for="id_email">{% trans "Email address" %}</label>
+      <input id="id_email"
+             class="tw:w-full tw:rounded-xl tw:border tw:border-line-strong tw:bg-surface-sunken tw:px-4 tw:py-2.5 tw:text-ink tw:transition tw:placeholder:text-ink-subtle tw:focus:border-brand tw:focus:outline-2 tw:focus:outline-offset-0 tw:focus:outline-brand"
+             type="email"
+             name="email"
+             value="{{ form.email.value|default_if_none:'' }}"
+             placeholder="name@example.com"
+             autocomplete="email"
+             autofocus
+             required>
+      {% for error in form.email.errors %}
+        <p class="tw:mt-1.5 tw:mb-0 tw:text-sm tw:text-danger-text">{{ error }}</p>
+      {% endfor %}
+    </div>
+    {% trans "Password" as password_label %}
+    {% include "account/partials/_password_field.html" with field_id="id_password" field_name="password" field_label=password_label field_errors=form.errors.password field_autocomplete="current-password" %}
+    <div class="tw:flex tw:flex-col tw:gap-3 tw:@lg:flex-row tw:@lg:items-start tw:@lg:justify-between">
+      <div class="tw:min-w-0">
+        <label class="tw:inline-flex tw:cursor-pointer tw:items-center tw:gap-2 tw:text-sm tw:font-semibold tw:text-ink"
+               for="rememberMe">
+          <input id="rememberMe"
+                 class="tw:size-4 tw:shrink-0 tw:cursor-pointer tw:accent-brand"
+                 type="checkbox"
+                 name="remember_me">
+          {% trans "Stay signed in for 30 days" %}
+        </label>
+        <p class="tw:mt-1 tw:mb-0 tw:text-sm tw:text-ink-muted">
+          {% blocktrans %}Your session stays active as long as you keep using the app.{% endblocktrans %}
+        </p>
+      </div>
+      <a class="tw:shrink-0 tw:text-sm tw:font-semibold tw:text-brand-text tw:no-underline tw:transition tw:hover:text-brand tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand"
+         href="{% url 'account:forgot-password' %}"
+         hx-get="{% url 'account:forgot-password' %}"
+         hx-target="#body"
+         hx-indicator="#body-loading-spinner"
+         hx-swap="morph:innerHTML"
+         hx-push-url="true">{% trans "Forgot password?" %}</a>
+    </div>
+    <div>
+      <input type="hidden" name="passkeys" id="passkeys" value="">
+      <button id="login-submit-button"
+              class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-transparent tw:bg-brand tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-on-brand tw:shadow-brand tw:transition tw:hover:bg-brand-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+              type="submit">{% trans "Log in" %}</button>
+      <div class="tw:my-4 tw:flex tw:items-center tw:gap-3">
+        <span class="tw:h-px tw:flex-1 tw:bg-line"></span>
+        <span class="tw:text-sm tw:text-ink-subtle">{% trans "or" %}</span>
+        <span class="tw:h-px tw:flex-1 tw:bg-line"></span>
+      </div>
+      {# The `hidden` attribute, not tw:hidden: passkey-login.js reveals this by clearing it. #}
+      <p id="passkey-login-error"
+         class="tw:mt-0 tw:mb-2 tw:text-sm tw:text-danger-text"
+         hidden></p>
+      <button id="passkey-login-btn"
+              class="tw:inline-flex tw:w-full tw:cursor-pointer tw:items-center tw:justify-center tw:gap-2 tw:rounded-xl tw:border tw:border-line-strong tw:bg-transparent tw:px-5 tw:py-2.5 tw:text-sm tw:font-semibold tw:text-ink tw:transition tw:hover:bg-surface-hover tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand tw:active:scale-95"
+              type="button">{% trans "Sign in with passkey" %}</button>
+      <p class="tw:mt-4 tw:mb-0 tw:text-sm tw:text-ink-subtle">
+        {% blocktrans %}We renew your cookie while you stay active so normal usage does not log you out, and checking "Stay signed in" keeps you signed in for 30 days.{% endblocktrans %}
+      </p>
+    </div>
+  </form>
+  {% render_bundle "password-visibility" attrs="defer" %}
   <script src="{% static 'passkeys/js/base64url.js' %}" nonce="{{ csp_nonce }}"></script>
   <script src="{% static 'passkeys/js/helpers.js' %}" nonce="{{ csp_nonce }}"></script>
   <script src="{% static 'passkeys/js/login.js' %}" nonce="{{ csp_nonce }}"></script>
@@ -117,4 +119,4 @@
         };
         document.getElementById("passkey-login-btn").addEventListener("click", startPasskeyLogin);
   </script>
-{% endblock content %}
+{% endblock auth_form %}
