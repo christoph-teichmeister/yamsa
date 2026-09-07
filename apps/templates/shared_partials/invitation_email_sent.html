@@ -6,10 +6,9 @@
 <details class="group">
   <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-sm text-ink-subtle transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden"
            data-stop-propagation="true">
-    <i class="bi bi-envelope-fill" aria-hidden="true"></i>
+    {% icon "envelope-fill" %}
     {% trans "Invitation email sent" %}
-    <i class="bi bi-chevron-down transition-transform group-open:rotate-180 motion-reduce:transition-none"
-       aria-hidden="true"></i>
+    {% icon "chevron-down" "transition-transform group-open:rotate-180 motion-reduce:transition-none" %}
   </summary>
   <p class="mt-1.5 mb-0 text-sm text-ink-subtle">
     {% trans "You can resend an invitation email five minutes after one has been sent." %}

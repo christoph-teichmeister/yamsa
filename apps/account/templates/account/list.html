@@ -5,9 +5,9 @@
     {% if is_member %}
       <div class="grid grid-cols-1 gap-3 @lg:grid-cols-2">
         {% trans "Add existing user" as add_existing_label %}
-        {% include "account/partials/_people_action.html" with action_viewname="room:userconnectiontoroom-create" action_label=add_existing_label action_icon="bi-person-plus-fill" %}
+        {% include "account/partials/_people_action.html" with action_viewname="room:userconnectiontoroom-create" action_label=add_existing_label action_icon="person-plus-fill" %}
         {% trans "Add guest" as add_guest_label %}
-        {% include "account/partials/_people_action.html" with action_viewname="account:guest-create" action_label=add_guest_label action_icon="bi-person-plus" %}
+        {% include "account/partials/_people_action.html" with action_viewname="account:guest-create" action_label=add_guest_label action_icon="person-plus" %}
       </div>
       <div class="grid grid-cols-1 gap-3 @lg:grid-cols-2">
         {% csrf_token %}

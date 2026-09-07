@@ -19,7 +19,6 @@ module.exports = {
     sheet: path.resolve(staticJsPath, "sheet.js"),
     dialog: path.resolve(staticJsPath, "dialog.js"),
     "password-visibility": path.resolve(staticJsPath, "password-visibility.js"),
-    icons: path.resolve(staticJsPath, "icons.js"),
     tailwind: path.resolve(staticSrcPath, "tailwind.js"),
     htmx: path.resolve(staticJsPath, "htmx.js"),
   },
@@ -43,13 +42,6 @@ module.exports = {
           },
           "postcss-loader",
         ],
-      },
-      {
-        test: /\.(woff2?|eot|ttf|otf|svg)(\?.*)?$/i,
-        type: "asset/resource",
-        generator: {
-          filename: "fonts/[name][ext]",
-        },
       },
     ],
   },

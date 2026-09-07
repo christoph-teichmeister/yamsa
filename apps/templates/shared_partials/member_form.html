@@ -36,7 +36,7 @@
      hx-indicator="#body-loading-spinner"
      hx-swap="morph:innerHTML"
      hx-push-url="true">
-    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+    {% icon "chevron-left" %}
     {{ back_label|default:default_back_label }}
   </a>
 {% endif %}
@@ -63,8 +63,7 @@
       {% if hero_subtitle %}<p class="m-0 text-sm text-ink-muted">{{ hero_subtitle }}</p>{% endif %}
     </div>
     <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
-      <i class="bi {{ hero_badge_icon|default:'bi-people' }}"
-         aria-hidden="true"></i>
+      {% icon hero_badge_icon|default:"people" %}
       {% if hero_badge_label %}
         {{ hero_badge_label }}
       {% else %}
@@ -109,7 +108,7 @@
     <button class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none"
             type="submit"
             {% if submit_disabled %}disabled aria-disabled="true"{% endif %}>
-      <i class="bi {{ submit_icon|default:'bi-check-lg' }}" aria-hidden="true"></i>
+      {% icon submit_icon|default:"check-lg" %}
       {% if submit_label %}
         {{ submit_label }}
       {% else %}

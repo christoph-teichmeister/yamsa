@@ -41,7 +41,7 @@ some script would have to maintain.
     <p class="mt-2 mb-0 text-sm text-brand-text"
        data-category-suggestion-hint
        hidden>
-      <i class="bi bi-lightbulb mr-1" aria-hidden="true"></i>
+      {% icon "lightbulb" "mr-1" %}
       {% trans "Suggested from your description — pick another one any time." %}
     </p>
   {% endif %}
@@ -53,7 +53,7 @@ some script would have to maintain.
      href="{% room_url 'transaction:category-manager' %}"
      target="_blank"
      rel="noopener">
-    <i class="bi bi-gear" aria-hidden="true"></i>
+    {% icon "gear" %}
     {% trans "Manage categories" %}
   </a>
 </fieldset>

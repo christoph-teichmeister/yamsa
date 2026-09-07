@@ -97,8 +97,7 @@
                         {% if form.language.value == choice_value %}selected{% endif %}>{{ choice_label }}</option>
               {% endfor %}
             </select>
-            <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle"
-               aria-hidden="true"></i>
+            {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle" %}
           </div>
           {% for error_message in form.errors.language.data %}
             <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
@@ -142,14 +141,12 @@
               hx-swap="morph:innerHTML"
               hx-push-url="true">
         <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text"
-              aria-hidden="true">
-          <i class="bi bi-key"></i>
-        </span>
+              aria-hidden="true">{% icon "key" %}</span>
         <span class="min-w-0 flex-1">
           <span class="block font-medium text-ink">{% trans "Change your password" %}</span>
           <span class="block text-sm text-ink-subtle">{% trans "Choose a unique password to keep your rooms safe." %}</span>
         </span>
-        <i class="bi bi-chevron-right text-ink-subtle" aria-hidden="true"></i>
+        {% icon "chevron-right" "text-ink-subtle" %}
       </button>
       <button class="flex w-full items-center gap-3 border-0 bg-transparent px-5 py-3 text-left transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
               type="button"
@@ -159,16 +156,14 @@
               hx-swap="morph:innerHTML"
               hx-push-url="true">
         <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text"
-              aria-hidden="true">
-          <i class="bi bi-shield-check"></i>
-        </span>
+              aria-hidden="true">{% icon "shield-check" %}</span>
         <span class="min-w-0 flex-1">
           <span class="block font-medium text-ink">{% trans "Security settings" %}</span>
           <span class="block text-sm text-ink-subtle">
             {% trans "Log in with your fingerprint, face ID, or a hardware security key — no password required." %}
           </span>
         </span>
-        <i class="bi bi-chevron-right text-ink-subtle" aria-hidden="true"></i>
+        {% icon "chevron-right" "text-ink-subtle" %}
       </button>
       {% if request.user.is_superuser and user.is_superuser %}
         <a id="superuser-admin-link"
@@ -176,11 +171,9 @@
            href="{{ core.BACKEND_URL }}/{{ core.ADMIN_URL }}/login"
            target="_blank">
           <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-surface-sunken text-ink-muted"
-                aria-hidden="true">
-            <i class="bi bi-terminal"></i>
-          </span>
+                aria-hidden="true">{% icon "terminal" %}</span>
           <span class="min-w-0 flex-1 font-medium text-ink">{% trans "Admin" %}</span>
-          <i class="bi bi-box-arrow-up-right text-ink-subtle" aria-hidden="true"></i>
+          {% icon "box-arrow-up-right" "text-ink-subtle" %}
         </a>
       {% endif %}
     </div>

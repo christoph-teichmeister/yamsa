@@ -59,7 +59,8 @@ class TestRoomShareButton:
         assert response.status_code == 200
         content = response.content.decode()
         assert "data-copy-share-url" not in content
-        assert "bi-dash-circle" in content
+        # Icons are <use> references into the sprite now, not font classes.
+        assert "#dash-circle" in content
 
     def test_who_are_you_partial_calls_out_registration_cta(self, owner_client, room):
         owner_client.logout()

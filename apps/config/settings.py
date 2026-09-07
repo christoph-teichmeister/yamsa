@@ -317,6 +317,9 @@ TEMPLATES = (
             ),
             "builtins": [
                 "apps.room.templatetags.room_tags",
+                # 46 templates draw an icon; a `{% load %}` in each of them would be 46 lines
+                # saying the same thing, and one missing line is a TemplateSyntaxError.
+                "apps.core.templatetags.icon_tags",
             ],
         },
     },

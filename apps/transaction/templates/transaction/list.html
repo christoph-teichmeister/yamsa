@@ -6,8 +6,7 @@
       <div class="flex items-start gap-3 rounded-2xl border border-line bg-brand-soft px-4 py-3"
            role="status"
            data-dismissable>
-        <i class="bi bi-people mt-0.5 shrink-0 text-brand-text"
-           aria-hidden="true"></i>
+        {% icon "people" "mt-0.5 shrink-0 text-brand-text" %}
         <div class="min-w-0 flex-1">
           <p class="m-0 text-sm text-ink">
             {% trans "Import done. Share this room with the others instead of letting them import their own export — otherwise the same history ends up in two rooms." %}
@@ -22,9 +21,7 @@
         <button class="shrink-0 cursor-pointer rounded-lg border-0 bg-transparent p-1 text-ink-subtle transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 type="button"
                 aria-label="{% trans "Close" %}"
-                data-dismiss>
-          <i class="bi bi-x-lg" aria-hidden="true"></i>
-        </button>
+                data-dismiss>{% icon "x-lg" %}</button>
       </div>
     {% endif %}
     <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
@@ -39,7 +36,7 @@
         <div class="mt-3 flex flex-wrap gap-2">
           {% include "room/partials/_room_status_badge.html" %}
           <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
-            <i class="bi bi-receipt" aria-hidden="true"></i>
+            {% icon "receipt" %}
             {% blocktrans count transaction_count=transactions_total_count %}{{ transaction_count }} transaction{% plural %}{{ transaction_count }} transactions{% endblocktrans %}
           </span>
         </div>
@@ -65,7 +62,7 @@
                     hx-indicator="#body-loading-spinner"
                     hx-swap="morph:innerHTML"
                     hx-push-url="true">
-              <i class="bi bi-x-lg" aria-hidden="true"></i>
+              {% icon "x-lg" %}
               {% trans "Clear filter" %}
             </button>
           </div>
@@ -90,8 +87,7 @@
           <label class="mb-1.5 block text-sm font-semibold text-ink"
                  for="transaction-search">{% trans "Search" %}</label>
           <div class="relative">
-            <i class="bi bi-search pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-subtle"
-               aria-hidden="true"></i>
+            {% icon "search" "pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-subtle" %}
             <input id="transaction-search"
                    class="w-full rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-4 pl-10 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand disabled:cursor-not-allowed disabled:opacity-50"
                    type="search"
@@ -139,7 +135,7 @@
           <a class="inline-flex items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-5 py-2.5 text-sm font-semibold text-ink no-underline transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
              href="{% room_url 'transaction:export' %}"
              title="{% trans "Export CSV" %}">
-            <i class="bi bi-download" aria-hidden="true"></i>
+            {% icon "download" %}
             {% trans "Export CSV" %}
           </a>
         </div>
@@ -183,7 +179,7 @@
             hx-indicator="#body-loading-spinner"
             hx-swap="morph:innerHTML"
             hx-push-url="true">
-      <i class="bi bi-plus-lg" aria-hidden="true"></i>
+      {% icon "plus-lg" %}
       <span>{% trans "Add transaction" %}</span>
     </button>
   {% endif %}

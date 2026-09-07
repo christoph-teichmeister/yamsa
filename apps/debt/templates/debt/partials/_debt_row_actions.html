@@ -1,7 +1,7 @@
 {% load room_tags i18n l10n %}
 {% if debt.settled %}
   <span class="inline-flex items-center gap-1.5 rounded-full bg-success-soft px-2.5 py-1 text-xs font-semibold text-success-text">
-    <i class="bi bi-piggy-bank-fill" aria-hidden="true"></i>
+    {% icon "piggy-bank-fill" %}
     {% trans "Settled" %}
   </span>
 {% elif debt.viewer_is_debitor %}
@@ -14,7 +14,7 @@
        href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
        target="_blank"
        rel="noopener">
-      <i class="bi bi-paypal" aria-hidden="true"></i>
+      {% icon "paypal" %}
       {% trans "Pay with PayPal" %}
     </a>
   {% endif %}
@@ -26,7 +26,7 @@
           hx-indicator="#body-loading-spinner"
           hx-swap="morph:innerHTML"
           hx-push-url="true">
-    <i class="bi bi-piggy-bank" aria-hidden="true"></i>
+    {% icon "piggy-bank" %}
     {% trans "Mark as paid" %}
   </button>
 {% else %}

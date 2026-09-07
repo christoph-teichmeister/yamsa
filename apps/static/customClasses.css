@@ -1,3 +1,15 @@
+/* The icon contract the bootstrap-icons font used to provide, now that the icons come out of
+   a sprite instead: an icon is 1em of the text it sits in and takes its colour from it, so the
+   call sites keep the `text-*` utilities they already carried. */
+.bi {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    flex: 0 0 auto;
+    fill: currentColor;
+    vertical-align: -0.125em;
+}
+
 .me-involved {
     font-weight: bold;
     color: var(--yamsa-brand-text);

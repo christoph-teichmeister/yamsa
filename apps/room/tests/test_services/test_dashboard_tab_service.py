@@ -13,14 +13,14 @@ class TestDashboardTabService:
 
         expected_order = ["transaction", "debt", "people", "room"]
         expected_routes = {
-            "transaction": ("bi bi-wallet", "transaction:list"),
-            "debt": ("bi bi-piggy-bank", "debt:list"),
-            "people": ("bi bi-people", "account:list"),
-            "room": ("bi bi-gear", "room:detail"),
+            "transaction": ("wallet", "transaction:list"),
+            "debt": ("piggy-bank", "debt:list"),
+            "people": ("people", "account:list"),
+            "room": ("gear", "room:detail"),
         }
 
         assert [tab.name for tab in tabs] == expected_order
         for tab in tabs:
             icon, route_name = expected_routes[tab.name]
-            assert tab.icon_class == icon
+            assert tab.icon_name == icon
             assert tab.get_url == reverse(route_name, kwargs={"room_slug": room.slug})

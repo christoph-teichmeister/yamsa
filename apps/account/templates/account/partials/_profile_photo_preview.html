@@ -30,9 +30,7 @@
            width="80"
            height="80">
       <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/45 text-lg text-white opacity-0 transition-opacity group-hover:opacity-100 group-has-focus-visible:opacity-100"
-            aria-hidden="true">
-        <i class="bi bi-zoom-in"></i>
-      </span>
+            aria-hidden="true">{% icon "zoom-in" %}</span>
     </button>
     <dialog id="profile-photo-preview-dialog"
             class="m-auto w-[min(34rem,calc(100vw-2rem))] rounded-3xl border border-line bg-surface p-0 text-ink backdrop:bg-black/60"
@@ -42,9 +40,7 @@
         <button class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-ink-subtle transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 type="button"
                 aria-label="{% trans "Close" %}"
-                data-dialog-close>
-          <i class="bi bi-x-lg" aria-hidden="true"></i>
-        </button>
+                data-dialog-close>{% icon "x-lg" %}</button>
       </div>
       {# Contained, not cropped: the point of the dialog is the part the round avatar cuts away. #}
       <div class="flex items-center justify-center bg-surface-sunken p-5">

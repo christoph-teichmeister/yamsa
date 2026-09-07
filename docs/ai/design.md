@@ -545,8 +545,30 @@ does. The category suggestion hint and the transaction form's split-lock hint fo
 and the lock itself sets only real state — `readOnly`, `aria-disabled`, `disabled` — which
 `read-only:`, `aria-disabled:` and `disabled:` then render.
 
-Icons are bootstrap-icons (`<i class="bi bi-…" aria-hidden="true">`). It is a standalone icon
-font — it never needed the framework it is named after, and it stayed when the framework went.
+## Icons come out of a sprite
+
+`{% icon "chevron-down" %}`, and `{% icon "trash" "text-danger-text" %}` when it needs utilities of
+its own. The tag is a template builtin, so no `{% load %}` — 46 templates draw an icon and one
+forgotten load line is a TemplateSyntaxError.
+
+What it renders is a `<use>` into `apps/static/icons/sprite.svg`. The `.bi` class survives from the
+font era and keeps its contract: **an icon is 1em of the text it sits in and takes `currentColor`**,
+which is why every call site keeps the `text-*` utilities it already had, and why an icon needs no
+size of its own.
+
+The drawings are still bootstrap-icons, but the font is not shipped: 2078 glyphs and a 97 KB
+stylesheet for the 72 icons in use, where the sprite is 11 KB gzipped and every page then pays
+1-3 KB of `<use>` markup. The npm package is a **devDependency** — the source `sync_icons` builds
+the sprite from, never something a request touches, because the runtime image does not install it.
+
+Adding an icon is `{% icon "the-name" %}` plus `python manage.py sync_icons`, and the sprite is
+committed. `sync_icons --check` in the static-analysis job fails on a sprite that has drifted from
+the templates, in either direction. It reads names only, so it needs no `node_modules`.
+
+A name that reaches the tag through a variable cannot be found by reading the templates —
+`dashboard_tab_service.py`'s four, and what the `member_form` / `_people_action` partials get
+passed. Those are listed in `apps/core/icons/registry.py`, and adding one there is the price of
+passing an icon name around instead of writing it at the call site.
 
 ## Class hooks the tests hold on to
 

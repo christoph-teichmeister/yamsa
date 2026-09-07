@@ -36,8 +36,7 @@
                       </option>
                     {% endfor %}
                   </select>
-                  <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle"
-                     aria-hidden="true"></i>
+                  {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle" %}
                 </div>
                 <div>
                   <input id="{{ name_field.id_for_label }}"
@@ -85,8 +84,7 @@
                       </option>
                     {% endfor %}
                   </select>
-                  <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle"
-                     aria-hidden="true"></i>
+                  {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle" %}
                 </div>
                 <div class="flex gap-2">
                   <input id="{{ name_field.id_for_label }}"
@@ -168,8 +166,7 @@
                   {% endif %}
                 {% endfor %}
               </select>
-              <i class="bi bi-chevron-down pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle"
-                 aria-hidden="true"></i>
+              {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle" %}
             </div>
           </div>
         </div>
@@ -228,8 +225,7 @@
         <div class="border-t border-line px-5 py-4 @md:px-6">
           <div class="flex items-start gap-2 rounded-2xl border border-warning-text/40 bg-warning-soft px-4 py-3"
                role="alert">
-            <i class="bi bi-exclamation-triangle-fill mt-0.5 shrink-0 text-warning-text"
-               aria-hidden="true"></i>
+            {% icon "exclamation-triangle-fill" "mt-0.5 shrink-0 text-warning-text" %}
             <p class="m-0 text-sm text-warning-text">
               {% blocktrans with codes=unknown_currency_codes|join:", " %}These currencies are unknown here and will be booked in the room currency: {{ codes }}. Their amounts land in the same balance, so the resulting debts will be wrong.{% endblocktrans %}
             </p>
@@ -240,7 +236,7 @@
         <button class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
                 type="submit"
                 data-disable-on-submit="true">
-          <i class="bi bi-check2-circle" aria-hidden="true"></i>
+          {% icon "check2-circle" %}
           {% trans "Import now" %}
         </button>
       </div>

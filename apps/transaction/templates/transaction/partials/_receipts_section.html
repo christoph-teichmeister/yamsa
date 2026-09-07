@@ -22,9 +22,7 @@
               <button class="inline-flex size-8 cursor-pointer items-center justify-center rounded-full border border-danger-text/60 bg-surface text-danger-text shadow-card transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                       type="submit"
                       aria-label="{% trans "Delete receipt" %}"
-                      title="{% trans "Delete receipt" %}">
-                <i class="bi bi-trash" aria-hidden="true"></i>
-              </button>
+                      title="{% trans "Delete receipt" %}">{% icon "trash" %}</button>
             </form>
           {% endif %}
           <a class="flex h-full flex-col text-inherit no-underline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
@@ -46,10 +44,7 @@
                         data="{{ receipt.file.url }}#view=FitH&toolbar=0&navpanes=0"
                         type="{{ receipt.content_type }}"
                         aria-label="{% trans "PDF receipt preview" %}">
-                  <div class="flex size-full items-center justify-center">
-                    <i class="bi bi-file-earmark-pdf text-3xl text-ink-subtle"
-                       aria-hidden="true"></i>
-                  </div>
+                  <div class="flex size-full items-center justify-center">{% icon "file-earmark-pdf" "text-3xl text-ink-subtle" %}</div>
                 </object>
               </div>
             {% endif %}
@@ -71,8 +66,7 @@
     {% if current_room.is_closed %}
       <div class="mt-4 flex items-start gap-2 rounded-2xl border border-warning-text/40 bg-warning-soft px-4 py-3"
            role="note">
-        <i class="bi bi-info-circle-fill mt-0.5 shrink-0 text-warning-text"
-           aria-hidden="true"></i>
+        {% icon "info-circle-fill" "mt-0.5 shrink-0 text-warning-text" %}
         <p class="m-0 text-sm text-warning-text">{% trans "Receipts cannot be uploaded after the room has been closed." %}</p>
       </div>
     {% else %}
@@ -102,7 +96,7 @@
                      name="{{ receipt_field.html_name }}"
                      accept="{{ receipt_field.field.widget.attrs.accept }}"
                      required>
-              <i class="bi bi-file-earmark-arrow-up" aria-hidden="true"></i>
+              {% icon "file-earmark-arrow-up" %}
               {% trans "Upload receipt" %}
             </label>
             <p class="m-0 text-sm text-ink-subtle">{% trans "PDF or PNG/JPEG/WebP/GIF (max 5 MB)." %}</p>
