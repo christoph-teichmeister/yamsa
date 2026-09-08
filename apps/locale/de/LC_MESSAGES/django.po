@@ -466,6 +466,24 @@ msgstr "yamsa, gemeinsame Ausgaben, Mitbewohner-App, Rechnungsteilung, Dashboard
 msgid "yamsa"
 msgstr "yamsa"
 
+msgid "No connection - the expense is saved on this device and will be sent later"
+msgstr "Keine Verbindung – die Ausgabe ist auf diesem Gerät gespeichert und wird später gesendet"
+
+msgid "Your saved expense has been sent"
+msgstr "Deine gespeicherte Ausgabe wurde gesendet"
+
+msgid "A saved expense could not be sent. Open the room to see why."
+msgstr "Eine gespeicherte Ausgabe konnte nicht gesendet werden. Öffne den Raum, um zu sehen warum."
+
+msgid "Offline"
+msgstr "Offline"
+
+msgid "Changes cannot be saved right now"
+msgstr "Änderungen können gerade nicht gespeichert werden"
+
+msgid "Saved data from"
+msgstr "Gespeicherter Stand von"
+
 msgid "Currency"
 msgstr "Währung"
 
@@ -1827,6 +1845,21 @@ msgstr "Keine Daten verfügbar"
 msgid "Add a few expenses to unlock the timeline."
 msgstr "Füge ein paar Ausgaben hinzu, um die Timeline freizuschalten."
 
+msgid "One expense is waiting to be sent"
+msgstr "Eine Ausgabe wartet auf den Versand"
+
+msgid "expenses are waiting to be sent"
+msgstr "Ausgaben warten auf den Versand"
+
+msgid "waiting"
+msgstr "wartet"
+
+msgid "not accepted"
+msgstr "nicht angenommen"
+
+msgid "This browser can only send them while yamsa is open. Come back once you have a connection."
+msgstr "Dieser Browser kann sie nur senden, solange yamsa geöffnet ist. Komm zurück, sobald du Verbindung hast."
+
 msgid "Stored documents are linked to this transaction."
 msgstr "Gespeicherte Dokumente sind mit dieser Transaktion verknüpft."
 
@@ -1977,36 +2010,3 @@ msgstr "Transaktionen importiert"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
-
-msgid "Offline"
-msgstr "Offline"
-
-msgid "Changes cannot be saved right now"
-msgstr "Änderungen können gerade nicht gespeichert werden"
-
-msgid "Saved data from"
-msgstr "Gespeicherter Stand von"
-
-msgid "No connection - the expense is saved on this device and will be sent later"
-msgstr "Keine Verbindung – die Ausgabe ist auf diesem Gerät gespeichert und wird später gesendet"
-
-msgid "Your saved expense has been sent"
-msgstr "Deine gespeicherte Ausgabe wurde gesendet"
-
-msgid "A saved expense could not be sent. Open the room to see why."
-msgstr "Eine gespeicherte Ausgabe konnte nicht gesendet werden. Öffne den Raum, um zu sehen warum."
-
-msgid "One expense is waiting to be sent"
-msgstr "Eine Ausgabe wartet auf den Versand"
-
-msgid "expenses are waiting to be sent"
-msgstr "Ausgaben warten auf den Versand"
-
-msgid "waiting"
-msgstr "wartet"
-
-msgid "not accepted"
-msgstr "nicht angenommen"
-
-msgid "This browser can only send them while yamsa is open. Come back once you have a connection."
-msgstr "Dieser Browser kann sie nur senden, solange yamsa geöffnet ist. Komm zurück, sobald du Verbindung hast."
