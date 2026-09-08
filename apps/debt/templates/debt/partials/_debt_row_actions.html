@@ -7,11 +7,13 @@
 {% elif debt.viewer_is_debitor %}
   {% if debt.creditor.paypal_me_username %}
     {% comment %}
-      paypal.me parses the amount itself, so it must stay unlocalised - a German viewer would
-      otherwise send "42,50" into the URL and land on a broken PayPal page.
+      The long paypal.com/paypalme form, not the paypal.me short link: the short link redirects to
+      the bare profile and drops the amount segment, so the amount never reaches the payment page.
+      The amount must also stay unlocalised - a German viewer would otherwise send "42,50" and land
+      on a broken PayPal page.
     {% endcomment %}
     <a class="inline-flex items-center justify-center gap-2 rounded-xl border border-brand bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-brand-text no-underline transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
-       href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
+       href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
        target="_blank"
        rel="noopener">
       {% icon "paypal" %}

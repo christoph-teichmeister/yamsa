@@ -38,3 +38,19 @@ class TestDebtSettleView:
         assert response.status_code == http.HTTPStatus.OK
         avatar = BeautifulSoup(response.content.decode(), "html.parser").select_one(".avatar")
         assert avatar.find("img")["src"] == debt.creditor.avatar_url
+
+    def test_paypal_link_carries_the_amount_and_currency(self, client, room, user, guest_user):
+        """Regression: the paypal.me short link drops the amount segment on redirect."""
+        user.paypal_me_username = "creditorname"
+        user.save()
+        create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+        debt = room.debts.filter(settled=False).first()
+        client.force_login(guest_user)
+
+        response = client.get(reverse("debt:settle", kwargs={"room_slug": room.slug, "pk": debt.pk}))
+
+        assert response.status_code == http.HTTPStatus.OK
+        soup = BeautifulSoup(response.content.decode(), "html.parser")
+        paypal_link = soup.select_one('a[href*="paypal"]')
+        assert paypal_link is not None
+        assert paypal_link["href"] == (f"https://www.paypal.com/paypalme/creditorname/{debt.value}{debt.currency.code}")

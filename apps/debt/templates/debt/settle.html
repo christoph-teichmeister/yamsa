@@ -41,7 +41,7 @@
           <p class="m-0 text-sm text-ink-muted">
             {% trans "Not paid yet?" %}
             <a class="font-semibold text-brand-text no-underline transition hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-               href="https://www.paypal.me/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
+               href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
                target="_blank"
                rel="noopener">
               {% blocktrans with creditor_name=debt.creditor.name trimmed %}
