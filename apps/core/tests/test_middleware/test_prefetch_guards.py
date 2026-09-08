@@ -7,8 +7,10 @@ run again per warm-up - on a page nobody is looking at.
 from unittest import mock
 
 import pytest
+from django.conf import settings
 from django.urls import reverse
 
+from apps.account.constants import SESSION_TTL_SESSION_KEY
 from apps.core.pwa_constants import PREFETCH_HEADER_NAME
 from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY
 
@@ -46,3 +48,21 @@ def test_warming_the_dashboard_does_not_run_the_reminder_services(
 
     payment_reminder.assert_called_once()
     closure_reminder.assert_called_once()
+
+
+def test_warming_a_page_does_not_keep_the_session_alive(authenticated_client, room):
+    """Otherwise a session never expires while the app is open, and every warmed page writes it."""
+    session = authenticated_client.session
+    session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
+    session.set_expiry(30)
+    session.save()
+    authenticated_client.cookies[settings.SESSION_COOKIE_NAME] = session.session_key
+
+    url = reverse("transaction:list", kwargs={"room_slug": room.slug})
+    authenticated_client.get(url, headers=PREFETCH_HEADERS)
+
+    assert authenticated_client.session.get_expiry_age() <= 30
+
+    authenticated_client.get(url)
+
+    assert authenticated_client.session.get_expiry_age() > 30

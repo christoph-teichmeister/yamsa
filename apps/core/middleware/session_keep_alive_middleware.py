@@ -4,6 +4,7 @@ from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 
 from apps.account.constants import SESSION_TTL_SESSION_KEY
+from apps.core.pwa_constants import PREFETCH_HEADER_NAME
 
 
 class SessionKeepAliveMiddleware:
@@ -34,6 +35,12 @@ class SessionKeepAliveMiddleware:
             return False
 
         if not hasattr(request, "session"):
+            return False
+
+        # A client filling its offline cache is not the visitor doing something. Counting it would
+        # keep a session alive for as long as the app stays open, and it writes the session row
+        # once per warmed page - five at a time, against whatever else is in flight.
+        if request.headers.get(PREFETCH_HEADER_NAME):
             return False
 
         return not self._is_safe_htmx_fragment(request)

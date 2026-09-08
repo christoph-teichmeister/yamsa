@@ -45,6 +45,9 @@ class TestOffline:
             reverse("debt:list", kwargs={"room_slug": room.slug}),
             reverse("account:list", kwargs={"room_slug": room.slug}),
             reverse("room:detail", kwargs={"room_slug": room.slug}),
+            # Warmed last. Waiting for it too is what keeps a test from racing the tail of the
+            # warm-up with whatever it does next.
+            reverse("transaction:create", kwargs={"room_slug": room.slug}),
         ]
 
     @staticmethod
