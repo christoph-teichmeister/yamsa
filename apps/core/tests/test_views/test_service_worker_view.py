@@ -80,6 +80,22 @@ def test_service_worker_never_answers_app_assets_from_the_cache_first(client):
 
     assert "cacheFirst" not in script
     assert re.search(
-        r"if \(isDocument \|\| isAppAsset\) \{\s*event\.respondWith\(networkFirst\(request\)\);",
+        r"if \(isDocument\) \{\s*event\.respondWith\(networkFirstPage\(request\)\);",
         script,
     )
+    assert re.search(
+        r"if \(isAppAsset\) \{\s*event\.respondWith\(networkFirstAsset\(request\)\);",
+        script,
+    )
+
+
+def test_service_worker_keeps_pages_out_of_the_shared_asset_cache(client):
+    """A page carries what one account was allowed to see; an asset is the same for everyone."""
+    script = client.get(reverse("core:serviceworker")).content.decode()
+
+    assert 'const PAGES_CACHE_PREFIX = "yamsa-pages-' in script
+    # storePage() is the only writer of the page cache, and it refuses a response the scope
+    # middleware did not label.
+    assert "const scope = response.headers.get(SCOPE_HEADER);" in script
+    assert "networkFirstAsset" in script
+    assert "STATIC_CACHE_NAME" in script

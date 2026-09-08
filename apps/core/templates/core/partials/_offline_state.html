@@ -1,0 +1,28 @@
+{% load i18n %}
+{% comment %}
+Inside #base-content rather than the head: htmx swaps the body on every navigation and leaves the
+head as the browser first loaded it, so a scope read from the head would still name the account
+that was signed in before a sign-out.
+{% endcomment %}
+<div hidden
+     data-offline-state
+     {% comment %}
+     No scope on the offline stand-in. It is precached once, without an account, and then served
+     for whichever page could not be reached - so reporting its scope would tell the worker the
+     visitor had signed out and take the whole offline cache down with it.
+     {% endcomment %}
+     {% if not called_by_offline_view %}data-pwa-scope="{{ core.PWA_SCOPE }}"{% endif %}
+     data-cached-at-header="{{ core.PWA_CACHED_AT_HEADER }}"
+     data-prefetch-header="{{ core.PWA_PREFETCH_HEADER }}"
+     {% if request.room %}data-offline-manifest-url="{% url 'room:offline-manifest' room_slug=request.room.slug %}"{% endif %}></div>
+<div hidden data-offline-banner role="status">
+  <div class="mb-6 flex items-center gap-3 rounded-2xl border border-line bg-warning-soft px-4 py-3 text-sm text-warning-text">
+    <span class="min-w-0 flex-1">
+      <span class="font-semibold">📡 {% trans "Offline" %}</span>
+      <span data-offline-hint>{% trans "Changes cannot be saved right now" %}</span>
+      <span hidden data-offline-stale>
+        {% trans "Saved data from" %} <time data-offline-cached-at></time>
+      </span>
+    </span>
+  </div>
+</div>

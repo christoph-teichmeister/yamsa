@@ -1977,3 +1977,12 @@ msgstr "Transaktionen importiert"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
+
+msgid "Offline"
+msgstr "Offline"
+
+msgid "Changes cannot be saved right now"
+msgstr "Änderungen können gerade nicht gespeichert werden"
+
+msgid "Saved data from"
+msgstr "Gespeicherter Stand von"

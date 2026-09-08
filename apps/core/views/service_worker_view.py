@@ -5,6 +5,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views import generic
 from webpack_loader.utils import get_files
 
+from apps.core.pwa_constants import CACHED_AT_HEADER_NAME, PREFETCH_HEADER_NAME, SCOPE_HEADER_NAME
 from apps.core.services.pwa_cache_version_service import resolve_cache_version
 
 
@@ -17,13 +18,21 @@ class ServiceWorkerView(generic.TemplateView):
         cache_settings = settings.PWA_SERVICE_WORKER
         precache_urls = self._build_precache_urls(cache_settings)
         cache_prefix = cache_settings.get("cache_prefix", "yamsa")
+        cache_version = resolve_cache_version()
 
         context.update(
-            cache_name=f"{cache_prefix}-static-{resolve_cache_version()}",
+            cache_name=f"{cache_prefix}-static-{cache_version}",
+            # Trailing separator included: the worker cannot know the current visitor while it is
+            # offline, so it recognises its page cache by this prefix rather than by a full name.
+            pages_cache_prefix=f"{cache_prefix}-pages-{cache_version}-",
             cache_prefix=cache_prefix,
             offline_url=str(cache_settings.get("offline_url", "/offline/")),
             precache_urls=json.dumps(precache_urls),
             static_url_prefix=cache_settings.get("static_url_prefix", settings.STATIC_URL),
+            max_cached_pages=cache_settings.get("max_cached_pages", 40),
+            scope_header=SCOPE_HEADER_NAME,
+            cached_at_header=CACHED_AT_HEADER_NAME,
+            prefetch_header=PREFETCH_HEADER_NAME,
         )
         return context
 

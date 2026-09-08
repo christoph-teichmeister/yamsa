@@ -14,6 +14,7 @@ module.exports = {
   entry: {
     d3: path.resolve(staticJsPath, "vendor/d3-entry.js"),
     navigation: path.resolve(staticJsPath, "navigation.js"),
+    offline: path.resolve(staticJsPath, "offline.js"),
     "suggested-guests": path.resolve(staticJsPath, "suggested-guests.js"),
     "category-suggestion": path.resolve(staticJsPath, "category-suggestion.js"),
     sheet: path.resolve(staticJsPath, "sheet.js"),

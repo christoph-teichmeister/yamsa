@@ -217,6 +217,7 @@ MIDDLEWARE = (
     "apps.room.middleware.RoomToRequestMiddleware",
     "apps.core.middleware.maintenance_middleware.MaintenanceMiddleware",
     "apps.core.middleware.toast_middleware.ToastMiddleware",
+    "apps.core.middleware.pwa_scope_middleware.PwaScopeHeaderMiddleware",
     # AxesMiddleware should be the last middleware in the MIDDLEWARE list.
     "axes.middleware.AxesMiddleware",
 )
@@ -627,9 +628,14 @@ PWA_SERVICE_WORKER = {
         "tailwind": "css",
         "htmx": "js",
         "navigation": "js",
+        "offline": "js",
         "dialog": "js",
     },
     "static_url_prefix": STATIC_URL,
+    # Ceiling on the HTML pages kept for offline reading. Room pages are the point of the cache and
+    # a busy account visits many of them, so without a bound the cache grows until the browser
+    # evicts the whole origin - which takes the precached app shell with it.
+    "max_cached_pages": 40,
 }
 
 MANIFEST = {

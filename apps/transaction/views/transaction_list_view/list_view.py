@@ -1,5 +1,6 @@
 from django.views import generic
 
+from apps.core.pwa_constants import PREFETCH_HEADER_NAME
 from apps.currency.models import Currency
 from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY
 from apps.transaction.models import Category
@@ -23,6 +24,11 @@ class TransactionListView(TransactionFeedMixin, generic.TemplateView):
 
     def _pop_import_share_hint(self) -> bool:
         """Show the "share instead of re-importing" hint once, right after an import."""
+        # A background request that fills the offline cache would spend the one showing on a page
+        # nobody is looking at.
+        if self.request.headers.get(PREFETCH_HEADER_NAME):
+            return False
+
         pending_slug = self.request.session.get(IMPORT_SHARE_HINT_SESSION_KEY)
         if pending_slug and pending_slug == str(self.request.room.slug):
             del self.request.session[IMPORT_SHARE_HINT_SESSION_KEY]
