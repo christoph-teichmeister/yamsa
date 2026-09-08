@@ -495,14 +495,20 @@ LOGGING = {
     },
 }
 
+# RELEASE
+# ------------------------------------------------------------------------------
+# Which build is running. Sentry groups issues by it and the service worker names its caches after
+# it, so a value that does not move between deploys is wrong in both places at once - stale caches
+# on every device, and every issue filed against the same version.
+#
+# SENTRY_RELEASE only exists where somebody configured it. RENDER_GIT_COMMIT is what carries this
+# in production: Render sets it on every deploy of a git-backed service, in the build and in the
+# runtime environment. One name for both readers, so a third source cannot reach one and miss the
+# other.
+RELEASE = env("SENTRY_RELEASE") or env("RENDER_GIT_COMMIT")
+
 # SENTRY
 # ------------------------------------------------------------------------------
-SENTRY_RELEASE = env("SENTRY_RELEASE")
-
-# What Render calls this build. Read here so the PWA can name its caches after it without a
-# variable anyone has to remember to set - see pwa_cache_version_service.
-RENDER_GIT_COMMIT = env("RENDER_GIT_COMMIT")
-
 if os.environ.get("SENTRY_DSN"):
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
@@ -521,6 +527,9 @@ if os.environ.get("SENTRY_DSN"):
         ),
         max_breadcrumbs=50,
         debug=False,
+        # None, not "": an empty string is a release named "" to the SDK, where None lets it fall
+        # back to its own detection.
+        release=RELEASE or None,
         environment=env("SENTRY_ENVIRONMENT"),
         server_name=BACKEND_URL,
         send_default_pii=True,

@@ -22,7 +22,7 @@ from apps.core.views.service_worker_view import ServiceWorkerView
         "static_url_prefix": "/custom-static/",
     },
     STATIC_URL="/static/",
-    SENTRY_RELEASE="release/1",
+    RELEASE="release/1",
 )
 def test_service_worker_builds_precache_urls_from_manifest():
     view = ServiceWorkerView()

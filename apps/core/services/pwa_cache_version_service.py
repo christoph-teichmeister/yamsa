@@ -17,12 +17,8 @@ def resolve_cache_version() -> str:
     A deploy that leaves this unchanged keeps every browser on the HTML and assets it cached
     before, because the old caches are never purged and network-first only reaches them while the
     device is offline.
-
-    RENDER_GIT_COMMIT is the one that actually carries this in production: Render sets it on every
-    deploy of a git-backed service, in the build and in the runtime environment, where SENTRY_RELEASE
-    only exists if somebody configured it.
     """
-    release = settings.SENTRY_RELEASE or settings.RENDER_GIT_COMMIT
+    release = settings.RELEASE
     if release:
         return _sanitise(release)
 

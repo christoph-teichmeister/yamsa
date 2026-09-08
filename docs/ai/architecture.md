@@ -86,10 +86,12 @@ open is not a queue. The replayed body is the one the form would have posted, ag
 view, so there is no second write path to keep in step.
 
 The cache names carry a version, and a deploy that leaves it unchanged keeps every browser on the
-release before. It comes from `RENDER_GIT_COMMIT`, which Render sets on every deploy of a
-git-backed service in both the build and the runtime environment — `SENTRY_RELEASE` overrides it
-where somebody configured one, and a hash of the asset manifests stands in where neither exists.
-Nothing here needs a variable set by hand.
+release before. It comes from the `RELEASE` setting, which Sentry is initialised from as well —
+one name for both readers, so a third source cannot reach one and miss the other. `RELEASE` is
+`SENTRY_RELEASE` where somebody configured one, otherwise `RENDER_GIT_COMMIT`, which Render sets
+on every deploy of a git-backed service in both the build and the runtime environment. Where
+neither exists — a working copy, another host — a hash of the asset manifests stands in for the
+cache name. Nothing here needs a variable set by hand.
 
 Things that will bite you here:
 
