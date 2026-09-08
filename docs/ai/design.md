@@ -612,6 +612,16 @@ The chrome around a page is four things, and none of them needs a component fram
   `0`, the dashboard nav at `1030`, the transaction feed's floating pill at `1050`, the top bar at
   `1300`, the toasts at `1400`, the debug banner at `4000` (in `customClasses.css`). The pill is
   positioned against the nav, so the two numbers have to be read together.
+- **The floating pill yields to the feed.** `hide-on-scroll.js` marks any `[data-hide-on-scroll]`
+  element with `data-scroll-hidden` while the reader scrolls down and clears it again on the way
+  up; the transaction feed's pill keys `opacity-0`, `translate-y-2` and `pointer-events-none` off
+  that attribute, the same way its rows key their highlight off `data-highlight`. It fades in
+  place rather than sliding away because it stacks above the opaque nav and would be seen crossing
+  it. Three rules keep it from disappearing when it is wanted: the top and the end of the page
+  always show it, a page that does not scroll never hides it, and focus brings it back — it stays
+  in the tab order while hidden. The end of the page only counts as the end when no
+  `[hx-trigger~="revealed"]` sentinel is left, or a lazy-loading feed would flash the pill at every
+  batch boundary.
 - **The content column** is the `app-container` utility — full width on a phone, half the viewport
   from 768 px up — shared by `#base-content`, the top bar and both bottom navs so the chrome stays
   aligned with what it frames.
