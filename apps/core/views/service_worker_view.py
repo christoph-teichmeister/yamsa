@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.urls import reverse
 from django.views import generic
 from webpack_loader.utils import get_files
 
@@ -33,6 +34,8 @@ class ServiceWorkerView(generic.TemplateView):
             scope_header=SCOPE_HEADER_NAME,
             cached_at_header=CACHED_AT_HEADER_NAME,
             prefetch_header=PREFETCH_HEADER_NAME,
+            session_url=reverse("core:pwa-session"),
+            login_path=reverse("account:login"),
         )
         return context
 

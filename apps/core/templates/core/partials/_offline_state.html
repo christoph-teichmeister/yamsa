@@ -14,6 +14,10 @@ that was signed in before a sign-out.
      {% if not called_by_offline_view %}data-pwa-scope="{{ core.PWA_SCOPE }}"{% endif %}
      data-cached-at-header="{{ core.PWA_CACHED_AT_HEADER }}"
      data-prefetch-header="{{ core.PWA_PREFETCH_HEADER }}"
+     data-toast-info-class="{{ toast_classes.info }}"
+     data-queued-message="{% trans 'No connection - the expense is saved on this device and will be sent later' %}"
+     data-sent-message="{% trans 'Your saved expense has been sent' %}"
+     data-rejected-message="{% trans 'A saved expense could not be sent. Open the room to see why.' %}"
      {% if request.room %}data-offline-manifest-url="{% url 'room:offline-manifest' room_slug=request.room.slug %}"{% endif %}></div>
 <div hidden data-offline-banner role="status">
   <div class="mb-6 flex items-center gap-3 rounded-2xl border border-line bg-warning-soft px-4 py-3 text-sm text-warning-text">

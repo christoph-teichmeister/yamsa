@@ -62,3 +62,44 @@ def form_valid(self, form):
     handle_message(SomeEvent(context_data={...}))  # after atomic, connection is free
     return super().form_valid(form)
 ```
+
+## Offline: what the app promises without a connection
+
+Three pieces, in `apps/core` and `apps/static/js/offline.js`:
+
+**The service worker** (`core/pwa/serviceworker.js`, rendered by `ServiceWorkerView`) keeps two
+caches. Assets go to `yamsa-static-<version>`, shared by everyone. Documents go to
+`yamsa-pages-<version>-<scope>`, where the scope comes from `PwaScopeHeaderMiddleware` and names
+the signed-in account. Only one page cache exists at a time — that is how the worker recognises
+its own while offline, when it has no session to ask. Both are network-first: the cache is the
+fallback, never the source.
+
+**The page** reports its scope on every load and after every htmx swap, which is what makes a
+sign-out drop the previous account's pages (a sign-out is an htmx request the worker never sees).
+It also asks the worker to warm the room from `room:offline-manifest` — the dashboard tabs plus the
+expense form. The worker does the fetching, because a `fetch()` the page makes is not a navigation
+and would not be recognised as a document.
+
+**The outbox** (`apps/static/js/outbox.js`, IndexedDB) holds an expense entered without a
+connection. The page writes it, the worker replays it — a queue that only drains while a tab is
+open is not a queue. The replayed body is the one the form would have posted, against the same
+view, so there is no second write path to keep in step.
+
+Things that will bite you here:
+
+- **`Vary`.** Django answers these pages with `Vary: Cookie, Accept-Language`. A warmed page is
+  fetched by the worker rather than by a navigation, so the two never agree on those headers.
+  Every read of the page cache passes `ignoreVary: true`; what `Cookie` separates is the account,
+  and the cache is already partitioned by exactly that.
+- **The offline stand-in reports no scope.** It is precached without an account and then shown for
+  any page that cannot be reached. Reporting a scope read as a sign-out, and one unreachable page
+  emptied the whole cache.
+- **Warming makes GETs repeat.** A request that only fills the cache carries
+  `PREFETCH_HEADER_NAME`; anything that changes state once on a GET — the reminder heartbeat, the
+  one-shot import hint — checks for it and stands down.
+- **`client_request_id` is minted per submission, not per form.** The form is served from the
+  cache, so every expense entered offline starts from the same copy; the outbox overwrites the
+  rendered id with its own. `ParentTransaction.client_request_id` is unique, and
+  `TransactionCreateView` answers a replay with the first submission's outcome and no second event.
+- **Background Sync does not exist on iOS.** The queue drains there when the app is opened again,
+  not before. Do not word anything in the UI as though it were sent.

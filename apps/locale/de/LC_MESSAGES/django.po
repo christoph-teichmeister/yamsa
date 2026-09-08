@@ -1986,3 +1986,24 @@ msgstr "Änderungen können gerade nicht gespeichert werden"
 
 msgid "Saved data from"
 msgstr "Gespeicherter Stand von"
+
+msgid "No connection - the expense is saved on this device and will be sent later"
+msgstr "Keine Verbindung – die Ausgabe ist auf diesem Gerät gespeichert und wird später gesendet"
+
+msgid "Your saved expense has been sent"
+msgstr "Deine gespeicherte Ausgabe wurde gesendet"
+
+msgid "A saved expense could not be sent. Open the room to see why."
+msgstr "Eine gespeicherte Ausgabe konnte nicht gesendet werden. Öffne den Raum, um zu sehen warum."
+
+msgid "One expense is waiting to be sent"
+msgstr "Eine Ausgabe wartet auf den Versand"
+
+msgid "expenses are waiting to be sent"
+msgstr "Ausgaben warten auf den Versand"
+
+msgid "waiting"
+msgstr "wartet"
+
+msgid "not accepted"
+msgstr "nicht angenommen"

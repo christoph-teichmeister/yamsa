@@ -13,14 +13,23 @@ def _manifest_url(room):
     return reverse("room:offline-manifest", kwargs={"room_slug": room.slug})
 
 
-def test_manifest_covers_exactly_the_rooms_navigation(authenticated_client, room):
+def test_manifest_covers_the_rooms_navigation(authenticated_client, room):
     """A tab the manifest misses is a tab that shows the offline page instead of the room."""
     response = authenticated_client.get(_manifest_url(room))
 
     assert response.status_code == 200
     payload = json.loads(response.content)
     assert payload["room"] == str(room.slug)
-    assert payload["urls"] == [tab.get_url for tab in DashboardTabService(room=room).get_tabs_as_list()]
+
+    tab_urls = [tab.get_url for tab in DashboardTabService(room=room).get_tabs_as_list()]
+    assert payload["urls"][: len(tab_urls)] == tab_urls
+
+
+def test_manifest_covers_the_expense_form(authenticated_client, room):
+    """The queue for expenses entered in a dead spot is worth nothing without the form."""
+    payload = json.loads(authenticated_client.get(_manifest_url(room)).content)
+
+    assert reverse("transaction:create", kwargs={"room_slug": room.slug}) in payload["urls"]
 
 
 def test_every_listed_url_can_actually_be_fetched(authenticated_client, room):

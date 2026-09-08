@@ -7,6 +7,15 @@ const MAX_CACHED_PAGES = {{ max_cached_pages }};
 const SCOPE_HEADER = "{{ scope_header }}";
 const CACHED_AT_HEADER = "{{ cached_at_header }}";
 const PREFETCH_HEADER = "{{ prefetch_header }}";
+const SESSION_URL = "{{ session_url }}";
+const LOGIN_PATH = "{{ login_path }}";
+
+// Mirrors apps/static/js/offline outbox module. The page writes this store and this worker
+// replays it, and a worker rendered by Django cannot import a webpack bundle to share them.
+const OUTBOX_DATABASE = "yamsa-outbox";
+const OUTBOX_STORE = "entries";
+const OUTBOX_VERSION = 1;
+const OUTBOX_SYNC_TAG = "yamsa-outbox";
 const PRECACHE_URLS = JSON.parse('{{ precache_urls|escapejs }}');
 const SAME_ORIGIN = self.location.origin;
 
@@ -274,8 +283,205 @@ self.addEventListener("message", (event) => {
     return;
   }
 
+  if (data.type === "yamsa:replay") {
+    event.waitUntil(replayOutbox());
+    return;
+  }
+
   if (data.type === "yamsa:purge-pages") {
     event.waitUntil(purgePagesCaches());
+  }
+});
+
+/*
+ * Replaying what the page could not send.
+ *
+ * Here rather than on the page because a queue that only drains while a tab is open is not a queue:
+ * the visitor writes the expense in a dead spot and puts the phone away.
+ */
+const openOutbox = () =>
+  new Promise((resolve, reject) => {
+    const request = indexedDB.open(OUTBOX_DATABASE, OUTBOX_VERSION);
+    request.onupgradeneeded = () => {
+      const database = request.result;
+      if (!database.objectStoreNames.contains(OUTBOX_STORE)) {
+        database.createObjectStore(OUTBOX_STORE, {keyPath: "id"});
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+
+const withOutbox = async (mode, work) => {
+  const database = await openOutbox();
+  try {
+    return await new Promise((resolve, reject) => {
+      const transaction = database.transaction(OUTBOX_STORE, mode);
+      const result = work(transaction.objectStore(OUTBOX_STORE));
+      transaction.oncomplete = () => resolve(result.value);
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error);
+    });
+  } finally {
+    database.close();
+  }
+};
+
+const readOutbox = () =>
+  withOutbox("readonly", (store) => {
+    const request = store.getAll();
+    const result = {};
+    request.onsuccess = () => {
+      result.value = request.result || [];
+    };
+    return result;
+  });
+
+const writeEntry = (entry) =>
+  withOutbox("readwrite", (store) => {
+    store.put(entry);
+    return {value: entry};
+  });
+
+const dropEntry = (id) =>
+  withOutbox("readwrite", (store) => {
+    store.delete(id);
+    return {value: id};
+  });
+
+const recordAttempt = (entry, status, lastError) =>
+  writeEntry({...entry, status, lastError, attempts: (entry.attempts || 0) + 1});
+
+/*
+ * What a queued submission needs before it may go out: a token minted for the session that exists
+ * now, and the account that session belongs to.
+ */
+const readSessionContext = async () => {
+  try {
+    const response = await fetch(SESSION_URL, {credentials: "same-origin"});
+    if (!response.ok) {
+      return null;
+    }
+    return await response.json();
+  } catch (error) {
+    return null;
+  }
+};
+
+const rebuildBody = (entry, csrfToken) => {
+  const body = new FormData();
+  for (const [name, value] of entry.body) {
+    // The captured token belongs to the session that rendered the form. Any sign-in since then
+    // replaced the secret behind it, and the submission would be refused on a technicality.
+    body.append(name, name === "csrfmiddlewaretoken" ? csrfToken : value);
+  }
+  return body;
+};
+
+const wasAnsweredWithSignIn = (response) => {
+  try {
+    return new URL(response.url).pathname === LOGIN_PATH;
+  } catch (error) {
+    return false;
+  }
+};
+
+const sendEntry = async (entry, context) => {
+  const response = await fetch(entry.url, {
+    method: "POST",
+    body: rebuildBody(entry, context.csrf_token),
+    credentials: "same-origin",
+    headers: {"X-CSRFToken": context.csrf_token},
+  });
+
+  if (wasAnsweredWithSignIn(response)) {
+    // Nothing wrong with the entry; it just has nobody to be filed under right now.
+    await recordAttempt(entry, "queued", "signed out");
+    return "blocked";
+  }
+
+  // The view answers a booked expense with a redirect to the room. A 200 means it came back with
+  // the form and its errors instead.
+  if (response.ok && response.redirected) {
+    await dropEntry(entry.id);
+    return "sent";
+  }
+
+  if (response.status >= 500) {
+    await recordAttempt(entry, "queued", `server ${response.status}`);
+    return "retry";
+  }
+
+  // A closed room, a member who left, a category that is gone. Kept rather than dropped: it is the
+  // visitor's expense, and only they can decide what happens to it.
+  await recordAttempt(entry, "rejected", `refused ${response.status}`);
+  return "rejected";
+};
+
+const announceOutboxChange = async (counts) => {
+  const windows = await self.clients.matchAll({includeUncontrolled: true, type: "window"});
+  windows.forEach((client) => client.postMessage({type: "yamsa:outbox-changed", ...counts}));
+};
+
+const drainOutbox = async () => {
+  const entries = (await readOutbox()).filter((entry) => entry.status !== "rejected");
+  if (!entries.length) {
+    return;
+  }
+
+  const context = await readSessionContext();
+  if (!context) {
+    return;
+  }
+
+  const counts = {sent: 0, rejected: 0};
+
+  for (const entry of entries) {
+    // Queue and cache both outlive a session. Replaying this under whoever is signed in now would
+    // book one person's expense against another.
+    if (entry.scope && context.scope && entry.scope !== context.scope) {
+      continue;
+    }
+
+    let outcome;
+    try {
+      outcome = await sendEntry(entry, context);
+    } catch (error) {
+      await recordAttempt(entry, "queued", "no connection");
+      break;
+    }
+
+    if (outcome === "sent") {
+      counts.sent += 1;
+    } else if (outcome === "rejected") {
+      counts.rejected += 1;
+    } else if (outcome === "blocked") {
+      break;
+    }
+  }
+
+  if (counts.sent || counts.rejected) {
+    await announceOutboxChange(counts);
+  }
+};
+
+// One drain at a time: a sync event and an open page asking at the same moment would otherwise
+// both send the same entry, and only the second would be recognised as a replay.
+let drainInFlight = null;
+
+const replayOutbox = () => {
+  if (!drainInFlight) {
+    drainInFlight = drainOutbox().finally(() => {
+      drainInFlight = null;
+    });
+  }
+
+  return drainInFlight;
+};
+
+self.addEventListener("sync", (event) => {
+  if (event.tag === OUTBOX_SYNC_TAG) {
+    event.waitUntil(replayOutbox());
   }
 });
 
