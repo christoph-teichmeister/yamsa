@@ -1,3 +1,5 @@
+import re
+
 from playwright.sync_api import expect
 
 from e2e.pages.base_page import BasePage
@@ -38,9 +40,20 @@ class TransactionListPage(BasePage):
 
         expect(self.rows).to_have_count(expected_count)
 
+    def expect_add_button_springs_back(self):
+        """The reveal overshoots its resting place; the hide does not.
+
+        Asserted on the declared timing rather than on a frame of the movement: a Tailwind
+        utility that fails to compile is the way this breaks, and it breaks silently.
+        """
+        expect(self.add_transaction_button).to_have_css(
+            "transition-timing-function", re.compile(r"cubic-bezier\(0\.34, 1\.56, 0\.64, 1\)")
+        )
+
     def expect_add_button_hidden(self):
         expect(self.add_transaction_button).to_have_attribute("data-scroll-hidden", "")
         expect(self.add_transaction_button).to_have_css("opacity", "0")
+        expect(self.add_transaction_button).not_to_have_css("transition-timing-function", re.compile(r"1\.56"))
 
     def expect_add_button_visible(self):
         expect(self.add_transaction_button).not_to_have_attribute("data-scroll-hidden", "")

@@ -176,9 +176,10 @@
     Clears the fixed bottom nav (~5rem) and stacks above it, but below the offcanvas menu (1200)
     and the toasts (1400). data-hide-on-scroll yields the row to the feed while reading; the
     hidden state fades in place rather than sliding down, because this pill stacks above the
-    opaque nav and would be seen crossing it.
+    opaque nav and would be seen crossing it. The `scroll-reveal` utility carries the timing -
+    the pill springs slightly past its place on the way back in.
     {% endcomment %}
-    <button class="fixed inset-x-0 bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] z-[1050] mx-auto inline-flex w-fit max-w-[calc(100%-2rem)] cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 data-scroll-hidden:pointer-events-none data-scroll-hidden:translate-y-2 data-scroll-hidden:opacity-0 motion-reduce:transition-none"
+    <button class="fixed inset-x-0 bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] z-[1050] mx-auto inline-flex w-fit max-w-[calc(100%-2rem)] cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-on-brand shadow-brand scroll-reveal translate-y-0 hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 data-scroll-hidden:pointer-events-none data-scroll-hidden:translate-y-2 data-scroll-hidden:opacity-0"
             type="button"
             data-hide-on-scroll
             hx-get="{% room_url 'transaction:create' %}"

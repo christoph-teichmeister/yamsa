@@ -63,6 +63,16 @@ class TestTransactionListAddButton:
 
         list_page.expect_add_button_visible()
 
+    def test_it_springs_back_into_place_when_it_returns(self, page, base_url, room_with_transactions, logged_in):
+        list_page = self._open_list(page, base_url, room_with_transactions, logged_in)
+
+        list_page.scroll_by(400)
+        list_page.expect_add_button_hidden()
+
+        list_page.scroll_by(-100)
+
+        list_page.expect_add_button_springs_back()
+
     def test_scrolling_down_hides_it(self, page, base_url, room_with_transactions, logged_in):
         list_page = self._open_list(page, base_url, room_with_transactions, logged_in)
 
