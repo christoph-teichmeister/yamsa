@@ -106,6 +106,28 @@ import {OUTBOX_SYNC_TAG, buildEntry, putEntry, readEntries} from './outbox.js';
 
   const isOffline = () => document.documentElement.dataset.connection === 'offline';
 
+  /*
+   * Ask the server whether it is there, rather than asking the device whether it has a network.
+   *
+   * navigator.onLine answers the second question: it is true for a device attached to a network
+   * that reaches nothing, and headless browsers have been seen reporting it true with the network
+   * cut out from under them. A request that either answers or does not is the only reading of
+   * "offline" the page can act on.
+   */
+  const serverAnswers = async (state) => {
+    const probeUrl = state.dataset.connectionProbeUrl;
+    if (!probeUrl) {
+      return navigator.onLine;
+    }
+
+    try {
+      const response = await fetch(probeUrl, {cache: 'no-store', credentials: 'same-origin'});
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  };
+
   const renderBanner = async () => {
     const state = readState();
     const banner = document.querySelector(BANNER_SELECTOR);
@@ -136,6 +158,17 @@ import {OUTBOX_SYNC_TAG, buildEntry, putEntry, readEntries} from './outbox.js';
   const setConnectionState = (online) => {
     document.documentElement.dataset.connection = online ? 'online' : 'offline';
     renderBanner();
+  };
+
+  const confirmConnectionState = async () => {
+    const state = readState();
+    if (!state) {
+      return;
+    }
+
+    // navigator.onLine saying "offline" is trustworthy and saves the request; saying "online" is
+    // the claim worth checking.
+    setConnectionState(navigator.onLine ? await serverAnswers(state) : false);
   };
 
   const showToast = (state, messageKey) => {
@@ -285,11 +318,13 @@ import {OUTBOX_SYNC_TAG, buildEntry, putEntry, readEntries} from './outbox.js';
   };
 
   const init = () => {
+    // The cheap reading first, so the page does not sit in the wrong state while the probe runs.
     setConnectionState(navigator.onLine);
     refresh();
+    confirmConnectionState();
 
     window.addEventListener('online', () => {
-      setConnectionState(true);
+      confirmConnectionState();
       askWorkerToReplay();
     });
     window.addEventListener('offline', () => setConnectionState(false));

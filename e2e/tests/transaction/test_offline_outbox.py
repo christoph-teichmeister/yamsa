@@ -32,6 +32,7 @@ OUTBOX_HOLDS_ONE = f"async () => (await ({OUTBOX_SIZE})()) === 1"
 
 
 @pytest.mark.e2e
+@pytest.mark.expects_htmx_errors
 class TestOfflineOutbox:
     @staticmethod
     def _room_paths(room):
