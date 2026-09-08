@@ -9,7 +9,7 @@ class TestEditUserForm:
         new_data = {
             "name": "new_name",
             "email": "new_email@local.local",
-            "paypal_me_username": "new_paypal_me_username",
+            "paypal_me_username": "newpaypalhandle",
             "wants_to_receive_webpush_notifications": True,
             "wants_to_receive_payment_reminders": False,
         }
@@ -66,3 +66,35 @@ class TestEditUserForm:
 
         assert not user.wants_to_receive_webpush_notifications
         assert not WebpushInformation.objects.filter(user=user).exists()
+
+    def test_pasted_paypal_link_is_reduced_to_the_handle(self, user):
+        form = self.form_class(
+            instance=user,
+            data={
+                "name": user.name,
+                "email": user.email,
+                "paypal_me_username": "https://www.paypal.me/creditorname/",
+                "wants_to_receive_payment_reminders": True,
+            },
+        )
+        assert form.is_valid(), form.errors
+
+        form.save()
+        user.refresh_from_db()
+
+        assert user.paypal_me_username == "creditorname"
+
+    def test_paypal_username_that_cannot_resolve_is_rejected_on_its_own_field(self, user):
+        form = self.form_class(
+            instance=user,
+            data={
+                "name": user.name,
+                "email": user.email,
+                "paypal_me_username": "not a handle",
+                "wants_to_receive_payment_reminders": True,
+            },
+        )
+
+        assert not form.is_valid()
+        # On the field rather than as a non-field error: the profile sheet renders it under the input.
+        assert "paypal_me_username" in form.errors

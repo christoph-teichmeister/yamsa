@@ -15,7 +15,7 @@ def has_superuser_admin_link(content: str) -> bool:
 
 
 def test_get_as_registered_user_own_profile(authenticated_client, user):
-    user.paypal_me_username = "paypal_username"
+    user.paypal_me_username = "paypalhandle"
     user.save()
 
     response = authenticated_client.get(reverse("account:detail", args=(user.id,)))
@@ -75,7 +75,7 @@ def test_get_as_guest_own_profile(client, guest_user):
 
 def test_get_as_guest_other_profile(client, guest_user, user, room):
     client.force_login(guest_user)
-    user.paypal_me_username = "paypal_username"
+    user.paypal_me_username = "paypalhandle"
     user.save()
 
     assert room.users.filter(id=guest_user.id).exists()

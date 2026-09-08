@@ -11,11 +11,13 @@ from django.contrib.auth import hashers
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from apps.account.managers import UserManager
+from apps.account.utils.paypal import normalize_paypal_me_username
 from apps.core.utils import determine_upload_to
 from apps.room.models import Room, UserConnectionToRoom
 
@@ -167,6 +169,14 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
             self.password = f"{self.name}-{timestamp}"
 
         self.email = self.__class__.objects.normalize_email(self.email)
+
+        # Here rather than in a field validator: a validator runs before this method and can only
+        # reject, so a pasted "@name" would be refused instead of reduced to the handle it carries.
+        try:
+            self.paypal_me_username = normalize_paypal_me_username(self.paypal_me_username)
+        except ValidationError as error:
+            raise ValidationError({"paypal_me_username": error}) from error
+
         super().clean()
 
     @cached_property
