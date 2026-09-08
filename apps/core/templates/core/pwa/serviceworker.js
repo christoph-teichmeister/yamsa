@@ -240,6 +240,8 @@ self.addEventListener("fetch", (event) => {
  * the fetch handler would not recognise it as a document, and a visitor who navigates away
  * mid-warm would cancel the rest.
  */
+const hasWindowClient = async () => (await self.clients.matchAll({type: "window"})).length > 0;
+
 const warmPagesFromManifest = async (manifestUrl) => {
   const prefetchInit = {credentials: "same-origin", headers: {[PREFETCH_HEADER]: "1"}};
   let urls = [];
@@ -256,6 +258,12 @@ const warmPagesFromManifest = async (manifestUrl) => {
   }
 
   for (const url of urls) {
+    // Nobody is looking any more. The pages would be cached for a window that is gone, and until
+    // the list runs out the server keeps answering on its behalf - against whatever is asking now.
+    if (!(await hasWindowClient())) {
+      return;
+    }
+
     // Keyed on a plain request, so a later navigation to the same URL finds it.
     const request = new Request(normalizeUrl(url));
     try {
