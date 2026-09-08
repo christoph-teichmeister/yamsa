@@ -61,9 +61,12 @@ env = environ.Env(
     # Sentry ENV
     SENTRY_DSN=(str, ""),
     SENTRY_ENVIRONMENT=(str, "local"),
-    SENTRY_RELEASE=(str, "<sha>"),
+    SENTRY_RELEASE=(str, ""),
     SENTRY_TRACES_SAMPLE_RATE=(float, 0.1),
     SENTRY_LOG_LEVEL=(int, logging.INFO),
+    # Render sets this itself on every deploy of a git-backed service, in the build and in the
+    # runtime environment. Nothing has to be configured by hand for it to be there.
+    RENDER_GIT_COMMIT=(str, ""),
     # Webpush ENV
     VAPID_PUBLIC_KEY=(str, ""),
     VAPID_PRIVATE_KEY=(str, ""),
@@ -495,6 +498,10 @@ LOGGING = {
 # SENTRY
 # ------------------------------------------------------------------------------
 SENTRY_RELEASE = env("SENTRY_RELEASE")
+
+# What Render calls this build. Read here so the PWA can name its caches after it without a
+# variable anyone has to remember to set - see pwa_cache_version_service.
+RENDER_GIT_COMMIT = env("RENDER_GIT_COMMIT")
 
 if os.environ.get("SENTRY_DSN"):
     import sentry_sdk

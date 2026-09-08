@@ -5,10 +5,6 @@ from pathlib import Path
 from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
 
-# env() hands this out whenever the deployment does not set SENTRY_RELEASE, so it is a value the
-# service worker may never treat as a release.
-SENTRY_RELEASE_PLACEHOLDER = "<sha>"
-
 FALLBACK_VERSION = "dev"
 
 _UNSAFE_CACHE_NAME_CHARS = re.compile(r"[^0-9A-Za-z_-]")
@@ -21,9 +17,13 @@ def resolve_cache_version() -> str:
     A deploy that leaves this unchanged keeps every browser on the HTML and assets it cached
     before, because the old caches are never purged and network-first only reaches them while the
     device is offline.
+
+    RENDER_GIT_COMMIT is the one that actually carries this in production: Render sets it on every
+    deploy of a git-backed service, in the build and in the runtime environment, where SENTRY_RELEASE
+    only exists if somebody configured it.
     """
-    release = settings.SENTRY_RELEASE
-    if release and release != SENTRY_RELEASE_PLACEHOLDER:
+    release = settings.SENTRY_RELEASE or settings.RENDER_GIT_COMMIT
+    if release:
         return _sanitise(release)
 
     fingerprint = _asset_fingerprint()
@@ -37,8 +37,9 @@ def _sanitise(value: str) -> str:
 def _asset_fingerprint() -> str:
     """Hash of the two files that name every asset the service worker precaches.
 
-    Stands in for the release when the deployment does not provide one. Both files change whenever
-    a rebuild changes what the templates ask for, which is the part a stale cache gets wrong.
+    Stands in where no release is on offer - a local run, a host that names its builds differently.
+    Both files change whenever a rebuild changes what the templates ask for, which is the part a
+    stale cache gets wrong.
     """
     digest = hashlib.sha256()
     found = False

@@ -85,6 +85,12 @@ connection. The page writes it, the worker replays it — a queue that only drai
 open is not a queue. The replayed body is the one the form would have posted, against the same
 view, so there is no second write path to keep in step.
 
+The cache names carry a version, and a deploy that leaves it unchanged keeps every browser on the
+release before. It comes from `RENDER_GIT_COMMIT`, which Render sets on every deploy of a
+git-backed service in both the build and the runtime environment — `SENTRY_RELEASE` overrides it
+where somebody configured one, and a hash of the asset manifests stands in where neither exists.
+Nothing here needs a variable set by hand.
+
 Things that will bite you here:
 
 - **`Vary`.** Django answers these pages with `Vary: Cookie, Accept-Language`. A warmed page is
