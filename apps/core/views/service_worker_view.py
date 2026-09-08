@@ -5,6 +5,8 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views import generic
 from webpack_loader.utils import get_files
 
+from apps.core.services.pwa_cache_version_service import resolve_cache_version
+
 
 class ServiceWorkerView(generic.TemplateView):
     template_name = "core/pwa/serviceworker.js"
@@ -14,10 +16,11 @@ class ServiceWorkerView(generic.TemplateView):
         context = super().get_context_data(**kwargs)
         cache_settings = settings.PWA_SERVICE_WORKER
         precache_urls = self._build_precache_urls(cache_settings)
+        cache_prefix = cache_settings.get("cache_prefix", "yamsa")
 
         context.update(
-            cache_name=cache_settings.get("cache_name", "yamsa-static-cache"),
-            cache_prefix=cache_settings.get("cache_prefix", "yamsa-static-cache"),
+            cache_name=f"{cache_prefix}-static-{resolve_cache_version()}",
+            cache_prefix=cache_prefix,
             offline_url=str(cache_settings.get("offline_url", "/offline/")),
             precache_urls=json.dumps(precache_urls),
             static_url_prefix=cache_settings.get("static_url_prefix", settings.STATIC_URL),

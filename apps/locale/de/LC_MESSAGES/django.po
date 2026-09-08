@@ -1387,6 +1387,9 @@ msgstr "Verwandtes Update öffnen"
 msgid "Something went wrong"
 msgstr "Etwas ist schiefgelaufen"
 
+msgid "No connection - your change was not saved"
+msgstr "Keine Verbindung – deine Änderung wurde nicht gespeichert"
+
 msgid "Remove from room"
 msgstr "Aus dem Raum entfernen"
 

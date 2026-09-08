@@ -15,7 +15,6 @@ from apps.core.views.service_worker_view import ServiceWorkerView
         "splash_screens": [{"src": "/static/images/splash/splash.png"}],
     },
     PWA_SERVICE_WORKER={
-        "cache_name": "test-cache",
         "cache_prefix": "test-prefix",
         "offline_url": "/offline-custom/",
         "precache_static": ["app.css", "", None],
@@ -23,12 +22,13 @@ from apps.core.views.service_worker_view import ServiceWorkerView
         "static_url_prefix": "/custom-static/",
     },
     STATIC_URL="/static/",
+    SENTRY_RELEASE="release/1",
 )
 def test_service_worker_builds_precache_urls_from_manifest():
     view = ServiceWorkerView()
     context = view.get_context_data()
 
-    assert context["cache_name"] == "test-cache"
+    assert context["cache_name"] == "test-prefix-static-release-1"
     assert context["cache_prefix"] == "test-prefix"
     assert context["offline_url"] == "/offline-custom/"
     assert context["static_url_prefix"] == "/custom-static/"

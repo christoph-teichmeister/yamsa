@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import datetime
 import logging
 import os
-import re
 import socket
 import sys
 from pathlib import Path
@@ -494,6 +493,8 @@ LOGGING = {
 
 # SENTRY
 # ------------------------------------------------------------------------------
+SENTRY_RELEASE = env("SENTRY_RELEASE")
+
 if os.environ.get("SENTRY_DSN"):
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
@@ -604,11 +605,11 @@ EMAIL_DEFAULT_REPLY_TO_ADDRESS = env("DJANGO_EMAIL_DEFAULT_REPLY_TO_ADDRESS", de
 # ------------------------------------------------------------------------------
 
 
-PWA_CACHE_VERSION = re.sub(r"[^0-9A-Za-z_-]", "-", env("SENTRY_RELEASE"))
 PWA_OFFLINE_URL = reverse_lazy("core:offline")
 PWA_SERVICE_WORKER = {
-    "cache_name": f"yamsa-static-cache-{PWA_CACHE_VERSION}",
-    "cache_prefix": "yamsa-static-cache",
+    # Every cache the service worker owns starts with this, so purging by prefix also reaches the
+    # caches left behind by earlier naming schemes.
+    "cache_prefix": "yamsa",
     "offline_url": PWA_OFFLINE_URL,
     # Names, not URLs. What a name is served under is only known once the app registry stands, and
     # the two kinds do not agree: ManifestStaticFilesStorage hashes a static file, render_bundle
