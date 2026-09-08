@@ -63,6 +63,7 @@
       {% include "_side_menu.html" %}
     {% endif %}
     <div class="app-container my-12 px-2 py-12" id="base-content">
+      {% include "core/partials/_offline_state.html" %}
       {% block content %}
       {% endblock content %}
     </div>
@@ -88,6 +89,7 @@
     {% endif %}
     {% render_bundle "htmx" attrs="defer" %}
     {% render_bundle "navigation" attrs="defer" %}
+    {% render_bundle "offline" attrs="defer" %}
     {% render_bundle "dialog" attrs="defer" %}
   </body>
 </html>

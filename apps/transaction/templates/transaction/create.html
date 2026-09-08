@@ -22,11 +22,18 @@
           action="{% room_url 'transaction:create' %}"
           enctype="multipart/form-data"
           hx-post="{% room_url 'transaction:create' %}"
+          data-offline-queue
+          data-offline-queue-room="{{ current_room.slug }}"
+          data-offline-queue-redirect="{% room_url 'transaction:list' %}"
           hx-target="#body"
           hx-indicator="#body-loading-spinner"
           hx-swap="morph:innerHTML"
           hx-push-url="true">
       {% csrf_token %}
+      {# Names this submission, so a replay of it books the expense once. See TransactionCreateView. #}
+      <input type="hidden"
+             name="client_request_id"
+             value="{{ client_request_id }}">
       <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "New transaction" %}</p>
         <h1 class="mt-1 mb-0 text-xl font-semibold break-words text-ink">

@@ -37,7 +37,7 @@ def user_password():
 
 
 @pytest.fixture(autouse=True)
-def _fail_on_htmx_console_errors(page):
+def _fail_on_htmx_console_errors(page, request):
     # live_server writes to a real (transactional) DB and serves over real HTTP, so a broken
     # htmx request shows up as a browser console error rather than a Python exception — catch it
     # here instead of every test silently passing on a swap that never happened.
@@ -50,6 +50,12 @@ def _fail_on_htmx_console_errors(page):
     page.on("console", _on_console)
 
     yield
+
+    # A test that cuts the connection on purpose gets htmx:afterRequest and htmx:sendError logged
+    # by htmx itself, from triggerErrorEvent. There is no way to fail such a request quietly, so
+    # those tests say up front that the noise is the point.
+    if request.node.get_closest_marker("expects_htmx_errors"):
+        return
 
     assert not htmx_errors, f"HTMX reported error(s) in the browser console: {htmx_errors}"
 

@@ -31,6 +31,12 @@ class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
         default=resolve_default_category_pk,
     )
 
+    # The client's own name for the request that created this transaction, so a submission it sends
+    # more than once - a queued offline entry replayed after the first attempt did reach us, a
+    # resubmitted form - books the expense once. The unique index is the guarantee; a view checking
+    # first only spares the visitor an error page.
+    client_request_id = models.UUIDField(null=True, blank=True, unique=True, editable=False)
+
     class Meta:
         ordering = ("-id",)
         default_related_name = "parent_transactions"

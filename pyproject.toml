@@ -109,6 +109,7 @@ testpaths = [
 ]
 markers = [
     "e2e: End-to-end tests via Playwright (run separately with `pytest e2e/`)",
+    "expects_htmx_errors: The test severs the connection, so htmx logs its own errors to the console",
 ]
 env = [
     "DJANGO_TESTING=1",

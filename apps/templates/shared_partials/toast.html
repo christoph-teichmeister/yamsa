@@ -25,6 +25,7 @@
           nonce="{{ csp_nonce }}">[]</script>
 {% endif %}
 {% trans "Something went wrong" as something_went_wrong %}
+{% trans "No connection - your change was not saved" as connection_lost %}
 <script type="module" nonce="{{ csp_nonce }}">
     // Must match `duration-250` on #toast-id: the queue waits out the fade before it shows the
     // next toast, and a transitionend listener would never fire for a reader on reduced motion.
@@ -45,6 +46,7 @@
         const baseToastClasses = toastTypeDiv.className
         const defaultErrorToastClasses = "{{ toast_classes.error|escapejs }}"
         const defaultErrorMessage = "⚠️ {{ something_went_wrong|escapejs }} 🥺"
+        const connectionErrorMessage = "📡 {{ connection_lost|escapejs }}"
 
         let toastIsVisible = false
         let autohideTimer = null
@@ -164,8 +166,22 @@
             if (evt.detail?.successful) {
                 return
             }
+            // A request that never reached the server arrives here too, carrying `error`. The
+            // listener below names that case; both firing would stack two toasts on one failure.
+            if (evt.detail?.error) {
+                return
+            }
             enqueueToast({
                 message: defaultErrorMessage,
+                type: defaultErrorToastClasses,
+            })
+            showNextToast()
+        })
+
+        // "Something went wrong" is true of a failed send but says nothing a reader can act on.
+        document.body.addEventListener("htmx:sendError", () => {
+            enqueueToast({
+                message: connectionErrorMessage,
                 type: defaultErrorToastClasses,
             })
             showNextToast()

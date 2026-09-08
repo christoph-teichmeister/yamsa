@@ -3,6 +3,6 @@
   {% if is_in_maintenance %}
     {% include "shared_partials/_error_page.html" with error_emoji="🚧 🚧" error_headline="yamsa is in Maintenance" error_hint="Please check back later!" error_note="We are sorry for any inconveniences" %}
   {% elif called_by_offline_view %}
-    {% include "shared_partials/_error_page.html" with error_emoji="🚧 🚧" error_headline="You seem to be offline" error_hint="Please check back later!" error_note="yamsa needs internet to work" error_action_template="core/partials/_offline_retry_button.html" %}
+    {% include "shared_partials/_error_page.html" with error_emoji="🚧 🚧" error_headline="You seem to be offline" error_hint="This page has not been saved for offline reading" error_note="Rooms you opened while connected are still available" error_action_template="core/partials/_offline_retry_button.html" %}
   {% endif %}
 {% endblock content %}

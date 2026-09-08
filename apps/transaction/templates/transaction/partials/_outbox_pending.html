@@ -1,0 +1,38 @@
+{% load i18n %}
+{% comment %}
+Expenses this device could not send yet.
+
+Deliberately not shaped like a transaction row: nothing here is booked, no debt was recalculated
+from it, and a card that looked like the real ones would say otherwise. The row markup sits in a
+template element so the list stays in this layer rather than being written out again in JavaScript.
+
+The headline comes in two forms rather than one with a placeholder: the count is only known in the
+browser, and a single string would have to be grammatical for every number.
+
+The last line is shown only where the browser cannot send in the background - every browser on iOS.
+Saying so is the honest option: the alternative is a visitor who puts the phone away expecting the
+expense to go out on its own.
+{% endcomment %}
+<div hidden
+     data-outbox-pending
+     data-outbox-room="{{ current_room.slug }}"
+     data-outbox-headline-one="{% trans 'One expense is waiting to be sent' %}"
+     data-outbox-headline-many="{% trans 'expenses are waiting to be sent' %}"
+     data-outbox-waiting="{% trans 'waiting' %}"
+     data-outbox-rejected="{% trans 'not accepted' %}">
+  <div class="rounded-2xl border border-line bg-warning-soft px-4 py-3 text-sm text-warning-text">
+    <p class="m-0 font-semibold" data-outbox-pending-headline></p>
+    <ul class="mt-2 mb-0 flex list-none flex-col gap-1 p-0"
+        data-outbox-pending-list>
+    </ul>
+    <p hidden class="mt-2 mb-0 text-xs" data-outbox-manual-send-hint>
+      {% trans "This browser can only send them while yamsa is open. Come back once you have a connection." %}
+    </p>
+  </div>
+</div>
+<template data-outbox-pending-row>
+  <li class="flex items-baseline justify-between gap-3">
+    <span class="min-w-0 flex-1 truncate" data-outbox-row-summary></span>
+    <span class="shrink-0 text-xs" data-outbox-row-state></span>
+  </li>
+</template>
