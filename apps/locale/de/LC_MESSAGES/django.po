@@ -433,6 +433,9 @@ msgstr "Registrierung fehlgeschlagen."
 msgid "Delete this passkey?"
 msgstr "Diesen Passkey löschen?"
 
+msgid "Enter your PayPal.Me username - letters and numbers only, at most 20 characters."
+msgstr "Gib deinen PayPal.Me-Benutzernamen ein - nur Buchstaben und Zahlen, maximal 20 Zeichen."
+
 msgid "The combination of email and password does not match"
 msgstr "Die Kombination aus E-Mail und Passwort ist nicht korrekt"
 
