@@ -88,10 +88,11 @@ view, so there is no second write path to keep in step.
 The cache names carry a version, and a deploy that leaves it unchanged keeps every browser on the
 release before. It comes from the `RELEASE` setting, which Sentry is initialised from as well —
 one name for both readers, so a third source cannot reach one and miss the other. `RELEASE` is
-`SENTRY_RELEASE` where somebody configured one, otherwise `RENDER_GIT_COMMIT`, which Render sets
-on every deploy of a git-backed service in both the build and the runtime environment. Where
-neither exists — a working copy, another host — a hash of the asset manifests stands in for the
-cache name. Nothing here needs a variable set by hand.
+`RENDER_GIT_COMMIT` and nothing else: Render sets it on every deploy of a git-backed service, in
+the build and in the runtime environment, so nothing has to be configured for it to be right.
+Somewhere without it — a Docker deploy, a working copy — it is empty, and each reader falls back
+on its own: Sentry to its reading of the `SENTRY_RELEASE` environment variable, the service worker
+to a hash of the asset manifests.
 
 Things that will bite you here:
 
