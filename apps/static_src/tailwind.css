@@ -242,3 +242,32 @@
     }
   }
 }
+
+/* The floating pill's transition. One `transition` shorthand cannot carry both halves of this:
+   the reveal overshoots its resting place and settles back, while the hide, the press and the
+   hover must stay short - a 300 ms spring on `scale` makes a tap feel unanswered. The overshoot
+   is on `translate` alone, so the pill springs without the label ever leaving the ground it
+   stands on. */
+@utility scroll-reveal {
+  transition:
+    opacity 200ms ease-out,
+    translate 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    scale 120ms ease-out,
+    color 150ms ease-in-out,
+    background-color 150ms ease-in-out,
+    box-shadow 150ms ease-in-out;
+
+  /* Going away is not an entrance: no overshoot, and out of the way faster than it came. */
+  &[data-scroll-hidden] {
+    transition:
+      opacity 140ms ease-in,
+      translate 140ms ease-in;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &,
+    &[data-scroll-hidden] {
+      transition: none;
+    }
+  }
+}

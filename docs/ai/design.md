@@ -622,6 +622,12 @@ The chrome around a page is four things, and none of them needs a component fram
   in the tab order while hidden. The end of the page only counts as the end when no
   `[hx-trigger~="revealed"]` sentinel is left, or a lazy-loading feed would flash the pill at every
   batch boundary.
+  Its timing is the `scroll-reveal` utility in `tailwind.css` rather than a `transition` utility,
+  because the two halves want different curves: coming back overshoots on `translate` and settles
+  (320 ms, `cubic-bezier(0.34, 1.56, 0.64, 1)`), while going away, the press and the hover stay
+  short — a spring on `scale` makes a tap feel unanswered. `prefers-reduced-motion` drops all of
+  it to a plain state change, which is why the utility owns that query instead of the template
+  carrying `motion-reduce:transition-none`.
 - **The content column** is the `app-container` utility — full width on a phone, half the viewport
   from 768 px up — shared by `#base-content`, the top bar and both bottom navs so the chrome stays
   aligned with what it frames.
