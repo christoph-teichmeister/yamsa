@@ -102,4 +102,5 @@ Things that will bite you here:
   rendered id with its own. `ParentTransaction.client_request_id` is unique, and
   `TransactionCreateView` answers a replay with the first submission's outcome and no second event.
 - **Background Sync does not exist on iOS.** The queue drains there when the app is opened again,
-  not before. Do not word anything in the UI as though it were sent.
+  not before. The pending strip says so where `SyncManager` is missing, and nothing in the UI words
+  a queued expense as sent.

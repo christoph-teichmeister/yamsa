@@ -73,6 +73,11 @@ class TestOfflineOutbox:
 
     @staticmethod
     def _add_expense_offline(page, base_url, room, description):
+        """Enter an expense with no connection and wait for the form to hand over to the list.
+
+        Waiting matters: queueing ends in a full navigation, and a test that moves on before it
+        lands cancels it - the next goto comes back as ERR_ABORTED.
+        """
         create_page = TransactionCreatePage(
             page, base_url, reverse("transaction:create", kwargs={"room_slug": room.slug})
         )
@@ -80,13 +85,12 @@ class TestOfflineOutbox:
         create_page.fill_required_fields(description=description, amount="12.50")
         create_page.choose_category("groceries")
         create_page.submit()
+        page.wait_for_url(f"{base_url}{reverse('transaction:list', kwargs={'room_slug': room.slug})}")
         return create_page
 
     def test_an_expense_entered_offline_is_kept_and_shown_as_waiting(self, page, base_url, profile_user, room):
         paths = self._prepare(page, base_url, profile_user, room)
         self._go_offline(page)
-        page.goto(f"{base_url}{reverse('transaction:create', kwargs={'room_slug': room.slug})}")
-
         self._add_expense_offline(page, base_url, room, "Bought bread offline")
 
         _wait_until(page, OUTBOX_HOLDS_ONE, None)
@@ -94,12 +98,23 @@ class TestOfflineOutbox:
         expect(page).to_have_url(f"{base_url}{paths[0]}")
         expect(page.locator("[data-outbox-pending]")).to_be_visible()
         expect(page.locator("[data-outbox-pending]")).to_contain_text("Bought bread offline")
+        # This browser sends in the background, so it must not promise otherwise.
+        expect(page.locator("[data-outbox-manual-send-hint]")).to_be_hidden()
         assert not ParentTransaction.objects.filter(description="Bought bread offline").exists()
+
+    def test_a_browser_without_background_sync_says_so(self, page, base_url, profile_user, room):
+        """Every browser on iOS. Left unsaid, a visitor puts the phone away and nothing goes out."""
+        page.add_init_script("delete window.SyncManager;")
+        self._prepare(page, base_url, profile_user, room)
+        self._go_offline(page)
+        self._add_expense_offline(page, base_url, room, "Bought tea offline")
+        _wait_until(page, OUTBOX_HOLDS_ONE, None)
+
+        expect(page.locator("[data-outbox-manual-send-hint]")).to_be_visible()
 
     def test_the_queue_drains_once_the_connection_is_back(self, page, base_url, profile_user, room):
         self._prepare(page, base_url, profile_user, room)
         self._go_offline(page)
-        page.goto(f"{base_url}{reverse('transaction:create', kwargs={'room_slug': room.slug})}")
         self._add_expense_offline(page, base_url, room, "Bought milk offline")
         _wait_until(page, OUTBOX_HOLDS_ONE, None)
 
@@ -117,15 +132,12 @@ class TestOfflineOutbox:
         Left as rendered, the second would reach the server looking like a replay of the first and
         be folded away - the visitor would lose an expense and never be told.
         """
-        create_path = reverse("transaction:create", kwargs={"room_slug": room.slug})
         self._prepare(page, base_url, profile_user, room)
         self._go_offline(page)
 
-        page.goto(f"{base_url}{create_path}")
         self._add_expense_offline(page, base_url, room, "First offline expense")
         _wait_until(page, OUTBOX_HOLDS_ONE, None)
 
-        page.goto(f"{base_url}{create_path}")
         self._add_expense_offline(page, base_url, room, "Second offline expense")
         _wait_until(page, f"async () => (await ({OUTBOX_SIZE})()) === 2", None)
 
@@ -140,7 +152,6 @@ class TestOfflineOutbox:
         """The queue is drained by whatever gets there first; both must be safe."""
         self._prepare(page, base_url, profile_user, room)
         self._go_offline(page)
-        page.goto(f"{base_url}{reverse('transaction:create', kwargs={'room_slug': room.slug})}")
         self._add_expense_offline(page, base_url, room, "Bought jam offline")
         _wait_until(page, OUTBOX_HOLDS_ONE, None)
 

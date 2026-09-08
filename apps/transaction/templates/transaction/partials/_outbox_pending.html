@@ -20,6 +20,14 @@ template element so the list stays in this layer rather than being written out a
   <div class="rounded-2xl border border-line bg-warning-soft px-4 py-3 text-sm text-warning-text">
     <p class="m-0 font-semibold" data-outbox-pending-headline></p>
     <ul class="mt-2 mb-0 flex list-none flex-col gap-1 p-0" data-outbox-pending-list></ul>
+    {% comment %}
+    Shown only where the browser cannot send in the background - every browser on iOS. Saying so is
+    the honest option: the alternative is a visitor who puts the phone away expecting the expense
+    to go out on its own.
+    {% endcomment %}
+    <p hidden class="mt-2 mb-0 text-xs" data-outbox-manual-send-hint>
+      {% trans "This browser can only send them while yamsa is open. Come back once you have a connection." %}
+    </p>
   </div>
 </div>
 <template data-outbox-pending-row>

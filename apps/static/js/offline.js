@@ -22,6 +22,7 @@ import {OUTBOX_SYNC_TAG, buildEntry, putEntry, readEntries} from './outbox.js';
   const PENDING_LIST_SELECTOR = '[data-outbox-pending-list]';
   const PENDING_HEADLINE_SELECTOR = '[data-outbox-pending-headline]';
   const PENDING_ROW_TEMPLATE_SELECTOR = '[data-outbox-pending-row]';
+  const MANUAL_SEND_HINT_SELECTOR = '[data-outbox-manual-send-hint]';
 
   // A room is warmed once per document, not once per navigation: htmx keeps this script alive
   // across the whole visit, and re-warming on every swap would multiply every page view by the
@@ -243,6 +244,11 @@ import {OUTBOX_SYNC_TAG, buildEntry, putEntry, readEntries} from './outbox.js';
         return row;
       })
     );
+    const manualSendHint = container.querySelector(MANUAL_SEND_HINT_SELECTOR);
+    if (manualSendHint) {
+      manualSendHint.hidden = 'SyncManager' in window;
+    }
+
     container.hidden = false;
   };
 

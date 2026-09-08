@@ -2007,3 +2007,6 @@ msgstr "wartet"
 
 msgid "not accepted"
 msgstr "nicht angenommen"
+
+msgid "This browser can only send them while yamsa is open. Come back once you have a connection."
+msgstr "Dieser Browser kann sie nur senden, solange yamsa geöffnet ist. Komm zurück, sobald du Verbindung hast."
