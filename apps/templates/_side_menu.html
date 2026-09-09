@@ -11,7 +11,7 @@ The panel is a modal <dialog>, which brings the focus trap, Escape and the backd
 Bootstrap offcanvas needed a component for. Being in the top layer it also outranks every z-index
 in the app, the toasts included - a toast raised while the menu is open waits behind the scrim.
 {% endcomment %}
-<nav class="fixed inset-x-0 top-0 z-[1300] bg-surface-sunken pt-6 pb-2">
+<nav class="fixed inset-x-0 top-0 z-[1300] bg-surface-sunken pt-[calc(1.5rem+env(safe-area-inset-top))] pb-2">
   <div class="app-container pt-6">
     <div class="flex w-full items-center justify-between gap-2">
       <div class="flex w-10 shrink-0 items-center">
@@ -60,7 +60,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
         class="side-panel fixed inset-y-0 left-0 m-0 h-full max-h-none w-3/4 max-w-none overflow-x-hidden overflow-y-auto border-0 bg-surface-sunken p-0 text-ink md:w-[30%]"
         aria-labelledby="side-menu-panel-label"
         data-dialog>
-  <div class="flex h-full flex-col gap-4 px-4 pt-10 pb-6">
+  <div class="flex h-full flex-col gap-4 px-4 pt-[calc(2.5rem+env(safe-area-inset-top))] pb-6">
     <div class="flex items-center justify-between gap-3">
       <h5 class="m-0 text-xl font-semibold text-ink-strong"
           id="side-menu-panel-label">{% trans "Menu" %}</h5>
