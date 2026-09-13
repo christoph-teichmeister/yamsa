@@ -1198,10 +1198,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"idiomorph@npm:^0.7.4":
-  version: 0.7.4
-  resolution: "idiomorph@npm:0.7.4"
-  checksum: 10c0/1eec0b868c5e00cb69b7b32fd3a85e9116570d2447dbad4fab80d6a54783df59e7214f675e8cd40ca453df9bf948b9393d67b0d93fac93c91468172a6255d908
+"idiomorph@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "idiomorph@npm:0.8.0"
+  checksum: 10c0/9d4eb98b685ecb801c50af9d41b2a03affc7eb4865d48c277a839185a55f0e297c69ebb0ecc727e78b5568761cc74e533f7f42d13bef56337c0ab5e8a08bbde7
   languageName: node
   linkType: hard
 
@@ -2147,7 +2147,7 @@ __metadata:
     css-loader: "npm:^7.1.5"
     d3: "npm:^7.9.0"
     htmx.org: "npm:^2.0.10"
-    idiomorph: "npm:^0.7.4"
+    idiomorph: "npm:^0.8.0"
     mini-css-extract-plugin: "npm:^2.10.2"
     postcss: "npm:^8.5.28"
     postcss-loader: "npm:^8.2.1"
