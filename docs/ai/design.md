@@ -23,7 +23,7 @@ The pages, for orientation:
 - `403.html`, `404.html`, `500.html` and `core/_maintenance_or_offline.html` — the error and
   stand-in pages, all four through `shared_partials/_error_page.html`
 - `news/list.html` with `shared_partials/news_card.html`, `shared_partials/_news_card_content.html`
-  and `shared_partials/news_batch.html` — the activity timeline
+  and `shared_partials/news_batch.html` — the room dashboard's activity timeline tab
 - `core/_welcome.html` with the `room/partials/_room_overview_*` partials,
   `room/partials/_room_balance_summary.html` and `room/partials/_room_create_row.html` — the room
   overview

@@ -1041,26 +1041,11 @@ msgstr "News Update"
 msgid "News"
 msgstr "Neuigkeiten"
 
-msgid "Room activity timeline"
-msgstr "Aktivitätsverlauf des Raums"
-
-msgid "See transactions and changes at a glance"
-msgstr "Transaktionen und Änderungen auf einen Blick sehen"
-
-msgid "Every room update - expenses logged, settlements, highlights - lands here so you never miss a beat."
-msgstr "Jedes Raum-Update – erfasste Ausgaben, Abrechnungen, Highlights – landet hier, damit du nichts verpasst."
-
-msgid "Auto-updated feed"
-msgstr "Automatisch aktualisierter Feed"
-
-msgid "Events appear in chronological order with the newest at the top."
-msgstr "Ereignisse erscheinen in chronologischer Reihenfolge, die Neuesten oben."
-
 msgid "No updates yet"
 msgstr "Noch keine Aktualisierungen"
 
-msgid "Once roommates start logging expenses or changes, they will appear here."
-msgstr "Sobald Mitbewohner Ausgaben oder Änderungen erfassen, erscheinen sie hier."
+msgid "Once someone logs an expense or change in this room, it will appear here."
+msgstr "Sobald jemand in diesem Raum eine Ausgabe oder Änderung erfasst, erscheint sie hier."
 
 msgid "Preferred currency"
 msgstr "Bevorzugte Währung"
@@ -1373,12 +1358,6 @@ msgstr "Zur Startseite"
 
 msgid "Start"
 msgstr "Start"
-
-msgid "What happened in your rooms"
-msgstr "Was in deinen Räumen passiert ist"
-
-msgid "Updates"
-msgstr "Neuigkeiten"
 
 msgid "Log out"
 msgstr "Abmelden"

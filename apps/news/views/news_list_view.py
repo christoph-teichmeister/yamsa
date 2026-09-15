@@ -1,15 +1,14 @@
 from functools import cached_property
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
 from django_context_decorator import context
 
 from apps.news.constants import NEWS_FEED_PAGE_SIZE
 from apps.news.models import News
-from apps.news.views.mixins import NewsForUserMixin
+from apps.news.views.mixins import NewsBaseContext, NewsForRoomMixin
 
 
-class NewsListView(NewsForUserMixin, LoginRequiredMixin, generic.TemplateView):
+class NewsListView(NewsBaseContext, NewsForRoomMixin, generic.TemplateView):
     template_name = "news/list.html"
 
     @cached_property

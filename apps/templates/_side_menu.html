@@ -161,27 +161,6 @@ in the app, the toasts included - a toast raised while the menu is open waits be
       </div>
       <span class="room-status-badge bg-surface-hover text-ink-strong">{% trans "Start" %}</span>
     </div>
-    {% url 'news:list' as news_url %}
-    <div class="room-entry"
-         {% if request.path == news_url %}data-active{% endif %}
-         role="button"
-         tabindex="0"
-         data-keyboard-click
-         data-dialog-close
-         hx-trigger="click delay:300ms"
-         hx-get="{{ news_url }}"
-         hx-indicator="#body-loading-spinner"
-         hx-target="#body"
-         hx-swap="morph:innerHTML"
-         hx-push-url="true">
-      <div class="room-circle"
-           {% if request.path == news_url %}data-selected{% endif %}>{% icon "newspaper" %}</div>
-      <div class="room-entry-text min-w-0 flex-1 text-left">
-        <div class="room-name m-0 font-semibold">{% trans "News" %}</div>
-        <small class="room-description">{% trans "What happened in your rooms" %}</small>
-      </div>
-      <span class="room-status-badge bg-surface-hover text-ink-strong">{% trans "Updates" %}</span>
-    </div>
     {% include "_side_menu_room_list.html" %}
     <div class="mt-auto">
       <button type="button"

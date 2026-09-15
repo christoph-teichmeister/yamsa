@@ -11,11 +11,12 @@ class TestDashboardTabService:
         room = RoomFactory()
         tabs = DashboardTabService(room).get_tabs_as_list()
 
-        expected_order = ["transaction", "debt", "people", "room"]
+        expected_order = ["transaction", "debt", "people", "news", "room"]
         expected_routes = {
             "transaction": ("wallet", "transaction:list"),
             "debt": ("piggy-bank", "debt:list"),
             "people": ("people", "account:list"),
+            "news": ("newspaper", "news:list"),
             "room": ("gear", "room:detail"),
         }
 
