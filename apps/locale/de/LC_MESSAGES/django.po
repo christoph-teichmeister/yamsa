@@ -2007,9 +2007,3 @@ msgstr "Transaktionen importiert"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
-
-#~ msgid "What happened in your rooms"
-#~ msgstr "Was in deinen Räumen passiert ist"
-
-#~ msgid "Updates"
-#~ msgstr "Neuigkeiten"
