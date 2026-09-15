@@ -4,10 +4,11 @@ App-specific login flow, so this doesn't need rediscovering per session. Full ba
 (auth mechanism, seed command, all test accounts) is in `docs/ai/testing.md` — this file is
 just the copy-paste `playwright-cli` version.
 
-## 1. Find the running server's port
+## 1. Server port
 
-Scripts and `docker-compose.yml` default to `8000`; the README's manual instructions use
-`8002`. Don't assume — check what's actually listening:
+Default to `8000` (used by `docker-compose.yml` and `scripts/run_backend_local.sh`; the
+README's manual `runserver` instructions say `8002`, which is inconsistent with those). If
+`8000` doesn't respond, check what's actually listening before trying other ports:
 
 ```bash
 lsof -iTCP -sTCP:LISTEN -P | grep -E ':(8000|8002)'
