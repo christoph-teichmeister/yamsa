@@ -17,7 +17,7 @@ class News(FullCleanOnSaveMixin, CommonInfo):
     highlighted = models.BooleanField(default=False)
     title = models.CharField(max_length=100, blank=True)
     message = models.TextField(max_length=10000)
-    room = models.ForeignKey("room.Room", related_name="news", on_delete=models.DO_NOTHING)
+    room = models.ForeignKey("room.Room", related_name="news", on_delete=models.CASCADE)
     type = models.IntegerField(choices=TypeChoices.choices, null=True, blank=True)
     deeplink = models.CharField(max_length=512, blank=True)
 

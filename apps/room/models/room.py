@@ -100,3 +100,7 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     @property
     def is_closed(self):
         return self.status == self.StatusChoices.CLOSED
+
+    @property
+    def can_be_deleted(self):
+        return self.is_closed

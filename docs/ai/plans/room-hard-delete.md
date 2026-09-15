@@ -1,7 +1,16 @@
 # Plan: hard-delete a closed room
 
-Not implemented yet — planning only. Written up so the follow-up ticket has a concrete
-data-impact assessment instead of "just add a delete button".
+Implemented. Decisions taken on the open questions below: deletion is allowed to whoever can
+already close the room (no new permission check), remaining members are notified, and the
+sheet's "Danger zone" gates the action behind a two-step confirmation dialog, mirroring the
+existing force-close dialog.
+
+One thing this plan didn't anticipate: `Room` mixes in `EmitModelCreatedEventOnSaveMixin`,
+which auto-fires an event named `<ModelName><Deleted|Created|Changed>` straight after
+`Room.delete()`/`.save()`, matched purely by class name. A hand-written `RoomDeleted` event
+collided with that convention and fired with the wrong context (`instance` only, after the
+cascade had already wiped the data this feature needs). The event is named `RoomHardDeleted`
+instead to stay out of that convention's way.
 
 ## Goal
 

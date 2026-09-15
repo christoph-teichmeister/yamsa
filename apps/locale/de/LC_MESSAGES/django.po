@@ -1068,6 +1068,13 @@ msgstr "Bevorzugte Währung"
 msgid "This room still has open debts and can not be closed"
 msgstr "Dieser Raum hat noch offene Schulden und kann nicht geschlossen werden"
 
+msgid "Room deleted"
+msgstr "Raum gelöscht"
+
+#, python-brace-format
+msgid "{editor} deleted \"{room}\""
+msgstr "{editor} hat \"{room}\" gelöscht"
+
 msgid "Room closed"
 msgstr "Raum geschlossen"
 
@@ -1223,6 +1230,31 @@ msgstr "Tracking-Kategorien anpassen"
 msgid "Add room-specific categories and control their order without touching the global defaults."
 msgstr "Füge raumspezifische Kategorien hinzu und steuere deren Reihenfolge, ohne die globalen Standardeinstellungen zu verändern."
 
+msgid "Danger zone"
+msgstr "Gefahrenzone"
+
+msgid "Delete this room"
+msgstr "Diesen Raum löschen"
+
+msgid "Permanently removes the room, its transactions, debts and receipts. Members keep their accounts."
+msgstr "Entfernt den Raum, seine Transaktionen, Schulden und Belege endgültig. Mitglieder behalten ihre Konten."
+
+msgid "Delete room"
+msgstr "Raum löschen"
+
+msgid "Delete this room?"
+msgstr "Diesen Raum löschen?"
+
+msgid "This can not be undone."
+msgstr "Dies kann nicht rückgängig gemacht werden."
+
+#, python-format
+msgid "\"%(room_name)s\" and everything that belongs only to it — transactions, debts, receipts and news — will be permanently deleted. Members keep their accounts and can still be found in other rooms."
+msgstr "\"%(room_name)s\" und alles, was ausschließlich zu diesem Raum gehört – Transaktionen, Schulden, Belege und News – wird endgültig gelöscht. Mitglieder behalten ihre Konten und sind weiterhin in anderen Räumen zu finden."
+
+msgid "Delete forever"
+msgstr "Endgültig löschen"
+
 msgid "Status"
 msgstr "Status"
 
@@ -1296,6 +1328,9 @@ msgstr "vor %(timesince)s"
 
 msgid "This room is closed. No changes can be made."
 msgstr "Dieser Raum ist geschlossen. Es können keine Änderungen vorgenommen werden."
+
+msgid "Only a closed room can be deleted."
+msgstr "Nur ein geschlossener Raum kann gelöscht werden."
 
 msgid "Toggle navigation"
 msgstr "Navigation umschalten"
