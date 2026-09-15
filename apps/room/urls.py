@@ -31,6 +31,7 @@ urlpatterns = [
             path("detail", views.RoomDetailView.as_view(), name="detail"),
             path("edit", views.RoomEditView.as_view(), name="edit"),
             path("status", views.RoomStatusUpdateView.as_view(), name="status"),
+            path("delete", views.RoomHardDeleteView.as_view(), name="delete"),
             path(
                 "offline-manifest",
                 views.RoomOfflineManifestView.as_view(),
