@@ -8,6 +8,36 @@ in `factories.py` (app-level if specific to one app, or a shared `conftest.py`/`
 Aim for coverage parity with existing badges (>85%); add regression tests when touching business-critical flows such as
 settlement math or transaction rendering.
 
+## Logging in for manual or Playwright-driven testing
+
+Auth is a custom `account.User` model with email-based login (django-axes reads `email` as the
+username field) — not Django's default username/password, not allauth.
+
+Seed the local database once per session against a running server:
+
+```
+uv run python manage.py restore_test_data
+```
+
+This flushes the DB and creates fixed-credential accounts (all password `Admin123$`):
+
+| Role             | Email                            |
+|------------------|-----------------------------------|
+| Superuser        | `admin@yamsa.local`               |
+| Registered user  | `registered_user_1@yamsa.local` … `registered_user_5@yamsa.local` |
+
+Guest users (`guest_1`…`guest_5`) are also seeded but have no usable password by design
+(`User.clean()`) — they can only authenticate through a room-invite link
+(`AuthenticateGuestUserView`), never through the login form.
+
+Login form: `/account/login/`, fields `#id_email` / `#id_password`, submit
+`#login-submit-button` (see `apps/account/forms/login_form.py` and
+`account/partials/_password_field.html`, whose `id_password` id is kept stable for exactly
+this reason). A failed login renders `#login-error`.
+
+For the copy-paste `playwright-cli` flow, see
+`.claude/skills/playwright-cli/references/yamsa-login.md`.
+
 ## Testing the service worker
 
 Service worker behaviour is only real in a browser, so it lives in `e2e/` rather than in a JS unit
