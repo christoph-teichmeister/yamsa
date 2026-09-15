@@ -6,6 +6,12 @@ allowed-tools: Bash(playwright-cli:*) Bash(npx:*) Bash(npm:*)
 
 # Browser Automation with playwright-cli
 
+## Project logins
+
+Before improvising a login flow against this app, read
+`references/yamsa-login.md` — it has the seed command, test credentials, and
+selectors for `yamsa`'s login form.
+
 ## Quick start
 
 ```bash
