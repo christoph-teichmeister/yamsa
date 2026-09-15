@@ -17,7 +17,9 @@ class TestNewsFeedChunkView:
         older_news = create_news(room=room, message="Older update")
         newer_news = create_news(room=room, message="Newer update")
 
-        response = authenticated_client.get(reverse("news:feed"), {"cursor": newer_news.id})
+        response = authenticated_client.get(
+            reverse("news:feed", kwargs={"room_slug": room.slug}), {"cursor": newer_news.id}
+        )
 
         assert response.status_code == http.HTTPStatus.OK
         returned_ids = [news.id for news in response.context_data["news"]]

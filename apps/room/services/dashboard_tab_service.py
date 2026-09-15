@@ -31,6 +31,12 @@ class DashboardTabService:
                 get_url=reverse("account:list", kwargs={"room_slug": self.room.slug}),
             ),
             DashboardTab(
+                name="news",
+                icon_name="newspaper",
+                room=self.room,
+                get_url=reverse("news:list", kwargs={"room_slug": self.room.slug}),
+            ),
+            DashboardTab(
                 name="room",
                 icon_name="gear",
                 room=self.room,

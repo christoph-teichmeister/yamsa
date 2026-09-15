@@ -1,11 +1,10 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
 
 from apps.news.constants import NEWS_FEED_PAGE_SIZE
-from apps.news.views.mixins import NewsForUserMixin
+from apps.news.views.mixins import NewsBaseContext, NewsForRoomMixin
 
 
-class NewsFeedChunkView(NewsForUserMixin, LoginRequiredMixin, generic.TemplateView):
+class NewsFeedChunkView(NewsBaseContext, NewsForRoomMixin, generic.TemplateView):
     template_name = "shared_partials/news_batch.html"
 
     def get_paginate_by(self):

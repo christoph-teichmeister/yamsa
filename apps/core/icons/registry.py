@@ -27,6 +27,7 @@ NAMES_PASSED_AS_VARIABLES = frozenset(
         "wallet",
         "piggy-bank",
         "people",
+        "newspaper",
         "gear",
         # shared_partials/member_form.html, via its callers
         "at",
