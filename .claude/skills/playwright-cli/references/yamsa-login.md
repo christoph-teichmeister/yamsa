@@ -6,12 +6,12 @@ just the copy-paste `playwright-cli` version.
 
 ## 1. Server port
 
-Default to `8000` (used by `docker-compose.yml` and `scripts/run_backend_local.sh`; the
-README's manual `runserver` instructions say `8002`, which is inconsistent with those). If
-`8000` doesn't respond, check what's actually listening before trying other ports:
+Default to `8000` (used by `docker-compose.yml`, `scripts/run_backend_local.sh`, and the
+README's manual `runserver` instructions). If it doesn't respond, check what's actually
+listening before trying other ports:
 
 ```bash
-lsof -iTCP -sTCP:LISTEN -P | grep -E ':(8000|8002)'
+lsof -iTCP -sTCP:LISTEN -P | grep ':8000'
 # or, if using docker-compose:
 docker compose ps backend
 ```
