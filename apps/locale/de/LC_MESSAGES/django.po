@@ -191,6 +191,9 @@ msgstr "Lade %(invitee)s zu \"%(room)s\" ein"
 msgid "Send invite"
 msgstr "Einladung senden"
 
+msgid "Copy invite link"
+msgstr "Einladungslink kopieren"
+
 msgid "Add existing user"
 msgstr "Bestehenden Nutzer hinzufügen"
 
@@ -1319,9 +1322,6 @@ msgstr "Nur ein geschlossener Raum kann gelöscht werden."
 
 msgid "Toggle navigation"
 msgstr "Navigation umschalten"
-
-msgid "Copy the rooms URL to your clipboard to send it to your friends"
-msgstr "Kopiere die Raum-URL in die Zwischenablage, um sie deinen Freunden zu schicken"
 
 msgid "Room settings"
 msgstr "Raumeinstellungen"

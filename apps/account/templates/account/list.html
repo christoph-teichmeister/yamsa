@@ -3,6 +3,16 @@
 {% block tab_content %}
   <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% if is_member %}
+      <button class="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border border-transparent bg-brand px-5 py-4 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
+              type="button"
+              data-copy-share-url="true"
+              data-share-url="{{ current_room.share_url }}"
+              hx-get="{% url 'room:htmx-checked-clipboard' %}"
+              hx-target="find .invite-link-icon"
+              hx-swap="morph:innerHTML">
+        <span class="invite-link-icon">{% include "shared_partials/clipboard_icon_unchecked.html" %}</span>
+        {% trans "Copy invite link" %}
+      </button>
       <div class="grid grid-cols-1 gap-3 @lg:grid-cols-2">
         {% trans "Add existing user" as add_existing_label %}
         {% include "account/partials/_people_action.html" with action_viewname="room:userconnectiontoroom-create" action_label=add_existing_label action_icon="person-plus-fill" %}

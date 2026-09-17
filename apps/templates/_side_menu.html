@@ -1,6 +1,5 @@
 {% load room_tags i18n %}
 {% trans "Toggle navigation" as offcanvas_toggle_label %}
-{% trans "Copy the rooms URL to your clipboard to send it to your friends" as copy_rooms_url_tooltip %}
 {% trans "Room settings" as room_settings_label %}
 {% trans "Theme" as theme_group_label %}
 {% trans "Light theme" as light_theme_label %}
@@ -28,16 +27,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
           <span class="block truncate text-sm text-ink-subtle">{{ current_room.description|truncatechars:50 }}</span>
         </div>
         <div class="flex w-10 shrink-0 items-center justify-end">
-          {% if current_room.is_open %}
-            <button class="inline-flex size-10 cursor-pointer items-center justify-center rounded-xl border border-line-strong bg-surface text-lg text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-                    type="button"
-                    data-copy-share-url="true"
-                    data-share-url="{{ current_room.share_url }}"
-                    title="{{ copy_rooms_url_tooltip }}"
-                    aria-label="{{ copy_rooms_url_tooltip }}"
-                    hx-get="{% url 'room:htmx-checked-clipboard' %}"
-                    hx-swap="morph:innerHTML">{% include "shared_partials/clipboard_icon_unchecked.html" %}</button>
-          {% elif current_room.is_closed %}
+          {% if current_room.is_closed %}
             <button class="inline-flex size-10 cursor-pointer items-center justify-center rounded-xl border border-transparent bg-transparent text-2xl text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                     type="button"
                     aria-label="{{ room_settings_label }}"
