@@ -33,24 +33,33 @@ class TestRoomShareButton:
         client.force_login(owner)
         return client
 
-    def test_share_button_shows_for_open_rooms_without_guests(self, owner_client, room):
-        response = owner_client.get(reverse("room:dashboard", kwargs={"room_slug": room.slug}))
+    def test_share_button_shows_on_people_tab_for_open_rooms_without_guests(self, owner_client, room):
+        response = owner_client.get(reverse("account:list", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == 200
         assert "data-copy-share-url" in response.content.decode()
         assert reverse("room:share", kwargs={"share_hash": room.share_hash}) in response.content.decode()
 
-    def test_share_button_shows_for_open_room_with_guests(self, owner_client, room):
+    def test_share_button_shows_on_people_tab_for_open_room_with_guests(self, owner_client, room):
         guest = GuestUserFactory()
         UserConnectionToRoomFactory(user=guest, room=room)
 
-        response = owner_client.get(reverse("room:dashboard", kwargs={"room_slug": room.slug}))
+        response = owner_client.get(reverse("account:list", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == 200
         assert "data-copy-share-url" in response.content.decode()
         assert reverse("room:share", kwargs={"share_hash": room.share_hash}) in response.content.decode()
 
-    def test_share_button_hides_when_room_closed(self, owner_client, room):
+    def test_share_button_stays_on_people_tab_when_room_closed(self, owner_client, room):
+        room.status = Room.StatusChoices.CLOSED
+        room.save(update_fields=["status"])
+
+        response = owner_client.get(reverse("account:list", kwargs={"room_slug": room.slug}))
+
+        assert response.status_code == 200
+        assert "data-copy-share-url" in response.content.decode()
+
+    def test_room_settings_icon_replaces_nav_button_when_room_closed(self, owner_client, room):
         room.status = Room.StatusChoices.CLOSED
         room.save(update_fields=["status"])
 
@@ -61,6 +70,12 @@ class TestRoomShareButton:
         assert "data-copy-share-url" not in content
         # Icons are <use> references into the sprite now, not font classes.
         assert "#dash-circle" in content
+
+    def test_nav_bar_no_longer_shows_share_button_for_open_rooms(self, owner_client, room):
+        response = owner_client.get(reverse("room:dashboard", kwargs={"room_slug": room.slug}))
+
+        assert response.status_code == 200
+        assert "data-copy-share-url" not in response.content.decode()
 
     def test_who_are_you_partial_calls_out_registration_cta(self, owner_client, room):
         owner_client.logout()
