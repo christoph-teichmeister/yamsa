@@ -63,13 +63,14 @@
       {% include "_side_menu.html" %}
     {% endif %}
     {% comment %}
-      mt is split from my-12/py-12 on purpose: the fixed top bar (_side_menu.html) grows with
-      env(safe-area-inset-top), and this offset has to grow with it too, or a notch/Dynamic-Island
-      device (or the installed PWA, which reports a real inset where the browser tab may report
-      zero) leaves the bar taller than the space reserved for it - it then paints over the top of
-      whatever renders first here, which on every room tab is the header card.
+      mt/mb are split from my-12/py-12 on purpose: the fixed top and bottom bars
+      (_side_menu.html, _dashboard_nav.html) both grow with their respective safe-area-inset, and
+      these offsets have to grow with them too, or a notch/Dynamic-Island device (or the installed
+      PWA, which reports a real inset where the browser tab may report zero) leaves a bar taller
+      than the space reserved for it - it then paints over whatever renders at that edge here,
+      which on every room tab is the header card (top) or the last list row (bottom).
     {% endcomment %}
-    <div class="app-container mt-[calc(3rem+env(safe-area-inset-top,0px))] mb-12 px-2 py-12"
+    <div class="app-container mt-[calc(3rem+env(safe-area-inset-top,0px))] mb-[calc(3rem+env(safe-area-inset-bottom,0px))] px-2 py-12"
          id="base-content">
       {% include "core/partials/_offline_state.html" %}
       {% block content %}
