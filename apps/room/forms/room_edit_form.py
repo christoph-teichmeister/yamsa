@@ -30,3 +30,14 @@ class RoomEditForm(forms.ModelForm):
         self.instance.lastmodified_by = self.user
         self.instance.lastmodified_at = timezone.now()
         return super().save(commit)
+
+    @property
+    def selected_currency_id(self) -> str:
+        """The bound field's value, always a string.
+
+        `BoundField.value()` returns the model's int pk when unbound, but the raw string from
+        POST data when the form was resubmitted after a validation error - a template comparing
+        `<option value="...">` (always a string) against that would need to normalise both sides
+        itself, which is why this exists.
+        """
+        return str(self["preferred_currency"].value() or "")

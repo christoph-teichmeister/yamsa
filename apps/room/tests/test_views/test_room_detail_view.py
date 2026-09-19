@@ -26,7 +26,9 @@ class TestRoomDetailView:
 
         assert room.name in content
         assert str(Room.StatusChoices.OPEN.label) in content
-        assert "Closing readiness" in content
+        # Closing readiness is stated once, by the Status section alone - see
+        # test_an_open_room_without_debts_offers_to_close for that assertion.
+        assert "All debts are settled. You can close the room." in content
 
     def test_an_open_room_without_debts_offers_to_close(self, authenticated_client, room):
         content = authenticated_client.get(reverse("room:detail", kwargs={"room_slug": room.slug})).content.decode()
