@@ -3,7 +3,7 @@
 {% block tab_content %}
   <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% if is_member %}
-      <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+      <div class="@container overflow-hidden rounded-lg border border-line bg-surface">
         <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
           <div class="flex items-center gap-3">
             {% include "room/partials/_room_seal.html" with icon=current_room.slug|room_seal_icon tilt=current_room.slug|room_seal_tilt size_class="size-9" %}
@@ -42,7 +42,7 @@
         {% endfor %}
       </div>
     {% else %}
-      <div class="@container rounded-3xl border border-brand/20 bg-gradient-to-br from-brand-soft to-transparent px-5 py-6 text-center @md:px-6">
+      <div class="@container rounded-lg border border-brand/20 bg-gradient-to-br from-brand-soft to-transparent px-5 py-6 text-center @md:px-6">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Guest access" %}</p>
         <h1 class="mt-1 mb-1 text-xl font-semibold break-words text-ink">
           {% with current_room.name as room_name %}
