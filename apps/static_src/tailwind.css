@@ -179,6 +179,16 @@
   --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.08), 0 14px 32px rgb(0 0 0 / 0.14);
   --shadow-brand: 0 8px 20px rgb(var(--yamsa-brand-rgb), 0.28);
 
+  /* Visibly rounder than a trimmed index card, but well short of Tailwind's own lg/xl/2xl/3xl
+     defaults (8/12/16/24px) - every `rounded-lg`+ utility in the app inherits this override, so
+     no individual box, sheet, or button needs a class change. `rounded-full` (pills, avatars,
+     the floating add-transaction button) is untouched: a chip or a fab is a control, not a card,
+     and stays fully round regardless of this scale. */
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.625rem;
+  --radius-2xl: 0.75rem;
+  --radius-3xl: 1rem;
+
   /* The pulsing dot every loading indicator in the app is built from. `animate-ping` is the
      nearest thing Tailwind ships and it is not the same shape: it ends at twice the size, so a
      row of them overlaps. This one starts at nothing and rests at its own size. */
