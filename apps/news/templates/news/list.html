@@ -1,7 +1,18 @@
 {% extends "room/dashboard.html" %}
-{% load i18n %}
+{% load i18n room_tags %}
 {% block tab_content %}
   <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4 pb-16">
+    <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+      <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
+        <div class="flex items-center gap-3">
+          {% include "room/partials/_room_seal.html" with icon=current_room.slug|room_seal_icon tilt=current_room.slug|room_seal_tilt size_class="size-9" %}
+          <div class="min-w-0 flex-1">
+            <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Activity" %}</p>
+            <h1 class="mt-1 mb-0 text-xl font-semibold text-ink">{% trans "Room activity" %}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
     {% if highlighted_news or news %}
       {# The rail is the container's own ::before, so it spans exactly the events it belongs to. #}
       <div id="news-feed"
