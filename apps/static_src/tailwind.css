@@ -28,76 +28,79 @@
 
 @custom-variant dark ([data-theme="dark"] &);
 
-/* The palette of the whole app.
+/* The palette of the whole app - the recipe-card-box world (docs/ai/design-redesign-plan.md):
+   warm kraft/cream neutrals, one committed terracotta accent, replacing the old blue-on-white
+   system that three independent critique cycles found "structurally generic."
+
    The tokens switch with the theme, which is why templates need no `dark:` variant for them -
    `bg-surface` is already correct in both.
 
    Every pair a reader has to make out is contrast-checked by scripts/check_palette_contrast.py:
    text on its ground at 4.5:1, control borders and the focus ring at 3:1. Change a value here and
    run that script - the failures it reports are the reason these numbers are what they are.
-   The neutrals of both themes sit on the same hue as the brand (~219°); a warm neutral under a
-   cold brand is what made the old dark theme look muddy. */
+   The neutrals of both themes sit on the same warm hue as the brand (~20°, terracotta); a cool
+   neutral under a warm brand is exactly the mismatch the old blue-on-cool-gray palette had. */
 :root,
 [data-theme="light"] {
   /* Scrollbars, form controls and every other native widget follow the theme only through this. */
   color-scheme: light;
 
-  --yamsa-canvas: #f5f7fa;
-  --yamsa-surface: #ffffff;
-  --yamsa-surface-raised: #ffffff;
-  --yamsa-surface-sunken: #eef1f7;
-  --yamsa-surface-hover: #e5eaf3;
-  --yamsa-line: #dde2ec;
+  --yamsa-canvas: #f6ecdb;
+  --yamsa-surface: #fffbf2;
+  --yamsa-surface-raised: #fffefa;
+  --yamsa-surface-sunken: #ece0c8;
+  --yamsa-surface-hover: #ecdfc4;
+  --yamsa-line: #ddc9a3;
   /* Carries the boundary of inputs and outline buttons, so it is held to 3:1 - clearly darker
      than the decorative `line`. */
-  --yamsa-line-strong: #8895b0;
-  --yamsa-ink-strong: #0f1319;
+  --yamsa-line-strong: #93724c;
+  --yamsa-ink-strong: #241a0e;
   /* A triplet, because customClasses.css tints the neutrals at several alphas - a row's
      hover ground, the skeleton shimmer, the divider. */
-  --yamsa-ink-rgb: 27, 32, 39;
-  --yamsa-ink-muted: #4d5665;
-  --yamsa-ink-subtle: #606a7f;
+  --yamsa-ink-rgb: 44, 32, 19;
+  --yamsa-ink-muted: #5c4930;
+  --yamsa-ink-subtle: #6f5b3f;
   /* The fill is dark enough to carry white here; on the dark theme it is the other way round.
      Each is the tone that reads as an action against its own ground. */
-  --yamsa-brand-rgb: 47, 111, 228;
-  --yamsa-brand-hover: #2660cc;
+  --yamsa-brand-rgb: 168, 69, 28;
+  --yamsa-brand-hover: #8a3814;
   --yamsa-on-brand: #ffffff;
-  --yamsa-brand-text: #1f5bbf;
+  --yamsa-brand-text: #863a12;
   --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.12);
   /* A triplet, because the trend chart strokes its line at 0.9 alpha. */
-  --yamsa-link-rgb: 31, 91, 191;
-  --yamsa-success-text: #0c7047;
+  --yamsa-link-rgb: 168, 69, 28;
+  --yamsa-success-text: #0a5f3c;
   --yamsa-success-soft: rgb(var(--yamsa-success-rgb), 0.14);
-  --yamsa-warning-text: #8f4d0d;
+  --yamsa-warning-text: #7a420b;
   --yamsa-warning-soft: rgb(var(--yamsa-warning-rgb), 0.16);
-  --yamsa-danger-text: #b42318;
+  --yamsa-danger-text: #9c1e14;
   --yamsa-danger-soft: rgb(var(--yamsa-danger-rgb), 0.12);
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --yamsa-canvas: #1b1e24;
-  --yamsa-surface: #23262e;
-  --yamsa-surface-raised: #2b2f38;
-  --yamsa-surface-sunken: #14161b;
-  --yamsa-surface-hover: #31353f;
-  --yamsa-line: #343945;
-  --yamsa-line-strong: #667082;
-  --yamsa-ink-strong: #ffffff;
-  --yamsa-ink-rgb: 232, 235, 242;
-  --yamsa-ink-muted: #aab3c2;
-  --yamsa-ink-subtle: #959daf;
+  --yamsa-canvas: #211a0f;
+  --yamsa-surface: #2b2214;
+  --yamsa-surface-raised: #332819;
+  --yamsa-surface-sunken: #19130a;
+  --yamsa-surface-hover: #423420;
+  --yamsa-line: #4a3b24;
+  --yamsa-line-strong: #8a7350;
+  --yamsa-ink-strong: #f7ecd9;
+  --yamsa-ink-rgb: 232, 220, 196;
+  --yamsa-ink-muted: #c2ab84;
+  --yamsa-ink-subtle: #b29f7c;
   /* The fill is the same tone as the text here, so a button, a link and an amount read as one
      colour. It is too light for a white label, which is why `on-brand` is dark on this theme. */
-  --yamsa-brand-rgb: 143, 184, 255;
-  --yamsa-brand-hover: #a9c9ff;
-  --yamsa-on-brand: #0b1b33;
-  --yamsa-brand-text: #8fb8ff;
-  /* Thinner than the status tints on this theme: the brand is a light blue here, so the same
-     alpha would lift the tint until its own label no longer reads on it. */
-  --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.14);
-  --yamsa-link-rgb: 143, 184, 255;
+  --yamsa-brand-rgb: 232, 148, 96;
+  --yamsa-brand-hover: #f0aa7c;
+  --yamsa-on-brand: #2a1608;
+  --yamsa-brand-text: #f2a878;
+  /* Thinner than the status tints on this theme: the brand is a light terracotta here, so the
+     same alpha would lift the tint until its own label no longer reads on it. */
+  --yamsa-brand-soft: rgb(var(--yamsa-brand-rgb), 0.16);
+  --yamsa-link-rgb: 232, 148, 96;
   --yamsa-success-text: #5fd6a4;
   --yamsa-success-soft: rgb(var(--yamsa-success-rgb), 0.18);
   --yamsa-warning-text: #f0ad6d;
@@ -116,7 +119,7 @@
   /* The one brand tone that does not switch, for the surfaces that are the same on both themes
      and have to carry white either way: the auth hero and the button standing on it. Everything
      else takes `brand`, which follows the theme. */
-  --yamsa-brand-strong: #1b5acd;
+  --yamsa-brand-strong: #7a2f10;
 
   /* The scrim of the loading overlays. One value for both themes, because it does not sit on
      the canvas but on whatever the page happens to show, and it has one job on either theme:
@@ -169,6 +172,11 @@
 }
 
 @theme {
+  /* The ledger's typed digits - amounts, dates, balances - the one place this world's index-card
+     character shows in the type itself rather than in layout. Nothing else takes it: the rest of
+     the app keeps the system-ui stack in apps/static/base.css. */
+  --font-ledger: "Courier Prime", ui-monospace, "SF Mono", "Cascadia Code", monospace;
+
   /* The only additions to Tailwind's own scales: its default shadows vanish on a dark ground. */
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
   --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.08), 0 14px 32px rgb(0 0 0 / 0.14);
@@ -213,7 +221,7 @@
 /* The auth hero's ground. A utility rather than two tokens because its far end is a value of the
    gradient and of nothing else - and this file is the only place a colour is written down. */
 @utility auth-hero-surface {
-  background: linear-gradient(135deg, var(--yamsa-brand-strong), #113881);
+  background: linear-gradient(135deg, var(--yamsa-brand-strong), #2a1608);
 }
 
 /* The side menu's slide-in, on a modal <dialog>. None of this is expressible as a utility: the

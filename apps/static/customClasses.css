@@ -1,3 +1,27 @@
+/* Self-hosted (OFL-licensed) rather than linked to Google Fonts: the app is a PWA with an offline
+   page, and a font a visitor's browser fetched once still has to render from the service worker's
+   own cache on the next offline visit - a CDN link the worker doesn't control can't promise that.
+   Lives here, not in tailwind.css: this file is loaded by a plain <link>, unprocessed by webpack's
+   css-loader, which otherwise tries to resolve a root-relative url() as a JS module import and
+   fails to find it. Latin subset only; the German diacritics the app ships (ä/ö/ü/ß) sit in
+   U+0000-00FF, covered by this subset, not the latin-ext one. The `--font-ledger` token that names
+   this family lives in tailwind.css, next to the rest of the palette. */
+@font-face {
+    font-family: "Courier Prime";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/static/fonts/courier-prime-400.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Courier Prime";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/static/fonts/courier-prime-700.woff2") format("woff2");
+}
+
 /* The icon contract the bootstrap-icons font used to provide, now that the icons come out of
    a sprite instead: an icon is 1em of the text it sits in and takes its colour from it, so the
    call sites keep the `text-*` utilities they already carried. */
