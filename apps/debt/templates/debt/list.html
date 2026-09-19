@@ -154,7 +154,7 @@
                 </p>
               </div>
               {# Lining figures so the amounts of stacked rows line up on the decimal point. #}
-              <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap {% if debt.settled %}text-ink-muted{% elif debt.viewer_is_debitor %}text-danger-text{% elif debt.viewer_is_creditor %}text-success-text{% else %}text-ink{% endif %}">
+              <p class="m-0 shrink-0 font-ledger font-semibold whitespace-nowrap {% if debt.settled %}text-ink-muted{% elif debt.viewer_is_debitor %}text-danger-text{% elif debt.viewer_is_creditor %}text-success-text{% else %}text-ink{% endif %}">
                 {{ debt.value|format_with_thousands }}&nbsp;{{ debt.currency.sign }}
               </p>
             </div>

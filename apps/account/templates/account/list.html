@@ -35,7 +35,7 @@
         {% for user in user_qs_for_room %}
           {% include "shared_partials/user_card.html" with user=user %}
         {% empty %}
-          <div class="rounded-2xl border border-dashed border-line-strong px-6 py-8 text-center @lg:col-span-2">
+          <div class="rounded-lg border border-dashed border-line-strong px-6 py-8 text-center @lg:col-span-2">
             <p class="m-0 font-semibold text-ink">{% trans "No one here yet" %}</p>
             <p class="m-0 text-sm text-ink-muted">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
           </div>
