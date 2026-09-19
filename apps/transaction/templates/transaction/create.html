@@ -67,7 +67,8 @@
         <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Required details" %}</p>
         <div class="grid grid-cols-1 gap-4 px-5 pt-2 pb-5 @lg:grid-cols-2 @md:px-6">
           <div class="@lg:col-span-2">
-            <label class="mb-1.5 block text-sm font-semibold text-ink" for="description">{% trans "What was this?" %}</label>
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
+                   for="description">{% trans "What was this?" %}</label>
             {% with description_field=form.description %}
               <input id="description"
                      class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
