@@ -11,6 +11,7 @@ viewport - the same card is full width on a phone and half a column wide on a de
 {% endcomment %}
 <button class="room-overview-card @container flex h-full w-full cursor-pointer rounded-2xl border border-line bg-surface-sunken px-3.5 py-3 text-left transition hover:-translate-y-0.5 hover:border-brand/55 hover:shadow-card-hover focus-visible:-translate-y-0.5 focus-visible:border-brand/55 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:focus-visible:translate-y-0{% if entry.is_closed %} opacity-85{% endif %}{% if not entry.user_is_in_room %} italic{% endif %}"
         type="button"
+        data-room-name="{{ entry.name|lower }}"
         aria-label="{{ entry.name }}"
         hx-get="{{ entry.target_url }}"
         hx-target="#body"

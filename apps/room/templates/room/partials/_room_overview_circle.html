@@ -1,7 +1,11 @@
 {% comment %}
   The initials disc of an overview card. Smaller than the side menu's .room-circle, which is why
   it carries its own size rather than that class.
+
+  Always brand-toned, not danger-toned when closed: the status badge already says "Closed" on
+  every card that needs it, and a red circle next to it repeated the same signal in a second
+  color that reads as an alert rather than an identity mark.
 {% endcomment %}
-<span class="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold uppercase {% if entry.is_closed %}bg-danger-soft text-danger-text{% else %}bg-brand-soft text-brand-text{% endif %}">
+<span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-sm font-semibold text-brand-text uppercase">
   {{ entry.capitalised_initials }}
 </span>

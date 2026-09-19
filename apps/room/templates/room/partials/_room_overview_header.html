@@ -1,0 +1,28 @@
+{% load i18n %}
+{% comment %}
+  The dashboard's arrival moment: a greeting instead of jumping straight into the tile grid, the
+  single most urgent room to deal with when there is one, and a guest's own status - the one thing
+  this page otherwise never says about the viewer.
+{% endcomment %}
+<div class="flex flex-wrap items-start justify-between gap-2">
+  <div>
+    <p class="room-overview-greeting m-0 text-lg font-semibold text-ink">
+      {% blocktrans trimmed with name=request.user.name %}
+        Welcome back, {{ name }}
+      {% endblocktrans %}
+    </p>
+    {% if most_urgent_entry %}
+      <p class="room-overview-highlight m-0 text-sm text-ink-muted">
+        {% blocktrans trimmed with room=most_urgent_entry.name %}
+          Your biggest open balance is in {{ room }}
+        {% endblocktrans %}
+      </p>
+    {% endif %}
+  </div>
+  {% if request.user.is_guest %}
+    <span class="room-overview-guest-badge inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line-strong bg-surface-sunken px-2.5 py-1 text-xs font-semibold text-ink">
+      {% icon "person-check" %}
+      {% trans "Guest access" %}
+    </span>
+  {% endif %}
+</div>
