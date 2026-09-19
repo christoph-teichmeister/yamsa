@@ -52,29 +52,37 @@ entries, and the index-card-box pattern is specifically for *lists*, not single-
 - [x] **Debts** (`debt/list.html`) — rows already sat hairline-divided inside the room sheet with
   no per-row card chrome; the only gap was typography, so debt values now carry `font-ledger`,
   same as the dashboard/feed.
-- [x] **People** (`account/list.html`) — member cards (`shared_partials/user_card.html`) stay
-  individual, not a hairline list: a card carries a remove action, a guest/member badge, and an
-  invitation-status row that a transaction row doesn't. Moved from `rounded-2xl` +
-  lift/shadow-card-hover to `rounded-lg border-line bg-surface` + `hover:bg-surface-hover`, the
-  same flat chrome room tiles use, so it reads as the new world without pretending to be a list.
-- [ ] **Activity** (`news/list.html`) — done means: the timeline's card-per-event treatment is
-  reconsidered against the box pattern, or kept if the direction contract judges a timeline a
-  genuinely different shape than a ledger list.
-- [ ] **Categories** (`transaction/category_manager.html`) — done means: the category list moves
-  to the box pattern; category color swatches and the create form get a look pass consistent
-  with the new palette (they already inherit the tokens, not yet the structure).
+- [x] **People** (`account/list.html`) — first pass kept member cards individually boxed
+  (`rounded-lg border bg-surface`), lighter than before but still a per-row card; the user called
+  this out directly. Reworked into a flat row (`user_card.html`) inside a `divide-y` list, same
+  hairline pattern as every other list in the app - the remove action, badges, and
+  invitation-status row all fit inline in a row, no box needed.
+- [x] **Activity** (`news/list.html`) — header sheet flattened like the rest; each timeline event
+  dropped `shadow-card` and the hover lift for a flat border/surface. The rail still separates
+  events - that part of a timeline's shape doesn't map onto a hairline list, so events stay
+  visually distinct blocks, just without card chrome.
+- [x] **Categories** (`transaction/category_manager.html`) — panel and per-category tiles moved
+  `rounded-2xl` → the (now-tuned) radius scale, consistent with the rest of the app. Categories
+  stayed individual tiles, not a hairline list, the same reasoning as People's per-item actions -
+  each one carries its own order input, default toggle, and delete form.
 - [x] **Room sheet** (`room/partials/_room_sheet.html`) — the user's call: flatten everywhere, no
   exception for single-object detail. Sheet wrapper moved `rounded-3xl`/`shadow-card` →
-  `rounded-lg`/no shadow, same as Debts/People/the feed.
-- [ ] **Auth pages** (login/register/forgot-password, `account/_auth_base.html`) — done means:
-  the auth hero's gradient (`auth-hero-surface`, back to blue after the terracotta revert) and
-  the form half both read as the new world, not just recolored old chrome.
-- [ ] **Guest entry** (`room/partials/_detail_who_are_you.html`) — done means: the same box/seal
-  treatment as the member-facing screens, so a guest's first view matches what they see after
-  claiming their invitation.
-- [ ] **Bottom-nav safe-area gap** — flagged, not fixed, in the header-clipping pass:
-  `room/partials/_dashboard_nav.html`'s fixed bottom nav has no `env(safe-area-inset-bottom)`
-  term at all (unlike the top bar, which now does). Same bug class, opposite edge.
+  the flat chrome, same as Debts/People/the feed.
+- [x] **Auth pages** (login/register/forgot-password, `account/_auth_base.html`) — hero/form shell
+  dropped `rounded-3xl`/`shadow-card` for the same flat border chrome as every other screen.
+- [x] **Guest entry** (`room/partials/_detail_who_are_you.html`) — sheet and its nested notes
+  match the member-facing screens' flat chrome.
+- [x] **Bottom-nav safe-area gap** — `_dashboard_nav.html`'s fixed bottom nav now reserves
+  `env(safe-area-inset-bottom)`, and `#base-content`'s bottom offset grows with it, mirroring the
+  top-bar fix.
+- [x] **Global corner radius** — not originally scoped, but the user's actual complaint kept
+  coming back to individually-boxed rows and pill-shaped buttons reading as "cards" even after
+  the box/shadow removal. Traced to Tailwind's own `rounded-lg`/`xl`/`2xl`/`3xl` defaults
+  (8/12/16/24px) being too round for this direction. Fixed once, app-wide, with a
+  `--radius-lg`…`--radius-3xl` override in `apps/static_src/tailwind.css` rather than a
+  per-template class sweep - landed at a visibly-rounder-than-square middle ground
+  (8/10/12/16px) after a too-sharp first pass got rejected too. `rounded-full` (pills, avatars,
+  the floating add-transaction button) is untouched by design.
 - [ ] **Room-seal motif and warm-voice copy** — built earlier in this project's identity pass (before the redesign was
   requested), explicitly not protected from replacement. Decide,
   screen by screen as this list is worked through, whether the seal icons and the warm
