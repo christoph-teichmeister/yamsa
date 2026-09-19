@@ -208,55 +208,6 @@
     });
   };
 
-  const TOP_BAR_SELECTOR = '#app-top-bar';
-  const BOTTOM_BAR_SELECTOR = '#app-bottom-bar';
-  const TOP_BAR_HEIGHT_PROPERTY = '--app-top-bar-height';
-  const BOTTOM_BAR_HEIGHT_PROPERTY = '--app-bottom-bar-height';
-
-  let barHeightObserver = null;
-
-  const setBarHeightVar = (propertyName, element) => {
-    if (!element) {
-      document.documentElement.style.removeProperty(propertyName);
-      return;
-    }
-
-    document.documentElement.style.setProperty(propertyName, `${element.getBoundingClientRect().height}px`);
-  };
-
-  // #base-content's margins have to match these bars' real rendered height, not a guess - it
-  // varies by safe-area-inset, by whether a room name/description is showing, and by OS font
-  // scaling. Re-run after every htmx swap: morph can replace these nodes outright.
-  const initBarHeightVars = () => {
-    const topBar = document.querySelector(TOP_BAR_SELECTOR);
-    const bottomBar = document.querySelector(BOTTOM_BAR_SELECTOR);
-
-    setBarHeightVar(TOP_BAR_HEIGHT_PROPERTY, topBar);
-    setBarHeightVar(BOTTOM_BAR_HEIGHT_PROPERTY, bottomBar);
-
-    if (barHeightObserver) {
-      barHeightObserver.disconnect();
-    }
-
-    if (typeof ResizeObserver !== 'function') {
-      return;
-    }
-
-    barHeightObserver = new ResizeObserver((entries) => {
-      entries.forEach((entry) => {
-        const property = entry.target.id === 'app-top-bar' ? TOP_BAR_HEIGHT_PROPERTY : BOTTOM_BAR_HEIGHT_PROPERTY;
-        document.documentElement.style.setProperty(property, `${entry.target.getBoundingClientRect().height}px`);
-      });
-    });
-
-    if (topBar) {
-      barHeightObserver.observe(topBar);
-    }
-    if (bottomBar) {
-      barHeightObserver.observe(bottomBar);
-    }
-  };
-
   const refreshDynamicElements = () => {
     initProfilePictureFallbacks();
     applyDataStyleVars();
@@ -264,7 +215,6 @@
     // about the stored preference.
     applyThemeToggleState(getStoredPreference());
     initRoomSearch();
-    initBarHeightVars();
   };
 
   const KEYBOARD_CLICK_SELECTOR = '[data-keyboard-click]';
