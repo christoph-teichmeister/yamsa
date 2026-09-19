@@ -11,7 +11,19 @@
 @import "tailwindcss/utilities.css";
 
 @source "../templates/**/*.html";
-@source "../*/templates/**/*.html";
+/* Named per app rather than one glob with a `*` where the app name goes: that wildcard needs the
+   `apps` directory listing to resolve, so the build watches `apps` itself - and `apps/static/bundles`
+   is this build's own output. Every asset it writes there (`clean: true` included) then counts as
+   a change under `apps` and reopens the next build - a self-triggering rebuild loop with no
+   source edit involved. Add a line here when a new app gets a templates directory. */
+@source "../account/templates/**/*.html";
+@source "../core/templates/**/*.html";
+@source "../debt/templates/**/*.html";
+@source "../importer/templates/**/*.html";
+@source "../mail/templates/**/*.html";
+@source "../news/templates/**/*.html";
+@source "../room/templates/**/*.html";
+@source "../transaction/templates/**/*.html";
 @source "../static/js/**/*.js";
 
 @custom-variant dark ([data-theme="dark"] &);

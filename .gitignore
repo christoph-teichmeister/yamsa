@@ -21,7 +21,7 @@ dist/
 apps/config/.env
 /.env
 apps/locale/de/LC_MESSAGES/django.mo
-apps/static/bundles/
+/webpack_bundles/
 apps/staticfiles/
 staticfiles/
 /static/
