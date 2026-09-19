@@ -30,12 +30,12 @@
         {% trans "Add guest" as add_guest_label %}
         {% include "account/partials/_people_action.html" with action_viewname="account:guest-create" action_label=add_guest_label action_icon="person-plus" %}
       </div>
-      <div class="grid grid-cols-1 gap-3 @lg:grid-cols-2">
+      <div class="divide-y divide-line">
         {% csrf_token %}
         {% for user in user_qs_for_room %}
           {% include "shared_partials/user_card.html" with user=user %}
         {% empty %}
-          <div class="rounded-lg border border-dashed border-line-strong px-6 py-8 text-center @lg:col-span-2">
+          <div class="px-1 py-10 text-center">
             <p class="m-0 font-semibold text-ink">{% trans "No one here yet" %}</p>
             <p class="m-0 text-sm text-ink-muted">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
           </div>
