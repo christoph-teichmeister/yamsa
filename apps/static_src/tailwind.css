@@ -225,6 +225,15 @@
   }
 }
 
+/* #base-content's vertical offsets must match the fixed top/bottom bars' real rendered height,
+   not a guess - it varies by safe-area-inset, by whether a room name/description is showing, and
+   by OS font scaling. navigation.js measures #app-top-bar/#app-bottom-bar and writes these
+   custom properties; the calc() fallbacks only cover the instant before that JS runs. */
+#base-content {
+  margin-top: var(--app-top-bar-height, calc(3rem + env(safe-area-inset-top, 0px)));
+  margin-bottom: var(--app-bottom-bar-height, calc(3rem + env(safe-area-inset-bottom, 0px)));
+}
+
 /* The auth hero's ground. A utility rather than two tokens because its far end is a value of the
    gradient and of nothing else - and this file is the only place a colour is written down. */
 @utility auth-hero-surface {
