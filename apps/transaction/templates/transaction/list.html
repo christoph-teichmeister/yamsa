@@ -33,7 +33,7 @@
         {% if transactions_available %}
           <p class="m-0 text-sm text-ink-muted">{% trans "Pick a row to explore the full breakdown." %}</p>
         {% else %}
-          <p class="m-0 text-sm text-ink-muted">{% trans "Record your first expense to see the running history here." %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Nothing filed yet - the first coffee run counts too." %}</p>
         {% endif %}
         <div class="mt-3 flex flex-wrap gap-2">
           {% include "room/partials/_room_status_badge.html" %}
@@ -144,8 +144,8 @@
       {% else %}
         <div class="border-t border-line px-5 py-10 text-center"
              id="transaction-empty-placeholder">
-          <p class="m-0 font-semibold text-ink">{% trans "Nothing to show yet" %}</p>
-          <p class="m-0 text-sm text-ink-muted">{% trans "Start by logging an expense to build your history." %}</p>
+          <p class="m-0 font-semibold text-ink">{% trans "Empty ledger, for now" %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Log the first expense and this room's history starts here." %}</p>
         </div>
       {% endif %}
       <div class="border-t border-line">

@@ -14,5 +14,5 @@ class TestRoomDashboardGuestOnboarding:
         assert response.status_code == http.HTTPStatus.OK
         soup = BeautifulSoup(response.content, "html.parser")
         assert soup.find(string=lambda text: text and "Who are you?" in text)
-        assert soup.find(string=lambda text: text and "Maybe register?" in text)
+        assert soup.find(string=lambda text: text and "No account needed" in text)
         assert soup.find(string=lambda text: text and "Create a free account" in text)

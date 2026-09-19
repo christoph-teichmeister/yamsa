@@ -20,10 +20,10 @@
       {% else %}
         <div class="rounded-2xl border border-dashed border-line-strong px-6 py-10 text-center">
           <span class="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand-text">
-            {% icon "house" %}
+            {% icon "door-open" %}
           </span>
-          <p class="m-0 font-semibold text-ink">{% trans "No rooms yet" %}</p>
-          <p class="m-0 text-sm text-ink-muted">{% trans "Create a room to start splitting expenses with your friends." %}</p>
+          <p class="m-0 font-semibold text-ink">{% trans "Nobody's moved in yet" %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Open a room for your place and invite whoever shares it - rent, groceries, all of it, sorted out fairly." %}</p>
         </div>
       {% endif %}
       {% url 'room:create' as create_url %}

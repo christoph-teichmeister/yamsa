@@ -21,7 +21,8 @@
     <div class="border-t border-line px-5 py-5 @md:px-6">
       <p class="mt-0 mb-3 text-sm text-ink-muted">
         {% blocktrans trimmed %}
-          Maybe register? A free account keeps your rooms, reminders, and history together.
+          No account needed to pick your name below and join in. If you'd rather keep this room,
+          its reminders, and your history under one login next time, that's what an account is for.
         {% endblocktrans %}
       </p>
       <div class="flex flex-col gap-3 rounded-2xl border border-brand/40 bg-brand-soft px-4 py-4 @md:flex-row @md:items-start">
@@ -45,7 +46,8 @@
         {% csrf_token %}
         <div class="flex flex-col gap-3 border-t border-line px-5 py-5 @md:px-6">
           <div>
-            <label class="mb-1.5 block text-sm font-semibold text-ink" for="userSelect">{% trans "Who are you?" %}</label>
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
+                   for="userSelect">{% trans "Who are you?" %}</label>
             <div class="relative">
               <select id="userSelect"
                       class="w-full appearance-none rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-10 pl-4 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
