@@ -2,7 +2,7 @@
 {% load i18n room_tags %}
 {% block tab_content %}
   <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4 pb-16">
-    <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+    <div class="@container overflow-hidden rounded-lg border border-line bg-surface">
       <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
         <div class="flex items-center gap-3">
           {% include "room/partials/_room_seal.html" with icon=current_room.slug|room_seal_icon tilt=current_room.slug|room_seal_tilt size_class="size-9" %}
@@ -23,7 +23,7 @@
         {% include "shared_partials/news_batch.html" with news=news news_next_cursor=news_next_cursor news_initial_render=news_initial_render %}
       </div>
     {% else %}
-      <div class="mt-4 rounded-2xl border border-dashed border-line-strong px-6 py-10 text-center">
+      <div class="mt-4 rounded-lg border border-dashed border-line-strong px-6 py-10 text-center">
         <p class="m-0 font-semibold text-ink">{% trans "No updates yet" %}</p>
         <p class="m-0 text-sm text-ink-muted">{% trans "Once someone logs an expense or change in this room, it will appear here." %}</p>
       </div>

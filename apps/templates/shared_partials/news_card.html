@@ -13,12 +13,12 @@ decide what "highlighted" looks like and the pill inside can react to it with gr
     <a class="block text-inherit no-underline"
        href="{{ news.deeplink }}"
        aria-label="{{ news_open_label }}">
-      <div class="rounded-2xl border border-line bg-surface px-5 py-4 shadow-card transition group-hover:-translate-y-0.5 group-hover:border-brand/35 group-hover:shadow-card-hover group-focus-visible:-translate-y-0.5 group-focus-visible:border-brand/35 group-focus-visible:shadow-card-hover group-data-highlighted:border-transparent group-data-highlighted:bg-warning-soft motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
+      <div class="rounded-lg border border-line bg-surface px-5 py-4 transition group-hover:bg-surface-hover group-focus-visible:bg-surface-hover group-data-highlighted:border-transparent group-data-highlighted:bg-warning-soft">
         {% include "shared_partials/_news_card_content.html" with news=news %}
       </div>
     </a>
   {% else %}
-    <div class="rounded-2xl border border-dashed border-line bg-surface px-5 py-4 opacity-85 shadow-card group-data-highlighted:border-transparent group-data-highlighted:bg-warning-soft">
+    <div class="rounded-lg border border-dashed border-line bg-surface px-5 py-4 opacity-85 group-data-highlighted:border-transparent group-data-highlighted:bg-warning-soft">
       {% include "shared_partials/_news_card_content.html" with news=news %}
     </div>
   {% endif %}
