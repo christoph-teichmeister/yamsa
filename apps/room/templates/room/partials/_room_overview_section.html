@@ -16,7 +16,7 @@ open state is the details element's own and needs no aria-expanded to mirror it.
           <span class="border-b-2 border-transparent pb-1 -mb-[2px] text-xs font-semibold tracking-[0.08em] text-ink-subtle uppercase group-open:border-brand group-open:text-brand-text">{% trans title %} ({{ entries|length }})</span>
           {% icon "chevron-down" "room-overview-toggle-icon text-ink-subtle transition-transform group-open:rotate-180 motion-reduce:transition-none" %}
         </summary>
-        <div class="room-overview-entries mt-2 grid grid-cols-2 gap-2 rounded-lg border border-line bg-surface p-2 @md:gap-3"
+        <div class="room-overview-entries mt-2 grid grid-cols-2 gap-2 @md:gap-3"
              id="{{ section_id }}">
           {% for entry in entries %}
             {% include "room/partials/_room_overview_card.html" with entry=entry tile=tile %}
@@ -26,13 +26,14 @@ open state is the details element's own and needs no aria-expanded to mirror it.
     {% else %}
       <p class="m-0 inline-block w-fit border-b-2 border-brand pb-1 text-xs font-semibold tracking-[0.08em] text-brand-text uppercase">{% trans title %}</p>
       {% comment %}
-        One ruled row per entry inside a shared box, not a grid of separately-bordered cards: the
-        recipe-card-box direction reads a room list as index cards stacked in one box, not tiles
-        floating with gaps between them. An open room carries a balance and a last-used time next
+        Rows sit directly on the page, divided only by a hairline - no wrapping card, no surface
+        change from the canvas behind it. A bordered/radiused box around the whole list still
+        reads as one big card; a bank statement or an inbox doesn't put a border around its own
+        row list, it just rules the rows. An open room carries a balance and a last-used time next
         to its name; two of those side by side is what pushed the name into an ellipsis on
         anything but a wide desktop.
       {% endcomment %}
-      <div class="room-overview-entries divide-y divide-line rounded-lg border border-line bg-surface">
+      <div class="room-overview-entries divide-y divide-line">
         {% for entry in entries %}
           {% include "room/partials/_room_overview_card.html" with entry=entry tile=tile %}
         {% endfor %}
