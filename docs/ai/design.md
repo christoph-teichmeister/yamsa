@@ -75,10 +75,10 @@ Three consequences of Preflight worth keeping in mind when writing a template:
 
 ## Colors
 
-The recipe-card-box redesign (docs/ai/design-redesign-plan.md) replaced the palette's hues — warm
-kraft/cream neutrals, one committed terracotta accent — but not its contract or its token names.
-Every rule and token below still holds; only the values in `apps/static_src/tailwind.css` changed,
-and `scripts/check_palette_contrast.py` still passes against the new numbers.
+The recipe-card-box redesign (docs/ai/design-redesign-plan.md) tried a warm kraft/cream and
+terracotta palette here; the user found the terracotta accent read as alarm/negative rather than
+warm, and it was reverted to the original blue-on-cool-gray values the same session. The
+redesign's structural change — the index-card box below — stayed; only the color swap was undone.
 
 `apps/static_src/tailwind.css` holds the palette of the **whole app** — the `--yamsa-*` tokens
 there are the only place a color is written down. Tailwind exposes them via `@theme inline`;
