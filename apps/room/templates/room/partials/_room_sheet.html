@@ -12,7 +12,7 @@
   status section is live, because it runs on its own cycle.
 {% endcomment %}
 <form id="room-sheet"
-      class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card"
+      class="@container overflow-hidden rounded-lg border border-line bg-surface"
       method="post"
       action="{% room_url 'room:edit' %}"
       data-sheet
@@ -23,6 +23,7 @@
   {% csrf_token %}
   <div class="bg-gradient-to-br from-brand-soft to-transparent p-5 @md:p-6">
     <div class="flex flex-col gap-4 @md:flex-row @md:items-center">
+      {% include "room/partials/_room_seal_edit.html" with room=current_room seal_form=seal_form seal_dialog_is_open=seal_dialog_is_open %}
       <div class="min-w-0 flex-1">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Room overview" %}</p>
         <h1 id="room-name"
@@ -44,7 +45,7 @@
         <label class="m-0 text-sm text-ink-muted @md:w-44 @md:shrink-0" for="name">{{ form.fields.name.label }}</label>
         <div class="min-w-0 flex-1">
           <input id="name"
-                 class="w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
+                 class="w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand disabled:cursor-not-allowed disabled:opacity-60"
                  type="text"
                  name="name"
                  required
@@ -60,13 +61,16 @@
                for="description">{{ form.fields.description.label }}</label>
         <div class="min-w-0 flex-1">
           <input id="description"
-                 class="w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
+                 class="w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand disabled:cursor-not-allowed disabled:opacity-60"
                  type="text"
                  name="description"
                  maxlength="50"
                  placeholder="{% trans "No description added yet." %}"
                  value="{{ form.description.value|default_if_none:current_room.description }}"
                  {% if current_room.is_closed %}disabled{% endif %}>
+          <p id="description-counter" class="mt-1.5 mb-0 text-xs text-ink-subtle">
+            {{ form.description.value|default_if_none:current_room.description|length }}/50
+          </p>
           {% for error_message in form.errors.description.data %}
             <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
@@ -78,13 +82,13 @@
         <div class="min-w-0 flex-1">
           <div class="relative">
             <select id="preferred_currency"
-                    class="w-full appearance-none rounded-lg border border-line-strong bg-surface-sunken py-2 pr-9 pl-3 font-medium text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
+                    class="w-full appearance-none rounded-lg border border-line-strong bg-surface-sunken py-2 pr-9 pl-3 font-medium text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand disabled:cursor-not-allowed disabled:opacity-60"
                     name="preferred_currency"
                     required
                     {% if current_room.is_closed %}disabled{% endif %}>
               {% for currency in all_currencies %}
                 <option value="{{ currency.id }}"
-                        {% if currency.id|stringformat:"s" == form.preferred_currency.value|stringformat:"s" %}selected{% endif %}>
+                        {% if currency.id|stringformat:"s" == form.selected_currency_id %}selected{% endif %}>
                   {{ currency }}
                 </option>
               {% endfor %}
@@ -103,17 +107,26 @@
   {% endif %}
   <div class="border-t border-line">
     <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Overview" %}</p>
-    <div class="divide-y divide-line">
-      {% trans "Members" as members_label %}
-      {% include "shared_partials/_sheet_value_row.html" with row_label=members_label row_value=current_room.users.count %}
-      {% trans "Closing readiness" as readiness_label %}
-      {% if current_room.can_be_closed %}
-        {% trans "No unsettled debts remain." as readiness_value %}
-      {% else %}
-        {% trans "Settle open debts before closing." as readiness_value %}
-      {% endif %}
-      {% include "shared_partials/_sheet_value_row.html" with row_label=readiness_label row_value=readiness_value %}
-    </div>
+    {% blocktrans asvar members_count_label count member_count=current_room.users.count %}
+      {{ member_count }} member
+    {% plural %}
+      {{ member_count }} members
+    {% endblocktrans %}
+    <button class="flex w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-5 py-3 text-left transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
+            type="button"
+            hx-get="{% room_url 'account:list' %}"
+            hx-target="#body"
+            hx-indicator="#body-loading-spinner"
+            hx-swap="morph:innerHTML"
+            hx-push-url="true">
+      <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-text"
+            aria-hidden="true">{% icon "people" %}</span>
+      <span class="min-w-0 flex-1">
+        <span class="block font-medium text-ink">{% trans "Members" %}</span>
+        <span class="block text-sm text-ink-subtle">{{ members_count_label }}</span>
+      </span>
+      {% icon "chevron-right" "text-ink-subtle" %}
+    </button>
   </div>
   {% include "room/partials/_room_status_section.html" %}
   <div class="border-t border-line">
@@ -192,4 +205,17 @@
       </div>
     </dialog>
   {% endif %}
+  <script nonce="{{ csp_nonce }}">
+      (function () {
+        var input = document.getElementById('description');
+        var counter = document.getElementById('description-counter');
+        if (!input || !counter) {
+          return;
+        }
+        var maxLength = input.getAttribute('maxlength');
+        input.addEventListener('input', function () {
+          counter.textContent = input.value.length + '/' + maxLength;
+        });
+      })();
+  </script>
 </form>

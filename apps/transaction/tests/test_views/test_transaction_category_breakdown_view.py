@@ -81,7 +81,7 @@ class TestTransactionCategoryBreakdownView:
         assert response.status_code == 200
 
         currency_sign = room.preferred_currency.sign
-        soup = BeautifulSoup(response.content.decode(), "html.parser")
+        soup = BeautifulSoup(response.content.decode(), "html5lib")
         legend_list = soup.select_one("[data-category-legend]")
         legend_items = legend_list.select("[data-category-legend-item]")
         assert len(legend_items) == 2
@@ -162,7 +162,13 @@ class TestTransactionCategoryBreakdownView:
         response = authenticated_client.get(reverse("transaction:category-breakdown", kwargs={"room_slug": room.slug}))
         assert response.status_code == 200
 
-        soup = BeautifulSoup(response.content.decode(), "html.parser")
+        # html5lib, not html.parser: html.parser mis-resolves an unescaped "&currency=" inside an
+        # attribute as the legacy "&curren;" entity followed by "cy=" - a real quirk of that
+        # parser, not of the browser. Per the HTML5 spec, a named character reference inside an
+        # attribute value is *not* resolved when followed by an alphanumeric character (here "c"
+        # in "cy"), which is exactly why real browsers render this literally and html.parser does
+        # not; html5lib implements that rule correctly.
+        soup = BeautifulSoup(response.content.decode(), "html5lib")
         legend_item = soup.select_one("[data-category-legend-item]")
         assert legend_item is not None
         assert legend_item["data-category-slug"] == groceries.slug
@@ -190,7 +196,7 @@ class TestTransactionCategoryBreakdownView:
         response = authenticated_client.get(reverse("transaction:category-breakdown", kwargs={"room_slug": room.slug}))
         assert response.status_code == 200
 
-        soup = BeautifulSoup(response.content.decode(), "html.parser")
+        soup = BeautifulSoup(response.content.decode(), "html5lib")
         legend_item = soup.select_one("[data-category-legend-item]")
 
         # Regression guard: the entry used to be a div with hx-trigger="click keyup[...]" — htmx splits

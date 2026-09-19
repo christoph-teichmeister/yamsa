@@ -11,9 +11,9 @@ open state is the details element's own and needs no aria-expanded to mirror it.
   <section class="flex flex-col gap-2">
     {% if collapsible %}
       <details class="group">
-        <summary class="room-overview-toggle flex cursor-pointer list-none items-center justify-between gap-2 py-1 [&::-webkit-details-marker]:hidden"
+        <summary class="room-overview-toggle flex cursor-pointer list-none items-center justify-between gap-2 border-b-2 border-line py-1 [&::-webkit-details-marker]:hidden"
                  aria-controls="{{ section_id }}">
-          <span class="text-xs font-semibold tracking-[0.08em] text-ink-subtle uppercase">{% trans title %} ({{ entries|length }})</span>
+          <span class="border-b-2 border-transparent pb-1 -mb-[2px] text-xs font-semibold tracking-[0.08em] text-ink-subtle uppercase group-open:border-brand group-open:text-brand-text">{% trans title %} ({{ entries|length }})</span>
           {% icon "chevron-down" "room-overview-toggle-icon text-ink-subtle transition-transform group-open:rotate-180 motion-reduce:transition-none" %}
         </summary>
         <div class="room-overview-entries mt-2 grid grid-cols-2 gap-2 @md:gap-3"
@@ -24,13 +24,16 @@ open state is the details element's own and needs no aria-expanded to mirror it.
         </div>
       </details>
     {% else %}
-      <p class="m-0 text-xs font-semibold tracking-[0.08em] text-ink-subtle uppercase">{% trans title %}</p>
+      <p class="m-0 inline-block w-fit border-b-2 border-brand pb-1 text-xs font-semibold tracking-[0.08em] text-brand-text uppercase">{% trans title %}</p>
       {% comment %}
-        One per row at every width, unlike the tile sections above. An open room carries a balance
-        and a last-used time next to its name; two of those side by side is what pushed the name
-        into an ellipsis on anything but a wide desktop.
+        Rows sit directly on the page, divided only by a hairline - no wrapping card, no surface
+        change from the canvas behind it. A bordered/radiused box around the whole list still
+        reads as one big card; a bank statement or an inbox doesn't put a border around its own
+        row list, it just rules the rows. An open room carries a balance and a last-used time next
+        to its name; two of those side by side is what pushed the name into an ellipsis on
+        anything but a wide desktop.
       {% endcomment %}
-      <div class="room-overview-entries grid grid-cols-1 gap-2 @md:gap-3">
+      <div class="room-overview-entries divide-y divide-line">
         {% for entry in entries %}
           {% include "room/partials/_room_overview_card.html" with entry=entry tile=tile %}
         {% endfor %}

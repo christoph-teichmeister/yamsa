@@ -8,7 +8,7 @@ has no profile to open, so only a member's card is interactive - and only then d
 pointer, the lift and data-keyboard-click.
 {% endcomment %}
 {% trans "Remove from room" as remove_from_room_label %}
-<article class="flex h-full gap-3 rounded-2xl border border-line bg-surface-sunken p-5{% if not user.is_guest %} cursor-pointer transition hover:-translate-y-1 hover:border-brand/35 hover:shadow-card-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand motion-reduce:transition-none motion-reduce:hover:translate-y-0{% endif %}"
+<article class="flex gap-3 border-0 bg-transparent px-1 py-4{% if not user.is_guest %} cursor-pointer transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand{% endif %}"
          {% if not user.is_guest %} tabindex="0" role="button" data-keyboard-click="true" aria-label="{{ user.name }}" hx-trigger="click" hx-get="{% url 'account:detail' pk=user.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" hx-sync=".people-remove-action:abort" {% endif %}>
   {% include "shared_partials/_user_avatar.html" with avatar_url=user.avatar_url avatar_name=user.name|default:user.email avatar_fallback_url=user.profile_picture_fallback_url avatar_class="avatar-lg avatar-square" %}
   <div class="flex min-w-0 flex-1 flex-col gap-2">

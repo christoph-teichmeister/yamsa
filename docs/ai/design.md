@@ -75,6 +75,11 @@ Three consequences of Preflight worth keeping in mind when writing a template:
 
 ## Colors
 
+The recipe-card-box redesign (docs/ai/design-redesign-plan.md) tried a warm kraft/cream and
+terracotta palette here; the user found the terracotta accent read as alarm/negative rather than
+warm, and it was reverted to the original blue-on-cool-gray values the same session. The
+redesign's structural change — the index-card box below — stayed; only the color swap was undone.
+
 `apps/static_src/tailwind.css` holds the palette of the **whole app** — the `--yamsa-*` tokens
 there are the only place a color is written down. Tailwind exposes them via `@theme inline`;
 **prefer them over `dark:` variants** —
@@ -212,6 +217,24 @@ object it only adds borders to read past.
 
 Rows that lead somewhere are buttons of the same shape with an icon, a title, a sub-line and a
 chevron — never a card with a button in it.
+
+## The index-card box (a list of entries)
+
+The dashboard's room list and the expense feed treat a **list of entries** the way the sheet
+treats one object's fields: `rounded-lg border border-line bg-surface`, entries divided by
+hairlines (`divide-y divide-line`), not individually bordered/shadowed/radiused cards floating
+with gaps between them — the recipe-card-box direction (docs/ai/design-redesign-plan.md) reads a
+room as one index card stacked in a shared box, not a tile competing for its own elevation. A
+group of entries (Open/Closed/Other, a date group) is a **register tab**: its caption carries a
+`border-b-2 border-brand` underline rather than a card-grid section header. Only the tile
+variant — genuinely side-by-side objects, `_room_overview_card.html`'s `tile=True` path — keeps
+its own `rounded-lg border` per item, because a 2-column grid has no meaningful hairline to divide
+along.
+
+Amounts, balances, and dates that read as ledger figures take `font-ledger` (Courier Prime,
+self-hosted in `apps/static/fonts/`, `@font-face` in `apps/static/customClasses.css` — not
+`tailwind.css`, since css-loader tries and fails to resolve a root-relative `url()` as a module
+import). Nothing else takes it; the rest of the app keeps the system-ui stack in `base.css`.
 
 ## Form pages behind a sheet
 

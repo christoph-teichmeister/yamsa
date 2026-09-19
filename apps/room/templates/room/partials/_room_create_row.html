@@ -3,7 +3,7 @@
   The one "new room" affordance, in the overview and in the side menu's room list. The menu passes
   dismiss_side_menu so the panel slides shut before htmx swaps the page underneath it.
 {% endcomment %}
-<button class="flex w-full cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-brand/45 bg-transparent px-3.5 py-3 text-left transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+<button class="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-dashed border-brand/45 bg-transparent px-3.5 py-3 text-left transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
         type="button"
         {% if dismiss_side_menu %}data-dialog-close hx-trigger="click delay:300ms"{% endif %}
         hx-get="{{ create_url }}"

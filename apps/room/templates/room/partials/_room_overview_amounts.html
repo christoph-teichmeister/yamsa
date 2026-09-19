@@ -14,12 +14,12 @@
       {% elif balance.user_owes %}
         <span class="room-overview-amount flex flex-col items-end leading-tight">
           <span class="room-overview-amount-label text-[0.6rem] tracking-[0.03em] text-ink-subtle uppercase">{% trans "You owe" %}</span>
-          <span class="room-overview-amount-value text-sm font-semibold tabular-nums text-warning-text">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
+          <span class="room-overview-amount-value font-ledger text-sm font-semibold tabular-nums text-warning-text">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
         </span>
       {% else %}
         <span class="room-overview-amount flex flex-col items-end leading-tight">
           <span class="room-overview-amount-label text-[0.6rem] tracking-[0.03em] text-ink-subtle uppercase">{% trans "You get back" %}</span>
-          <span class="room-overview-amount-value text-sm font-semibold tabular-nums text-success-text">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
+          <span class="room-overview-amount-value font-ledger text-sm font-semibold tabular-nums text-success-text">{{ balance.absolute_amount|format_with_thousands }}{{ balance.currency_sign }}</span>
         </span>
       {% endif %}
     {% empty %}

@@ -212,6 +212,16 @@ class Command(BaseCommand):
                 "members": registered_users[2:] + guest_users[2:],
                 "creator": registered_users[4],
             },
+            {
+                # A single-member room: _create_transactions/_create_debts both skip rooms with
+                # fewer than 2 members, so this reliably stays empty - a curated fixture for
+                # empty-state QA, not the accidental zero-transaction state every room has today.
+                "name": "Nobody's Moved In Yet",
+                "description": "Reserved for testing empty states",
+                "currency": currencies["EUR"],
+                "members": [registered_users[0]],
+                "creator": registered_users[0],
+            },
         ]
 
         rooms = []

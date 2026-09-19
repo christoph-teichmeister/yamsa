@@ -11,7 +11,19 @@
 @import "tailwindcss/utilities.css";
 
 @source "../templates/**/*.html";
-@source "../*/templates/**/*.html";
+/* Named per app rather than one glob with a `*` where the app name goes: that wildcard needs the
+   `apps` directory listing to resolve, so the build watches `apps` itself - and `apps/static/bundles`
+   is this build's own output. Every asset it writes there (`clean: true` included) then counts as
+   a change under `apps` and reopens the next build - a self-triggering rebuild loop with no
+   source edit involved. Add a line here when a new app gets a templates directory. */
+@source "../account/templates/**/*.html";
+@source "../core/templates/**/*.html";
+@source "../debt/templates/**/*.html";
+@source "../importer/templates/**/*.html";
+@source "../mail/templates/**/*.html";
+@source "../news/templates/**/*.html";
+@source "../room/templates/**/*.html";
+@source "../transaction/templates/**/*.html";
 @source "../static/js/**/*.js";
 
 @custom-variant dark ([data-theme="dark"] &);
@@ -157,10 +169,25 @@
 }
 
 @theme {
+  /* The ledger's typed digits - amounts, dates, balances - the one place this world's index-card
+     character shows in the type itself rather than in layout. Nothing else takes it: the rest of
+     the app keeps the system-ui stack in apps/static/base.css. */
+  --font-ledger: "Courier Prime", ui-monospace, "SF Mono", "Cascadia Code", monospace;
+
   /* The only additions to Tailwind's own scales: its default shadows vanish on a dark ground. */
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
   --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.08), 0 14px 32px rgb(0 0 0 / 0.14);
   --shadow-brand: 0 8px 20px rgb(var(--yamsa-brand-rgb), 0.28);
+
+  /* Visibly rounder than a trimmed index card, but well short of Tailwind's own lg/xl/2xl/3xl
+     defaults (8/12/16/24px) - every `rounded-lg`+ utility in the app inherits this override, so
+     no individual box, sheet, or button needs a class change. `rounded-full` (pills, avatars,
+     badges) is untouched: a chip is a control, not a card, and stays fully round regardless of
+     this scale. */
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.625rem;
+  --radius-2xl: 0.75rem;
+  --radius-3xl: 1rem;
 
   /* The pulsing dot every loading indicator in the app is built from. `animate-ping` is the
      nearest thing Tailwind ships and it is not the same shape: it ends at twice the size, so a

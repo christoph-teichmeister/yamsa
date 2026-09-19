@@ -38,6 +38,23 @@ this reason). A failed login renders `#login-error`.
 For the copy-paste `playwright-cli` flow, see
 `.claude/skills/playwright-cli/references/yamsa-login.md`.
 
+## Richer test data for design/UX QA
+
+`restore_test_data` alone leaves every room empty (it creates no transactions at all). For design
+work that needs real content density - long lists, multiple currencies, settled and unsettled
+debts, a genuinely empty room - run this on top of it:
+
+```
+uv run python manage.py restore_test_data
+uv run python manage.py create_intensive_test_data
+```
+
+`create_intensive_test_data` reuses the same fixed-credential users (`get_or_create`, so it layers
+cleanly rather than duplicating them) and adds 7 rooms: 6 populated with 25 transaction scenarios
+each across 4 currencies (EUR/GBP/USD/CHF) and a mix of settled/unsettled debts, plus one
+single-member room ("Nobody's Moved In Yet") that the transaction/debt creation steps skip by
+construction - a curated empty-state fixture, not an accidental one.
+
 ## Testing the service worker
 
 Service worker behaviour is only real in a browser, so it lives in `e2e/` rather than in a JS unit

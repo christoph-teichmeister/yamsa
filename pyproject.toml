@@ -44,6 +44,7 @@ dev = [
     "pytest-env",
     "pytest-factoryboy",
     "pytest-playwright",
+    "html5lib>=1.1",
 ]
 
 [build-system]
@@ -228,3 +229,8 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
+
+[dependency-groups]
+dev = [
+    "djlint==1.46.1",
+]

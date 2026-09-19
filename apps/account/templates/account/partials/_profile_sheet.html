@@ -52,7 +52,8 @@
         </div>
       </div>
       <div class="flex flex-col gap-1 px-5 py-3 @md:flex-row @md:items-center @md:gap-4">
-        <label class="m-0 text-sm text-ink-muted @md:w-44 @md:shrink-0" for="email">{{ form.fields.email.label }}</label>
+        <label class="m-0 text-sm text-ink-muted @md:w-44 @md:shrink-0"
+               for="email">{{ form.fields.email.label }}</label>
         <div class="min-w-0 flex-1">
           <input id="email"
                  class="w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
@@ -124,7 +125,8 @@
         {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_payment_reminders" toggle_name="wants_to_receive_payment_reminders" toggle_checked=form.wants_to_receive_payment_reminders.value|default_if_none:user.wants_to_receive_payment_reminders toggle_editable=True %}
       </div>
       <div class="flex items-center justify-between gap-4 px-5 py-3">
-        <label class="m-0 text-sm text-ink" for="wants_to_receive_room_reminders">{{ form.fields.wants_to_receive_room_reminders.label }}</label>
+        <label class="m-0 text-sm text-ink"
+               for="wants_to_receive_room_reminders">{{ form.fields.wants_to_receive_room_reminders.label }}</label>
         {% include "shared_partials/_toggle_switch.html" with toggle_id="wants_to_receive_room_reminders" toggle_name="wants_to_receive_room_reminders" toggle_checked=form.wants_to_receive_room_reminders.value|default_if_none:user.wants_to_receive_room_reminders toggle_editable=True %}
       </div>
     </div>

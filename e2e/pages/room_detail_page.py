@@ -60,8 +60,11 @@ class RoomDetailPage(BasePage):
         expect(self.page.locator("#room-status-label")).to_have_text(label)
 
     def close_room(self):
+        # The happy-path close now confirms first, same as force-close and delete already did.
+        self.page.locator("#close-room-button").click()
+        expect(self.page.locator("#close-room-dialog")).to_be_visible()
         with self.page.expect_response(lambda response: "/status" in response.url):
-            self.page.locator("#close-room-button").click()
+            self.page.locator("#close-room-confirm-button").click()
 
     def reopen_room(self):
         with self.page.expect_response(lambda response: "/status" in response.url):

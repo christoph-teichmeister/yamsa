@@ -3,15 +3,27 @@
 {% block content %}
   {% if request.user.is_authenticated %}
     <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
+      {% include "room/partials/_room_overview_header.html" %}
       {% if has_room_entries %}
+        {% include "room/partials/_room_overview_legend.html" %}
         {% include "room/partials/_room_balance_summary.html" with totals=open_balance_totals %}
-        {% include "room/partials/_room_overview_section.html" with entries=open_room_entries title=_("Open") %}
-        {% include "room/partials/_room_overview_section.html" with entries=closed_room_entries title=_("Closed") collapsible=True section_id="closedRooms" tile=True %}
-        {% include "room/partials/_room_overview_section.html" with entries=other_room_entries title=_("Other") collapsible=True section_id="otherRooms" tile=True %}
+        {% if show_room_search %}
+          {% include "room/partials/_room_overview_search.html" %}
+        {% endif %}
+        <div data-room-search-scope class="flex flex-col gap-4">
+          {% include "room/partials/_room_overview_section.html" with entries=open_room_entries title=_("Open") %}
+          {% include "room/partials/_room_overview_section.html" with entries=closed_room_entries title=_("Closed") collapsible=True section_id="closedRooms" tile=True %}
+          {% include "room/partials/_room_overview_section.html" with entries=other_room_entries title=_("Other") collapsible=True section_id="otherRooms" tile=True %}
+          <p data-room-search-empty
+             class="hidden m-0 text-sm text-ink-subtle">{% trans "No room matches your search." %}</p>
+        </div>
       {% else %}
-        <div class="rounded-2xl border border-dashed border-line-strong px-6 py-8 text-center">
-          <p class="m-0 font-semibold text-ink">{% trans "No rooms yet" %}</p>
-          <p class="m-0 text-sm text-ink-muted">{% trans "Create a room to start splitting expenses with your friends." %}</p>
+        <div class="rounded-2xl border border-dashed border-line-strong px-6 py-10 text-center">
+          <span class="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-brand-soft text-brand-text">
+            {% icon "door-open" %}
+          </span>
+          <p class="m-0 font-semibold text-ink">{% trans "Nobody's moved in yet" %}</p>
+          <p class="m-0 text-sm text-ink-muted">{% trans "Open a room for your place and invite whoever shares it - rent, groceries, all of it, sorted out fairly." %}</p>
         </div>
       {% endif %}
       {% url 'room:create' as create_url %}

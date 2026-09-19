@@ -30,8 +30,21 @@ The loader auto-manages:
     {% for _ in "x"|rjust:skeleton_count %}<div class="skeleton-item"></div>{% endfor %}
   </div>
   {% include "shared_partials/_loading_overlay.html" with loader_id=loader_id %}
+  {% comment %}
+    A failed request must not look like "no results" - see docs/ai/design.md's list-loader note.
+    Kept out of the skeleton/overlay pair above because it has to survive `reset()`.
+  {% endcomment %}
+  <div id="{{ loader_id }}-error"
+       class="flex flex-col items-center gap-2 px-5 py-6 text-center"
+       role="alert"
+       style="display: none">
+    <p class="m-0 text-sm text-ink-muted">{% trans "Couldn't load this. Check your connection and try again." %}</p>
+    <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            type="button"
+            data-list-loader-retry>{% trans "Retry" %}</button>
+  </div>
 </div>
-<script type="text/javascript" nonce="{{ csp_nonce }}">
+<script nonce="{{ csp_nonce }}">
 (function() {
     const loaderId = '{{ loader_id|escapejs }}';
     const targetId = '{{ target_id|default:loader_id|escapejs }}';
@@ -41,14 +54,26 @@ The loader auto-manages:
     let overlayTimer = null;
     let isLoading = false;
     
+    const errorId = loaderId + '-error';
+
     const showSkeleton = () => {
         const skeleton = document.getElementById(skeletonId);
         if (skeleton) skeleton.style.display = 'block';
     };
-    
+
     const hideSkeleton = () => {
         const skeleton = document.getElementById(skeletonId);
         if (skeleton) skeleton.style.display = 'none';
+    };
+
+    const hideError = () => {
+        const errorBox = document.getElementById(errorId);
+        if (errorBox) errorBox.style.display = 'none';
+    };
+
+    const showError = () => {
+        const errorBox = document.getElementById(errorId);
+        if (errorBox) errorBox.style.display = 'flex';
     };
     
     const showOverlay = () => {
@@ -68,39 +93,57 @@ The loader auto-manages:
     const reset = () => {
         hideSkeleton();
         hideOverlay();
+        hideError();
         isLoading = false;
     };
-    
+
     const startLoading = () => {
         if (!isLoading) {
             isLoading = true;
+            hideError();
             showSkeleton();
-            
+
             // The skeleton stays behind the overlay: it is the only thing giving the
             // container height, so hiding it would collapse the absolutely positioned
             // overlay to zero height.
             overlayTimer = setTimeout(showOverlay, 800);
         }
     };
-    
+
     const targetElement = document.getElementById(targetId);
     if (!targetElement) {
         console.warn(`ListLoader: target element #${targetId} not found`);
         return;
     }
-    
+
     // Listen for HTMX request start
     targetElement.addEventListener('htmx:xhr:progress', startLoading);
     targetElement.addEventListener('htmx:beforeRequest', startLoading);
-    
+
     // Listen for HTMX request completion
     targetElement.addEventListener('htmx:afterSwap', (e) => {
         reset();
     });
-    
-    // Listen for HTMX request error
+
+    // Listen for HTMX request error: htmx does not swap on a non-2xx response, so targetElement
+    // (and its hx-get/hx-swap) survives to retry from.
     targetElement.addEventListener('htmx:responseError', (e) => {
-        reset();
+        hideSkeleton();
+        hideOverlay();
+        isLoading = false;
+        showError();
     });
+
+    const errorBox = document.getElementById(errorId);
+    const retryButton = errorBox ? errorBox.querySelector('[data-list-loader-retry]') : null;
+    if (retryButton) {
+        retryButton.addEventListener('click', () => {
+            htmx.ajax('GET', targetElement.getAttribute('hx-get'), {
+                source: targetElement,
+                target: targetElement,
+                swap: targetElement.getAttribute('hx-swap') || 'innerHTML',
+            });
+        });
+    }
 })();
 </script>

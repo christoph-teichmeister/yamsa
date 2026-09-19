@@ -3,7 +3,13 @@ const webpack = require("webpack");
 const BundleTracker = require("webpack-bundle-tracker");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const bundlesPath = path.resolve(__dirname, "apps/static/bundles");
+// Outside apps/ entirely, not just outside apps/static: Tailwind's @source directives watch
+// their common ancestor across every app's templates dir, which is apps/ itself. An output
+// directory anywhere under apps/ then counts as a content change on every build (clean: true
+// rewrites it every time) and reopens the next one - a self-triggering watch loop with no
+// source edit involved. Served at the same /static/bundles/ URL via a second STATICFILES_DIRS
+// entry (apps/config/settings.py), so nothing downstream of the URL changes.
+const bundlesPath = path.resolve(__dirname, "webpack_bundles/bundles");
 const staticJsPath = path.resolve(__dirname, "apps/static/js");
 // Build-only sources, deliberately outside apps/static: collectstatic runs every .css it
 // finds there through the manifest storage, which cannot resolve Tailwind's @import.

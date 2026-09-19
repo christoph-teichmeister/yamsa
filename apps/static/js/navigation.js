@@ -214,6 +214,7 @@
     // A swap of #body brings a fresh side menu, and with it toggle buttons that know nothing
     // about the stored preference.
     applyThemeToggleState(getStoredPreference());
+    initRoomSearch();
   };
 
   const KEYBOARD_CLICK_SELECTOR = '[data-keyboard-click]';
@@ -266,10 +267,51 @@
     }
   };
 
+  const ROOM_SEARCH_SELECTOR = '[data-room-search]';
+  const ROOM_CARD_SELECTOR = '.room-overview-card';
+
+  const initRoomSearch = () => {
+    document.querySelectorAll(ROOM_SEARCH_SELECTOR).forEach((input) => {
+      if (input.dataset.roomSearchBound === 'true') {
+        return;
+      }
+      input.dataset.roomSearchBound = 'true';
+
+      const scope = input.closest('.@container')?.querySelector('[data-room-search-scope]');
+      if (!scope) {
+        return;
+      }
+
+      input.addEventListener('input', () => {
+        const query = input.value.trim().toLowerCase();
+        let anyVisible = false;
+
+        scope.querySelectorAll(ROOM_CARD_SELECTOR).forEach((card) => {
+          const matches = query === '' || (card.dataset.roomName || '').includes(query);
+          card.classList.toggle('hidden', !matches);
+          if (matches) {
+            anyVisible = true;
+            // A match inside a collapsed Closed/Other section must not stay hidden behind it.
+            const details = card.closest('details');
+            if (details && query !== '') {
+              details.open = true;
+            }
+          }
+        });
+
+        const emptyHint = scope.querySelector('[data-room-search-empty]');
+        if (emptyHint) {
+          emptyHint.classList.toggle('hidden', anyVisible || query === '');
+        }
+      });
+    });
+  };
+
   const init = () => {
     initThemeToggle();
     initShareButtons();
     initRoomNavigationScrollReset();
+    initRoomSearch();
     refreshDynamicElements();
     document.addEventListener('click', handleNavigationClick);
     document.addEventListener('keydown', handleKeyboardActivation);

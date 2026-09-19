@@ -191,6 +191,12 @@ msgstr "Lade %(invitee)s zu \"%(room)s\" ein"
 msgid "Send invite"
 msgstr "Einladung senden"
 
+msgid "People"
+msgstr "Personen"
+
+msgid "Room roster"
+msgstr "Mitgliederliste"
+
 msgid "Copy invite link"
 msgstr "Einladungslink kopieren"
 
@@ -457,11 +463,14 @@ msgstr "Geschlossen"
 msgid "Other"
 msgstr "Andere"
 
-msgid "No rooms yet"
-msgstr "Noch keine Räume"
+msgid "No room matches your search."
+msgstr "Kein Raum entspricht deiner Suche."
 
-msgid "Create a room to start splitting expenses with your friends."
-msgstr "Erstelle einen Raum, um Ausgaben mit deinen Freunden zu teilen."
+msgid "Nobody's moved in yet"
+msgstr "Noch niemand eingezogen"
+
+msgid "Open a room for your place and invite whoever shares it - rent, groceries, all of it, sorted out fairly."
+msgstr "Eröffne einen Raum für eure Wohngemeinschaft und lade alle Mitbewohner:innen ein - Miete, Einkäufe, alles fair aufgeteilt."
 
 msgid "yamsa helps shared households track expenses, settle debts, and stay organized with collaborative rooms, dashboards, and notifications."
 msgstr "yamsa hilft Wohngemeinschaften dabei, Ausgaben zu verfolgen, Schulden auszugleichen und mit kollaborativen Räumen, Dashboards und Benachrichtigungen organisiert zu bleiben."
@@ -522,11 +531,11 @@ msgstr "Schulden"
 msgid "Optimised debts"
 msgstr "Optimierte Schulden"
 
-msgid "The fewest payments that settle this room - we cancel out who owes whom."
-msgstr "Die wenigsten Zahlungen, die diesen Raum ausgleichen – wir rechnen gegenseitige Schulden gegeneinander auf."
-
 msgid "Unoptimised debts"
 msgstr "Unoptimierte Schulden"
+
+msgid "The fewest payments that settle this room - we cancel out who owes whom."
+msgstr "Die wenigsten Zahlungen, die diesen Raum ausgleichen – wir rechnen gegenseitige Schulden gegeneinander auf."
 
 msgid "One repayment per expense, exactly as the money was spent."
 msgstr "Eine Rückzahlung pro Ausgabe, genau so wie das Geld ausgegeben wurde."
@@ -1044,6 +1053,12 @@ msgstr "News Update"
 msgid "News"
 msgstr "Neuigkeiten"
 
+msgid "Activity"
+msgstr "Aktivität"
+
+msgid "Room activity"
+msgstr "Raumaktivität"
+
 msgid "No updates yet"
 msgstr "Noch keine Aktualisierungen"
 
@@ -1052,6 +1067,9 @@ msgstr "Sobald jemand in diesem Raum eine Ausgabe oder Änderung erfasst, ersche
 
 msgid "Preferred currency"
 msgstr "Bevorzugte Währung"
+
+msgid "The seal image could not be reduced enough. Try a smaller file."
+msgstr "Das Siegelbild konnte nicht ausreichend verkleinert werden. Versuche es mit einer kleineren Datei."
 
 msgid "This room still has open debts and can not be closed"
 msgstr "Dieser Raum hat noch offene Schulden und kann nicht geschlossen werden"
@@ -1148,8 +1166,8 @@ msgstr "Füge frühere Mitbewohner mit einem Tippen hinzu. Markiere deine bevorz
 msgid "Open to guests"
 msgstr "Für Gäste offen"
 
-msgid "Maybe register? A free account keeps your rooms, reminders, and history together."
-msgstr "Vielleicht registrieren? Ein kostenloses Konto hält deine Räume, Erinnerungen und Historie zusammen."
+msgid "No account needed to pick your name below and join in. If you'd rather keep this room, its reminders, and your history under one login next time, that's what an account is for."
+msgstr "Kein Konto nötig, um unten deinen Namen auszuwählen und mitzumachen. Wenn du diesen Raum, seine Erinnerungen und deine Historie beim nächsten Mal lieber unter einem Login bündeln willst, ist genau dafür ein Konto da."
 
 msgid "Claim your invitation"
 msgstr "Einladung annehmen"
@@ -1188,6 +1206,47 @@ msgstr "Starte eine neue Gruppe mit Freunden"
 msgid "Balanced (%(currency)s)"
 msgstr "Ausgeglichen (%(currency)s)"
 
+#, python-format
+msgid "Welcome back, %(name)s"
+msgstr "Willkommen zurück, %(name)s"
+
+#, python-format
+msgid "Your biggest open balance is in %(room)s"
+msgstr "Dein größter offener Saldo ist in %(room)s"
+
+msgid "What do Open, Closed and Other mean?"
+msgstr "Was bedeuten Offen, Geschlossen und Andere?"
+
+msgid "Open — a room you're part of, still splitting expenses."
+msgstr "Offen – ein Raum, in dem du Mitglied bist und noch Ausgaben aufteilst."
+
+msgid "Closed — a room you're part of that has settled its debts and stopped taking new ones."
+msgstr "Geschlossen – ein Raum, in dem du Mitglied bist, dessen Schulden beglichen sind und der keine neuen mehr aufnimmt."
+
+msgid "Other — every room on this instance you're not a member of, visible because you're a superuser."
+msgstr "Andere – jeder Raum auf dieser Instanz, in dem du kein Mitglied bist, sichtbar weil du Superuser bist."
+
+msgid "Search your rooms"
+msgstr "Deine Räume durchsuchen"
+
+msgid "Change room seal"
+msgstr "Raumsiegel ändern"
+
+msgid "Room seal"
+msgstr "Raumsiegel"
+
+msgid "Choose an icon"
+msgstr "Icon auswählen"
+
+msgid "Upload a custom image"
+msgstr "Eigenes Bild hochladen"
+
+msgid "Reset to the default seal?"
+msgstr "Auf das Standardsiegel zurücksetzen?"
+
+msgid "Reset to default"
+msgstr "Auf Standard zurücksetzen"
+
 msgid "Room overview"
 msgstr "Raumübersicht"
 
@@ -1200,17 +1259,26 @@ msgstr "Noch keine Beschreibung hinzugefügt."
 msgid "Overview"
 msgstr "Übersicht"
 
+#, python-format
+msgid ""
+"\n"
+"      %(member_count)s member\n"
+"    "
+msgid_plural ""
+"\n"
+"      %(member_count)s members\n"
+"    "
+msgstr[0] ""
+"\n"
+"      %(member_count)s Mitglied\n"
+"    "
+msgstr[1] ""
+"\n"
+"      %(member_count)s Mitglieder\n"
+"    "
+
 msgid "Members"
 msgstr "Mitglieder"
-
-msgid "Closing readiness"
-msgstr "Schließbereitschaft"
-
-msgid "No unsettled debts remain."
-msgstr "Es bleiben keine offenen Schulden."
-
-msgid "Settle open debts before closing."
-msgstr "Begleiche offene Schulden vor dem Schließen."
 
 msgid "Customize tracking categories"
 msgstr "Tracking-Kategorien anpassen"
@@ -1263,6 +1331,15 @@ msgstr "Raum schließen"
 
 msgid "Reopen room"
 msgstr "Raum wieder öffnen"
+
+msgid "Close this room?"
+msgstr "Diesen Raum schließen?"
+
+msgid "Its fields become read-only until you reopen it."
+msgstr "Seine Felder werden schreibgeschützt, bis du ihn wieder öffnest."
+
+msgid "Nobody can add new expenses or edit the room's settings while it's closed. You can reopen it any time."
+msgstr "Niemand kann neue Ausgaben hinzufügen oder die Raumeinstellungen bearbeiten, solange er geschlossen ist. Du kannst ihn jederzeit wieder öffnen."
 
 msgid "Outstanding debts"
 msgstr "Ausstehende Schulden"
@@ -1367,6 +1444,12 @@ msgstr "Neu"
 
 msgid "Bring your data from another app"
 msgstr "Hol deine Daten aus einer anderen App"
+
+msgid "Couldn't load this. Check your connection and try again."
+msgstr "Konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut."
+
+msgid "Retry"
+msgstr "Erneut versuchen"
 
 msgid "Loading..."
 msgstr "Wird geladen..."
@@ -1713,17 +1796,14 @@ msgstr "Import fertig. Teile diesen Raum mit den anderen, statt dass sie ihren e
 msgid "Copy share link"
 msgstr "Link zum Teilen kopieren"
 
-msgid "Expenses"
-msgstr "Ausgaben"
-
 msgid "Room transactions"
 msgstr "Raumtransaktionen"
 
 msgid "Pick a row to explore the full breakdown."
 msgstr "Wähle eine Zeile, um die vollständige Aufschlüsselung zu sehen."
 
-msgid "Record your first expense to see the running history here."
-msgstr "Erfasse deine erste Ausgabe, um den Verlauf hier anzuzeigen."
+msgid "Nothing filed yet - the first coffee run counts too."
+msgstr "Noch nichts erfasst - auch der erste Kaffee-Einkauf zählt."
 
 #, python-format
 msgid "%(transaction_count)s transaction"
@@ -1746,11 +1826,14 @@ msgstr "Suche"
 msgid "Filter by payer or description"
 msgstr "Nach Zahler:in oder Beschreibung filtern"
 
-msgid "Nothing to show yet"
-msgstr "Noch nichts zu zeigen"
+msgid "Exports every transaction in the room, not just your current search or filter."
+msgstr "Exportiert jede Transaktion im Raum, nicht nur deine aktuelle Suche oder deinen Filter."
 
-msgid "Start by logging an expense to build your history."
-msgstr "Erfasse zuerst eine Ausgabe, um deinen Verlauf aufzubauen."
+msgid "Empty ledger, for now"
+msgstr "Noch leeres Kassenbuch"
+
+msgid "Log the first expense and this room's history starts here."
+msgstr "Erfasse die erste Ausgabe, und die Historie dieses Raums beginnt hier."
 
 msgid "Transactions logged"
 msgstr "Erfasste Transaktionen"

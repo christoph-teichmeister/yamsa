@@ -1,4 +1,4 @@
-{% load room_tags i18n %}
+{% load humanize room_tags i18n %}
 {% comment %}
 One batch of the transaction feed, swapped into #transaction-feed by htmx.
 
@@ -7,6 +7,11 @@ chevron - so Enter and Space work without the keyboard-click shim a div with rol
 needs. `.transaction-row` stays as the hook the highlight script and the e2e suite address.
 {% endcomment %}
 {% for parent_transaction in parent_transactions %}
+  {% ifchanged parent_transaction.paid_at|date:"Y-m-d" %}
+    <p class="m-0 bg-surface px-5 pt-3 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">
+      {{ parent_transaction.paid_at|naturalday }}
+    </p>
+  {% endifchanged %}
   <button id="transaction-{{ parent_transaction.id }}"
           class="transaction-row flex w-full cursor-pointer items-center gap-3 border-0 bg-transparent px-5 py-3 text-left transition duration-500 hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand data-highlight:bg-brand-soft"
           type="button"
@@ -22,7 +27,8 @@ needs. `.transaction-row` stays as the hook the highlight script and the e2e sui
     </span>
     <span class="min-w-0 flex-1">
       {% with description_value=parent_transaction.description|default:_("No description") %}
-        <span class="block truncate font-medium text-ink">{{ description_value|truncatechars:70 }}</span>
+        <span class="block truncate font-medium text-ink"
+              title="{{ description_value }}">{{ description_value|truncatechars:70 }}</span>
       {% endwith %}
       {# Payer on the left, date under the amount: on a phone the two would otherwise wrap into each other. #}
       <span class="mt-1 flex min-w-0 items-center gap-1.5 text-sm text-ink-subtle">
@@ -35,7 +41,7 @@ needs. `.transaction-row` stays as the hook the highlight script and the e2e sui
       </span>
     </span>
     <span class="shrink-0 text-right">
-      <span class="block font-semibold whitespace-nowrap text-brand-text">
+      <span class="font-ledger block text-base font-semibold whitespace-nowrap text-brand-text">
         {{ parent_transaction.currency.sign }}{{ parent_transaction.total_child_value|format_with_thousands }}
       </span>
       <span class="mt-1 block text-xs whitespace-nowrap text-ink-subtle">{{ parent_transaction.paid_at|date }}</span>

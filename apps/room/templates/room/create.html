@@ -60,7 +60,8 @@
           {% endfor %}
         </div>
         <div>
-          <label class="mb-1.5 block text-sm font-semibold text-ink" for="description">{{ form.fields.description.label }}</label>
+          <label class="mb-1.5 block text-sm font-semibold text-ink"
+                 for="description">{{ form.fields.description.label }}</label>
           {# An input, not a textarea: the field is capped at 50 characters, the same as the sheet's. #}
           <input id="description"
                  class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"

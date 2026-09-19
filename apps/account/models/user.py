@@ -196,6 +196,8 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
                 "last_activity",
                 "last_transaction_at",
                 "name",
+                "seal_icon",
+                "seal_image",
                 "slug",
                 "status",
                 "user_is_in_room",

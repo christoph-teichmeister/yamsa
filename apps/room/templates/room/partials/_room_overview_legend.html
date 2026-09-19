@@ -1,0 +1,17 @@
+{% load i18n %}
+{% comment %}
+  Same collapsed-by-default <details> the guest picker's "Not seeing your name?" hint uses - no
+  script, and it costs the page nothing until someone actually wonders what the three groups mean.
+{% endcomment %}
+<details class="group">
+  <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-sm text-ink-muted transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden">
+    {% icon "info-circle-fill" %}
+    {% trans "What do Open, Closed and Other mean?" %}
+    {% icon "chevron-down" "transition-transform group-open:rotate-180 motion-reduce:transition-none" %}
+  </summary>
+  <ul class="mt-2 mb-0 flex list-none flex-col gap-1 pl-0 text-sm text-ink-subtle">
+    <li>{% trans "Open — a room you're part of, still splitting expenses." %}</li>
+    <li>{% trans "Closed — a room you're part of that has settled its debts and stopped taking new ones." %}</li>
+    <li>{% trans "Other — every room on this instance you're not a member of, visible because you're a superuser." %}</li>
+  </ul>
+</details>

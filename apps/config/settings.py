@@ -253,7 +253,14 @@ STATICFILES_FOLDER = "static" if DEBUG else "staticfiles"
 STATIC_ROOT = os.path.join(BASE_DIR, STATICFILES_FOLDER)
 
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
-STATICFILES_DIRS = (os.path.join(APPS_DIR, "static"),)
+# The second entry is webpack's own output (webpack.config.js), deliberately outside apps/ - see
+# the comment on that config's bundlesPath. Its "bundles" subfolder lands at the same /static/
+# URL as before, since FileSystemFinder maps a STATICFILES_DIRS entry's contents straight under
+# STATIC_URL regardless of the entry's own path.
+STATICFILES_DIRS = (
+    os.path.join(APPS_DIR, "static"),
+    os.path.join(BASE_DIR, "webpack_bundles"),
+)
 STATICFILES_FINDERS = (
     # Default finders
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -263,7 +270,7 @@ STATICFILES_FINDERS = (
 WEBPACK_LOADER = {
     "DEFAULT": {
         "BUNDLE_DIR_NAME": "bundles/",
-        "STATS_FILE": os.path.join(APPS_DIR, "static", "bundles", "webpack-stats.json"),
+        "STATS_FILE": os.path.join(BASE_DIR, "webpack_bundles", "bundles", "webpack-stats.json"),
         "POLL_INTERVAL": 0.1,
         "IGNORE": [r".+\.hot-update.js"],
         "LOADER_CLASS": "apps.config.custom_webpack_loader.NormalizedWebpackLoader",

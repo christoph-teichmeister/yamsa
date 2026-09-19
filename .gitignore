@@ -21,7 +21,7 @@ dist/
 apps/config/.env
 /.env
 apps/locale/de/LC_MESSAGES/django.mo
-apps/static/bundles/
+/webpack_bundles/
 apps/staticfiles/
 staticfiles/
 /static/
@@ -54,3 +54,6 @@ docker-compose.override.yml
 .claude/skill-usage.log
 .claude/beyonder/access.local.md
 .claude/beyonder/reviews/
+
+# Impeccable skill run state (mocks, build state) - session-local, not project artifacts
+.impeccable/

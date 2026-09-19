@@ -1,7 +1,4 @@
 {% comment %}
-  The initials disc of an overview card. Smaller than the side menu's .room-circle, which is why
-  it carries its own size rather than that class.
+  The room's seal on an overview card - see _room_seal.html for the mark itself.
 {% endcomment %}
-<span class="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold uppercase {% if entry.is_closed %}bg-danger-soft text-danger-text{% else %}bg-brand-soft text-brand-text{% endif %}">
-  {{ entry.capitalised_initials }}
-</span>
+{% include "room/partials/_room_seal.html" with icon=entry.seal_icon tilt=entry.seal_tilt_deg image_url=entry.seal_image_url %}

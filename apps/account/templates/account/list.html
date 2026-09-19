@@ -1,8 +1,19 @@
 {% extends "room/dashboard.html" %}
-{% load i18n %}
+{% load i18n room_tags %}
 {% block tab_content %}
   <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% if is_member %}
+      <div class="@container overflow-hidden rounded-lg border border-line bg-surface">
+        <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
+          <div class="flex items-center gap-3">
+            {% include "room/partials/_room_seal.html" with icon=current_room|room_seal_icon tilt=current_room|room_seal_tilt size_class="size-9" image_url=current_room.seal_image_url %}
+            <div class="min-w-0 flex-1">
+              <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "People" %}</p>
+              <h1 class="mt-1 mb-0 text-xl font-semibold text-ink">{% trans "Room roster" %}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
       <button class="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border border-transparent bg-brand px-5 py-4 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
               type="button"
               data-copy-share-url="true"
@@ -19,19 +30,19 @@
         {% trans "Add guest" as add_guest_label %}
         {% include "account/partials/_people_action.html" with action_viewname="account:guest-create" action_label=add_guest_label action_icon="person-plus" %}
       </div>
-      <div class="grid grid-cols-1 gap-3 @lg:grid-cols-2">
+      <div class="divide-y divide-line">
         {% csrf_token %}
         {% for user in user_qs_for_room %}
           {% include "shared_partials/user_card.html" with user=user %}
         {% empty %}
-          <div class="rounded-2xl border border-dashed border-line-strong px-6 py-8 text-center @lg:col-span-2">
+          <div class="px-1 py-10 text-center">
             <p class="m-0 font-semibold text-ink">{% trans "No one here yet" %}</p>
             <p class="m-0 text-sm text-ink-muted">{% trans "Invite a roommate or add a guest to start splitting expenses." %}</p>
           </div>
         {% endfor %}
       </div>
     {% else %}
-      <div class="@container rounded-3xl border border-brand/20 bg-gradient-to-br from-brand-soft to-transparent px-5 py-6 text-center @md:px-6">
+      <div class="@container rounded-lg border border-brand/20 bg-gradient-to-br from-brand-soft to-transparent px-5 py-6 text-center @md:px-6">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Guest access" %}</p>
         <h1 class="mt-1 mb-1 text-xl font-semibold break-words text-ink">
           {% with current_room.name as room_name %}

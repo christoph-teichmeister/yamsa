@@ -221,6 +221,19 @@ class TestWelcomePartialView:
 
         assert "12.50€" in content or "12,50€" in content
 
+    def test_the_summary_holds_several_currencies_without_crowding(self, authenticated_client, room, user, guest_user):
+        # Balance-summary tiles wrap (flex-wrap) rather than requiring a fixed column count, so
+        # four currencies at once is a real case, not an edge case that never happens.
+        currencies = [CurrencyFactory(sign=sign) for sign in ("€", "$", "£", "¥")]
+        for currency in currencies:
+            create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="5.00")
+
+        content = authenticated_client.get(reverse("core:welcome")).content.decode()
+
+        assert content.count("room-balance-tile") == len(currencies)
+        for currency in currencies:
+            assert f"5.00{currency.sign}" in content or f"5,00{currency.sign}" in content
+
     def test_the_closed_section_hides_its_rooms_behind_a_toggle(self, authenticated_client, room, closed_room):
         content = authenticated_client.get(reverse("core:welcome")).content.decode()
 

@@ -1,6 +1,6 @@
 {% load room_tags i18n %}
 <div id="room-category-list">
-  <div class="@container rounded-2xl border border-line bg-surface p-5">
+  <div class="@container rounded-lg border border-line bg-surface p-5">
     <div class="mb-4 flex items-start justify-between gap-2">
       <div class="min-w-0">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Available categories" %}</p>
@@ -15,7 +15,7 @@
     {% if room_categories %}
       <div class="grid grid-cols-1 gap-3 @2xl:grid-cols-2" role="list">
         {% for room_category in room_categories %}
-          <div class="relative flex h-full flex-col gap-4 rounded-2xl border border-line bg-surface-sunken p-4"
+          <div class="relative flex h-full flex-col gap-4 rounded-lg border border-line bg-surface-sunken p-4"
                role="listitem">
             {% comment %}
               Its own form, in the corner: deleting must not carry the order and default fields of

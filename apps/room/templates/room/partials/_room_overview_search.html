@@ -1,0 +1,15 @@
+{% load i18n %}
+{% comment %}
+  Only rendered once scanning the list is itself the effort (see WelcomePartialView.show_room_search).
+  Filters .room-overview-card elements client-side by data-room-name; navigation.js owns the
+  behaviour and re-binds it after every htmx swap, the same way it does for every other
+  progressively-enhanced control on this page.
+{% endcomment %}
+<div class="relative">
+  {% icon "search" "pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-subtle" %}
+  <input type="search"
+         data-room-search
+         placeholder="{% trans 'Search your rooms' %}"
+         aria-label="{% trans 'Search your rooms' %}"
+         class="w-full rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-4 pl-10 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand">
+</div>
