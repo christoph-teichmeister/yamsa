@@ -10,13 +10,13 @@
       {% if total.owed_by_user %}
         <div class="room-balance-tile owing flex min-w-0 max-w-64 flex-1 basis-32 flex-col gap-0.5 rounded-2xl border border-warning-text/40 bg-warning-soft px-3.5 py-2.5">
           <span class="room-balance-caption text-[0.65rem] tracking-[0.06em] text-ink-subtle uppercase">{% trans "You owe" %}</span>
-          <span class="room-balance-value text-lg font-bold tabular-nums text-warning-text">{{ total.owed_by_user|format_with_thousands }}{{ total.currency_sign }}</span>
+          <span class="room-balance-value font-ledger text-lg font-bold tabular-nums text-warning-text">{{ total.owed_by_user|format_with_thousands }}{{ total.currency_sign }}</span>
         </div>
       {% endif %}
       {% if total.owed_to_user %}
         <div class="room-balance-tile receiving flex min-w-0 max-w-64 flex-1 basis-32 flex-col gap-0.5 rounded-2xl border border-success-text/40 bg-success-soft px-3.5 py-2.5">
           <span class="room-balance-caption text-[0.65rem] tracking-[0.06em] text-ink-subtle uppercase">{% trans "You get back" %}</span>
-          <span class="room-balance-value text-lg font-bold tabular-nums text-success-text">{{ total.owed_to_user|format_with_thousands }}{{ total.currency_sign }}</span>
+          <span class="room-balance-value font-ledger text-lg font-bold tabular-nums text-success-text">{{ total.owed_to_user|format_with_thousands }}{{ total.currency_sign }}</span>
         </div>
       {% endif %}
     {% endfor %}
