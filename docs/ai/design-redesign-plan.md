@@ -63,10 +63,9 @@ entries, and the index-card-box pattern is specifically for *lists*, not single-
 - [ ] **Categories** (`transaction/category_manager.html`) — done means: the category list moves
   to the box pattern; category color swatches and the create form get a look pass consistent
   with the new palette (they already inherit the tokens, not yet the structure).
-- [ ] **Room sheet** (`room/partials/_room_sheet.html`) — done means: a decision on whether the
-  Sheet component itself (docs/ai/design.md "Sheets, not tiles") gets the flatter box
-  treatment too, or stays `rounded-3xl` as the correct shape for one-object-detail pages (the box pattern was scoped to
-  *lists* — this needs an explicit call, not an assumption).
+- [x] **Room sheet** (`room/partials/_room_sheet.html`) — the user's call: flatten everywhere, no
+  exception for single-object detail. Sheet wrapper moved `rounded-3xl`/`shadow-card` →
+  `rounded-lg`/no shadow, same as Debts/People/the feed.
 - [ ] **Auth pages** (login/register/forgot-password, `account/_auth_base.html`) — done means:
   the auth hero's gradient (`auth-hero-surface`, back to blue after the terracotta revert) and
   the form half both read as the new world, not just recolored old chrome.
