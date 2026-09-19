@@ -54,3 +54,6 @@ docker-compose.override.yml
 .claude/skill-usage.log
 .claude/beyonder/access.local.md
 .claude/beyonder/reviews/
+
+# Impeccable skill run state (mocks, build state) - session-local, not project artifacts
+.impeccable/
