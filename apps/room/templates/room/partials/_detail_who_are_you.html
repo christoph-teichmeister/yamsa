@@ -1,6 +1,6 @@
 {% load i18n %}
 <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
-  <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
+  <div class="@container overflow-hidden rounded-lg border border-line bg-surface">
     <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
       <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Guest access" %}</p>
       <h1 class="mt-1 mb-0 text-xl font-semibold break-words text-ink">{{ current_room.name }}</h1>
@@ -25,7 +25,7 @@
           its reminders, and your history under one login next time, that's what an account is for.
         {% endblocktrans %}
       </p>
-      <div class="flex flex-col gap-3 rounded-2xl border border-brand/40 bg-brand-soft px-4 py-4 @md:flex-row @md:items-start">
+      <div class="flex flex-col gap-3 rounded-lg border border-brand/40 bg-brand-soft px-4 py-4 @md:flex-row @md:items-start">
         {% icon "person-plus-fill" "shrink-0 text-2xl text-brand-text" %}
         <div class="min-w-0 flex-1">
           <p class="mt-0 mb-1 font-semibold text-ink">{% trans "Claim your invitation" %}</p>
@@ -86,7 +86,7 @@
       </form>
     {% else %}
       <div class="border-t border-line px-5 py-5 @md:px-6">
-        <div class="rounded-2xl border border-line bg-surface-sunken px-4 py-3"
+        <div class="rounded-lg border border-line bg-surface-sunken px-4 py-3"
              role="note">
           <p class="m-0 text-sm text-ink-muted">
             {% trans "No guests have been invited yet. Create an account to add yourself to the room." %}
