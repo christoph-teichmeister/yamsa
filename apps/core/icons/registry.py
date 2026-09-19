@@ -29,6 +29,14 @@ NAMES_PASSED_AS_VARIABLES = frozenset(
         "people",
         "newspaper",
         "gear",
+        # apps/room/dataclasses/room_overview_entry.py SEAL_ICONS, via _room_overview_circle.html
+        "key",
+        "cup-hot",
+        "lamp",
+        "door-open",
+        "leaf",
+        "house-heart",
+        "palette2",
         # shared_partials/member_form.html, via its callers
         "at",
         "send-check",

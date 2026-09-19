@@ -23,6 +23,7 @@
   {% csrf_token %}
   <div class="bg-gradient-to-br from-brand-soft to-transparent p-5 @md:p-6">
     <div class="flex flex-col gap-4 @md:flex-row @md:items-center">
+      {% include "room/partials/_room_seal.html" with icon=current_room.slug|room_seal_icon tilt=current_room.slug|room_seal_tilt size_class="size-12" %}
       <div class="min-w-0 flex-1">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Room overview" %}</p>
         <h1 id="room-name"

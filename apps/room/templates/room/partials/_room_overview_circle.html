@@ -1,11 +1,4 @@
 {% comment %}
-  The initials disc of an overview card. Smaller than the side menu's .room-circle, which is why
-  it carries its own size rather than that class.
-
-  Always brand-toned, not danger-toned when closed: the status badge already says "Closed" on
-  every card that needs it, and a red circle next to it repeated the same signal in a second
-  color that reads as an alert rather than an identity mark.
+  The room's seal on an overview card - see _room_seal.html for the mark itself.
 {% endcomment %}
-<span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-sm font-semibold text-brand-text uppercase">
-  {{ entry.capitalised_initials }}
-</span>
+{% include "room/partials/_room_seal.html" with icon=entry.seal_icon tilt=entry.seal_tilt_deg %}

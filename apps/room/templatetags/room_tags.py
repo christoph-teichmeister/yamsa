@@ -9,8 +9,19 @@ from django.utils.timesince import timesince
 from django.utils.translation import gettext as _
 
 from apps.core.utils import format_number_with_thousands
+from apps.room import room_seal
 
 register = template.Library()
+
+
+@register.filter
+def room_seal_icon(slug):
+    return room_seal.seal_icon(slug)
+
+
+@register.filter
+def room_seal_tilt(slug):
+    return room_seal.seal_tilt_deg(slug)
 
 
 @register.simple_tag(takes_context=True)

@@ -3,6 +3,7 @@ from datetime import datetime
 from uuid import UUID
 
 from apps.room.dataclasses.room_balance import RoomBalance
+from apps.room.room_seal import seal_icon, seal_tilt_deg
 
 
 @dataclass(frozen=True)
@@ -28,3 +29,13 @@ class RoomOverviewEntry:
     def meta_text(self) -> str:
         """The card's secondary line: who owns a room the user is not in, else its description."""
         return self.created_by_name if not self.user_is_in_room else self.description
+
+    @property
+    def seal_icon(self) -> str:
+        """The room's signature icon - stable per room, not per render, picked off its slug."""
+        return seal_icon(self.slug)
+
+    @property
+    def seal_tilt_deg(self) -> int:
+        """A small stable tilt for the seal, so it reads as stamped rather than centred art."""
+        return seal_tilt_deg(self.slug)
