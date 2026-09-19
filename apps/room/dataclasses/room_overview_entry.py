@@ -3,7 +3,7 @@ from datetime import datetime
 from uuid import UUID
 
 from apps.room.dataclasses.room_balance import RoomBalance
-from apps.room.room_seal import seal_icon, seal_tilt_deg
+from apps.room.room_seal import default_seal_icon, seal_tilt_deg
 
 
 @dataclass(frozen=True)
@@ -24,6 +24,10 @@ class RoomOverviewEntry:
     # last_activity_at falls back to the room's own timestamp so it can still be ordered.
     last_transaction_at: datetime | None
     balances: tuple[RoomBalance, ...]
+    # "" when the room has no explicit choice - resolved_seal_icon then falls back to the
+    # slug-derived default, same as Room.resolved_seal_icon.
+    stored_seal_icon: str
+    seal_image_url: str | None
 
     @property
     def meta_text(self) -> str:
@@ -32,8 +36,8 @@ class RoomOverviewEntry:
 
     @property
     def seal_icon(self) -> str:
-        """The room's signature icon - stable per room, not per render, picked off its slug."""
-        return seal_icon(self.slug)
+        """The room's signature icon - a member's choice, or picked off its slug by default."""
+        return self.stored_seal_icon or default_seal_icon(self.slug)
 
     @property
     def seal_tilt_deg(self) -> int:

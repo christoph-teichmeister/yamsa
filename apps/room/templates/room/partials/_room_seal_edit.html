@@ -1,0 +1,91 @@
+{% load i18n room_tags %}
+{% comment %}
+  The room seal, editable: a button showing the current mark opens a dialog to pick one of the
+  predefined icons or upload a custom image. Lives inside `#room-sheet`'s own <form> (mirrors
+  account/partials/_profile_photo.html's placement inside the profile sheet's form) so every
+  control here rides on that form's CSRF token without a nested <form> of its own - nested forms
+  are invalid HTML and would split #room-sheet in two.
+
+  Posting swaps the whole #room-sheet back in, same as every other field on it - the seal has no
+  narrower swap target because the header it lives in is part of that one sheet.
+{% endcomment %}
+<div class="relative shrink-0">
+  <button class="group/seal relative flex size-12 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0"
+          type="button"
+          aria-haspopup="dialog"
+          aria-label="{% trans "Change room seal" %}"
+          title="{% trans "Change room seal" %}"
+          data-dialog-open="room-seal-dialog">
+    {% include "room/partials/_room_seal.html" with icon=room|room_seal_icon tilt=room|room_seal_tilt image_url=room.seal_image_url size_class="size-12" %}
+    <span class="pointer-events-none absolute inset-0 flex items-center justify-center rounded-full bg-black/45 text-sm text-white opacity-0 transition-opacity group-hover/seal:opacity-100 group-has-focus-visible/seal:opacity-100"
+          aria-hidden="true">{% icon "camera" %}</span>
+  </button>
+  <dialog id="room-seal-dialog"
+          class="m-auto w-[min(24rem,calc(100vw-2rem))] rounded-lg border border-line bg-surface p-0 text-ink backdrop:bg-black/60"
+          data-dialog
+          {% if seal_dialog_is_open %}open{% endif %}>
+    <div class="flex items-center justify-between gap-3 border-b border-line px-5 py-3">
+      <p class="m-0 font-semibold text-ink">{% trans "Room seal" %}</p>
+      <button class="flex size-8 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-ink-subtle transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              type="button"
+              aria-label="{% trans "Close" %}"
+              data-dialog-close>{% icon "x-lg" %}</button>
+    </div>
+    <div class="flex flex-col gap-4 p-5">
+      {% for error_message in seal_form.errors.seal_image.data %}
+        <p class="m-0 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger-text">{{ error_message.message }}</p>
+      {% endfor %}
+      <div>
+        <p class="mb-2 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Choose an icon" %}</p>
+        <div class="grid grid-cols-4 gap-2">
+          {% room_seal_icons as seal_icons %}
+          {% for icon_name in seal_icons %}
+            <button class="flex size-12 w-full cursor-pointer items-center justify-center rounded-lg border text-lg transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand {% if room.seal_icon == icon_name and not room.seal_image %}border-brand bg-brand-soft text-brand-text{% else %}border-line bg-surface-sunken text-ink{% endif %}"
+                    type="button"
+                    name="seal_icon"
+                    value="{{ icon_name }}"
+                    aria-label="{{ icon_name }}"
+                    hx-post="{% room_url 'room:seal-icon-update' %}"
+                    hx-target="#room-sheet"
+                    hx-swap="outerHTML"
+                    hx-indicator="#body-loading-spinner">{% icon icon_name %}</button>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover"
+               for="room-seal-image-input">
+          {% icon "upload" %}
+          {% trans "Upload a custom image" %}
+        </label>
+        {# The input posts itself: htmx sends the chosen file straight away and swaps the sheet back in. #}
+        <input id="room-seal-image-input"
+               class="hidden"
+               type="file"
+               name="seal_image"
+               accept="image/*"
+               hx-post="{% room_url 'room:seal-image-update' %}"
+               hx-encoding="multipart/form-data"
+               hx-trigger="change"
+               hx-target="#room-sheet"
+               hx-swap="outerHTML"
+               hx-indicator="#body-loading-spinner">
+        {% if room.seal_icon or room.seal_image %}
+          <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-danger-text/60 bg-transparent px-5 py-2.5 text-sm font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  type="button"
+                  hx-post="{% room_url 'room:seal-reset' %}"
+                  hx-target="#room-sheet"
+                  hx-swap="outerHTML"
+                  hx-indicator="#body-loading-spinner"
+                  hx-confirm="{% trans "Reset to the default seal?" %}">
+            {% icon "arrow-repeat" %}
+            {% trans "Reset to default" %}
+          </button>
+        {% endif %}
+      </div>
+      <p class="m-0 text-xs text-ink-subtle">
+        {% trans "We automatically resize and compress PNG/JPEG uploads so they stay under 3 MB." %}
+      </p>
+    </div>
+  </dialog>
+</div>

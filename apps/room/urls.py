@@ -30,6 +30,9 @@ urlpatterns = [
             path("dashboard", views.RoomDashboardView.as_view(), name="dashboard"),
             path("detail", views.RoomDetailView.as_view(), name="detail"),
             path("edit", views.RoomEditView.as_view(), name="edit"),
+            path("seal/icon", views.RoomSealIconUpdateView.as_view(), name="seal-icon-update"),
+            path("seal/image", views.RoomSealImageUpdateView.as_view(), name="seal-image-update"),
+            path("seal/reset", views.RoomSealResetView.as_view(), name="seal-reset"),
             path("status", views.RoomStatusUpdateView.as_view(), name="status"),
             path("delete", views.RoomHardDeleteView.as_view(), name="delete"),
             path(

@@ -1,19 +1,27 @@
 {% comment %}
   The room's stamped seal - the mark itself, shared by the dashboard card and the sheet header so
   the two never drift. Takes `icon` and `tilt` (the values `room_seal_icon`/`room_seal_tilt`, or
-  `entry.seal_icon`/`entry.seal_tilt_deg`, compute off a room's slug) and an optional `size_class`
-  (default `size-10`).
+  `entry.seal_icon`/`entry.seal_tilt_deg`, resolve to a member's choice or fall back to one derived
+  off a room's slug), an optional `image_url` (a member's custom uploaded seal, shown in place of
+  `icon` when given), and an optional `size_class` (default `size-10`).
 
   Always brand-toned, not danger-toned when closed: a room's status is said elsewhere, and a red
   seal next to it would repeat that signal in a second color that reads as an alert rather than an
   identity mark.
 {% endcomment %}
-<span class="room-seal relative inline-flex {{ size_class|default:"size-10" }} shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-text"
+<span class="room-seal relative inline-flex {{ size_class|default:"size-10" }} shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-soft text-brand-text"
       style="rotate: {{ tilt }}deg">
+  {% if image_url %}
+    <img class="absolute inset-0 h-full w-full object-cover"
+         src="{{ image_url }}"
+         alt=""
+         loading="lazy">
+  {% else %}
+    {% icon icon "relative text-[1.05rem]" %}
+  {% endif %}
   <svg class="pointer-events-none absolute inset-0 size-full"
        viewBox="0 0 40 40"
        aria-hidden="true">
     <circle cx="20" cy="20" r="18.25" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1 4.6" stroke-linecap="round" class="opacity-70" />
   </svg>
-  {% icon icon "relative text-[1.05rem]" %}
 </span>

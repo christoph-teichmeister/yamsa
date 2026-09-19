@@ -77,18 +77,17 @@ entries, and the index-card-box pattern is specifically for *lists*, not single-
   top-bar fix.
 - [x] **Global corner radius** — not originally scoped, but the user's actual complaint kept
   coming back to individually-boxed rows and pill-shaped buttons reading as "cards" even after
-  the box/shadow removal. Traced to Tailwind's own `rounded-lg`/`xl`/`2xl`/`3xl` defaults
-  (8/12/16/24px) being too round for this direction. Fixed once, app-wide, with a
+  the box/shadow removal. Traced to Tailwind's own `rounded-lg`/`xl`/`2xl`/`3xl` defaults (8/12/16/24px) being too round
+  for this direction. Fixed once, app-wide, with a
   `--radius-lg`…`--radius-3xl` override in `apps/static_src/tailwind.css` rather than a
-  per-template class sweep - landed at a visibly-rounder-than-square middle ground
-  (8/10/12/16px) after a too-sharp first pass got rejected too. `rounded-full` (pills, avatars,
+  per-template class sweep - landed at a visibly-rounder-than-square middle ground (8/10/12/16px) after a too-sharp
+  first pass got rejected too. `rounded-full` (pills, avatars,
   the floating add-transaction button) is untouched by design.
-- [ ] **Room-seal motif and warm-voice copy** — built earlier in this project's identity pass (before the redesign was
-  requested), explicitly not protected from replacement. Decide,
-  screen by screen as this list is worked through, whether the seal icons and the warm
-  empty-state/guest-entry copy survive inside the recipe-card-box world, get adapted (e.g. the
-  seal as a literal "stamp" on an index card), or are dropped in favor of something the new
-  direction suggests instead.
+- [x] **Room-seal motif** — survives, and now a real feature: `Room.seal_icon`/`seal_image`
+  let a member override the slug-derived default with one of the predefined icons or a custom
+  uploaded image, edited from the room sheet's header (`_room_seal_edit.html`, mirrors
+  `account/partials/_profile_photo.html`'s dialog/upload pattern). Uploads reuse
+  `CompressPictureService`. Warm-voice copy is a separate, still-open question.
 
 ## Reference
 

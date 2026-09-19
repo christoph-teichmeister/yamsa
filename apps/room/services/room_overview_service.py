@@ -47,6 +47,20 @@ class RoomOverviewService:
 
         return balances_per_room_id
 
+    @staticmethod
+    def _seal_image_url(name: str | None) -> str | None:
+        """Resolve a stored ImageField name to its URL, without a model instance to ask.
+
+        `room_qs_for_list` is a `.values()` queryset for this exact reason - it hands back the
+        raw stored name rather than a FieldFile, so the storage backend has to be asked directly.
+        """
+        if not name:
+            return None
+        try:
+            return Room._meta.get_field("seal_image").storage.url(name)
+        except Exception:
+            return None
+
     def _build_entry(self, room_values: dict) -> RoomOverviewEntry:
         is_closed = room_values["status"] == Room.StatusChoices.CLOSED
         target_viewname = Room.dashboard_viewname_for(room_values["status"])
@@ -64,6 +78,8 @@ class RoomOverviewService:
             last_activity_at=room_values["last_activity"],
             last_transaction_at=room_values["last_transaction_at"],
             balances=tuple(self._balances_per_room_id.get(room_values["id"], ())),
+            stored_seal_icon=room_values["seal_icon"],
+            seal_image_url=self._seal_image_url(room_values["seal_image"]),
         )
 
     def get_entries(self) -> list[RoomOverviewEntry]:

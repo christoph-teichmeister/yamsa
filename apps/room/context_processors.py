@@ -41,6 +41,11 @@ def room_context(request):
             "open_debt_count": room.debts.filter(settled=False).count(),
             "can_be_closed": room.can_be_closed,
             "can_be_deleted": room.can_be_deleted,
+            "seal_icon": room.seal_icon,
+            "resolved_seal_icon": room.resolved_seal_icon,
+            "seal_tilt": room.seal_tilt,
+            "seal_image": bool(room.seal_image),
+            "seal_image_url": room.seal_image_url,
             # Processed info
             "guest_users": room.room_users.filter(is_guest=True),
             "share_url": share_url,

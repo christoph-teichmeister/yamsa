@@ -12,7 +12,9 @@ class RoomSheetResponseMixin:
     def is_htmx_request(self) -> bool:
         return self.request.headers.get("HX-Request") == "true"
 
-    def render_room_sheet(self, room, *, form=None, status_form=None) -> HttpResponse:
+    def render_room_sheet(
+        self, room, *, form=None, status_form=None, seal_form=None, seal_dialog_is_open: bool = False
+    ) -> HttpResponse:
         """Answer with the sheet alone, so the browser keeps the page it is already on.
 
         `request.room` is loaded by the middleware before the view runs, so a save leaves the
@@ -29,6 +31,8 @@ class RoomSheetResponseMixin:
                     "room": room,
                     "form": form if form is not None else RoomEditForm(instance=room),
                     "status_form": status_form,
+                    "seal_form": seal_form,
+                    "seal_dialog_is_open": seal_dialog_is_open,
                     "open_debt_count": room.debts.filter(settled=False).count(),
                 },
                 request=self.request,
