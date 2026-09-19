@@ -44,6 +44,7 @@ dev = [
     "pytest-env",
     "pytest-factoryboy",
     "pytest-playwright",
+    "html5lib>=1.1",
 ]
 
 [build-system]
