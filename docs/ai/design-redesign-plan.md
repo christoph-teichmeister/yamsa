@@ -49,12 +49,14 @@ Extending the direction to each is a separate, scoped pass — not a blind whole
 since each surface's content shape differs (a settings sheet's label/value rows aren't a list of
 entries, and the index-card-box pattern is specifically for *lists*, not single-object detail).
 
-- [ ] **Debts** (`debt/list.html`) — done means: the debt rows (already a list of entries per
-  person/direction) move to the same hairline-divided box as the dashboard/feed; balance
-  figures take `font-ledger`.
-- [ ] **People** (`account/list.html`) — done means: member cards decide whether they're a "list
-  of entries" (box treatment) or stay individual (they carry more per-person actions than a
-  transaction row does — worth a direction check before assuming the pattern transfers as-is).
+- [x] **Debts** (`debt/list.html`) — rows already sat hairline-divided inside the room sheet with
+  no per-row card chrome; the only gap was typography, so debt values now carry `font-ledger`,
+  same as the dashboard/feed.
+- [x] **People** (`account/list.html`) — member cards (`shared_partials/user_card.html`) stay
+  individual, not a hairline list: a card carries a remove action, a guest/member badge, and an
+  invitation-status row that a transaction row doesn't. Moved from `rounded-2xl` +
+  lift/shadow-card-hover to `rounded-lg border-line bg-surface` + `hover:bg-surface-hover`, the
+  same flat chrome room tiles use, so it reads as the new world without pretending to be a list.
 - [ ] **Activity** (`news/list.html`) — done means: the timeline's card-per-event treatment is
   reconsidered against the box pattern, or kept if the direction contract judges a timeline a
   genuinely different shape than a ledger list.
