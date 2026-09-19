@@ -28,12 +28,17 @@
     {% endif %}
     <div class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card">
       <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
-        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Transactions" %}</p>
-        <h1 class="mt-1 mb-1 text-xl font-semibold text-ink">{% trans "Room transactions" %}</h1>
+        <div class="flex items-center gap-3">
+          {% include "room/partials/_room_seal.html" with icon=current_room.slug|room_seal_icon tilt=current_room.slug|room_seal_tilt size_class="size-9" %}
+          <div class="min-w-0 flex-1">
+            <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Transactions" %}</p>
+            <h1 class="mt-1 mb-0 text-xl font-semibold text-ink">{% trans "Room transactions" %}</h1>
+          </div>
+        </div>
         {% if transactions_available %}
-          <p class="m-0 text-sm text-ink-muted">{% trans "Pick a row to explore the full breakdown." %}</p>
+          <p class="mt-1 mb-1 text-sm text-ink-muted">{% trans "Pick a row to explore the full breakdown." %}</p>
         {% else %}
-          <p class="m-0 text-sm text-ink-muted">{% trans "Nothing filed yet - the first coffee run counts too." %}</p>
+          <p class="mt-1 mb-1 text-sm text-ink-muted">{% trans "Nothing filed yet - the first coffee run counts too." %}</p>
         {% endif %}
         <div class="mt-3 flex flex-wrap gap-2">
           {% include "room/partials/_room_status_badge.html" %}
