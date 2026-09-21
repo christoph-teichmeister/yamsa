@@ -389,6 +389,9 @@
                 referenceInput.value = formatDecimal(totalInput.value);
             };
 
+            // Playwright's fill() (and some assistive input methods) only ever dispatch "input",
+            // never "change" - listening to both keeps the live preview from silently going stale.
+            totalInput.addEventListener("input", applyEqualSplit);
             totalInput.addEventListener("change", applyEqualSplit);
         })();
   </script>
