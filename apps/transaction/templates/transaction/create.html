@@ -87,26 +87,27 @@
             <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Maximum 50 characters." %}</p>
           </div>
           <div>
-            <label class="mb-1.5 block text-sm font-semibold text-ink" for="value">{% trans "Amount paid" %}</label>
-            {% with value_field=form.value %}
+            <label class="mb-1.5 block text-sm font-semibold text-ink"
+                   for="total_value_input">{% trans "Amount paid" %}</label>
+            {% with total_value_field=form.total_value %}
               <div class="relative">
                 <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-subtle">{{ current_room.preferred_currency.sign }}</span>
-                <input id="value"
+                <input id="total_value_input"
                        class="w-full rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-4 pl-9 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                        type="number"
-                       name="value"
+                       name="total_value"
                        min="0"
                        step="0.01"
                        max="99999999"
                        placeholder="0.00"
-                       value="{{ value_field.value|default:'' }}"
+                       value="{{ total_value_field.value|default:'' }}"
                        required>
               </div>
-              {% for error_message in value_field.errors %}
+              {% for error_message in total_value_field.errors %}
                 <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
               {% endfor %}
             {% endwith %}
-            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Total paid in the selected currency." %}</p>
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Total paid in the selected currency. Splitting evenly by default - adjust individual shares below." %}</p>
           </div>
           <div class="@lg:col-span-2">
             {% include "transaction/partials/_category_field.html" with category_field=form.category %}
@@ -141,30 +142,84 @@
             {% endwith %}
             <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Person covering this expense." %}</p>
           </div>
-          <div>
-            <label class="mb-1.5 block text-sm font-semibold text-ink"
-                   for="paidForSelect">{% trans "Split between" %}</label>
-            {% with paid_for_field=form.paid_for %}
-              {# A native multi-select: `required` then makes the browser insist on at least one beneficiary. #}
-              <select id="paidForSelect"
-                      class="w-full rounded-xl border border-line-strong bg-surface-sunken px-2 py-2 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
-                      name="paid_for"
-                      size="4"
-                      multiple
-                      required>
-                {% for room_user in current_room.users %}
-                  <option value="{{ room_user.id }}"
-                          {% if room_user.id|stringformat:"s" in selected_paid_for %}selected{% endif %}>
-                    {{ room_user.name }}
-                  </option>
-                {% endfor %}
-              </select>
-              {% for error_message in paid_for_field.errors %}
-                <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
-              {% endfor %}
-            {% endwith %}
-            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Hold Cmd/Ctrl to adjust beneficiaries." %}</p>
+        </div>
+      </div>
+      <div class="border-t border-line">
+        <p class="m-0 px-5 pt-4 pb-1 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Split between" %}</p>
+        <div class="flex flex-col gap-3 px-5 pt-2 pb-5 @md:px-6">
+          <div class="flex flex-wrap items-center gap-2">
+            <p class="m-0 min-w-0 flex-1 text-sm text-ink-muted">
+              {% trans "Splits evenly by default - edit an amount to give someone a different share." %}
+            </p>
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
+              {% icon "people" %}
+              {% blocktrans count participant_count=split_rows|length %}{{ participant_count }} person{% plural %}{{ participant_count }} people{% endblocktrans %}
+            </span>
           </div>
+          {% for split_row in split_rows %}
+            <div class="split-row rounded-2xl border border-line bg-surface-sunken/40 p-4 transition hover:border-brand/40">
+              <div class="grid grid-cols-1 items-end gap-3 @md:grid-cols-[1fr_1fr_auto]">
+                <div>
+                  <label class="mb-1.5 block text-xs font-semibold tracking-wider text-ink-subtle uppercase"
+                         for="value_input_{{ forloop.counter }}">{% trans "Amount" %}</label>
+                  <div class="relative">
+                    <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-subtle">{{ current_room.preferred_currency.sign }}</span>
+                    <input id="value_input_{{ forloop.counter }}"
+                           class="w-full rounded-lg border border-line-strong bg-surface py-2 pr-3 pl-8 font-medium text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
+                           type="number"
+                           name="value"
+                           min="0"
+                           step="0.01"
+                           max="99999999"
+                           value="{{ split_row.value }}"
+                           required>
+                  </div>
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-xs font-semibold tracking-wider text-ink-subtle uppercase"
+                         for="paid_for_select_{{ forloop.counter }}">{% trans "For" %}</label>
+                  <div class="relative">
+                    <select id="paid_for_select_{{ forloop.counter }}"
+                            class="w-full appearance-none rounded-lg border border-line-strong bg-surface py-2 pr-9 pl-3 font-medium text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
+                            name="paid_for"
+                            required>
+                      {% for room_user in current_room.users %}
+                        <option value="{{ room_user.id }}"
+                                {% if room_user.id|stringformat:"s" == split_row.paid_for_id %}selected{% endif %}>
+                          {{ room_user.name }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                    {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle" %}
+                  </div>
+                </div>
+                <button class="inline-flex cursor-pointer items-center justify-center gap-2 justify-self-end rounded-lg border border-danger-text/60 bg-transparent px-3 py-2 text-sm font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50"
+                        type="button"
+                        aria-label="{% trans "Remove this share" %}"
+                        hx-confirm="{% trans "Remove this participant?" %}"
+                        hx-swap="none"
+                        data-split-row-remove="true">{% icon "trash" %}</button>
+              </div>
+            </div>
+          {% empty %}
+            <p class="m-0 text-sm text-ink-subtle">{% trans "No participants yet." %}</p>
+          {% endfor %}
+          {% for error_message in form.paid_for.errors %}<p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>{% endfor %}
+          {% for error_message in form.value.errors %}<p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>{% endfor %}
+          <span id="add-child-transaction-container"></span>
+          <button class="inline-flex cursor-pointer items-center justify-center gap-2 self-center rounded-xl border border-brand bg-transparent px-4 py-2 text-sm font-semibold text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
+                  type="button"
+                  hx-get="{% room_url 'transaction:child-transaction-create' %}"
+                  hx-target="#add-child-transaction-container"
+                  hx-swap="morph:outerHTML"
+                  hx-push-url="false">
+            {% icon "plus-circle" %}
+            {% trans "Add participant" %}
+          </button>
+          <input id="reference_total_value_input"
+                 type="hidden"
+                 name="reference_total_value"
+                 value="{{ reference_total_value }}">
         </div>
       </div>
       {% comment %}
@@ -289,5 +344,53 @@
       </datalist>
     </form>
   </section>
+  <script nonce="{{ csp_nonce }}">
+        // Splits the total evenly across the current split-rows whenever it changes, so hand-edited
+        // shares only ever get overwritten by a total the visitor entered on purpose - never by
+        // adding or removing a participant. Mirrors split_amount_exact() in apps/transaction/utils.py
+        // (ROUND_HALF_UP, remainder distributed one cent at a time starting at row 0) in integer
+        // cents, so the client-side preview matches what the server persists on submit.
+        (function () {
+            const totalInput = document.getElementById("total_value_input");
+            const referenceInput = document.getElementById("reference_total_value_input");
+            if (!totalInput || !referenceInput) {
+                return;
+            }
+
+            const formatDecimal = (value) => {
+                const parsed = parseFloat(value);
+                return (Number.isNaN(parsed) ? 0 : parsed).toFixed(2);
+            };
+
+            const splitEvenly = (totalStr, shareCount) => {
+                const totalCents = Math.round(parseFloat(totalStr) * 100) || 0;
+                const perCents = Math.round(totalCents / shareCount);
+                const cents = new Array(shareCount).fill(perCents);
+                let remainder = totalCents - perCents * shareCount;
+                const step = remainder > 0 ? 1 : -1;
+                let i = 0;
+                while (remainder !== 0) {
+                    cents[i] += step;
+                    remainder -= step;
+                    i = (i + 1) % shareCount;
+                }
+                return cents.map((cent) => (cent / 100).toFixed(2));
+            };
+
+            const applyEqualSplit = () => {
+                const rowValueInputs = document.querySelectorAll(".split-row input[name='value']");
+                if (rowValueInputs.length === 0) {
+                    return;
+                }
+                const shares = splitEvenly(totalInput.value, rowValueInputs.length);
+                rowValueInputs.forEach((input, index) => {
+                    input.value = shares[index];
+                });
+                referenceInput.value = formatDecimal(totalInput.value);
+            };
+
+            totalInput.addEventListener("change", applyEqualSplit);
+        })();
+  </script>
   {% render_bundle "category-suggestion" attrs="defer" %}
 {% endblock tab_content %}

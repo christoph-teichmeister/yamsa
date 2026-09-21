@@ -16,6 +16,7 @@ from apps.room.tests.factories import RoomFactory
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.models import Category, ChildTransaction, ParentTransaction
 from apps.transaction.services.room_category_service import RoomCategoryService
+from apps.transaction.utils import split_total_across_paid_for
 from apps.transaction.views import TransactionListView
 
 pytestmark = pytest.mark.django_db
@@ -25,6 +26,7 @@ class TestTransactionCreateView:
     @freeze_time("2020-04-04 4:20:00")
     def test_post_regular(self, authenticated_client, room, user):
         assert room.users.count() > 1, "This test requires more than one participant in the room"
+        members = list(room.users.all())
 
         response = authenticated_client.post(
             reverse("transaction:create", kwargs={"room_slug": room.slug}),
@@ -35,9 +37,11 @@ class TestTransactionCreateView:
                 "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
                 "paid_by": user.id,
                 "room": room.id,
-                "paid_for": [str(member.id) for member in room.users.all()],
+                "paid_for": [str(member.id) for member in members],
                 "room_slug": room.slug,
-                "value": 10,
+                "total_value": 10,
+                "value": ["0.00"] * len(members),
+                "reference_total_value": "0.00",
             },
             follow=True,
         )
@@ -51,10 +55,45 @@ class TestTransactionCreateView:
         parent_transaction = ParentTransaction.objects.get(description="My description", room=room, paid_by=user)
         assert parent_transaction.value == Decimal("10")
 
-        child_transaction_value = Decimal("10") / room.users.count()
-        for member in room.users.all():
-            qs = ChildTransaction.objects.filter(paid_for=member, value=child_transaction_value)
+        expected_shares = split_total_across_paid_for(Decimal("10"), members)
+        for member, expected_share in zip(members, expected_shares, strict=True):
+            qs = ChildTransaction.objects.filter(paid_for=member, value=expected_share)
             assert qs.exists()
+
+    @freeze_time("2020-04-04 4:20:00")
+    def test_post_with_unequal_shares(self, authenticated_client, room, user):
+        assert room.users.count() > 1, "This test requires more than one participant in the room"
+        members = list(room.users.all())
+        first_member, *rest_members = members
+        # Everyone but the first member is given the same (arbitrary) small share, the first member
+        # covers the remainder - the "one person only had a coke" scenario.
+        rest_share = Decimal("10.00")
+        first_share = Decimal("90.00") - rest_share * len(rest_members)
+
+        response = authenticated_client.post(
+            reverse("transaction:create", kwargs={"room_slug": room.slug}),
+            data={
+                "category": Category.objects.get(slug="groceries").id,
+                "description": "My description",
+                "currency": room.preferred_currency.id,
+                "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
+                "paid_by": user.id,
+                "room": room.id,
+                "paid_for": [str(member.id) for member in members],
+                "room_slug": room.slug,
+                "total_value": "90.00",
+                "value": [str(first_share), *[str(rest_share)] * len(rest_members)],
+                "reference_total_value": "90.00",
+            },
+            follow=True,
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        parent_transaction = ParentTransaction.objects.get(description="My description", room=room, paid_by=user)
+        assert parent_transaction.value == Decimal("90.00")
+        assert ChildTransaction.objects.filter(paid_for=first_member, value=first_share).exists()
+        for member in rest_members:
+            assert ChildTransaction.objects.filter(paid_for=member, value=rest_share).exists()
 
     def test_get_renders_a_chip_per_category_without_preselecting_one(self, authenticated_client, room):
         response = authenticated_client.get(reverse("transaction:create", kwargs={"room_slug": room.slug}))
@@ -89,6 +128,7 @@ class TestTransactionCreateView:
         assert "data-category-suggestion-index" in response.content.decode()
 
     def test_post_without_a_category_is_rejected(self, authenticated_client, room, user):
+        members = list(room.users.all())
         response = authenticated_client.post(
             reverse("transaction:create", kwargs={"room_slug": room.slug}),
             data={
@@ -97,9 +137,11 @@ class TestTransactionCreateView:
                 "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
                 "paid_by": user.id,
                 "room": room.id,
-                "paid_for": [str(member.id) for member in room.users.all()],
+                "paid_for": [str(member.id) for member in members],
                 "room_slug": room.slug,
-                "value": 10,
+                "total_value": 10,
+                "value": ["0.00"] * len(members),
+                "reference_total_value": "0.00",
             },
         )
 
@@ -107,6 +149,7 @@ class TestTransactionCreateView:
         assert not ParentTransaction.objects.filter(description="Uncategorised").exists()
 
     def test_post_closed_room_is_rejected(self, authenticated_client, closed_room, user):
+        members = list(closed_room.users.all())
         response = authenticated_client.post(
             reverse("transaction:create", kwargs={"room_slug": closed_room.slug}),
             data={
@@ -115,9 +158,11 @@ class TestTransactionCreateView:
                 "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
                 "paid_by": user.id,
                 "room": closed_room.id,
-                "paid_for": [str(member.id) for member in closed_room.users.all()],
+                "paid_for": [str(member.id) for member in members],
                 "room_slug": closed_room.slug,
-                "value": 10,
+                "total_value": 10,
+                "value": ["0.00"] * len(members),
+                "reference_total_value": "0.00",
             },
         )
 
@@ -126,6 +171,7 @@ class TestTransactionCreateView:
 
     @staticmethod
     def _valid_payload(room, user, **overrides):
+        members = list(room.users.all())
         payload = {
             "category": Category.objects.get(slug="groceries").id,
             "description": "My description",
@@ -133,9 +179,11 @@ class TestTransactionCreateView:
             "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
             "paid_by": user.id,
             "room": room.id,
-            "paid_for": [str(member.id) for member in room.users.all()],
+            "paid_for": [str(member.id) for member in members],
             "room_slug": room.slug,
-            "value": 10,
+            "total_value": 10,
+            "value": ["0.00"] * len(members),
+            "reference_total_value": "0.00",
         }
         payload.update(overrides)
         return payload
@@ -251,7 +299,9 @@ class TestTransactionCreateView:
                 "room": room.id,
                 "paid_for": [user.id, other_user.id],
                 "room_slug": room.slug,
-                "value": "10.00",
+                "total_value": "10.00",
+                "value": ["0.00", "0.00"],
+                "reference_total_value": "0.00",
             },
             request=MagicMock(user=user),
             room=room,

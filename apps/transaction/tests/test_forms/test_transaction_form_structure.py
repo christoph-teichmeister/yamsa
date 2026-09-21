@@ -81,7 +81,9 @@ class TestTransactionFormStructure:
             "room": room.id,
             "paid_for": [u.id for u in paid_for_users],
             "room_slug": room.slug,
-            "value": "12.00",
+            "total_value": "12.00",
+            "value": ["0.00"] * len(paid_for_users),
+            "reference_total_value": "0.00",
         }
 
     def test_save_two_consecutive_transactions_both_persist(self):

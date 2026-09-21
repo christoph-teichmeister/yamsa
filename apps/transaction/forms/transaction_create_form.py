@@ -2,8 +2,8 @@ import mimetypes
 from decimal import Decimal
 
 from django import forms
+from django.contrib.postgres.forms import SimpleArrayField
 
-from apps.account.models import User
 from apps.transaction.forms.mixins.room_category_field import RoomCategoryFieldMixin
 from apps.transaction.models import ChildTransaction, ParentTransaction, Receipt
 from apps.transaction.utils import split_total_across_paid_for
@@ -20,9 +20,16 @@ RECEIPT_AUTH_REQUIRED_MESSAGE = "Authenticated user is required to upload receip
 
 
 class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
-    paid_for = forms.ModelMultipleChoiceField(queryset=User.objects.all())
+    total_value = forms.DecimalField(decimal_places=2, max_digits=10)
+    # The total the currently submitted `value` row values were last computed against - carried
+    # in a hidden field because, unlike the edit form, there is no persisted split to compare to.
+    reference_total_value = forms.DecimalField(decimal_places=2, max_digits=10, required=False)
+
+    # Per-row ChildTransaction fields, parallel arrays like TransactionEditForm's.
+    paid_for = SimpleArrayField(forms.IntegerField())
+    value = SimpleArrayField(forms.DecimalField(decimal_places=2, max_digits=10))
+
     room_slug = forms.CharField()
-    value = forms.DecimalField()
     category = RoomCategoryFieldMixin.build_category_field()
     receipts = forms.FileField(
         widget=forms.ClearableFileInput(),
@@ -49,6 +56,26 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
         self._request = request
         super().__init__(*args, **kwargs)
         self.narrow_category_field_to(room)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        total_value = cleaned_data.get("total_value")
+        paid_for_entries = cleaned_data.get("paid_for")
+
+        if total_value is None or not paid_for_entries:
+            return cleaned_data
+
+        values = cleaned_data.get("value") or []
+        reference_total_value = cleaned_data.get("reference_total_value") or Decimal("0.00")
+        sum_values = sum(values, Decimal("0.00"))
+        total_changed = total_value != reference_total_value
+
+        if total_changed:
+            cleaned_data["value"] = split_total_across_paid_for(total_value, paid_for_entries)
+        elif sum_values != total_value:
+            cleaned_data["total_value"] = sum_values
+
+        return cleaned_data
 
     def clean_receipts(self):
         field_name = self.add_prefix("receipts")
@@ -100,11 +127,10 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
     def save(self, commit=True):
         instance: ParentTransaction = super().save(commit)
 
-        total_value = Decimal(self.cleaned_data["value"])
-        paid_for_entries = list(self.cleaned_data["paid_for"])
-        shares = split_total_across_paid_for(total_value, paid_for_entries)
-        for debtor, share in zip(paid_for_entries, shares, strict=False):
-            ChildTransaction.objects.create(parent_transaction=instance, paid_for=debtor, value=share)
+        paid_for_entries = self.cleaned_data["paid_for"]
+        values = self.cleaned_data["value"]
+        for debtor_id, share in zip(paid_for_entries, values, strict=False):
+            ChildTransaction.objects.create(parent_transaction=instance, paid_for_id=debtor_id, value=share)
 
         self._save_receipts(instance)
 

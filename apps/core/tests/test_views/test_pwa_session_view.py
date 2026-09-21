@@ -32,6 +32,7 @@ def test_the_token_is_accepted_by_a_form_post(authenticated_client, room, user):
     from apps.transaction.models import Category, ParentTransaction
 
     token = json.loads(authenticated_client.get(reverse("core:pwa-session")).content)["csrf_token"]
+    members = list(room.users.all())
 
     response = authenticated_client.post(
         reverse("transaction:create", kwargs={"room_slug": room.slug}),
@@ -43,9 +44,11 @@ def test_the_token_is_accepted_by_a_form_post(authenticated_client, room, user):
             "paid_at": datetime(2020, 4, 4, 4, 20, 0, tzinfo=UTC),
             "paid_by": user.id,
             "room": room.id,
-            "paid_for": [str(member.id) for member in room.users.all()],
+            "paid_for": [str(member.id) for member in members],
             "room_slug": room.slug,
-            "value": 10,
+            "total_value": 10,
+            "value": ["0.00"] * len(members),
+            "reference_total_value": "0.00",
         },
     )
 

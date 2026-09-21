@@ -186,7 +186,7 @@ import {OUTBOX_SYNC_TAG, buildEntry, putEntry, readEntries} from './outbox.js';
 
   const summarize = (form) => {
     const description = form.querySelector('[name="description"]');
-    const value = form.querySelector('[name="value"]');
+    const value = form.querySelector('[name="total_value"]') || form.querySelector('[name="value"]');
     const parts = [description && description.value, value && value.value].filter(Boolean);
     return parts.join(' · ');
   };
