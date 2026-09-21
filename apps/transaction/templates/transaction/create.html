@@ -344,56 +344,5 @@
       </datalist>
     </form>
   </section>
-  <script nonce="{{ csp_nonce }}">
-        // Splits the total evenly across the current split-rows whenever it changes, so hand-edited
-        // shares only ever get overwritten by a total the visitor entered on purpose - never by
-        // adding or removing a participant. Mirrors split_amount_exact() in apps/transaction/utils.py
-        // (ROUND_HALF_UP, remainder distributed one cent at a time starting at row 0) in integer
-        // cents, so the client-side preview matches what the server persists on submit.
-        (function () {
-            const totalInput = document.getElementById("total_value_input");
-            const referenceInput = document.getElementById("reference_total_value_input");
-            if (!totalInput || !referenceInput) {
-                return;
-            }
-
-            const formatDecimal = (value) => {
-                const parsed = parseFloat(value);
-                return (Number.isNaN(parsed) ? 0 : parsed).toFixed(2);
-            };
-
-            const splitEvenly = (totalStr, shareCount) => {
-                const totalCents = Math.round(parseFloat(totalStr) * 100) || 0;
-                const perCents = Math.round(totalCents / shareCount);
-                const cents = new Array(shareCount).fill(perCents);
-                let remainder = totalCents - perCents * shareCount;
-                const step = remainder > 0 ? 1 : -1;
-                let i = 0;
-                while (remainder !== 0) {
-                    cents[i] += step;
-                    remainder -= step;
-                    i = (i + 1) % shareCount;
-                }
-                return cents.map((cent) => (cent / 100).toFixed(2));
-            };
-
-            const applyEqualSplit = () => {
-                const rowValueInputs = document.querySelectorAll(".split-row input[name='value']");
-                if (rowValueInputs.length === 0) {
-                    return;
-                }
-                const shares = splitEvenly(totalInput.value, rowValueInputs.length);
-                rowValueInputs.forEach((input, index) => {
-                    input.value = shares[index];
-                });
-                referenceInput.value = formatDecimal(totalInput.value);
-            };
-
-            // Playwright's fill() (and some assistive input methods) only ever dispatch "input",
-            // never "change" - listening to both keeps the live preview from silently going stale.
-            totalInput.addEventListener("input", applyEqualSplit);
-            totalInput.addEventListener("change", applyEqualSplit);
-        })();
-  </script>
-  {% render_bundle "category-suggestion" attrs="defer" %}
+  {% render_bundle "transaction-create" attrs="defer" %}
 {% endblock tab_content %}
