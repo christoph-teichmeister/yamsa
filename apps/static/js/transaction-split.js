@@ -11,6 +11,7 @@
 
   const TOTAL_INPUT_SELECTOR = "#total_value_input";
   const REFERENCE_INPUT_SELECTOR = "#reference_total_value_input";
+  const ROW_VALUE_INPUT_SELECTOR = ".split-row input[name='value']";
 
   const formatDecimal = (value) => {
     const parsed = parseFloat(value);
@@ -37,15 +38,17 @@
 
   // Splits the total evenly across the current split-rows whenever it changes, so hand-edited
   // shares only ever get overwritten by a total the visitor entered on purpose - never by adding
-  // or removing a participant.
+  // or removing a participant. A total edit is a deliberate reset: every row (dirty or not) goes
+  // back to an equal share, and none of them count as hand-edited anymore.
   const applyEqualSplit = (totalInput, referenceInput) => {
-    const rowValueInputs = document.querySelectorAll(".split-row input[name='value']");
+    const rowValueInputs = document.querySelectorAll(ROW_VALUE_INPUT_SELECTOR);
     if (rowValueInputs.length === 0) {
       return;
     }
     const shares = splitEvenly(totalInput.value, rowValueInputs.length);
     rowValueInputs.forEach((input, index) => {
       input.value = shares[index];
+      delete input.dataset.dirty;
     });
     referenceInput.value = formatDecimal(totalInput.value);
   };
@@ -64,6 +67,61 @@
     applyEqualSplit(totalInput, referenceInput);
   };
 
+  // A row a visitor actually typed into keeps its amount when a participant is added or removed;
+  // an untouched row is fair game to rebalance - otherwise removing someone silently leaves their
+  // share stuck on whoever is left, instead of folding back into what's still unaccounted for.
+  const markRowDirty = (event) => {
+    const rowInput = event.target.closest(ROW_VALUE_INPUT_SELECTOR);
+    if (rowInput) {
+      rowInput.dataset.dirty = "true";
+    }
+  };
+
+  // Splits whatever the total doesn't already account for (the sum of hand-edited rows) evenly
+  // across the rows nobody has touched yet. Mirrors split_amount_exact() the same way
+  // applyEqualSplit() does, just over a subset of the rows.
+  const redistributeAmongUntouchedRows = () => {
+    const totalInput = document.querySelector(TOTAL_INPUT_SELECTOR);
+    if (!totalInput) {
+      return;
+    }
+
+    const rowValueInputs = document.querySelectorAll(ROW_VALUE_INPUT_SELECTOR);
+    const untouchedInputs = [];
+    let dirtyCents = 0;
+    rowValueInputs.forEach((input) => {
+      if (input.dataset.dirty === "true") {
+        dirtyCents += Math.round((parseFloat(input.value) || 0) * 100);
+      } else {
+        untouchedInputs.push(input);
+      }
+    });
+    if (untouchedInputs.length === 0) {
+      return;
+    }
+
+    const totalCents = Math.round(parseFloat(totalInput.value) * 100) || 0;
+    const remainderCents = Math.max(totalCents - dirtyCents, 0);
+    const shares = splitEvenly((remainderCents / 100).toFixed(2), untouchedInputs.length);
+    untouchedInputs.forEach((input, index) => {
+      input.value = shares[index];
+    });
+  };
+
   document.addEventListener("input", handleTotalInputEvent);
   document.addEventListener("change", handleTotalInputEvent);
+  document.addEventListener("input", markRowDirty);
+  document.addEventListener("change", markRowDirty);
+
+  // "Add participant" swaps a new (untouched) row in via htmx; letting the afterSwap event
+  // settle first is what makes the new row queryable here.
+  document.addEventListener("htmx:afterSwap", redistributeAmongUntouchedRows);
+  // The remove button deletes its own .split-row via a plain DOM removal (see navigation.js),
+  // not an htmx swap, so there is no htmx event to hook into - deferring to the next tick is what
+  // guarantees that removal has already happened by the time this runs, regardless of listener order.
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-split-row-remove]")) {
+      window.setTimeout(redistributeAmongUntouchedRows, 0);
+    }
+  });
 })();
