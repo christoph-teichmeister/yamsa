@@ -8,11 +8,15 @@ html {
 }
 
 /* Preflight paints neither, and `color-scheme` alone only gets the page a browser's idea of a
-   dark ground - close enough to hide that the palette is not being used at all. */
+   dark ground - close enough to hide that the palette is not being used at all. Only the
+   horizontal insets are reserved here (for landscape notches): the sticky top/bottom bars and
+   .app-container already reserve their own vertical safe-area, and stacking a second
+   safe-area-inset-top on top of theirs is what pushed the header far down the screen on phones
+   with a real notch/Dynamic Island inset. */
 body {
     background-color: var(--yamsa-canvas);
     color: var(--yamsa-ink);
-    padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
+    padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
 }
 
 /* Reboot gave every heading its own colour; Preflight lets them inherit the body's. */
