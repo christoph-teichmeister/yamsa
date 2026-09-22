@@ -50,7 +50,7 @@ class TransactionCreatePage(BasePage):
 
     def fill_required_fields(self, *, description: str, amount: str):
         self.type_description(description)
-        self.page.locator("#value").fill(amount)
+        self.page.locator("#total_value_input").fill(amount)
 
     def submit(self):
         self.page.get_by_role("button", name="Add transaction").click()

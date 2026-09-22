@@ -28,6 +28,7 @@ def currency():
 
 
 def _transaction_payload(user, room, currency_id) -> dict[str, Any]:
+    members = list(room.users.all())
     return {
         "category": Category.objects.get(slug="groceries").id,
         "description": "Receipt upload",
@@ -35,9 +36,11 @@ def _transaction_payload(user, room, currency_id) -> dict[str, Any]:
         "paid_at": datetime(2020, 1, 1, 12, 0, tzinfo=UTC),
         "paid_by": user.id,
         "room": room.id,
-        "paid_for": [str(user.id) for user in room.users.all()],
+        "paid_for": [str(member.id) for member in members],
         "room_slug": room.slug,
-        "value": Decimal("10"),
+        "total_value": Decimal("10"),
+        "value": ["0.00"] * len(members),
+        "reference_total_value": "0.00",
     }
 
 

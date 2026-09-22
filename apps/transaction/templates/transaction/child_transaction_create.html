@@ -1,8 +1,9 @@
 {% load i18n %}
 {% comment %}
-One more share on the edit form, swapped in place of #add-child-transaction-container. It must
-mirror the split rows that template renders, down to the `.split-row` hook the remove handler in
-navigation.js and the total-lock script address.
+One more share on the create/edit form, swapped in place of #add-child-transaction-container. It
+must mirror the split rows those templates render, down to the `.split-row` hook the remove
+handler in navigation.js and the total-lock script address. Uses `current_room` rather than
+`parent_transaction` for the currency sign, since the create flow has no ParentTransaction yet.
 {% endcomment %}
 <div class="split-row rounded-2xl border border-line bg-surface-sunken/40 p-4 transition hover:border-brand/40">
   <div class="grid grid-cols-1 items-end gap-3 @md:grid-cols-[1fr_1fr_auto]">
@@ -10,7 +11,7 @@ navigation.js and the total-lock script address.
       <label class="mb-1.5 block text-xs font-semibold tracking-wider text-ink-subtle uppercase"
              for="value_input_new">{% trans "Amount" %}</label>
       <div class="relative">
-        <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-subtle">{{ parent_transaction.currency.sign }}</span>
+        <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-subtle">{{ current_room.preferred_currency.sign }}</span>
         <input id="value_input_new"
                class="w-full rounded-lg border border-line-strong bg-surface py-2 pr-3 pl-8 font-medium text-ink transition read-only:cursor-not-allowed read-only:opacity-75 focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                type="number"

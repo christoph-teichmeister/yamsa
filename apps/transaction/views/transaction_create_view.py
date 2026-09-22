@@ -34,6 +34,14 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
         kwargs = super().get_form_kwargs()
         kwargs.setdefault("request", self.request)
         kwargs.setdefault("room", self.request.room)
+
+        if self.request.method == "POST":
+            # SimpleArrayField expects a single delimited value, not Django's default QueryDict
+            # multi-value handling - same conversion TransactionEditView.get_form_kwargs() does.
+            kwargs["data"]._mutable = True
+            for field in ("paid_for", "value"):
+                kwargs["data"][field] = kwargs["data"].getlist(field)
+
         return kwargs
 
     def form_invalid(self, form):
@@ -143,7 +151,8 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
         # Minted per rendered form rather than in the browser, so a submission that never reaches
         # JavaScript still carries one.
         context["client_request_id"] = uuid.uuid4()
-        context["selected_paid_for"] = self._build_selected_paid_for()
+        context["split_rows"] = self._build_split_rows()
+        context["reference_total_value"] = self._build_reference_total_value()
 
         form = context.get("form")
 
@@ -155,10 +164,26 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
         return context
 
-    def _build_selected_paid_for(self):
+    def _build_split_rows(self):
+        """One row per beneficiary, each with the amount to pre-fill in its split-row input.
+
+        Reconstructed from POST on a failed submission, so a validation error does not discard
+        beneficiaries the visitor already added or amounts they already edited by hand.
+        """
         if self.request.method == "POST":
-            return [str(user_id) for user_id in self.request.POST.getlist("paid_for")]
-        return [str(user_id) for user_id in self.request.room.users.values_list("id", flat=True)]
+            paid_for_ids = self.request.POST.getlist("paid_for")
+            values = self.request.POST.getlist("value")
+            return [
+                {"paid_for_id": paid_for_id, "value": value}
+                for paid_for_id, value in zip(paid_for_ids, values, strict=False)
+            ]
+        room_user_ids = self.request.room.users.values_list("id", flat=True)
+        return [{"paid_for_id": str(user_id), "value": "0.00"} for user_id in room_user_ids]
+
+    def _build_reference_total_value(self):
+        if self.request.method == "POST":
+            return self.request.POST.get("reference_total_value", "0.00")
+        return "0.00"
 
     def _build_selected_paid_by(self, form):
         posted = self.request.POST.get("paid_by")

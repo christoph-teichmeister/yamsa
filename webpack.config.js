@@ -22,7 +22,7 @@ module.exports = {
     navigation: path.resolve(staticJsPath, "navigation.js"),
     offline: path.resolve(staticJsPath, "offline.js"),
     "suggested-guests": path.resolve(staticJsPath, "suggested-guests.js"),
-    "category-suggestion": path.resolve(staticJsPath, "category-suggestion.js"),
+    "transaction-create": path.resolve(staticJsPath, "transaction-create.js"),
     sheet: path.resolve(staticJsPath, "sheet.js"),
     dialog: path.resolve(staticJsPath, "dialog.js"),
     "password-visibility": path.resolve(staticJsPath, "password-visibility.js"),

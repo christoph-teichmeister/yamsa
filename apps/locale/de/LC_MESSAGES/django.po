@@ -1637,8 +1637,8 @@ msgstr "Maximal 50 Zeichen."
 msgid "Amount paid"
 msgstr "Bezahlter Betrag"
 
-msgid "Total paid in the selected currency."
-msgstr "In der gewählten Währung insgesamt bezahlt."
+msgid "Total paid in the selected currency. Splitting evenly by default - adjust individual shares below."
+msgstr "In der gewählten Währung insgesamt bezahlt. Standardmäßig gleichmäßig aufgeteilt - einzelne Anteile unten anpassen."
 
 msgid "Who paid?"
 msgstr "Wer hat bezahlt?"
@@ -1649,8 +1649,20 @@ msgstr "Die Person, die diese Ausgabe getragen hat."
 msgid "Split between"
 msgstr "Aufgeteilt auf"
 
-msgid "Hold Cmd/Ctrl to adjust beneficiaries."
-msgstr "Halte Cmd/Ctrl gedrückt, um die Begünstigten anzupassen."
+msgid "Splits evenly by default - edit an amount to give someone a different share."
+msgstr "Standardmäßig gleichmäßig aufgeteilt - einen Betrag anpassen, um jemandem einen anderen Anteil zu geben."
+
+#, python-format
+msgid "%(participant_count)s person"
+msgid_plural "%(participant_count)s people"
+msgstr[0] "%(participant_count)s Person"
+msgstr[1] "%(participant_count)s Personen"
+
+msgid "No participants yet."
+msgstr "Noch keine Teilnehmer."
+
+msgid "Add participant"
+msgstr "Teilnehmer hinzufügen"
 
 msgid "Optional"
 msgstr "Optional"
@@ -1766,20 +1778,11 @@ msgstr "Aktueller Split: %(split_total)s%(split_currency)s"
 msgid "Update each share or remove it entirely."
 msgstr "Aktualisiere jeden Anteil oder entferne ihn vollständig."
 
-#, python-format
-msgid "%(participant_count)s person"
-msgid_plural "%(participant_count)s people"
-msgstr[0] "%(participant_count)s Person"
-msgstr[1] "%(participant_count)s Personen"
-
 msgid "⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically."
 msgstr "⚠️ Gesamte Änderungen sperren einzelne Anteile; das Backend gleicht die Splits automatisch aus."
 
 msgid "No split entries yet."
 msgstr "Noch keine Splits erfasst."
-
-msgid "Add participant"
-msgstr "Teilnehmer hinzufügen"
 
 msgid "Add extra notes here"
 msgstr "Hier zusätzliche Notizen hinzufügen"
