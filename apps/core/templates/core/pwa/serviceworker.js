@@ -210,9 +210,9 @@ self.addEventListener("fetch", (event) => {
 
   const normalisedRequestUrl = normalizeUrl(request.url);
   const isDocument = request.mode === "navigate" || request.destination === "document";
-  // Answering an app asset from the cache first would strand the client on it for good: the URLs
-  // carry no content hash (render_bundle emits bundles/<name>.bundle.js in every environment), so
-  // no later build can invalidate the entry. The cache is the offline fallback, not the source.
+  // Answering an app asset from the cache first would risk stranding the client on it for good:
+  // webpack bundles and Django's own static files are content-hashed, but nothing here checks
+  // that every request under this prefix is. The cache is the offline fallback, not the source.
   const isAppAsset =
     normalisedRequestUrl.startsWith(`${SAME_ORIGIN}${STATIC_URL_PREFIX}`) ||
     PRECACHE_URL_SET.has(normalisedRequestUrl);

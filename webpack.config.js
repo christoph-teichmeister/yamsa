@@ -31,7 +31,10 @@ module.exports = {
     htmx: path.resolve(staticJsPath, "htmx.js"),
   },
   output: {
-    filename: "[name].bundle.js",
+    // Content-hashed: a rebuild that changes a bundle's content gets a new URL, so a stale
+    // browser cache can only ever serve a URL matching what it cached, instead of a fixed
+    // name silently serving whatever the last deploy overwrote it with.
+    filename: "[name].[contenthash:8].bundle.js",
     path: bundlesPath,
     publicPath: "/static/bundles/",
     clean: true,
@@ -61,7 +64,7 @@ module.exports = {
       htmx: ["htmx.org", "default"],
     }),
     new MiniCssExtractPlugin({
-      filename: "[name].bundle.css",
+      filename: "[name].[contenthash:8].bundle.css",
     }),
     new BundleTracker({
       path: bundlesPath,
