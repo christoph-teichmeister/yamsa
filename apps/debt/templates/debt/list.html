@@ -126,7 +126,9 @@
       {% endif %}
       <div class="divide-y divide-line border-t border-line">
         {% for debt in debts %}
-          <div class="flex flex-col gap-2 px-5 py-4{% if debt.settled %} bg-surface-sunken{% endif %}">
+          {# data-debt-row is what the e2e suite addresses a row by; nothing else reads it. #}
+          <div class="flex flex-col gap-2 px-5 py-4{% if debt.settled %} bg-surface-sunken{% endif %}"
+               data-debt-row="{{ debt.id }}">
             {% comment %}
               Centred rather than baseline-aligned: the debtor/creditor pair on the left is taller
               than the sentence it belongs to.
