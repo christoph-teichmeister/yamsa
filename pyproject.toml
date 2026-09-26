@@ -232,5 +232,5 @@ ban-relative-imports = "all"
 
 [dependency-groups]
 dev = [
-    "djlint==1.46.1",
+    "djlint==1.46.2",
 ]

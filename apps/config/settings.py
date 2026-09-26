@@ -987,6 +987,19 @@ if env.bool("DJANGO_TESTING", False) or any(keyword in sys.argv for keyword in (
     environ.Env.read_env(env_file=base("unittest.env"))
 
     DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
+    if E2E_TESTING:
+        # pytest-django hands an in-memory SQLite database to the live server as one connection
+        # shared by every request thread, so two requests a page fires at once (a form post
+        # beside /pwa/session/ or a service-worker warm-up) collide and fail with "database table
+        # is locked" - a 500, or a 400 when it hits the session save. A file gives each thread
+        # its own connection; WAL lets reads run beside a write, and IMMEDIATE takes the write
+        # lock when a transaction opens, so a writer waits out the timeout instead of failing.
+        DATABASES["default"]["TEST"] = {"NAME": str(BASE_DIR / "e2e-test.sqlite3")}
+        DATABASES["default"]["OPTIONS"] = {
+            "timeout": 20,
+            "transaction_mode": "IMMEDIATE",
+            "init_command": "PRAGMA journal_mode=WAL;",
+        }
     TEST_RUN = True
     WEBPUSH_NOTIFICATION_CLASS = "apps.webpush.dataclasses.TestNotification"
 

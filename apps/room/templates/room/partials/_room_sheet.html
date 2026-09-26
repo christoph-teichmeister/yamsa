@@ -195,12 +195,14 @@
           <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
                   data-dialog-close>{% trans "Cancel" %}</button>
+          {# hx-push-url: htmx follows the view's redirect without touching the address bar, which would otherwise stay on the deleted room and 404 on reload. #}
           <button id="delete-room-confirm-button"
                   class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-danger-soft px-4 py-2 text-sm font-semibold text-danger-text transition hover:border-danger-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
                   hx-post="{% room_url 'room:delete' %}"
                   hx-target="#body"
-                  hx-swap="innerHTML">{% trans "Delete forever" %}</button>
+                  hx-swap="innerHTML"
+                  hx-push-url="true">{% trans "Delete forever" %}</button>
         </div>
       </div>
     </dialog>
