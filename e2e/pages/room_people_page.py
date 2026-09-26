@@ -14,8 +14,32 @@ class RoomPeoplePage(BasePage):
         with self.page.expect_response(lambda response: "/guest/create/" in response.url):
             self.page.get_by_role("button", name="Add guest").click()
 
+    def add_existing_user(self, email: str):
+        self.page.get_by_role("button", name="Add existing user").click()
+        self.page.locator("#id_email").fill(email)
+        with self.page.expect_response(lambda response: "/userconnectiontoroom/create" in response.url):
+            self.page.get_by_role("button", name="Add existing user").click()
+
+    def remove_member(self, name: str):
+        # hx-confirm asks through the browser's own confirm(), which Playwright would dismiss.
+        self.page.once("dialog", lambda dialog: dialog.accept())
+        with self.page.expect_response(lambda response: "/remove-from-room/" in response.url):
+            self.member_card(name).get_by_role("button", name="Remove from room").click()
+
+    def member_card(self, name: str):
+        return self.page.locator("#body article").filter(has_text=name)
+
     def expect_member(self, name: str):
-        expect(self.page.locator("#body article").filter(has_text=name)).to_have_count(1)
+        expect(self.member_card(name)).to_have_count(1)
+
+    def expect_no_member(self, name: str):
+        expect(self.member_card(name)).to_have_count(0)
+
+    def expect_field_error(self, message: str):
+        expect(self.page.locator("#body form p.text-danger-text")).to_contain_text(message)
+
+    def expect_toast(self, message: str):
+        expect(self.page.locator("#toast-message-span")).to_contain_text(message)
 
     def share_url(self) -> str:
         # Read off the copy button rather than the clipboard, which headless Chromium keeps
