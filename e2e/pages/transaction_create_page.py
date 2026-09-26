@@ -50,7 +50,50 @@ class TransactionCreatePage(BasePage):
 
     def fill_required_fields(self, *, description: str, amount: str):
         self.type_description(description)
+        self.set_total(amount)
+
+    def set_total(self, amount: str):
         self.page.locator("#total_value_input").fill(amount)
+
+    def shares(self) -> dict[str, str]:
+        """Each split row's amount, keyed by the participant it is for.
+
+        By name rather than position: the rows follow the room's member order, which a test does
+        not control.
+        """
+        return dict(
+            self.page.locator(".split-row").evaluate_all(
+                """rows => rows.map(row => [
+                    row.querySelector("select[name='paid_for']").selectedOptions[0].text.trim(),
+                    row.querySelector("input[name='value']").value,
+                ])"""
+            )
+        )
+
+    def expect_shares(self, expected: dict[str, str]):
+        # Per row through expect() rather than one comparison of shares(): a removal rebalances
+        # on the next tick, so the amounts may still be settling when this is called.
+        expect(self.page.locator(".split-row")).to_have_count(len(expected))
+        assert sorted(self.shares()) == sorted(expected)
+        for participant, amount in expected.items():
+            expect(self._row_for(participant).locator("input[name='value']")).to_have_value(amount)
+
+    def _row_for(self, participant: str):
+        names = list(self.shares())
+        return self.page.locator(".split-row").nth(names.index(participant))
+
+    def set_share(self, participant: str, amount: str):
+        self._row_for(participant).locator("input[name='value']").fill(amount)
+
+    def remove_share(self, participant: str):
+        self._row_for(participant).get_by_role("button", name="Remove this share").click()
+
+    def add_participant(self, participant: str):
+        rows = self.page.locator(".split-row")
+        row_count = rows.count()
+        self.page.get_by_role("button", name="Add participant").click()
+        expect(rows).to_have_count(row_count + 1)
+        rows.last.locator("select[name='paid_for']").select_option(label=participant)
 
     def submit(self):
         self.page.get_by_role("button", name="Add transaction").click()
