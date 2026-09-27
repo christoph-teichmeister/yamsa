@@ -4,14 +4,11 @@ from typing import Any
 from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
-from django.db import transaction
 from django.utils import timezone
 
 from apps.account.models import User
-from apps.core.event_loop.runner import handle_message
 from apps.room.models import Room
 from apps.transaction.forms.mixins.room_category_field import RoomCategoryFieldMixin
-from apps.transaction.messages.events.transaction import ParentTransactionUpdated
 from apps.transaction.models import ChildTransaction, ParentTransaction
 from apps.transaction.utils import split_total_across_paid_for
 
@@ -75,15 +72,10 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
         return cleaned_data
 
     def save(self, commit=True):
-        # Call the super class's .save() and get the ParentTransaction instance
+        # Only persists: the transaction boundary and the ParentTransactionUpdated event belong to
+        # the view, after the rows are written (see AGENTS.md, #333).
         instance: ParentTransaction = super().save(commit)
-
         self._save_child_transactions(instance)
-
-        # Handle any necessary post-update actions
-        handle_message(ParentTransactionUpdated(context_data={"parent_transaction": instance, "room": instance.room}))
-
-        # Return the saved ParentTransaction instance
         return instance
 
     def _save_child_transactions(self, instance: ParentTransaction):
@@ -141,10 +133,9 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
                 )
 
         # Use a bulk update to efficiently update multiple child transactions
-        with transaction.atomic():
-            ChildTransaction.objects.bulk_update(
-                objs=updated_child_transactions, fields=("paid_for", "value", "lastmodified_by", "lastmodified_at")
-            )
+        ChildTransaction.objects.bulk_update(
+            objs=updated_child_transactions, fields=("paid_for", "value", "lastmodified_by", "lastmodified_at")
+        )
 
     def _current_total_value(self) -> Decimal:
         raw_value = getattr(self.instance, "value", None)

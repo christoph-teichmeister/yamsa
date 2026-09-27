@@ -1,10 +1,14 @@
+from django.db import transaction
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
+from apps.core.event_loop.runner import handle_message
 from apps.room.views.mixins import RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
+from apps.transaction.messages.events.transaction import ParentTransactionUpdated
 from apps.transaction.models import ParentTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
@@ -33,6 +37,17 @@ class TransactionEditView(RoomNotClosedRequiredMixin, TransactionBaseContext, ge
                 form_kwargs["data"][field] = form_kwargs["data"].getlist(field)
 
         return form_kwargs
+
+    def form_valid(self, form):
+        # The parent and its shares are written together or not at all; the event only follows
+        # once they are committed, so its handlers never run inside the transaction (#333).
+        with transaction.atomic():
+            self.object = form.save()
+
+        handle_message(
+            ParentTransactionUpdated(context_data={"parent_transaction": self.object, "room": self.object.room})
+        )
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse(
