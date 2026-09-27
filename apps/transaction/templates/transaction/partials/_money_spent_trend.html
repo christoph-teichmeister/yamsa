@@ -46,7 +46,9 @@ The chart's own SVG rules stay in a stylesheet: d3 generates .trend-line-path, .
   </div>
   {% if trend_series %}
     <div class="relative mt-4 w-full">
-      <div id="trend-line-chart" class="trend-line-chart"></div>
+      <div id="trend-line-chart"
+           class="trend-line-chart"
+           data-not-enough-data-message="{% trans "Not enough data to render the chart yet." %}"></div>
     </div>
     {{ trend_chart_data|json_script:"trend-chart-data" }}
   {% else %}

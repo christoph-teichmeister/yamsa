@@ -59,3 +59,19 @@ class TestCategoryBreakdown:
         ).navigate()
 
         expect(page.get_by_text("No tracked expenses yet.")).to_be_visible()
+
+    def test_the_donut_is_drawn_when_arriving_from_another_chart_page(self, open_insights, page, spending_room):
+        # Both pages used to end in an inline chart script, and a morph from one to the other
+        # left the new page's script unrun. Nothing links them directly yet; any #body swap
+        # between them does what such a link would.
+        insights_page = open_insights("debt:money-spent-on-room")
+        insights_page.reveal_trend()
+        expect(insights_page.trend.locator("#trend-line-chart svg")).to_have_count(2)
+
+        page.evaluate(
+            "url => htmx.ajax('GET', url, {target: '#body', swap: 'morph:innerHTML'})",
+            reverse("transaction:category-breakdown", kwargs={"room_slug": spending_room.slug}),
+        )
+
+        eur_chart = page.locator('[data-category-breakdown="EUR"] [data-transaction-category-chart]')
+        expect(eur_chart.get_by_role("button", name="🛒 Groceries: 1,200.00€")).to_be_visible()

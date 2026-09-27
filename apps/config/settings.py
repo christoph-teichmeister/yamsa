@@ -656,6 +656,7 @@ PWA_SERVICE_WORKER = {
         "offline": "js",
         "dialog": "js",
         "transaction-list": "js",
+        "charts": "js",
     },
     "static_url_prefix": STATIC_URL,
     # Ceiling on the HTML pages kept for offline reading. Room pages are the point of the cache and
