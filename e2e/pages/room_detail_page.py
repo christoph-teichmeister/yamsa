@@ -104,3 +104,40 @@ class RoomDetailPage(BasePage):
 
     def expect_url_is_the_room(self):
         expect(self.page).to_have_url(re.compile(r"/detail$"))
+
+    @property
+    def seal(self):
+        """The seal in the sheet's header, inside the button that opens its dialog."""
+        return self.page.locator("#room-sheet [data-dialog-open='room-seal-dialog'] .room-seal")
+
+    @property
+    def seal_dialog(self):
+        return self.page.locator("#room-seal-dialog")
+
+    def open_seal_dialog(self):
+        self.page.get_by_role("button", name="Change room seal").click()
+        expect(self.seal_dialog).to_be_visible()
+
+    def pick_seal_icon(self, icon_name: str):
+        with self.page.expect_response(lambda response: response.url.endswith("/seal/icon")):
+            self.seal_dialog.get_by_role("button", name=icon_name, exact=True).click()
+
+    def upload_seal_image(self, file_name: str, content: bytes, mime_type: str = "image/png"):
+        # The input posts itself through htmx on change, so the file is set on it directly.
+        with self.page.expect_response(lambda response: response.url.endswith("/seal/image")):
+            self.seal_dialog.locator("#room-seal-image-input").set_input_files(
+                {"name": file_name, "mimeType": mime_type, "buffer": content}
+            )
+
+    def reset_seal(self):
+        # hx-confirm asks through the browser's own confirm(), which Playwright would dismiss.
+        self.page.once("dialog", lambda dialog: dialog.accept())
+        with self.page.expect_response(lambda response: response.url.endswith("/seal/reset")):
+            self.seal_dialog.get_by_role("button", name="Reset to default").click()
+
+    def expect_seal_icon(self, icon_name: str):
+        expect(self.seal.locator("img")).to_have_count(0)
+        expect(self.seal.locator("svg use").first).to_have_attribute("href", re.compile(rf"#{re.escape(icon_name)}$"))
+
+    def expect_seal_image(self):
+        expect(self.seal.locator("img")).to_have_count(1)
