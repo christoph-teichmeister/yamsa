@@ -3,10 +3,11 @@ from django.urls import reverse
 from django.views import View
 
 from apps.room.forms import RoomSealIconForm
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 from apps.room.views.mixins.room_sheet_response import RoomSheetResponseMixin
 
 
-class RoomSealIconUpdateView(RoomSheetResponseMixin, View):
+class RoomSealIconUpdateView(RoomNotClosedRequiredMixin, RoomSheetResponseMixin, View):
     """Pick one of the predefined seal icons, replacing any custom image."""
 
     def post(self, request, *args, **kwargs):

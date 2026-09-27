@@ -10,15 +10,19 @@
   narrower swap target because the header it lives in is part of that one sheet.
 {% endcomment %}
 <div class="relative shrink-0">
-  <button class="group/seal relative flex size-12 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0"
+  <button class="group/seal relative flex size-12 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 disabled:cursor-default"
           type="button"
           aria-haspopup="dialog"
           aria-label="{% trans "Change room seal" %}"
           title="{% trans "Change room seal" %}"
-          data-dialog-open="room-seal-dialog">
+          data-dialog-open="room-seal-dialog"
+          {% if room.is_closed %}disabled aria-disabled="true"{% endif %}>
     {% include "room/partials/_room_seal.html" with icon=room|room_seal_icon tilt=room|room_seal_tilt image_url=room.seal_image_url size_class="size-12" %}
-    <span class="pointer-events-none absolute inset-0 flex items-center justify-center rounded-full bg-black/45 text-sm text-white opacity-0 transition-opacity group-hover/seal:opacity-100 group-has-focus-visible/seal:opacity-100"
-          aria-hidden="true">{% icon "camera" %}</span>
+    {# A closed room's seal cannot change, so it offers no camera to hint that it could. #}
+    {% if not room.is_closed %}
+      <span class="pointer-events-none absolute inset-0 flex items-center justify-center rounded-full bg-black/45 text-sm text-white opacity-0 transition-opacity group-hover/seal:opacity-100 group-has-focus-visible/seal:opacity-100"
+            aria-hidden="true">{% icon "camera" %}</span>
+    {% endif %}
   </button>
   <dialog id="room-seal-dialog"
           class="m-auto w-[min(24rem,calc(100vw_-_2rem))] rounded-lg border border-line bg-surface p-0 text-ink backdrop:bg-black/60"

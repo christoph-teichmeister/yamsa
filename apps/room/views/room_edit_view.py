@@ -6,11 +6,12 @@ from django_context_decorator import context
 
 from apps.room.forms import RoomEditForm
 from apps.room.models import Room
+from apps.room.views.mixins import RoomNotClosedRequiredMixin
 from apps.room.views.mixins.room_base_context import RoomBaseContext
 from apps.room.views.mixins.room_sheet_response import RoomSheetResponseMixin
 
 
-class RoomEditView(RoomSheetResponseMixin, RoomBaseContext, generic.UpdateView):
+class RoomEditView(RoomNotClosedRequiredMixin, RoomSheetResponseMixin, RoomBaseContext, generic.UpdateView):
     # The sheet is editable wherever it is shown, so this view has no page of its own: it is the
     # POST target, and a GET on it belongs on the room.
     template_name = "room/detail.html"

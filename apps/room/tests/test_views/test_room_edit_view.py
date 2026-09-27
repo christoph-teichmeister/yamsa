@@ -107,3 +107,19 @@ class TestRoomEditView:
 
         room.refresh_from_db()
         assert room.lastmodified_by == user
+
+    def test_post_closed_room_is_rejected(self, authenticated_client, closed_room):
+        original_name = closed_room.name
+
+        response = authenticated_client.post(
+            reverse("room:edit", kwargs={"room_slug": closed_room.slug}),
+            data={
+                "name": "Renamed while closed",
+                "description": closed_room.description,
+                "preferred_currency": closed_room.preferred_currency_id,
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
+        closed_room.refresh_from_db()
+        assert closed_room.name == original_name
