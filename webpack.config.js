@@ -23,6 +23,7 @@ module.exports = {
     offline: path.resolve(staticJsPath, "offline.js"),
     "suggested-guests": path.resolve(staticJsPath, "suggested-guests.js"),
     "transaction-create": path.resolve(staticJsPath, "transaction-create.js"),
+    "transaction-list": path.resolve(staticJsPath, "transaction-list.js"),
     sheet: path.resolve(staticJsPath, "sheet.js"),
     dialog: path.resolve(staticJsPath, "dialog.js"),
     "password-visibility": path.resolve(staticJsPath, "password-visibility.js"),
