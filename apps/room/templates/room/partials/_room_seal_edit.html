@@ -43,12 +43,13 @@
         <p class="mb-2 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Choose an icon" %}</p>
         <div class="grid grid-cols-4 gap-2">
           {% room_seal_icons as seal_icons %}
-          {% for icon_name in seal_icons %}
+          {% for icon_name, icon_label in seal_icons %}
             <button class="flex size-12 w-full cursor-pointer items-center justify-center rounded-lg border text-lg transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand {% if room.seal_icon == icon_name and not room.seal_image %}border-brand bg-brand-soft text-brand-text{% else %}border-line bg-surface-sunken text-ink{% endif %}"
                     type="button"
                     name="seal_icon"
                     value="{{ icon_name }}"
-                    aria-label="{{ icon_name }}"
+                    aria-label="{{ icon_label }}"
+                    aria-pressed="{% if room.seal_icon == icon_name and not room.seal_image %}true{% else %}false{% endif %}"
                     hx-post="{% room_url 'room:seal-icon-update' %}"
                     hx-target="#room-sheet"
                     hx-swap="outerHTML"

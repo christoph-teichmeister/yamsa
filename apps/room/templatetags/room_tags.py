@@ -9,7 +9,7 @@ from django.utils.timesince import timesince
 from django.utils.translation import gettext as _
 
 from apps.core.utils import format_number_with_thousands
-from apps.room.room_seal import SEAL_ICONS
+from apps.room.room_seal import SEAL_ICON_LABELS, SEAL_ICONS
 
 register = template.Library()
 
@@ -27,9 +27,10 @@ def room_seal_tilt(room):
 
 @register.simple_tag
 def room_seal_icons():
-    """The predefined seal icons a member can pick from - not view context, so the picker works
-    wherever the room sheet renders without every view having to thread it through."""
-    return SEAL_ICONS
+    """The predefined seal icons a member can pick from, as (icon name, label) pairs - not view
+    context, so the picker works wherever the room sheet renders without every view having to
+    thread it through."""
+    return [(icon_name, SEAL_ICON_LABELS[icon_name]) for icon_name in SEAL_ICONS]
 
 
 @register.simple_tag(takes_context=True)

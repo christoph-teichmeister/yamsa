@@ -39,6 +39,17 @@ class TestRoomSeal:
         logged_in_room_detail_page.expect_seal_icon(other_icon)
         assert _stored_seal(shared_room) == (other_icon, False)
 
+    def test_each_icon_is_announced_by_name_and_the_chosen_one_as_pressed(self, logged_in_room_detail_page, other_icon):
+        logged_in_room_detail_page.open_seal_dialog()
+        logged_in_room_detail_page.pick_seal_icon(other_icon)
+
+        logged_in_room_detail_page.open_seal_dialog()
+
+        expect(logged_in_room_detail_page.seal_dialog.get_by_role("button", name="palette2")).to_have_count(0)
+        for icon_name in SEAL_ICONS:
+            expected = "true" if icon_name == other_icon else "false"
+            expect(logged_in_room_detail_page.seal_icon_button(icon_name)).to_have_attribute("aria-pressed", expected)
+
     def test_picking_an_icon_leaves_the_rest_of_the_sheet_pristine(self, logged_in_room_detail_page, other_icon):
         logged_in_room_detail_page.open_seal_dialog()
 

@@ -2,6 +2,7 @@ import re
 
 from playwright.sync_api import expect
 
+from apps.room.room_seal import SEAL_ICON_LABELS
 from e2e.pages.base_page import BasePage
 
 
@@ -118,9 +119,13 @@ class RoomDetailPage(BasePage):
         self.page.get_by_role("button", name="Change room seal").click()
         expect(self.seal_dialog).to_be_visible()
 
+    def seal_icon_button(self, icon_name: str):
+        # By the label a screen reader announces, which is what the button is named by.
+        return self.seal_dialog.get_by_role("button", name=str(SEAL_ICON_LABELS[icon_name]), exact=True)
+
     def pick_seal_icon(self, icon_name: str):
         with self.page.expect_response(lambda response: response.url.endswith("/seal/icon")):
-            self.seal_dialog.get_by_role("button", name=icon_name, exact=True).click()
+            self.seal_icon_button(icon_name).click()
 
     def upload_seal_image(self, file_name: str, content: bytes, mime_type: str = "image/png"):
         # The input posts itself through htmx on change, so the file is set on it directly.
