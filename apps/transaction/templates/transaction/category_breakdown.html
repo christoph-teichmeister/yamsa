@@ -103,9 +103,9 @@
                             data-category-color="{{ category.color|default:'' }}"
                             aria-hidden="true">{{ category.emoji }}</span>
                       <span class="min-w-0">
-                        <span class="block truncate font-semibold text-ink">{{ category.name }}</span>
-                        <span class="block truncate text-sm text-ink-muted"
-                              data-category-slug-label>{{ category.slug|title }}</span>
+                        <span class="block truncate font-semibold text-ink"
+                              data-category-name>{{ category.name }}</span>
+                        <span class="block truncate text-sm text-ink-muted" data-category-share>{% blocktrans with share=category.share_percent|floatformat:1 %}{{ share }}% of the total{% endblocktrans %}</span>
                       </span>
                     </span>
                     <span class="flex shrink-0 items-center gap-2">

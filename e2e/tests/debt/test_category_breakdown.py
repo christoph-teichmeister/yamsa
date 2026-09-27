@@ -31,6 +31,12 @@ class TestCategoryBreakdown:
         assert insights_page.legend_items("EUR") == [("Groceries", "1,200.00€"), ("Restaurants & Bars", "30.00€")]
         assert insights_page.legend_items("CHF") == [("Activities", "10.00Fr")]
 
+    def test_each_category_names_its_share_of_its_currency(self, open_insights):
+        insights_page = open_insights("transaction:category-breakdown")
+
+        assert insights_page.legend_shares("EUR") == ["97.6% of the total", "2.4% of the total"]
+        assert insights_page.legend_shares("CHF") == ["100.0% of the total"]
+
     def test_each_currency_gets_a_donut_with_a_slice_per_category(self, open_insights, page):
         open_insights("transaction:category-breakdown")
 

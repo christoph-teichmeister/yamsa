@@ -58,11 +58,14 @@ class RoomInsightsPage(BasePage):
             .locator("[data-category-legend-item]")
             .evaluate_all(
                 """items => items.map(item => [
-                    item.querySelector("[data-category-slug-label]").previousElementSibling.innerText.trim(),
+                    item.querySelector("[data-category-name]").innerText.trim(),
                     item.querySelector("[data-category-amount]").innerText.trim(),
                 ])"""
             )
         ]
+
+    def legend_shares(self, currency_code: str) -> list[str]:
+        return self.legend(currency_code).locator("[data-category-share]").all_inner_texts()
 
     def open_legend_entry(self, currency_code: str, category_slug: str):
         self.legend(currency_code).locator(f'[data-category-slug="{category_slug}"]').click()

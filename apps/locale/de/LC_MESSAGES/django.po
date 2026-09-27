@@ -1615,6 +1615,10 @@ msgstr "Tippe auf eine Kategorie, um ihre Transaktionen zu sehen."
 msgid "Show transactions for %(category_name)s"
 msgstr "Transaktionen für %(category_name)s anzeigen"
 
+#, python-format
+msgid "%(share)s%% of the total"
+msgstr "%(share)s %% der Summe"
+
 msgid "No tracked expenses yet. Add a transaction to populate the breakdown."
 msgstr "Noch keine erfassten Ausgaben. Füge eine Transaktion hinzu, um die Aufschlüsselung zu füllen."
 
