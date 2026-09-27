@@ -19,17 +19,11 @@ class ParentTransactionDeleteView(RoomNotClosedRequiredMixin, TransactionBaseCon
         )
 
     def form_valid(self, form):
-        handle_message(
-            ParentTransactionDeleted(
-                context_data={
-                    "parent_transaction": self.object,
-                    "room": self.object.room,
-                    "user_who_deleted": self.request.user,
-                }
-            )
-        )
+        deleted = ParentTransactionDeleted.context_before_deletion(self.object, user_who_deleted=self.request.user)
 
         self.object.child_transactions.all().delete()
         form_valid_return = super().form_valid(form)
+
+        handle_message(ParentTransactionDeleted(context_data=deleted))
 
         return form_valid_return

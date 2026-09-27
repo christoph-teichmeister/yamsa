@@ -27,3 +27,13 @@ class TestRoomSealResetView:
         room.refresh_from_db()
         assert room.seal_icon == ""
         assert not room.seal_image
+
+    def test_post_closed_room_is_rejected(self, authenticated_client, closed_room):
+        closed_room.seal_icon = SEAL_ICONS[0]
+        closed_room.save(update_fields=["seal_icon"])
+
+        response = authenticated_client.post(reverse("room:seal-reset", kwargs={"room_slug": closed_room.slug}))
+
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
+        closed_room.refresh_from_db()
+        assert closed_room.seal_icon == SEAL_ICONS[0]

@@ -78,9 +78,9 @@ def test_send_notification_on_child_transaction_deleted_localizes_body_per_recip
         mock.patch("apps.webpush.handlers.events.events.Notification", wraps=Notification) as mocked_notification,
     ):
         send_notification_on_child_transaction_deleted(
-            context=ParentTransactionDeleted.Context(
-                parent_transaction=parent_transaction, room=room, user_who_deleted=user
-            )
+            context=ParentTransactionDeleted(
+                context_data=ParentTransactionDeleted.context_before_deletion(parent_transaction, user_who_deleted=user)
+            ).Context
         )
 
     recipients = [call.args[0] for call in mocked_send.call_args_list]

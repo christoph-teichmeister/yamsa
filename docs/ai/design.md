@@ -607,7 +607,7 @@ The transaction pages keep three more: `.transaction-meta` (the first one must n
 `e2e/pages/transaction_detail_page.py`), `.transaction-breakdown-item` and `.graph-label`. The
 category legend moved the other way: its tests used to select `.list-group-item`, `p.text-muted.small`
 and `span.fw-semibold`, and now read `[data-category-legend]`, `[data-category-legend-item]`,
-`[data-category-slug-label]` and `[data-category-amount]` — a hook that says what it is beats a
+`[data-category-name]`, `[data-category-share]` and `[data-category-amount]` — a hook that says what it is beats a
 class that says how it looks.
 
 `.room-status-badge` is the one that still has a rule in `customClasses.css`, because the side

@@ -88,7 +88,7 @@ class TestTransactionCategoryBreakdownView:
 
         rendered_amounts_by_slug = {}
         for item in legend_items:
-            slug = item.select_one("[data-category-slug-label]").get_text(strip=True).lower()
+            slug = item["data-category-slug"]
             amount_span = item.select_one("[data-category-amount]")
             rendered_amounts_by_slug[slug] = amount_span.get_text(strip=True)
 
@@ -100,6 +100,13 @@ class TestTransactionCategoryBreakdownView:
         # (e.g. "34,25|34,25€"). Asserting the span's exact text catches that, unlike a
         # substring-count check, which the doubled string still satisfies.
         assert rendered_amounts_by_slug == expected_amounts
+
+        rendered_shares = {
+            item["data-category-slug"]: item.select_one("[data-category-share]").get_text(strip=True)
+            for item in legend_items
+        }
+        # 34.25 and 12.75 of 47.00.
+        assert rendered_shares == {"groceries": "72.9% of the total", "transport": "27.1% of the total"}
 
     def test_category_breakdown_view_splits_charts_per_currency(self, authenticated_client, room, user):
         groceries = Category.objects.get(slug="groceries")

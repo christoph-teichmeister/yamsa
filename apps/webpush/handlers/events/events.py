@@ -124,7 +124,7 @@ def send_notification_on_child_transaction_deleted(context: ParentTransactionDel
                 click_url=reverse(
                     viewname="transaction:list",
                     kwargs={
-                        "room_slug": parent_transaction.room.slug,
+                        "room_slug": context.room.slug,
                     },
                 ),
             ),
@@ -132,12 +132,12 @@ def send_notification_on_child_transaction_deleted(context: ParentTransactionDel
 
     build_notification_for_user(parent_transaction.paid_by).send_to_user(parent_transaction.paid_by)
 
-    for child_transaction in ChildTransaction.objects.filter(parent_transaction_id=parent_transaction.id):
+    for debtor in context.debtors:
         # If a user updated this transaction on another ones behalf and is a debtor, do not notify them
-        if parent_transaction.lastmodified_by == child_transaction.paid_for:
+        if parent_transaction.lastmodified_by == debtor:
             continue
 
-        build_notification_for_user(child_transaction.paid_for).send_to_user(child_transaction.paid_for)
+        build_notification_for_user(debtor).send_to_user(debtor)
 
 
 @message_registry.register_event(event=DebtSettled)

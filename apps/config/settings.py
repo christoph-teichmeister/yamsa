@@ -655,6 +655,8 @@ PWA_SERVICE_WORKER = {
         "navigation": "js",
         "offline": "js",
         "dialog": "js",
+        "transaction-list": "js",
+        "charts": "js",
     },
     "static_url_prefix": STATIC_URL,
     # Ceiling on the HTML pages kept for offline reading. Room pages are the point of the cache and
@@ -933,6 +935,7 @@ TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST_FUTURE_GLOB_PATTERNS = [
     "dummy_instance",
     "dummy_context",
     "dummy_meta",
+    "toast_urls",
     "room_factory",
     "user_connection_to_room_factory",
     "child_transaction_factory",

@@ -75,8 +75,11 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
             currency_sign = group["currency"]["sign"] or ""
             currency_code = group["currency"]["code"] or ""
             chart_points = self._build_chart_points(sorted_categories, currency_sign)
+            currency_total = sum(category["total_amount"] for category in sorted_categories)
             for category in sorted_categories:
                 category["filter_url"] = self._build_filter_url(category["slug"], currency_code)
+                # Per currency: amounts in different currencies share no total.
+                category["share_percent"] = category["total_amount"] / currency_total * 100
 
             currency_id = group["currency"]["id"]
             chart_suffix = f"{currency_code}-{currency_id}"

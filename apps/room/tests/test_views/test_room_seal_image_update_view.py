@@ -49,3 +49,15 @@ class TestRoomSealImageUpdateView:
         assert "Upload a valid image." in content
         room.refresh_from_db()
         assert not room.seal_image
+
+    def test_post_closed_room_is_rejected(self, tmp_path, settings, authenticated_client, closed_room):
+        settings.MEDIA_ROOT = str(tmp_path)
+
+        response = authenticated_client.post(
+            reverse("room:seal-image-update", kwargs={"room_slug": closed_room.slug}),
+            data={"seal_image": build_upload()},
+        )
+
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
+        closed_room.refresh_from_db()
+        assert not closed_room.seal_image

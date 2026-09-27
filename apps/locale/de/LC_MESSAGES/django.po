@@ -1112,6 +1112,38 @@ msgstr "Räume"
 msgid "{user} belongs to {room}"
 msgstr "{user} gehört zu {room}"
 
+msgctxt "room seal icon"
+msgid "Key"
+msgstr "Schlüssel"
+
+msgctxt "room seal icon"
+msgid "Hot drink"
+msgstr "Heißgetränk"
+
+msgctxt "room seal icon"
+msgid "Lamp"
+msgstr "Lampe"
+
+msgctxt "room seal icon"
+msgid "Open door"
+msgstr "Offene Tür"
+
+msgctxt "room seal icon"
+msgid "Leaf"
+msgstr "Blatt"
+
+msgctxt "room seal icon"
+msgid "Home"
+msgstr "Zuhause"
+
+msgctxt "room seal icon"
+msgid "Piggy bank"
+msgstr "Sparschwein"
+
+msgctxt "room seal icon"
+msgid "Palette"
+msgstr "Farbpalette"
+
 #, python-format
 msgid "%(room_count)s room together"
 msgid_plural "%(room_count)s rooms together"
@@ -1567,6 +1599,12 @@ msgid_plural "%(category_count)s categories"
 msgstr[0] "%(category_count)s Kategorie"
 msgstr[1] "%(category_count)s Kategorien"
 
+msgid "Add expenses to unlock the breakdown."
+msgstr "Füge Ausgaben hinzu, um die Aufschlüsselung freizuschalten."
+
+msgid "Tap a slice"
+msgstr "Tippe auf ein Segment"
+
 msgid "Legend"
 msgstr "Legende"
 
@@ -1577,14 +1615,12 @@ msgstr "Tippe auf eine Kategorie, um ihre Transaktionen zu sehen."
 msgid "Show transactions for %(category_name)s"
 msgstr "Transaktionen für %(category_name)s anzeigen"
 
+#, python-format
+msgid "%(share)s%% of the total"
+msgstr "%(share)s %% der Summe"
+
 msgid "No tracked expenses yet. Add a transaction to populate the breakdown."
 msgstr "Noch keine erfassten Ausgaben. Füge eine Transaktion hinzu, um die Aufschlüsselung zu füllen."
-
-msgid "Add expenses to unlock the breakdown."
-msgstr "Füge Ausgaben hinzu, um die Aufschlüsselung freizuschalten."
-
-msgid "Tap a slice"
-msgstr "Tippe auf ein Segment"
 
 #, python-format
 msgid "Manage categories for \"%(room_name)s\""
@@ -1923,9 +1959,6 @@ msgstr "Von anderen übernommen (brutto)"
 msgid "Loading spending timeline…"
 msgstr "Verlauf wird geladen…"
 
-msgid "Not enough data to render the chart yet."
-msgstr "Noch nicht genug Daten, um das Diagramm darzustellen."
-
 msgid "Spending over time"
 msgstr "Ausgaben über die Zeit"
 
@@ -1941,6 +1974,9 @@ msgstr "Ausgabentrend-Intervalle"
 
 msgid "Updating..."
 msgstr "Wird aktualisiert..."
+
+msgid "Not enough data to render the chart yet."
+msgstr "Noch nicht genug Daten, um das Diagramm darzustellen."
 
 msgid "No data available"
 msgstr "Keine Daten verfügbar"

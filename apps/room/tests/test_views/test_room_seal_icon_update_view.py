@@ -54,3 +54,13 @@ class TestRoomSealIconUpdateView:
         assert "open" in dialog_tag
         room.refresh_from_db()
         assert room.seal_icon != "not-a-real-icon"
+
+    def test_post_closed_room_is_rejected(self, authenticated_client, closed_room):
+        response = authenticated_client.post(
+            reverse("room:seal-icon-update", kwargs={"room_slug": closed_room.slug}),
+            data={"seal_icon": SEAL_ICONS[0]},
+        )
+
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
+        closed_room.refresh_from_db()
+        assert closed_room.seal_icon == ""

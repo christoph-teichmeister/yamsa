@@ -18,11 +18,12 @@ const staticSrcPath = path.resolve(__dirname, "apps/static_src");
 module.exports = {
   mode: "production",
   entry: {
-    d3: path.resolve(staticJsPath, "vendor/d3-entry.js"),
+    charts: path.resolve(staticJsPath, "charts.js"),
     navigation: path.resolve(staticJsPath, "navigation.js"),
     offline: path.resolve(staticJsPath, "offline.js"),
     "suggested-guests": path.resolve(staticJsPath, "suggested-guests.js"),
     "transaction-create": path.resolve(staticJsPath, "transaction-create.js"),
+    "transaction-list": path.resolve(staticJsPath, "transaction-list.js"),
     sheet: path.resolve(staticJsPath, "sheet.js"),
     dialog: path.resolve(staticJsPath, "dialog.js"),
     "password-visibility": path.resolve(staticJsPath, "password-visibility.js"),
