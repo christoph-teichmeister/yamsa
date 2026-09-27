@@ -56,7 +56,8 @@
           </span>
         </div>
         {% for money_spent in money_spent_per_person_qs %}
-          <div class="flex flex-col gap-1.5">
+          {# data-insight-row is what the e2e suite addresses a row by; nothing else reads it. #}
+          <div class="flex flex-col gap-1.5" data-insight-row="spent">
             <div class="flex items-center justify-between gap-3">
               {# .graph-label stays as the hook test_money_spent_on_room_view_avatars.py addresses. #}
               <p class="graph-label m-0 flex min-w-0 items-center gap-2 font-semibold text-ink">
@@ -99,7 +100,7 @@
         {% if open_debts_per_person_qs %}
           <p class="m-0 text-sm text-ink-muted">{% trans "Open debt (after optimisation)" %}</p>
           {% for debt_row in open_debts_per_person_qs %}
-            <div class="flex flex-col gap-1.5">
+            <div class="flex flex-col gap-1.5" data-insight-row="owed">
               <div class="flex items-center justify-between gap-3">
                 <p class="graph-label m-0 flex min-w-0 items-center gap-2 font-semibold text-ink">
                   {% include "shared_partials/_user_avatar.html" with avatar_url=room_member_avatars|get_item:debt_row.debitor_id avatar_name=debt_row.debitor_name %}
@@ -131,7 +132,7 @@
           <div class="mt-1 flex flex-col gap-3 border-t border-line pt-3">
             <p class="m-0 text-sm text-ink-muted">{% trans "Covered by others (gross)" %}</p>
             {% for covered in money_covered_for_person_qs %}
-              <div class="flex flex-col gap-1.5">
+              <div class="flex flex-col gap-1.5" data-insight-row="covered">
                 <div class="flex items-center justify-between gap-3">
                   <p class="graph-label m-0 flex min-w-0 items-center gap-2 font-semibold text-ink">
                     {% include "shared_partials/_user_avatar.html" with avatar_url=room_member_avatars|get_item:covered.paid_for_id avatar_name=covered.paid_for__name %}
