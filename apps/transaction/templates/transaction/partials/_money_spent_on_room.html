@@ -109,7 +109,7 @@
                     {% endautoescape %}
                   </span>
                 </p>
-                <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap text-ink">{{ debt_row.total_open_debt }} {{ debt_row.currency_sign }}</p>
+                <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap text-ink">{{ debt_row.total_open_debt|format_with_thousands }} {{ debt_row.currency_sign }}</p>
               </div>
               {% with max_val=max_open_debt_per_currency|get_item:debt_row.currency_sign %}
                 {% if max_val %}
@@ -141,7 +141,7 @@
                       {% endautoescape %}
                     </span>
                   </p>
-                  <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap text-ink">{{ covered.total_covered_for_person }} {{ covered.currency_sign }}</p>
+                  <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap text-ink">{{ covered.total_covered_for_person|format_with_thousands }} {{ covered.currency_sign }}</p>
                 </div>
                 {# Scaled against the currency's total spend, so the three groups share one reading. #}
                 {% for total_entry in total_money_spent %}
