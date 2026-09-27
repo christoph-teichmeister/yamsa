@@ -3,7 +3,7 @@ from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
 from apps.room.views.mixins import RoomNotClosedRequiredMixin
-from apps.transaction.messages.events.transaction import ParentTransactionDeleted
+from apps.transaction.messages.events.transaction import ChildTransactionDeleted, ParentTransactionDeleted
 from apps.transaction.models import ChildTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
@@ -42,9 +42,15 @@ class ChildTransactionDeleteView(RoomNotClosedRequiredMixin, TransactionBaseCont
             )
 
             parent_transaction.delete()
-
-        # There is no need to send a notification, when a child_transaction has been deleted, as this can only be
-        # done when editing a transaction anyway - a user would have to save the form afterward, which will trigger
-        # a ParentTransactionUpdated event, which notifies everyone
+        else:
+            # The share is gone the moment it is removed, not when the edit form is saved; a visitor
+            # who leaves the form here must not find the debt it carried still standing. Stamping the
+            # remover as the last modifier is what the event's notification names as the editor.
+            parent_transaction.save(update_fields=("lastmodified_at", "lastmodified_by"))
+            handle_message(
+                ChildTransactionDeleted(
+                    context_data={"parent_transaction": parent_transaction, "room": parent_transaction.room}
+                )
+            )
 
         return form_valid_return
