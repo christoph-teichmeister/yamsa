@@ -12,17 +12,17 @@ def create_news_on_transaction_deleted(context: ParentTransactionDeleted.Context
     message = _('{actor} deleted the transaction "{description}" ({amount}{currency}) in "{room}"').format(
         actor=context.user_who_deleted.name,
         description=parent_transaction.description,
-        amount=parent_transaction.value,
+        amount=context.amount,
         currency=parent_transaction.currency.sign,
-        room=parent_transaction.room.name,
+        room=context.room.name,
     )
 
     News.objects.create(
         title=_("{icon} {initials}: Transaction deleted").format(
             icon="🗑️",
-            initials=parent_transaction.room.capitalised_initials,
+            initials=context.room.capitalised_initials,
         ),
         message=message,
-        room_id=parent_transaction.room_id,
+        room_id=context.room.id,
         type=News.TypeChoices.TRANSACTION_DELETED,
     )

@@ -27,21 +27,19 @@ class ChildTransactionDeleteView(RoomNotClosedRequiredMixin, TransactionBaseCont
         )
 
     def form_valid(self, form):
-        form_valid_return = super().form_valid(form)
         parent_transaction = self.object.parent_transaction
+        # Taken while this share still exists: it is part of what the transaction carried.
+        deleted = (
+            ParentTransactionDeleted.context_before_deletion(parent_transaction, user_who_deleted=self.request.user)
+            if parent_transaction.child_transactions.count() == 1
+            else None
+        )
 
-        if parent_transaction.child_transactions.count() == 0:
-            handle_message(
-                ParentTransactionDeleted(
-                    context_data={
-                        "parent_transaction": parent_transaction,
-                        "room": self.object.parent_transaction.room,
-                        "user_who_deleted": self.request.user,
-                    }
-                )
-            )
+        form_valid_return = super().form_valid(form)
 
+        if deleted is not None:
             parent_transaction.delete()
+            handle_message(ParentTransactionDeleted(context_data=deleted))
         else:
             # The share is gone the moment it is removed, not when the edit form is saved; a visitor
             # who leaves the form here must not find the debt it carried still standing. Stamping the
