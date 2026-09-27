@@ -933,6 +933,7 @@ TEST_STRUCTURE_VALIDATOR_FILE_WHITELIST_FUTURE_GLOB_PATTERNS = [
     "dummy_instance",
     "dummy_context",
     "dummy_meta",
+    "toast_urls",
     "room_factory",
     "user_connection_to_room_factory",
     "child_transaction_factory",

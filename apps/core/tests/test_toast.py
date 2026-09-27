@@ -1,8 +1,7 @@
 import json
 
+import pytest
 from django.http import HttpResponse
-from django.template import Template
-from django.template.response import TemplateResponse
 
 from apps.core.middleware.toast_middleware import ToastMiddleware
 from apps.core.toast import ToastQueue
@@ -26,18 +25,20 @@ def test_toast_queue_consumption_order_and_clears_entries():
     assert not queue.has_entries()
 
 
-def test_middleware_injects_toasts_into_template_context(rf):
-    def get_response(request) -> TemplateResponse:
-        request.toast_queue.success("Context toast")
-        return TemplateResponse(request, Template("<div></div>"), {})
+@pytest.mark.urls("apps.core.tests.helpers.toast_urls")
+def test_middleware_renders_toasts_into_a_full_page_load(db, client):
+    response = client.get("/render/")
 
-    middleware = ToastMiddleware(get_response)
-    request = rf.get("/")
-    response = middleware(request)
+    assert response.content.decode() == "[Rendered toast]"
 
-    assert "queued_toasts" in response.context_data
-    queued_toasts = response.context_data["queued_toasts"]
-    assert queued_toasts[0]["message"] == "Context toast"
+
+@pytest.mark.urls("apps.core.tests.helpers.toast_urls")
+def test_middleware_leaves_htmx_toasts_to_the_headers(db, client):
+    response = client.get("/render/", HTTP_HX_REQUEST="true")
+
+    # The swapped-in page would show them a second time.
+    assert response.content.decode() == ""
+    assert json.loads(response["HX-Trigger"])["triggerToast"][0]["message"] == "Rendered toast"
 
 
 def test_middleware_merges_toasts_into_htmx_headers(rf):
@@ -58,3 +59,30 @@ def test_middleware_merges_toasts_into_htmx_headers(rf):
 
     after_settle_payload = json.loads(response["HX-Trigger-After-Settle"])
     assert after_settle_payload["triggerToast"][0]["message"] == "Header toast"
+
+
+@pytest.mark.urls("apps.core.tests.helpers.toast_urls")
+def test_middleware_carries_toasts_across_a_redirect(db, client):
+    redirect = client.post("/redirect/")
+
+    assert redirect.status_code == 302
+    assert "HX-Trigger" not in redirect
+    assert client.get("/target/").content.decode() == "[Carried toast]"
+    assert client.get("/target/").content.decode() == ""
+
+
+@pytest.mark.urls("apps.core.tests.helpers.toast_urls")
+def test_middleware_carries_toasts_across_a_redirect_htmx_follows(db, client):
+    client.post("/redirect/", HTTP_HX_REQUEST="true")
+
+    target = client.get("/target/", HTTP_HX_REQUEST="true")
+
+    assert json.loads(target["HX-Trigger"])["triggerToast"][0]["message"] == "Carried toast"
+
+
+@pytest.mark.urls("apps.core.tests.helpers.toast_urls")
+def test_middleware_keeps_carried_toasts_away_from_prefetch_requests(db, client):
+    client.post("/redirect/")
+
+    assert client.get("/target/", HTTP_X_YAMSA_PREFETCH="1").content.decode() == ""
+    assert client.get("/target/").content.decode() == "[Carried toast]"
