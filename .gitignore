@@ -57,5 +57,9 @@ docker-compose.override.yml
 .claude/beyonder/access.local.md
 .claude/beyonder/reviews/
 
+# implement-story skill run state and worktrees
+.claude/runs/
+.claude/worktrees/
+
 # Impeccable skill run state (mocks, build state) - session-local, not project artifacts
 .impeccable/
