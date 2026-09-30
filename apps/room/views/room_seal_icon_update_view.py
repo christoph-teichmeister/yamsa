@@ -10,7 +10,7 @@ from apps.room.views.mixins.room_sheet_response import RoomSheetResponseMixin
 class RoomSealIconUpdateView(RoomNotClosedRequiredMixin, RoomSheetResponseMixin, View):
     """Pick one of the predefined seal icons, replacing any custom image."""
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args: object, **kwargs):
         room = request.room
         form = RoomSealIconForm(request.POST, instance=room)
 

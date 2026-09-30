@@ -205,6 +205,7 @@ select = [
     "YTT", # Avoid non-future-prove usages of "sys"
     # "FBT",     # Protects you from the "boolean trap bug"
     # "ARG",     # Unused arguments - almost every hit is a Django/pytest-mandated signature (view/admin/context-processor overrides, fixture activation, test doubles), not a real bug
+    "ANN002", # Missing type hint for *args (#455, staged ANN rollout, step 4)
     "ANN401", # Disallow `typing.Any` in type hints (#455, staged ANN rollout, smallest rule count first)
     # "ANN",     # Missing type hints - no safe autofix; would mean hand-annotating ~4400 existing call sites, a separate typing effort
 ]

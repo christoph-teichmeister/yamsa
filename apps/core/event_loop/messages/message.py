@@ -9,7 +9,7 @@ class Message:
 
     @dataclass
     class Context:
-        def __init__(self, *args, **kwargs):
+        def __init__(self, *args: object, **kwargs):
             raise NotImplementedError
 
     @classmethod

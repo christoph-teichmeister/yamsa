@@ -6,5 +6,5 @@ from django.views import generic
 class BaseView(generic.TemplateView):
     template_name = "core/base.html"
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args: object, **kwargs):
         return redirect(reverse(viewname="core:welcome"))
