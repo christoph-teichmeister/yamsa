@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     help = "Creates some test data"
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options: object):
         call_command("flush", "--noinput")
 
         call_command("migrate")

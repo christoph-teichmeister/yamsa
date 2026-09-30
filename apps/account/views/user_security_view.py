@@ -10,12 +10,12 @@ class UserSecurityView(LoginRequiredMixin, generic.DetailView):
     context_object_name = "user"
     model = User
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs: object):
         if not request.user.is_superuser and request.user.id != kwargs["pk"]:
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         context = super().get_context_data(**kwargs)
         passkey = UserPasskey.objects.filter(user=self.object).first()
         context["passkey"] = passkey

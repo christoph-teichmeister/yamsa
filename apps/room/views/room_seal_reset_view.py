@@ -9,7 +9,7 @@ from apps.room.views.mixins.room_sheet_response import RoomSheetResponseMixin
 class RoomSealResetView(RoomNotClosedRequiredMixin, RoomSheetResponseMixin, View):
     """Clear any chosen icon or uploaded image, back to the room's derived default seal."""
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs: object):
         room = request.room
         if room.seal_image:
             room.seal_image.delete(save=False)

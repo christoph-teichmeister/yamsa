@@ -9,7 +9,7 @@ from apps.room.services.suggested_guest_service import SuggestedGuestService
 class SuggestedGuestFriendToggleHTMXView(mixins.LoginRequiredMixin, generic.TemplateView):
     template_name = "room/_suggested_guest_list.html"
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs: object):
         user_id = request.POST.get("suggested_user_id")
 
         if not user_id:

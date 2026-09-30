@@ -14,7 +14,7 @@ handler500 = server_error_view
 class FaviconRedirectView(RedirectView):
     permanent = True
 
-    def get_redirect_url(self, *args, **kwargs):  # pragma: no cover - trivial wiring
+    def get_redirect_url(self, *args, **kwargs: object):  # pragma: no cover - trivial wiring
         return staticfiles_url("images/favicon.ico")
 
 

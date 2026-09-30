@@ -23,7 +23,7 @@ class BaseYamsaEmailService(BaseEmailService):
     template_name = "mail/email_text_base.html"
 
     def __init__(
-        self, recipient: User, recipient_email_list: list | (tuple | str) | None = None, *args, **kwargs
+        self, recipient: User, recipient_email_list: list | (tuple | str) | None = None, *args, **kwargs: object
     ) -> None:
         self.recipient = recipient
 
