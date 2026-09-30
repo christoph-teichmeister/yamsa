@@ -54,7 +54,7 @@ def spending_room(people, euro, franc):
         for order_index, (slug, name, emoji) in enumerate(CATEGORIES)
     }
 
-    def expense(paid_by, currency, category_slug, description, shares):
+    def expense(paid_by, currency, category_slug, description, shares) -> None:
         parent_transaction = ParentTransactionFactory(
             room=room,
             paid_by=paid_by,

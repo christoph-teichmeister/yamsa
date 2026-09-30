@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.http import HttpResponse
 from django.urls import reverse
 
 from apps.currency.models import Currency
@@ -22,7 +23,7 @@ def currency(db):
 class TestRealSplitwiseExport:
     """Runs an excerpt of a genuine Splitwise export through the whole flow."""
 
-    def _import(self, client, currency):
+    def _import(self, client, currency) -> HttpResponse:
         upload = SimpleUploadedFile("Splitwise_expenses.csv", FIXTURE.read_bytes(), content_type="text/csv")
         redirect = client.post(reverse("importer:upload"), data={"source": "splitwise-csv", "file": upload})
         token = redirect.url.split("token=")[1]

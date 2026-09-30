@@ -13,7 +13,7 @@ from apps.transaction.tests.factories import ChildTransactionFactory, ParentTran
 
 @pytest.mark.django_db
 class TestMoneySpentOnRoomViewContext:
-    def _view_for_room(self, room):
+    def _view_for_room(self, room) -> MoneySpentOnRoomView:
         view = MoneySpentOnRoomView()
         view.request = SimpleNamespace(room=room, GET={})
         return view

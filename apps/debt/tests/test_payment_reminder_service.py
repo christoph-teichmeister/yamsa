@@ -10,7 +10,7 @@ from apps.room.models import Room
 
 @pytest.fixture
 def debt_factory(room_with_stale_activity):
-    def _factory(*, debitor, creditor, value):
+    def _factory(*, debitor, creditor, value) -> Debt:
         return Debt.objects.create(
             debitor=debitor,
             creditor=creditor,

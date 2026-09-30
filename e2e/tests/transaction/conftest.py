@@ -40,7 +40,7 @@ def room(profile_user, roommate):
 
 @pytest.fixture
 def logged_in(page, base_url, profile_user):
-    def _login():
+    def _login() -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login(profile_user.email, DEFAULT_PASSWORD)

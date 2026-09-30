@@ -44,7 +44,7 @@ class TestOfflineOutbox:
             reverse("transaction:create", kwargs={"room_slug": room.slug}),
         ]
 
-    def _prepare(self, page, base_url, profile_user, room):
+    def _prepare(self, page, base_url, profile_user, room) -> list[str]:
         """Sign in and let the worker take over and warm the room.
 
         Uses the transaction suite's own room fixture: these tests run against a transactional

@@ -97,7 +97,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
             # still better than refusing it.
             return None
 
-    def _already_booked(self):
+    def _already_booked(self) -> HttpResponseRedirect:
         """Answer a replay with the outcome of the submission that got here first.
 
         No event: the transaction exists, so its debts were recalculated and everyone was notified
@@ -109,7 +109,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
     def _names_the_client_request_id(exc) -> bool:
         return CLIENT_REQUEST_ID_FIELD in (getattr(exc, "error_dict", None) or {})
 
-    def _attach_validation_error(self, form, exc):
+    def _attach_validation_error(self, form, exc) -> bool:
         error_dict = getattr(exc, "error_dict", None)
         if error_dict:
             for field_name, errors in error_dict.items():
@@ -136,7 +136,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
         return False
 
-    def _get_toast_error_message(self, form):
+    def _get_toast_error_message(self, form) -> str | None:
         non_field_errors = form.non_field_errors()
         if non_field_errors:
             return str(non_field_errors[0])
@@ -164,7 +164,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
         return context
 
-    def _build_split_rows(self):
+    def _build_split_rows(self) -> list[dict]:
         """One row per beneficiary, each with the amount to pre-fill in its split-row input.
 
         Reconstructed from POST on a failed submission, so a validation error does not discard
@@ -180,12 +180,12 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
         room_user_ids = self.request.room.users.values_list("id", flat=True)
         return [{"paid_for_id": str(user_id), "value": "0.00"} for user_id in room_user_ids]
 
-    def _build_reference_total_value(self):
+    def _build_reference_total_value(self) -> str:
         if self.request.method == "POST":
             return self.request.POST.get("reference_total_value", "0.00")
         return "0.00"
 
-    def _build_selected_paid_by(self, form):
+    def _build_selected_paid_by(self, form) -> str:
         posted = self.request.POST.get("paid_by")
         if posted:
             return posted
@@ -195,7 +195,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
                 return str(value)
         return str(self.request.user.id)
 
-    def _build_selected_currency(self, form):
+    def _build_selected_currency(self, form) -> str:
         if self.request.method == "POST":
             posted = self.request.POST.get("currency")
             if posted:

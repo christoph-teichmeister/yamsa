@@ -3,6 +3,7 @@ import http
 import pytest
 from axes.models import AccessAttempt
 from django.conf import settings
+from django.http import HttpResponse
 from django.urls import reverse
 
 from apps.account.constants import SESSION_TTL_SESSION_KEY
@@ -130,7 +131,7 @@ def test_axes_lockout_tracks_username_and_ip_scope(client, user):
     # so supply the headers Axes will inspect.
     assert settings.AXES_LOCKOUT_PARAMETERS == [["username", "ip_address"]]
 
-    def wrong_password_post(ip_address):
+    def wrong_password_post(ip_address) -> HttpResponse:
         meta = {"REMOTE_ADDR": ip_address, "HTTP_X_FORWARDED_FOR": ip_address}
         return client.post(
             login_url,

@@ -42,7 +42,7 @@ class Command(BaseCommand):
         SPRITE_PATH.write_text(sprite, encoding="utf-8")
         self.stdout.write(self.style.SUCCESS(f"Wrote {SPRITE_PATH} ({len(names)} icons)."))
 
-    def _check(self, names):
+    def _check(self, names) -> None:
         if not SPRITE_PATH.exists():
             message = f"{SPRITE_PATH} is missing. Run `python manage.py sync_icons`."
             raise CommandError(message)

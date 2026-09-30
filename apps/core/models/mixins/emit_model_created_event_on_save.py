@@ -70,7 +70,7 @@ class EmitModelCreatedEventOnSaveMixin:
 
         return del_operation
 
-    def _send_message(self, model_event_class, context_label: str):
+    def _send_message(self, model_event_class, context_label: str) -> None:
         if model_event_class is None:
             return
 

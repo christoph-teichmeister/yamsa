@@ -10,7 +10,7 @@ from apps.room.messages.events.room_status_changed import RoomStatusChanged
 from apps.room.models import Room
 
 
-def _build_notification_stub(record: list[tuple[Any, Any]]):
+def _build_notification_stub(record: list[tuple[Any, Any]]) -> type:
     class DummyNotification:
         class Payload:
             def __init__(self, head: str, body: str, click_url: str = "") -> None:

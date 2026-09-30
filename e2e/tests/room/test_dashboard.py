@@ -11,12 +11,13 @@ from apps.currency.tests.factories import CurrencyFactory
 from apps.debt.models import Debt
 from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
+from apps.transaction.models import ParentTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 from e2e.pages.dashboard_page import DashboardPage
 from e2e.pages.login_page import LoginPage
 
 
-def _add_transaction(*, room, user, paid_at: datetime):
+def _add_transaction(*, room, user, paid_at: datetime) -> ParentTransaction:
     return ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency, paid_at=paid_at)
 
 
@@ -30,7 +31,7 @@ def _room_with_balance(
     owed_to_owner: Decimal | None = None,
     status: str = Room.StatusChoices.OPEN,
     last_transaction_at: datetime | None = None,
-):
+) -> Room:
     room = RoomFactory(created_by=owner, name=name, status=status)
     room.users.add(owner, roommate)
     if owed_by_owner is not None:
@@ -42,7 +43,7 @@ def _room_with_balance(
     return room
 
 
-def _closed_room_with_debt(*, owner, roommate, currency):
+def _closed_room_with_debt(*, owner, roommate, currency) -> Room:
     return _room_with_balance(
         name="Closed Room",
         owner=owner,
@@ -53,7 +54,7 @@ def _closed_room_with_debt(*, owner, roommate, currency):
     )
 
 
-def _url_of(room):
+def _url_of(room) -> str:
     return reverse(Room.dashboard_viewname_for(room.status), kwargs={"room_slug": room.slug})
 
 

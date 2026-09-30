@@ -1,4 +1,4 @@
-from playwright.sync_api import expect
+from playwright.sync_api import Locator, expect
 
 from e2e.pages.base_page import BasePage
 
@@ -78,7 +78,7 @@ class TransactionCreatePage(BasePage):
         for participant, amount in expected.items():
             expect(self._row_for(participant).locator("input[name='value']")).to_have_value(amount)
 
-    def _row_for(self, participant: str):
+    def _row_for(self, participant: str) -> Locator:
         names = list(self.shares())
         return self.page.locator(".split-row").nth(names.index(participant))
 

@@ -42,7 +42,7 @@ class Notification:
         sound: str = None
 
         @property
-        def _default_icon_and_badge(self):
+        def _default_icon_and_badge(self) -> str:
             return settings.BACKEND_URL + static("images/32x32.webp")
 
         def _build_data(self) -> dict:
@@ -55,7 +55,7 @@ class Notification:
 
             return {"actionClickUrls": action_click_urls, "notificationClickUrl": self.click_url}
 
-        def _set_icon_and_badge_if_empty(self):
+        def _set_icon_and_badge_if_empty(self) -> None:
             default_icon_and_badge = settings.BACKEND_URL + staticfiles_storage.url("images/favicon.ico")
 
             if self.icon is None:

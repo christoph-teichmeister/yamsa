@@ -1,3 +1,5 @@
+from collections.abc import Iterator
+
 from django.db.models import Prefetch
 from django.http import StreamingHttpResponse
 from django.utils import timezone
@@ -39,7 +41,7 @@ class TransactionExportView(RoomMembershipRequiredMixin, TransactionBaseContext,
 
         return response
 
-    def _write_rows(self, writer, buffer, parents, timestamp):
+    def _write_rows(self, writer, buffer, parents, timestamp) -> Iterator[str]:
         for parent in parents:
             currency_value = parent.currency.sign or parent.currency.code or ""
             category_name = self._safe(parent.category.name if parent.category else "")

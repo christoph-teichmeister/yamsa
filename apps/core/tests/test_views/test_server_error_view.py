@@ -5,7 +5,7 @@ from django.urls import path
 import apps.config.urls as root_urls
 
 
-def _boom(request):
+def _boom(request) -> None:
     msg = "forced"
     raise Exception(msg)  # noqa: TRY002 - deliberately generic, simulates an arbitrary unhandled crash
 

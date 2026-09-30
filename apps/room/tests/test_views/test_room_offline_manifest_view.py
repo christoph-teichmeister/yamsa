@@ -9,7 +9,7 @@ from apps.room.services.dashboard_tab_service import DashboardTabService
 pytestmark = pytest.mark.django_db
 
 
-def _manifest_url(room):
+def _manifest_url(room) -> str:
     return reverse("room:offline-manifest", kwargs={"room_slug": room.slug})
 
 

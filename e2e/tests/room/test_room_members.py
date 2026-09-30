@@ -14,7 +14,7 @@ from e2e.pages.dashboard_page import DashboardPage
 from e2e.pages.room_people_page import RoomPeoplePage
 
 
-def _dashboard_url(room):
+def _dashboard_url(room) -> str:
     return reverse(Room.dashboard_viewname_for(room.status), kwargs={"room_slug": room.slug})
 
 

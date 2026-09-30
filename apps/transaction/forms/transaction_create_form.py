@@ -136,7 +136,7 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
 
         return instance
 
-    def _save_receipts(self, parent_transaction: ParentTransaction):
+    def _save_receipts(self, parent_transaction: ParentTransaction) -> None:
         receipt_files = self.cleaned_data.get("receipts") or []
         if not receipt_files:
             return

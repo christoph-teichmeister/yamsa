@@ -2,6 +2,7 @@ import pytest
 from django.db import connection
 from django.urls import reverse
 
+from apps.room.models import Room
 from apps.transaction.constants import TRANSACTION_FEED_PAGE_SIZE
 from apps.transaction.models import Category, ChildTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
@@ -16,7 +17,7 @@ PHONE_VIEWPORT = {"width": 390, "height": 700}
 SINGLE_BATCH_COUNT = TRANSACTION_FEED_PAGE_SIZE - 2
 
 
-def _create_transactions(room, paid_by, count: int):
+def _create_transactions(room, paid_by, count: int) -> Room:
     groceries = Category.objects.get(slug=GROCERIES)
     for index in range(count):
         parent_transaction = ParentTransactionFactory(

@@ -9,6 +9,7 @@ from django.test.client import Client
 from django.utils import timezone
 from PIL import Image
 
+from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.tests.factories import GuestUserFactory, SuperuserFactory, UserFactory
 from apps.room.models import Room
@@ -98,7 +99,7 @@ def room_with_stale_activity(room, user):
 def attach_profile_picture():
     """Give a user a real picture, so their avatar renders as an image rather than as an initial."""
 
-    def _attach(user_instance):
+    def _attach(user_instance) -> User:
         buffer = BytesIO()
         Image.new("RGB", (64, 64), color=(255, 255, 255)).save(buffer, format="PNG")
         user_instance.profile_picture.save("avatar.png", ContentFile(buffer.getvalue()), save=True)

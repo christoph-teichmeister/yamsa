@@ -71,7 +71,7 @@ class TestDebtOptimiseService:
             (user.id, guest_user.id, currency_2.id, Decimal(7)),
         ]
 
-        def ordering_key(debt):
+        def ordering_key(debt) -> tuple:
             return debt[2], debt[0], debt[1]
 
         sorted_expected = sorted(expected_debts, key=ordering_key)

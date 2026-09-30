@@ -9,7 +9,7 @@ from apps.room.handlers.events.notify_on_room_deleted import send_notification_o
 from apps.room.messages.events.room_hard_deleted import RoomHardDeleted
 
 
-def _build_notification_stub(record: list[tuple[Any, Any]]):
+def _build_notification_stub(record: list[tuple[Any, Any]]) -> type:
     class DummyNotification:
         class Payload:
             def __init__(self, head: str, body: str, click_url: str = "") -> None:

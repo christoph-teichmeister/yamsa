@@ -8,7 +8,7 @@ class _StubStorage:
     def __init__(self) -> None:
         self.deleted_names: list[str] = []
 
-    def delete(self, name):
+    def delete(self, name) -> None:
         self.deleted_names.append(name)
 
 
