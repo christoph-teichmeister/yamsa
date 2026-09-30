@@ -47,10 +47,10 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} ({self.get_status_display()})"
 
-    def save(self, *args, **kwargs: object):
+    def save(self, *args: object, **kwargs: object):
         if not self.slug:
             self.slug = uuid.uuid4()
 

@@ -7,7 +7,7 @@ from django.views.i18n import set_language as django_set_language
 
 @method_decorator(require_POST, name="dispatch")
 class SetLanguageView(View):
-    def post(self, request, *args, **kwargs: object):
+    def post(self, request, *args: object, **kwargs: object):
         language = request.POST.get("language")
 
         if request.user.is_authenticated and language in dict(settings.LANGUAGES) and request.user.language != language:

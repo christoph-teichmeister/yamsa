@@ -6,7 +6,7 @@ from apps.room.models import Room, UserConnectionToRoom
 
 
 class SuggestedGuestService:
-    def __init__(self, user, limit: int = 8):
+    def __init__(self, user, limit: int = 8) -> None:
         self.user = user
         self.limit = limit
 

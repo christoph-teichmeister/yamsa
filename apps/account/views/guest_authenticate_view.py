@@ -9,7 +9,7 @@ from apps.account.models import User
 class AuthenticateGuestUserView(generic.View):
     http_method_names = ["post", "options"]
 
-    def post(self, request, *args, **kwargs: object):
+    def post(self, request, *args: object, **kwargs: object):
         room_slug = self.request.POST.get("room_slug")
 
         redirect_response = HttpResponseRedirect(

@@ -16,7 +16,7 @@ class TransactionExportView(RoomMembershipRequiredMixin, TransactionBaseContext,
 
     HEADER = [_("Paid by"), _("Paid for"), _("Description"), _("Amount"), _("Currency"), _("Category"), _("Paid at")]
 
-    def get(self, request, *args, **kwargs: object):
+    def get(self, request, *args: object, **kwargs: object):
         """Stream room transactions while respecting prefetching and metadata."""
         room = request.room
         parents = (

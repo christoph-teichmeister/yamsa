@@ -5,7 +5,7 @@ from apps.room.messages.events.room_hard_deleted import RoomHardDeleted
 
 
 class _StubStorage:
-    def __init__(self):
+    def __init__(self) -> None:
         self.deleted_names: list[str] = []
 
     def delete(self, name):

@@ -23,7 +23,7 @@ class UserFriendship(CommonInfo):
             models.Index(fields=["friend", "user"], name="acc_usrfrndshp_frnd_usr_idx"),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.user} ↔ {self.friend}"
 
     def clean(self):

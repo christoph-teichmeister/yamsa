@@ -22,7 +22,7 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
     template_name = "importer/preview.html"
     form_class = ImportPreviewForm
 
-    def dispatch(self, request, *args, **kwargs: object):
+    def dispatch(self, request, *args: object, **kwargs: object):
         # This runs before LoginRequiredMixin.dispatch, so anonymous visitors must fall through
         # to the mixin instead of being redirected to the upload page.
         if request.user.is_authenticated and self._payload is None:

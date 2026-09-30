@@ -16,7 +16,7 @@ class RoomClosureReminderService:
     REMINDER_TYPE = ReminderLog.ReminderType.INACTIVE_ROOM
     HEARTBEAT_INTERVAL = timedelta(days=30)  # Keep room nudges to roughly one-per-month bursts.
 
-    def __init__(self, *, now: datetime | None = None):
+    def __init__(self, *, now: datetime | None = None) -> None:
         self.now = now or timezone.now()
         # Any room with activity older than this threshold becomes a closure candidate.
         self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)

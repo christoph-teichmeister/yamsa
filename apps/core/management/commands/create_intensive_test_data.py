@@ -72,7 +72,7 @@ class Command(BaseCommand):
             help="Force creation of intensive test data even in production environments",
         )
 
-    def handle(self, *args, **options: object):
+    def handle(self, *args: object, **options: object):
         # Check if we're in a safe environment
         if not settings.DEBUG and not options.get("force"):
             msg = (

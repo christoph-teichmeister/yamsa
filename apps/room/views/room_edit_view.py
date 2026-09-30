@@ -20,7 +20,7 @@ class RoomEditView(RoomNotClosedRequiredMixin, RoomSheetResponseMixin, RoomBaseC
     model = Room
     form_class = RoomEditForm
 
-    def get(self, request, *args, **kwargs: object):
+    def get(self, request, *args: object, **kwargs: object):
         return redirect("room:detail", room_slug=kwargs[self.slug_url_kwarg])
 
     def get_success_url(self):

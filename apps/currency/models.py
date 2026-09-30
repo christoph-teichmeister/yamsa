@@ -13,5 +13,5 @@ class Currency(FullCleanOnSaveMixin, models.Model):
         verbose_name = _("Currency")
         verbose_name_plural = _("Currencies")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.code.upper()} ({self.sign})"

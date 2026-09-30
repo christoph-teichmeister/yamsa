@@ -9,7 +9,7 @@ from apps.room.views.mixins import RoomNotClosedRequiredMixin
 
 
 class UserRemoveFromRoomView(RoomNotClosedRequiredMixin, UserListForRoomView):
-    def post(self, request, *args, **kwargs: object):
+    def post(self, request, *args: object, **kwargs: object):
         response = super().get(request, *args, **kwargs)
 
         user_to_be_removed = User.objects.get(id=kwargs.get("pk"))

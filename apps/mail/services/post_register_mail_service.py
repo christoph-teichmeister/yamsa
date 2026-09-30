@@ -11,7 +11,7 @@ class PostRegisterEmailService(BaseYamsaEmailService):
     user_has_rooms = False
 
     def __init__(
-        self, recipient: User, recipient_email_list: list | (tuple | str) | None = None, *args, **kwargs: object
+        self, recipient: User, recipient_email_list: list | (tuple | str) | None = None, *args: object, **kwargs: object
     ) -> None:
         self.user_has_rooms = recipient.room_qs_for_list.exists()
         super().__init__(recipient, recipient_email_list, *args, **kwargs)

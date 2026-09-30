@@ -25,7 +25,7 @@ class RoomCategoryService:
 
     room: Room
 
-    def __init__(self, room: Room):
+    def __init__(self, room: Room) -> None:
         """Initialize the service with the room whose categories we are managing."""
         self.room = room
 

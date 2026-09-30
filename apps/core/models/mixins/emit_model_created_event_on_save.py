@@ -31,7 +31,7 @@ class EmitModelCreatedEventOnSaveMixin:
         def get_model_events_as_tuple(self) -> tuple:
             return self.Created, self.Changed, self.Deleted
 
-    def __init__(self, *args, **kwargs: object):
+    def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
         for model_event in self.ModelEvents().get_model_events_as_tuple():
@@ -51,7 +51,7 @@ class EmitModelCreatedEventOnSaveMixin:
     def expand_model_event_context(self) -> dict:
         return {}
 
-    def save(self, *args, **kwargs: object):
+    def save(self, *args: object, **kwargs: object):
         model_event_type = self.ModelEvents.Created if not self.id else self.ModelEvents.Changed
 
         super().save(*args, **kwargs)

@@ -26,7 +26,7 @@ class Debt(FullCleanOnSaveMixin, CommonInfo, models.Model):
         verbose_name = _lazy("Debt")
         verbose_name_plural = _lazy("Debts")
 
-    def __str__(self):
+    def __str__(self) -> str:
         debitor = self.debitor.name
         creditor = self.creditor.name
         value = self.value

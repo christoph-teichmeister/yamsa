@@ -15,7 +15,7 @@ class DebtExportView(RoomMembershipRequiredMixin, DebtBaseContext, CsvExportMixi
 
     HEADER = [_("Debitor"), _("Creditor"), _("Amount"), _("Currency")]
 
-    def get(self, request, *args, **kwargs: object):
+    def get(self, request, *args: object, **kwargs: object):
         """Build a streaming response containing metadata and unsettled debt rows."""
         room = request.room
         debts = (
