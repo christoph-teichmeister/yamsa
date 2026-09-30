@@ -11,15 +11,15 @@ _ZERO_AMOUNT = Value(Decimal(0), output_field=DecimalField(max_digits=10, decima
 class DebtQuerySet(models.QuerySet):
     """Custom implementation of QuerySet."""
 
-    def filter_open(self):
+    def filter_open(self) -> models.QuerySet:
         """Restrict to debts that still have to be paid."""
         return self.filter(settled=False)
 
-    def filter_involving_user(self, *, user_id: int):
+    def filter_involving_user(self, *, user_id: int) -> models.QuerySet:
         """Restrict to debts the user is a party to, on either side."""
         return self.filter(Q(debitor_id=user_id) | Q(creditor_id=user_id))
 
-    def aggregate_balance_per_room_and_currency(self, *, user_id: int):
+    def aggregate_balance_per_room_and_currency(self, *, user_id: int) -> models.QuerySet:
         """Return one row per (room, currency) holding the user's gross debit and credit side.
 
         Grouping by currency is mandatory: the project has no exchange rates, so amounts of

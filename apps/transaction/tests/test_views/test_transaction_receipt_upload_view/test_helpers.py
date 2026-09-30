@@ -3,7 +3,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from apps.transaction.models import Receipt
 
 
-def create_receipt(parent_transaction, uploaded_by):
+def create_receipt(parent_transaction, uploaded_by) -> Receipt:
     receipt_file = SimpleUploadedFile(
         "receipt.pdf",
         b"%PDF-1.4\n%%EOF",

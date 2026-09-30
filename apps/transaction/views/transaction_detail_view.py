@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
@@ -12,7 +13,7 @@ class TransactionDetailView(TransactionBaseContext, generic.DetailView):
     context_object_name = "parent_transaction"
     template_name = "transaction/detail.html"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return (
             super()
             .get_queryset()
@@ -22,15 +23,15 @@ class TransactionDetailView(TransactionBaseContext, generic.DetailView):
 
     @context
     @cached_property
-    def child_transactions(self):
+    def child_transactions(self) -> QuerySet:
         # Every row prints the name and the avatar of the person it is for.
         return self.object.child_transactions.select_related("paid_for")
 
     @context
     @cached_property
-    def receipts(self):
+    def receipts(self) -> QuerySet:
         return self.object.receipts.all()
 
     @context
-    def receipt_upload_form(self):
+    def receipt_upload_form(self) -> TransactionReceiptUploadForm:
         return TransactionReceiptUploadForm(request=self.request)

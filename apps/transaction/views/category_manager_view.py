@@ -21,12 +21,12 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
     slug_url_kwarg = "room_slug"
     template_name = "transaction/category_manager.html"
 
-    def dispatch(self, request, *args: object, **kwargs: object):
+    def dispatch(self, request, *args: object, **kwargs: object) -> HttpResponse:
         self.object = self.get_object()
         self._ensure_room_member()
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs: object):
+    def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
         context.update(
             self._build_context(

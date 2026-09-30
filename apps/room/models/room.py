@@ -50,7 +50,7 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
     def __str__(self) -> str:
         return f"{self.name} ({self.get_status_display()})"
 
-    def save(self, *args: object, **kwargs: object):
+    def save(self, *args: object, **kwargs: object) -> None:
         if not self.slug:
             self.slug = uuid.uuid4()
 
@@ -68,13 +68,13 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
                 return candidate
 
     @cached_property
-    def room_users(self):
+    def room_users(self) -> models.QuerySet:
         from apps.account.models import User
 
         return User.objects.filter(room=self)
 
     @cached_property
-    def has_guests(self):
+    def has_guests(self) -> bool:
         return self.room_users.filter(is_guest=True).exists()
 
     @classmethod
@@ -101,19 +101,19 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
             return ""
 
     @cached_property
-    def capitalised_initials(self):
+    def capitalised_initials(self) -> str:
         return self.name[:2].upper()
 
     @property
-    def can_be_closed(self):
+    def can_be_closed(self) -> bool:
         return not self.debts.filter(settled=False).exists()
 
     @property
-    def is_closed(self):
+    def is_closed(self) -> bool:
         return self.status == self.StatusChoices.CLOSED
 
     @property
-    def can_be_deleted(self):
+    def can_be_deleted(self) -> bool:
         return self.is_closed
 
     @property

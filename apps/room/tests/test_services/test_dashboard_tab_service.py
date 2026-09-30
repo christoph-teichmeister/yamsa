@@ -7,7 +7,7 @@ from apps.room.tests.factories import RoomFactory
 
 @pytest.mark.django_db
 class TestDashboardTabService:
-    def test_get_tabs_includes_expected_routes(self):
+    def test_get_tabs_includes_expected_routes(self) -> None:
         room = RoomFactory()
         tabs = DashboardTabService(room).get_tabs_as_list()
 

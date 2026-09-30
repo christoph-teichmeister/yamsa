@@ -1,3 +1,5 @@
+from collections.abc import Iterator
+
 import pytest
 from django.test import Client, override_settings
 from django.urls import path
@@ -11,7 +13,7 @@ def _boom(request) -> None:
 
 
 @pytest.fixture
-def boom_url():
+def boom_url() -> Iterator[str]:
     url_pattern = path("__test_boom__/", _boom)
     root_urls.urlpatterns.append(url_pattern)
     yield "/__test_boom__/"
@@ -19,7 +21,7 @@ def boom_url():
 
 
 @override_settings(DEBUG=False)
-def test_server_error_view_renders_with_request_in_context(boom_url):
+def test_server_error_view_renders_with_request_in_context(boom_url) -> None:
     """Regression test for #YAMSA-46/#YAMSA-44.
 
     Django's default handler500 renders 500.html without a request in context, and 500.html's
@@ -32,7 +34,7 @@ def test_server_error_view_renders_with_request_in_context(boom_url):
 
 
 @override_settings(DEBUG=False)
-def test_server_error_view_skips_full_page_render_for_htmx(boom_url):
+def test_server_error_view_skips_full_page_render_for_htmx(boom_url) -> None:
     """An htmx request never swaps in a non-2xx response.
 
     So the full 500.html render (with all its context-processor dependencies) is unnecessary

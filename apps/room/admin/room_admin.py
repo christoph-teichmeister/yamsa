@@ -7,7 +7,7 @@ from apps.room.models import Room
 
 
 @admin.action(description="Optimise debts of selected Rooms")
-def optimise_debts_for_room(modeladmin, request, queryset):  # pragma: no cover
+def optimise_debts_for_room(modeladmin, request, queryset) -> None:  # pragma: no cover
     for room in queryset:
         DebtOptimiseService.process(room_id=room.id)
 
@@ -33,7 +33,7 @@ class RoomAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
         ),
     )
 
-    def get_inlines(self, request, obj):
+    def get_inlines(self, request, obj) -> tuple:
         from apps.room.admin.user_connection_to_room_admin import UserConnectionToRoomForRoomAdminInline
 
         return *super().get_inlines(request, obj), UserConnectionToRoomForRoomAdminInline

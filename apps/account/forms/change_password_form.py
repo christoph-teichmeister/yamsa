@@ -25,14 +25,14 @@ class ChangePasswordForm(forms.ModelForm):
         self._request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
 
-    def clean_old_password(self):
+    def clean_old_password(self) -> str:
         old_password = self.cleaned_data["old_password"]
         possible_user = authenticate(request=self._request, email=self.instance.email, password=old_password)
         if possible_user is None:
             raise ValidationError(self.ExceptionMessage.PASSWORD_INCORRECT)
         return old_password
 
-    def clean(self):
+    def clean(self) -> None:
         cleaned_data = super().clean()
 
         # A field that failed its own validation is gone from cleaned_data, so reading it by key
@@ -42,6 +42,6 @@ class ChangePasswordForm(forms.ModelForm):
         if new_password and confirmation and new_password != confirmation:
             raise ValidationError({"new_password_confirmation": self.ExceptionMessage.PASSWORDS_DO_NOT_MATCH})
 
-    def save(self, commit=True):
+    def save(self, commit=True) -> User:
         self.instance.password = hashers.make_password(self.cleaned_data["new_password"])
         return super().save(commit)

@@ -7,6 +7,7 @@ from django.urls import reverse
 from apps.account.messages.commands.remove_user_from_room import RemoveUserFromRoom
 from apps.account.models import User
 from apps.account.views import UserListForRoomView
+from apps.core.event_loop.messages.message import Message
 from apps.core.toast_constants import ERROR_TOAST_CLASS
 from apps.core.views import WelcomePartialView
 
@@ -16,21 +17,21 @@ pytestmark = pytest.mark.django_db
 recorded_messages: list[object] = []
 
 
-def handle_message(message):
+def handle_message(message) -> Message:
     recorded_messages.append(message)
     return message
 
 
-def deny_removal(self, room_id):
+def deny_removal(self, room_id) -> bool:
     return False
 
 
-def allow_removal(self, room_id):
+def allow_removal(self, room_id) -> bool:
     return True
 
 
 @pytest.fixture
-def recorded_messages_recorder():
+def recorded_messages_recorder() -> list[object]:
     recorded_messages.clear()
     return recorded_messages
 
@@ -42,7 +43,7 @@ def test_post_user_can_not_be_removed_from_room(
     hx_client,
     monkeypatch,
     recorded_messages_recorder,
-):
+) -> None:
     room.users.add(guest_user)
 
     monkeypatch.setattr(
@@ -81,7 +82,7 @@ def test_post_user_can_be_removed_from_room(
     hx_client,
     monkeypatch,
     recorded_messages_recorder,
-):
+) -> None:
     room.users.add(guest_user)
 
     monkeypatch.setattr(
@@ -112,7 +113,7 @@ def test_post_closed_room_is_rejected(
     hx_client,
     monkeypatch,
     recorded_messages_recorder,
-):
+) -> None:
     monkeypatch.setattr(
         "apps.account.views.user_remove_from_room_view.handle_message",
         handle_message,
@@ -137,7 +138,7 @@ def test_post_user_removes_themselves_from_room(
     hx_client,
     monkeypatch,
     recorded_messages_recorder,
-):
+) -> None:
     room.users.add(user)
 
     monkeypatch.setattr(

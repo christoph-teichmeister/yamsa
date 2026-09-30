@@ -1,6 +1,7 @@
 """Tests that ensure the event-loop runner emits logging events on failures."""
 
 import logging
+from collections.abc import Iterator
 
 import pytest
 
@@ -30,7 +31,7 @@ def _latest_error_record(handler: _CaptureHandler, level: int) -> logging.LogRec
 
 
 @pytest.fixture
-def capture_handler():
+def capture_handler() -> Iterator[_CaptureHandler]:
     handler = _CaptureHandler()
     logger.addHandler(handler)
     original_level = logger.level
@@ -43,7 +44,7 @@ def capture_handler():
 
 
 @pytest.fixture(autouse=True)
-def cleanup_registry():
+def cleanup_registry() -> Iterator[None]:
     yield
     message_registry.command_dict.pop(_DummyCommand, None)
     message_registry.event_dict.pop(_DummyEvent, None)
@@ -60,7 +61,7 @@ class TestEventLoopRunner:
         handlers = message_registry.event_dict.setdefault(_DummyEvent, [])
         handlers.append(_failing_event_handler)
 
-    def test_handle_command_exception_logs_context(self, capture_handler):
+    def test_handle_command_exception_logs_context(self, capture_handler) -> None:
         self._register_command_handler()
         capture_handler.records.clear()
         command = _DummyCommand({})
@@ -75,7 +76,7 @@ class TestEventLoopRunner:
         assert command.uuid in record.getMessage()
         assert record.exc_info is not None
 
-    def test_handle_event_exception_logs_context(self, capture_handler):
+    def test_handle_event_exception_logs_context(self, capture_handler) -> None:
         self._register_event_handler()
         capture_handler.records.clear()
         event = _DummyEvent({})
@@ -91,7 +92,7 @@ class TestEventLoopRunner:
         assert record.exc_info is not None
 
     @pytest.mark.django_db
-    def test_handle_message_dispatches_command_and_event_handlers(self):
+    def test_handle_message_dispatches_command_and_event_handlers(self) -> None:
         processed: list[str] = []
 
         @message_registry.register_command(command=_DummyCommand)

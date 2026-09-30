@@ -7,7 +7,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestRoomCategoryService:
-    def test_seeds_defaults_and_marks_default(self, room):
+    def test_seeds_defaults_and_marks_default(self, room) -> None:
         service = RoomCategoryService(room=room)
         categories = list(service.get_categories())
 
@@ -16,7 +16,7 @@ class TestRoomCategoryService:
         assert defaults.count() == 1
         assert defaults.first().category.slug == DEFAULT_CATEGORY_SLUG
 
-    def test_create_room_category_can_mark_default(self, room):
+    def test_create_room_category_can_mark_default(self, room) -> None:
         service = RoomCategoryService(room=room)
         service.create_room_category(name="Private", emoji="🎯", color="#120A7D", make_default=True)
 
@@ -24,7 +24,7 @@ class TestRoomCategoryService:
         assert default.category.slug.startswith("private")
         assert service.get_default_category().pk == default.category.pk
 
-    def test_create_room_category_shifts_existing_categories(self, room):
+    def test_create_room_category_shifts_existing_categories(self, room) -> None:
         service = RoomCategoryService(room=room)
         initial_first = service.get_categories()[0]
         created = service.create_room_category(name="Room Tag", emoji="🚀", color="#FEDCBA", order_index=0)
@@ -34,7 +34,7 @@ class TestRoomCategoryService:
         assert categories[1].category.slug == initial_first.category.slug
         assert [rc.order_index for rc in categories] == list(range(len(categories)))
 
-    def test_update_room_category_reorders_without_changing_default(self, room):
+    def test_update_room_category_reorders_without_changing_default(self, room) -> None:
         service = RoomCategoryService(room=room)
         categories_before = list(service.get_categories())
         target = categories_before[2]
@@ -46,7 +46,7 @@ class TestRoomCategoryService:
         assert [rc.order_index for rc in updated_categories] == list(range(len(updated_categories)))
         assert RoomCategory.objects.get(room=room, is_default=True).id == default_before.id
 
-    def test_delete_room_category_compacts_order(self, room):
+    def test_delete_room_category_compacts_order(self, room) -> None:
         service = RoomCategoryService(room=room)
         categories = list(service.get_categories())
         target = categories[1]
@@ -55,7 +55,7 @@ class TestRoomCategoryService:
         remaining = list(service.get_categories())
         assert [rc.order_index for rc in remaining] == list(range(len(remaining)))
 
-    def test_delete_default_promotes_next_category(self, room):
+    def test_delete_default_promotes_next_category(self, room) -> None:
         service = RoomCategoryService(room=room)
         service.get_categories()
         default = RoomCategory.objects.get(room=room, is_default=True)
@@ -65,7 +65,7 @@ class TestRoomCategoryService:
         assert new_default.category.slug != default.category.slug
         assert service.get_default_category().slug == new_default.category.slug
 
-    def test_category_queryset_includes_custom_room_category(self, room):
+    def test_category_queryset_includes_custom_room_category(self, room) -> None:
         service = RoomCategoryService(room=room)
         created = service.create_room_category(name="Room Private", emoji="🎨", color="#123456")
 

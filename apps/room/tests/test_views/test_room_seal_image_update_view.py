@@ -15,7 +15,9 @@ def build_upload(file_name: str = "seal.png") -> SimpleUploadedFile:
 
 
 class TestRoomSealImageUpdateView:
-    def test_post_stores_the_image_and_clears_any_chosen_icon(self, tmp_path, settings, authenticated_client, room):
+    def test_post_stores_the_image_and_clears_any_chosen_icon(
+        self, tmp_path, settings, authenticated_client, room
+    ) -> None:
         settings.MEDIA_ROOT = str(tmp_path)
         room.seal_icon = SEAL_ICONS[0]
         room.save(update_fields=["seal_icon"])
@@ -33,7 +35,7 @@ class TestRoomSealImageUpdateView:
 
     def test_post_of_an_invalid_file_keeps_the_dialog_open_with_the_error(
         self, tmp_path, settings, authenticated_client, room
-    ):
+    ) -> None:
         settings.MEDIA_ROOT = str(tmp_path)
         corrupted = SimpleUploadedFile("seal.bin", b"not-an-image", content_type="application/octet-stream")
 
@@ -50,7 +52,7 @@ class TestRoomSealImageUpdateView:
         room.refresh_from_db()
         assert not room.seal_image
 
-    def test_post_closed_room_is_rejected(self, tmp_path, settings, authenticated_client, closed_room):
+    def test_post_closed_room_is_rejected(self, tmp_path, settings, authenticated_client, closed_room) -> None:
         settings.MEDIA_ROOT = str(tmp_path)
 
         response = authenticated_client.post(

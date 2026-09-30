@@ -8,14 +8,14 @@ from apps.webpush.tests.factories import WebpushInformationFactory
 
 
 @pytest.fixture
-def notification_send_service(user):
+def notification_send_service(user) -> NotificationSendService:
     WebpushInformationFactory(user=user)
     return NotificationSendService()
 
 
 @pytest.mark.django_db
 class TestNotificationSendService:
-    def test_webpush_exception_is_swallowed(self, notification_send_service, user):
+    def test_webpush_exception_is_swallowed(self, notification_send_service, user) -> None:
         exception = WebPushException("boom", response=mock.Mock(status_code=500))
 
         with mock.patch(
@@ -26,7 +26,7 @@ class TestNotificationSendService:
 
         assert responses == []
 
-    def test_unexpected_exception_is_swallowed(self, notification_send_service, user):
+    def test_unexpected_exception_is_swallowed(self, notification_send_service, user) -> None:
         with mock.patch(
             "apps.webpush.services.notification_send_service.webpush",
             side_effect=RuntimeError("network down"),

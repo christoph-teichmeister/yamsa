@@ -28,10 +28,10 @@ def _stored_seal(room: Room) -> tuple[str, bool]:
 
 @pytest.mark.e2e
 class TestRoomSeal:
-    def test_a_room_wears_its_default_seal_until_one_is_chosen(self, logged_in_room_detail_page, default_icon):
+    def test_a_room_wears_its_default_seal_until_one_is_chosen(self, logged_in_room_detail_page, default_icon) -> None:
         logged_in_room_detail_page.expect_seal_icon(default_icon)
 
-    def test_a_predefined_icon_can_be_picked(self, logged_in_room_detail_page, shared_room, other_icon):
+    def test_a_predefined_icon_can_be_picked(self, logged_in_room_detail_page, shared_room, other_icon) -> None:
         logged_in_room_detail_page.open_seal_dialog()
 
         logged_in_room_detail_page.pick_seal_icon(other_icon)
@@ -39,7 +39,9 @@ class TestRoomSeal:
         logged_in_room_detail_page.expect_seal_icon(other_icon)
         assert _stored_seal(shared_room) == (other_icon, False)
 
-    def test_each_icon_is_announced_by_name_and_the_chosen_one_as_pressed(self, logged_in_room_detail_page, other_icon):
+    def test_each_icon_is_announced_by_name_and_the_chosen_one_as_pressed(
+        self, logged_in_room_detail_page, other_icon
+    ) -> None:
         logged_in_room_detail_page.open_seal_dialog()
         logged_in_room_detail_page.pick_seal_icon(other_icon)
 
@@ -50,7 +52,9 @@ class TestRoomSeal:
             expected = "true" if icon_name == other_icon else "false"
             expect(logged_in_room_detail_page.seal_icon_button(icon_name)).to_have_attribute("aria-pressed", expected)
 
-    def test_picking_an_icon_leaves_the_rest_of_the_sheet_pristine(self, logged_in_room_detail_page, other_icon):
+    def test_picking_an_icon_leaves_the_rest_of_the_sheet_pristine(
+        self, logged_in_room_detail_page, other_icon
+    ) -> None:
         logged_in_room_detail_page.open_seal_dialog()
 
         logged_in_room_detail_page.pick_seal_icon(other_icon)
@@ -58,7 +62,7 @@ class TestRoomSeal:
         # The seal has its own cycle; the sheet's action row only speaks for its fields.
         logged_in_room_detail_page.expect_actions_disabled()
 
-    def test_a_custom_image_replaces_the_icon(self, logged_in_room_detail_page, shared_room, other_icon):
+    def test_a_custom_image_replaces_the_icon(self, logged_in_room_detail_page, shared_room, other_icon) -> None:
         logged_in_room_detail_page.open_seal_dialog()
         logged_in_room_detail_page.pick_seal_icon(other_icon)
 
@@ -68,7 +72,9 @@ class TestRoomSeal:
         logged_in_room_detail_page.expect_seal_image()
         assert _stored_seal(shared_room) == ("", True)
 
-    def test_picking_an_icon_replaces_the_custom_image(self, logged_in_room_detail_page, shared_room, other_icon):
+    def test_picking_an_icon_replaces_the_custom_image(
+        self, logged_in_room_detail_page, shared_room, other_icon
+    ) -> None:
         logged_in_room_detail_page.open_seal_dialog()
         logged_in_room_detail_page.upload_seal_image("seal.png", build_image_bytes())
 
@@ -78,7 +84,9 @@ class TestRoomSeal:
         logged_in_room_detail_page.expect_seal_icon(other_icon)
         assert _stored_seal(shared_room) == (other_icon, False)
 
-    def test_a_file_that_is_no_image_is_refused_in_the_open_dialog(self, logged_in_room_detail_page, shared_room):
+    def test_a_file_that_is_no_image_is_refused_in_the_open_dialog(
+        self, logged_in_room_detail_page, shared_room
+    ) -> None:
         logged_in_room_detail_page.open_seal_dialog()
 
         logged_in_room_detail_page.upload_seal_image("seal.png", b"not an image at all", mime_type="image/png")
@@ -87,7 +95,9 @@ class TestRoomSeal:
         expect(logged_in_room_detail_page.seal_dialog).to_contain_text("Upload a valid image.")
         assert _stored_seal(shared_room) == ("", False)
 
-    def test_resetting_brings_back_the_default(self, logged_in_room_detail_page, shared_room, default_icon, other_icon):
+    def test_resetting_brings_back_the_default(
+        self, logged_in_room_detail_page, shared_room, default_icon, other_icon
+    ) -> None:
         logged_in_room_detail_page.open_seal_dialog()
         logged_in_room_detail_page.upload_seal_image("seal.png", build_image_bytes())
 
@@ -97,12 +107,14 @@ class TestRoomSeal:
         logged_in_room_detail_page.expect_seal_icon(default_icon)
         assert _stored_seal(shared_room) == ("", False)
 
-    def test_a_room_with_its_default_seal_offers_no_reset(self, logged_in_room_detail_page):
+    def test_a_room_with_its_default_seal_offers_no_reset(self, logged_in_room_detail_page) -> None:
         logged_in_room_detail_page.open_seal_dialog()
 
         expect(logged_in_room_detail_page.seal_dialog.get_by_role("button", name="Reset to default")).to_have_count(0)
 
-    def test_the_chosen_seal_shows_on_the_rooms_other_pages(self, logged_in_room_detail_page, shared_room, other_icon):
+    def test_the_chosen_seal_shows_on_the_rooms_other_pages(
+        self, logged_in_room_detail_page, shared_room, other_icon
+    ) -> None:
         logged_in_room_detail_page.open_seal_dialog()
         logged_in_room_detail_page.pick_seal_icon(other_icon)
 
@@ -115,7 +127,7 @@ class TestRoomSeal:
             "href", re.compile(rf"#{re.escape(other_icon)}$")
         )
 
-    def test_a_closed_room_keeps_its_seal(self, page, logged_in_room_detail_page, shared_room):
+    def test_a_closed_room_keeps_its_seal(self, page, logged_in_room_detail_page, shared_room) -> None:
         Room.objects.filter(pk=shared_room.pk).update(status=Room.StatusChoices.CLOSED)
         connection.close()
         logged_in_room_detail_page.navigate()

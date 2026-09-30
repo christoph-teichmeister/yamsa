@@ -3,7 +3,7 @@ import pytest
 
 @pytest.mark.e2e
 class TestRoomSheet:
-    def test_the_actions_stay_disabled_until_a_field_changes(self, logged_in_room_detail_page):
+    def test_the_actions_stay_disabled_until_a_field_changes(self, logged_in_room_detail_page) -> None:
         logged_in_room_detail_page.expect_fields_editable()
         # Nothing has changed yet, so there is nothing to save or to throw away.
         logged_in_room_detail_page.expect_actions_disabled()
@@ -12,7 +12,7 @@ class TestRoomSheet:
 
         logged_in_room_detail_page.expect_actions_enabled()
 
-    def test_typing_never_leaves_the_page(self, logged_in_room_detail_page):
+    def test_typing_never_leaves_the_page(self, logged_in_room_detail_page) -> None:
         logged_in_room_detail_page.mark_sheet("before-typing")
 
         logged_in_room_detail_page.fill_name("Renamed by e2e")
@@ -21,7 +21,7 @@ class TestRoomSheet:
         # this fails the moment editing starts fetching a page or a fragment.
         assert logged_in_room_detail_page.read_sheet_marker() == "before-typing"
 
-    def test_saving_swaps_the_sheet_in_place(self, logged_in_room_detail_page):
+    def test_saving_swaps_the_sheet_in_place(self, logged_in_room_detail_page) -> None:
         logged_in_room_detail_page.fill_name("Renamed by e2e")
 
         logged_in_room_detail_page.save()
@@ -32,7 +32,7 @@ class TestRoomSheet:
         logged_in_room_detail_page.expect_actions_disabled()
         logged_in_room_detail_page.expect_url_is_the_room()
 
-    def test_discarding_restores_the_stored_values(self, logged_in_room_detail_page, shared_room):
+    def test_discarding_restores_the_stored_values(self, logged_in_room_detail_page, shared_room) -> None:
         logged_in_room_detail_page.fill_name("Typed but never saved")
         logged_in_room_detail_page.expect_actions_enabled()
 
@@ -41,7 +41,7 @@ class TestRoomSheet:
         logged_in_room_detail_page.expect_name(shared_room.name)
         logged_in_room_detail_page.expect_actions_disabled()
 
-    def test_closing_a_settled_room_leaves_nothing_to_edit(self, logged_in_room_detail_page):
+    def test_closing_a_settled_room_leaves_nothing_to_edit(self, logged_in_room_detail_page) -> None:
         logged_in_room_detail_page.expect_status("Open")
 
         logged_in_room_detail_page.close_room()

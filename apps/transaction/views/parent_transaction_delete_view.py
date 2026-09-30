@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.urls import reverse
 from django.views import generic
 
@@ -12,13 +13,13 @@ class ParentTransactionDeleteView(RoomNotClosedRequiredMixin, TransactionBaseCon
     model = ParentTransaction
     template_name = "transaction/edit.html"
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(
             viewname="transaction:list",
             kwargs={"room_slug": self.request.room.slug},
         )
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponse:
         deleted = ParentTransactionDeleted.context_before_deletion(self.object, user_who_deleted=self.request.user)
 
         self.object.child_transactions.all().delete()

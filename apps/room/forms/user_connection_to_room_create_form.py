@@ -17,13 +17,13 @@ class UserConnectionToRoomCreateForm(forms.ModelForm):
         model = UserConnectionToRoom
         fields = ("email", "room_slug")
 
-    def clean_email(self):
+    def clean_email(self) -> str:
         if not User.objects.filter(email=self.cleaned_data["email"]).exists():
             raise ValidationError(self.ExceptionMessage.EMAIL_UNKNOWN)
 
         return self.cleaned_data["email"]
 
-    def clean(self):
+    def clean(self) -> None:
         if UserConnectionToRoom.objects.filter(
             user__email=self.data["email"], room__slug=self.data["room_slug"]
         ).exists():

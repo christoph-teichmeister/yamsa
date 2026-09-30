@@ -8,7 +8,7 @@ from apps.room.models import UserConnectionToRoom
 
 @pytest.mark.django_db
 class TestRoomToRequestMiddleware:
-    def test_middleware_sets_user_has_seen_this_room_properly(self, authenticated_client, user, room):
+    def test_middleware_sets_user_has_seen_this_room_properly(self, authenticated_client, user, room) -> None:
         connection = UserConnectionToRoom.objects.get(user=user, room=room)
         assert not connection.user_has_seen_this_room
 
@@ -18,7 +18,7 @@ class TestRoomToRequestMiddleware:
         connection.refresh_from_db()
         assert connection.user_has_seen_this_room
 
-    def test_middleware_allows_superuser_to_see_a_room(self, client, superuser, room):
+    def test_middleware_allows_superuser_to_see_a_room(self, client, superuser, room) -> None:
         client.defaults["HTTP_HX_REQUEST"] = "true"
         client.force_login(superuser)
 

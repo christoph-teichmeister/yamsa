@@ -13,7 +13,7 @@ class WebPushSaveView(generic.CreateView):
     form_class = WebPushInformationForm
     template_name = ""
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
         post_data = json.loads(self.request.body.decode("utf-8"))
 
         subscription_data = post_data.pop("subscription", {})
@@ -28,7 +28,7 @@ class WebPushSaveView(generic.CreateView):
             },
         }
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponse:
         if not self.request.user.is_authenticated:
             return HttpResponse(status=http.HTTPStatus.BAD_REQUEST)
 
@@ -48,5 +48,5 @@ class WebPushSaveView(generic.CreateView):
             content="Unknown status_type",
         )
 
-    def form_invalid(self, form):
+    def form_invalid(self, form) -> HttpResponse:
         return HttpResponse(status=http.HTTPStatus.BAD_REQUEST, content=form.errors)

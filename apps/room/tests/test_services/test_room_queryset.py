@@ -5,7 +5,7 @@ from apps.room.models import Room
 
 @pytest.mark.django_db
 class TestRoomQuerySetWithoutMembers:
-    def test_returns_room_with_no_users(self, db):
+    def test_returns_room_with_no_users(self, db) -> None:
         from apps.room.tests.factories import RoomFactory
 
         empty_room = RoomFactory()
@@ -14,13 +14,13 @@ class TestRoomQuerySetWithoutMembers:
         qs = Room.objects.filter_without_members()
         assert qs.filter(pk=empty_room.pk).exists()
 
-    def test_excludes_room_with_users(self, room):
+    def test_excludes_room_with_users(self, room) -> None:
         assert room.users.exists()
 
         qs = Room.objects.filter_without_members()
         assert not qs.filter(pk=room.pk).exists()
 
-    def test_mixed_rooms_only_returns_empty_ones(self, room, db):
+    def test_mixed_rooms_only_returns_empty_ones(self, room, db) -> None:
         from apps.room.tests.factories import RoomFactory
 
         empty_room = RoomFactory()

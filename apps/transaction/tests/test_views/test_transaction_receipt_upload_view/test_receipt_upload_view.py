@@ -1,4 +1,5 @@
 import json
+from collections.abc import Iterator
 from http import HTTPStatus
 
 import pytest
@@ -12,7 +13,7 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def cleanup_receipts():
+def cleanup_receipts() -> Iterator[None]:
     yield
     for receipt in Receipt.objects.all():
         receipt.file.delete(save=False)
@@ -22,7 +23,7 @@ def cleanup_receipts():
 class TestTransactionReceiptUploadView:
     def test_receipt_uploads_for_transaction_detail(
         self, authenticated_client, room, user, transaction_with_children, cleanup_receipts
-    ):
+    ) -> None:
         parent_transaction = transaction_with_children
         receipt_file = SimpleUploadedFile(
             "receipt.pdf",
@@ -54,7 +55,7 @@ class TestTransactionReceiptUploadView:
 
     def test_receipt_upload_rejects_invalid_file(
         self, authenticated_client, room, transaction_with_children, cleanup_receipts
-    ):
+    ) -> None:
         parent_transaction = transaction_with_children
         invalid_file = SimpleUploadedFile(
             "receipt.txt",
@@ -78,7 +79,7 @@ class TestTransactionReceiptUploadView:
 
     def test_receipt_upload_rejected_for_closed_room(
         self, authenticated_client, closed_room, transaction_with_children_in_closed_room, cleanup_receipts
-    ):
+    ) -> None:
         parent_transaction = transaction_with_children_in_closed_room
         receipt_file = SimpleUploadedFile(
             "receipt.pdf",

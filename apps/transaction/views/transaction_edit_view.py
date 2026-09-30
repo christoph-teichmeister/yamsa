@@ -1,5 +1,6 @@
 from django.db import transaction
-from django.http import HttpResponseRedirect
+from django.db.models import QuerySet
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views import generic
@@ -19,10 +20,10 @@ class TransactionEditView(RoomNotClosedRequiredMixin, TransactionBaseContext, ge
     template_name = "transaction/edit.html"
     context_object_name = "parent_transaction"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return super().get_queryset().select_related("paid_by", "currency", "category")
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
         form_kwargs = super().get_form_kwargs()
 
         form_kwargs.setdefault("room", self.request.room)
@@ -38,7 +39,7 @@ class TransactionEditView(RoomNotClosedRequiredMixin, TransactionBaseContext, ge
 
         return form_kwargs
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponse:
         # The parent and its shares are written together or not at all; the event only follows
         # once they are committed, so its handlers never run inside the transaction (#333).
         with transaction.atomic():
@@ -49,7 +50,7 @@ class TransactionEditView(RoomNotClosedRequiredMixin, TransactionBaseContext, ge
         )
         return HttpResponseRedirect(self.get_success_url())
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(
             viewname="transaction:detail",
             kwargs={"room_slug": self.request.room.slug, "pk": self.object.id},
@@ -57,5 +58,5 @@ class TransactionEditView(RoomNotClosedRequiredMixin, TransactionBaseContext, ge
 
     @context
     @cached_property
-    def child_transaction_qs(self):
+    def child_transaction_qs(self) -> QuerySet:
         return self.get_object().child_transactions.select_related("paid_for")

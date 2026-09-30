@@ -12,7 +12,7 @@ class ImportUploadForm(forms.Form):
     source = forms.ChoiceField(choices=get_source_choices, label=_("Source"))
     file = forms.FileField(label=_("Export file"))
 
-    def clean(self):
+    def clean(self) -> dict:
         cleaned_data = super().clean()
         source = cleaned_data.get("source")
         uploaded_file = cleaned_data.get("file")

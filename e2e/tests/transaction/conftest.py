@@ -1,7 +1,10 @@
+from collections.abc import Callable
+
 import pytest
 from django.urls import reverse
 
 from apps.account.tests.constants import DEFAULT_PASSWORD
+from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.models import Category, RoomCategory
 from e2e.pages.login_page import LoginPage
@@ -19,7 +22,7 @@ ROOM_CATALOG = (
 
 
 @pytest.fixture
-def room(profile_user, roommate):
+def room(profile_user, roommate) -> Room:
     room = RoomFactory(created_by=profile_user)
     room.users.add(profile_user, roommate)
 
@@ -39,7 +42,7 @@ def room(profile_user, roommate):
 
 
 @pytest.fixture
-def logged_in(page, base_url, profile_user):
+def logged_in(page, base_url, profile_user) -> Callable:
     def _login() -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
@@ -49,7 +52,7 @@ def logged_in(page, base_url, profile_user):
 
 
 @pytest.fixture
-def open_create_form(page, base_url, room, logged_in):
+def open_create_form(page, base_url, room, logged_in) -> Callable:
     def _open() -> TransactionCreatePage:
         logged_in()
         create_page = TransactionCreatePage(

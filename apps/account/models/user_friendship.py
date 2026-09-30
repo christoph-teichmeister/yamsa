@@ -26,7 +26,7 @@ class UserFriendship(CommonInfo):
     def __str__(self) -> str:
         return f"{self.user} ↔ {self.friend}"
 
-    def clean(self):
+    def clean(self) -> None:
         super().clean()
         if self.user_id is None or self.friend_id is None:
             return

@@ -10,7 +10,7 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.mark.parametrize("authenticated_user", ["user", "guest_user"], indirect=True)
-def test_get_regular_as_user_and_guest_user(hx_client, authenticated_user):
+def test_get_regular_as_user_and_guest_user(hx_client, authenticated_user) -> None:
     client = hx_client(authenticated_user)
 
     response = client.get(reverse("account:logout"), follow=True)

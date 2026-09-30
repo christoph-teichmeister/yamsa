@@ -1,10 +1,11 @@
 import pytest
 
+from apps.importer.dataclasses import ParsedImport
 from apps.importer.parsers.splitwise import SplitwiseCsvParser
 from apps.importer.tests.factories import build_file_like
 
 
-def parse(rows, header=None):
+def parse(rows, header=None) -> ParsedImport:
     kwargs = {"header": header} if header else {}
     return SplitwiseCsvParser().parse(build_file_like(rows, **kwargs))
 
@@ -21,27 +22,27 @@ class TestSplitwiseCsvParserSkippedRows:
             ("2023-03-06,Kostenfehler,Allgemein,abc,EUR,5.00,-5.00", "cost"),
         ],
     )
-    def test_row_is_skipped_with_reason(self, row, expected_fragment):
+    def test_row_is_skipped_with_reason(self, row, expected_fragment) -> None:
         result = parse([row])
 
         assert result.transactions == ()
         assert len(result.skipped_rows) == 1
         assert expected_fragment.lower() in result.skipped_rows[0].reason.lower()
 
-    def test_row_with_two_payers_is_skipped(self):
+    def test_row_with_two_payers_is_skipped(self) -> None:
         header = "Datum,Beschreibung,Kategorie,Kosten,Währung,Anna,Ben,Cleo"
         result = parse(["2023-03-06,Zwei Zahler,Allgemein,15.00,EUR,10.00,5.00,-15.00"], header=header)
 
         assert result.transactions == ()
         assert "more than one payer" in result.skipped_rows[0].reason.lower()
 
-    def test_blank_lines_are_ignored_without_being_reported(self):
+    def test_blank_lines_are_ignored_without_being_reported(self) -> None:
         result = parse(["", "   ", "2023-03-06,Ikea,Allgemein,10.00,EUR,5.00,-5.00"])
 
         assert len(result.transactions) == 1
         assert result.skipped_rows == ()
 
-    def test_skipped_row_keeps_its_spreadsheet_row_number(self):
+    def test_skipped_row_keeps_its_spreadsheet_row_number(self) -> None:
         result = parse(
             [
                 "2023-03-06,Ikea,Allgemein,10.00,EUR,5.00,-5.00",

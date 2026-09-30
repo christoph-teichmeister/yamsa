@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import authenticate, login
+from django.http import HttpResponse
 from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import get_supported_language_variant
@@ -17,10 +18,10 @@ class LogInUserView(generic.FormView):
     class ExceptionMessage:
         AUTH_FAILED = _("The combination of email and password does not match")
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(viewname="core:welcome")
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponse:
         cleaned_data = form.cleaned_data
         possible_user = authenticate(
             request=self.request, email=cleaned_data["email"], password=cleaned_data["password"]

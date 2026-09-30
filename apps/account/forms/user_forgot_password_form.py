@@ -17,7 +17,7 @@ class UserForgotPasswordForm(forms.Form):
     class Meta:
         fields = ("email",)
 
-    def clean_email(self):
+    def clean_email(self) -> str:
         email = self.cleaned_data["email"]
         if not User.objects.filter(email=email).exists():
             raise ValidationError(self.ExceptionMessage.UNKNOWN_EMAIL_ADDRESS.format(email=email))

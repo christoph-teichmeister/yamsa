@@ -13,7 +13,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestMoneySpentViews:
-    def test_money_spent_on_room_displays_aggregated_context(self, client, room, user, guest_user):
+    def test_money_spent_on_room_displays_aggregated_context(self, client, room, user, guest_user) -> None:
         _, child_transactions = create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -44,7 +44,7 @@ class TestMoneySpentViews:
         assert covered_per_person[0]["paid_for__name"] == guest_user.name
         assert covered_per_person[0]["total_covered_for_person"] == expected_total
 
-    def test_money_spent_trend_view_builds_chart_payload(self, client, room, user, guest_user):
+    def test_money_spent_trend_view_builds_chart_payload(self, client, room, user, guest_user) -> None:
         _, child_transactions = create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -77,7 +77,7 @@ class TestMoneySpentViews:
         assert chart_data["rangeStart"] < chart_data["rangeEnd"]
         assert [entry["currency"] for entry in chart_data["series"]] == [room.preferred_currency.sign]
 
-    def test_money_spent_trend_view_steps_per_transaction_not_per_week(self, client, room, user, guest_user):
+    def test_money_spent_trend_view_steps_per_transaction_not_per_week(self, client, room, user, guest_user) -> None:
         """Regression: weekly buckets collapsed a whole trip into a single jump."""
         now = timezone.now()
         for offset_hours in (5, 4, 3):
@@ -101,7 +101,7 @@ class TestMoneySpentViews:
         assert [point["value"] for point in points] == [0.0, 10.0, 20.0, 30.0, 30.0]
         assert [point["delta"] for point in points] == [0.0, 10.0, 10.0, 10.0, 0.0]
 
-    def test_money_spent_trend_view_keeps_currencies_apart(self, client, room, user, guest_user):
+    def test_money_spent_trend_view_keeps_currencies_apart(self, client, room, user, guest_user) -> None:
         """Regression: same-bucket rows of a second currency silently overwrote the first."""
         now = timezone.now()
         second_currency = CurrencyFactory(sign="Ft")
@@ -136,7 +136,7 @@ class TestMoneySpentViews:
         # Totals across currencies are not comparable, so the room's own currency leads.
         assert series[0]["currency"] == room.preferred_currency.sign
 
-    def test_money_spent_trend_view_starts_from_spending_before_the_range(self, client, room, user, guest_user):
+    def test_money_spent_trend_view_starts_from_spending_before_the_range(self, client, room, user, guest_user) -> None:
         """Regression: the running total restarted at zero whenever the window cut off older expenses."""
         now = timezone.now()
         create_parent_transaction_with_optimisation(
@@ -166,7 +166,7 @@ class TestMoneySpentViews:
         assert series["points"][0]["value"] == 40.0
         assert series["total"] == 50.0
 
-    def test_money_spent_trend_view_range_matches_the_selected_period(self, client, room, user, guest_user):
+    def test_money_spent_trend_view_range_matches_the_selected_period(self, client, room, user, guest_user) -> None:
         """Regression: the start was snapped back to a Monday, so '7 days' spanned up to 14."""
         create_parent_transaction_with_optimisation(
             room=room,
@@ -184,14 +184,14 @@ class TestMoneySpentViews:
 
         assert context["trend_range_end"] - context["trend_range_start"] == timedelta(weeks=1)
 
-    def test_money_spent_trend_view_shows_empty_state_without_transactions(self, client, room, user):
+    def test_money_spent_trend_view_shows_empty_state_without_transactions(self, client, room, user) -> None:
         response = client.get(reverse("debt:money-spent-trend", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == http.HTTPStatus.OK
         assert response.context_data["trend_series"] == []
         assert "No data available" in response.content.decode()
 
-    def test_money_spent_on_room_omits_self_owed_entries(self, client, room, user, guest_user):
+    def test_money_spent_on_room_omits_self_owed_entries(self, client, room, user, guest_user) -> None:
         _, child_transactions = create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -209,7 +209,7 @@ class TestMoneySpentViews:
             transaction.value for transaction in child_transactions if transaction.paid_for == guest_user
         )
 
-    def test_money_spent_on_room_shows_empty_state_without_transactions(self, client, room, user):
+    def test_money_spent_on_room_shows_empty_state_without_transactions(self, client, room, user) -> None:
         client.force_login(user)
         response = client.get(reverse("debt:money-spent-on-room", kwargs={"room_slug": room.slug}))
 

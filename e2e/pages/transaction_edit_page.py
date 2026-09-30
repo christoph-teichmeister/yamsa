@@ -1,4 +1,4 @@
-from playwright.sync_api import expect
+from playwright.sync_api import Locator, expect
 
 from e2e.pages.transaction_create_page import TransactionCreatePage
 
@@ -11,17 +11,17 @@ class TransactionEditPage(TransactionCreatePage):
     right away, and that the whole transaction can be deleted from here.
     """
 
-    def set_paid_by(self, participant: str):
+    def set_paid_by(self, participant: str) -> None:
         self.page.locator("#paid_by_select").select_option(label=participant)
 
-    def add_participant(self, participant: str, amount: str):
+    def add_participant(self, participant: str, amount: str) -> None:
         super().add_participant(participant)
         self.page.locator(".split-row").last.locator("input[name='value']").fill(amount)
 
-    def save(self):
+    def save(self) -> None:
         self.page.get_by_role("button", name="Save changes").click()
 
-    def remove_saved_share(self, participant: str, *, confirm: bool = True):
+    def remove_saved_share(self, participant: str, *, confirm: bool = True) -> None:
         # hx-confirm asks through the browser's own confirm(), which Playwright would dismiss.
         self.page.once("dialog", lambda dialog: dialog.accept() if confirm else dialog.dismiss())
         if not confirm:
@@ -31,10 +31,10 @@ class TransactionEditPage(TransactionCreatePage):
             self._row_for(participant).get_by_role("button", name="Remove this share").click()
 
     @property
-    def delete_button(self):
+    def delete_button(self) -> Locator:
         return self.page.get_by_role("button", name="Delete", exact=True)
 
-    def delete_transaction(self, *, confirm: bool = True):
+    def delete_transaction(self, *, confirm: bool = True) -> None:
         self.page.once("dialog", lambda dialog: dialog.accept() if confirm else dialog.dismiss())
         if not confirm:
             self.delete_button.click()
@@ -42,7 +42,7 @@ class TransactionEditPage(TransactionCreatePage):
         with self.page.expect_response(lambda response: "/parent-transaction/delete/" in response.url):
             self.delete_button.click()
 
-    def expect_shares_locked(self, *, locked: bool):
+    def expect_shares_locked(self, *, locked: bool) -> None:
         values = self.page.locator(".split-row input[name='value']")
         for index in range(values.count()):
             if locked:

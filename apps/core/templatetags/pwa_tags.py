@@ -5,13 +5,13 @@ register = template.Library()
 
 
 @register.inclusion_tag("core/pwa/load_meta_data.html", takes_context=True)
-def load_pwa_meta_data(context):
+def load_pwa_meta_data(context) -> dict:
     # Pass MANIFEST settings into the template
     return {"manifest": settings.MANIFEST}
 
 
 @register.inclusion_tag("core/pwa/load_serviceworker.html", takes_context=True)
-def load_serviceworker(context):
+def load_serviceworker(context) -> dict:
     # For some reason, context does not always have request
     # (See https://chris-teichmeister.sentry.io/issues/4814658034/?project=4506417250107392)
     # ...take care of this here

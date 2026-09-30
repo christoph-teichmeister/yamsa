@@ -12,7 +12,7 @@ from e2e.pages.login_page import LoginPage
 
 @pytest.mark.e2e
 class TestViewProfile:
-    def test_user_can_view_own_profile(self, logged_in_profile_detail_page, profile_user):
+    def test_user_can_view_own_profile(self, logged_in_profile_detail_page, profile_user) -> None:
         logged_in_profile_detail_page.expect_name(profile_user.name)
         logged_in_profile_detail_page.expect_email(profile_user.email)
         logged_in_profile_detail_page.expect_actions_present()
@@ -20,7 +20,7 @@ class TestViewProfile:
 
     def test_user_can_view_profile_of_roommate(
         self, page, base_url, profile_user, roommate, shared_room, user_password
-    ):
+    ) -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login(profile_user.email, user_password)
@@ -35,7 +35,7 @@ class TestViewProfile:
 
     def test_user_can_look_at_the_photo_of_a_roommate_full_size(
         self, page, base_url, profile_user, roommate, shared_room, user_password
-    ):
+    ) -> None:
         roommate.profile_picture.save("avatar.png", ContentFile(build_image_bytes()), save=True)
 
         login_page = LoginPage(page, base_url, reverse("account:login"))
@@ -52,7 +52,7 @@ class TestViewProfile:
 
     def test_a_roommate_without_a_photo_offers_no_preview(
         self, page, base_url, profile_user, roommate, shared_room, user_password
-    ):
+    ) -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login(profile_user.email, user_password)
@@ -65,7 +65,7 @@ class TestViewProfile:
 
     def test_user_cannot_view_profile_of_unrelated_user(
         self, page, base_url, profile_user, unrelated_user, user_password
-    ):
+    ) -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login(profile_user.email, user_password)
@@ -76,7 +76,7 @@ class TestViewProfile:
         expected_status_code_forbidden = 403
         assert response.status == expected_status_code_forbidden
 
-    def test_superuser_can_view_any_profile(self, page, base_url, superuser, unrelated_user, user_password):
+    def test_superuser_can_view_any_profile(self, page, base_url, superuser, unrelated_user, user_password) -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login(superuser.email, user_password)
@@ -87,10 +87,10 @@ class TestViewProfile:
 
         detail_page.expect_member_name(unrelated_user.name)
 
-    def test_guest_sees_guest_mode_banner_on_own_profile(self, logged_in_guest_detail_page):
+    def test_guest_sees_guest_mode_banner_on_own_profile(self, logged_in_guest_detail_page) -> None:
         logged_in_guest_detail_page.expect_guest_mode_banner_visible()
 
-    def test_anonymous_visitor_is_redirected_to_login(self, page, base_url, profile_user):
+    def test_anonymous_visitor_is_redirected_to_login(self, page, base_url, profile_user) -> None:
         path = reverse("account:detail", kwargs={"pk": profile_user.id})
         page.goto(f"{base_url}{path}")
 

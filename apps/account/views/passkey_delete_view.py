@@ -6,7 +6,7 @@ from passkeys.models import UserPasskey
 
 
 class PasskeyDeleteView(LoginRequiredMixin, View):
-    def post(self, request):
+    def post(self, request) -> HttpResponse:
         qs = UserPasskey.objects.filter(id=request.POST.get("id"), user=request.user)
         if not qs.exists():
             return HttpResponse("Fehler: Passkey nicht gefunden oder gehört nicht dir.", status=403)

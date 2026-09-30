@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import authenticate, login
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import get_supported_language_variant
@@ -10,7 +10,7 @@ from apps.account.constants import LANGUAGE_SESSION_KEY, SESSION_TTL_SESSION_KEY
 
 
 class PasskeyLoginView(View):
-    def post(self, request):
+    def post(self, request) -> HttpResponse:
         user = authenticate(request=request)
         if user is None:
             return JsonResponse({"status": "ERR", "message": "Passkey nicht erkannt."}, status=401)

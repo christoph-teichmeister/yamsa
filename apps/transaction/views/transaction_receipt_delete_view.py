@@ -1,4 +1,4 @@
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.views import generic
 
@@ -11,7 +11,7 @@ from apps.transaction.views.mixins.transaction_base_context import TransactionBa
 class TransactionReceiptDeleteView(RoomNotClosedRequiredMixin, TransactionBaseContext, generic.TemplateView):
     template_name = "transaction/partials/_receipts_section.html"
 
-    def post(self, request, room_slug, receipt_pk):
+    def post(self, request, room_slug, receipt_pk) -> HttpResponse:
         receipt = get_object_or_404(
             Receipt.objects.select_related("uploaded_by", "parent_transaction__room"),
             pk=receipt_pk,

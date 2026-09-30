@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -20,23 +21,23 @@ class RoomEditView(RoomNotClosedRequiredMixin, RoomSheetResponseMixin, RoomBaseC
     model = Room
     form_class = RoomEditForm
 
-    def get(self, request, *args: object, **kwargs: object):
+    def get(self, request, *args: object, **kwargs: object) -> HttpResponse:
         return redirect("room:detail", room_slug=kwargs[self.slug_url_kwarg])
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse("room:detail", kwargs={"room_slug": self.object.slug})
 
-    def get_form(self, form_class=None):
+    def get_form(self, form_class=None) -> RoomEditForm:
         form = super().get_form(form_class)
         form.user = self.request.user
         return form
 
     @context
     @cached_property
-    def open_debt_count(self):
+    def open_debt_count(self) -> int:
         return self.object.debts.filter(settled=False).count()
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponse:
         response = super().form_valid(form)
 
         if not self.is_htmx_request():
@@ -44,7 +45,7 @@ class RoomEditView(RoomNotClosedRequiredMixin, RoomSheetResponseMixin, RoomBaseC
 
         return self.render_room_sheet(self.object)
 
-    def form_invalid(self, form):
+    def form_invalid(self, form) -> HttpResponse:
         if self.is_htmx_request():
             return self.render_room_sheet(self.object, form=form)
         return super().form_invalid(form)

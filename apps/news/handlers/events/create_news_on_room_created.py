@@ -7,7 +7,7 @@ from apps.room.messages.events.room_created import RoomCreated
 
 
 @message_registry.register_event(event=RoomCreated)
-def create_news_on_room_created(context: RoomCreated.Context):
+def create_news_on_room_created(context: RoomCreated.Context) -> None:
     room = context.instance
 
     message = _('{creator} created "{room_name}"').format(

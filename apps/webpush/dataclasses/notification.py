@@ -64,14 +64,14 @@ class Notification:
             if self.badge is None:
                 self.badge = default_icon_and_badge
 
-        def format_for_webpush(self):
+        def format_for_webpush(self) -> str:
             self._set_icon_and_badge_if_empty()
             return json.dumps({**self.__dict__, "data": self._build_data()})
 
     payload: Payload
     ttl: int = 1000
 
-    def send_to_user(self, user: User):
+    def send_to_user(self, user: User) -> list:
         # If the user does not want to receive webpush notifications, do not send them
         if not user.wants_to_receive_webpush_notifications:
             return []

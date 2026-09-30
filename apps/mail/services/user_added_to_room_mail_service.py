@@ -16,7 +16,7 @@ class UserAddedToRoomEmailService(BaseYamsaEmailService):
     def get_subject(self) -> str:
         return (_("Welcome to %(room_name)s") % {"room_name": self.new_room.name}) + " 🥳"
 
-    def get_email_user_text_context(self):
+    def get_email_user_text_context(self) -> EmailUserTextContext:
         return EmailUserTextContext(
             text_list=[
                 _("You have been invited to %(room_name)s to join your friends") % {"room_name": self.new_room.name}
@@ -25,7 +25,7 @@ class UserAddedToRoomEmailService(BaseYamsaEmailService):
             ]
         )
 
-    def get_email_extra_context(self):
+    def get_email_extra_context(self) -> EmailExtraContext:
         cta_btn_link = f"{settings.BACKEND_URL}{reverse('room:detail', kwargs={'room_slug': self.new_room.slug})}"
         return EmailExtraContext(
             show_cta=True,

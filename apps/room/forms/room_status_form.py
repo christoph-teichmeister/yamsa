@@ -32,7 +32,7 @@ class RoomStatusForm(forms.ModelForm):
         """Whether this post is the transition to closed, rather than any save on a closed room."""
         return "status" in self.changed_data and self.cleaned_data.get("status") == Room.StatusChoices.CLOSED
 
-    def clean(self):
+    def clean(self) -> dict:
         cleaned_data = super().clean()
         new_status = cleaned_data.get("status")
 
@@ -46,7 +46,7 @@ class RoomStatusForm(forms.ModelForm):
 
         return cleaned_data
 
-    def save(self, commit=True):
+    def save(self, commit=True) -> Room:
         self.instance.lastmodified_by = self.user
         self.instance.lastmodified_at = timezone.now()
         return super().save(commit)

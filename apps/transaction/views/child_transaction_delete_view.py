@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.urls import reverse
 from django.views import generic
 
@@ -12,7 +13,7 @@ class ChildTransactionDeleteView(RoomNotClosedRequiredMixin, TransactionBaseCont
     model = ChildTransaction
     template_name = "transaction/edit.html"
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         # If the count is 1, then that means that we are currently deleting the last child_transaction,
         # so the parent_transaction _will_ have no child_transactions anymore, after this operation is executed
         if self.object.parent_transaction.child_transactions.count() == 1:
@@ -26,7 +27,7 @@ class ChildTransactionDeleteView(RoomNotClosedRequiredMixin, TransactionBaseCont
             kwargs={"pk": self.object.parent_transaction.id, "room_slug": self.request.room.slug},
         )
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponse:
         parent_transaction = self.object.parent_transaction
         # Taken while this share still exists: it is part of what the transaction carried.
         deleted = (

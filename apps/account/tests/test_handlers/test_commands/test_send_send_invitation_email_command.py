@@ -13,7 +13,7 @@ from apps.mail.services.invitation_mail_service import InvitationEmailService
 @pytest.mark.django_db
 @freeze_time("2020-04-04 04:20:00")
 class TestSendInvitationEmailHandler:
-    def test_regular(self, guest_user, user):
+    def test_regular(self, guest_user, user) -> None:
         context = {
             "invitee": guest_user,
             "invitee_email": "invitee_email@local.local",

@@ -17,7 +17,7 @@ class RegisterForm(ModelForm):
         model = User
         fields = ("id", "is_guest", "name", "email", "password")
 
-    def clean_email(self):
+    def clean_email(self) -> str:
         email = self.cleaned_data["email"]
         normalized_email = validate_unique_email(
             email, error_message=self.ExceptionMessage.EMAIL_ADDRESS_ALREADY_IN_USE
@@ -26,10 +26,10 @@ class RegisterForm(ModelForm):
         self.cleaned_data["email"] = normalized_email
         return normalized_email
 
-    def clean_password(self):
+    def clean_password(self) -> str:
         return hashers.make_password(self.cleaned_data["password"])
 
-    def save(self, commit=True):
+    def save(self, commit=True) -> User:
         self.instance.id = self.cleaned_data["id"]
         self.instance.name = self.cleaned_data["name"]
         return super().save(commit)

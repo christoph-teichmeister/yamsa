@@ -14,7 +14,7 @@ REMINDER_SERVICE_PATH = "apps.room.services.room_closure_reminder_service.RoomCl
 
 @pytest.mark.django_db
 class TestRoomClosureReminderService:
-    def test_notifies_creator(self, room_with_stale_activity):
+    def test_notifies_creator(self, room_with_stale_activity) -> None:
         service = RoomClosureReminderService(now=timezone.now())
 
         with mock.patch(REMINDER_SERVICE_PATH) as mocked_process:
@@ -27,7 +27,7 @@ class TestRoomClosureReminderService:
         log = ReminderLog.objects.filter(reminder_type=service.REMINDER_TYPE).latest("created_at")
         assert log.recipients == [room_with_stale_activity.created_by.email]
 
-    def test_respects_creator_opt_out(self, room_with_stale_activity):
+    def test_respects_creator_opt_out(self, room_with_stale_activity) -> None:
         room = room_with_stale_activity
         room.created_by.wants_to_receive_room_reminders = False
         room.created_by.save(update_fields=["wants_to_receive_room_reminders"])
@@ -42,7 +42,7 @@ class TestRoomClosureReminderService:
         log = ReminderLog.objects.filter(reminder_type=service.REMINDER_TYPE).latest("created_at")
         assert log.recipients == []
 
-    def test_closed_rooms_are_skipped(self, room_with_stale_activity):
+    def test_closed_rooms_are_skipped(self, room_with_stale_activity) -> None:
         room = room_with_stale_activity
         room.status = Room.StatusChoices.CLOSED
         room.save(update_fields=["status"])
@@ -58,12 +58,12 @@ class TestRoomClosureReminderService:
         assert log.recipients == []
 
     @override_settings(INACTIVITY_REMINDER_ENABLED=False)
-    def test_should_run_returns_false_when_disabled(self):
+    def test_should_run_returns_false_when_disabled(self) -> None:
         service = RoomClosureReminderService(now=timezone.now())
 
         assert not service.should_run()
 
-    def test_should_run_respects_heartbeat_interval(self):
+    def test_should_run_respects_heartbeat_interval(self) -> None:
         ReminderLog.objects.create(reminder_type=RoomClosureReminderService.REMINDER_TYPE, recipients=[])
         last_log = ReminderLog.objects.order_by("-created_at").first()
         service = RoomClosureReminderService(
@@ -72,7 +72,7 @@ class TestRoomClosureReminderService:
 
         assert not service.should_run()
 
-    def test_should_run_after_heartbeat_expires(self):
+    def test_should_run_after_heartbeat_expires(self) -> None:
         ReminderLog.objects.create(reminder_type=RoomClosureReminderService.REMINDER_TYPE, recipients=[])
         last_log = ReminderLog.objects.order_by("-created_at").first()
         service = RoomClosureReminderService(
@@ -81,7 +81,7 @@ class TestRoomClosureReminderService:
 
         assert service.should_run()
 
-    def test_run_if_due_skips_when_not_ready(self):
+    def test_run_if_due_skips_when_not_ready(self) -> None:
         service = RoomClosureReminderService(now=timezone.now())
 
         with (
@@ -95,7 +95,7 @@ class TestRoomClosureReminderService:
     # Creator-membership guard
     # ------------------------------------------------------------------
 
-    def test_creator_removed_from_room_is_not_notified(self, room_with_stale_activity):
+    def test_creator_removed_from_room_is_not_notified(self, room_with_stale_activity) -> None:
         """A creator who is no longer a room member must not receive a reminder."""
         room = room_with_stale_activity
         creator = room.created_by
@@ -110,7 +110,7 @@ class TestRoomClosureReminderService:
         assert candidates == []
         assert not mocked_process.called
 
-    def test_creator_still_in_room_is_notified(self, room_with_stale_activity):
+    def test_creator_still_in_room_is_notified(self, room_with_stale_activity) -> None:
         """Sanity-check: creator who is still a member continues to be notified."""
         room = room_with_stale_activity
         assert room.users.filter(pk=room.created_by.pk).exists(), "pre-condition: creator must be a member"
@@ -127,7 +127,7 @@ class TestRoomClosureReminderService:
     # Auto-close empty rooms
     # ------------------------------------------------------------------
 
-    def test_empty_open_room_is_closed_on_run(self, room_with_stale_activity):
+    def test_empty_open_room_is_closed_on_run(self, room_with_stale_activity) -> None:
         """An open room with no members must be auto-closed during run()."""
         room = room_with_stale_activity
         room.users.clear()
@@ -140,7 +140,7 @@ class TestRoomClosureReminderService:
         room.refresh_from_db()
         assert room.status == Room.StatusChoices.CLOSED
 
-    def test_empty_room_is_not_notified_after_autoclose(self, room_with_stale_activity):
+    def test_empty_room_is_not_notified_after_autoclose(self, room_with_stale_activity) -> None:
         """Auto-closed empty rooms must not trigger any notification emails."""
         room = room_with_stale_activity
         room.users.clear()
@@ -153,7 +153,7 @@ class TestRoomClosureReminderService:
         assert candidates == []
         assert not mocked_process.called
 
-    def test_room_with_members_is_not_autoclosed(self, room_with_stale_activity):
+    def test_room_with_members_is_not_autoclosed(self, room_with_stale_activity) -> None:
         """Rooms that still have members must not be auto-closed."""
         room = room_with_stale_activity
         assert room.users.exists(), "pre-condition: room must have members"
@@ -166,7 +166,7 @@ class TestRoomClosureReminderService:
         room.refresh_from_db()
         assert room.status == Room.StatusChoices.OPEN
 
-    def test_already_closed_empty_room_stays_closed(self, room_with_stale_activity):
+    def test_already_closed_empty_room_stays_closed(self, room_with_stale_activity) -> None:
         """Already-closed rooms must not be touched by the auto-close logic."""
         room = room_with_stale_activity
         room.users.clear()

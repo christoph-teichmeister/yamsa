@@ -3,6 +3,7 @@ from decimal import Decimal
 import pytest
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
 from apps.debt.models import Debt
 from apps.transaction.models import ChildTransaction, ParentTransaction
@@ -10,7 +11,7 @@ from e2e.tests.transaction.conftest import GROCERIES
 
 
 @pytest.fixture
-def flatmate(room):
+def flatmate(room) -> User:
     flatmate = UserFactory()
     room.users.add(flatmate)
     return flatmate
@@ -28,7 +29,7 @@ def _booked_shares(room, description: str) -> dict[str, Decimal]:
 class TestTransactionSplit:
     def test_a_total_is_split_evenly_with_the_odd_cent_on_the_first_row(
         self, open_create_form, profile_user, roommate, flatmate
-    ):
+    ) -> None:
         create_page = open_create_form()
 
         create_page.set_total("10.00")
@@ -39,7 +40,9 @@ class TestTransactionSplit:
         assert list(shares.values()) == ["3.34", "3.33", "3.33"]
         assert set(shares) == {profile_user.name, roommate.name, flatmate.name}
 
-    def test_a_hand_edited_share_is_booked_as_entered(self, open_create_form, room, profile_user, roommate, page):
+    def test_a_hand_edited_share_is_booked_as_entered(
+        self, open_create_form, room, profile_user, roommate, page
+    ) -> None:
         create_page = open_create_form()
         create_page.fill_required_fields(description="Tankfüllung", amount="30.00")
         create_page.choose_category(GROCERIES)
@@ -58,7 +61,7 @@ class TestTransactionSplit:
 
     def test_shares_that_outgrow_the_total_raise_it_to_their_sum(
         self, open_create_form, room, profile_user, roommate, page
-    ):
+    ) -> None:
         create_page = open_create_form()
         create_page.fill_required_fields(description="Grillabend", amount="30.00")
         create_page.choose_category(GROCERIES)
@@ -73,7 +76,7 @@ class TestTransactionSplit:
             roommate.name: Decimal("25.00"),
         }
 
-    def test_changing_the_total_resets_hand_edited_shares(self, open_create_form, profile_user, roommate):
+    def test_changing_the_total_resets_hand_edited_shares(self, open_create_form, profile_user, roommate) -> None:
         create_page = open_create_form()
         create_page.set_total("30.00")
         create_page.set_share(roommate.name, "25.00")
@@ -84,7 +87,7 @@ class TestTransactionSplit:
 
     def test_removing_a_participant_folds_their_share_into_the_untouched_rows(
         self, open_create_form, profile_user, roommate, flatmate
-    ):
+    ) -> None:
         create_page = open_create_form()
         create_page.set_total("30.00")
         create_page.set_share(profile_user.name, "16.00")
@@ -95,7 +98,7 @@ class TestTransactionSplit:
 
     def test_adding_a_participant_rebalances_only_the_untouched_rows(
         self, open_create_form, room, profile_user, roommate, flatmate, page
-    ):
+    ) -> None:
         create_page = open_create_form()
         create_page.fill_required_fields(description="Pizzaabend", amount="30.00")
         create_page.choose_category(GROCERIES)

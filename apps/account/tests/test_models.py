@@ -24,12 +24,12 @@ def _build_image_bytes(width=64, height=64) -> bytes:
     return buffer.getvalue()
 
 
-def test_str_method(user):
+def test_str_method(user) -> None:
     assert str(user) == user.name
 
 
 @freeze_time("2020-04-04 04:20:00")
-def test_clean_for_guests(guest_user):
+def test_clean_for_guests(guest_user) -> None:
     timestamp = time()
 
     name_before = guest_user.name
@@ -45,7 +45,7 @@ def test_clean_for_guests(guest_user):
     assert guest_user.password == f"{guest_user.name}-{timestamp}"
 
 
-def test_clean_for_regular_user(user):
+def test_clean_for_regular_user(user) -> None:
     name_before = user.name
     email_before = user.email
     password_before = user.password
@@ -57,14 +57,14 @@ def test_clean_for_regular_user(user):
     assert password_before == user.password
 
 
-def test_room_qs_for_list_user(user, room):
+def test_room_qs_for_list_user(user, room) -> None:
     qs = user.room_qs_for_list
 
     assert qs.count() == 1
     assert qs.first()["name"] == room.name
 
 
-def test_room_qs_for_list_superuser(superuser, room):
+def test_room_qs_for_list_superuser(superuser, room) -> None:
     _ = room  # ensure fixture creates first room for superuser
     RoomFactory()
 
@@ -73,7 +73,7 @@ def test_room_qs_for_list_superuser(superuser, room):
     assert qs.count() == 2
 
 
-def test_has_seen_room_true(user, room):
+def test_has_seen_room_true(user, room) -> None:
     connection = UserConnectionToRoom.objects.get(user=user, room=room)
     connection.user_has_seen_this_room = True
     connection.save()
@@ -84,7 +84,7 @@ def test_has_seen_room_true(user, room):
     assert found_connection == connection
 
 
-def test_has_seen_room_false(user, room):
+def test_has_seen_room_false(user, room) -> None:
     room.users.remove(user)
 
     connection, has_seen_room = user.has_seen_room(room.id)
@@ -93,17 +93,17 @@ def test_has_seen_room_false(user, room):
     assert connection is None
 
 
-def test_can_be_removed_from_room_true(user, room):
+def test_can_be_removed_from_room_true(user, room) -> None:
     assert user.can_be_removed_from_room(room.id) is True
 
 
-def test_can_be_removed_from_room_false(user, room):
+def test_can_be_removed_from_room_false(user, room) -> None:
     ParentTransactionFactory(room=room, paid_by=user)
 
     assert user.can_be_removed_from_room(room.id) is False
 
 
-def test_generate_random_password_with_length(user):
+def test_generate_random_password_with_length(user) -> None:
     password_hash_before = user.password
 
     length = 10
@@ -114,12 +114,12 @@ def test_generate_random_password_with_length(user):
     assert user.password != password_hash_before
 
 
-def test_profile_picture_url_defaults_to_placeholder(user):
+def test_profile_picture_url_defaults_to_placeholder(user) -> None:
     fallback_url = user.profile_picture_fallback_url
     assert user.profile_picture_url == fallback_url
 
 
-def test_profile_picture_url_returns_file_url_when_available(user, tmp_path):
+def test_profile_picture_url_returns_file_url_when_available(user, tmp_path) -> None:
     tmp_media_root = tmp_path / "media"
     tmp_media_root.mkdir()
 
@@ -133,7 +133,7 @@ def test_profile_picture_url_returns_file_url_when_available(user, tmp_path):
         assert user.profile_picture_url == user.profile_picture.url
 
 
-def test_profile_picture_url_falls_back_when_file_missing(user, tmp_path):
+def test_profile_picture_url_falls_back_when_file_missing(user, tmp_path) -> None:
     tmp_media_root = tmp_path / "media"
     tmp_media_root.mkdir()
 
@@ -151,17 +151,17 @@ def test_profile_picture_url_falls_back_when_file_missing(user, tmp_path):
         assert user.profile_picture_url == fallback_url
 
 
-def test_avatar_url_is_none_without_a_picture(user):
+def test_avatar_url_is_none_without_a_picture(user) -> None:
     assert user.avatar_url is None
 
 
-def test_avatar_url_returns_the_stored_url(user):
+def test_avatar_url_returns_the_stored_url(user) -> None:
     user.profile_picture.save("avatar.png", ContentFile(_build_image_bytes()), save=True)
 
     assert user.avatar_url == user.profile_picture.url
 
 
-def test_avatar_url_is_none_when_the_file_is_gone(user):
+def test_avatar_url_is_none_when_the_file_is_gone(user) -> None:
     user.profile_picture.save("avatar.png", ContentFile(_build_image_bytes()), save=True)
     user.profile_picture.storage.delete(user.profile_picture.name)
     user.refresh_from_db()
@@ -169,7 +169,7 @@ def test_avatar_url_is_none_when_the_file_is_gone(user):
     assert user.avatar_url is None
 
 
-def test_avatar_url_narrows_a_cloudinary_url(user):
+def test_avatar_url_narrows_a_cloudinary_url(user) -> None:
     cloudinary_url = "https://res.cloudinary.com/yamsa/image/upload/v1/account/user/profile_picture/uuid-avatar"
 
     narrowed_url = user._as_avatar_url(cloudinary_url)
@@ -180,11 +180,11 @@ def test_avatar_url_narrows_a_cloudinary_url(user):
     )
 
 
-def test_avatar_url_leaves_a_non_cloudinary_url_alone(user):
+def test_avatar_url_leaves_a_non_cloudinary_url_alone(user) -> None:
     assert user._as_avatar_url("http://media.testserver/avatar.png") == "http://media.testserver/avatar.png"
 
 
-def test_the_storage_is_asked_once_per_stored_file(user):
+def test_the_storage_is_asked_once_per_stored_file(user) -> None:
     """Regression test: MediaCloudinaryStorage.exists() is an HTTP call, and a list asks per row."""
     cache.clear()
     user.profile_picture.save("avatar.png", ContentFile(_build_image_bytes()), save=True)
@@ -199,14 +199,14 @@ def test_the_storage_is_asked_once_per_stored_file(user):
         assert exists_mock.call_count == 1
 
 
-def test_cannot_friend_self(user):
+def test_cannot_friend_self(user) -> None:
     friendship = UserFriendship(user=user, friend=user)
 
     with pytest.raises(ValidationError):
         friendship.clean()
 
 
-def test_unique_constraint_applies(user, guest_user):
+def test_unique_constraint_applies(user, guest_user) -> None:
     UserFriendship.objects.create(user=user, friend=guest_user)
 
     with pytest.raises(IntegrityError):

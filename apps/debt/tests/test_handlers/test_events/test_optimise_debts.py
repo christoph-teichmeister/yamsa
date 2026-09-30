@@ -13,7 +13,7 @@ from apps.transaction.tests.conftest import create_parent_transaction_with_optim
 
 @pytest.mark.django_db
 class TestCalculateOptimisedDebts:
-    def test_simple_reduction_single_currency_no_settle(self, room, user, guest_user):
+    def test_simple_reduction_single_currency_no_settle(self, room, user, guest_user) -> None:
         currency = CurrencyFactory()
 
         create_parent_transaction_with_optimisation(
@@ -63,7 +63,7 @@ class TestCalculateOptimisedDebts:
         assert user.debts.count() == 0
 
     @freeze_time("2020-04-04 4:20:00")
-    def test_simple_reduction_single_currency_with_settle(self, room, user, guest_user, authenticated_client):
+    def test_simple_reduction_single_currency_with_settle(self, room, user, guest_user, authenticated_client) -> None:
         currency = CurrencyFactory()
 
         create_parent_transaction_with_optimisation(
@@ -174,7 +174,7 @@ class TestCalculateOptimisedDebts:
 
         assert room.debts.filter(settled=False).count() == 1
 
-    def test_complicated_reduction_two_currencies_no_settle(self, room, user, guest_user):
+    def test_complicated_reduction_two_currencies_no_settle(self, room, user, guest_user) -> None:
         currency_list = [CurrencyFactory(), CurrencyFactory()]
         currency_1 = currency_list[0]
         currency_2 = currency_list[1]
@@ -544,7 +544,9 @@ class TestCalculateOptimisedDebts:
         assert room.debts.count() == 0
 
     @freeze_time("2020-04-04 4:20:00")
-    def test_complicated_reduction_two_currencies_with_settle(self, room, user, guest_user, authenticated_client):
+    def test_complicated_reduction_two_currencies_with_settle(
+        self, room, user, guest_user, authenticated_client
+    ) -> None:
         currency_list = [CurrencyFactory(), CurrencyFactory()]
         currency_1 = currency_list[0]
         currency_2 = currency_list[1]
@@ -734,7 +736,7 @@ class TestCalculateOptimisedDebts:
         assert room.debts.filter(settled=False).count() == 0
 
     @freeze_time("2020-04-04 4:20:00")
-    def test_debt_optimisation_bug_real_life_example(self, room, user, guest_user):
+    def test_debt_optimisation_bug_real_life_example(self, room, user, guest_user) -> None:
         currency_1 = CurrencyFactory()
 
         chris = user

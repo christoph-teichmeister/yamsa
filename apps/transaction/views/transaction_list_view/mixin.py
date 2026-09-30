@@ -1,7 +1,7 @@
 from datetime import datetime
 from urllib.parse import urlencode
 
-from django.db.models import Q, Sum
+from django.db.models import Q, QuerySet, Sum
 from django.utils import timezone
 
 from apps.currency.models import Currency
@@ -45,7 +45,7 @@ class TransactionFeedMixin(TransactionBaseContext):
             params["currency"] = currency_code
         return params
 
-    def get_base_queryset(self):
+    def get_base_queryset(self) -> QuerySet:
         return (
             ParentTransaction.objects.filter(room=self.request.room)
             .select_related("paid_by", "currency", "category")
@@ -54,7 +54,7 @@ class TransactionFeedMixin(TransactionBaseContext):
             .order_by("-paid_at", "-id")
         )
 
-    def filter_queryset(self, queryset):
+    def filter_queryset(self, queryset) -> QuerySet:
         search_query = self.get_search_query()
         if search_query:
             queryset = queryset.filter(
@@ -71,7 +71,7 @@ class TransactionFeedMixin(TransactionBaseContext):
 
         return queryset
 
-    def apply_cursor(self, queryset):
+    def apply_cursor(self, queryset) -> QuerySet:
         cursor_paid_at = self.request.GET.get("cursor_paid_at")
         cursor_id = self.request.GET.get("cursor_id")
         if not cursor_paid_at or not cursor_id:
@@ -92,7 +92,7 @@ class TransactionFeedMixin(TransactionBaseContext):
 
         return queryset.filter(Q(paid_at__lt=cursor_dt) | (Q(paid_at=cursor_dt) & Q(id__lt=cursor_pk)))
 
-    def get_feed_batch(self, queryset=None):
+    def get_feed_batch(self, queryset=None) -> tuple[list, dict | None]:
         queryset = queryset or self.get_base_queryset()
         queryset = self.filter_queryset(queryset)
         queryset = self.apply_cursor(queryset)
@@ -105,7 +105,7 @@ class TransactionFeedMixin(TransactionBaseContext):
 
         return transactions, next_cursor
 
-    def build_feed_context(self, *, queryset=None):
+    def build_feed_context(self, *, queryset=None) -> dict:
         transactions, next_cursor = self.get_feed_batch(queryset=queryset)
         feed_params = self.get_feed_params()
         return {

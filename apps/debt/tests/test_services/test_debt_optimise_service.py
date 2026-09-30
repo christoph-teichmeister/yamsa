@@ -11,7 +11,7 @@ from apps.transaction.tests.conftest import create_parent_transaction_with_optim
 
 @pytest.mark.django_db
 class TestDebtOptimiseService:
-    def test_aggregated_balances_include_settled_debts_across_currencies(self, room, user, guest_user):
+    def test_aggregated_balances_include_settled_debts_across_currencies(self, room, user, guest_user) -> None:
         other_user = UserFactory()
         room.users.add(other_user)
 

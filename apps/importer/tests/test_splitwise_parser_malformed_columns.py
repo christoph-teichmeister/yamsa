@@ -1,16 +1,17 @@
 from decimal import Decimal
 
+from apps.importer.dataclasses import ParsedImport
 from apps.importer.parsers.splitwise import SplitwiseCsvParser
 from apps.importer.tests.factories import build_file_like
 
 
-def parse(rows, header=None):
+def parse(rows, header=None) -> ParsedImport:
     kwargs = {"header": header} if header else {}
     return SplitwiseCsvParser().parse(build_file_like(rows, **kwargs))
 
 
 class TestSplitwiseCsvParserMalformedColumns:
-    def test_blank_header_column_does_not_shift_later_values(self):
+    def test_blank_header_column_does_not_shift_later_values(self) -> None:
         # The blank column sits between the two people; reading positionally by filtered index
         # would attribute Bob's value to the empty column.
         header = "Datum,Beschreibung,Kategorie,Kosten,Währung,Anna,,Bob"
@@ -24,7 +25,7 @@ class TestSplitwiseCsvParserMalformedColumns:
             "Bob": Decimal("5.00"),
         }
 
-    def test_duplicate_headings_become_distinct_people(self):
+    def test_duplicate_headings_become_distinct_people(self) -> None:
         header = "Datum,Beschreibung,Kategorie,Kosten,Währung,Anna,Anna"
         result = parse(["2023-03-06,Kaffee,Allgemein,10.00,EUR,5.00,-5.00"], header=header)
 
@@ -34,7 +35,7 @@ class TestSplitwiseCsvParserMalformedColumns:
         # Both columns must survive as separate shares instead of collapsing onto one person.
         assert {share.person for share in transaction.shares} == {"Anna", "Anna (2)"}
 
-    def test_trailing_blank_headings_are_ignored(self):
+    def test_trailing_blank_headings_are_ignored(self) -> None:
         header = "Datum,Beschreibung,Kategorie,Kosten,Währung,Anna,Bob,"
         result = parse(["2023-03-06,Kaffee,Allgemein,10.00,EUR,5.00,-5.00,"], header=header)
 

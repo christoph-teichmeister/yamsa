@@ -6,7 +6,7 @@ from apps.room.models import Room
 pytestmark = pytest.mark.django_db
 
 
-def test_the_form_persists_the_rooms_own_fields(room: Room, user):
+def test_the_form_persists_the_rooms_own_fields(room: Room, user) -> None:
     form = RoomEditForm(
         data={
             "name": "Renamed room",
@@ -25,7 +25,7 @@ def test_the_form_persists_the_rooms_own_fields(room: Room, user):
     assert saved_room.lastmodified_by == user
 
 
-def test_the_status_is_not_one_of_the_fields(room: Room, user):
+def test_the_status_is_not_one_of_the_fields(room: Room, user) -> None:
     """Closing a room runs on its own cycle, so this form must not be able to flip it."""
     form = RoomEditForm(
         data={

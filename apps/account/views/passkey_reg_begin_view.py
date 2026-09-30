@@ -1,12 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.views import View
 from passkeys.FIDO2 import reg_begin
 from passkeys.models import UserPasskey
 
 
 class PasskeyRegBeginView(LoginRequiredMixin, View):
-    def get(self, request):
+    def get(self, request) -> HttpResponse:
         if UserPasskey.objects.filter(user=request.user).exists():
             return JsonResponse(
                 {"status": "ERR", "message": "Du hast bereits einen Passkey registriert."},

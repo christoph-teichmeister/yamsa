@@ -9,7 +9,7 @@ from e2e.tests.transaction.conftest import ACTIVITIES
 
 @pytest.mark.e2e
 class TestTransactionCreateSubmission:
-    def test_a_transaction_is_filed_under_the_chosen_category(self, open_create_form, room, page, base_url):
+    def test_a_transaction_is_filed_under_the_chosen_category(self, open_create_form, room, page, base_url) -> None:
         create_page = open_create_form()
 
         create_page.fill_required_fields(description="Kino am Freitag", amount="24.00")
@@ -28,7 +28,7 @@ class TestTransactionCreateSubmission:
         detail_page.navigate()
         detail_page.expect_category("Activities")
 
-    def test_the_form_does_not_submit_without_a_category(self, open_create_form, room, page):
+    def test_the_form_does_not_submit_without_a_category(self, open_create_form, room, page) -> None:
         create_page = open_create_form()
 
         create_page.fill_required_fields(description="Ohne Kategorie", amount="9.00")
@@ -38,7 +38,7 @@ class TestTransactionCreateSubmission:
         assert page.url.endswith(reverse("transaction:create", kwargs={"room_slug": room.slug}))
         assert not ParentTransaction.objects.filter(room=room, description="Ohne Kategorie").exists()
 
-    def test_the_category_manager_opens_beside_the_form(self, open_create_form, room, page):
+    def test_the_category_manager_opens_beside_the_form(self, open_create_form, room, page) -> None:
         create_page = open_create_form()
         create_page.fill_required_fields(description="Noch nicht gespeichert", amount="5.00")
 

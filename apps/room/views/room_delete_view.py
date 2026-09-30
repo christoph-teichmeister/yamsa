@@ -1,4 +1,4 @@
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
@@ -17,7 +17,7 @@ class RoomHardDeleteView(generic.View):
 
     open_room_message = _("Only a closed room can be deleted.")
 
-    def post(self, request, *args: object, **kwargs: object):
+    def post(self, request, *args: object, **kwargs: object) -> HttpResponse:
         room = request.room
 
         if not room.can_be_deleted:

@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth import mixins
+from django.http import HttpResponse
 from django.views import generic
 
 from apps.account.forms import EditUserForm
@@ -12,7 +13,7 @@ class UserDetailView(mixins.LoginRequiredMixin, generic.DetailView):
     context_object_name = "user"
     model = User
 
-    def dispatch(self, request, *args: object, **kwargs: object):
+    def dispatch(self, request, *args: object, **kwargs: object) -> HttpResponse:
         if not request.user.is_authenticated:
             return self.handle_no_permission()
 
@@ -31,14 +32,14 @@ class UserDetailView(mixins.LoginRequiredMixin, generic.DetailView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs: object):
+    def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
         if self.request.user.id == self.object.id:
             # Own profile: every value is rendered as its own form control, editable right away.
             context["form"] = EditUserForm(instance=self.object)
         return context
 
-    def get(self, request, *args: object, **kwargs: object):
+    def get(self, request, *args: object, **kwargs: object) -> HttpResponse:
         response = super().get(request, *args, **kwargs)
         response["HX-Trigger"] = json.dumps(
             {"notificationsEnabled": self.object.wants_to_receive_webpush_notifications}

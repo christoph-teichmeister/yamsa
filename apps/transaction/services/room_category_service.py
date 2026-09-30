@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, QuerySet
 from django.utils.text import slugify
 
 from apps.room.models import Room
@@ -37,7 +37,7 @@ class RoomCategoryService:
         self._ensure_defaults()
         return self.room.room_categories.select_related("category").order_by("order_index", "id")
 
-    def get_category_queryset(self):
+    def get_category_queryset(self) -> QuerySet:
         """Produce a queryset of Category objects associated with this room.
 
         The ordering mirrors the room-specific ordering for RoomCategory.
@@ -47,7 +47,7 @@ class RoomCategoryService:
             "room_category_map__order_index", "room_category_map__id"
         )
 
-    def get_default_category(self):
+    def get_default_category(self) -> Category:
         """Fetch the currently flagged default category for this room.
 
         Falls back to the global default if the room has no category marked.

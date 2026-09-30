@@ -1,4 +1,4 @@
-def user_context(request):
+def user_context(request) -> dict:
     user = request.user
     if not user.is_authenticated:
         return {}

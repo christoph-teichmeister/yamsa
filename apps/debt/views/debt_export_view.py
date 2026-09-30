@@ -1,6 +1,6 @@
 from collections.abc import Iterator
 
-from django.http import StreamingHttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -17,7 +17,7 @@ class DebtExportView(RoomMembershipRequiredMixin, DebtBaseContext, CsvExportMixi
 
     HEADER = [_("Debitor"), _("Creditor"), _("Amount"), _("Currency")]
 
-    def get(self, request, *args: object, **kwargs: object):
+    def get(self, request, *args: object, **kwargs: object) -> HttpResponse:
         """Build a streaming response containing metadata and unsettled debt rows."""
         room = request.room
         debts = (

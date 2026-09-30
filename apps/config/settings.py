@@ -572,7 +572,7 @@ CSRF_TRUSTED_ORIGINS = (FRONTEND_URL, BACKEND_URL)
 
 # AXES
 # ------------------------------------------------------------------------------
-def axes_cooloff_time(request):
+def axes_cooloff_time(request) -> datetime.timedelta:
     return datetime.timedelta(0, LOGIN_TIMEDELTA)
 
 

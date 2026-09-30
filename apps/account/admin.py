@@ -37,7 +37,7 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
         ParentTransactionPaidByInline,
     )
 
-    def get_readonly_fields(self, request, obj=None):
+    def get_readonly_fields(self, request, obj=None) -> tuple:
         readonly_fields = super().get_readonly_fields(request, obj)
         readonly_fields += ("last_login",)
 

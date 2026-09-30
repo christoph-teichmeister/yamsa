@@ -54,7 +54,7 @@ class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
             return Decimal(0)
         return total
 
-    def save(self, *args: object, **kwargs: object):
+    def save(self, *args: object, **kwargs: object) -> None:
         if not getattr(self, "category_id", None) and getattr(self, "room", None):
             from apps.transaction.services.room_category_service import RoomCategoryService
 

@@ -14,7 +14,7 @@ class ForgotPasswordEmailService(BaseYamsaEmailService):
         cta_label=_("Log in with new password"),
     )
 
-    def get_email_user_text_context(self):
+    def get_email_user_text_context(self) -> EmailUserTextContext:
         new_password = self.recipient.generate_random_password_with_length(10)
 
         text_list = [

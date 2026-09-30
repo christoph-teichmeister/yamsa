@@ -16,7 +16,7 @@ class PostRegisterEmailService(BaseYamsaEmailService):
         self.user_has_rooms = recipient.room_qs_for_list.exists()
         super().__init__(recipient, recipient_email_list, *args, **kwargs)
 
-    def get_email_user_text_context(self):
+    def get_email_user_text_context(self) -> EmailUserTextContext:
         text_list = [_("Welcome to yamsa") + " 🥳"]
 
         if self.user_has_rooms:
@@ -27,7 +27,7 @@ class PostRegisterEmailService(BaseYamsaEmailService):
 
         return EmailUserTextContext(text_list=text_list)
 
-    def get_email_extra_context(self):
+    def get_email_extra_context(self) -> EmailExtraContext:
         cta_btn_link = reverse(viewname="room:create")
         cta_btn_text = _("Create a room")
 

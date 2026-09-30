@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
@@ -19,15 +20,15 @@ class RoomStatusUpdateView(RoomSheetResponseMixin, RoomBaseContext, generic.Upda
     model = Room
     form_class = RoomStatusForm
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse("room:detail", kwargs={"room_slug": self.object.slug})
 
-    def get_form(self, form_class=None):
+    def get_form(self, form_class=None) -> RoomStatusForm:
         form = super().get_form(form_class)
         form.user = self.request.user
         return form
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponse:
         status_changed = "status" in form.changed_data
         force_closed = form.closes_the_room and form.cleaned_data.get("force_close")
 
@@ -46,7 +47,7 @@ class RoomStatusUpdateView(RoomSheetResponseMixin, RoomBaseContext, generic.Upda
 
         return self.render_room_sheet(self.object)
 
-    def form_invalid(self, form):
+    def form_invalid(self, form) -> HttpResponse:
         if self.is_htmx_request():
             return self.render_room_sheet(self.object, status_form=form)
         return super().form_invalid(form)

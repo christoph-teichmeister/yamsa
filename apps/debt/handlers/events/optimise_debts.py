@@ -20,5 +20,5 @@ def calculate_optimised_debts(
     | ChildTransactionDeleted.Context
     | ParentTransactionDeleted.Context
     | TransactionsImported.Context,
-):
+) -> None:
     DebtOptimiseService.process(room_id=context.room.id)
