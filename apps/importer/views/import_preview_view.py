@@ -22,7 +22,7 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
     template_name = "importer/preview.html"
     form_class = ImportPreviewForm
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request, *args: object, **kwargs: object):
         # This runs before LoginRequiredMixin.dispatch, so anonymous visitors must fall through
         # to the mixin instead of being redirected to the upload page.
         if request.user.is_authenticated and self._payload is None:
@@ -68,7 +68,7 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
                 break
         return initial
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         context = super().get_context_data(**kwargs)
         currencies = resolve_currencies_by_code(self.parsed.currency_codes)
         context["parsed"] = self.parsed

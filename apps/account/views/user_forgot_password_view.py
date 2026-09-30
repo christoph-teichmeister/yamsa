@@ -12,7 +12,7 @@ class UserForgotPasswordView(generic.FormView):
     form_class = UserForgotPasswordForm
     context_object_name = "user"
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):

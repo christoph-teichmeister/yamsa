@@ -17,7 +17,7 @@ class RoomHardDeleteView(generic.View):
 
     open_room_message = _("Only a closed room can be deleted.")
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args: object, **kwargs: object):
         room = request.room
 
         if not room.can_be_deleted:

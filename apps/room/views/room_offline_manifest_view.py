@@ -19,7 +19,7 @@ class RoomOfflineManifestView(RoomMembershipRequiredMixin, generic.View):
     be opened there.
     """
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args: object, **kwargs: object):
         room_slug = request.room.slug
         urls = [tab.get_url for tab in DashboardTabService(room=request.room).get_tabs_as_list()]
         urls.append(reverse("transaction:create", kwargs={"room_slug": room_slug}))

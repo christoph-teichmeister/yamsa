@@ -16,7 +16,7 @@ class UserConnectionToRoomCreateView(RoomNotClosedRequiredMixin, AccountBaseCont
     def get_success_url(self):
         return reverse(viewname="account:list", kwargs={"room_slug": self.request.room.slug})
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         context = super().get_context_data(**kwargs)
         context["suggested_guests"] = SuggestedGuestService(user=self.request.user).get_suggested_guests()
         return context

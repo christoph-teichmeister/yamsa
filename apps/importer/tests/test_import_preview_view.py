@@ -32,7 +32,7 @@ def preview_session(authenticated_client):
     return parsed
 
 
-def build_preview_payload(parsed, currency, token="", **overrides):
+def build_preview_payload(parsed, currency, token="", **overrides: object):
     payload = {
         "token": token,
         "room_name": "Kilian & Elisabeth",

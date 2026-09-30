@@ -11,7 +11,7 @@ class InvitationEmailService(BaseYamsaEmailService):
 
     subject = _("Invitation") + " 🥳"
 
-    def __init__(self, invited_by: User, *args, **kwargs) -> None:
+    def __init__(self, invited_by: User, *args: object, **kwargs: object) -> None:
         self.invited_by = invited_by
         super().__init__(*args, **kwargs)
 

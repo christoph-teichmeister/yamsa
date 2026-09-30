@@ -171,7 +171,7 @@ class TestTransactionCreateView:
         assert not ParentTransaction.objects.filter(description="My description", room=closed_room).exists()
 
     @staticmethod
-    def _valid_payload(room, user, **overrides) -> dict:
+    def _valid_payload(room, user, **overrides: object) -> dict:
         members = list(room.users.all())
         payload = {
             "category": Category.objects.get(slug="groceries").id,

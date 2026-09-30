@@ -17,7 +17,7 @@ class UserListForRoomView(AccountBaseContext, generic.ListView):
             .order_by("user_has_seen_this_room", "name")
         )
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         context = super().get_context_data(**kwargs)
         request = self.request
         room = getattr(request, "room", None)

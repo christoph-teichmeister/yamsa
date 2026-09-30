@@ -12,7 +12,7 @@ class UserDetailView(mixins.LoginRequiredMixin, generic.DetailView):
     context_object_name = "user"
     model = User
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request, *args: object, **kwargs: object):
         if not request.user.is_authenticated:
             return self.handle_no_permission()
 
@@ -31,14 +31,14 @@ class UserDetailView(mixins.LoginRequiredMixin, generic.DetailView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         context = super().get_context_data(**kwargs)
         if self.request.user.id == self.object.id:
             # Own profile: every value is rendered as its own form control, editable right away.
             context["form"] = EditUserForm(instance=self.object)
         return context
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args: object, **kwargs: object):
         response = super().get(request, *args, **kwargs)
         response["HX-Trigger"] = json.dumps(
             {"notificationsEnabled": self.object.wants_to_receive_webpush_notifications}

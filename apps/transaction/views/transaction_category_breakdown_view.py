@@ -21,7 +21,7 @@ from apps.transaction.views.mixins.transaction_base_context import TransactionBa
 class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateView):
     template_name = "transaction/category_breakdown.html"
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         context = super().get_context_data(**kwargs)
         breakdown_qs = (
             ParentTransaction.objects.filter(room=self.request.room)

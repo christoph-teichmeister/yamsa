@@ -17,7 +17,7 @@ class NewsFeedChunkView(NewsBaseContext, NewsForRoomMixin, generic.TemplateView)
     def get_queryset(self):
         return self.get_feed_queryset()
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         context_data = super().get_context_data(**kwargs)
         queryset = self.get_queryset()
         cursor_value = self.request.GET.get("cursor")

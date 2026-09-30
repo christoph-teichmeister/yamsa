@@ -10,7 +10,7 @@ class YamsaPasskeyBackend(PasskeyModelBackend):
     (e.g. client.login() in tests, admin login, or management commands).
     """
 
-    def authenticate(self, request, username="", password="", **kwargs):
+    def authenticate(self, request, username="", password="", **kwargs: object):
         if username != "" and password != "":
             # Regular password branch — let the parent handle it (sets session["passkey"]).
             return super().authenticate(request, username=username, password=password, **kwargs)

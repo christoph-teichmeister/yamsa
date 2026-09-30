@@ -145,7 +145,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
                 return str(errors[0])
         return None
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         context = super().get_context_data(**kwargs)
         context["current_datetime"] = timezone.now().strftime("%Y-%m-%dT%H:%M")
         # Minted per rendered form rather than in the browser, so a submission that never reaches
