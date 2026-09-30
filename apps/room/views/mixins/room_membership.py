@@ -7,7 +7,7 @@ from django.shortcuts import resolve_url
 class RoomMembershipRequiredMixin(AccessMixin):
     """Prevent access to room resources for non-members."""
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request, *args: object, **kwargs):
         """Allow only authenticated users who have seen the room."""
         self.request = request
         user = request.user

@@ -7,7 +7,7 @@ from apps.account.views.mixins.profile_partial_response import ProfilePartialRes
 
 
 class UserProfilePictureDeleteView(ProfilePartialResponseMixin, mixins.LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args: object, **kwargs):
         user = request.user
         if user.profile_picture:
             user.profile_picture.delete(save=False)

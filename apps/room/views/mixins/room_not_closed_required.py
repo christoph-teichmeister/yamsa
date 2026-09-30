@@ -10,7 +10,7 @@ class RoomNotClosedRequiredMixin(AccessMixin):
 
     closed_room_message = _("This room is closed. No changes can be made.")
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request, *args: object, **kwargs):
         room = getattr(request, "room", None)
         if request.method not in SAFE_METHODS and room is not None and room.is_closed:
             return self.handle_no_permission()

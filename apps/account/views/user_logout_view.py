@@ -9,7 +9,7 @@ from apps.account.constants import SESSION_TTL_SESSION_KEY
 class LogOutUserView(generic.View):
     http_method_names = ["get", "options"]
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args: object, **kwargs):
         self._clear_session_ttl(request=request)
         logout(request=request)
         return HttpResponseRedirect(redirect_to=reverse(viewname="account:login"))

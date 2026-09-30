@@ -16,7 +16,7 @@ class RoomShareView(RoomDashboardView):
         self.request.session[SHARED_ROOM_SLUG_SESSION_KEY] = str(room.slug)
         return room
 
-    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+    def get(self, request: HttpRequest, *args: object, **kwargs) -> HttpResponse:
         room = self.get_object()
 
         if request.user.is_authenticated:
