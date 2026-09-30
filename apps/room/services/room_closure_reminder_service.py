@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Q, QuerySet
 from django.urls import reverse
 from django.utils import timezone
 
@@ -72,7 +72,7 @@ class RoomClosureReminderService:
 
         return last_log.created_at + self.HEARTBEAT_INTERVAL <= self.now
 
-    def _collect_rooms(self):
+    def _collect_rooms(self) -> QuerySet[Room]:
         """Find open rooms that have been idle past the inactivity threshold.
 
         Only includes rooms where the creator is still an active member, so

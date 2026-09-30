@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-from django.db.models import F, Sum
+from django.db.models import F, QuerySet, Sum
 from django.utils import formats, timezone
 from django.views import generic
 from django_context_decorator import context
@@ -61,7 +61,7 @@ class MoneySpentTrendPartialView(RoomChildTransactionQuerysetMixin, DebtBaseCont
         )
         return {row["currency_sign"]: row["total"] for row in rows}
 
-    def _expenses_in_range(self, range_start: datetime, range_end: datetime):
+    def _expenses_in_range(self, range_start: datetime, range_end: datetime) -> QuerySet:
         """One row per parent transaction: the chart steps per expense, not per calendar bucket."""
         return (
             self.get_base_queryset()

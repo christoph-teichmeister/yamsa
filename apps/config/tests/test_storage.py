@@ -4,7 +4,7 @@ from apps.config.storage import ManifestStaticFilesStorage
 
 
 class TestManifestStaticFilesStoredName:
-    def _make_storage(self):
+    def _make_storage(self) -> ManifestStaticFilesStorage:
         return ManifestStaticFilesStorage.__new__(ManifestStaticFilesStorage)
 
     def test_missing_bootstrap_toggle_map_returns_name(self, monkeypatch):

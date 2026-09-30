@@ -52,11 +52,11 @@ def cleanup_registry():
 class TestEventLoopRunner:
     """Ensure the runner logs context while re-raising handler exceptions and keeps dispatching."""
 
-    def _register_command_handler(self):
+    def _register_command_handler(self) -> None:
         handlers = message_registry.command_dict.setdefault(_DummyCommand, [])
         handlers.append(_failing_command_handler)
 
-    def _register_event_handler(self):
+    def _register_event_handler(self) -> None:
         handlers = message_registry.event_dict.setdefault(_DummyEvent, [])
         handlers.append(_failing_event_handler)
 

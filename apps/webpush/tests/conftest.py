@@ -4,7 +4,7 @@ import pytest
 
 from apps.debt.handlers.events.optimise_debts import calculate_optimised_debts
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
-from apps.transaction.models import ChildTransaction
+from apps.transaction.models import ChildTransaction, ParentTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 
 
@@ -16,7 +16,7 @@ def create_parent_transaction_with_optimisation():
         paid_for_tuple,
         parent_transaction_kwargs=None,
         child_transaction_kwargs=None,
-    ):
+    ) -> tuple[ParentTransaction, tuple[ChildTransaction, ...]]:
         parent_kwargs = parent_transaction_kwargs or {}
         child_kwargs = child_transaction_kwargs or {}
 

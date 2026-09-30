@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from apps.account.messages.commands.send_invitation_email import SendInvitationEmail
 from apps.account.views import GuestSendInvitationEmailView, UserListForRoomView
+from apps.core.event_loop.messages.message import Message
 
 pytestmark = pytest.mark.django_db
 
@@ -29,7 +30,7 @@ def test_get_regular(authenticated_client, guest_user, room, guest_send_invitati
 def test_post_regular(authenticated_client, guest_send_invitation_url, monkeypatch):
     recorded_messages = []
 
-    def handle_message(message):
+    def handle_message(message) -> Message:
         recorded_messages.append(message)
         return message
 

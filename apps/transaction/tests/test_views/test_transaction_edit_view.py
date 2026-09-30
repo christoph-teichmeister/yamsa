@@ -15,7 +15,7 @@ from apps.transaction.utils import split_total_across_paid_for
 pytestmark = pytest.mark.django_db
 
 
-def _extract_total_input_attributes(response):
+def _extract_total_input_attributes(response) -> tuple[str, str]:
     response_html = response.content.decode()
     input_tag_match = re.search(
         r'<input\b[^>]*id=(?:["\']?)total_value_input(?:["\']?)[^>]*>', response_html, re.DOTALL
@@ -45,7 +45,7 @@ def _request_total_input_attributes(
     monkeypatch,
     initial_total_override,
     child_total_value=None,
-):
+) -> tuple[str, str]:
     parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
     if child_total_value is not None:
         ChildTransaction.objects.create(

@@ -2,7 +2,7 @@ from django.core import mail
 from django.db import transaction as db_transaction
 
 from apps.account.tests.factories import UserFactory
-from apps.importer.dataclasses import CategoryAssignment, PersonAssignment
+from apps.importer.dataclasses import CategoryAssignment, ImportResult, PersonAssignment
 from apps.importer.services.import_service import ImportService
 from apps.room.models import UserConnectionToRoom
 
@@ -14,13 +14,13 @@ class TestImportServiceSideEffects:
     hand those users back instead of connecting them itself.
     """
 
-    def _assignments(self, existing):
+    def _assignments(self, existing) -> list[PersonAssignment]:
         return [
             PersonAssignment(column="Kilian Karaus", kind=PersonAssignment.ME),
             PersonAssignment(column="Elisabeth", kind=PersonAssignment.EXISTING, user_id=existing.pk),
         ]
 
-    def _run(self, *, parsed, user, currency, existing):
+    def _run(self, *, parsed, user, currency, existing) -> tuple[ImportService, ImportResult]:
         service = ImportService(parsed=parsed, user=user)
         with db_transaction.atomic():
             result = service.process(

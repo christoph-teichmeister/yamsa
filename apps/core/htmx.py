@@ -66,7 +66,7 @@ class FormHtmxResponseMixin:
 
         return response
 
-    def _create_toast_trigger(self, *, message, toast_class):
+    def _create_toast_trigger(self, *, message, toast_class) -> dict[str, Any]:
         """Helper method to create toast trigger data."""
         if message:
             return {"triggerToast": {"message": message, "type": toast_class}}

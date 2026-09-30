@@ -26,7 +26,7 @@ PAGES_ARE_NOT_CACHED = f"async (paths) => !(await ({PAGES_ARE_CACHED})(paths))"
 # page.wait_for_function() polls its predicate synchronously and reads a returned Promise as
 # truthy, so it cannot wait on anything that has to be awaited - and reading cache storage does.
 # page.evaluate() does await, so the polling happens here instead.
-def _wait_until(page, expression, arg, timeout_ms=10_000, interval_ms=100):
+def _wait_until(page, expression, arg, timeout_ms=10_000, interval_ms=100) -> None:
     for _ in range(timeout_ms // interval_ms):
         if page.evaluate(expression, arg):
             return

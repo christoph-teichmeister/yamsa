@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from apps.account.messages.commands.send_forgot_password_email import SendForgotPasswordEmail
 from apps.account.views import LogInUserView, UserForgotPasswordView
+from apps.core.event_loop.messages.message import Message
 
 pytestmark = pytest.mark.django_db
 
@@ -20,7 +21,7 @@ def test_get_regular(authenticated_client):
 def test_post_regular(authenticated_client, user, monkeypatch):
     recorded_messages = []
 
-    def handle_message(message):
+    def handle_message(message) -> Message:
         recorded_messages.append(message)
         return message
 

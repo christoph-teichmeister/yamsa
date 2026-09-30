@@ -77,7 +77,7 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
         self._save_child_transactions(instance)
         return instance
 
-    def _save_child_transactions(self, instance: ParentTransaction):
+    def _save_child_transactions(self, instance: ParentTransaction) -> None:
         # Get the user making the request
         request_user = CurrentRequestMiddleware.get_current_user()
 

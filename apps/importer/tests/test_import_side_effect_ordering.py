@@ -1,6 +1,7 @@
 from unittest import mock
 
 import pytest
+from django.http import HttpResponse
 from django.urls import reverse
 
 from apps.account.tests.factories import UserFactory
@@ -21,7 +22,7 @@ class TestImportSideEffectOrdering:
     The debt recalculation must therefore run before the connection mails, not after.
     """
 
-    def _import(self, client, currency, friend):
+    def _import(self, client, currency, friend) -> HttpResponse:
         redirect = client.post(reverse("importer:upload"), data={"source": "splitwise-csv", "file": build_upload(ROWS)})
         token = redirect.url.split("token=")[1]
         response = client.get(f"{reverse('importer:preview')}?token={token}")

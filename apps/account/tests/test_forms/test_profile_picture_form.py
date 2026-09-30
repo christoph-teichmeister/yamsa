@@ -108,7 +108,7 @@ class TestProfilePictureForm:
     def test_rejects_uncompressed_oversized_images(self, user, monkeypatch):
         image_file = self._build_image_file()
 
-        def return_large_file(self):
+        def return_large_file(self) -> InMemoryUploadedFile:
             oversized_buffer = BytesIO(b"\x00" * (MAX_PROFILE_PICTURE_FILE_SIZE + 1024))
             oversized_buffer.seek(0)
             return InMemoryUploadedFile(

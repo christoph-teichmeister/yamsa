@@ -1,10 +1,12 @@
 import os
+from collections.abc import Iterator
 from urllib.parse import urlparse
 
 import pytest
 from django.conf import settings
 from django.test import Client
 from django.urls import reverse
+from playwright.sync_api import Page
 
 # Needed before the factory imports below (they touch the ORM at import time from Playwright's
 # sync context). Cleared in pytest_unconfigure() below so it doesn't leak into other tests sharing
@@ -37,13 +39,13 @@ def user_password():
 
 
 @pytest.fixture(autouse=True)
-def _fail_on_htmx_console_errors(page, request):
+def _fail_on_htmx_console_errors(page, request) -> Iterator[None]:
     # live_server writes to a real (transactional) DB and serves over real HTTP, so a broken
     # htmx request shows up as a browser console error rather than a Python exception — catch it
     # here instead of every test silently passing on a swap that never happened.
     htmx_errors = []
 
-    def _on_console(message):
+    def _on_console(message) -> None:
         if message.type == "error" and message.text.startswith("htmx:"):
             htmx_errors.append(message.text)
 
@@ -60,14 +62,14 @@ def _fail_on_htmx_console_errors(page, request):
     assert not htmx_errors, f"HTMX reported error(s) in the browser console: {htmx_errors}"
 
 
-def _login(page, base_url, email: str, password: str):
+def _login(page, base_url, email: str, password: str) -> Page:
     login_page = LoginPage(page, base_url, reverse("account:login"))
     login_page.navigate()
     login_page.login(email, password)
     return page
 
 
-def _login_as_guest(page, base_url, guest: User):
+def _login_as_guest(page, base_url, guest: User) -> Page:
     # Guest accounts get an unusable, non-hashed password on every save (see User.clean()) and can
     # never authenticate through the login form by design — the app only ever logs them in via
     # AuthenticateGuestUserView's direct login() call from a room invite link. Mirror that here by

@@ -39,7 +39,7 @@ class ServiceWorkerView(generic.TemplateView):
         )
         return context
 
-    def _build_precache_urls(self, cache_settings):
+    def _build_precache_urls(self, cache_settings) -> list[str]:
         manifest = settings.MANIFEST
         urls = set()
 

@@ -1,6 +1,7 @@
 """Form around the profile picture, which is uploaded on its own rather than with the profile."""
 
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import UploadedFile
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 from PIL import Image, UnidentifiedImageError
@@ -20,7 +21,7 @@ class ProfilePictureForm(ModelForm):
         model = User
         fields = ("profile_picture",)
 
-    def _uploaded_picture(self):
+    def _uploaded_picture(self) -> UploadedFile | None:
         """The file of this request, if any.
 
         Without a new upload, `cleaned_data` falls back to the picture already stored — truthy, and

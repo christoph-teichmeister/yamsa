@@ -69,7 +69,7 @@ class TestTransactionFormStructure:
 
         assert form.fields["category"].required
 
-    def _build_create_form_data(self, room, user, currency, paid_for_users, description="Test transaction"):
+    def _build_create_form_data(self, room, user, currency, paid_for_users, description="Test transaction") -> dict:
         from django.utils import timezone
 
         return {

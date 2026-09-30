@@ -3,6 +3,7 @@ import json
 from unittest import mock
 
 import pytest
+from django.http import HttpResponse
 from django.test import RequestFactory
 from django.urls import reverse
 
@@ -12,7 +13,7 @@ from apps.webpush.views import WebPushSaveView
 @pytest.mark.django_db
 class TestWebPushSaveView:
     @pytest.fixture(autouse=True)
-    def _setup(self, authenticated_client, user):
+    def _setup(self, authenticated_client, user) -> None:
         self.client = authenticated_client
         self.url = reverse("webpush:save")
         self.factory = RequestFactory()
@@ -29,7 +30,7 @@ class TestWebPushSaveView:
             "status_type": status_type,
         }
 
-    def _post(self, status_type: str):
+    def _post(self, status_type: str) -> HttpResponse:
         return self.client.post(
             self.url,
             data=json.dumps(self._build_payload(status_type)),

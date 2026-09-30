@@ -11,7 +11,7 @@ ROWS = [
 ]
 
 
-def _stored_payload(session):
+def _stored_payload(session) -> object | None:
     """The parsed file lives under a per-upload token, so tests cannot address it by a fixed key."""
     for key, value in session.items():
         if key.startswith(f"{SESSION_KEY_PREFIX}:"):

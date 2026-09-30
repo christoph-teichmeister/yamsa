@@ -30,7 +30,7 @@ class TestPasskeyRegBeginView:
         fake_state = {"challenge": "abc"}
         fake_options = {"publicKey": {"challenge": "abc"}}
 
-        def fake_begin_registration(user, request):
+        def fake_begin_registration(user, request) -> tuple[dict, dict]:
             return fake_options, fake_state
 
         monkeypatch.setattr("passkeys.webauthn.begin_registration", fake_begin_registration)

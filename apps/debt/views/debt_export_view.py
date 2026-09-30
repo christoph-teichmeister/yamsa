@@ -1,3 +1,5 @@
+from collections.abc import Iterator
+
 from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.text import slugify
@@ -32,7 +34,7 @@ class DebtExportView(RoomMembershipRequiredMixin, DebtBaseContext, CsvExportMixi
 
         return response
 
-    def _write_rows(self, writer, buffer, debts, timestamp):
+    def _write_rows(self, writer, buffer, debts, timestamp) -> Iterator[str]:
         for debt in debts:
             row = [
                 self._safe(debt.debitor.name),
