@@ -205,6 +205,7 @@ select = [
     "YTT", # Avoid non-future-prove usages of "sys"
     # "FBT",     # Protects you from the "boolean trap bug"
     # "ARG",     # Unused arguments - almost every hit is a Django/pytest-mandated signature (view/admin/context-processor overrides, fixture activation, test doubles), not a real bug
+    "ANN001", # Missing type hint for function argument (#455, staged ANN rollout, step 8)
     "ANN202", # Missing return type hint for private function (#455, staged ANN rollout, step 6)
     "ANN003", # Missing type hint for **kwargs (#455, staged ANN rollout, step 5)
     "ANN002", # Missing type hint for *args (#455, staged ANN rollout, step 4)

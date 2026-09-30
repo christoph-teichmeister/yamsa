@@ -15,11 +15,11 @@ class SessionKeepAliveMiddleware:
     def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
         self.get_response = get_response
 
-    def __call__(self, request) -> HttpResponse:
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         self._refresh_session_if_needed(request)
         return self.get_response(request)
 
-    def _refresh_session_if_needed(self, request) -> None:
+    def _refresh_session_if_needed(self, request: HttpRequest) -> None:
         if not self._should_refresh(request):
             return
 
@@ -29,7 +29,7 @@ class SessionKeepAliveMiddleware:
 
         request.session.set_expiry(target_ttl)
 
-    def _should_refresh(self, request) -> bool:
+    def _should_refresh(self, request: HttpRequest) -> bool:
         user = getattr(request, "user", None)
         if not user or not user.is_authenticated:
             return False
@@ -45,7 +45,7 @@ class SessionKeepAliveMiddleware:
 
         return not self._is_safe_htmx_fragment(request)
 
-    def _is_safe_htmx_fragment(self, request) -> bool:
+    def _is_safe_htmx_fragment(self, request: HttpRequest) -> bool:
         if not request.headers.get("HX-Request"):
             return False
 

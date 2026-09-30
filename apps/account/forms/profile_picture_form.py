@@ -55,7 +55,7 @@ class ProfilePictureForm(ModelForm):
         self._compressed_profile_picture = compressed_picture
         return compressed_picture
 
-    def save(self, commit=True):
+    def save(self, commit: bool = True):
         """Persist the compressed picture produced while cleaning."""
         picture = self.cleaned_data.get("profile_picture")
         if picture and self._uploaded_picture():

@@ -3,7 +3,7 @@
 It renders a TemplateResponse before the middleware's __call__ gets it back.
 """
 
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.template import engines
 from django.template.response import TemplateResponse
 from django.urls import include, path
@@ -11,17 +11,17 @@ from django.urls import include, path
 TOAST_TEMPLATE = engines["django"].from_string("{% for toast in queued_toasts %}[{{ toast.message }}]{% endfor %}")
 
 
-def render_with_toast(request):
+def render_with_toast(request: HttpRequest):
     request.toast_queue.success("Rendered toast")
     return TemplateResponse(request, TOAST_TEMPLATE, {})
 
 
-def redirect_with_toast(request):
+def redirect_with_toast(request: HttpRequest):
     request.toast_queue.success("Carried toast")
     return HttpResponseRedirect("/target/")
 
 
-def target(request):
+def target(request: HttpRequest):
     return TemplateResponse(request, TOAST_TEMPLATE, {})
 
 

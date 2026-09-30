@@ -1,6 +1,9 @@
 import csv
 import io
 from collections.abc import Iterator
+from datetime import datetime
+
+from django.db.models import Model, QuerySet
 
 
 class CsvExportMixin:
@@ -8,14 +11,14 @@ class CsvExportMixin:
 
     _FORMULA_TRIGGERS = frozenset("=+-@\t\r")
 
-    def _iter_rows(self, room, queryset, timestamp) -> Iterator[str]:
+    def _iter_rows(self, room: Model, queryset: QuerySet, timestamp: datetime) -> Iterator[str]:
         buffer = io.StringIO()
         writer = csv.writer(buffer)
 
         yield from self._write_metadata(writer, buffer, room, timestamp)
         yield from self._write_rows(writer, buffer, queryset, timestamp)
 
-    def _write_metadata(self, writer, buffer, room, timestamp) -> Iterator[str]:
+    def _write_metadata(self, writer: object, buffer: io.StringIO, room: Model, timestamp: datetime) -> Iterator[str]:
         metadata = [
             ["Room Slug", room.slug],
             ["Room Name", room.name],
@@ -32,16 +35,18 @@ class CsvExportMixin:
         writer.writerow(self.HEADER)
         yield self._pop_buffer(buffer)
 
-    def _write_rows(self, writer, buffer, queryset, timestamp) -> Iterator[str]:
+    def _write_rows(
+        self, writer: object, buffer: io.StringIO, queryset: QuerySet, timestamp: datetime
+    ) -> Iterator[str]:
         raise NotImplementedError
 
-    def _pop_buffer(self, buffer) -> str:
+    def _pop_buffer(self, buffer: io.StringIO) -> str:
         value = buffer.getvalue()
         buffer.seek(0)
         buffer.truncate(0)
         return value
 
-    def _safe(self, value) -> str:
+    def _safe(self, value: object) -> str:
         if value is None:
             return ""
 

@@ -1,9 +1,14 @@
 import http
+from collections.abc import Callable
 
 import pytest
 from bs4 import BeautifulSoup
+from django.test import Client
 from django.urls import reverse
+from pytest_django.fixtures import DjangoAssertNumQueries
 
+from apps.account.models import User
+from apps.room.models import Room
 from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 from apps.transaction.tests.factories import ParentTransactionFactory
 from apps.transaction.views import TransactionDetailView
@@ -11,7 +16,7 @@ from apps.transaction.views import TransactionDetailView
 pytestmark = pytest.mark.django_db
 
 
-def test_transaction_detail_shows_receipt_empty_state(client, room, user):
+def test_transaction_detail_shows_receipt_empty_state(client: Client, room: Room, user: User):
     parent_transaction = ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency)
     client.force_login(user)
 
@@ -23,7 +28,7 @@ def test_transaction_detail_shows_receipt_empty_state(client, room, user):
 
 
 def test_transaction_detail_shows_an_avatar_per_split_participant(
-    client, room, user, guest_user, attach_profile_picture
+    client: Client, room: Room, user: User, guest_user: User, attach_profile_picture: Callable
 ):
     attach_profile_picture(user)
     parent_transaction, _ = create_parent_transaction_with_optimisation(
@@ -46,7 +51,9 @@ def test_transaction_detail_shows_an_avatar_per_split_participant(
     assert rendered_avatars == {user.avatar_url, guest_user.name[:1].upper()}
 
 
-def test_split_rows_do_not_query_per_participant(room, user, guest_user, django_assert_num_queries):
+def test_split_rows_do_not_query_per_participant(
+    room: Room, user: User, guest_user: User, django_assert_num_queries: DjangoAssertNumQueries
+):
     """Regression test: the breakdown prints a name and an avatar per row."""
     parent_transaction, _ = create_parent_transaction_with_optimisation(
         room=room,

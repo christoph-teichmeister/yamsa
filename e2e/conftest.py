@@ -6,16 +6,19 @@ import pytest
 from django.conf import settings
 from django.test import Client
 from django.urls import reverse
-from playwright.sync_api import Page
+from playwright.sync_api import ConsoleMessage, Page
 
 # Needed before the factory imports below (they touch the ORM at import time from Playwright's
 # sync context). Cleared in pytest_unconfigure() below so it doesn't leak into other tests sharing
 # this worker process.
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
+from pytest_django.live_server_helper import LiveServer
+
 from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.tests.factories import GuestUserFactory, SuperuserFactory, UserFactory
+from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
 from e2e.pages.account_detail_page import AccountDetailPage
 from e2e.pages.account_security_page import AccountSecurityPage
@@ -24,12 +27,12 @@ from e2e.pages.login_page import LoginPage
 from e2e.pages.room_detail_page import RoomDetailPage
 
 
-def pytest_unconfigure(config):
+def pytest_unconfigure(config: pytest.Config):
     os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE", None)
 
 
 @pytest.fixture(scope="session")
-def base_url(live_server):
+def base_url(live_server: LiveServer):
     return live_server.url
 
 
@@ -39,13 +42,13 @@ def user_password():
 
 
 @pytest.fixture(autouse=True)
-def _fail_on_htmx_console_errors(page, request) -> Iterator[None]:
+def _fail_on_htmx_console_errors(page: Page, request: pytest.FixtureRequest) -> Iterator[None]:
     # live_server writes to a real (transactional) DB and serves over real HTTP, so a broken
     # htmx request shows up as a browser console error rather than a Python exception — catch it
     # here instead of every test silently passing on a swap that never happened.
     htmx_errors = []
 
-    def _on_console(message) -> None:
+    def _on_console(message: ConsoleMessage) -> None:
         if message.type == "error" and message.text.startswith("htmx:"):
             htmx_errors.append(message.text)
 
@@ -62,14 +65,14 @@ def _fail_on_htmx_console_errors(page, request) -> Iterator[None]:
     assert not htmx_errors, f"HTMX reported error(s) in the browser console: {htmx_errors}"
 
 
-def _login(page, base_url, email: str, password: str) -> Page:
+def _login(page: Page, base_url: str, email: str, password: str) -> Page:
     login_page = LoginPage(page, base_url, reverse("account:login"))
     login_page.navigate()
     login_page.login(email, password)
     return page
 
 
-def _login_as_guest(page, base_url, guest: User) -> Page:
+def _login_as_guest(page: Page, base_url: str, guest: User) -> Page:
     # Guest accounts get an unusable, non-hashed password on every save (see User.clean()) and can
     # never authenticate through the login form by design — the app only ever logs them in via
     # AuthenticateGuestUserView's direct login() call from a room invite link. Mirror that here by
@@ -92,44 +95,44 @@ def _login_as_guest(page, base_url, guest: User) -> Page:
 
 
 @pytest.fixture
-def profile_user(transactional_db):
+def profile_user(transactional_db: None):
     return UserFactory()
 
 
 @pytest.fixture
-def roommate(transactional_db):
+def roommate(transactional_db: None):
     return UserFactory()
 
 
 @pytest.fixture
-def shared_room(profile_user, roommate):
+def shared_room(profile_user: User, roommate: User):
     room = RoomFactory(created_by=profile_user)
     room.users.add(profile_user, roommate)
     return room
 
 
 @pytest.fixture
-def unrelated_user(transactional_db):
+def unrelated_user(transactional_db: None):
     return UserFactory()
 
 
 @pytest.fixture
-def guest_user(transactional_db):
+def guest_user(transactional_db: None):
     return GuestUserFactory()
 
 
 @pytest.fixture
-def superuser(transactional_db):
+def superuser(transactional_db: None):
     return SuperuserFactory()
 
 
 @pytest.fixture
-def profile_detail_path(profile_user):
+def profile_detail_path(profile_user: User):
     return reverse("account:detail", kwargs={"pk": profile_user.id})
 
 
 @pytest.fixture
-def logged_in_profile_detail_page(page, base_url, profile_detail_path, profile_user):
+def logged_in_profile_detail_page(page: Page, base_url: str, profile_detail_path: str, profile_user: User):
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
     detail_page = AccountDetailPage(page, base_url, profile_detail_path)
@@ -138,7 +141,7 @@ def logged_in_profile_detail_page(page, base_url, profile_detail_path, profile_u
 
 
 @pytest.fixture
-def room_with_open_debt(shared_room, profile_user, roommate):
+def room_with_open_debt(shared_room: Room, profile_user: User, roommate: User):
     from decimal import Decimal
 
     from apps.debt.models import Debt
@@ -154,7 +157,7 @@ def room_with_open_debt(shared_room, profile_user, roommate):
 
 
 @pytest.fixture
-def logged_in_room_detail_page(page, base_url, profile_user, shared_room):
+def logged_in_room_detail_page(page: Page, base_url: str, profile_user: User, shared_room: Room):
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
     detail_page = RoomDetailPage(page, base_url, reverse("room:detail", kwargs={"room_slug": shared_room.slug}))
@@ -163,7 +166,7 @@ def logged_in_room_detail_page(page, base_url, profile_user, shared_room):
 
 
 @pytest.fixture
-def logged_in_security_page(page, base_url, profile_user):
+def logged_in_security_page(page: Page, base_url: str, profile_user: User):
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
     security_page = AccountSecurityPage(page, base_url, reverse("account:security", kwargs={"pk": profile_user.id}))
@@ -172,7 +175,7 @@ def logged_in_security_page(page, base_url, profile_user):
 
 
 @pytest.fixture
-def logged_in_change_password_page(page, base_url, profile_user):
+def logged_in_change_password_page(page: Page, base_url: str, profile_user: User):
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
     password_page = ChangePasswordPage(
@@ -183,7 +186,7 @@ def logged_in_change_password_page(page, base_url, profile_user):
 
 
 @pytest.fixture
-def logged_in_guest_detail_page(page, base_url, guest_user):
+def logged_in_guest_detail_page(page: Page, base_url: str, guest_user: User):
     _login_as_guest(page, base_url, guest_user)
 
     guest_detail_path = reverse("account:detail", kwargs={"pk": guest_user.id})

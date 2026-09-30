@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import register
+from django.db.models import Model
+from django.http import HttpRequest
 
 from apps.core.admin import YamsaCommonInfoAdminMixin
 from apps.transaction.models import Category
@@ -11,12 +13,12 @@ class CategoryAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     ordering = ("order_index", "id")
     list_filter = ("is_default",)
 
-    def get_actions(self, request):
+    def get_actions(self, request: HttpRequest):
         actions = super().get_actions(request)
         actions.pop("delete_selected", None)
         return actions
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, request: HttpRequest, obj: Model | None = None):
         if obj and obj.is_default:
             return False
         return super().has_delete_permission(request, obj)

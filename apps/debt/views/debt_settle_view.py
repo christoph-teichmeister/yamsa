@@ -1,3 +1,4 @@
+from django.forms import BaseForm
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
@@ -14,7 +15,7 @@ class DebtSettleView(RoomNotClosedRequiredMixin, DebtBaseContext, generic.Update
     fields = ("id", "settled", "settled_at")
     template_name = "debt/settle.html"
 
-    def form_valid(self, form):
+    def form_valid(self, form: BaseForm):
         if self.object.settled:
             self.object.settled_at = timezone.now()
 

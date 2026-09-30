@@ -2,7 +2,9 @@ from decimal import Decimal
 
 import pytest
 
+from apps.account.models import User
 from apps.debt.handlers.events.optimise_debts import calculate_optimised_debts
+from apps.room.models import Room
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
 from apps.transaction.models import ChildTransaction, ParentTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
@@ -11,11 +13,11 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 @pytest.fixture
 def create_parent_transaction_with_optimisation():
     def _create(
-        room,
-        paid_by,
-        paid_for_tuple,
-        parent_transaction_kwargs=None,
-        child_transaction_kwargs=None,
+        room: Room,
+        paid_by: User,
+        paid_for_tuple: tuple[User, ...],
+        parent_transaction_kwargs: dict | None = None,
+        child_transaction_kwargs: dict | None = None,
     ) -> tuple[ParentTransaction, tuple[ChildTransaction, ...]]:
         parent_kwargs = parent_transaction_kwargs or {}
         child_kwargs = child_transaction_kwargs or {}

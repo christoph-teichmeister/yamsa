@@ -2,18 +2,20 @@ from unittest import mock
 
 import pytest
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
 from apps.mail.services.user_added_to_room_mail_service import UserAddedToRoomEmailService
 from apps.room.handlers.events.notify_on_user_connection_to_room_created import (
     send_email_on_user_connection_to_room_created,
 )
 from apps.room.messages.events.user_connection_to_room_created import UserConnectionToRoomCreated
+from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory, UserConnectionToRoomFactory
 
 
 @pytest.mark.django_db
 class TestSendEmailOnUserConnectionToRoomCreated:
-    def test_returns_none_for_non_guest_non_creator(self, room, user):
+    def test_returns_none_for_non_guest_non_creator(self, room: Room, user: User):
         another_user = UserFactory()
         ucr = UserConnectionToRoomFactory(user=another_user, room=room, created_by=user)
 
@@ -29,7 +31,7 @@ class TestSendEmailOnUserConnectionToRoomCreated:
         mocked_init.assert_called_once_with(recipient=another_user, new_room=room)
         mocked_process.assert_called_once()
 
-    def test_returns_none_for_creator(self, user):
+    def test_returns_none_for_creator(self, user: User):
         ucr = UserConnectionToRoomFactory(user=user, room=RoomFactory(created_by=user), created_by=user)
 
         result = send_email_on_user_connection_to_room_created(
@@ -38,7 +40,7 @@ class TestSendEmailOnUserConnectionToRoomCreated:
 
         assert result is None
 
-    def test_returns_none_for_guest(self, guest_user, user):
+    def test_returns_none_for_guest(self, guest_user: User, user: User):
         ucr = UserConnectionToRoomFactory(user=guest_user, room=RoomFactory(created_by=user), created_by=user)
 
         result = send_email_on_user_connection_to_room_created(

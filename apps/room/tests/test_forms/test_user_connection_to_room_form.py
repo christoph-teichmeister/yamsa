@@ -3,8 +3,9 @@ from unittest import mock
 import pytest
 from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 
+from apps.account.models import User
 from apps.room.forms.user_connection_to_room_create_form import UserConnectionToRoomCreateForm
-from apps.room.models import UserConnectionToRoom
+from apps.room.models import Room, UserConnectionToRoom
 from apps.room.tests.factories import RoomFactory
 
 
@@ -12,7 +13,7 @@ from apps.room.tests.factories import RoomFactory
 class TestUserConnectionToRoomCreateForm:
     form_class = UserConnectionToRoomCreateForm
 
-    def test_create_regular(self, user):
+    def test_create_regular(self, user: User):
         new_room = RoomFactory(created_by=user)
         data = {"email": user.email, "room_slug": new_room.slug}
 
@@ -28,7 +29,7 @@ class TestUserConnectionToRoomCreateForm:
         new_room.refresh_from_db()
         assert new_room.users.filter(email=user.email).exists()
 
-    def test_clean_email_regular(self, user):
+    def test_clean_email_regular(self, user: User):
         new_room = RoomFactory(created_by=user)
         data = {"email": user.email, "room_slug": new_room.slug}
         form = self.form_class(data=data)
@@ -45,7 +46,7 @@ class TestUserConnectionToRoomCreateForm:
         assert not form.is_valid()
         assert form.errors["email"][0] == form.ExceptionMessage.EMAIL_UNKNOWN
 
-    def test_form_raises_error_if_user_already_in_room(self, user, room):
+    def test_form_raises_error_if_user_already_in_room(self, user: User, room: Room):
         data = {"email": user.email, "room_slug": room.slug}
         form = self.form_class(data=data)
 

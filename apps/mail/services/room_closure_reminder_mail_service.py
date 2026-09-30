@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+from apps.account.models import User
 from apps.account.utils.notification_preferences import (
     ROOM_REMINDER_VARIANT,
     build_payment_reminder_unsubscribe_url,
@@ -16,7 +17,7 @@ from apps.mail.services.base_email_service import (
 class RoomClosureReminderEmailService(BaseYamsaEmailService):
     FROM_EMAIL = settings.EMAIL_DEFAULT_FROM_EMAIL
 
-    def __init__(self, recipient, *, room_name: str, inactivity_days: int, room_link: str) -> None:
+    def __init__(self, recipient: User, *, room_name: str, inactivity_days: int, room_link: str) -> None:
         self.room_name = room_name
         self.inactivity_days = inactivity_days
         self.room_link = room_link

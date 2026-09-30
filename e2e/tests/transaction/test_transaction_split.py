@@ -1,22 +1,26 @@
+from collections.abc import Callable
 from decimal import Decimal
 
 import pytest
 from django.urls import reverse
+from playwright.sync_api import Page
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
 from apps.debt.models import Debt
+from apps.room.models import Room
 from apps.transaction.models import ChildTransaction, ParentTransaction
 from e2e.tests.transaction.conftest import GROCERIES
 
 
 @pytest.fixture
-def flatmate(room):
+def flatmate(room: Room):
     flatmate = UserFactory()
     room.users.add(flatmate)
     return flatmate
 
 
-def _booked_shares(room, description: str) -> dict[str, Decimal]:
+def _booked_shares(room: Room, description: str) -> dict[str, Decimal]:
     parent_transaction = ParentTransaction.objects.get(room=room, description=description)
     return {
         child.paid_for.name: child.value
@@ -27,7 +31,7 @@ def _booked_shares(room, description: str) -> dict[str, Decimal]:
 @pytest.mark.e2e
 class TestTransactionSplit:
     def test_a_total_is_split_evenly_with_the_odd_cent_on_the_first_row(
-        self, open_create_form, profile_user, roommate, flatmate
+        self, open_create_form: Callable, profile_user: User, roommate: User, flatmate: User
     ):
         create_page = open_create_form()
 
@@ -39,7 +43,9 @@ class TestTransactionSplit:
         assert list(shares.values()) == ["3.34", "3.33", "3.33"]
         assert set(shares) == {profile_user.name, roommate.name, flatmate.name}
 
-    def test_a_hand_edited_share_is_booked_as_entered(self, open_create_form, room, profile_user, roommate, page):
+    def test_a_hand_edited_share_is_booked_as_entered(
+        self, open_create_form: Callable, room: Room, profile_user: User, roommate: User, page: Page
+    ):
         create_page = open_create_form()
         create_page.fill_required_fields(description="Tankfüllung", amount="30.00")
         create_page.choose_category(GROCERIES)
@@ -57,7 +63,7 @@ class TestTransactionSplit:
         assert (debt.debitor, debt.creditor, debt.value) == (roommate, profile_user, Decimal("20.00"))
 
     def test_shares_that_outgrow_the_total_raise_it_to_their_sum(
-        self, open_create_form, room, profile_user, roommate, page
+        self, open_create_form: Callable, room: Room, profile_user: User, roommate: User, page: Page
     ):
         create_page = open_create_form()
         create_page.fill_required_fields(description="Grillabend", amount="30.00")
@@ -73,7 +79,9 @@ class TestTransactionSplit:
             roommate.name: Decimal("25.00"),
         }
 
-    def test_changing_the_total_resets_hand_edited_shares(self, open_create_form, profile_user, roommate):
+    def test_changing_the_total_resets_hand_edited_shares(
+        self, open_create_form: Callable, profile_user: User, roommate: User
+    ):
         create_page = open_create_form()
         create_page.set_total("30.00")
         create_page.set_share(roommate.name, "25.00")
@@ -83,7 +91,7 @@ class TestTransactionSplit:
         create_page.expect_shares({profile_user.name: "20.00", roommate.name: "20.00"})
 
     def test_removing_a_participant_folds_their_share_into_the_untouched_rows(
-        self, open_create_form, profile_user, roommate, flatmate
+        self, open_create_form: Callable, profile_user: User, roommate: User, flatmate: User
     ):
         create_page = open_create_form()
         create_page.set_total("30.00")
@@ -94,7 +102,7 @@ class TestTransactionSplit:
         create_page.expect_shares({profile_user.name: "16.00", roommate.name: "14.00"})
 
     def test_adding_a_participant_rebalances_only_the_untouched_rows(
-        self, open_create_form, room, profile_user, roommate, flatmate, page
+        self, open_create_form: Callable, room: Room, profile_user: User, roommate: User, flatmate: User, page: Page
     ):
         create_page = open_create_form()
         create_page.fill_required_fields(description="Pizzaabend", amount="30.00")

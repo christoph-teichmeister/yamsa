@@ -20,7 +20,7 @@ class LogInUserView(generic.FormView):
     def get_success_url(self):
         return reverse(viewname="core:welcome")
 
-    def form_valid(self, form):
+    def form_valid(self, form: LoginForm):
         cleaned_data = form.cleaned_data
         possible_user = authenticate(
             request=self.request, email=cleaned_data["email"], password=cleaned_data["password"]

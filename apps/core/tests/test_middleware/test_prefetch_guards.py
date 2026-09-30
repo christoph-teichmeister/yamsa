@@ -5,21 +5,24 @@ run again per warm-up - on a page nobody is looking at.
 """
 
 from unittest import mock
+from unittest.mock import MagicMock
 
 import pytest
 from django.conf import settings
+from django.test import Client
 from django.urls import reverse
 
 from apps.account.constants import SESSION_TTL_SESSION_KEY
 from apps.core.pwa_constants import PREFETCH_HEADER_NAME
 from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY
+from apps.room.models import Room
 
 pytestmark = pytest.mark.django_db
 
 PREFETCH_HEADERS = {PREFETCH_HEADER_NAME.lower(): "1"}
 
 
-def test_warming_the_transaction_list_keeps_the_import_hint_unspent(authenticated_client, room):
+def test_warming_the_transaction_list_keeps_the_import_hint_unspent(authenticated_client: Client, room: Room):
     session = authenticated_client.session
     session[IMPORT_SHARE_HINT_SESSION_KEY] = str(room.slug)
     session.save()
@@ -36,7 +39,7 @@ def test_warming_the_transaction_list_keeps_the_import_hint_unspent(authenticate
 @mock.patch("apps.room.services.room_closure_reminder_service.RoomClosureReminderService.run_if_due")
 @mock.patch("apps.debt.services.payment_reminder_service.PaymentReminderService.run_if_due")
 def test_warming_the_dashboard_does_not_run_the_reminder_services(
-    payment_reminder, closure_reminder, authenticated_client, room
+    payment_reminder: MagicMock, closure_reminder: MagicMock, authenticated_client: Client, room: Room
 ):
     url = reverse("room:dashboard", kwargs={"room_slug": room.slug})
     authenticated_client.get(url, headers=PREFETCH_HEADERS)
@@ -50,7 +53,7 @@ def test_warming_the_dashboard_does_not_run_the_reminder_services(
     closure_reminder.assert_called_once()
 
 
-def test_warming_a_page_does_not_keep_the_session_alive(authenticated_client, room):
+def test_warming_a_page_does_not_keep_the_session_alive(authenticated_client: Client, room: Room):
     """Otherwise a session never expires while the app is open, and every warmed page writes it."""
     session = authenticated_client.session
     session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE

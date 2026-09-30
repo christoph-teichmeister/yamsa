@@ -1,6 +1,7 @@
 import pytest
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
 from apps.news.handlers.events.create_news_on_transaction_create import create_news_on_transaction_create
 from apps.news.models import News
@@ -37,7 +38,7 @@ class TestCreateNewsOnTransactionCreate:
         )
         assert news.deeplink == expected_deeplink
 
-    def test_handler_creates_news_entry_with_expected_payload_when_creator_differs_from_payer(self, another_user):
+    def test_handler_creates_news_entry_with_expected_payload_when_creator_differs_from_payer(self, another_user: User):
         parent_transaction = ParentTransactionFactory()
         parent_transaction.created_by = another_user
         parent_transaction.save()

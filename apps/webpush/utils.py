@@ -5,7 +5,7 @@ from django.utils.module_loading import import_string
 Notification = import_string(settings.WEBPUSH_NOTIFICATION_CLASS)
 
 
-def get_templatetag_context(context):
+def get_templatetag_context(context: dict) -> dict:
     request = context["request"]
     vapid_public_key = getattr(settings, "WEBPUSH_SETTINGS", {}).get("VAPID_PUBLIC_KEY", "")
 

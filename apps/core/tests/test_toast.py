@@ -1,7 +1,8 @@
 import json
 
 import pytest
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
+from django.test import Client, RequestFactory
 
 from apps.core.middleware.toast_middleware import ToastMiddleware
 from apps.core.toast import ToastQueue
@@ -26,14 +27,14 @@ def test_toast_queue_consumption_order_and_clears_entries():
 
 
 @pytest.mark.urls("apps.core.tests.helpers.toast_urls")
-def test_middleware_renders_toasts_into_a_full_page_load(db, client):
+def test_middleware_renders_toasts_into_a_full_page_load(db: None, client: Client):
     response = client.get("/render/")
 
     assert response.content.decode() == "[Rendered toast]"
 
 
 @pytest.mark.urls("apps.core.tests.helpers.toast_urls")
-def test_middleware_leaves_htmx_toasts_to_the_headers(db, client):
+def test_middleware_leaves_htmx_toasts_to_the_headers(db: None, client: Client):
     response = client.get("/render/", HTTP_HX_REQUEST="true")
 
     # The swapped-in page would show them a second time.
@@ -41,8 +42,8 @@ def test_middleware_leaves_htmx_toasts_to_the_headers(db, client):
     assert json.loads(response["HX-Trigger"])["triggerToast"][0]["message"] == "Rendered toast"
 
 
-def test_middleware_merges_toasts_into_htmx_headers(rf):
-    def get_response(request) -> HttpResponse:
+def test_middleware_merges_toasts_into_htmx_headers(rf: RequestFactory):
+    def get_response(request: HttpRequest) -> HttpResponse:
         request.toast_queue.success("Header toast")
         response = HttpResponse()
         response["HX-Trigger"] = json.dumps({"existing": "value"})
@@ -62,7 +63,7 @@ def test_middleware_merges_toasts_into_htmx_headers(rf):
 
 
 @pytest.mark.urls("apps.core.tests.helpers.toast_urls")
-def test_middleware_carries_toasts_across_a_redirect(db, client):
+def test_middleware_carries_toasts_across_a_redirect(db: None, client: Client):
     redirect = client.post("/redirect/")
 
     assert redirect.status_code == 302
@@ -72,7 +73,7 @@ def test_middleware_carries_toasts_across_a_redirect(db, client):
 
 
 @pytest.mark.urls("apps.core.tests.helpers.toast_urls")
-def test_middleware_carries_toasts_across_a_redirect_htmx_follows(db, client):
+def test_middleware_carries_toasts_across_a_redirect_htmx_follows(db: None, client: Client):
     client.post("/redirect/", HTTP_HX_REQUEST="true")
 
     target = client.get("/target/", HTTP_HX_REQUEST="true")
@@ -81,7 +82,7 @@ def test_middleware_carries_toasts_across_a_redirect_htmx_follows(db, client):
 
 
 @pytest.mark.urls("apps.core.tests.helpers.toast_urls")
-def test_middleware_keeps_carried_toasts_away_from_prefetch_requests(db, client):
+def test_middleware_keeps_carried_toasts_away_from_prefetch_requests(db: None, client: Client):
     client.post("/redirect/")
 
     assert client.get("/target/", HTTP_X_YAMSA_PREFETCH="1").content.decode() == ""

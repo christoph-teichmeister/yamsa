@@ -14,7 +14,7 @@ class GuestCreateView(RoomNotClosedRequiredMixin, AccountBaseContext, generic.Cr
     form_class = GuestCreateForm
     template_name = "account/create_guest.html"
 
-    def form_valid(self, form):
+    def form_valid(self, form: GuestCreateForm):
         created_guest: User = form.instance
 
         created_guest.created_at = timezone.now()

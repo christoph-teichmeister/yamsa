@@ -2,16 +2,20 @@ from decimal import Decimal
 
 import pytest
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
 from apps.currency.tests.factories import CurrencyFactory
 from apps.debt.models import Debt
 from apps.debt.services.debt_optimise_service import DebtOptimiseService
+from apps.room.models import Room
 from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 
 
 @pytest.mark.django_db
 class TestDebtOptimiseService:
-    def test_aggregated_balances_include_settled_debts_across_currencies(self, room, user, guest_user):
+    def test_aggregated_balances_include_settled_debts_across_currencies(
+        self, room: Room, user: User, guest_user: User
+    ):
         other_user = UserFactory()
         room.users.add(other_user)
 
@@ -71,7 +75,7 @@ class TestDebtOptimiseService:
             (user.id, guest_user.id, currency_2.id, Decimal(7)),
         ]
 
-        def ordering_key(debt) -> tuple:
+        def ordering_key(debt: tuple) -> tuple:
             return debt[2], debt[0], debt[1]
 
         sorted_expected = sorted(expected_debts, key=ordering_key)

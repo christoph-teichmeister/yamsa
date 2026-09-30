@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.core.management import BaseCommand
-from django.core.management.base import CommandError
+from django.core.management.base import CommandError, CommandParser
 from django.db import transaction
 from django.utils.timezone import now
 
@@ -65,7 +65,7 @@ class Command(BaseCommand):
 
     help = "Creates an intensive set of test data (same users as restore_test_data, many more rooms/transactions/debts)"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument(
             "--force",
             action="store_true",
@@ -166,7 +166,9 @@ class Command(BaseCommand):
         return {"EUR": eur, "GBP": gbp, "USD": usd, "CHF": chf}
 
     @staticmethod
-    def _create_rooms(currencies, categories, users_dict) -> list[tuple[Room, dict]]:
+    def _create_rooms(
+        currencies: dict[str, Currency], categories: dict[str, Category], users_dict: dict
+    ) -> list[tuple[Room, dict]]:
         registered_users = users_dict["registered_users"]
         guest_users = users_dict["guest_users"]
         admin = users_dict["admin"]
@@ -259,7 +261,7 @@ class Command(BaseCommand):
         return rooms
 
     @staticmethod
-    def _create_transactions(rooms, categories) -> None:
+    def _create_transactions(rooms: list[tuple[Room, dict]], categories: dict[str, Category]) -> None:
         base_date = now() - timedelta(days=90)
 
         for room, config in rooms:
@@ -314,7 +316,7 @@ class Command(BaseCommand):
             print(f'Transactions created for room "{room.name}": {len(_TRANSACTION_SCENARIOS)} parent transactions')
 
     @staticmethod
-    def _create_debts(rooms) -> None:
+    def _create_debts(rooms: list[tuple[Room, dict]]) -> None:
         for room, config in rooms:
             # Use member_ids from config to ensure deterministic ordering
             member_ids = [user.id for user in config["members"]]

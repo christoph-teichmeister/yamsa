@@ -1,9 +1,10 @@
 import pytest
 from django.db import transaction as db_transaction
 
+from apps.account.models import User
 from apps.core.event_loop.runner import handle_message
 from apps.currency.models import Currency
-from apps.importer.dataclasses import CategoryAssignment, ImportResult, PersonAssignment
+from apps.importer.dataclasses import CategoryAssignment, ImportResult, ParsedImport, PersonAssignment
 from apps.importer.parsers.splitwise import SplitwiseCsvParser
 from apps.importer.services.import_service import ImportService
 from apps.importer.tests.factories import DEFAULT_ROWS, build_file_like
@@ -11,7 +12,7 @@ from apps.transaction.messages.events.transaction import TransactionsImported
 
 
 @pytest.fixture
-def currency(db):
+def currency(db: None):
     return Currency.objects.create(name="Euro", sign="€", code="EUR")
 
 
@@ -25,7 +26,13 @@ def run_import():
     """Drive ImportService the way the preview view does, including the follow-up event."""
 
     def _run_import(
-        *, parsed, user, currency, person_assignments=None, category_assignments=None, fire_event=True
+        *,
+        parsed: ParsedImport,
+        user: User,
+        currency: Currency,
+        person_assignments: list[PersonAssignment] | None = None,
+        category_assignments: list[CategoryAssignment] | None = None,
+        fire_event: bool = True,
     ) -> ImportResult:
         if person_assignments is None:
             person_assignments = [

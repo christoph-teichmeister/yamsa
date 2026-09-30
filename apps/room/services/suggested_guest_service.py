@@ -1,12 +1,12 @@
 from collections import OrderedDict, defaultdict
 
-from apps.account.models import UserFriendship
+from apps.account.models import User, UserFriendship
 from apps.room.dataclasses import SuggestedGuest
 from apps.room.models import Room, UserConnectionToRoom
 
 
 class SuggestedGuestService:
-    def __init__(self, user, limit: int = 8) -> None:
+    def __init__(self, user: User, limit: int = 8) -> None:
         self.user = user
         self.limit = limit
 

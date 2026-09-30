@@ -2,6 +2,7 @@ from decimal import Decimal
 
 import pytest
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
 from apps.debt.models import Debt
 from apps.room.forms.room_status_form import RoomStatusForm
@@ -38,7 +39,7 @@ def test_clean_blocks_closing_a_room_with_open_debts(room: Room):
     assert "open debts" in str(form.errors["status"][0])
 
 
-def test_the_force_flag_lets_a_room_with_open_debts_close(room: Room, user):
+def test_the_force_flag_lets_a_room_with_open_debts_close(room: Room, user: User):
     create_open_debt(room)
 
     form = RoomStatusForm(data={"status": Room.StatusChoices.CLOSED, "force_close": "true"}, instance=room)
@@ -53,7 +54,7 @@ def test_the_force_flag_lets_a_room_with_open_debts_close(room: Room, user):
     assert not Debt.objects.get(room=room).settled
 
 
-def test_a_settled_room_closes_without_the_force_flag(room: Room, user):
+def test_a_settled_room_closes_without_the_force_flag(room: Room, user: User):
     form = RoomStatusForm(data={"status": Room.StatusChoices.CLOSED}, instance=room)
     form.user = user
 
@@ -62,7 +63,7 @@ def test_a_settled_room_closes_without_the_force_flag(room: Room, user):
     assert form.save().status == Room.StatusChoices.CLOSED
 
 
-def test_reopening_is_not_a_closing_transition(room: Room, user):
+def test_reopening_is_not_a_closing_transition(room: Room, user: User):
     room.status = Room.StatusChoices.CLOSED
     room.save()
 
@@ -74,7 +75,7 @@ def test_reopening_is_not_a_closing_transition(room: Room, user):
     assert form.save().status == Room.StatusChoices.OPEN
 
 
-def test_saving_a_closed_room_again_is_not_a_transition(room: Room, user):
+def test_saving_a_closed_room_again_is_not_a_transition(room: Room, user: User):
     """A post that repeats the stored status must not count as closing it."""
     room.status = Room.StatusChoices.CLOSED
     room.save()

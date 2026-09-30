@@ -1,6 +1,6 @@
 import pytest
 from django.urls import reverse
-from playwright.sync_api import expect
+from playwright.sync_api import Page, expect
 
 from apps.room.models import Room
 from e2e.pages.room_detail_page import RoomDetailPage
@@ -8,7 +8,9 @@ from e2e.pages.room_detail_page import RoomDetailPage
 
 @pytest.mark.e2e
 class TestRoomDelete:
-    def test_a_closed_room_can_be_deleted_for_good(self, logged_in_room_detail_page, shared_room, page):
+    def test_a_closed_room_can_be_deleted_for_good(
+        self, logged_in_room_detail_page: RoomDetailPage, shared_room: Room, page: Page
+    ):
         Room.objects.filter(id=shared_room.id).update(status=Room.StatusChoices.CLOSED)
         logged_in_room_detail_page.navigate()
 
@@ -17,7 +19,9 @@ class TestRoomDelete:
         expect(page.locator("#room-sheet")).to_have_count(0)
         assert not Room.objects.filter(id=shared_room.id).exists()
 
-    def test_deleting_a_room_leaves_its_url_behind(self, logged_in_room_detail_page, shared_room, page, base_url):
+    def test_deleting_a_room_leaves_its_url_behind(
+        self, logged_in_room_detail_page: RoomDetailPage, shared_room: Room, page: Page, base_url: str
+    ):
         Room.objects.filter(id=shared_room.id).update(status=Room.StatusChoices.CLOSED)
         logged_in_room_detail_page.navigate()
 

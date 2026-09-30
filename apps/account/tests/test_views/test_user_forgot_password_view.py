@@ -1,16 +1,18 @@
 import http
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
 from apps.account.messages.commands.send_forgot_password_email import SendForgotPasswordEmail
+from apps.account.models import User
 from apps.account.views import LogInUserView, UserForgotPasswordView
 from apps.core.event_loop.messages.message import Message
 
 pytestmark = pytest.mark.django_db
 
 
-def test_get_regular(authenticated_client):
+def test_get_regular(authenticated_client: Client):
     response = authenticated_client.get(reverse("account:forgot-password"))
 
     assert response.status_code == http.HTTPStatus.OK
@@ -18,10 +20,10 @@ def test_get_regular(authenticated_client):
     assert "Forgot password" in response.content.decode()
 
 
-def test_post_regular(authenticated_client, user, monkeypatch):
+def test_post_regular(authenticated_client: Client, user: User, monkeypatch: pytest.MonkeyPatch):
     recorded_messages = []
 
-    def handle_message(message) -> Message:
+    def handle_message(message: Message) -> Message:
         recorded_messages.append(message)
         return message
 
@@ -40,7 +42,7 @@ def test_post_regular(authenticated_client, user, monkeypatch):
     assert "Login" in response.content.decode()
 
 
-def test_post_email_invalid(authenticated_client):
+def test_post_email_invalid(authenticated_client: Client):
     unknown_email = "unknown_email@local.local"
     response = authenticated_client.post(
         reverse("account:forgot-password"),

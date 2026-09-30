@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpRequest
 from django.views import generic
 from passkeys.models import UserPasskey
 
@@ -10,7 +11,7 @@ class UserSecurityView(LoginRequiredMixin, generic.DetailView):
     context_object_name = "user"
     model = User
 
-    def dispatch(self, request, *args: object, **kwargs: object):
+    def dispatch(self, request: HttpRequest, *args: object, **kwargs: object):
         if not request.user.is_superuser and request.user.id != kwargs["pk"]:
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)

@@ -3,8 +3,10 @@ from typing import Any
 
 import pytest
 
+from apps.account.models import User
+from apps.room.models import Room
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
-from apps.transaction.models import ChildTransaction
+from apps.transaction.models import ChildTransaction, ParentTransaction
 from apps.transaction.services.room_category_service import RoomCategoryService
 from apps.transaction.tests.factories import ParentTransactionFactory
 
@@ -12,7 +14,7 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def parent_transaction_with_children(room, guest_user, user):
+def parent_transaction_with_children(room: Room, guest_user: User, user: User):
     parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
     first_child = ChildTransaction.objects.create(
         parent_transaction=parent_transaction,
@@ -31,7 +33,7 @@ def parent_transaction_with_children(room, guest_user, user):
     return parent_transaction, [first_child, second_child]
 
 
-def _base_form_data(parent_transaction, total_value) -> dict[str, Any]:
+def _base_form_data(parent_transaction: ParentTransaction, total_value: str) -> dict[str, Any]:
     child_transactions = list(parent_transaction.child_transactions.order_by("-id"))
     return {
         "description": parent_transaction.description,
@@ -48,14 +50,18 @@ def _base_form_data(parent_transaction, total_value) -> dict[str, Any]:
 
 
 class TestTransactionEditFormTotalValue:
-    def test_total_value_field_exposes_correct_initial(self, parent_transaction_with_children):
+    def test_total_value_field_exposes_correct_initial(
+        self, parent_transaction_with_children: tuple[ParentTransaction, list[ChildTransaction]]
+    ):
         parent_transaction, _ = parent_transaction_with_children
         form = TransactionEditForm(instance=parent_transaction)
 
         assert "total_value" in form.fields
         assert form.initial["total_value"] == parent_transaction.value
 
-    def test_rebalances_shares_when_total_changes(self, parent_transaction_with_children):
+    def test_rebalances_shares_when_total_changes(
+        self, parent_transaction_with_children: tuple[ParentTransaction, list[ChildTransaction]]
+    ):
         parent_transaction, _ = parent_transaction_with_children
         data = _base_form_data(parent_transaction, total_value="60.00")
         form = TransactionEditForm(data=data, instance=parent_transaction)
@@ -64,7 +70,9 @@ class TestTransactionEditFormTotalValue:
         assert form.cleaned_data["total_value"] == Decimal("60.00")
         assert form.cleaned_data["value"] == [Decimal("30.00"), Decimal("30.00")]
 
-    def test_propagates_value_sum_when_shares_rebalanced(self, parent_transaction_with_children):
+    def test_propagates_value_sum_when_shares_rebalanced(
+        self, parent_transaction_with_children: tuple[ParentTransaction, list[ChildTransaction]]
+    ):
         parent_transaction, _ = parent_transaction_with_children
         data = _base_form_data(parent_transaction, total_value=str(parent_transaction.value))
         data["value"] = ["15.00", "25.00"]

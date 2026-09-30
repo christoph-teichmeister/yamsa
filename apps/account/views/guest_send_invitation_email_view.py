@@ -15,7 +15,7 @@ class GuestSendInvitationEmailView(RoomNotClosedRequiredMixin, AccountBaseContex
     form_class = GuestSendInvitationEmailForm
     context_object_name = "user"
 
-    def form_valid(self, form):
+    def form_valid(self, form: GuestSendInvitationEmailForm):
         form_valid = super().form_valid(form)
 
         handle_message(

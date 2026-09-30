@@ -12,7 +12,7 @@ class RoomSealIconForm(ModelForm):
         model = Room
         fields = ("seal_icon",)
 
-    def save(self, commit=True):
+    def save(self, commit: bool = True):
         if self.instance.seal_image:
             self.instance.seal_image.delete(save=False)
         self.instance.seal_image = None

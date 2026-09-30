@@ -1,23 +1,26 @@
 import http
 import json
+from collections.abc import Callable
 
 import pytest
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.account.tests.factories import UserPasskeyFactory
 
 pytestmark = pytest.mark.django_db
 
 
 class TestPasskeyRegBeginView:
-    def test_get_requires_login(self, client):
+    def test_get_requires_login(self, client: Client):
         response = client.get(reverse("account:passkey-reg-begin"))
 
         assert response.status_code == http.HTTPStatus.FOUND
         assert "login" in response["Location"]
 
-    def test_get_returns_400_when_passkey_already_exists(self, hx_client, user):
+    def test_get_returns_400_when_passkey_already_exists(self, hx_client: Callable, user: User):
         UserPasskeyFactory(user=user)
         client = hx_client(user)
         response = client.get(reverse("account:passkey-reg-begin"))
@@ -26,11 +29,13 @@ class TestPasskeyRegBeginView:
         data = json.loads(response.content)
         assert data["status"] == "ERR"
 
-    def test_get_delegates_to_library_when_no_passkey(self, hx_client, user, monkeypatch):
+    def test_get_delegates_to_library_when_no_passkey(
+        self, hx_client: Callable, user: User, monkeypatch: pytest.MonkeyPatch
+    ):
         fake_state = {"challenge": "abc"}
         fake_options = {"publicKey": {"challenge": "abc"}}
 
-        def fake_begin_registration(user, request) -> tuple[dict, dict]:
+        def fake_begin_registration(user: User, request: HttpRequest) -> tuple[dict, dict]:
             return fake_options, fake_state
 
         monkeypatch.setattr("passkeys.webauthn.begin_registration", fake_begin_registration)

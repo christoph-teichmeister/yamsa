@@ -1,8 +1,12 @@
+from collections.abc import Callable
+
 from django.core import mail
 from django.db import transaction as db_transaction
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
-from apps.importer.dataclasses import CategoryAssignment, ImportResult, PersonAssignment
+from apps.currency.models import Currency
+from apps.importer.dataclasses import CategoryAssignment, ImportResult, ParsedImport, PersonAssignment
 from apps.importer.services.import_service import ImportService
 from apps.room.models import UserConnectionToRoom
 
@@ -14,13 +18,15 @@ class TestImportServiceSideEffects:
     hand those users back instead of connecting them itself.
     """
 
-    def _assignments(self, existing) -> list[PersonAssignment]:
+    def _assignments(self, existing: User) -> list[PersonAssignment]:
         return [
             PersonAssignment(column="Kilian Karaus", kind=PersonAssignment.ME),
             PersonAssignment(column="Elisabeth", kind=PersonAssignment.EXISTING, user_id=existing.pk),
         ]
 
-    def _run(self, *, parsed, user, currency, existing) -> tuple[ImportService, ImportResult]:
+    def _run(
+        self, *, parsed: ParsedImport, user: User, currency: Currency, existing: User
+    ) -> tuple[ImportService, ImportResult]:
         service = ImportService(parsed=parsed, user=user)
         with db_transaction.atomic():
             result = service.process(
@@ -35,7 +41,9 @@ class TestImportServiceSideEffects:
             )
         return service, result
 
-    def test_existing_user_is_not_connected_inside_the_atomic_block(self, db, user, currency, parsed):
+    def test_existing_user_is_not_connected_inside_the_atomic_block(
+        self, db: None, user: User, currency: Currency, parsed: ParsedImport
+    ):
         existing = UserFactory(name="Elisabeth")
 
         _service, result = self._run(parsed=parsed, user=user, currency=currency, existing=existing)
@@ -43,7 +51,9 @@ class TestImportServiceSideEffects:
         assert result.deferred_connections == [existing]
         assert not UserConnectionToRoom.objects.filter(room=result.room, user=existing).exists()
 
-    def test_no_mail_is_sent_while_the_transaction_is_open(self, db, user, currency, parsed):
+    def test_no_mail_is_sent_while_the_transaction_is_open(
+        self, db: None, user: User, currency: Currency, parsed: ParsedImport
+    ):
         existing = UserFactory(name="Elisabeth")
         mail.outbox.clear()
 
@@ -51,7 +61,9 @@ class TestImportServiceSideEffects:
 
         assert mail.outbox == []
 
-    def test_connecting_afterwards_completes_the_membership(self, db, user, currency, parsed):
+    def test_connecting_afterwards_completes_the_membership(
+        self, db: None, user: User, currency: Currency, parsed: ParsedImport
+    ):
         existing = UserFactory(name="Elisabeth")
 
         service, result = self._run(parsed=parsed, user=user, currency=currency, existing=existing)
@@ -61,7 +73,9 @@ class TestImportServiceSideEffects:
         assert UserConnectionToRoom.objects.filter(room=result.room, user=existing).exists()
         assert result.room.users.count() == 2
 
-    def test_guests_are_still_connected_inside_the_service(self, db, user, currency, parsed, run_import):
+    def test_guests_are_still_connected_inside_the_service(
+        self, db: None, user: User, currency: Currency, parsed: ParsedImport, run_import: Callable
+    ):
         # Both handlers return early for guests, so those connections are safe in the block.
         result = run_import(parsed=parsed, user=user, currency=currency)
 

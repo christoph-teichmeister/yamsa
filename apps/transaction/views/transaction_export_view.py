@@ -1,7 +1,9 @@
+import io
 from collections.abc import Iterator
+from datetime import datetime
 
-from django.db.models import Prefetch
-from django.http import StreamingHttpResponse
+from django.db.models import Prefetch, QuerySet
+from django.http import HttpRequest, StreamingHttpResponse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -18,7 +20,7 @@ class TransactionExportView(RoomMembershipRequiredMixin, TransactionBaseContext,
 
     HEADER = [_("Paid by"), _("Paid for"), _("Description"), _("Amount"), _("Currency"), _("Category"), _("Paid at")]
 
-    def get(self, request, *args: object, **kwargs: object):
+    def get(self, request: HttpRequest, *args: object, **kwargs: object):
         """Stream room transactions while respecting prefetching and metadata."""
         room = request.room
         parents = (
@@ -41,7 +43,7 @@ class TransactionExportView(RoomMembershipRequiredMixin, TransactionBaseContext,
 
         return response
 
-    def _write_rows(self, writer, buffer, parents, timestamp) -> Iterator[str]:
+    def _write_rows(self, writer: object, buffer: io.StringIO, parents: QuerySet, timestamp: datetime) -> Iterator[str]:
         for parent in parents:
             currency_value = parent.currency.sign or parent.currency.code or ""
             category_name = self._safe(parent.category.name if parent.category else "")

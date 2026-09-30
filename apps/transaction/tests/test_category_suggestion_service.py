@@ -1,5 +1,7 @@
 import pytest
 
+from apps.account.models import User
+from apps.room.models import Room
 from apps.transaction.models import Category
 from apps.transaction.services.category_suggestion_service import (
     BASE_CATEGORY_KEYWORDS,
@@ -27,13 +29,13 @@ class TestCategorySuggestionService:
     def test_tokenize_drops_short_and_numeric_tokens(self):
         assert tokenize("Pizza 12 at da Toni") == ["pizza", "toni"]
 
-    def test_static_keywords_point_at_the_rooms_own_categories(self, room):
+    def test_static_keywords_point_at_the_rooms_own_categories(self, room: Room):
         index = CategorySuggestionService(room=room).build_index()
 
         groceries = Category.objects.get(slug="groceries")
         assert index["rewe"] == groceries.id
 
-    def test_index_only_contains_categories_the_room_offers(self, room):
+    def test_index_only_contains_categories_the_room_offers(self, room: Room):
         service = RoomCategoryService(room=room)
         removed = next(
             room_category
@@ -47,7 +49,7 @@ class TestCategorySuggestionService:
         assert "pizza" not in index
         assert "rewe" in index
 
-    def test_room_history_overrides_a_static_keyword(self, room, user):
+    def test_room_history_overrides_a_static_keyword(self, room: Room, user: User):
         activities = Category.objects.get(slug="activities")
         for _ in range(2):
             ParentTransactionFactory(room=room, paid_by=user, description="Pizza night", category=activities)
@@ -56,7 +58,7 @@ class TestCategorySuggestionService:
 
         assert index["pizza"] == activities.id
 
-    def test_ambiguous_history_keyword_is_skipped(self, room, user):
+    def test_ambiguous_history_keyword_is_skipped(self, room: Room, user: User):
         activities = Category.objects.get(slug="activities")
         household = Category.objects.get(slug="household")
         ParentTransactionFactory(room=room, paid_by=user, description="Kaution zurueck", category=activities)
@@ -66,7 +68,7 @@ class TestCategorySuggestionService:
 
         assert "kaution" not in index
 
-    def test_history_of_another_room_is_ignored(self, room, closed_room, user):
+    def test_history_of_another_room_is_ignored(self, room: Room, closed_room: Room, user: User):
         activities = Category.objects.get(slug="activities")
         ParentTransactionFactory(room=closed_room, paid_by=user, description="Pizza night", category=activities)
 

@@ -1,11 +1,17 @@
+from collections.abc import Callable
+
+from apps.account.models import User
 from apps.currency.models import Currency
+from apps.importer.dataclasses import ParsedImport
 from apps.importer.parsers.splitwise import SplitwiseCsvParser
 from apps.importer.tests.factories import build_file_like
 from apps.transaction.models import ParentTransaction
 
 
 class TestImportServiceCurrency:
-    def test_duplicate_currency_codes_do_not_break_the_import(self, run_import, db, user, currency, parsed):
+    def test_duplicate_currency_codes_do_not_break_the_import(
+        self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
+    ):
         # Currency.code has no unique constraint, so a .get() would raise MultipleObjectsReturned.
         Currency.objects.create(name="Euro (duplicate)", sign="€", code="EUR")
 
@@ -13,7 +19,9 @@ class TestImportServiceCurrency:
 
         assert ParentTransaction.objects.filter(room=result.room).count() == 2
 
-    def test_unknown_currency_code_falls_back_to_the_room_currency(self, run_import, db, user, currency):
+    def test_unknown_currency_code_falls_back_to_the_room_currency(
+        self, run_import: Callable, db: None, user: User, currency: Currency
+    ):
         parsed = SplitwiseCsvParser().parse(
             build_file_like(
                 ["2023-03-06,Ikea,Möbel,10.00,EUR,5.00,-5.00"],

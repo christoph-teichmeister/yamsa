@@ -1,5 +1,5 @@
 from django.contrib.auth import login
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 
@@ -9,7 +9,7 @@ from apps.account.models import User
 class AuthenticateGuestUserView(generic.View):
     http_method_names = ["post", "options"]
 
-    def post(self, request, *args: object, **kwargs: object):
+    def post(self, request: HttpRequest, *args: object, **kwargs: object):
         room_slug = self.request.POST.get("room_slug")
 
         redirect_response = HttpResponseRedirect(

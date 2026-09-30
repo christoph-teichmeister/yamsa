@@ -1,7 +1,7 @@
 from django.template import Context, Template
 
 
-def render(template_string, **context: object):
+def render(template_string: str, **context: object):
     return Template("{% load icon_tags %}" + template_string).render(Context(context))
 
 

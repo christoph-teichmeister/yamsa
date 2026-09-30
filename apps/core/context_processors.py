@@ -1,11 +1,12 @@
 from django.conf import settings
+from django.http import HttpRequest
 
 from apps.core.pwa_constants import CACHED_AT_HEADER_NAME, PREFETCH_HEADER_NAME
 from apps.core.services.pwa_scope_service import resolve_scope
 from apps.core.toast_constants import TOAST_TYPE_CLASSES
 
 
-def core_context(request):
+def core_context(request: HttpRequest):
     return {
         "core": {
             # Calculated info

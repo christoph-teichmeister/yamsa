@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import register
+from django.db.models import Model
+from django.http import HttpRequest
 
 from apps.account.models import User
 from apps.core.admin import YamsaCommonInfoAdminMixin
@@ -37,7 +39,7 @@ class UserAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
         ParentTransactionPaidByInline,
     )
 
-    def get_readonly_fields(self, request, obj=None):
+    def get_readonly_fields(self, request: HttpRequest, obj: Model | None = None):
         readonly_fields = super().get_readonly_fields(request, obj)
         readonly_fields += ("last_login",)
 

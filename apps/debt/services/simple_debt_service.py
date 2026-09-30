@@ -16,7 +16,7 @@ class SimpleDebtService:
     """
 
     @staticmethod
-    def get_rows(*, room_id, viewer_id) -> list[SimpleDebtRow]:
+    def get_rows(*, room_id: int, viewer_id: int) -> list[SimpleDebtRow]:
         # The explicit order_by() clears ChildTransaction's Meta ordering; an inherited ordering
         # field would otherwise join the GROUP BY and split the aggregate across extra rows.
         aggregates = list(

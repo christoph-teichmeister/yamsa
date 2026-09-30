@@ -1,13 +1,13 @@
 from django.contrib.auth.mixins import AccessMixin
 from django.contrib.auth.views import redirect_to_login
-from django.http import HttpResponseForbidden
+from django.http import HttpRequest, HttpResponseForbidden
 from django.shortcuts import resolve_url
 
 
 class RoomMembershipRequiredMixin(AccessMixin):
     """Prevent access to room resources for non-members."""
 
-    def dispatch(self, request, *args: object, **kwargs: object):
+    def dispatch(self, request: HttpRequest, *args: object, **kwargs: object):
         """Allow only authenticated users who have seen the room."""
         self.request = request
         user = request.user

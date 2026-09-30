@@ -1,13 +1,14 @@
 import pytest
 
 from apps.account.forms.user_forgot_password_form import UserForgotPasswordForm
+from apps.account.models import User
 
 
 @pytest.mark.django_db
 class TestUserForgotPasswordForm:
     form_class = UserForgotPasswordForm
 
-    def test_regular(self, user):
+    def test_regular(self, user: User):
         form = self.form_class(data={"email": user.email})
         assert form.is_valid()
 

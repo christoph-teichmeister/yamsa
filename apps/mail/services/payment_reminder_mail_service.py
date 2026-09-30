@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+from apps.account.models import User
 from apps.account.utils.notification_preferences import (
     PAYMENT_REMINDER_VARIANT,
     build_payment_reminder_unsubscribe_url,
@@ -17,7 +18,7 @@ class PaymentReminderEmailService(BaseYamsaEmailService):
     FROM_EMAIL = settings.EMAIL_DEFAULT_FROM_EMAIL
 
     def __init__(
-        self, recipient, *, room_name: str, amount_summary: str, inactivity_days: int, payment_link: str
+        self, recipient: User, *, room_name: str, amount_summary: str, inactivity_days: int, payment_link: str
     ) -> None:
         self.room_name = room_name
         self.amount_summary = amount_summary

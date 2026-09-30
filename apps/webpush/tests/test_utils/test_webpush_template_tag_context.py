@@ -2,13 +2,14 @@ import pytest
 from django.test import RequestFactory
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.webpush.utils import get_templatetag_context
 
 pytestmark = pytest.mark.django_db
 
 
 class TestWebPushTemplateTagContext:
-    def test_returns_expected_context_data(self, user):
+    def test_returns_expected_context_data(self, user: User):
         request = RequestFactory().get("/")
         request.user = user
         context = {"request": request, "webpush": {"group": "alerts"}}

@@ -1,6 +1,6 @@
 from django.contrib.auth import mixins
 from django.db import transaction
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -9,7 +9,7 @@ from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
 from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY, TOKEN_PARAM
-from apps.importer.dataclasses import ParsedImport
+from apps.importer.dataclasses import ImportResult, ParsedImport
 from apps.importer.forms import ImportPreviewForm
 from apps.importer.registry import get_parser
 from apps.importer.services.import_service import ImportService
@@ -22,7 +22,7 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
     template_name = "importer/preview.html"
     form_class = ImportPreviewForm
 
-    def dispatch(self, request, *args: object, **kwargs: object):
+    def dispatch(self, request: HttpRequest, *args: object, **kwargs: object):
         # This runs before LoginRequiredMixin.dispatch, so anonymous visitors must fall through
         # to the mixin instead of being redirected to the upload page.
         if request.user.is_authenticated and self._payload is None:
@@ -81,7 +81,7 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
         context["unknown_currency_codes"] = [code for code in self.parsed.currency_codes if not currencies.get(code)]
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form: ImportPreviewForm):
         service = ImportService(parsed=self.parsed, user=self.request.user)
 
         with transaction.atomic():
@@ -120,12 +120,12 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
 
         return HttpResponseRedirect(reverse("transaction:list", kwargs={"room_slug": result.room.slug}))
 
-    def form_invalid(self, form):
+    def form_invalid(self, form: ImportPreviewForm):
         for error in form.non_field_errors():
             self.request.toast_queue.error(str(error))
         return super().form_invalid(form)
 
-    def _build_success_message(self, result) -> str:
+    def _build_success_message(self, result: ImportResult) -> str:
         message = _("%(count)d transactions imported") % {"count": result.transaction_count}
         if result.settlement_count:
             message += _(", %(count)d settlements") % {"count": result.settlement_count}

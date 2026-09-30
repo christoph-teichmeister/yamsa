@@ -1,5 +1,5 @@
 from django.contrib.auth import mixins
-from django.http import HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponseBadRequest
 from django.views import generic
 
 from apps.account.models import User, UserFriendship
@@ -9,7 +9,7 @@ from apps.room.services.suggested_guest_service import SuggestedGuestService
 class SuggestedGuestFriendToggleHTMXView(mixins.LoginRequiredMixin, generic.TemplateView):
     template_name = "room/_suggested_guest_list.html"
 
-    def post(self, request, *args: object, **kwargs: object):
+    def post(self, request: HttpRequest, *args: object, **kwargs: object):
         user_id = request.POST.get("suggested_user_id")
 
         if not user_id:

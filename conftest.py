@@ -20,17 +20,17 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 
 
 @pytest.fixture
-def user(db):
+def user(db: None):
     return UserFactory()
 
 
 @pytest.fixture
-def guest_user(db):
+def guest_user(db: None):
     return GuestUserFactory()
 
 
 @pytest.fixture
-def authenticated_user(request, user, guest_user):
+def authenticated_user(request: pytest.FixtureRequest, user: User, guest_user: User):
     param = request.param
     if param == "user":
         return user
@@ -43,26 +43,26 @@ def authenticated_user(request, user, guest_user):
 
 
 @pytest.fixture
-def room(db, user, guest_user):
+def room(db: None, user: User, guest_user: User):
     room_instance = RoomFactory(created_by=user)
     room_instance.users.add(user, guest_user)
     return room_instance
 
 
 @pytest.fixture
-def closed_room(db, user, guest_user):
+def closed_room(db: None, user: User, guest_user: User):
     room_instance = RoomFactory(created_by=user, status=Room.StatusChoices.CLOSED)
     room_instance.users.add(user, guest_user)
     return room_instance
 
 
 @pytest.fixture
-def superuser(db):
+def superuser(db: None):
     return SuperuserFactory()
 
 
 @pytest.fixture
-def authenticated_client(client, user):
+def authenticated_client(client: Client, user: User):
     client.defaults["HTTP_HX_REQUEST"] = "true"
     request = RequestFactory().get("/")
     assert client.login(request=request, email=user.email, password=DEFAULT_PASSWORD)
@@ -70,7 +70,7 @@ def authenticated_client(client, user):
 
 
 @pytest.fixture
-def superuser_htmx_client(superuser) -> Client:
+def superuser_htmx_client(superuser: User) -> Client:
     client = Client()
     client.defaults["HTTP_HX_REQUEST"] = "true"
     client.force_login(superuser)
@@ -78,7 +78,7 @@ def superuser_htmx_client(superuser) -> Client:
 
 
 @pytest.fixture
-def room_with_stale_activity(room, user):
+def room_with_stale_activity(room: Room, user: User):
     reminder_category = CategoryFactory(
         slug=f"room-reminder-{room.pk}",
         name="Room reminder",
@@ -99,7 +99,7 @@ def room_with_stale_activity(room, user):
 def attach_profile_picture():
     """Give a user a real picture, so their avatar renders as an image rather than as an initial."""
 
-    def _attach(user_instance) -> User:
+    def _attach(user_instance: User) -> User:
         buffer = BytesIO()
         Image.new("RGB", (64, 64), color=(255, 255, 255)).save(buffer, format="PNG")
         user_instance.profile_picture.save("avatar.png", ContentFile(buffer.getvalue()), save=True)

@@ -1,5 +1,7 @@
 from django.contrib import admin
-from django.contrib.admin import register
+from django.contrib.admin import ModelAdmin, register
+from django.db.models import Model, QuerySet
+from django.http import HttpRequest
 
 from apps.core.admin import YamsaCommonInfoAdminMixin
 from apps.debt.services.debt_optimise_service import DebtOptimiseService
@@ -7,7 +9,7 @@ from apps.room.models import Room
 
 
 @admin.action(description="Optimise debts of selected Rooms")
-def optimise_debts_for_room(modeladmin, request, queryset):  # pragma: no cover
+def optimise_debts_for_room(modeladmin: ModelAdmin, request: HttpRequest, queryset: QuerySet):  # pragma: no cover
     for room in queryset:
         DebtOptimiseService.process(room_id=room.id)
 
@@ -33,7 +35,7 @@ class RoomAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
         ),
     )
 
-    def get_inlines(self, request, obj):
+    def get_inlines(self, request: HttpRequest, obj: Model | None):
         from apps.room.admin.user_connection_to_room_admin import UserConnectionToRoomForRoomAdminInline
 
         return *super().get_inlines(request, obj), UserConnectionToRoomForRoomAdminInline

@@ -46,7 +46,7 @@ class RoomStatusForm(forms.ModelForm):
 
         return cleaned_data
 
-    def save(self, commit=True):
+    def save(self, commit: bool = True):
         self.instance.lastmodified_by = self.user
         self.instance.lastmodified_at = timezone.now()
         return super().save(commit)

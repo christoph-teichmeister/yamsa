@@ -60,7 +60,7 @@ class TestEventLoopRunner:
         handlers = message_registry.event_dict.setdefault(_DummyEvent, [])
         handlers.append(_failing_event_handler)
 
-    def test_handle_command_exception_logs_context(self, capture_handler):
+    def test_handle_command_exception_logs_context(self, capture_handler: _CaptureHandler):
         self._register_command_handler()
         capture_handler.records.clear()
         command = _DummyCommand({})
@@ -75,7 +75,7 @@ class TestEventLoopRunner:
         assert command.uuid in record.getMessage()
         assert record.exc_info is not None
 
-    def test_handle_event_exception_logs_context(self, capture_handler):
+    def test_handle_event_exception_logs_context(self, capture_handler: _CaptureHandler):
         self._register_event_handler()
         capture_handler.records.clear()
         event = _DummyEvent({})

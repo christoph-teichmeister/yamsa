@@ -3,6 +3,7 @@ from datetime import timedelta
 import pytest
 from django.utils import timezone
 
+from apps.account.models import User
 from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.models import ParentTransaction
@@ -11,7 +12,7 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 
 @pytest.mark.django_db
 class TestRoomQsForListOrdering:
-    def test_rooms_ordered_by_most_recent_activity_first(self, user):
+    def test_rooms_ordered_by_most_recent_activity_first(self, user: User):
         now = timezone.now()
 
         old_room = RoomFactory(created_by=user)
@@ -36,7 +37,7 @@ class TestRoomQsForListOrdering:
             "new_room (more recent activity) should appear before old_room in the side nav"
         )
 
-    def test_room_without_transactions_sorts_after_room_with_transactions(self, user):
+    def test_room_without_transactions_sorts_after_room_with_transactions(self, user: User):
         now = timezone.now()
 
         no_tx_room = RoomFactory(created_by=user)

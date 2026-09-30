@@ -7,7 +7,7 @@ class TestManifestStaticFilesStoredName:
     def _make_storage(self) -> ManifestStaticFilesStorage:
         return ManifestStaticFilesStorage.__new__(ManifestStaticFilesStorage)
 
-    def test_missing_bootstrap_toggle_map_returns_name(self, monkeypatch):
+    def test_missing_bootstrap_toggle_map_returns_name(self, monkeypatch: pytest.MonkeyPatch):
         storage = self._make_storage()
         base = ManifestStaticFilesStorage.__bases__[0]
         monkeypatch.setattr(
@@ -18,7 +18,7 @@ class TestManifestStaticFilesStoredName:
 
         assert result == "passkeys/js/bootstrap-toggle.min.js.map"
 
-    def test_missing_non_map_asset_raises(self, monkeypatch):
+    def test_missing_non_map_asset_raises(self, monkeypatch: pytest.MonkeyPatch):
         storage = self._make_storage()
         base = ManifestStaticFilesStorage.__bases__[0]
         monkeypatch.setattr(

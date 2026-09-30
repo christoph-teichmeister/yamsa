@@ -2,18 +2,19 @@ import http
 from datetime import UTC, datetime
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 from freezegun import freeze_time
 
 from apps.account.models import User
 from apps.account.views import GuestCreateView, UserListForRoomView
-from apps.room.models import UserConnectionToRoom
+from apps.room.models import Room, UserConnectionToRoom
 
 pytestmark = pytest.mark.django_db
 
 
 @freeze_time("2020-04-04 04:20")
-def test_get_regular(authenticated_client, room):
+def test_get_regular(authenticated_client: Client, room: Room):
     response = authenticated_client.get(reverse("account:guest-create", kwargs={"room_slug": room.slug}))
 
     assert response.status_code == http.HTTPStatus.OK
@@ -24,7 +25,7 @@ def test_get_regular(authenticated_client, room):
 
 
 @freeze_time("2020-04-04 04:20")
-def test_post_regular(authenticated_client, room, user):
+def test_post_regular(authenticated_client: Client, room: Room, user: User):
     guest_name = "Guest Name"
 
     response = authenticated_client.post(
@@ -47,7 +48,7 @@ def test_post_regular(authenticated_client, room, user):
     assert UserConnectionToRoom.objects.filter(user=new_guest, room=room).exists()
 
 
-def test_post_closed_room_is_rejected(authenticated_client, closed_room):
+def test_post_closed_room_is_rejected(authenticated_client: Client, closed_room: Room):
     guest_name = "Guest Name"
 
     response = authenticated_client.post(

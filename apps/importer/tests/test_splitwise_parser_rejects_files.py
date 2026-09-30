@@ -2,12 +2,13 @@ import io
 
 import pytest
 
+from apps.importer.dataclasses import ParsedImport
 from apps.importer.parsers.exceptions import ImportParseError
 from apps.importer.parsers.splitwise import SplitwiseCsvParser
 from apps.importer.tests.factories import build_file_like
 
 
-def parse(rows, header=None):
+def parse(rows: list[str], header: str | None = None) -> ParsedImport:
     kwargs = {"header": header} if header else {}
     return SplitwiseCsvParser().parse(build_file_like(rows, **kwargs))
 

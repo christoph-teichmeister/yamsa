@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 from django.middleware.csrf import get_token
 from django.views import generic
 
@@ -14,7 +14,7 @@ class PwaSessionView(generic.View):
     in now would book their expense against someone else.
     """
 
-    def get(self, request, *args: object, **kwargs: object):
+    def get(self, request: HttpRequest, *args: object, **kwargs: object):
         return JsonResponse(
             {
                 "csrf_token": get_token(request),

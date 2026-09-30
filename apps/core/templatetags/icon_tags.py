@@ -6,7 +6,7 @@ register = template.Library()
 
 
 @register.simple_tag
-def icon(name, css_class=""):
+def icon(name: str, css_class: str = "") -> str:
     """Render one icon out of the sprite.
 
         {% icon "chevron-down" %}

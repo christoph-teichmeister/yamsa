@@ -5,12 +5,13 @@ import pytest
 from apps.account.handlers.commands.send_post_register_email import handle_send_post_register_mail
 from apps.account.messages.commands.send_post_register_email import SendPostRegisterEmail
 from apps.account.messages.events.post_register_email_sent import PostRegisterEmailSent
+from apps.account.models import User
 from apps.mail.services.post_register_mail_service import PostRegisterEmailService
 
 
 @pytest.mark.django_db
 class TestSendPostRegisterEmailHandler:
-    def test_regular(self, user):
+    def test_regular(self, user: User):
         context = {"user": user}
 
         with (

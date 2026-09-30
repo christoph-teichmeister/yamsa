@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
@@ -10,7 +11,7 @@ class RoomShareView(RoomDashboardView):
     slug_field = "share_hash"
     slug_url_kwarg = "share_hash"
 
-    def get_object(self, queryset=None):
+    def get_object(self, queryset: QuerySet | None = None):
         room = super().get_object(queryset)
         assign_room_to_request(self.request, room)
         self.request.session[SHARED_ROOM_SLUG_SESSION_KEY] = str(room.slug)

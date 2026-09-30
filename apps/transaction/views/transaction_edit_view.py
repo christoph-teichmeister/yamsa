@@ -38,7 +38,7 @@ class TransactionEditView(RoomNotClosedRequiredMixin, TransactionBaseContext, ge
 
         return form_kwargs
 
-    def form_valid(self, form):
+    def form_valid(self, form: TransactionEditForm):
         # The parent and its shares are written together or not at all; the event only follows
         # once they are committed, so its handlers never run inside the transaction (#333).
         with transaction.atomic():

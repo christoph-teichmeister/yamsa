@@ -1,14 +1,16 @@
 import pytest
 from django.contrib.auth import authenticate
+from django.http import HttpRequest
 
 from apps.account.forms.change_password_form import ChangePasswordForm
+from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
 
 pytestmark = pytest.mark.django_db
 
 
 class TestChangePasswordForm:
-    def test_regular(self, user, form_request):
+    def test_regular(self, user: User, form_request: HttpRequest):
         new_password = "new_password"
 
         form = ChangePasswordForm(
@@ -29,7 +31,7 @@ class TestChangePasswordForm:
         authenticated_user = authenticate(request=form_request, email=user.email, password=new_password)
         assert authenticated_user == user
 
-    def test_password_incorrect(self, user, form_request):
+    def test_password_incorrect(self, user: User, form_request: HttpRequest):
         form = ChangePasswordForm(
             request=form_request,
             instance=user,
@@ -43,7 +45,7 @@ class TestChangePasswordForm:
         assert not form.is_valid()
         assert form.errors["old_password"][0] == form.ExceptionMessage.PASSWORD_INCORRECT
 
-    def test_new_passwords_do_not_match(self, user, form_request):
+    def test_new_passwords_do_not_match(self, user: User, form_request: HttpRequest):
         form = ChangePasswordForm(
             request=form_request,
             instance=user,

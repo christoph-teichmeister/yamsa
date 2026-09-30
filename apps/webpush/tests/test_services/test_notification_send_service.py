@@ -3,19 +3,21 @@ from unittest import mock
 import pytest
 from pywebpush import WebPushException
 
+from apps.account.models import User
 from apps.webpush.services.notification_send_service import NotificationSendService
+from apps.webpush.services.notification_send_test_service import NotificationSendTestService
 from apps.webpush.tests.factories import WebpushInformationFactory
 
 
 @pytest.fixture
-def notification_send_service(user):
+def notification_send_service(user: User):
     WebpushInformationFactory(user=user)
     return NotificationSendService()
 
 
 @pytest.mark.django_db
 class TestNotificationSendService:
-    def test_webpush_exception_is_swallowed(self, notification_send_service, user):
+    def test_webpush_exception_is_swallowed(self, notification_send_service: NotificationSendTestService, user: User):
         exception = WebPushException("boom", response=mock.Mock(status_code=500))
 
         with mock.patch(
@@ -26,7 +28,9 @@ class TestNotificationSendService:
 
         assert responses == []
 
-    def test_unexpected_exception_is_swallowed(self, notification_send_service, user):
+    def test_unexpected_exception_is_swallowed(
+        self, notification_send_service: NotificationSendTestService, user: User
+    ):
         with mock.patch(
             "apps.webpush.services.notification_send_service.webpush",
             side_effect=RuntimeError("network down"),

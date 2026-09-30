@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError, CommandParser
 
 from apps.core.icons import ICON_SOURCE_DIR, SPRITE_PATH, build_sprite, collect_icon_names, sprite_symbol_names
 
@@ -9,7 +9,7 @@ from apps.core.icons import ICON_SOURCE_DIR, SPRITE_PATH, build_sprite, collect_
 class Command(BaseCommand):
     help = "Rebuild apps/static/icons/sprite.svg from the icons the templates use."
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument(
             "--check",
             action="store_true",
@@ -42,7 +42,7 @@ class Command(BaseCommand):
         SPRITE_PATH.write_text(sprite, encoding="utf-8")
         self.stdout.write(self.style.SUCCESS(f"Wrote {SPRITE_PATH} ({len(names)} icons)."))
 
-    def _check(self, names) -> None:
+    def _check(self, names: set[str]) -> None:
         if not SPRITE_PATH.exists():
             message = f"{SPRITE_PATH} is missing. Run `python manage.py sync_icons`."
             raise CommandError(message)

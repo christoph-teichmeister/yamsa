@@ -1,6 +1,7 @@
 import http
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
 from apps.account.tests.test_utils import contains_attribute
@@ -10,7 +11,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestRoomDetailView:
-    def test_the_fields_are_editable_straight_away(self, authenticated_client, room):
+    def test_the_fields_are_editable_straight_away(self, authenticated_client: Client, room: Room):
         response = authenticated_client.get(reverse("room:detail", kwargs={"room_slug": room.slug}))
         content = response.content.decode()
 
@@ -21,7 +22,7 @@ class TestRoomDetailView:
         assert contains_attribute(content, "id", "save-room-button")
         assert contains_attribute(content, "id", "discard-room-button")
 
-    def test_it_shows_the_rooms_own_values(self, authenticated_client, room):
+    def test_it_shows_the_rooms_own_values(self, authenticated_client: Client, room: Room):
         content = authenticated_client.get(reverse("room:detail", kwargs={"room_slug": room.slug})).content.decode()
 
         assert room.name in content
@@ -30,13 +31,13 @@ class TestRoomDetailView:
         # test_an_open_room_without_debts_offers_to_close for that assertion.
         assert "All debts are settled. You can close the room." in content
 
-    def test_an_open_room_without_debts_offers_to_close(self, authenticated_client, room):
+    def test_an_open_room_without_debts_offers_to_close(self, authenticated_client: Client, room: Room):
         content = authenticated_client.get(reverse("room:detail", kwargs={"room_slug": room.slug})).content.decode()
 
         assert contains_attribute(content, "id", "close-room-button")
         assert not contains_attribute(content, "id", "force-close-dialog")
 
-    def test_a_closed_room_offers_reopening_and_nothing_to_save(self, authenticated_client, closed_room):
+    def test_a_closed_room_offers_reopening_and_nothing_to_save(self, authenticated_client: Client, closed_room: Room):
         content = authenticated_client.get(
             reverse("room:detail", kwargs={"room_slug": closed_room.slug})
         ).content.decode()
@@ -47,7 +48,7 @@ class TestRoomDetailView:
         assert "disabled" in content
         assert str(Room.StatusChoices.CLOSED.label) in content
 
-    def test_a_closed_room_offers_the_danger_zone(self, authenticated_client, closed_room):
+    def test_a_closed_room_offers_the_danger_zone(self, authenticated_client: Client, closed_room: Room):
         content = authenticated_client.get(
             reverse("room:detail", kwargs={"room_slug": closed_room.slug})
         ).content.decode()
@@ -55,7 +56,7 @@ class TestRoomDetailView:
         assert contains_attribute(content, "id", "delete-room-button")
         assert contains_attribute(content, "id", "delete-room-dialog")
 
-    def test_an_open_room_offers_no_danger_zone(self, authenticated_client, room):
+    def test_an_open_room_offers_no_danger_zone(self, authenticated_client: Client, room: Room):
         content = authenticated_client.get(reverse("room:detail", kwargs={"room_slug": room.slug})).content.decode()
 
         assert not contains_attribute(content, "id", "delete-room-button")

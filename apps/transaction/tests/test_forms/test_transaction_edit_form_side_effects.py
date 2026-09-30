@@ -2,10 +2,13 @@ from decimal import Decimal
 from unittest import mock
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
+from apps.room.models import Room
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
-from apps.transaction.models import ChildTransaction
+from apps.transaction.models import ChildTransaction, ParentTransaction
 from apps.transaction.services.room_category_service import RoomCategoryService
 from apps.transaction.tests.factories import ParentTransactionFactory
 
@@ -15,7 +18,7 @@ DEBT_RECALCULATION = "apps.debt.handlers.events.optimise_debts.DebtOptimiseServi
 
 
 @pytest.fixture
-def parent_transaction(room, user, guest_user):
+def parent_transaction(room: Room, user: User, guest_user: User):
     parent_transaction = ParentTransactionFactory(
         room=room, paid_by=user, category=RoomCategoryService(room=room).get_default_category()
     )
@@ -24,7 +27,7 @@ def parent_transaction(room, user, guest_user):
     return parent_transaction
 
 
-def _form_data(parent_transaction, *, values: list[str]) -> dict:
+def _form_data(parent_transaction: ParentTransaction, *, values: list[str]) -> dict:
     child_transactions = list(parent_transaction.child_transactions.order_by("id"))
     return {
         "description": parent_transaction.description,
@@ -41,7 +44,7 @@ def _form_data(parent_transaction, *, values: list[str]) -> dict:
 
 
 class TestTransactionEditFormSideEffects:
-    def test_saving_the_form_only_persists(self, parent_transaction):
+    def test_saving_the_form_only_persists(self, parent_transaction: ParentTransaction):
         form = TransactionEditForm(
             data=_form_data(parent_transaction, values=["10.00", "20.00"]), instance=parent_transaction
         )
@@ -57,7 +60,9 @@ class TestTransactionEditFormSideEffects:
             Decimal("20.00"),
         ]
 
-    def test_saving_through_the_view_recalculates_the_debts(self, authenticated_client, room, parent_transaction):
+    def test_saving_through_the_view_recalculates_the_debts(
+        self, authenticated_client: Client, room: Room, parent_transaction: ParentTransaction
+    ):
         with mock.patch(DEBT_RECALCULATION) as recalculate:
             response = authenticated_client.post(
                 reverse("transaction:edit", kwargs={"room_slug": room.slug, "pk": parent_transaction.id}),

@@ -1,6 +1,8 @@
 import pytest
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
 
 
@@ -11,11 +13,11 @@ class TestRoomCreateView:
         return UserFactory(is_guest=False)
 
     @pytest.fixture
-    def owner_client(self, client, owner):
+    def owner_client(self, client: Client, owner: User):
         client.force_login(owner)
         return client
 
-    def test_back_button_targets_dashboard(self, owner_client):
+    def test_back_button_targets_dashboard(self, owner_client: Client):
         response = owner_client.get(reverse("room:create"))
 
         assert response.status_code == 200

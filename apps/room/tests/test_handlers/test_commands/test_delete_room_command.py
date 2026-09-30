@@ -16,7 +16,7 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 pytestmark = pytest.mark.django_db
 
 
-def create_receipt(parent_transaction, uploaded_by) -> Receipt:
+def create_receipt(parent_transaction: ParentTransaction, uploaded_by: User) -> Receipt:
     receipt_file = SimpleUploadedFile("receipt.pdf", b"%PDF-1.4\n%%EOF", content_type="application/pdf")
     return Receipt.objects.create(
         parent_transaction=parent_transaction,
@@ -29,7 +29,7 @@ def create_receipt(parent_transaction, uploaded_by) -> Receipt:
 
 
 class TestHandleDeleteRoom:
-    def test_deleting_a_room_cascades_its_own_data_but_keeps_users(self, room, user, guest_user):
+    def test_deleting_a_room_cascades_its_own_data_but_keeps_users(self, room: Room, user: User, guest_user: User):
         parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
         ChildTransaction.objects.create(parent_transaction=parent_transaction, paid_for=guest_user, value=Decimal(5))
         create_receipt(parent_transaction=parent_transaction, uploaded_by=user)
@@ -60,7 +60,9 @@ class TestHandleDeleteRoom:
         assert User.objects.filter(id=user.id).exists()
         assert User.objects.filter(id=guest_user.id).exists()
 
-    def test_the_event_carries_the_recipients_and_receipts_captured_before_the_delete(self, room, user, guest_user):
+    def test_the_event_carries_the_recipients_and_receipts_captured_before_the_delete(
+        self, room: Room, user: User, guest_user: User
+    ):
         parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
         receipt = create_receipt(parent_transaction=parent_transaction, uploaded_by=user)
         receipt_name = receipt.file.name
@@ -74,7 +76,7 @@ class TestHandleDeleteRoom:
         assert result.Context.member_user_ids == [guest_user.id]
         assert result.Context.receipt_storage_refs == [(receipt.file.storage, receipt_name)]
 
-    def test_the_actor_is_not_among_the_notified_members(self, room, user, guest_user):
+    def test_the_actor_is_not_among_the_notified_members(self, room: Room, user: User, guest_user: User):
         result = handle_delete_room(
             DeleteRoom.Context(room=room, user_requesting_deletion=user),
         )

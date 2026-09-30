@@ -2,17 +2,20 @@ import json
 from http import HTTPStatus
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.core.toast_constants import SUCCESS_TOAST_CLASS
-from apps.transaction.models import Receipt
+from apps.room.models import Room
+from apps.transaction.models import ParentTransaction, Receipt
 from apps.transaction.tests.test_views.test_transaction_receipt_upload_view.test_helpers import create_receipt
 
 pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def receipt_for_guest(transaction_with_children, guest_user):
+def receipt_for_guest(transaction_with_children: ParentTransaction, guest_user: User):
     receipt = create_receipt(transaction_with_children, uploaded_by=guest_user)
     try:
         yield receipt
@@ -22,7 +25,9 @@ def receipt_for_guest(transaction_with_children, guest_user):
 
 
 class TestTransactionReceiptDeleteView:
-    def test_receipt_owner_can_delete_receipt(self, authenticated_client, room, user, transaction_with_children):
+    def test_receipt_owner_can_delete_receipt(
+        self, authenticated_client: Client, room: Room, user: User, transaction_with_children: ParentTransaction
+    ):
         parent_transaction = transaction_with_children
         receipt = create_receipt(parent_transaction, uploaded_by=user)
 
@@ -40,7 +45,9 @@ class TestTransactionReceiptDeleteView:
         assert toasts[0]["type"] == SUCCESS_TOAST_CLASS
         assert receipt.original_name not in response.content.decode()
 
-    def test_receipt_delete_forbidden_for_other_user(self, authenticated_client, room, guest_user, receipt_for_guest):
+    def test_receipt_delete_forbidden_for_other_user(
+        self, authenticated_client: Client, room: Room, guest_user: User, receipt_for_guest: Receipt
+    ):
         receipt = receipt_for_guest
 
         response = authenticated_client.post(
@@ -51,7 +58,11 @@ class TestTransactionReceiptDeleteView:
         assert Receipt.objects.filter(pk=receipt.pk).exists()
 
     def test_receipt_delete_rejected_for_closed_room(
-        self, authenticated_client, closed_room, user, transaction_with_children_in_closed_room
+        self,
+        authenticated_client: Client,
+        closed_room: Room,
+        user: User,
+        transaction_with_children_in_closed_room: ParentTransaction,
     ):
         receipt = create_receipt(transaction_with_children_in_closed_room, uploaded_by=user)
 

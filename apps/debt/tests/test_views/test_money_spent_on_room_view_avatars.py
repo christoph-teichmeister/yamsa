@@ -1,16 +1,20 @@
 import http
+from collections.abc import Callable
 
 import pytest
 from bs4 import BeautifulSoup
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
+from apps.room.models import Room
 from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 
 
 @pytest.mark.django_db
 class TestMoneySpentOnRoomViewAvatars:
     def test_every_bar_shows_the_face_of_the_person_it_belongs_to(
-        self, client, room, user, guest_user, attach_profile_picture
+        self, client: Client, room: Room, user: User, guest_user: User, attach_profile_picture: Callable
     ):
         attach_profile_picture(user)
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))

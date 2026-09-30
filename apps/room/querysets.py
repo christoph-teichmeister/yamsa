@@ -1,10 +1,13 @@
+from django.contrib.auth.models import AnonymousUser
 from django.db import models
 from django.db.models import BooleanField, Exists, ExpressionWrapper, F, Max, OuterRef
 from django.db.models.functions import Coalesce, Substr, Upper
 
+from apps.account.models import User
+
 
 class RoomQuerySet(models.QuerySet):
-    def visible_for(self, user):
+    def visible_for(self, user: User | AnonymousUser):
         if user.is_anonymous:
             return self.none()
 

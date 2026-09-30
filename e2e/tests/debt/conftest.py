@@ -1,11 +1,15 @@
 import pytest
 from django.db import connection
 from django.urls import reverse
+from playwright.sync_api import Page
 
+from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.tests.factories import UserFactory
+from apps.currency.models import Currency
 from apps.currency.tests.factories import CurrencyFactory
 from apps.debt.services.debt_optimise_service import DebtOptimiseService
+from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.models import Category, ChildTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
@@ -20,24 +24,24 @@ CATEGORIES = (
 
 
 @pytest.fixture
-def euro(transactional_db):
+def euro(transactional_db: None):
     return CurrencyFactory(code="EUR", sign="€", name="Euro")
 
 
 @pytest.fixture
-def franc(transactional_db):
+def franc(transactional_db: None):
     return CurrencyFactory(code="CHF", sign="Fr", name="Swiss franc")
 
 
 @pytest.fixture
-def people(transactional_db):
+def people(transactional_db: None):
     # Fixed names: the lists on "Who paid what" are ordered by name, and the assertions read them
     # in that order.
     return UserFactory(name="Alex"), UserFactory(name="Bea"), UserFactory(name="Chris")
 
 
 @pytest.fixture
-def spending_room(people, euro, franc):
+def spending_room(people: tuple[User, User, User], euro: Currency, franc: Currency):
     """Three expenses across two currencies and three categories.
 
     EUR: Alex pays 1,200.00 split three ways, Bea pays 30.00 split with Alex. That leaves Chris
@@ -54,7 +58,13 @@ def spending_room(people, euro, franc):
         for order_index, (slug, name, emoji) in enumerate(CATEGORIES)
     }
 
-    def expense(paid_by, currency, category_slug, description, shares) -> None:
+    def expense(
+        paid_by: User,
+        currency: Currency,
+        category_slug: str,
+        description: str,
+        shares: list[tuple[User, str]],
+    ) -> None:
         parent_transaction = ParentTransactionFactory(
             room=room,
             paid_by=paid_by,
@@ -75,7 +85,7 @@ def spending_room(people, euro, franc):
 
 
 @pytest.fixture
-def open_insights(page, base_url, people, spending_room):
+def open_insights(page: Page, base_url: str, people: tuple[User, User, User], spending_room: Room):
     def _open(view_name: str) -> RoomInsightsPage:
         _login(page, base_url, people[0].email, DEFAULT_PASSWORD)
         insights_page = RoomInsightsPage(page, base_url, reverse(view_name, kwargs={"room_slug": spending_room.slug}))

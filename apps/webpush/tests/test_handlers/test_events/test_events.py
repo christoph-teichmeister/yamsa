@@ -1,10 +1,13 @@
+from collections.abc import Callable
 from decimal import Decimal
 from unittest import mock
 
 import pytest
 from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
+from apps.room.models import Room
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
 from apps.webpush.handlers.events.events import send_notification_on_transaction_create
 from apps.webpush.utils import Notification
@@ -18,10 +21,10 @@ class TestSendNotificationOnTransactionCreate:
 
     def test_send_notification_on_transaction_create_to_debitor_if_creditor_is_creator(
         self,
-        room,
-        user,
-        guest_user,
-        create_parent_transaction_with_optimisation,
+        room: Room,
+        user: User,
+        guest_user: User,
+        create_parent_transaction_with_optimisation: Callable,
     ):
         parent_transaction, _ = create_parent_transaction_with_optimisation(
             room=room,
@@ -40,11 +43,11 @@ class TestSendNotificationOnTransactionCreate:
 
     def test_send_notification_on_transaction_create_to_multiple_debitors_if_creditor_is_creator(
         self,
-        room,
-        user,
-        guest_user,
-        another_user,
-        create_parent_transaction_with_optimisation,
+        room: Room,
+        user: User,
+        guest_user: User,
+        another_user: User,
+        create_parent_transaction_with_optimisation: Callable,
     ):
         room.users.add(another_user)
 
@@ -68,11 +71,11 @@ class TestSendNotificationOnTransactionCreate:
 
     def test_send_notification_on_transaction_create_to_debitors_except_creator_and_creditor_if_someone_else_created(
         self,
-        room,
-        user,
-        guest_user,
-        another_user,
-        create_parent_transaction_with_optimisation,
+        room: Room,
+        user: User,
+        guest_user: User,
+        another_user: User,
+        create_parent_transaction_with_optimisation: Callable,
     ):
         room.users.add(another_user)
         with mock.patch.object(CurrentRequestMiddleware, "get_current_user", return_value=another_user):
@@ -95,10 +98,10 @@ class TestSendNotificationOnTransactionCreate:
 
     def test_send_notification_on_transaction_create_body_when_creator_is_payer(
         self,
-        room,
-        user,
-        guest_user,
-        create_parent_transaction_with_optimisation,
+        room: Room,
+        user: User,
+        guest_user: User,
+        create_parent_transaction_with_optimisation: Callable,
     ):
         parent_transaction, _ = create_parent_transaction_with_optimisation(
             room=room,
@@ -127,11 +130,11 @@ class TestSendNotificationOnTransactionCreate:
 
     def test_send_notification_on_transaction_create_body_when_creator_differs_from_payer(
         self,
-        room,
-        user,
-        guest_user,
-        another_user,
-        create_parent_transaction_with_optimisation,
+        room: Room,
+        user: User,
+        guest_user: User,
+        another_user: User,
+        create_parent_transaction_with_optimisation: Callable,
     ):
         room.users.add(another_user)
         with mock.patch.object(CurrentRequestMiddleware, "get_current_user", return_value=another_user):
@@ -165,11 +168,11 @@ class TestSendNotificationOnTransactionCreate:
 
     def test_send_notification_on_transaction_create_localizes_body_per_recipient_language(
         self,
-        room,
-        user,
-        guest_user,
-        another_user,
-        create_parent_transaction_with_optimisation,
+        room: Room,
+        user: User,
+        guest_user: User,
+        another_user: User,
+        create_parent_transaction_with_optimisation: Callable,
     ):
         room.users.add(another_user)
         guest_user.language = "de"

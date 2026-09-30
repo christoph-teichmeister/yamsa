@@ -1,10 +1,11 @@
 import uuid
 from decimal import Decimal
 
+from django.db.models import Model
 from django.utils.formats import number_format
 
 
-def determine_upload_to(instance, filename: str):
+def determine_upload_to(instance: Model, filename: str) -> str:
     """Return an upload path that keeps the folder structure but guarantees a unique filename."""
     base_path = f"{instance._meta.app_label}/{instance._meta.model_name}"
     if instance.UPLOAD_FOLDER_NAME is not None:

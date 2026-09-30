@@ -1,14 +1,16 @@
 import pytest
 from django.utils import timezone
 
+from apps.account.models import User
 from apps.currency.tests.factories import CurrencyFactory
+from apps.room.models import Room
 from apps.transaction.models import DEFAULT_CATEGORY_SLUG, ParentTransaction
 
 pytestmark = pytest.mark.django_db
 
 
 class TestParentTransactionModel:
-    def test_parent_transaction_defaults_to_misc_category(self, user, room):
+    def test_parent_transaction_defaults_to_misc_category(self, user: User, room: Room):
         currency = CurrencyFactory()
         transaction = ParentTransaction.objects.create(
             description="Default category check",

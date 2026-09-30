@@ -34,7 +34,7 @@ class RegisterUserView(generic.CreateView):
             "email": self.request.GET.get("with_email"),
         }
 
-    def form_valid(self, form):
+    def form_valid(self, form: RegisterForm):
         response = super().form_valid(form)
 
         # Immediately log the created user in

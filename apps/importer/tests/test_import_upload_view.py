@@ -1,4 +1,6 @@
+from django.contrib.sessions.backends.base import SessionBase
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client
 from django.urls import reverse
 
 from apps.importer.constants import SESSION_KEY_PREFIX
@@ -11,7 +13,7 @@ ROWS = [
 ]
 
 
-def _stored_payload(session) -> object | None:
+def _stored_payload(session: SessionBase) -> object | None:
     """The parsed file lives under a per-upload token, so tests cannot address it by a fixed key."""
     for key, value in session.items():
         if key.startswith(f"{SESSION_KEY_PREFIX}:"):
@@ -20,17 +22,17 @@ def _stored_payload(session) -> object | None:
 
 
 class TestImportUploadView:
-    def test_login_is_required(self, db, client):
+    def test_login_is_required(self, db: None, client: Client):
         response = client.get(reverse("importer:upload"))
 
         assert response.status_code == 302
 
-    def test_page_renders_for_a_logged_in_user(self, db, authenticated_client):
+    def test_page_renders_for_a_logged_in_user(self, db: None, authenticated_client: Client):
         response = authenticated_client.get(reverse("importer:upload"))
 
         assert response.status_code == 200
 
-    def test_valid_upload_stores_the_parsed_file_in_the_session(self, db, authenticated_client):
+    def test_valid_upload_stores_the_parsed_file_in_the_session(self, db: None, authenticated_client: Client):
         response = authenticated_client.post(
             reverse("importer:upload"),
             data={"source": "splitwise-csv", "file": build_upload(ROWS)},
@@ -41,7 +43,7 @@ class TestImportUploadView:
         payload = _stored_payload(authenticated_client.session)
         assert len(payload["transactions"]) == 2
 
-    def test_non_csv_file_is_rejected(self, db, authenticated_client):
+    def test_non_csv_file_is_rejected(self, db: None, authenticated_client: Client):
         upload = SimpleUploadedFile("export.txt", b"whatever", content_type="text/plain")
 
         response = authenticated_client.post(
@@ -51,7 +53,7 @@ class TestImportUploadView:
         assert response.status_code == 200
         assert _stored_payload(authenticated_client.session) is None
 
-    def test_empty_file_is_rejected(self, db, authenticated_client):
+    def test_empty_file_is_rejected(self, db: None, authenticated_client: Client):
         upload = SimpleUploadedFile("export.csv", b"", content_type="text/csv")
 
         response = authenticated_client.post(
@@ -61,7 +63,7 @@ class TestImportUploadView:
         assert response.status_code == 200
         assert _stored_payload(authenticated_client.session) is None
 
-    def test_file_without_importable_rows_is_rejected(self, db, authenticated_client):
+    def test_file_without_importable_rows_is_rejected(self, db: None, authenticated_client: Client):
         response = authenticated_client.post(
             reverse("importer:upload"),
             data={"source": "splitwise-csv", "file": build_upload(["2026-09-05,Gesamtbilanz,,,EUR,1.00,-1.00"])},

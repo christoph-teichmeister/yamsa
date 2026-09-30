@@ -1,8 +1,10 @@
 import pytest
 from django.urls import reverse
-from playwright.sync_api import expect
+from playwright.sync_api import Page, expect
 
+from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
+from apps.currency.models import Currency
 from apps.currency.tests.factories import CurrencyFactory
 from apps.room.models import Room
 from e2e.conftest import _login
@@ -11,12 +13,12 @@ from e2e.pages.room_create_page import RoomCreatePage
 
 
 @pytest.fixture
-def currencies(transactional_db):
+def currencies(transactional_db: None):
     return CurrencyFactory(code="EUR", sign="€"), CurrencyFactory(code="CHF", sign="Fr")
 
 
 @pytest.fixture
-def room_create_page(page, base_url, profile_user, currencies):
+def room_create_page(page: Page, base_url: str, profile_user: User, currencies: tuple[Currency, Currency]):
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
     create_page = RoomCreatePage(page, base_url, reverse("room:create"))
     create_page.navigate()
@@ -25,7 +27,9 @@ def room_create_page(page, base_url, profile_user, currencies):
 
 @pytest.mark.e2e
 class TestRoomCreate:
-    def test_a_new_room_opens_on_its_own_page(self, room_create_page, profile_user, currencies, page):
+    def test_a_new_room_opens_on_its_own_page(
+        self, room_create_page: RoomCreatePage, profile_user: User, currencies: tuple[Currency, Currency], page: Page
+    ):
         _, swiss_francs = currencies
 
         room_create_page.fill(name="Hütte am See", description="Wanderwoche", currency_label="CHF (Fr)")
@@ -38,7 +42,7 @@ class TestRoomCreate:
         assert room.preferred_currency == swiss_francs
         assert list(room.users.all()) == [profile_user]
 
-    def test_the_new_room_is_listed_on_the_dashboard(self, room_create_page, page, base_url):
+    def test_the_new_room_is_listed_on_the_dashboard(self, room_create_page: RoomCreatePage, page: Page, base_url: str):
         room_create_page.fill(name="WG Küche", description="Einkäufe")
         room_create_page.submit()
         page.wait_for_url(lambda url: url.endswith("/detail"))
@@ -48,7 +52,7 @@ class TestRoomCreate:
 
         dashboard_page.expect_room_order(["WG Küche"])
 
-    def test_a_room_without_a_name_is_not_created(self, room_create_page, page):
+    def test_a_room_without_a_name_is_not_created(self, room_create_page: RoomCreatePage, page: Page):
         room_create_page.fill(name="", description="Ohne Namen")
         room_create_page.submit()
 

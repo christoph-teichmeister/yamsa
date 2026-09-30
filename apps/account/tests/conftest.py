@@ -2,6 +2,8 @@ import pytest
 from django.test import RequestFactory
 from django.test.client import Client
 
+from apps.account.models import User
+
 
 @pytest.fixture
 def form_request():
@@ -9,8 +11,8 @@ def form_request():
 
 
 @pytest.fixture
-def hx_client(client):
-    def _hx_client(user) -> Client:
+def hx_client(client: Client):
+    def _hx_client(user: User) -> Client:
         client.defaults["HTTP_HX_REQUEST"] = "true"
         client.force_login(user)
         return client
