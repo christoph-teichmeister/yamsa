@@ -15,7 +15,7 @@ class SessionKeepAliveMiddleware:
     def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request) -> HttpResponse:
         self._refresh_session_if_needed(request)
         return self.get_response(request)
 

@@ -18,7 +18,7 @@ class PaymentReminderService:
     REMINDER_TYPE = ReminderLog.ReminderType.INACTIVE_DEBT
     HEARTBEAT_INTERVAL = timedelta(days=30)  # Approximate monthly cadence for reminders.
 
-    def __init__(self, *, now: datetime | None = None):
+    def __init__(self, *, now: datetime | None = None) -> None:
         """Set up a timestamp window that determines which rooms count as inactive."""
         self.now = now or timezone.now()
         # Rooms older than this threshold are eligible for payment nudges.

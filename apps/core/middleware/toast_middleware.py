@@ -14,10 +14,10 @@ class ToastMiddleware:
     CARRIED_TOASTS_SESSION_KEY = "toast_middleware_carried_toasts"
     REDIRECT_STATUS_CODES = frozenset({301, 302, 303, 307, 308})
 
-    def __init__(self, get_response):
+    def __init__(self, get_response) -> None:
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request) -> HttpResponse:
         request.toast_queue = ToastQueue()
         for toast in self._take_carried_toasts(request):
             request.toast_queue.add(toast["message"], toast["type"])

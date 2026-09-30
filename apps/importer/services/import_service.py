@@ -24,7 +24,7 @@ class ImportService:
     left to the TransactionsImported event so it happens once, after the block exits.
     """
 
-    def __init__(self, *, parsed: ParsedImport, user: User):
+    def __init__(self, *, parsed: ParsedImport, user: User) -> None:
         self.parsed = parsed
         self.user = user
 
