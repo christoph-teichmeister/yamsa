@@ -1,5 +1,3 @@
-from django.http import HttpResponse
-
 from apps.core.event_loop.registry import message_registry
 from apps.core.event_loop.runner import handle_message
 
@@ -62,7 +60,7 @@ class EmitModelCreatedEventOnSaveMixin:
             model_event_class=getattr(self, model_event_type.attr_name), context_label=model_event_type.label
         )
 
-    def delete(self, using=None, keep_parents=False) -> HttpResponse:
+    def delete(self, using=None, keep_parents=False) -> tuple[int, dict[str, int]]:
         del_operation = super().delete(using, keep_parents)
 
         self._send_message(

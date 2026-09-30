@@ -47,7 +47,7 @@ class RoomCategoryService:
             "room_category_map__order_index", "room_category_map__id"
         )
 
-    def get_default_category(self) -> Category:
+    def get_default_category(self) -> Category | None:
         """Fetch the currently flagged default category for this room.
 
         Falls back to the global default if the room has no category marked.
