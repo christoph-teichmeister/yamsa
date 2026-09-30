@@ -9,9 +9,9 @@ MIXED_CURRENCY_ROWS = [
 
 
 class TestImportCurrencyWarning:
-    """
-    Codes without a Currency row are booked in the room currency, which merges foreign amounts
-    into one balance. The preview has to say so before the user confirms.
+    """Codes without a Currency row are booked in the room currency, which merges foreign amounts into one balance.
+
+    The preview has to say so before the user confirms.
     """
 
     def test_unknown_codes_are_listed_in_the_preview(self, db, authenticated_client, currency):

@@ -18,7 +18,7 @@ class ParsedTransaction:
 
     @property
     def total(self) -> Decimal:
-        return sum((share.value for share in self.shares), Decimal("0"))
+        return sum((share.value for share in self.shares), Decimal(0))
 
     def as_payload(self) -> dict:
         return {

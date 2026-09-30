@@ -1,4 +1,4 @@
-import os
+from pathlib import PurePosixPath
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
@@ -21,7 +21,7 @@ class ImportUploadForm(forms.Form):
 
         parser = get_parser(source)
 
-        extension = os.path.splitext(uploaded_file.name)[1].lower()
+        extension = PurePosixPath(uploaded_file.name).suffix.lower()
         if extension not in parser.accepted_extensions:
             expected = ", ".join(parser.accepted_extensions)
             raise forms.ValidationError({"file": _("Please upload a %(extensions)s file.") % {"extensions": expected}})

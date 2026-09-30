@@ -37,7 +37,7 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
         )
         return context
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # noqa: PLR0911 - one early return per validated action/error case
         action = request.POST.get("action")
         service = self._get_service()
 

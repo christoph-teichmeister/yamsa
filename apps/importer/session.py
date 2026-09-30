@@ -26,8 +26,7 @@ def pop_parsed_import(session, token: str) -> dict | None:
 
 
 def resolve_currencies_by_code(codes) -> dict[str, Currency | None]:
-    """
-    Map source currency codes onto Currency rows.
+    """Map source currency codes onto Currency rows.
 
     Currency.code carries no unique constraint, so .get() could raise MultipleObjectsReturned.
     A code with no row maps to None; callers decide whether to warn or substitute.

@@ -6,8 +6,6 @@ have to sit on one hue so a cold brand never lands on a warm ground. This script
 those promises checkable - run it after touching a colour.
 """
 
-from __future__ import annotations
-
 import argparse
 import colorsys
 import re
@@ -19,6 +17,7 @@ CSS_PATH = Path(__file__).resolve().parent.parent / "apps" / "static_src" / "tai
 BODY_TEXT_RATIO = 4.5
 NON_TEXT_RATIO = 3.0
 MAX_HUE_SPREAD = 20
+SRGB_LINEAR_THRESHOLD = 0.04045  # sRGB EOTF breakpoint between the linear and gamma segments
 
 TEXT_TOKENS = (
     "ink-strong",
@@ -72,7 +71,7 @@ def flatten(color: str, ground: str) -> str:
 def _relative_luminance(color: str) -> float:
     def channel(value: int) -> float:
         value /= 255
-        return value / 12.92 if value <= 0.04045 else ((value + 0.055) / 1.055) ** 2.4
+        return value / 12.92 if value <= SRGB_LINEAR_THRESHOLD else ((value + 0.055) / 1.055) ** 2.4
 
     red, green, blue = (channel(part) for part in _channels(color))
     return 0.2126 * red + 0.7152 * green + 0.0722 * blue
@@ -89,7 +88,7 @@ def hue(color: str) -> int:
     return round(colorsys.rgb_to_hls(red, green, blue)[0] * 360)
 
 
-def read_themes(css: str) -> dict[str, dict[str, str]]:
+def read_themes(css: str) -> dict[str, dict[str, str]]:  # noqa: C901 - dev script, refactor candidate tracked separately
     """Resolve the `--yamsa-*` tokens per theme, following the `rgb(var(--…-rgb))` indirection."""
     themes: dict[str, dict[str, str]] = {"light": {}, "dark": {}}
     shared: dict[str, str] = {}
@@ -123,7 +122,7 @@ def read_themes(css: str) -> dict[str, dict[str, str]]:
     return themes
 
 
-def failures(themes: dict[str, dict[str, str]]) -> list[str]:
+def failures(themes: dict[str, dict[str, str]]) -> list[str]:  # noqa: C901 - dev script, refactor candidate tracked separately
     found: list[str] = []
     for name, tokens in themes.items():
         for ground in GROUNDS:

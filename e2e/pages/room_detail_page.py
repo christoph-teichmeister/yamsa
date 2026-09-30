@@ -31,7 +31,6 @@ class RoomDetailPage(BasePage):
 
     def mark_sheet(self, marker: str):
         """Tag the sheet so a later read proves whether it survived or was replaced."""
-
         self.page.locator("#room-sheet").evaluate("(sheet, value) => (sheet.dataset.e2eMarker = value)", marker)
 
     def read_sheet_marker(self) -> str | None:

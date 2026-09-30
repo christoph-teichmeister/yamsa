@@ -18,7 +18,7 @@ def test_post_closed_room_is_rejected(authenticated_client, closed_room, user):
         data={
             "parent_transaction": parent_transaction.id,
             "paid_for": user.id,
-            "value": Decimal("5"),
+            "value": Decimal(5),
         },
     )
 

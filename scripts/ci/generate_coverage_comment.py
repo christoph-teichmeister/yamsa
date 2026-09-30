@@ -10,7 +10,8 @@ Usage:
 import argparse
 import os
 from dataclasses import dataclass
-from xml.etree import ElementTree
+from pathlib import Path
+from xml.etree import ElementTree as ET
 
 from class_coverage import ClassCoverage
 
@@ -30,7 +31,7 @@ class Suite:
 
 
 def parse_suite(label: str, xml_path: str, fail_under: float) -> Suite:
-    root = ElementTree.parse(xml_path).getroot()
+    root = ET.parse(xml_path).getroot()  # noqa: S314 - parses our own CI-generated coverage.xml, not untrusted input
 
     classes = [
         ClassCoverage(
@@ -122,13 +123,13 @@ def main() -> None:
 
     suites = [parse_suite(*parse_suite_arg(raw)) for raw in args.suites]
 
-    with open(args.output, "w") as output_file:
+    with Path(args.output).open("w") as output_file:
         output_file.write(render_comment(suites))
 
     passed = all(suite.passed for suite in suites)
     github_output = os.environ.get("GITHUB_OUTPUT")
     if github_output:
-        with open(github_output, "a") as handle:
+        with Path(github_output).open("a") as handle:
             handle.write(f"passed={'true' if passed else 'false'}\n")
 
 

@@ -23,7 +23,7 @@ def transaction_with_children(room, user):
         ChildTransactionFactory.create(
             parent_transaction=parent_transaction,
             paid_for=member,
-            value=Decimal("5"),
+            value=Decimal(5),
         )
 
     return parent_transaction
@@ -41,7 +41,7 @@ def transaction_with_children_in_closed_room(closed_room, user):
         ChildTransactionFactory.create(
             parent_transaction=parent_transaction,
             paid_for=member,
-            value=Decimal("5"),
+            value=Decimal(5),
         )
 
     return parent_transaction

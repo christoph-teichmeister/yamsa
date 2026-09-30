@@ -25,5 +25,5 @@ class TestManifestStaticFilesStoredName:
             base, "_stored_name", lambda self, name, hashed_files: (_ for _ in ()).throw(ValueError("missing"))
         )
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="missing"):
             storage._stored_name("some/missing/asset.js", {})

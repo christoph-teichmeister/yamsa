@@ -40,4 +40,4 @@ class RoomBalance:
 
         Distinct from a room with no open debts at all, which yields no RoomBalance.
         """
-        return self.net_amount == Decimal("0")
+        return self.net_amount == Decimal(0)

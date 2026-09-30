@@ -159,28 +159,53 @@ target-version = "py313"  # Fixed version from onrender.com (If you change this,
 [tool.ruff.lint]
 select = [
     "A", # flake8-builtins
+    "ASYNC", # flake8-async
     "B", # flake8-bugbear
+    "BLE", # flake8-blind-except
     "C4", # Checks for unnecessary comprehensions
+    "C90", # mccabe complexity
+    "D", # pydocstyle
     "DJ", # flake8-django
     "DTZ", # flake8-datetimez
     "E", # pycodestyle errors
     "EM", # flake8-errmsg
+    "ERA", # eradicate commented-out code
+    "EXE", # flake8-executable
     "F", # Pyflakes
+    "FLY", # flynt f-string conversion
+    "FURB", # refurb, modern idioms
     "G", # flake8-logging-format
     "I", # isort
+    "ICN", # flake8-import-conventions
+    "INP", # flake8-no-pep420
     "INT", # Validates your gettext translation strings
+    "ISC", # flake8-implicit-str-concat
     "LOG", # flake8-logging
     "N", # pep8-naming
     "PERF", # Perflint
     "PGH", # No all-purpose "# noqa" and eval validation
     "PIE", # Bunch of useful rules
+    "PL", # Pylint
+    "PT", # flake8-pytest-style
+    "PTH", # flake8-use-pathlib
+    "RET", # flake8-return
+    "RSE", # flake8-raise
     "RUF", # Removes unnecessary "#noqa" comments
+    "S", # flake8-bandit
     "SIM", # Simplifies your code
+    "SLF", # flake8-self
+    "SLOT", # flake8-slots
+    "T10", # flake8-debugger
+    "T20", # flake8-print
+    "TD", # flake8-todos
     "TID", # flake8-tidy-imports
+    "TRY", # tryceratops, exception-handling patterns
     "UP", # PyUpgrade
     "W", # pycodestyle warnings
     "YTT", # Avoid non-future-prove usages of "sys"
     # "FBT",     # Protects you from the "boolean trap bug"
+    # "ARG",     # Unused arguments - almost every hit is a Django/pytest-mandated signature (view/admin/context-processor overrides, fixture activation, test doubles), not a real bug
+    # "ANN",     # Missing type hints - no safe autofix; would mean hand-annotating ~4400 existing call sites, a separate typing effort
 ]
 ignore = [
     'N999', # Project name contains underscore, not fixable
@@ -189,6 +214,12 @@ ignore = [
     'DJ012', # Odd ordering of Django model methods
     'RUF012', # Mutable class attributes should be annotated with `typing.ClassVar`
     'PERF401', # Use a list comprehension to create a transformed list
+    'ISC001', # Conflicts with the ruff formatter (multi-line implicit string concat)
+    'TRY003', # Overlaps with EM101/EM102, which already own exception-message wording
+    'D100', 'D101', 'D102', 'D103', 'D104', 'D105', 'D106', 'D107', # Missing docstrings - not retrofitted repo-wide, only style rules (D2xx/D4xx) are enforced
+    'PLC0415', # Django apps import locally to dodge circular imports at app-loading time; this is idiomatic here, not a smell
+    'SLF001', # Almost every hit is Django's own underscore-prefixed but semi-public API (`Model._meta`, `QueryDict._mutable`)
+    'TD003', # Pre-existing TODOs predate the project's issue tracker discipline; can't retroactively fabricate a link
 ]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
@@ -213,6 +244,14 @@ fixable = [
     "PERF", # Perflint
     "PGH", # No all-purpose "# noqa" and eval validation
     "UP", # PyUpgrade
+    "G", # flake8-logging-format
+    "LOG", # flake8-logging
+    "FLY", # flynt f-string conversion
+    "FURB", # refurb, modern idioms
+    "ISC", # flake8-implicit-str-concat
+    "RET", # flake8-return
+    "RSE", # flake8-raise
+    "D", # pydocstyle
 ]
 unfixable = []
 
@@ -228,6 +267,48 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
     # Allows "imported but unused" in init files
     "F401",
 ]
+"**/tests/*" = [
+    "S101", # assert use is the point of a test
+    "S105", "S106", # fixture/test credentials aren't real secrets
+    "PLR2004", # magic values are normal in test assertions
+]
+"**/test_*.py" = [
+    "S101", # assert use is the point of a test
+    "S105", "S106", # fixture/test credentials aren't real secrets
+    "PLR2004", # magic values are normal in test assertions
+]
+"conftest.py" = [
+    "S101", # assert use is the point of a test
+]
+"e2e/**" = [
+    "S101", # Playwright page objects assert on page state, that's their job
+]
+"**/management/commands/*.py" = [
+    "T201", # management commands talk to the operator via stdout, that's the interface
+    "S105", # dev/anonymisation fixtures reset accounts to a known non-production password, not a leaked secret
+]
+"scripts/*.py" = [
+    "T201", # standalone dev scripts talk to the operator via stdout, that's the interface
+    "INP001", # standalone dev scripts, not a Python package
+]
+"scripts/**" = [
+    "INP001", # standalone dev scripts, not a Python package
+]
+"apps/core/event_loop/**" = [
+    "T201", # event bus autodiscovery/creation logging predates structured logging here
+]
+"apps/core/context_managers/measure_time_and_queries_context_manager.py" = [
+    "T201", # print is the debug-output mechanism this context manager exists to provide
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pylint]
+max-args = 8 # Django views/forms/signals routinely take more than the default 5
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"

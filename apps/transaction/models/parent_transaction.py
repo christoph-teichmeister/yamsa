@@ -51,7 +51,7 @@ class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
         aggregate = self.child_transactions.aggregate(Sum("value"))
         total = aggregate["value__sum"]
         if total is None:
-            return Decimal("0")
+            return Decimal(0)
         return total
 
     def save(self, *args, **kwargs):

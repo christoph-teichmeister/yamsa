@@ -23,7 +23,7 @@ class TestSimpleDebtService:
         row = rows[0]
         assert row.debitor == guest_user
         assert row.creditor == user
-        assert row.value == Decimal("13")
+        assert row.value == Decimal(13)
         assert row.settled is False
         assert row.viewer_is_debitor is False
         assert row.viewer_is_creditor is True
@@ -49,7 +49,7 @@ class TestSimpleDebtService:
         rows = SimpleDebtService.get_rows(room_id=room.id, viewer_id=user.id)
 
         assert len(rows) == 1
-        assert rows[0].value == Decimal("26")
+        assert rows[0].value == Decimal(26)
 
     def test_amounts_of_the_same_pair_stay_separate_across_currencies(self, room, user, guest_user):
         """The project has no exchange rates, so amounts of two currencies must never be added up."""
@@ -59,7 +59,7 @@ class TestSimpleDebtService:
         rows = SimpleDebtService.get_rows(room_id=room.id, viewer_id=user.id)
 
         assert len(rows) == 2
-        assert {row.value for row in rows} == {Decimal("13")}
+        assert {row.value for row in rows} == {Decimal(13)}
         assert len({row.currency.id for row in rows}) == 2
 
     def test_opposing_debts_of_a_pair_stay_separate_rows(self, room, user, guest_user):
@@ -85,7 +85,7 @@ class TestSimpleDebtService:
 
         assert len(rows) == 1
         assert rows[0].settled is False
-        assert rows[0].value == Decimal("13")
+        assert rows[0].value == Decimal(13)
 
     def test_rows_are_ordered_by_debitor_name(self, room, user, guest_user):
         early_debitor = UserFactory(name="Aaron")

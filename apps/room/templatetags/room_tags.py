@@ -4,7 +4,7 @@ from django import template
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.template.defaulttags import url
 from django.utils import timezone
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 from django.utils.timesince import timesince
 from django.utils.translation import gettext as _
 
@@ -27,9 +27,11 @@ def room_seal_tilt(room):
 
 @register.simple_tag
 def room_seal_icons():
-    """The predefined seal icons a member can pick from, as (icon name, label) pairs - not view
-    context, so the picker works wherever the room sheet renders without every view having to
-    thread it through."""
+    """The predefined seal icons a member can pick from, as (icon name, label) pairs.
+
+    Not view context, so the picker works wherever the room sheet renders without every view
+    having to thread it through.
+    """
     return [(icon_name, SEAL_ICON_LABELS[icon_name]) for icon_name in SEAL_ICONS]
 
 
@@ -38,11 +40,9 @@ def parse_user_text(context, user_name: str, start_of_sentence: bool = False):
     request = context.get("request")
 
     if request.user.name == user_name:
-        user_text = f'<span class="me-involved">{user_name}</span>'
-    else:
-        user_text = f"<strong>{user_name}</strong>"
+        return format_html('<span class="me-involved">{}</span>', user_name)
 
-    return mark_safe(user_text)
+    return format_html("<strong>{}</strong>", user_name)
 
 
 @register.tag
@@ -89,8 +89,7 @@ def room_last_used(value):
 
 @register.filter
 def format_with_thousands(value):
-    """
-    Formats a number with thousands separator using Django's locale-aware number_format.
+    """Formats a number with thousands separator using Django's locale-aware number_format.
 
     Uses django.utils.formats.number_format which respects i18n settings.
 
@@ -109,9 +108,8 @@ def format_with_thousands(value):
             try:
                 numeric_value = Decimal(str(value))
             except (ValueError, TypeError):
-                return mark_safe(str(value))
+                return str(value)
 
-        return mark_safe(format_number_with_thousands(numeric_value))
-    except Exception:
-        # Fallback: return original value if formatting fails
-        return mark_safe(str(value))
+        return format_number_with_thousands(numeric_value)
+    except Exception:  # noqa: BLE001 - number formatting can fail in template-data-dependent ways; fall back to the raw value
+        return str(value)

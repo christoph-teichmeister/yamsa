@@ -120,7 +120,7 @@ class TestTransactionCategoryBreakdownView:
             category=groceries,
             paid_at=timezone.now(),
         )
-        _make_child(parent_groceries, user, Decimal("20"))
+        _make_child(parent_groceries, user, Decimal(20))
 
         parent_transport = ParentTransactionFactory(
             room=room,
@@ -147,7 +147,7 @@ class TestTransactionCategoryBreakdownView:
         assert len(other_breakdown["categories"]) == 1
         assert preferred_breakdown["categories"][0]["slug"] == "groceries"
         assert other_breakdown["categories"][0]["slug"] == "transport"
-        assert preferred_breakdown["categories"][0]["total_amount"] == Decimal("20")
+        assert preferred_breakdown["categories"][0]["total_amount"] == Decimal(20)
         assert other_breakdown["categories"][0]["total_amount"] == Decimal("5.5")
 
         preferred_chart = {point["slug"]: point for point in preferred_breakdown["chart_data"]}

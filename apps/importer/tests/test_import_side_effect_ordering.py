@@ -16,9 +16,9 @@ ROWS = [
 
 
 class TestImportSideEffectOrdering:
-    """
-    handle_event re-raises, so a failing notification aborts everything after it. The debt
-    recalculation must therefore run before the connection mails, not after.
+    """handle_event re-raises, so a failing notification aborts everything after it.
+
+    The debt recalculation must therefore run before the connection mails, not after.
     """
 
     def _import(self, client, currency, friend):
@@ -48,7 +48,7 @@ class TestImportSideEffectOrdering:
 
     def test_debts_survive_a_failing_connection_mail(self, db, authenticated_client, currency, friend):
         target = "apps.mail.services.user_added_to_room_mail_service.UserAddedToRoomEmailService.process"
-        with mock.patch(target, side_effect=OSError("SMTP down")), pytest.raises(OSError):
+        with mock.patch(target, side_effect=OSError("SMTP down")), pytest.raises(OSError, match="SMTP down"):
             self._import(authenticated_client, currency, friend)
 
         imported_room = Room.objects.get(name="Kilian & Elisabeth")

@@ -5,6 +5,8 @@ from apps.core.admin import YamsaCommonInfoAdminMixin
 from apps.transaction.admin.child_transaction_inline import ChildTransactionInline
 from apps.transaction.models import ParentTransaction
 
+DESCRIPTION_PREVIEW_LENGTH = 40
+
 
 @register(ParentTransaction)
 class ParentTransactionAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
@@ -16,6 +18,6 @@ class ParentTransactionAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     @staticmethod
     def shortened_description(obj: ParentTransaction) -> str:
         description = obj.description or ""
-        if len(description) > 40:
-            return f"{description[:40]}..."
+        if len(description) > DESCRIPTION_PREVIEW_LENGTH:
+            return f"{description[:DESCRIPTION_PREVIEW_LENGTH]}..."
         return description

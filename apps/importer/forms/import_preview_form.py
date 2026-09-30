@@ -20,9 +20,9 @@ CATEGORY_EMOJI_MAX_LENGTH = Category._meta.get_field("emoji").max_length
 
 
 class ImportPreviewForm(forms.Form):
-    """
-    Maps every person column and every source category of a parsed file, and carries the
-    fields for the room that the import creates.
+    """Maps every person column and every source category of a parsed file.
+
+    Carries the fields for the room that the import creates.
     """
 
     room_name = forms.CharField(max_length=ROOM_NAME_MAX_LENGTH, label=_("Room name"))

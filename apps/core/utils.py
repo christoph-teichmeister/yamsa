@@ -14,8 +14,7 @@ def determine_upload_to(instance, filename: str):
 
 
 def format_number_with_thousands(value: Decimal | int | float) -> str:
-    """
-    Render a number with the locale's thousands separator and exactly two decimals.
+    """Render a number with the locale's thousands separator and exactly two decimals.
 
     Single source for the rule: the ``format_with_thousands`` template filter and the views that
     format amounts outside a template both call this, so a legend and a chart label on the same

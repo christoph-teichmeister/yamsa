@@ -83,7 +83,7 @@ class TestRoomStatusUpdateView:
         handle_message.assert_called_once()
 
     def test_the_rooms_own_fields_are_ignored(self, authenticated_client, room):
-        """htmx posts the enclosing sheet along, and none of it may reach the room."""
+        """Htmx posts the enclosing sheet along, and none of it may reach the room."""
         with mock.patch(STATUS_VIEW_MODULE):
             authenticated_client.post(
                 reverse("room:status", kwargs={"room_slug": room.slug}),

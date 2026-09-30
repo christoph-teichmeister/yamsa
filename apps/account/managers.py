@@ -4,4 +4,4 @@ from apps.account.querysets import UserQuerySet
 
 
 class UserManager(DjangoUserManager.from_queryset(UserQuerySet)):
-    """Custom Implementation of Djangos UserManager"""
+    """Custom Implementation of Djangos UserManager."""

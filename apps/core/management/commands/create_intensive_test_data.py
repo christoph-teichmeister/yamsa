@@ -16,6 +16,8 @@ from apps.room.models import Room, UserConnectionToRoom
 from apps.transaction.models import Category, ChildTransaction, ParentTransaction, RoomCategory
 from apps.transaction.models.constants import BASE_CATEGORY_SLUGS, DEFAULT_CATEGORY_SLUG
 
+MIN_MEMBERS_FOR_TRANSACTION = 2
+
 _CATEGORY_DATA = {
     "accommodation": ("Accommodation", "🏠", "#4A90D9", 0),
     "groceries": ("Groceries", "🛒", "#5CB85C", 1),
@@ -59,7 +61,7 @@ _TRANSACTION_SCENARIOS = [
 
 
 class Command(BaseCommand):
-    """Command for creating an intensive set of test data"""
+    """Command for creating an intensive set of test data."""
 
     help = "Creates an intensive set of test data (same users as restore_test_data, many more rooms/transactions/debts)"
 
@@ -263,7 +265,7 @@ class Command(BaseCommand):
         for room, config in rooms:
             # Use member_ids from config to ensure deterministic ordering
             member_ids = [user.id for user in config["members"]]
-            if len(member_ids) < 2:
+            if len(member_ids) < MIN_MEMBERS_FOR_TRANSACTION:
                 continue
 
             currency = config["currency"]
@@ -316,7 +318,7 @@ class Command(BaseCommand):
         for room, config in rooms:
             # Use member_ids from config to ensure deterministic ordering
             member_ids = [user.id for user in config["members"]]
-            if len(member_ids) < 2:
+            if len(member_ids) < MIN_MEMBERS_FOR_TRANSACTION:
                 continue
 
             currency = config["currency"]

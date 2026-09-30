@@ -1,5 +1,5 @@
-import os
 from io import BytesIO
+from pathlib import PurePosixPath
 from typing import ClassVar
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -64,7 +64,7 @@ class CompressPictureService:
                 buffer_size = buffer.getbuffer().nbytes
 
         buffer.seek(0)
-        file_root, _ = os.path.splitext(self.picture.name)
+        file_root = PurePosixPath(self.picture.name).with_suffix("")
         extension = {
             "JPEG": "jpg",
             "PNG": "png",

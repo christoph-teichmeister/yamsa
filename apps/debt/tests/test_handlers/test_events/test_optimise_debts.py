@@ -843,17 +843,17 @@ class TestCalculateOptimisedDebts:
         ) == Decimal("127.53")
         assert Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
             debitor_id=chris.id, room_id=room.id, currency_id=currency_1.id
-        ) == Decimal("0")
+        ) == Decimal(0)
         assert Debt.objects.get_total_money_of_currency_still_owed_to_others_for_a_room(
             debitor_id=oliver.id, room_id=room.id, currency_id=currency_1.id
-        ) == Decimal("0")
+        ) == Decimal(0)
 
         assert Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
             creditor_id=rici.id, room_id=room.id, currency_id=currency_1.id
-        ) == Decimal("0")
+        ) == Decimal(0)
         assert Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
             creditor_id=carina.id, room_id=room.id, currency_id=currency_1.id
-        ) == Decimal("0")
+        ) == Decimal(0)
         assert Debt.objects.get_total_money_of_currency_still_owed_by_others_for_a_room(
             creditor_id=chris.id, room_id=room.id, currency_id=currency_1.id
         ) == Decimal("52.85")

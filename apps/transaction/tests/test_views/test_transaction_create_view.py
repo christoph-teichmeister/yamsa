@@ -53,9 +53,9 @@ class TestTransactionCreateView:
 
         assert ParentTransaction.objects.filter(description="My description", room=room, paid_by=user).exists()
         parent_transaction = ParentTransaction.objects.get(description="My description", room=room, paid_by=user)
-        assert parent_transaction.value == Decimal("10")
+        assert parent_transaction.value == Decimal(10)
 
-        expected_shares = split_total_across_paid_for(Decimal("10"), members)
+        expected_shares = split_total_across_paid_for(Decimal(10), members)
         for member, expected_share in zip(members, expected_shares, strict=True):
             qs = ChildTransaction.objects.filter(paid_for=member, value=expected_share)
             assert qs.exists()
@@ -266,11 +266,11 @@ class TestTransactionCreateView:
         assert ParentTransaction.objects.filter(description="My description").count() == 1
 
     def test_form_valid_fires_handle_message_outside_atomic(self):
-        """
-        Regression test for #333: handle_message must be called from form_valid,
-        not from inside form.save() (which runs inside transaction.atomic).
-        Calling it from within the atomic block held the DB connection open
-        during webpush HTTP requests, blocking consecutive saves.
+        """Regression test for #333.
+
+        handle_message must be called from form_valid, not from inside form.save() (which runs
+        inside transaction.atomic). Calling it from within the atomic block held the DB connection
+        open during webpush HTTP requests, blocking consecutive saves.
         """
         from unittest.mock import MagicMock
 

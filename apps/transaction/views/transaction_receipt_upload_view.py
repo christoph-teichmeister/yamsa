@@ -40,5 +40,4 @@ class TransactionReceiptUploadView(RoomNotClosedRequiredMixin, TransactionBaseCo
             upload_success=upload_success,
         )
 
-        response = self.render_to_response(context)
-        return response
+        return self.render_to_response(context)

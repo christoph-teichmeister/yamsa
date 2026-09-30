@@ -12,12 +12,10 @@ class NotificationSendTestService:
         FILTER_WITH_NOT_PARAMS = "NotificationSendTestService.filter called without parameters"
 
     def _load_notification_outbox(self):
-        global _notification_list
         self._outbox = _notification_list
 
     def empty(self):
-        global _notification_list
-        _notification_list = []
+        _notification_list.clear()
         self._load_notification_outbox()
 
     def all(self):

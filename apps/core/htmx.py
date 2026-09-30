@@ -10,15 +10,14 @@ from apps.core.toast_constants import SUCCESS_TOAST_CLASS as TOAST_SUCCESS_CLASS
 
 
 class FormHtmxResponseMixin:
-    """
-    FormView mixin for HTMX integration with Django forms.
+    """FormView mixin for HTMX integration with Django forms.
 
     Features:
     - Add toast messages for success/error states
     - Set custom HX-Trigger events for HTMX
     """
 
-    # TODO CT: This is not used anywhere?
+    # TODO(CT): This is not used anywhere?
 
     # Class constants for styling
     SUCCESS_TOAST_CLASS = TOAST_SUCCESS_CLASS
@@ -68,7 +67,7 @@ class FormHtmxResponseMixin:
         return response
 
     def _create_toast_trigger(self, *, message, toast_class):
-        """Helper method to create toast trigger data"""
+        """Helper method to create toast trigger data."""
         if message:
             return {"triggerToast": {"message": message, "type": toast_class}}
         return {}
@@ -76,17 +75,17 @@ class FormHtmxResponseMixin:
     # Getter methods for dynamic configuration
 
     def get_hx_trigger(self) -> str | dict[str, Any]:
-        """Get trigger events for HTMX"""
+        """Get trigger events for HTMX."""
         return self.hx_trigger
 
     def get_toast_success_message(self) -> str | None:
-        """Get success message for toast notification"""
+        """Get success message for toast notification."""
         return self.toast_success_message
 
     def get_toast_error_message(self) -> str | None:
-        """Get error message for toast notification"""
+        """Get error message for toast notification."""
         return self.toast_error_message
 
     def get_response(self) -> HttpResponse:
-        """Create response object, can be overridden by subclasses"""
+        """Create response object, can be overridden by subclasses."""
         return HttpResponse(HTTPStatus.OK)

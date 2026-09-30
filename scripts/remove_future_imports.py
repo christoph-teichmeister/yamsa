@@ -30,7 +30,7 @@ def parse_args() -> argparse.Namespace:
         "paths",
         nargs="*",
         type=Path,
-        default=[Path(".")],
+        default=[Path()],
         help="Files or directories to scan (defaults to the repository root).",
     )
     parser.add_argument(

@@ -156,8 +156,7 @@ MINIMUM_KEYWORD_LENGTH = 3
 
 
 def normalize_keyword(value: str) -> str:
-    """
-    Fold a word into the form both this service and the client-side matcher compare on.
+    """Fold a word into the form both this service and the client-side matcher compare on.
 
     The JavaScript counterpart in static/js/category-suggestion.js applies the same NFKD
     fold, so a keyword built here matches what the browser derives from the description.
@@ -184,8 +183,7 @@ def tokenize(value: str) -> list[str]:
 
 
 class CategorySuggestionService:
-    """
-    Builds the keyword index the transaction form uses to propose a category while typing.
+    """Builds the keyword index the transaction form uses to propose a category while typing.
 
     The index maps a normalized keyword to the id of a category the room actually offers. It
     combines a static vocabulary with what the room did before; the room's own history wins,

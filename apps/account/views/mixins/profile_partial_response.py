@@ -15,7 +15,6 @@ class ProfilePartialResponseMixin:
 
     def render_profile_sheet(self, user, *, form=None) -> HttpResponse:
         """Answer with just the sheet, so the browser keeps the page it is already on."""
-
         return HttpResponse(
             render_to_string(
                 PROFILE_SHEET_TEMPLATE,
@@ -33,7 +32,6 @@ class ProfilePartialResponseMixin:
         The photo has its own cycle, so swapping only this part leaves the surrounding sheet — and
         with it whether the profile is currently being edited — exactly as the viewer left it.
         """
-
         return HttpResponse(
             render_to_string(
                 PROFILE_PHOTO_TEMPLATE,

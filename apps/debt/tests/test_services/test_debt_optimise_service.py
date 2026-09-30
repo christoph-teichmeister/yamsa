@@ -24,14 +24,14 @@ class TestDebtOptimiseService:
             paid_by=user,
             paid_for_tuple=(guest_user, other_user),
             parent_transaction_kwargs={"currency": currency_1},
-            child_transaction_kwargs={"value": Decimal("10")},
+            child_transaction_kwargs={"value": Decimal(10)},
         )
         create_parent_transaction_with_optimisation(
             room=room,
             paid_by=guest_user,
             paid_for_tuple=(user, other_user),
             parent_transaction_kwargs={"currency": currency_2},
-            child_transaction_kwargs={"value": Decimal("7")},
+            child_transaction_kwargs={"value": Decimal(7)},
         )
 
         settled_debt = room.debts.get(
@@ -48,7 +48,7 @@ class TestDebtOptimiseService:
             paid_by=other_user,
             paid_for_tuple=(guest_user, user),
             parent_transaction_kwargs={"currency": currency_1},
-            child_transaction_kwargs={"value": Decimal("5")},
+            child_transaction_kwargs={"value": Decimal(5)},
         )
 
         unsettled_snapshot = list(
@@ -66,9 +66,9 @@ class TestDebtOptimiseService:
         )
 
         expected_debts = [
-            (guest_user.id, user.id, currency_1.id, Decimal("5")),
-            (other_user.id, guest_user.id, currency_2.id, Decimal("7")),
-            (user.id, guest_user.id, currency_2.id, Decimal("7")),
+            (guest_user.id, user.id, currency_1.id, Decimal(5)),
+            (other_user.id, guest_user.id, currency_2.id, Decimal(7)),
+            (user.id, guest_user.id, currency_2.id, Decimal(7)),
         ]
 
         def ordering_key(debt):
@@ -79,7 +79,7 @@ class TestDebtOptimiseService:
         assert reprocessed_snapshot == sorted_expected
         assert (
             room.debts.filter(settled=True)
-            .filter(debitor_id=guest_user.id, creditor_id=user.id, value=Decimal("10"))
+            .filter(debitor_id=guest_user.id, creditor_id=user.id, value=Decimal(10))
             .exists()
         )
         assert len({currency_id for _, _, currency_id, _ in unsettled_snapshot}) == len(currency_ids)

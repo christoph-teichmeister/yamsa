@@ -21,7 +21,6 @@ class RoomSheetResponseMixin:
         `current_room` the context processor builds from it one version behind. Re-pointing it at
         the saved room is what keeps the swapped sheet — and the shell around it — in step.
         """
-
         self.request.room = room
 
         return HttpResponse(

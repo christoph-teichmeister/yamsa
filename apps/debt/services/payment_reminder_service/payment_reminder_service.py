@@ -26,7 +26,6 @@ class PaymentReminderService:
 
     def run(self) -> list[PaymentReminderCandidate]:
         """Send an email to every candidate that still owes a balance in an inactive room."""
-
         if not settings.INACTIVITY_REMINDER_ENABLED:
             return []
 

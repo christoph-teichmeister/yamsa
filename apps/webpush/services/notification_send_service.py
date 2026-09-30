@@ -1,3 +1,4 @@
+import http
 import logging
 
 from django.conf import settings
@@ -34,7 +35,7 @@ class NotificationSendService:
             )
         except WebPushException as e:
             # If the subscription has expired, delete it.
-            if getattr(e, "response", None) and e.response.status_code == 410:
+            if getattr(e, "response", None) and e.response.status_code == http.HTTPStatus.GONE:
                 return web_push_info.delete()
 
             logger.debug(

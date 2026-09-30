@@ -35,5 +35,4 @@ class TransactionReceiptDeleteView(RoomNotClosedRequiredMixin, TransactionBaseCo
             receipt_upload_form=form,
         )
 
-        response = self.render_to_response(context)
-        return response
+        return self.render_to_response(context)

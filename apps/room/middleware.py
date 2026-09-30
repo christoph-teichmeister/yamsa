@@ -20,8 +20,4 @@ class RoomToRequestMiddleware:
             room = Room.objects.get(slug=room_slug)
             assign_room_to_request(request, room)
 
-        response = self.get_response(request)
-
-        # Code to be executed for each request/response after the view is called.
-
-        return response
+        return self.get_response(request)

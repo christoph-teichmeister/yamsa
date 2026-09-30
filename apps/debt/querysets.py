@@ -5,11 +5,11 @@ from django.db.models import DecimalField, F, Q, Sum, Value
 from django.db.models.functions import Coalesce
 
 # Matches Debt.value; without an explicit output_field Coalesce raises "Expression contains mixed types".
-_ZERO_AMOUNT = Value(Decimal("0"), output_field=DecimalField(max_digits=10, decimal_places=2))
+_ZERO_AMOUNT = Value(Decimal(0), output_field=DecimalField(max_digits=10, decimal_places=2))
 
 
 class DebtQuerySet(models.QuerySet):
-    """Custom implementation of QuerySet"""
+    """Custom implementation of QuerySet."""
 
     def filter_open(self):
         """Restrict to debts that still have to be paid."""

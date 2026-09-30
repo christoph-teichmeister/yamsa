@@ -18,7 +18,7 @@ class WebPushSaveView(generic.CreateView):
 
         subscription_data = post_data.pop("subscription", {})
 
-        ret = {
+        return {
             **super().get_form_kwargs(),
             "data": {
                 "endpoint": subscription_data.get("endpoint", {}),
@@ -27,8 +27,6 @@ class WebPushSaveView(generic.CreateView):
                 **post_data,
             },
         }
-
-        return ret
 
     def form_valid(self, form):
         if not self.request.user.is_authenticated:
