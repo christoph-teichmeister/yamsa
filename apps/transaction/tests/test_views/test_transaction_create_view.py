@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 import pytest
 from bs4 import BeautifulSoup
+from bs4.element import Tag
 from django.urls import reverse
 from freezegun import freeze_time
 
@@ -110,7 +111,7 @@ class TestTransactionCreateView:
         assert category_field.select("input[type='radio'][checked]") == []
 
     @staticmethod
-    def _category_field(response):
+    def _category_field(response) -> Tag | None:
         soup = BeautifulSoup(response.content.decode(), "html.parser")
         return soup.select_one("[data-category-field]")
 
@@ -170,7 +171,7 @@ class TestTransactionCreateView:
         assert not ParentTransaction.objects.filter(description="My description", room=closed_room).exists()
 
     @staticmethod
-    def _valid_payload(room, user, **overrides):
+    def _valid_payload(room, user, **overrides) -> dict:
         members = list(room.users.all())
         payload = {
             "category": Category.objects.get(slug="groceries").id,

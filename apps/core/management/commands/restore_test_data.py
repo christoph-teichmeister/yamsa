@@ -23,7 +23,7 @@ class Command(BaseCommand):
         self.restore_test_data()
 
     @staticmethod
-    def _create_users():
+    def _create_users() -> None:
         # Hashed password "Admin123$"
         default_password = (
             "argon2$argon2id$v=19$m=102400,t=2,p=8$ZE1LcE9TYmpDZTNmR1I3aVdHc"
@@ -71,7 +71,7 @@ class Command(BaseCommand):
             print(f'User ID: {guest_user.id}, Name: "{guest_user.name}" created')
 
     @staticmethod
-    def _create_categories():
+    def _create_categories() -> None:
         category, _ = Category.objects.get_or_create(
             slug=DEFAULT_CATEGORY_SLUG,
             defaults={
@@ -86,14 +86,14 @@ class Command(BaseCommand):
         print(f'Category: "{category.name}" created')
 
     @staticmethod
-    def _create_currencies():
+    def _create_currencies() -> None:
         Currency.objects.create(name="Euro", sign="€", code="EUR")
         Currency.objects.create(name="Pound Sterling", sign="£", code="GBP")
 
         print("Euro and Pound Sterling created")
 
     @staticmethod
-    def _create_rooms():
+    def _create_rooms() -> None:
         all_users_id_list = User.objects.values_list("id", flat=True)
 
         for i in range(1, 4):
@@ -113,7 +113,7 @@ class Command(BaseCommand):
 
     @staticmethod
     @transaction.atomic
-    def restore_test_data():
+    def restore_test_data() -> None:
         """Creates / "Finds" test data.
 
         Will create a superuser, a few guest_users, rooms and transactions

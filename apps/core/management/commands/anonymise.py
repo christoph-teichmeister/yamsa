@@ -13,7 +13,7 @@ class Command(BaseCommand):
         self.anonymise_data()
 
     @staticmethod
-    def _anonymise_users():
+    def _anonymise_users() -> None:
         # Hashed password ""
         default_password = "Admin123$"
 
@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
     @staticmethod
     @transaction.atomic
-    def anonymise_data():
+    def anonymise_data() -> None:
         # Fake self for this method
         self = Command
 

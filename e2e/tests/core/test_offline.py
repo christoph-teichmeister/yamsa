@@ -39,7 +39,7 @@ def _wait_until(page, expression, arg, timeout_ms=10_000, interval_ms=100):
 @pytest.mark.e2e
 class TestOffline:
     @staticmethod
-    def _room_paths(room):
+    def _room_paths(room) -> list[str]:
         return [
             reverse("transaction:list", kwargs={"room_slug": room.slug}),
             reverse("debt:list", kwargs={"room_slug": room.slug}),
@@ -51,13 +51,13 @@ class TestOffline:
         ]
 
     @staticmethod
-    def _sign_in(page, base_url, profile_user):
+    def _sign_in(page, base_url, profile_user) -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login(profile_user.email, DEFAULT_PASSWORD)
 
     @staticmethod
-    def _go_offline(page):
+    def _go_offline(page) -> None:
         """Cut the connection for the worker too.
 
         page.context.set_offline() only reaches requests the page itself makes; a fetch the service
@@ -68,7 +68,7 @@ class TestOffline:
         page.context.set_offline(True)
 
     @staticmethod
-    def _open_controlled(page, base_url, path):
+    def _open_controlled(page, base_url, path) -> None:
         """Open a path and come back once a service worker is actually driving the page.
 
         The first navigation of a fresh profile installs the worker but is not yet controlled by
