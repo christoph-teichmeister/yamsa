@@ -16,7 +16,7 @@ class Command(BaseCommand):
             help="Report whether the sprite carries what the templates ask for, and write nothing.",
         )
 
-    def handle(self, *args: object, **options):
+    def handle(self, *args: object, **options: object):
         names = collect_icon_names(Path(settings.APPS_DIR))
 
         # Deliberately name-only, and deliberately without touching node_modules: the check

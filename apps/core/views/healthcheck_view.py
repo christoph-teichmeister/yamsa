@@ -7,5 +7,5 @@ from django.views import generic
 class HealthcheckView(generic.View):
     http_method_names = ["get", "options"]
 
-    def get(self, request, *args: object, **kwargs):
+    def get(self, request, *args: object, **kwargs: object):
         return HttpResponse(status=HTTPStatus.OK)

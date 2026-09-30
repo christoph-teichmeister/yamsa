@@ -17,7 +17,7 @@ class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
     def get_success_url(self):
         return reverse(viewname="room:detail", kwargs={"room_slug": self.object.slug})
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         context = super().get_context_data(**kwargs)
         context["suggested_guests"] = SuggestedGuestService(user=self.request.user).get_suggested_guests()
         context["dashboard_url"] = self._build_dashboard_url()

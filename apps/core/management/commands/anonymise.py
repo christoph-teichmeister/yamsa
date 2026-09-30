@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     help = '"Anonymises" Data'
 
-    def handle(self, *args: object, **options):
+    def handle(self, *args: object, **options: object):
         self.anonymise_data()
 
     @staticmethod

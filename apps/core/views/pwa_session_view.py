@@ -14,7 +14,7 @@ class PwaSessionView(generic.View):
     in now would book their expense against someone else.
     """
 
-    def get(self, request, *args: object, **kwargs):
+    def get(self, request, *args: object, **kwargs: object):
         return JsonResponse(
             {
                 "csrf_token": get_token(request),

@@ -21,12 +21,12 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
     slug_url_kwarg = "room_slug"
     template_name = "transaction/category_manager.html"
 
-    def dispatch(self, request, *args: object, **kwargs):
+    def dispatch(self, request, *args: object, **kwargs: object):
         self.object = self.get_object()
         self._ensure_room_member()
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         context = super().get_context_data(**kwargs)
         context.update(
             self._build_context(
@@ -37,7 +37,7 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
         )
         return context
 
-    def post(self, request, *args: object, **kwargs):  # noqa: PLR0911 - one early return per validated action/error case
+    def post(self, request, *args: object, **kwargs: object):  # noqa: PLR0911 - one early return per validated action/error case
         action = request.POST.get("action")
         service = self._get_service()
 

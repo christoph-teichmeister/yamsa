@@ -14,7 +14,7 @@ class ImportUploadView(mixins.LoginRequiredMixin, generic.FormView):
     template_name = "importer/upload.html"
     form_class = ImportUploadForm
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object):
         context = super().get_context_data(**kwargs)
         context["max_file_size_mb"] = MAX_IMPORT_FILE_SIZE // (1024 * 1024)
         return context

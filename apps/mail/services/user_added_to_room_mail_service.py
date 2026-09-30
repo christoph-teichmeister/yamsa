@@ -9,7 +9,7 @@ from apps.room.models import Room
 class UserAddedToRoomEmailService(BaseYamsaEmailService):
     new_room: Room = None
 
-    def __init__(self, new_room: Room, *args: object, **kwargs) -> None:
+    def __init__(self, new_room: Room, *args: object, **kwargs: object) -> None:
         self.new_room = new_room
         super().__init__(*args, **kwargs)
 

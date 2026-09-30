@@ -71,7 +71,7 @@ class News(FullCleanOnSaveMixin, CommonInfo):
         heading = self.heading
         return f"{heading}: {self.message[:20]}..."
 
-    def save(self, *args: object, **kwargs):
+    def save(self, *args: object, **kwargs: object):
         if self.highlighted:
             # If the current news has been marked as highlighted, find any other highlighted news and disable its
             # highlight
