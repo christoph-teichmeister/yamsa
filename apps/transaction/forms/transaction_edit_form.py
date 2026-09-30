@@ -1,5 +1,4 @@
 from decimal import Decimal
-from typing import Any
 
 from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 from django import forms
@@ -39,7 +38,7 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
             "child_transaction_id",
         )
 
-    def __init__(self, *args: Any, room: Room | None = None, **kwargs: Any) -> None:
+    def __init__(self, *args: object, room: Room | None = None, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
         self.narrow_category_field_to(room or getattr(self.instance, "room", None))
         room_users_qs = User.objects.filter(room=self.instance.room)
