@@ -107,7 +107,7 @@ class RoomClosureReminderService:
         return Room.objects.filter_status_open().filter_without_members().update(status=Room.StatusChoices.CLOSED)
 
     @staticmethod
-    def _should_notify_creator(creator):
+    def _should_notify_creator(creator) -> bool:
         """Skip guests or creators who opted out of room-related reminders."""
         if not creator:
             return False

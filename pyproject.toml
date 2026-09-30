@@ -206,6 +206,8 @@ select = [
     # "FBT",     # Protects you from the "boolean trap bug"
     # "ARG",     # Unused arguments - almost every hit is a Django/pytest-mandated signature (view/admin/context-processor overrides, fixture activation, test doubles), not a real bug
     "ANN204", # Missing return type hint for magic method (#455, staged ANN rollout, step 3)
+    "ANN401", # Disallow `typing.Any` in type hints (#455, staged ANN rollout, smallest rule count first)
+    "ANN205", # Missing return type hint for @staticmethod (#455, staged ANN rollout, step 2)
     # "ANN",     # Missing type hints - no safe autofix; would mean hand-annotating ~4400 existing call sites, a separate typing effort
 ]
 ignore = [

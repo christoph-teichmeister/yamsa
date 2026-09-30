@@ -35,7 +35,7 @@ OUTBOX_HOLDS_ONE = f"async () => (await ({OUTBOX_SIZE})()) === 1"
 @pytest.mark.expects_htmx_errors
 class TestOfflineOutbox:
     @staticmethod
-    def _room_paths(room):
+    def _room_paths(room) -> list[str]:
         return [
             reverse("transaction:list", kwargs={"room_slug": room.slug}),
             reverse("debt:list", kwargs={"room_slug": room.slug}),
@@ -63,17 +63,17 @@ class TestOfflineOutbox:
         return paths
 
     @staticmethod
-    def _go_offline(page):
+    def _go_offline(page) -> None:
         page.context.route("**/*", lambda route: route.abort())
         page.context.set_offline(True)
 
     @staticmethod
-    def _go_online(page):
+    def _go_online(page) -> None:
         page.context.unroute("**/*")
         page.context.set_offline(False)
 
     @staticmethod
-    def _add_expense_offline(page, base_url, room, description):
+    def _add_expense_offline(page, base_url, room, description) -> TransactionCreatePage:
         """Enter an expense with no connection and wait for the form to hand over to the list.
 
         Waiting matters: queueing ends in a full navigation, and a test that moves on before it

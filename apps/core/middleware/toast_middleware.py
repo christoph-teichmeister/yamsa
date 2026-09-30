@@ -75,7 +75,7 @@ class ToastMiddleware:
             self._merge_trigger_payload(existing, queued_toasts)
             response[header] = json.dumps(existing)
 
-    def _parse_header(self, header_value: Any) -> dict[str, Any]:
+    def _parse_header(self, header_value: str | None) -> dict[str, Any]:
         if not header_value:
             return {}
         try:

@@ -17,7 +17,7 @@ class TestProfilePictureForm:
     form_class = ProfilePictureForm
 
     @staticmethod
-    def _build_image_file(width=200, height=200):
+    def _build_image_file(width=200, height=200) -> SimpleUploadedFile:
         buffer = BytesIO()
         Image.new("RGB", (width, height), color=(255, 255, 255)).save(buffer, format="PNG")
         buffer.seek(0)

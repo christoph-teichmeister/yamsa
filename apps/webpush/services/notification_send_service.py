@@ -22,7 +22,7 @@ class NotificationSendService:
         return response_list
 
     @staticmethod
-    def _send_notification(web_push_info: WebpushInformation, payload: str, ttl: int):
+    def _send_notification(web_push_info: WebpushInformation, payload: str, ttl: int) -> object | None:
         try:
             return webpush(
                 subscription_info={
@@ -56,7 +56,7 @@ class NotificationSendService:
             return None
 
     @staticmethod
-    def _get_vapid_data():
+    def _get_vapid_data() -> dict:
         vapid_data = {}
 
         webpush_settings = getattr(settings, "WEBPUSH_SETTINGS", {})

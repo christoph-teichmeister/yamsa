@@ -3,6 +3,7 @@ from typing import Any
 import pytest
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
 from apps.room.handlers.events.notify_on_room_deleted import send_notification_on_room_deleted
 from apps.room.messages.events.room_hard_deleted import RoomHardDeleted
@@ -19,7 +20,7 @@ def _build_notification_stub(record: list[tuple[Any, Any]]):
         def __init__(self, payload) -> None:
             self.payload = payload
 
-        def send_to_user(self, user: Any) -> None:
+        def send_to_user(self, user: User) -> None:
             record.append((self, user))
 
     return DummyNotification
