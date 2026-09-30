@@ -83,7 +83,7 @@ class Command(BaseCommand):
         self.create_intensive_test_data()
 
     @staticmethod
-    def _create_users():
+    def _create_users() -> dict:
         # Hashed password "Admin123$"
         default_password = (
             "argon2$argon2id$v=19$m=102400,t=2,p=8$ZE1LcE9TYmpDZTNmR1I3aVdHc"
@@ -138,7 +138,7 @@ class Command(BaseCommand):
         }
 
     @staticmethod
-    def _create_categories():
+    def _create_categories() -> dict[str, Category]:
         categories = {}
         for slug in BASE_CATEGORY_SLUGS:
             name, emoji, color, order_index = _CATEGORY_DATA[slug]
@@ -157,7 +157,7 @@ class Command(BaseCommand):
         return categories
 
     @staticmethod
-    def _create_currencies():
+    def _create_currencies() -> dict[str, Currency]:
         eur, _ = Currency.objects.get_or_create(code="EUR", defaults={"name": "Euro", "sign": "€"})
         gbp, _ = Currency.objects.get_or_create(code="GBP", defaults={"name": "Pound Sterling", "sign": "£"})
         usd, _ = Currency.objects.get_or_create(code="USD", defaults={"name": "US Dollar", "sign": "$"})
@@ -166,7 +166,7 @@ class Command(BaseCommand):
         return {"EUR": eur, "GBP": gbp, "USD": usd, "CHF": chf}
 
     @staticmethod
-    def _create_rooms(currencies, categories, users_dict):
+    def _create_rooms(currencies, categories, users_dict) -> list[tuple[Room, dict]]:
         registered_users = users_dict["registered_users"]
         guest_users = users_dict["guest_users"]
         admin = users_dict["admin"]
@@ -259,7 +259,7 @@ class Command(BaseCommand):
         return rooms
 
     @staticmethod
-    def _create_transactions(rooms, categories):
+    def _create_transactions(rooms, categories) -> None:
         base_date = now() - timedelta(days=90)
 
         for room, config in rooms:
@@ -314,7 +314,7 @@ class Command(BaseCommand):
             print(f'Transactions created for room "{room.name}": {len(_TRANSACTION_SCENARIOS)} parent transactions')
 
     @staticmethod
-    def _create_debts(rooms):
+    def _create_debts(rooms) -> None:
         for room, config in rooms:
             # Use member_ids from config to ensure deterministic ordering
             member_ids = [user.id for user in config["members"]]
@@ -346,7 +346,7 @@ class Command(BaseCommand):
 
     @staticmethod
     @transaction.atomic
-    def create_intensive_test_data():
+    def create_intensive_test_data() -> None:
         self = Command
 
         categories = self._create_categories()

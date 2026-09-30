@@ -192,7 +192,7 @@ class CategorySuggestionService:
 
     room: Room
 
-    def __init__(self, room: Room):
+    def __init__(self, room: Room) -> None:
         self.room = room
 
     def build_index(self) -> dict[str, int]:

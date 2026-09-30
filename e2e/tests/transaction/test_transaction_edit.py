@@ -232,7 +232,7 @@ class TestTransactionEdit:
         expect(page.get_by_role("button", name="Edit expense")).to_be_disabled()
 
     @staticmethod
-    def _wait_for_detail_page(page, room, parent_transaction):
+    def _wait_for_detail_page(page, room, parent_transaction) -> None:
         # Saving redirects to the detail page; reading the DB before that lands would race the
         # request still in flight.
         detail_path = reverse("transaction:detail", kwargs={"room_slug": room.slug, "pk": parent_transaction.id})

@@ -9,7 +9,7 @@ from apps.core.event_loop.messages import Command, Event
 class MessageRegistry:
     """Singleton for registering messages classes in."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.command_dict: dict = {}
         self.event_dict: dict = {}
 

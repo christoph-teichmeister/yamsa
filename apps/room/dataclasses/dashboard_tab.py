@@ -11,7 +11,7 @@ class DashboardTab:
     get_url: str
     icon_name: str
 
-    def __init__(self, name: str, icon_name: str, room: Room, get_url: str | None = None):
+    def __init__(self, name: str, icon_name: str, room: Room, get_url: str | None = None) -> None:
         super().__init__()
 
         self.name = name

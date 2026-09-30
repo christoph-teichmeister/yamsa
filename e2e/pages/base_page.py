@@ -2,7 +2,7 @@ from playwright.sync_api import Page
 
 
 class BasePage:
-    def __init__(self, page: Page, base_url: str, path: str | None = None):
+    def __init__(self, page: Page, base_url: str, path: str | None = None) -> None:
         self.page = page
         self.base_url = base_url
         self.path = path

@@ -9,7 +9,7 @@ class Message:
 
     @dataclass
     class Context:
-        def __init__(self, *args: object, **kwargs):
+        def __init__(self, *args: object, **kwargs) -> None:
             raise NotImplementedError
 
     @classmethod
@@ -27,7 +27,7 @@ class Message:
     def __str__(self) -> str:
         return f"{self.__class__} ({self.uuid})"
 
-    def __init__(self, context_data: dict):
+    def __init__(self, context_data: dict) -> None:
         self.uuid = str(uuid.uuid4())
         self.Context = self._from_dict_to_dataclass(context_data=context_data)
 

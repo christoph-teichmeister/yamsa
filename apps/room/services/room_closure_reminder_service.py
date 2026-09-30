@@ -16,7 +16,7 @@ class RoomClosureReminderService:
     REMINDER_TYPE = ReminderLog.ReminderType.INACTIVE_ROOM
     HEARTBEAT_INTERVAL = timedelta(days=30)  # Keep room nudges to roughly one-per-month bursts.
 
-    def __init__(self, *, now: datetime | None = None):
+    def __init__(self, *, now: datetime | None = None) -> None:
         self.now = now or timezone.now()
         # Any room with activity older than this threshold becomes a closure candidate.
         self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)
@@ -107,7 +107,7 @@ class RoomClosureReminderService:
         return Room.objects.filter_status_open().filter_without_members().update(status=Room.StatusChoices.CLOSED)
 
     @staticmethod
-    def _should_notify_creator(creator):
+    def _should_notify_creator(creator) -> bool:
         """Skip guests or creators who opted out of room-related reminders."""
         if not creator:
             return False

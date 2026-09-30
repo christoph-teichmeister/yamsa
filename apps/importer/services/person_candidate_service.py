@@ -10,7 +10,7 @@ class PersonCandidateService:
     of my rooms") and make the import create a second account for them.
     """
 
-    def __init__(self, user: User):
+    def __init__(self, user: User) -> None:
         self.user = user
 
     def get_candidates(self) -> list[User]:

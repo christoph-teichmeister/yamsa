@@ -31,7 +31,7 @@ class EmitModelCreatedEventOnSaveMixin:
         def get_model_events_as_tuple(self) -> tuple:
             return self.Created, self.Changed, self.Deleted
 
-    def __init__(self, *args: object, **kwargs):
+    def __init__(self, *args: object, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         for model_event in self.ModelEvents().get_model_events_as_tuple():
