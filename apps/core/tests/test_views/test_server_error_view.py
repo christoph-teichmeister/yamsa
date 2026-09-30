@@ -6,7 +6,8 @@ import apps.config.urls as root_urls
 
 
 def _boom(request):
-    raise Exception("forced")  # noqa: EM101
+    msg = "forced"
+    raise Exception(msg)  # noqa: TRY002 - deliberately generic, simulates an arbitrary unhandled crash
 
 
 @pytest.fixture
@@ -19,9 +20,11 @@ def boom_url():
 
 @override_settings(DEBUG=False)
 def test_server_error_view_renders_with_request_in_context(boom_url):
-    """Regression test for #YAMSA-46/#YAMSA-44: Django's default handler500 renders 500.html
-    without a request in context, and 500.html's base template needs `request`, so the crash
-    handler itself was raising VariableDoesNotExist."""
+    """Regression test for #YAMSA-46/#YAMSA-44.
+
+    Django's default handler500 renders 500.html without a request in context, and 500.html's
+    base template needs `request`, so the crash handler itself was raising VariableDoesNotExist.
+    """
     response = Client(raise_request_exception=False).get(boom_url)
 
     assert response.status_code == 500
@@ -30,9 +33,12 @@ def test_server_error_view_renders_with_request_in_context(boom_url):
 
 @override_settings(DEBUG=False)
 def test_server_error_view_skips_full_page_render_for_htmx(boom_url):
-    """An htmx request never swaps in a non-2xx response, so the full 500.html render (with all
-    its context-processor dependencies) is unnecessary risk for no benefit — htmx's own
-    `htmx:afterRequest` handler already shows an error toast and leaves the current page in place."""
+    """An htmx request never swaps in a non-2xx response.
+
+    So the full 500.html render (with all its context-processor dependencies) is unnecessary
+    risk for no benefit — htmx's own `htmx:afterRequest` handler already shows an error toast
+    and leaves the current page in place.
+    """
     response = Client(raise_request_exception=False).get(boom_url, HTTP_HX_REQUEST="true")
 
     assert response.status_code == 500

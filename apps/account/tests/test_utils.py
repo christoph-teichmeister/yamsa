@@ -16,5 +16,4 @@ def contains_attribute(content: str, name: str, value: str) -> bool:
     MinifyHtmlMiddleware drops the quotes around values that do not need them, so an assertion on
     the quoted spelling alone passes locally and fails through the middleware.
     """
-
     return f'{name}="{value}"' in content or f"{name}={value} " in content or f"{name}={value}>" in content

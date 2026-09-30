@@ -17,6 +17,8 @@ import json
 from collections.abc import Iterator, Sequence
 from pathlib import Path
 
+PREVIEW_CLASS_NAMES_LIMIT = 5
+
 DEFAULT_EXCLUDES = {
     "node_modules",
     "static",
@@ -66,8 +68,8 @@ def print_report(violations: Sequence[tuple[Path, list[str]]], *, max_entries: i
 
     print(f"{len(violations)} modules declare multiple classes:")
     for module, class_names in sorted(violations)[:max_entries]:
-        snippet = ", ".join(class_names[:5])
-        suffix = "" if len(class_names) <= 5 else ", ..."
+        snippet = ", ".join(class_names[:PREVIEW_CLASS_NAMES_LIMIT])
+        suffix = "" if len(class_names) <= PREVIEW_CLASS_NAMES_LIMIT else ", ..."
         print(f"- {module}: {len(class_names)} classes ({snippet}{suffix})")
     if len(violations) > max_entries:
         print(f"  ...and {len(violations) - max_entries} more modules not shown.")
@@ -83,7 +85,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--root",
         type=Path,
-        default=Path("."),
+        default=Path(),
         help="Project root to scan (default: current directory).",
     )
     parser.add_argument(

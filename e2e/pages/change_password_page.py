@@ -22,7 +22,6 @@ class ChangePasswordPage(BasePage):
 
     def save_and_expect_the_profile(self, profile_detail_path: str):
         """A successful save answers with a redirect, so the pushed URL is the profile's."""
-
         self.page.locator("#save-password-button").click()
         expect(self.page).to_have_url(re.compile(rf"{re.escape(profile_detail_path)}$"))
 

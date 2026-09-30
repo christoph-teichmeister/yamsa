@@ -37,8 +37,11 @@ class TestProfilePictureForm:
             assert user.profile_picture.storage.exists(stored_name)
 
     def test_upload_saves_file_with_long_filename(self, user):
-        """Regression test for #YAMSA-45: uuid4()-prefixed long Android filenames overflowed the
-        old ImageField max_length=100, raising a DataError on save()."""
+        """Regression test for #YAMSA-45.
+
+        uuid4()-prefixed long Android filenames overflowed the old ImageField max_length=100,
+        raising a DataError on save().
+        """
         buffer = BytesIO()
         Image.new("RGB", (200, 200), color=(255, 255, 255)).save(buffer, format="PNG")
         buffer.seek(0)
@@ -91,7 +94,8 @@ class TestProfilePictureForm:
         image_file = self._build_image_file()
 
         def fail(self) -> None:
-            raise RuntimeError("failed")  # noqa: EM101
+            msg = "failed"
+            raise RuntimeError(msg)
 
         monkeypatch.setattr(CompressPictureService, "process", fail)
 
@@ -126,7 +130,6 @@ class TestProfilePictureForm:
 
     def test_saving_without_a_file_keeps_the_stored_picture(self, user):
         """The profile save posts no file, so an empty form must never clear the avatar."""
-
         with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
             setup_form = self.form_class(instance=user, data={}, files={"profile_picture": self._build_image_file()})
             assert setup_form.is_valid()

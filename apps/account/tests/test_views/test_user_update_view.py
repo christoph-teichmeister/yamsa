@@ -16,7 +16,6 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture
 def plain_client(user) -> Client:
     """A client without the HX-Request header, standing in for a direct browser navigation."""
-
     client = Client()
     client.force_login(user)
     return client

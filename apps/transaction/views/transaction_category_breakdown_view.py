@@ -113,8 +113,7 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
         return f"{format_number_with_thousands(amount)}{currency_sign}"
 
     def _collect_small_categories(self, sorted_categories: list[dict], total_amount: Decimal) -> list[dict]:
-        """
-        Pick the categories too thin to tap. They are the tail of the descending list.
+        """Pick the categories too thin to tap. They are the tail of the descending list.
 
         The bucket itself can still land under the threshold - four categories at 0.3% add up to
         1.2% - and that is left alone on purpose: growing it further would mean swallowing a
@@ -140,8 +139,7 @@ class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateV
         return small_categories
 
     def _build_chart_points(self, sorted_categories: list[dict], currency_sign: str) -> list[dict]:
-        """
-        Build the donut slices, collapsing slivers too thin to tap into one bucket.
+        """Build the donut slices, collapsing slivers too thin to tap into one bucket.
 
         The legend keeps every category, so nothing becomes unreachable - only the chart trades
         exact slices for hit targets.

@@ -1,5 +1,7 @@
-"""A URLconf that drives ToastMiddleware through Django's real handler, which renders a
-TemplateResponse before the middleware's __call__ gets it back."""
+"""A URLconf that drives ToastMiddleware through Django's real handler.
+
+It renders a TemplateResponse before the middleware's __call__ gets it back.
+"""
 
 from django.http import HttpResponseRedirect
 from django.template import engines

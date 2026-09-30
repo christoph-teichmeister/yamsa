@@ -23,13 +23,13 @@ def json_script_nonce(context, value, element_id):
         '<script id="{}" type="application/json" nonce="{}">{}</script>',
         element_id,
         nonce,
-        mark_safe(json_str),
+        mark_safe(json_str),  # noqa: S308 - mirrors Django's own json_script: JSON is escaped for <script> context above
     )
 
 
 @register.filter
 def get_item(dictionary, key):
-    """Look up a dict value by key in templates: {{ my_dict|get_item:some_var }}"""
+    """Look up a dict value by key in templates: {{ my_dict|get_item:some_var }}."""
     if isinstance(dictionary, dict):
         return dictionary.get(key)
     return None

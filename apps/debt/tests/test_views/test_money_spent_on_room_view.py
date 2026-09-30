@@ -23,10 +23,10 @@ class TestMoneySpentOnRoomViewContext:
         other_room.users.add(user)
         alien_currency = CurrencyFactory(sign="¤")
         other_parent = ParentTransactionFactory(room=other_room, paid_by=user, currency=alien_currency)
-        ChildTransactionFactory.create(parent_transaction=other_parent, paid_for=guest_user, value=Decimal("5"))
+        ChildTransactionFactory.create(parent_transaction=other_parent, paid_for=guest_user, value=Decimal(5))
 
         base_parent = ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency)
-        ChildTransactionFactory.create(parent_transaction=base_parent, paid_for=guest_user, value=Decimal("7"))
+        ChildTransactionFactory.create(parent_transaction=base_parent, paid_for=guest_user, value=Decimal(7))
 
         view = self._view_for_room(room)
         currency_signs = {entry["currency_sign"] for entry in view.money_spent_per_person_qs}
@@ -44,13 +44,13 @@ class TestMoneySpentOnRoomViewContext:
         currency_b = CurrencyFactory(sign="¤")
 
         primary_txn = ParentTransactionFactory(room=room, paid_by=payer_primary, currency=currency_a)
-        ChildTransactionFactory.create(parent_transaction=primary_txn, paid_for=guest_user, value=Decimal("10"))
-        ChildTransactionFactory.create(parent_transaction=primary_txn, paid_for=payee_third, value=Decimal("5"))
-        ChildTransactionFactory.create(parent_transaction=primary_txn, paid_for=payer_primary, value=Decimal("20"))
+        ChildTransactionFactory.create(parent_transaction=primary_txn, paid_for=guest_user, value=Decimal(10))
+        ChildTransactionFactory.create(parent_transaction=primary_txn, paid_for=payee_third, value=Decimal(5))
+        ChildTransactionFactory.create(parent_transaction=primary_txn, paid_for=payer_primary, value=Decimal(20))
 
         secondary_txn = ParentTransactionFactory(room=room, paid_by=payer_secondary, currency=currency_b)
-        ChildTransactionFactory.create(parent_transaction=secondary_txn, paid_for=guest_user, value=Decimal("7"))
-        ChildTransactionFactory.create(parent_transaction=secondary_txn, paid_for=payer_primary, value=Decimal("3"))
+        ChildTransactionFactory.create(parent_transaction=secondary_txn, paid_for=guest_user, value=Decimal(7))
+        ChildTransactionFactory.create(parent_transaction=secondary_txn, paid_for=payer_primary, value=Decimal(3))
 
         view = self._view_for_room(room)
 
@@ -58,21 +58,21 @@ class TestMoneySpentOnRoomViewContext:
         spent_map = {
             (entry["paid_by_name"], entry["currency_sign"]): entry["total_spent_per_person"] for entry in spent
         }
-        assert spent_map[(payer_primary.name, currency_a.sign)] == Decimal("35")
-        assert spent_map[(payer_secondary.name, currency_b.sign)] == Decimal("10")
+        assert spent_map[(payer_primary.name, currency_a.sign)] == Decimal(35)
+        assert spent_map[(payer_secondary.name, currency_b.sign)] == Decimal(10)
 
         total_spent = {entry["currency_sign"]: entry["total_spent"] for entry in view.total_money_spent}
-        assert total_spent[currency_a.sign] == Decimal("35")
-        assert total_spent[currency_b.sign] == Decimal("10")
+        assert total_spent[currency_a.sign] == Decimal(35)
+        assert total_spent[currency_b.sign] == Decimal(10)
 
         covered = list(view.money_covered_for_person_qs)
         covered_map = {
             (entry["paid_for__name"], entry["currency_sign"]): entry["total_covered_for_person"] for entry in covered
         }
-        assert covered_map[(guest_user.name, currency_a.sign)] == Decimal("10")
-        assert covered_map[(guest_user.name, currency_b.sign)] == Decimal("7")
-        assert covered_map[(payee_third.name, currency_a.sign)] == Decimal("5")
-        assert covered_map[(payer_primary.name, currency_b.sign)] == Decimal("3")
+        assert covered_map[(guest_user.name, currency_a.sign)] == Decimal(10)
+        assert covered_map[(guest_user.name, currency_b.sign)] == Decimal(7)
+        assert covered_map[(payee_third.name, currency_a.sign)] == Decimal(5)
+        assert covered_map[(payer_primary.name, currency_b.sign)] == Decimal(3)
         assert (payer_primary.name, currency_a.sign) not in covered_map
 
     def test_open_debts_per_person_qs_only_returns_unsettled(self, room, user, guest_user):
@@ -112,7 +112,7 @@ class TestMoneySpentOnRoomViewContext:
             creditor=user,
             room=room,
             currency=currency_a,
-            value=Decimal("30"),
+            value=Decimal(30),
             settled=False,
         )
         Debt.objects.create(
@@ -120,7 +120,7 @@ class TestMoneySpentOnRoomViewContext:
             creditor=user,
             room=room,
             currency=currency_a,
-            value=Decimal("10"),
+            value=Decimal(10),
             settled=False,
         )
         Debt.objects.create(
@@ -128,12 +128,12 @@ class TestMoneySpentOnRoomViewContext:
             creditor=user,
             room=room,
             currency=currency_b,
-            value=Decimal("55"),
+            value=Decimal(55),
             settled=False,
         )
 
         view = self._view_for_room(room)
         max_map = view.max_open_debt_per_currency
 
-        assert max_map[currency_a.sign] == Decimal("30")
-        assert max_map[currency_b.sign] == Decimal("55")
+        assert max_map[currency_a.sign] == Decimal(30)
+        assert max_map[currency_b.sign] == Decimal(55)

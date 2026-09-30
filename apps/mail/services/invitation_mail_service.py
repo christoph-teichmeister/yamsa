@@ -7,7 +7,7 @@ from apps.mail.services.base_email_service import BaseYamsaEmailService, EmailEx
 
 
 class InvitationEmailService(BaseYamsaEmailService):
-    """Email to invite guests to yamsa"""
+    """Email to invite guests to yamsa."""
 
     subject = _("Invitation") + " 🥳"
 

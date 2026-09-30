@@ -20,7 +20,7 @@ def create_parent_transaction_with_optimisation(
         child_kwargs = {
             "parent_transaction": created_parent_transaction,
             "paid_for": child_transaction_user,
-            "value": Decimal("13"),
+            "value": Decimal(13),
         }
         child_kwargs.update(child_transaction_kwargs)
         created_child_transactions.append(ChildTransaction.objects.create(**child_kwargs))

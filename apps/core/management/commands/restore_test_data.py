@@ -11,7 +11,7 @@ from apps.transaction.models import DEFAULT_CATEGORY_SLUG, Category
 
 
 class Command(BaseCommand):
-    """Command for restoring test data for the system"""
+    """Command for restoring test data for the system."""
 
     help = "Creates some test data"
 
@@ -114,12 +114,10 @@ class Command(BaseCommand):
     @staticmethod
     @transaction.atomic
     def restore_test_data():
-        """
-        Creates / "Finds" test data.
+        """Creates / "Finds" test data.
 
         Will create a superuser, a few guest_users, rooms and transactions
         """
-
         # Fake self for this method
         self = Command
 

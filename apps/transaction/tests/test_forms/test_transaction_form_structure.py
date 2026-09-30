@@ -87,8 +87,8 @@ class TestTransactionFormStructure:
         }
 
     def test_save_two_consecutive_transactions_both_persist(self):
-        """
-        Regression test for #333: two consecutive saves must both succeed.
+        """Regression test for #333: two consecutive saves must both succeed.
+
         Previously the second failed because the DB connection was blocked by
         a webpush HTTP call inside the open atomic block.
         """

@@ -1,5 +1,4 @@
-"""
-Tests for ListLoader component (Issue #144)
+"""Tests for ListLoader component (Issue #144).
 
 Tests the skeleton screen → overlay switching mechanism with 800ms threshold.
 """

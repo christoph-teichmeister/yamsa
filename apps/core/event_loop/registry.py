@@ -1,6 +1,5 @@
 import contextlib
 import importlib
-import os
 
 from django.conf import settings
 
@@ -8,9 +7,7 @@ from apps.core.event_loop.messages import Command, Event
 
 
 class MessageRegistry:
-    """
-    Singleton for registering messages classes in.
-    """
+    """Singleton for registering messages classes in."""
 
     def __init__(self):
         self.command_dict: dict = {}
@@ -59,9 +56,7 @@ class MessageRegistry:
         return decorator
 
     def autodiscover(self):
-        """
-        Detects message registries which have been registered via the "register_*" decorator.
-        """
+        """Detects message registries which have been registered via the "register_*" decorator."""
         if len(self.command_dict) + len(self.event_dict) > 0:
             return
 
@@ -72,11 +67,10 @@ class MessageRegistry:
             custom_package = app.replace("apps.", "")
             for message_type in ["commands", "events"]:
                 try:
-                    for module in os.listdir(settings.APPS_DIR / custom_package / "handlers" / message_type):
-                        if module[-3:] == ".py":
-                            module_name = module.replace(".py", "")
+                    for module in (settings.APPS_DIR / custom_package / "handlers" / message_type).iterdir():
+                        if module.suffix == ".py":
                             with contextlib.suppress(ModuleNotFoundError):
-                                importlib.import_module(f"{app}.handlers.{message_type}.{module_name}")
+                                importlib.import_module(f"{app}.handlers.{message_type}.{module.stem}")
                 except FileNotFoundError:
                     pass
 

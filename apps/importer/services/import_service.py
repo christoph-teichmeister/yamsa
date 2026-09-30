@@ -18,8 +18,7 @@ from apps.transaction.services.room_category_service import RoomCategoryService
 
 
 class ImportService:
-    """
-    Writes a ParsedImport into a brand-new room.
+    """Writes a ParsedImport into a brand-new room.
 
     Must run inside the caller's transaction.atomic(); the debt recalculation is deliberately
     left to the TransactionsImported event so it happens once, after the block exits.

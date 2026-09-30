@@ -12,9 +12,8 @@ class DebtOptimiseService:
     """Service responsible for refreshing unsettled debts for a room from current transactions."""
 
     @staticmethod
-    def process(room_id) -> None:
-        """
-        Rebuild the unsettled squad of debts for the requested room.
+    def process(room_id) -> None:  # noqa: C901, PLR0912, PLR0915 - debt-settlement algorithm, refactor candidate tracked separately
+        """Rebuild the unsettled squad of debts for the requested room.
 
         Steps:
         1. Purge unsettled debts so the recalculation starts from a clean slate.

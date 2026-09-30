@@ -5,7 +5,7 @@ from apps.account.models import User
 
 
 class Command(BaseCommand):
-    """Command for "anonymising" data"""
+    """Command for "anonymising" data."""
 
     help = '"Anonymises" Data'
 

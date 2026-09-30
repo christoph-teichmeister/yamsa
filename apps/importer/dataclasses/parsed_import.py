@@ -38,7 +38,7 @@ class ParsedImport:
     def totals_by_currency(self) -> dict[str, Decimal]:
         totals: dict[str, Decimal] = {}
         for transaction in self.transactions:
-            totals[transaction.currency_code] = totals.get(transaction.currency_code, Decimal("0")) + transaction.total
+            totals[transaction.currency_code] = totals.get(transaction.currency_code, Decimal(0)) + transaction.total
         return totals
 
     def as_payload(self) -> dict:

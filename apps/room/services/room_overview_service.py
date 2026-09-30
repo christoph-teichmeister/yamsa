@@ -58,7 +58,7 @@ class RoomOverviewService:
             return None
         try:
             return Room._meta.get_field("seal_image").storage.url(name)
-        except Exception:
+        except Exception:  # noqa: BLE001 - storage backends raise their own, varied exception types here
             return None
 
     def _build_entry(self, room_values: dict) -> RoomOverviewEntry:

@@ -132,5 +132,5 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
             return None
         try:
             return self.seal_image.url
-        except Exception:
+        except Exception:  # noqa: BLE001 - storage backends raise their own, varied exception types here
             return None

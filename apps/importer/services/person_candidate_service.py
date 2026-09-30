@@ -3,8 +3,7 @@ from apps.room.models import Room
 
 
 class PersonCandidateService:
-    """
-    Supplies the people an importer can map a file column onto.
+    """Supplies the people an importer can map a file column onto.
 
     Deliberately not SuggestedGuestService: that one skips guests and caps at eight entries,
     which would hide the most common duplicate ("this person is already a guest in another

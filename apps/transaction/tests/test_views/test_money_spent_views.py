@@ -86,7 +86,7 @@ class TestMoneySpentViews:
                 paid_by=user,
                 paid_for_tuple=(guest_user,),
                 parent_transaction_kwargs={"paid_at": now - timedelta(hours=offset_hours)},
-                child_transaction_kwargs={"value": Decimal("10")},
+                child_transaction_kwargs={"value": Decimal(10)},
             )
 
         response = client.get(
@@ -111,14 +111,14 @@ class TestMoneySpentViews:
             paid_by=user,
             paid_for_tuple=(guest_user,),
             parent_transaction_kwargs={"paid_at": now - timedelta(hours=2)},
-            child_transaction_kwargs={"value": Decimal("10")},
+            child_transaction_kwargs={"value": Decimal(10)},
         )
         create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
             paid_for_tuple=(guest_user,),
             parent_transaction_kwargs={"paid_at": now - timedelta(hours=1), "currency": second_currency},
-            child_transaction_kwargs={"value": Decimal("2500")},
+            child_transaction_kwargs={"value": Decimal(2500)},
         )
 
         response = client.get(
@@ -144,14 +144,14 @@ class TestMoneySpentViews:
             paid_by=user,
             paid_for_tuple=(guest_user,),
             parent_transaction_kwargs={"paid_at": now - timedelta(weeks=6)},
-            child_transaction_kwargs={"value": Decimal("40")},
+            child_transaction_kwargs={"value": Decimal(40)},
         )
         create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
             paid_for_tuple=(guest_user,),
             parent_transaction_kwargs={"paid_at": now - timedelta(hours=1)},
-            child_transaction_kwargs={"value": Decimal("10")},
+            child_transaction_kwargs={"value": Decimal(10)},
         )
 
         response = client.get(

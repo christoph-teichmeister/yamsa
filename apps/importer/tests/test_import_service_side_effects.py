@@ -8,8 +8,8 @@ from apps.room.models import UserConnectionToRoom
 
 
 class TestImportServiceSideEffects:
-    """
-    Connecting an existing non-guest emits webpush and email from inside Model.save().
+    """Connecting an existing non-guest emits webpush and email from inside Model.save().
+
     Doing that inside the caller's atomic block is the #333 pattern, so the service must
     hand those users back instead of connecting them itself.
     """

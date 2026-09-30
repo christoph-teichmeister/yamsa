@@ -1,5 +1,5 @@
 import hashlib
-import random
+import secrets
 import string
 from functools import cached_property, lru_cache
 from time import time
@@ -69,7 +69,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
 
         try:
             picture_exists = picture.storage.exists(picture.name)
-        except Exception:
+        except Exception:  # noqa: BLE001 - storage backends raise their own, varied exception types here
             picture_exists = False
 
         cache.set(
@@ -109,7 +109,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
 
         try:
             url = self.profile_picture.url
-        except Exception:
+        except Exception:  # noqa: BLE001 - storage backends raise their own, varied exception types here
             return None
 
         return self._as_avatar_url(url)
@@ -124,7 +124,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
 
         try:
             return self.profile_picture.url
-        except Exception:
+        except Exception:  # noqa: BLE001 - storage backends raise their own, varied exception types here
             return fallback_url
 
     name = models.CharField(max_length=50)
@@ -222,7 +222,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
 
     def generate_random_password_with_length(self, length: int) -> str:
         characters = string.ascii_letters + string.digits
-        new_password = "".join(random.choice(characters) for _ in range(length))
+        new_password = "".join(secrets.choice(characters) for _ in range(length))
 
         self.password = hashers.make_password(new_password)
         self.save()

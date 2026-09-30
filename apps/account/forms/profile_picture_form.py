@@ -28,7 +28,6 @@ class ProfilePictureForm(ModelForm):
         re-encode a picture that is already compressed and store it under a fresh name, leaving the
         previous file behind as garbage.
         """
-
         return self.files.get("profile_picture")
 
     def clean_profile_picture(self):
@@ -57,7 +56,6 @@ class ProfilePictureForm(ModelForm):
 
     def save(self, commit=True):
         """Persist the compressed picture produced while cleaning."""
-
         picture = self.cleaned_data.get("profile_picture")
         if picture and self._uploaded_picture():
             compressed_picture = getattr(self, "_compressed_profile_picture", None)

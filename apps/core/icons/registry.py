@@ -81,7 +81,7 @@ def build_sprite(names: set[str], source_dir: Path = ICON_SOURCE_DIR) -> str:
 
         # Everything between the root tags. The root's own width/height/class are
         # dropped: the size comes from the `.bi` rule at the use site.
-        body = re.sub(r"^.*?<svg[^>]*>|</svg>\s*$", "", svg, flags=re.S).strip()
+        body = re.sub(r"^.*?<svg[^>]*>|</svg>\s*$", "", svg, flags=re.DOTALL).strip()
         symbols.append(f'<symbol id="{name}" viewBox="{view_box.group(1)}" fill="currentColor">{body}</symbol>')
 
     joined = "\n".join(symbols)

@@ -28,7 +28,6 @@ class AccountDetailPage(BasePage):
 
     def mark_sheet(self, marker: str):
         """Tag the sheet element so a later read proves whether it survived or was replaced."""
-
         self.page.locator("#profile-sheet").evaluate("(sheet, value) => (sheet.dataset.e2eMarker = value)", marker)
 
     def read_sheet_marker(self) -> str | None:
@@ -47,7 +46,6 @@ class AccountDetailPage(BasePage):
 
         to_have_css retries, which a plain read cannot: the overlay fades in over a transition.
         """
-
         expect(self.page.locator("#profile-photo button span[aria-hidden]")).to_have_css(
             "opacity", "1" if visible else "0"
         )
@@ -94,7 +92,6 @@ class AccountDetailPage(BasePage):
         swaps every profile picture for the placeholder before a browser can read its src. That
         the rendered src is the stored picture is pinned in the view test instead.
         """
-
         avatar = self.page.locator("button[data-dialog-open='profile-photo-preview-dialog'] img")
         preview = self.page.locator("#profile-photo-preview-dialog img")
         expect(preview).to_be_visible()
@@ -107,7 +104,6 @@ class AccountDetailPage(BasePage):
 
     def expect_no_photo_preview(self):
         """An avatar that is only an initial has nothing to enlarge and offers no dialog."""
-
         expect(self.page.locator("#profile-photo-preview-dialog")).to_have_count(0)
 
     def expect_photo_present(self):
@@ -141,7 +137,6 @@ class AccountDetailPage(BasePage):
 
     def expect_member_name(self, name: str):
         """The name as shown on someone else's profile, which carries no editable fields."""
-
         expect(self.page.locator("#profile-name")).to_have_text(name)
 
     def expect_fields_editable(self):
@@ -153,7 +148,6 @@ class AccountDetailPage(BasePage):
 
     def expect_actions_absent(self):
         """Someone else's profile carries no editable field, so it carries no action row."""
-
         expect(self.page.locator("#save-profile-button")).to_have_count(0)
 
     def expect_security_section_visible(self):
@@ -171,7 +165,6 @@ class AccountDetailPage(BasePage):
         An attribute would be a false negative: morphing keeps the element but syncs its attributes
         to the incoming markup, which carries no marker.
         """
-
         self.page.locator("#body-loading-spinner").evaluate("(element) => (element.e2eSurvivedSwap = true)")
 
     def body_shell_survived(self) -> bool:

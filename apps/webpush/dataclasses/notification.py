@@ -10,7 +10,7 @@ from apps.account.models import User
 
 @dataclass
 class Notification:
-    """Dataclass for a notification
+    """Dataclass for a notification.
 
     https://developer.mozilla.org/en-US/docs/Web/API/Notification
     https://web.dev/articles/push-notifications-display-a-notification
@@ -26,7 +26,7 @@ class Notification:
 
     @dataclass
     class Payload:
-        """Dataclass for payload of a notification"""
+        """Dataclass for payload of a notification."""
 
         head: str
         body: str

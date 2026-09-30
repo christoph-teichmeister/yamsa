@@ -31,13 +31,13 @@ def create_receipt(parent_transaction, uploaded_by) -> Receipt:
 class TestHandleDeleteRoom:
     def test_deleting_a_room_cascades_its_own_data_but_keeps_users(self, room, user, guest_user):
         parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
-        ChildTransaction.objects.create(parent_transaction=parent_transaction, paid_for=guest_user, value=Decimal("5"))
+        ChildTransaction.objects.create(parent_transaction=parent_transaction, paid_for=guest_user, value=Decimal(5))
         create_receipt(parent_transaction=parent_transaction, uploaded_by=user)
         Debt.objects.create(
             room=room,
             debitor=guest_user,
             creditor=user,
-            value=Decimal("5"),
+            value=Decimal(5),
             currency=room.preferred_currency,
         )
         RoomCategory.objects.create(room=room, category=parent_transaction.category)

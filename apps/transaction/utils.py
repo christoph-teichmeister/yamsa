@@ -1,7 +1,7 @@
-import os
 import uuid
 from collections.abc import Sequence
 from decimal import ROUND_HALF_UP, Decimal
+from pathlib import PurePosixPath
 from typing import TYPE_CHECKING
 
 from django.utils.text import slugify
@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 
 
 def split_amount_exact(total: Decimal, shares: int) -> list[Decimal]:
-    """
-    Split total into `shares` Decimal values that sum exactly to total.
+    """Split total into `shares` Decimal values that sum exactly to total.
+
     Rounds each share to 0.01 using ROUND_HALF_UP and distributes remainder starting at index 0.
     """
     if shares <= 0:
@@ -36,9 +36,7 @@ def split_amount_exact(total: Decimal, shares: int) -> list[Decimal]:
 
 
 def split_total_across_paid_for(total: Decimal, paid_for_entries: Sequence) -> list[Decimal]:
-    """
-    Evenly distribute `total` across the provided `paid_for_entries`.
-    """
+    """Evenly distribute `total` across the provided `paid_for_entries`."""
     count = len(paid_for_entries)
     if count <= 0:
         error_msg = "paid_for_entries must include at least one participant"
@@ -50,10 +48,10 @@ def split_total_across_paid_for(total: Decimal, paid_for_entries: Sequence) -> l
 def receipt_upload_path(instance: "Receipt", filename: str) -> str:
     room_id = instance.parent_transaction.room_id
 
-    base_name, extension = os.path.splitext(os.path.basename(filename))
-    safe_name = slugify(base_name) or "file"
+    stem, extension = PurePosixPath(filename).stem, PurePosixPath(filename).suffix
+    safe_name = slugify(stem) or "file"
     extension = extension.lstrip(".")
     unique_id = uuid.uuid4().hex
     final_name = f"{unique_id}.{safe_name}.{extension}" if extension else f"{unique_id}.{safe_name}"
 
-    return os.path.join("receipts", str(room_id), final_name)
+    return str(PurePosixPath("receipts") / str(room_id) / final_name)

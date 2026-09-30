@@ -66,7 +66,7 @@ class TestSendNotificationOnTransactionCreate:
 
             assert mocked_send.call_count == 2
 
-    def test_send_notification_on_transaction_create_to_debitors_except_for_creator_and_creditor_if_someone_else_created(  # noqa: E501
+    def test_send_notification_on_transaction_create_to_debitors_except_creator_and_creditor_if_someone_else_created(
         self,
         room,
         user,
@@ -203,7 +203,8 @@ class TestSendNotificationOnTransactionCreate:
 
         assert body_by_recipient[guest_user] == (
             f"{another_user.name} hat eingetragen, dass {user.name} "
-            f'{parent_transaction.value}{parent_transaction.currency.sign} gezahlt hat ("{parent_transaction.description}")'  # noqa: E501
+            f"{parent_transaction.value}{parent_transaction.currency.sign} gezahlt hat "
+            f'("{parent_transaction.description}")'
         )
         assert body_by_recipient[user] == (
             f"{another_user.name} logged that {user.name} paid "

@@ -144,8 +144,7 @@ class SplitwiseCsvParser(BaseImportParser):
             raise ImportParseError(_("The file could not be read as CSV.")) from error
 
     def _read_people(self, header: list[str]) -> list[tuple[int, str]]:
-        """
-        Return (column offset, label) per person column.
+        """Return (column offset, label) per person column.
 
         The offset is the position in the raw header, not in the filtered list: a blank heading
         between two people would otherwise shift every later person's value by one column.
@@ -168,7 +167,7 @@ class SplitwiseCsvParser(BaseImportParser):
             )
         return people
 
-    def _handle_row(
+    def _handle_row(  # noqa: C901, PLR0911 - Splitwise row shapes branch heavily, refactor candidate tracked separately
         self,
         row: list[str],
         row_number: int,
@@ -209,7 +208,7 @@ class SplitwiseCsvParser(BaseImportParser):
                 return
             nets.append(value)
 
-        if abs(sum(nets, Decimal("0"))) > BALANCE_TOLERANCE:
+        if abs(sum(nets, Decimal(0))) > BALANCE_TOLERANCE:
             skip(_("The person columns do not cancel out"))
             return
 
@@ -296,7 +295,7 @@ class SplitwiseCsvParser(BaseImportParser):
         self, *, people: list[tuple[int, str]], nets: list[Decimal], cost: Decimal, payer_index: int
     ) -> tuple[ParsedShare, ...] | None:
         shares: list[ParsedShare] = []
-        others_total = Decimal("0")
+        others_total = Decimal(0)
         for index, (_offset, person) in enumerate(people):
             if index == payer_index:
                 continue
@@ -352,7 +351,7 @@ class SplitwiseCsvParser(BaseImportParser):
     def _parse_decimal(value: str) -> Decimal | None:
         candidate = value.strip()
         if not candidate:
-            return Decimal("0")
+            return Decimal(0)
         if DECIMAL_COMMA_PATTERN.match(candidate):
             candidate = candidate.replace(",", ".")
         if not DECIMAL_DOT_PATTERN.match(candidate):

@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 def handle_message(message_list: Message | list[Message]):
     """Process commands/events once Django has populated the registry on startup."""
-
     # The message registry is populated when `apps.core.apps.CoreConfig.ready()` runs,
     # so the runner never has to import or autodiscover handlers itself.
     queue = message_list if isinstance(message_list, list) else [message_list]
@@ -22,26 +21,26 @@ def handle_message(message_list: Message | list[Message]):
             handle_event(message, queue)
             continue
 
-        elif isinstance(message, Command):
+        if isinstance(message, Command):
             handle_command(message, queue)
             continue
 
         msg = f"{message} was not an Event or Command"
-        raise Exception(msg)
+        raise TypeError(msg)
 
 
 def handle_command(command: Command, queue: list[Message]):
     handler_list = message_registry.command_dict.get(command.__class__, [])
     for handler in handler_list:
         try:
-            # TODO CT: Warum ist der rückgabewert hier wichtig?
+            # TODO(CT): Warum ist der rückgabewert hier wichtig?
             logger.info(
                 "Handling command '%s' (%s) with handler '%s'",
                 command.__class__.__name__,
                 command.uuid,
                 handler.__name__,
             )
-            # TODO CT: das sollte um das ganze handle_message
+            # TODO(CT): das sollte um das ganze handle_message
             with transaction.atomic():
                 new_messages = handler(command.Context) or []
                 new_messages = new_messages if isinstance(new_messages, list) else [new_messages]

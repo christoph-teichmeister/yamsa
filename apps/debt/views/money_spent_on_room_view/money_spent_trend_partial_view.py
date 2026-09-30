@@ -92,15 +92,15 @@ class MoneySpentTrendPartialView(RoomChildTransactionQuerysetMixin, DebtBaseCont
         # gets its own series (and its own axis in the chart).
         cumulative_per_currency = dict(baselines)
         points_per_currency: dict[str, list[dict]] = {
-            sign: [self._point(range_start, total, Decimal("0"))] for sign, total in baselines.items()
+            sign: [self._point(range_start, total, Decimal(0))] for sign, total in baselines.items()
         }
 
         for row in self._expenses_in_range(range_start, range_end):
             sign = row["currency_sign"]
             expense_total = row["expense_total"]
             if sign not in points_per_currency:
-                points_per_currency[sign] = [self._point(range_start, Decimal("0"), Decimal("0"))]
-                cumulative_per_currency[sign] = Decimal("0")
+                points_per_currency[sign] = [self._point(range_start, Decimal(0), Decimal(0))]
+                cumulative_per_currency[sign] = Decimal(0)
             cumulative_per_currency[sign] += expense_total
             points_per_currency[sign].append(
                 self._point(
@@ -113,12 +113,12 @@ class MoneySpentTrendPartialView(RoomChildTransactionQuerysetMixin, DebtBaseCont
         series = []
         for sign, points in points_per_currency.items():
             cumulative = cumulative_per_currency[sign]
-            points.append(self._point(range_end, cumulative, Decimal("0")))
+            points.append(self._point(range_end, cumulative, Decimal(0)))
             series.append(
                 {
                     "currency": sign,
                     "points": points,
-                    "baseline": float(baselines.get(sign, Decimal("0"))),
+                    "baseline": float(baselines.get(sign, Decimal(0))),
                     "total": float(cumulative),
                 }
             )

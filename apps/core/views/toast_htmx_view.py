@@ -5,8 +5,7 @@ from apps.core.toast_constants import TOAST_TYPE_CLASSES
 
 
 class ToastHTMXView(generic.TemplateView):
-    """
-    HTMX-friendly fragment that renders the shared toast partial with payload data.
+    """HTMX-friendly fragment that renders the shared toast partial with payload data.
 
     The view simply forwards the GET parameters `toast_message` and `toast_type` into the
     shared `queued_toasts` context so the `shared_partials/toast.html` script can show the
@@ -30,9 +29,7 @@ class ToastHTMXView(generic.TemplateView):
     @context
     @property
     def queued_toasts(self) -> list[dict[str, str]]:
-        """
-        Convert the query parameters into a toast payload that matches the shared style map.
-        """
+        """Convert the query parameters into a toast payload that matches the shared style map."""
         toast_message = self.request.GET.get("toast_message")
         if not toast_message:
             return []

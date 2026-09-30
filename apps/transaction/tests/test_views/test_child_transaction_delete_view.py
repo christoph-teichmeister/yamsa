@@ -20,12 +20,12 @@ def test_post_closed_room_is_rejected(authenticated_client, closed_room, user, g
     child_transaction = ChildTransactionFactory(
         parent_transaction=parent_transaction,
         paid_for=user,
-        value=Decimal("5"),
+        value=Decimal(5),
     )
     ChildTransactionFactory(
         parent_transaction=parent_transaction,
         paid_for=guest_user,
-        value=Decimal("5"),
+        value=Decimal(5),
     )
 
     response = authenticated_client.post(

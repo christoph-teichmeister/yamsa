@@ -105,7 +105,7 @@ def test_send_notification_on_debt_settled_localizes_body_to_creditor_language(r
         creditor=creditor,
         room=room,
         currency=room.preferred_currency,
-        value=Decimal("10"),
+        value=Decimal(10),
     )
 
     with (

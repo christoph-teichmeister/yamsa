@@ -15,8 +15,7 @@ from apps.transaction.models import (
 
 
 class RoomCategoryService:
-    """
-    Encapsulates the business logic for managing the categories configured on a Room.
+    """Encapsulates the business logic for managing the categories configured on a Room.
 
     It ensures that every room starts with a canonical set of categories, keeps the order
     consistent, and enforces that one category is always marked as default. This service
@@ -27,22 +26,20 @@ class RoomCategoryService:
     room: Room
 
     def __init__(self, room: Room):
-        """
-        Initialize the service with the room whose categories we are managing.
-        """
+        """Initialize the service with the room whose categories we are managing."""
         self.room = room
 
     def get_categories(self) -> Iterable[RoomCategory]:
-        """
-        Return the room-specific categories with their related Category metadata,
-        guaranteeing defaults exist before the query.
+        """Return the room-specific categories with their related Category metadata.
+
+        Guarantees defaults exist before the query.
         """
         self._ensure_defaults()
         return self.room.room_categories.select_related("category").order_by("order_index", "id")
 
     def get_category_queryset(self):
-        """
-        Produce a queryset of Category objects associated with this room.
+        """Produce a queryset of Category objects associated with this room.
+
         The ordering mirrors the room-specific ordering for RoomCategory.
         """
         self._ensure_defaults()
@@ -51,8 +48,8 @@ class RoomCategoryService:
         )
 
     def get_default_category(self):
-        """
-        Fetch the currently flagged default category for this room.
+        """Fetch the currently flagged default category for this room.
+
         Falls back to the global default if the room has no category marked.
         """
         room_category = self._get_default_room_category()
@@ -69,8 +66,7 @@ class RoomCategoryService:
         order_index: int | None = None,
         make_default: bool = False,
     ) -> RoomCategory:
-        """
-        Create a new Category (with unique slug) and link it to the room via RoomCategory.
+        """Create a new Category (with unique slug) and link it to the room via RoomCategory.
 
         Args:
             name: Label shown to users.
@@ -97,19 +93,17 @@ class RoomCategoryService:
                 color=color or "",
                 order_index=desired_index,
             )
-            room_category = RoomCategory.objects.create(
+            return RoomCategory.objects.create(
                 room=self.room,
                 category=category,
                 order_index=desired_index,
                 is_default=make_default,
             )
-        return room_category
 
     def update_room_category(
         self, *, room_category_id: int, order_index: int, make_default: bool
     ) -> RoomCategory | None:
-        """
-        Update the RoomCategory metadata such as ordering/default flag.
+        """Update the RoomCategory metadata such as ordering/default flag.
 
         The method keeps the default constraint by clearing the previous default if
         this category is being promoted.
@@ -143,9 +137,7 @@ class RoomCategoryService:
         return room_category
 
     def delete_room_category(self, room_category_id: int) -> Category | None:
-        """
-        Remove a RoomCategory and, if it was the default, promote another category.
-        """
+        """Remove a RoomCategory and, if it was the default, promote another category."""
         self._ensure_defaults()
         with transaction.atomic():
             # Lock the row before deleting so we can safely check if it was the default.
@@ -166,8 +158,7 @@ class RoomCategoryService:
             return deleted_category
 
     def _ensure_defaults(self) -> None:
-        """
-        Populate the room with the base categories when none exist yet.
+        """Populate the room with the base categories when none exist yet.
 
         Uses bulk creation to avoid repeated queries, and the method is safe to call
         from multiple locations because it re-checks after acquiring the transaction lock.
@@ -194,9 +185,7 @@ class RoomCategoryService:
         self._ensure_default_exists()
 
     def _get_default_room_category(self) -> RoomCategory | None:
-        """
-        Helper that returns the RoomCategory marked as default (or None if missing).
-        """
+        """Helper that returns the RoomCategory marked as default (or None if missing)."""
         return (
             self.room.room_categories.filter(is_default=True)
             .select_related("category")
@@ -205,17 +194,13 @@ class RoomCategoryService:
         )
 
     def _next_order_index(self) -> int:
-        """
-        Determine the next order index by looking up the highest current index.
-        """
+        """Determine the next order index by looking up the highest current index."""
         last = self.room.room_categories.order_by("-order_index", "-id").first()
         # Start at zero if the room has no categories yet.
         return (last.order_index + 1) if last else 0
 
     def get_next_order_index(self) -> int:
-        """
-        Public-facing helper that ensures defaults exist before returning the next slot.
-        """
+        """Public-facing helper that ensures defaults exist before returning the next slot."""
         self._ensure_defaults()
         return self._next_order_index()
 
@@ -224,18 +209,14 @@ class RoomCategoryService:
         return max(0, min(desired_index, total))
 
     def _clear_default_marker(self) -> None:
-        """
-        Clear the default flag from whichever category currently holds it.
-        """
+        """Clear the default flag from whichever category currently holds it."""
         self.room.room_categories.filter(is_default=True).update(is_default=False)
 
     def _ensure_default_exists(self) -> RoomCategory | None:
-        """
-        Guarantee there is always a default RoomCategory by promoting the first item if needed.
-        """
+        """Guarantee there is always a default RoomCategory by promoting the first item if needed."""
         # Short-circuit if someone else already marked a default (common after create/update).
         if self.room.room_categories.filter(is_default=True).exists():
-            return
+            return None
         first = self.room.room_categories.order_by("order_index", "id").first()
         if first:
             first.is_default = True
@@ -244,9 +225,7 @@ class RoomCategoryService:
         return None
 
     def _build_unique_slug(self, name: str) -> str:
-        """
-        Generate a slugified identifier for a new Category, avoiding collisions.
-        """
+        """Generate a slugified identifier for a new Category, avoiding collisions."""
         base_slug = slugify(name) or "category"
         candidate = base_slug
         counter = 1

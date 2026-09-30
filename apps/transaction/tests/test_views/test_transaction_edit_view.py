@@ -17,7 +17,9 @@ pytestmark = pytest.mark.django_db
 
 def _extract_total_input_attributes(response):
     response_html = response.content.decode()
-    input_tag_match = re.search(r'<input\b[^>]*id=(?:["\']?)total_value_input(?:["\']?)[^>]*>', response_html, re.S)
+    input_tag_match = re.search(
+        r'<input\b[^>]*id=(?:["\']?)total_value_input(?:["\']?)[^>]*>', response_html, re.DOTALL
+    )
     if not input_tag_match:
         error_msg = (
             "Unable to locate the total value input in the edit form response. "
@@ -29,7 +31,8 @@ def _extract_total_input_attributes(response):
     value_match = re.search(r'value=(?:["\']?)([^"\'>\s]*)(?:["\']?)', input_tag)
     initial_match = re.search(r'data-initial-total=(?:["\']?)([^"\'>\s]*)(?:["\']?)', input_tag)
 
-    assert value_match and initial_match, "Expected both value and data-initial-total attributes on the total input."
+    assert value_match, "Expected a value attribute on the total input."
+    assert initial_match, "Expected a data-initial-total attribute on the total input."
 
     return value_match.group(1), initial_match.group(1)
 
@@ -200,7 +203,7 @@ class TestTransactionEditView:
         assert amount_values == expected_values
 
     @pytest.mark.parametrize(
-        "initial_total_override, child_total_value, expected_formatted",
+        ("initial_total_override", "child_total_value", "expected_formatted"),
         _INITIAL_TOTAL_VARIATIONS,
     )
     def test_total_input_formats_edge_initial_totals(
@@ -214,8 +217,10 @@ class TestTransactionEditView:
         child_total_value,
         expected_formatted,
     ):
-        """Settlement-critical totals must re-render as two-decimal strings even when the form's stored total arrives
-        as None, zero, or empty."""
+        """Settlement-critical totals must re-render as two-decimal strings.
+
+        This holds even when the form's stored total arrives as None, zero, or empty.
+        """
         value_attr, sanitized_initial = _request_total_input_attributes(
             authenticated_client,
             room,
@@ -229,7 +234,7 @@ class TestTransactionEditView:
         assert sanitized_initial == expected_formatted
 
     @pytest.mark.parametrize(
-        "initial_total_override, child_total_value, expected_formatted",
+        ("initial_total_override", "child_total_value", "expected_formatted"),
         _INITIAL_TOTAL_VARIATIONS,
     )
     def test_lock_state_dataset_matches_formatted_total(
@@ -243,8 +248,10 @@ class TestTransactionEditView:
         child_total_value,
         expected_formatted,
     ):
-        """The lock-state script (Safari/Augmented iOS flow) reads the formatted dataset, so it must match the
-        rendered total for these edge cases."""
+        """The lock-state script (Safari/Augmented iOS flow) reads the formatted dataset.
+
+        It must match the rendered total for these edge cases.
+        """
         value_attr, sanitized_initial = _request_total_input_attributes(
             authenticated_client,
             room,

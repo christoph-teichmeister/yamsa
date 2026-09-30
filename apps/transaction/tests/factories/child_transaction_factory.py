@@ -14,4 +14,4 @@ class ChildTransactionFactory(factory.django.DjangoModelFactory):
 
     parent_transaction = SubFactory(ParentTransactionFactory)
     paid_for = SubFactory(UserFactory)
-    value = Decimal("5")
+    value = Decimal(5)
