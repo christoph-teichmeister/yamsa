@@ -45,7 +45,7 @@ services:
     restart: "no"
 
   mailhog:
-    image: axllent/mailpit:v1.31
+    image: axllent/mailpit:v1.31.3
     networks:
       default:
         aliases:
