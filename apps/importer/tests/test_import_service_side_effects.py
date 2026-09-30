@@ -35,7 +35,7 @@ class TestImportServiceSideEffects:
             )
         return service, result
 
-    def test_existing_user_is_not_connected_inside_the_atomic_block(self, db, user, currency, parsed):
+    def test_existing_user_is_not_connected_inside_the_atomic_block(self, db, user, currency, parsed) -> None:
         existing = UserFactory(name="Elisabeth")
 
         _service, result = self._run(parsed=parsed, user=user, currency=currency, existing=existing)
@@ -43,7 +43,7 @@ class TestImportServiceSideEffects:
         assert result.deferred_connections == [existing]
         assert not UserConnectionToRoom.objects.filter(room=result.room, user=existing).exists()
 
-    def test_no_mail_is_sent_while_the_transaction_is_open(self, db, user, currency, parsed):
+    def test_no_mail_is_sent_while_the_transaction_is_open(self, db, user, currency, parsed) -> None:
         existing = UserFactory(name="Elisabeth")
         mail.outbox.clear()
 
@@ -51,7 +51,7 @@ class TestImportServiceSideEffects:
 
         assert mail.outbox == []
 
-    def test_connecting_afterwards_completes_the_membership(self, db, user, currency, parsed):
+    def test_connecting_afterwards_completes_the_membership(self, db, user, currency, parsed) -> None:
         existing = UserFactory(name="Elisabeth")
 
         service, result = self._run(parsed=parsed, user=user, currency=currency, existing=existing)
@@ -61,7 +61,7 @@ class TestImportServiceSideEffects:
         assert UserConnectionToRoom.objects.filter(room=result.room, user=existing).exists()
         assert result.room.users.count() == 2
 
-    def test_guests_are_still_connected_inside_the_service(self, db, user, currency, parsed, run_import):
+    def test_guests_are_still_connected_inside_the_service(self, db, user, currency, parsed, run_import) -> None:
         # Both handlers return early for guests, so those connections are safe in the block.
         result = run_import(parsed=parsed, user=user, currency=currency)
 

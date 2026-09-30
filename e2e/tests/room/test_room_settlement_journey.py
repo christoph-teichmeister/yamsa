@@ -20,7 +20,7 @@ GUEST_NAME = "Alex aus der Küche"
 
 
 @pytest.fixture
-def catalog(transactional_db):
+def catalog(transactional_db) -> None:
     # The transactional database flushes what the migrations seeded. A room created through the
     # UI links the base categories on first use, so they have to exist before it does.
     CurrencyFactory(code="EUR", sign="€")
@@ -38,7 +38,9 @@ class TestRoomSettlementJourney:
     other - above all that an expense entered in the form becomes a debt the guest can settle.
     """
 
-    def test_a_room_is_created_shared_settled_and_closed(self, catalog, profile_user, page, base_url, new_context):
+    def test_a_room_is_created_shared_settled_and_closed(
+        self, catalog, profile_user, page, base_url, new_context
+    ) -> None:
         _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
         create_page = RoomCreatePage(page, base_url, reverse("room:create"))

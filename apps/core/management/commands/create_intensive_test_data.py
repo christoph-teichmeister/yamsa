@@ -65,14 +65,14 @@ class Command(BaseCommand):
 
     help = "Creates an intensive set of test data (same users as restore_test_data, many more rooms/transactions/debts)"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser) -> None:
         parser.add_argument(
             "--force",
             action="store_true",
             help="Force creation of intensive test data even in production environments",
         )
 
-    def handle(self, *args: object, **options: object):
+    def handle(self, *args: object, **options: object) -> None:
         # Check if we're in a safe environment
         if not settings.DEBUG and not options.get("force"):
             msg = (

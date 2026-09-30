@@ -9,5 +9,5 @@ class ChildTransactionInline(admin.TabularInline):
     fields = ("value", "paid_for")
     readonly_fields = fields
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, request, obj=None) -> bool:
         return False

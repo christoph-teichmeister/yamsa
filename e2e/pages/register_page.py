@@ -2,7 +2,7 @@ from e2e.pages.base_page import BasePage
 
 
 class RegisterPage(BasePage):
-    def register(self, *, name: str, email: str | None, password: str):
+    def register(self, *, name: str, email: str | None, password: str) -> None:
         self.page.locator("#name").fill(name)
         if email is not None:
             self.page.locator("#email").fill(email)

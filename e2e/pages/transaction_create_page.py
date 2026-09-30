@@ -1,4 +1,4 @@
-from playwright.sync_api import Locator, expect
+from playwright.sync_api import Locator, Page, expect
 
 from e2e.pages.base_page import BasePage
 
@@ -11,48 +11,48 @@ class TransactionCreatePage(BasePage):
     """
 
     @property
-    def description_input(self):
+    def description_input(self) -> Locator:
         return self.page.locator("#description")
 
     @property
-    def category_field(self):
+    def category_field(self) -> Locator:
         return self.page.locator("[data-category-field]")
 
     @property
-    def suggestion_hint(self):
+    def suggestion_hint(self) -> Locator:
         return self.category_field.locator("[data-category-suggestion-hint]")
 
-    def radio_for(self, category_slug: str):
+    def radio_for(self, category_slug: str) -> Locator:
         return self.category_field.locator(f"input[data-category-slug='{category_slug}']")
 
-    def expect_categories_visible(self):
+    def expect_categories_visible(self) -> None:
         expect(self.category_field).to_be_visible()
         expect(self.category_field.locator("label[data-category-slug]").first).to_be_visible()
 
-    def expect_no_category_selected(self):
+    def expect_no_category_selected(self) -> None:
         expect(self.category_field.locator("input[type='radio']:checked")).to_have_count(0)
 
-    def expect_selected_category(self, category_slug: str):
+    def expect_selected_category(self, category_slug: str) -> None:
         expect(self.radio_for(category_slug)).to_be_checked()
 
-    def expect_suggestion_hint_visible(self, *, visible: bool):
+    def expect_suggestion_hint_visible(self, *, visible: bool) -> None:
         if visible:
             expect(self.suggestion_hint).to_be_visible()
         else:
             expect(self.suggestion_hint).to_be_hidden()
 
-    def type_description(self, text: str):
+    def type_description(self, text: str) -> None:
         self.description_input.fill(text)
 
-    def choose_category(self, category_slug: str):
+    def choose_category(self, category_slug: str) -> None:
         # The radio is stretched over the chip at opacity 0, so the click goes to the label.
         self.category_field.locator(f"label[data-category-slug='{category_slug}']").click()
 
-    def fill_required_fields(self, *, description: str, amount: str):
+    def fill_required_fields(self, *, description: str, amount: str) -> None:
         self.type_description(description)
         self.set_total(amount)
 
-    def set_total(self, amount: str):
+    def set_total(self, amount: str) -> None:
         self.page.locator("#total_value_input").fill(amount)
 
     def shares(self) -> dict[str, str]:
@@ -70,7 +70,7 @@ class TransactionCreatePage(BasePage):
             )
         )
 
-    def expect_shares(self, expected: dict[str, str]):
+    def expect_shares(self, expected: dict[str, str]) -> None:
         # Per row through expect() rather than one comparison of shares(): a removal rebalances
         # on the next tick, so the amounts may still be settling when this is called.
         expect(self.page.locator(".split-row")).to_have_count(len(expected))
@@ -82,32 +82,32 @@ class TransactionCreatePage(BasePage):
         names = list(self.shares())
         return self.page.locator(".split-row").nth(names.index(participant))
 
-    def set_share(self, participant: str, amount: str):
+    def set_share(self, participant: str, amount: str) -> None:
         self._row_for(participant).locator("input[name='value']").fill(amount)
 
-    def remove_share(self, participant: str):
+    def remove_share(self, participant: str) -> None:
         self._row_for(participant).get_by_role("button", name="Remove this share").click()
 
-    def add_participant(self, participant: str):
+    def add_participant(self, participant: str) -> None:
         rows = self.page.locator(".split-row")
         row_count = rows.count()
         self.page.get_by_role("button", name="Add participant").click()
         expect(rows).to_have_count(row_count + 1)
         rows.last.locator("select[name='paid_for']").select_option(label=participant)
 
-    def submit(self):
+    def submit(self) -> None:
         self.page.get_by_role("button", name="Add transaction").click()
 
-    def open_category_manager(self):
+    def open_category_manager(self) -> Page:
         with self.page.context.expect_page() as new_page:
             self.category_field.get_by_role("link", name="Manage categories").click()
         return new_page.value
 
-    def expect_category_reported_as_missing(self):
+    def expect_category_reported_as_missing(self) -> None:
         # No chip is checked, so the browser blocks the submit on the radio group's own
         # constraint rather than letting the request through.
         missing = self.radio_for_any().evaluate("radio => radio.validity.valueMissing")
         assert missing, "Expected the category radio group to report a missing value."
 
-    def radio_for_any(self):
+    def radio_for_any(self) -> Locator:
         return self.category_field.locator("input[type='radio']").first

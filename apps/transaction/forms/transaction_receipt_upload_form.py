@@ -1,6 +1,7 @@
 import mimetypes
 
 from django import forms
+from django.core.files.uploadedfile import UploadedFile
 
 from apps.transaction.forms.transaction_create_form import (
     MAX_RECEIPT_SIZE,
@@ -25,7 +26,7 @@ class TransactionReceiptUploadForm(forms.Form):
         self._request = request
         super().__init__(*args, **kwargs)
 
-    def clean_receipt(self):
+    def clean_receipt(self) -> UploadedFile | None:
         uploaded_file = self.cleaned_data.get("receipt")
         if not uploaded_file:
             return uploaded_file
@@ -51,7 +52,7 @@ class TransactionReceiptUploadForm(forms.Form):
 
         return uploaded_file
 
-    def save(self, parent_transaction):
+    def save(self, parent_transaction) -> Receipt:
         receipt_file = self.cleaned_data["receipt"]
         uploader = getattr(self._request, "user", None)
         return Receipt.objects.create(

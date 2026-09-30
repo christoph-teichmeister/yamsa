@@ -10,7 +10,7 @@ from apps.mail.services.forgot_password_mail_service import ForgotPasswordEmailS
 
 @pytest.mark.django_db
 class TestSendForgotPasswordEmailHandler:
-    def test_regular(self, user):
+    def test_regular(self, user) -> None:
         context = {"user": user}
 
         with (

@@ -4,6 +4,7 @@ import pytest
 from django.http import HttpResponse
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
 from apps.debt.models import Debt
 from apps.importer.tests.factories import build_upload
@@ -42,12 +43,12 @@ class TestImportSideEffectOrdering:
         return client.post(reverse("importer:preview"), data=payload)
 
     @pytest.fixture
-    def friend(self, db, user, room):
+    def friend(self, db, user, room) -> User:
         existing = UserFactory(name="Elisabeth")
         room.users.add(existing)
         return existing
 
-    def test_debts_survive_a_failing_connection_mail(self, db, authenticated_client, currency, friend):
+    def test_debts_survive_a_failing_connection_mail(self, db, authenticated_client, currency, friend) -> None:
         target = "apps.mail.services.user_added_to_room_mail_service.UserAddedToRoomEmailService.process"
         with mock.patch(target, side_effect=OSError("SMTP down")), pytest.raises(OSError, match="SMTP down"):
             self._import(authenticated_client, currency, friend)
@@ -57,7 +58,7 @@ class TestImportSideEffectOrdering:
         # The whole point: the room is not left with transactions and no debts.
         assert Debt.objects.filter(room=imported_room, settled=False).exists()
 
-    def test_a_healthy_import_connects_everyone(self, db, authenticated_client, currency, friend):
+    def test_a_healthy_import_connects_everyone(self, db, authenticated_client, currency, friend) -> None:
         response = self._import(authenticated_client, currency, friend)
 
         imported_room = Room.objects.get(name="Kilian & Elisabeth")

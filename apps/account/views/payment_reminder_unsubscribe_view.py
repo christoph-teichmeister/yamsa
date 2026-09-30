@@ -23,7 +23,7 @@ REMINDER_VARIANT_SUCCESS_MESSAGE = {
 class PaymentReminderUnsubscribeView(generic.TemplateView):
     template_name = "account/payment_reminder_unsubscribe.html"
 
-    def get_context_data(self, **kwargs: object):
+    def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
         context.setdefault("success", False)
         context.setdefault("message", "Unable to process the unsubscribe request.")

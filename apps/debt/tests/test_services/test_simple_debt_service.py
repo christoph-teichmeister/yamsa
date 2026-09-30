@@ -11,10 +11,10 @@ pytestmark = pytest.mark.django_db
 
 
 class TestSimpleDebtService:
-    def test_returns_no_rows_without_transactions(self, room, user):
+    def test_returns_no_rows_without_transactions(self, room, user) -> None:
         assert SimpleDebtService.get_rows(room_id=room.id, viewer_id=user.id) == []
 
-    def test_row_points_from_the_covered_user_to_the_payer(self, room, user, guest_user):
+    def test_row_points_from_the_covered_user_to_the_payer(self, room, user, guest_user) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
 
         rows = SimpleDebtService.get_rows(room_id=room.id, viewer_id=user.id)
@@ -28,7 +28,7 @@ class TestSimpleDebtService:
         assert row.viewer_is_debitor is False
         assert row.viewer_is_creditor is True
 
-    def test_shares_the_payer_covered_for_themselves_are_no_debt(self, room, user, guest_user):
+    def test_shares_the_payer_covered_for_themselves_are_no_debt(self, room, user, guest_user) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(user, guest_user))
 
         rows = SimpleDebtService.get_rows(room_id=room.id, viewer_id=user.id)
@@ -36,7 +36,7 @@ class TestSimpleDebtService:
         assert len(rows) == 1
         assert rows[0].debitor == guest_user
 
-    def test_amounts_of_the_same_pair_are_summed_within_a_currency(self, room, user, guest_user):
+    def test_amounts_of_the_same_pair_are_summed_within_a_currency(self, room, user, guest_user) -> None:
         currency = CurrencyFactory()
         for _ in range(2):
             create_parent_transaction_with_optimisation(
@@ -51,7 +51,7 @@ class TestSimpleDebtService:
         assert len(rows) == 1
         assert rows[0].value == Decimal(26)
 
-    def test_amounts_of_the_same_pair_stay_separate_across_currencies(self, room, user, guest_user):
+    def test_amounts_of_the_same_pair_stay_separate_across_currencies(self, room, user, guest_user) -> None:
         """The project has no exchange rates, so amounts of two currencies must never be added up."""
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
@@ -62,7 +62,7 @@ class TestSimpleDebtService:
         assert {row.value for row in rows} == {Decimal(13)}
         assert len({row.currency.id for row in rows}) == 2
 
-    def test_opposing_debts_of_a_pair_stay_separate_rows(self, room, user, guest_user):
+    def test_opposing_debts_of_a_pair_stay_separate_rows(self, room, user, guest_user) -> None:
         """The unoptimised view must not net anything - that is exactly what it contrasts with."""
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
         create_parent_transaction_with_optimisation(room=room, paid_by=guest_user, paid_for_tuple=(user,))
@@ -75,7 +75,7 @@ class TestSimpleDebtService:
             (user.id, guest_user.id),
         }
 
-    def test_rows_ignore_settlements_of_the_optimised_debts(self, room, user, guest_user):
+    def test_rows_ignore_settlements_of_the_optimised_debts(self, room, user, guest_user) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
         debt = room.debts.get()
         debt.settled = True
@@ -87,7 +87,7 @@ class TestSimpleDebtService:
         assert rows[0].settled is False
         assert rows[0].value == Decimal(13)
 
-    def test_rows_are_ordered_by_debitor_name(self, room, user, guest_user):
+    def test_rows_are_ordered_by_debitor_name(self, room, user, guest_user) -> None:
         early_debitor = UserFactory(name="Aaron")
         late_debitor = UserFactory(name="Zoe")
         room.users.add(early_debitor, late_debitor)

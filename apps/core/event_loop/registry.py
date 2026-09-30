@@ -14,7 +14,7 @@ class MessageRegistry:
         self.command_dict: dict = {}
         self.event_dict: dict = {}
 
-    def register_command(self, command: Command):
+    def register_command(self, command: Command) -> Callable:
         def decorator(decoratee) -> Callable:
             # Ensure that registered message is of correct type
             if not (issubclass(command, Command)):
@@ -35,7 +35,7 @@ class MessageRegistry:
 
         return decorator
 
-    def register_event(self, event: Event):
+    def register_event(self, event: Event) -> Callable:
         def decorator(decoratee) -> Callable:
             # Ensure that registered message is of correct type
             if not (issubclass(event, Event)):
@@ -56,7 +56,7 @@ class MessageRegistry:
 
         return decorator
 
-    def autodiscover(self):
+    def autodiscover(self) -> None:
         """Detects message registries which have been registered via the "register_*" decorator."""
         if len(self.command_dict) + len(self.event_dict) > 0:
             return

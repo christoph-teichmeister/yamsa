@@ -31,7 +31,7 @@ class EditUserForm(ModelForm):
             "wants_to_receive_room_reminders": _("Receive room reminder emails"),
         }
 
-    def save(self, commit=True):
+    def save(self, commit=True) -> User:
         # Remove stored webpush subscriptions when the user explicitly opts out.
         if self.cleaned_data["wants_to_receive_webpush_notifications"] is False:
             self.instance.webpush_infos.all().delete()

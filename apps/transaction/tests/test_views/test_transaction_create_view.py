@@ -25,7 +25,7 @@ pytestmark = pytest.mark.django_db
 
 class TestTransactionCreateView:
     @freeze_time("2020-04-04 4:20:00")
-    def test_post_regular(self, authenticated_client, room, user):
+    def test_post_regular(self, authenticated_client, room, user) -> None:
         assert room.users.count() > 1, "This test requires more than one participant in the room"
         members = list(room.users.all())
 
@@ -62,7 +62,7 @@ class TestTransactionCreateView:
             assert qs.exists()
 
     @freeze_time("2020-04-04 4:20:00")
-    def test_post_with_unequal_shares(self, authenticated_client, room, user):
+    def test_post_with_unequal_shares(self, authenticated_client, room, user) -> None:
         assert room.users.count() > 1, "This test requires more than one participant in the room"
         members = list(room.users.all())
         first_member, *rest_members = members
@@ -96,7 +96,7 @@ class TestTransactionCreateView:
         for member in rest_members:
             assert ChildTransaction.objects.filter(paid_for=member, value=rest_share).exists()
 
-    def test_get_renders_a_chip_per_category_without_preselecting_one(self, authenticated_client, room):
+    def test_get_renders_a_chip_per_category_without_preselecting_one(self, authenticated_client, room) -> None:
         response = authenticated_client.get(reverse("transaction:create", kwargs={"room_slug": room.slug}))
         category_field = self._category_field(response)
 
@@ -115,20 +115,20 @@ class TestTransactionCreateView:
         soup = BeautifulSoup(response.content.decode(), "html.parser")
         return soup.select_one("[data-category-field]")
 
-    def test_get_offers_a_way_into_the_category_manager(self, authenticated_client, room):
+    def test_get_offers_a_way_into_the_category_manager(self, authenticated_client, room) -> None:
         response = authenticated_client.get(reverse("transaction:create", kwargs={"room_slug": room.slug}))
 
         manager_url = reverse("transaction:category-manager", kwargs={"room_slug": room.slug})
         assert manager_url in response.content.decode()
 
-    def test_get_exposes_the_category_suggestion_index(self, authenticated_client, room):
+    def test_get_exposes_the_category_suggestion_index(self, authenticated_client, room) -> None:
         response = authenticated_client.get(reverse("transaction:create", kwargs={"room_slug": room.slug}))
 
         index = json.loads(response.context_data["category_suggestion_index"])
         assert index["rewe"] == Category.objects.get(slug="groceries").id
         assert "data-category-suggestion-index" in response.content.decode()
 
-    def test_post_without_a_category_is_rejected(self, authenticated_client, room, user):
+    def test_post_without_a_category_is_rejected(self, authenticated_client, room, user) -> None:
         members = list(room.users.all())
         response = authenticated_client.post(
             reverse("transaction:create", kwargs={"room_slug": room.slug}),
@@ -149,7 +149,7 @@ class TestTransactionCreateView:
         assert response.status_code == http.HTTPStatus.OK
         assert not ParentTransaction.objects.filter(description="Uncategorised").exists()
 
-    def test_post_closed_room_is_rejected(self, authenticated_client, closed_room, user):
+    def test_post_closed_room_is_rejected(self, authenticated_client, closed_room, user) -> None:
         members = list(closed_room.users.all())
         response = authenticated_client.post(
             reverse("transaction:create", kwargs={"room_slug": closed_room.slug}),
@@ -189,7 +189,7 @@ class TestTransactionCreateView:
         payload.update(overrides)
         return payload
 
-    def test_the_form_carries_a_name_for_the_submission(self, authenticated_client, room):
+    def test_the_form_carries_a_name_for_the_submission(self, authenticated_client, room) -> None:
         """Minted server-side, so a submission that never reaches JavaScript carries one too."""
         response = authenticated_client.get(reverse("transaction:create", kwargs={"room_slug": room.slug}))
 
@@ -197,7 +197,7 @@ class TestTransactionCreateView:
         assert field is not None
         assert uuid.UUID(field["value"])
 
-    def test_replaying_a_submission_books_the_expense_once(self, authenticated_client, room, user):
+    def test_replaying_a_submission_books_the_expense_once(self, authenticated_client, room, user) -> None:
         """What an offline queue does when the first attempt reached the server after all."""
         url = reverse("transaction:create", kwargs={"room_slug": room.slug})
         client_request_id = str(uuid.uuid4())
@@ -214,7 +214,7 @@ class TestTransactionCreateView:
         # Debts were recalculated and everyone was notified when it was created.
         replayed_message.assert_not_called()
 
-    def test_a_replay_adds_no_second_split(self, authenticated_client, room, user):
+    def test_a_replay_adds_no_second_split(self, authenticated_client, room, user) -> None:
         url = reverse("transaction:create", kwargs={"room_slug": room.slug})
         payload = self._valid_payload(room, user, client_request_id=str(uuid.uuid4()))
 
@@ -223,7 +223,7 @@ class TestTransactionCreateView:
 
         assert ChildTransaction.objects.count() == room.users.count()
 
-    def test_two_submissions_of_the_same_expense_are_both_booked(self, authenticated_client, room, user):
+    def test_two_submissions_of_the_same_expense_are_both_booked(self, authenticated_client, room, user) -> None:
         """Only a replay of one submission is folded away, not a visitor entering it twice."""
         url = reverse("transaction:create", kwargs={"room_slug": room.slug})
 
@@ -232,7 +232,7 @@ class TestTransactionCreateView:
 
         assert ParentTransaction.objects.filter(description="My description").count() == 2
 
-    def test_a_replay_that_slips_past_the_check_is_still_booked_once(self, authenticated_client, room, user):
+    def test_a_replay_that_slips_past_the_check_is_still_booked_once(self, authenticated_client, room, user) -> None:
         """The unique index is the guarantee, not the lookup - two replays can race each other.
 
         Blinding the lookup is how the test reaches the path that a real race takes, where the
@@ -249,7 +249,7 @@ class TestTransactionCreateView:
         assert response.status_code == http.HTTPStatus.FOUND
         assert ParentTransaction.objects.filter(description="My description").count() == 1
 
-    def test_a_submission_without_a_name_is_still_booked(self, authenticated_client, room, user):
+    def test_a_submission_without_a_name_is_still_booked(self, authenticated_client, room, user) -> None:
         """The field is the client's to send; a form posted without it may not be refused."""
         url = reverse("transaction:create", kwargs={"room_slug": room.slug})
 
@@ -258,7 +258,7 @@ class TestTransactionCreateView:
         assert response.status_code == http.HTTPStatus.FOUND
         assert ParentTransaction.objects.filter(description="My description").count() == 1
 
-    def test_an_unusable_name_does_not_cost_the_expense(self, authenticated_client, room, user):
+    def test_an_unusable_name_does_not_cost_the_expense(self, authenticated_client, room, user) -> None:
         url = reverse("transaction:create", kwargs={"room_slug": room.slug})
 
         response = authenticated_client.post(url, data=self._valid_payload(room, user, client_request_id="nonsense"))
@@ -266,7 +266,7 @@ class TestTransactionCreateView:
         assert response.status_code == http.HTTPStatus.FOUND
         assert ParentTransaction.objects.filter(description="My description").count() == 1
 
-    def test_form_valid_fires_handle_message_outside_atomic(self):
+    def test_form_valid_fires_handle_message_outside_atomic(self) -> None:
         """Regression test for #333.
 
         handle_message must be called from form_valid, not from inside form.save() (which runs

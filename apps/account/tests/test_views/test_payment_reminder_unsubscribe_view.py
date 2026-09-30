@@ -12,7 +12,7 @@ from apps.account.utils.notification_preferences import (
 pytestmark = pytest.mark.django_db
 
 
-def test_valid_token_unsubscribes_user(client, user):
+def test_valid_token_unsubscribes_user(client, user) -> None:
     url = build_payment_reminder_unsubscribe_url(user)
     query = parse_qs(urlparse(url).query)
     token = query["token"][0]
@@ -26,7 +26,7 @@ def test_valid_token_unsubscribes_user(client, user):
     assert "You are no longer subscribed to payment reminder emails." in response.content.decode()
 
 
-def test_room_variant_unsubscribes_room_reminders(client, user):
+def test_room_variant_unsubscribes_room_reminders(client, user) -> None:
     url = build_payment_reminder_unsubscribe_url(user, variant=ROOM_REMINDER_VARIANT)
     query = parse_qs(urlparse(url).query)
     token = query["token"][0]
@@ -45,7 +45,7 @@ def test_room_variant_unsubscribes_room_reminders(client, user):
     assert "You are no longer receiving room reminders." in response.content.decode()
 
 
-def test_invalid_token_shows_error_message(client, user):
+def test_invalid_token_shows_error_message(client, user) -> None:
     response = client.get(f"{reverse('account:payment-reminder-unsubscribe')}?token=invalid-token")
 
     user.refresh_from_db()

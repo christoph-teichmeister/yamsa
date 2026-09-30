@@ -5,13 +5,13 @@ from apps.importer.parsers.splitwise import SplitwiseCsvParser
 from apps.importer.tests.factories import build_file_like
 
 
-def parse(rows, header=None):
+def parse(rows, header=None) -> ParsedImport:
     kwargs = {"header": header} if header else {}
     return SplitwiseCsvParser().parse(build_file_like(rows, **kwargs))
 
 
 class TestSplitwiseCsvParserSerialisation:
-    def test_parsed_import_survives_a_json_round_trip(self):
+    def test_parsed_import_survives_a_json_round_trip(self) -> None:
         result = parse(
             [
                 "2023-03-06,Ikea,Möbel,72.97,EUR,72.97,-72.97",

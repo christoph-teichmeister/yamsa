@@ -15,7 +15,7 @@ pytestmark = pytest.mark.django_db
 class TestTransactionFeedView:
     def test_feed_shows_the_picture_of_a_payer_who_has_one(
         self, client, room, user, guest_user, attach_profile_picture
-    ):
+    ) -> None:
         attach_profile_picture(user)
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
         client.force_login(user)
@@ -30,7 +30,7 @@ class TestTransactionFeedView:
         assert avatar is not None
         assert avatar.find("img")["src"] == user.avatar_url
 
-    def test_feed_falls_back_to_the_initial_of_a_payer_without_a_picture(self, client, room, user, guest_user):
+    def test_feed_falls_back_to_the_initial_of_a_payer_without_a_picture(self, client, room, user, guest_user) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=guest_user, paid_for_tuple=(user,))
         client.force_login(user)
 
@@ -45,7 +45,7 @@ class TestTransactionFeedView:
         assert avatar.find("img") is None
         assert avatar.get_text(strip=True) == guest_user.name[:1].upper()
 
-    def test_transaction_feed_displays_no_matches_message(self, client, room, user, guest_user):
+    def test_transaction_feed_displays_no_matches_message(self, client, room, user, guest_user) -> None:
         create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -63,7 +63,7 @@ class TestTransactionFeedView:
         content = response.content.decode()
         assert 'No transactions match "missing".' in content
 
-    def test_feed_filters_by_category(self, authenticated_client, room, user, guest_user):
+    def test_feed_filters_by_category(self, authenticated_client, room, user, guest_user) -> None:
         groceries = Category.objects.get(slug="groceries")
         transport = Category.objects.get(slug="transport")
         create_parent_transaction_with_optimisation(
@@ -90,7 +90,7 @@ class TestTransactionFeedView:
         assert "Weekly groceries" in content
         assert "Train ticket" not in content
 
-    def test_feed_filters_by_currency(self, authenticated_client, room, user, guest_user):
+    def test_feed_filters_by_currency(self, authenticated_client, room, user, guest_user) -> None:
         other_currency = CurrencyFactory(code="ALT")
         create_parent_transaction_with_optimisation(
             room=room,
@@ -116,7 +116,7 @@ class TestTransactionFeedView:
         assert "Foreign currency spend" in content
         assert "Preferred currency spend" not in content
 
-    def test_feed_displays_filter_specific_empty_message(self, authenticated_client, room, user, guest_user):
+    def test_feed_displays_filter_specific_empty_message(self, authenticated_client, room, user, guest_user) -> None:
         transport = Category.objects.get(slug="transport")
         create_parent_transaction_with_optimisation(
             room=room,
@@ -134,7 +134,7 @@ class TestTransactionFeedView:
         assert response.status_code == http.HTTPStatus.OK
         assert "No transactions match the active filter." in response.content.decode()
 
-    def test_feed_keeps_filters_on_the_next_batch_link(self, authenticated_client, room, user, guest_user):
+    def test_feed_keeps_filters_on_the_next_batch_link(self, authenticated_client, room, user, guest_user) -> None:
         groceries = Category.objects.get(slug="groceries")
         for index in range(TRANSACTION_FEED_PAGE_SIZE):
             create_parent_transaction_with_optimisation(
@@ -156,7 +156,7 @@ class TestTransactionFeedView:
         assert next_batch_trigger is not None
         assert f"category={groceries.slug}" in next_batch_trigger["hx-get"]
 
-    def test_feed_combines_search_and_category_filter(self, authenticated_client, room, user, guest_user):
+    def test_feed_combines_search_and_category_filter(self, authenticated_client, room, user, guest_user) -> None:
         groceries = Category.objects.get(slug="groceries")
         transport = Category.objects.get(slug="transport")
         for description, category in (
@@ -184,7 +184,7 @@ class TestTransactionFeedView:
         assert "Market ticket" not in content
         assert "Corner shop groceries" not in content
 
-    def test_feed_ignores_an_absurdly_long_filter_value(self, authenticated_client, room, user, guest_user):
+    def test_feed_ignores_an_absurdly_long_filter_value(self, authenticated_client, room, user, guest_user) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
 
         response = authenticated_client.get(

@@ -57,7 +57,7 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.narrow_category_field_to(room)
 
-    def clean(self):
+    def clean(self) -> dict:
         cleaned_data = super().clean()
         total_value = cleaned_data.get("total_value")
         paid_for_entries = cleaned_data.get("paid_for")
@@ -77,7 +77,7 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
 
         return cleaned_data
 
-    def clean_receipts(self):
+    def clean_receipts(self) -> list:
         field_name = self.add_prefix("receipts")
         uploaded_files = self.files.getlist(field_name)
         cleaned_files = []
@@ -124,7 +124,7 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
 
         return cleaned_files
 
-    def save(self, commit=True):
+    def save(self, commit=True) -> ParentTransaction:
         instance: ParentTransaction = super().save(commit)
 
         paid_for_entries = self.cleaned_data["paid_for"]

@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.urls import reverse
 from django.views import generic
 
@@ -15,7 +16,7 @@ class GuestSendInvitationEmailView(RoomNotClosedRequiredMixin, AccountBaseContex
     form_class = GuestSendInvitationEmailForm
     context_object_name = "user"
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponse:
         form_valid = super().form_valid(form)
 
         handle_message(
@@ -30,5 +31,5 @@ class GuestSendInvitationEmailView(RoomNotClosedRequiredMixin, AccountBaseContex
 
         return form_valid
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(viewname="account:list", kwargs={"room_slug": self.request.room.slug})

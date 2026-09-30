@@ -14,19 +14,19 @@ class NotificationSendTestService:
     def _load_notification_outbox(self) -> None:
         self._outbox = _notification_list
 
-    def empty(self):
+    def empty(self) -> None:
         _notification_list.clear()
         self._load_notification_outbox()
 
-    def all(self):
+    def all(self) -> list[TestNotification]:
         self._load_notification_outbox()
         return self._outbox
 
-    def first(self):
+    def first(self) -> TestNotification:
         self._load_notification_outbox()
         return self._outbox[0]
 
-    def filter(self, user=None, head=None, body=None, click_url=None):
+    def filter(self, user=None, head=None, body=None, click_url=None) -> list[TestNotification]:
         # Ensure that outbox is up-to-date
         self._load_notification_outbox()
 

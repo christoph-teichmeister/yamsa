@@ -11,12 +11,12 @@ class CategoryAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
     ordering = ("order_index", "id")
     list_filter = ("is_default",)
 
-    def get_actions(self, request):
+    def get_actions(self, request) -> dict:
         actions = super().get_actions(request)
         actions.pop("delete_selected", None)
         return actions
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, request, obj=None) -> bool:
         if obj and obj.is_default:
             return False
         return super().has_delete_permission(request, obj)

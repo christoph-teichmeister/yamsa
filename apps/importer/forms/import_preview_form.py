@@ -1,4 +1,7 @@
+from collections.abc import Iterator
+
 from django import forms
+from django.forms import BoundField
 from django.utils.translation import gettext_lazy as _
 
 from apps.account.models import User
@@ -78,11 +81,11 @@ class ImportPreviewForm(forms.Form):
                 max_length=CATEGORY_EMOJI_MAX_LENGTH, required=False, initial=category.suggested_emoji, label=_("Emoji")
             )
 
-    def person_rows(self):
+    def person_rows(self) -> Iterator[tuple[str, BoundField, BoundField]]:
         for index, person in enumerate(self.parsed.people):
             yield person, self[f"{PERSON_FIELD_PREFIX}{index}"], self[f"{PERSON_FIELD_PREFIX}{index}_name"]
 
-    def category_rows(self):
+    def category_rows(self) -> Iterator[tuple[object, BoundField, BoundField, BoundField]]:
         for index, category in enumerate(self.parsed.categories):
             yield (
                 category,
@@ -91,7 +94,7 @@ class ImportPreviewForm(forms.Form):
                 self[f"{CATEGORY_FIELD_PREFIX}{index}_emoji"],
             )
 
-    def clean(self):
+    def clean(self) -> dict:
         cleaned_data = super().clean()
         self._clean_people(cleaned_data)
         self._clean_categories(cleaned_data)

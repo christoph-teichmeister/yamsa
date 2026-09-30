@@ -4,12 +4,12 @@ from apps.core.services.pwa_cache_version_service import FALLBACK_VERSION, resol
 
 
 @override_settings(RELEASE="feature/offline@1.2.3")
-def test_the_release_is_sanitised_into_a_cache_name():
+def test_the_release_is_sanitised_into_a_cache_name() -> None:
     assert resolve_cache_version() == "feature-offline-1-2-3"
 
 
 @override_settings(RELEASE="")
-def test_without_a_release_the_assets_stand_in_for_one(tmp_path):
+def test_without_a_release_the_assets_stand_in_for_one(tmp_path) -> None:
     """A run from a working copy, or a host that does not name its builds."""
     stats_file = tmp_path / "webpack-stats.json"
     stats_file.write_text('{"status": "done"}', encoding="utf-8")
@@ -23,6 +23,6 @@ def test_without_a_release_the_assets_stand_in_for_one(tmp_path):
 
 
 @override_settings(RELEASE="", STATIC_ROOT="")
-def test_without_any_asset_input_the_version_stays_constant():
+def test_without_any_asset_input_the_version_stays_constant() -> None:
     with override_settings(WEBPACK_LOADER={"DEFAULT": {}}):
         assert resolve_cache_version() == FALLBACK_VERSION

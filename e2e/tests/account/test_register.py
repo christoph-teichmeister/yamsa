@@ -13,7 +13,7 @@ from e2e.pages.register_page import RegisterPage
 
 @pytest.mark.e2e
 class TestRegister:
-    def test_a_visitor_from_a_share_link_joins_the_room_by_registering(self, shared_room, page, base_url):
+    def test_a_visitor_from_a_share_link_joins_the_room_by_registering(self, shared_room, page, base_url) -> None:
         page.goto(f"{base_url}{reverse('room:share', kwargs={'share_hash': shared_room.share_hash})}")
         page.get_by_role("link", name="Create a free account").click()
 
@@ -26,7 +26,7 @@ class TestRegister:
 
     def test_a_guest_keeps_their_history_when_registering_from_the_invitation(
         self, shared_room, guest_user, profile_user, page, base_url
-    ):
+    ) -> None:
         shared_room.users.add(guest_user)
         Debt.objects.create(
             room=shared_room,

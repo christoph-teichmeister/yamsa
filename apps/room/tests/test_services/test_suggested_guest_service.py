@@ -10,7 +10,7 @@ from apps.room.services.suggested_guest_service import SuggestedGuestService
 @pytest.mark.django_db
 class TestSuggestedGuestService:
     @pytest.fixture(autouse=True)
-    def setup(self):
+    def setup(self) -> None:
         self.currency = CurrencyFactory()
         self.creator = UserFactory(is_guest=False)
         self.friendliest = UserFactory(is_guest=False)
@@ -40,7 +40,7 @@ class TestSuggestedGuestService:
 
         UserFriendship.objects.create(user=self.creator, friend=self.friendliest)
 
-    def test_service_returns_friend_first_and_counts_rooms(self):
+    def test_service_returns_friend_first_and_counts_rooms(self) -> None:
         suggestions = SuggestedGuestService(user=self.creator).get_suggested_guests()
 
         assert len(suggestions) >= 2

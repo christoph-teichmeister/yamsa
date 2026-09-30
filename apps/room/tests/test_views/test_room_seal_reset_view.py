@@ -15,7 +15,7 @@ def build_upload(file_name: str = "seal.png") -> SimpleUploadedFile:
 
 
 class TestRoomSealResetView:
-    def test_post_clears_both_the_icon_and_the_image(self, tmp_path, settings, authenticated_client, room):
+    def test_post_clears_both_the_icon_and_the_image(self, tmp_path, settings, authenticated_client, room) -> None:
         settings.MEDIA_ROOT = str(tmp_path)
         room.seal_icon = SEAL_ICONS[0]
         room.seal_image = build_upload()
@@ -28,7 +28,7 @@ class TestRoomSealResetView:
         assert room.seal_icon == ""
         assert not room.seal_image
 
-    def test_post_closed_room_is_rejected(self, authenticated_client, closed_room):
+    def test_post_closed_room_is_rejected(self, authenticated_client, closed_room) -> None:
         closed_room.seal_icon = SEAL_ICONS[0]
         closed_room.save(update_fields=["seal_icon"])
 

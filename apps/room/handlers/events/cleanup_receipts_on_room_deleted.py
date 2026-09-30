@@ -3,6 +3,6 @@ from apps.room.messages.events.room_hard_deleted import RoomHardDeleted
 
 
 @message_registry.register_event(event=RoomHardDeleted)
-def delete_receipt_files_on_room_deleted(context: RoomHardDeleted.Context):
+def delete_receipt_files_on_room_deleted(context: RoomHardDeleted.Context) -> None:
     for storage, name in context.receipt_storage_refs:
         storage.delete(name)

@@ -14,7 +14,7 @@ class TestImportCurrencyWarning:
     The preview has to say so before the user confirms.
     """
 
-    def test_unknown_codes_are_listed_in_the_preview(self, db, authenticated_client, currency):
+    def test_unknown_codes_are_listed_in_the_preview(self, db, authenticated_client, currency) -> None:
         redirect = authenticated_client.post(
             reverse("importer:upload"),
             data={"source": "splitwise-csv", "file": build_upload(MIXED_CURRENCY_ROWS)},
@@ -26,7 +26,7 @@ class TestImportCurrencyWarning:
         assert response.context["unknown_currency_codes"] == ["THB"]
         assert "THB" in response.content.decode()
 
-    def test_a_fully_known_file_shows_no_warning(self, db, authenticated_client, currency):
+    def test_a_fully_known_file_shows_no_warning(self, db, authenticated_client, currency) -> None:
         redirect = authenticated_client.post(
             reverse("importer:upload"),
             data={"source": "splitwise-csv", "file": build_upload(MIXED_CURRENCY_ROWS[:1])},

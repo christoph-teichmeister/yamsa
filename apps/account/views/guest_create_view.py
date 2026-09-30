@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
@@ -14,7 +15,7 @@ class GuestCreateView(RoomNotClosedRequiredMixin, AccountBaseContext, generic.Cr
     form_class = GuestCreateForm
     template_name = "account/create_guest.html"
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponse:
         created_guest: User = form.instance
 
         created_guest.created_at = timezone.now()
@@ -26,5 +27,5 @@ class GuestCreateView(RoomNotClosedRequiredMixin, AccountBaseContext, generic.Cr
 
         return response
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(viewname="account:list", kwargs={"room_slug": self.request.room.slug})

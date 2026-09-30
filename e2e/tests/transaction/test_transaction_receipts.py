@@ -1,11 +1,12 @@
 import base64
+from collections.abc import Callable
 
 import pytest
 from django.core.files.base import ContentFile
 from django.urls import reverse
 
 from apps.room.models import Room
-from apps.transaction.models import Receipt
+from apps.transaction.models import ParentTransaction, Receipt
 from apps.transaction.tests.factories import ParentTransactionFactory
 from e2e.pages.transaction_detail_page import TransactionDetailPage
 
@@ -16,14 +17,14 @@ ONE_PIXEL_PNG = base64.b64decode(
 
 
 @pytest.fixture
-def parent_transaction(room, profile_user):
+def parent_transaction(room, profile_user) -> ParentTransaction:
     return ParentTransactionFactory(
         room=room, paid_by=profile_user, currency=room.preferred_currency, description="Baumarkt"
     )
 
 
 @pytest.fixture
-def open_detail(page, base_url, room, parent_transaction, logged_in):
+def open_detail(page, base_url, room, parent_transaction, logged_in) -> Callable:
     def _open() -> TransactionDetailPage:
         logged_in()
         detail_page = TransactionDetailPage(
@@ -39,7 +40,9 @@ def open_detail(page, base_url, room, parent_transaction, logged_in):
 
 @pytest.mark.e2e
 class TestTransactionReceipts:
-    def test_an_uploaded_receipt_is_attached_to_the_transaction(self, open_detail, parent_transaction, profile_user):
+    def test_an_uploaded_receipt_is_attached_to_the_transaction(
+        self, open_detail, parent_transaction, profile_user
+    ) -> None:
         detail_page = open_detail()
         detail_page.expect_no_receipts()
 
@@ -53,7 +56,7 @@ class TestTransactionReceipts:
             profile_user,
         )
 
-    def test_a_file_that_is_no_receipt_is_rejected(self, open_detail, parent_transaction):
+    def test_a_file_that_is_no_receipt_is_rejected(self, open_detail, parent_transaction) -> None:
         detail_page = open_detail()
 
         detail_page.upload_receipt(name="notizen.txt", mime_type="text/plain", content=b"keine Quittung")
@@ -62,7 +65,7 @@ class TestTransactionReceipts:
         detail_page.expect_no_receipts()
         assert not Receipt.objects.filter(parent_transaction=parent_transaction).exists()
 
-    def test_the_uploader_can_delete_their_receipt(self, open_detail, parent_transaction):
+    def test_the_uploader_can_delete_their_receipt(self, open_detail, parent_transaction) -> None:
         detail_page = open_detail()
         detail_page.upload_receipt(name="kassenbon.png", mime_type="image/png", content=ONE_PIXEL_PNG)
         detail_page.expect_receipt("kassenbon.png")
@@ -72,7 +75,7 @@ class TestTransactionReceipts:
         detail_page.expect_no_receipts()
         assert not Receipt.objects.filter(parent_transaction=parent_transaction).exists()
 
-    def test_a_roommates_receipt_cannot_be_deleted(self, open_detail, parent_transaction, roommate):
+    def test_a_roommates_receipt_cannot_be_deleted(self, open_detail, parent_transaction, roommate) -> None:
         Receipt.objects.create(
             parent_transaction=parent_transaction,
             file=ContentFile(ONE_PIXEL_PNG, name="von-mitbewohner.png"),
@@ -86,7 +89,7 @@ class TestTransactionReceipts:
         detail_page.expect_receipt("von-mitbewohner.png")
         detail_page.expect_receipt_not_deletable("von-mitbewohner.png")
 
-    def test_a_closed_room_takes_no_more_receipts(self, open_detail, room):
+    def test_a_closed_room_takes_no_more_receipts(self, open_detail, room) -> None:
         Room.objects.filter(id=room.id).update(status=Room.StatusChoices.CLOSED)
 
         detail_page = open_detail()

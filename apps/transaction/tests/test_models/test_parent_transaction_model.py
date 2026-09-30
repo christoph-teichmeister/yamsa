@@ -8,7 +8,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestParentTransactionModel:
-    def test_parent_transaction_defaults_to_misc_category(self, user, room):
+    def test_parent_transaction_defaults_to_misc_category(self, user, room) -> None:
         currency = CurrencyFactory()
         transaction = ParentTransaction.objects.create(
             description="Default category check",

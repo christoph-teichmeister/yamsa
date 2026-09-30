@@ -10,7 +10,7 @@ from apps.core.event_loop.messages.message import Message
 pytestmark = pytest.mark.django_db
 
 
-def test_get_regular(authenticated_client):
+def test_get_regular(authenticated_client) -> None:
     response = authenticated_client.get(reverse("account:forgot-password"))
 
     assert response.status_code == http.HTTPStatus.OK
@@ -18,7 +18,7 @@ def test_get_regular(authenticated_client):
     assert "Forgot password" in response.content.decode()
 
 
-def test_post_regular(authenticated_client, user, monkeypatch):
+def test_post_regular(authenticated_client, user, monkeypatch) -> None:
     recorded_messages = []
 
     def handle_message(message) -> Message:
@@ -40,7 +40,7 @@ def test_post_regular(authenticated_client, user, monkeypatch):
     assert "Login" in response.content.decode()
 
 
-def test_post_email_invalid(authenticated_client):
+def test_post_email_invalid(authenticated_client) -> None:
     unknown_email = "unknown_email@local.local"
     response = authenticated_client.post(
         reverse("account:forgot-password"),

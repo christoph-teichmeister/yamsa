@@ -10,7 +10,7 @@ from e2e.tests.transaction.conftest import ACTIVITIES, GROCERIES
 
 
 @pytest.fixture
-def parent_transaction(room, profile_user):
+def parent_transaction(room, profile_user) -> ParentTransaction:
     parent_transaction = ParentTransactionFactory(
         room=room,
         paid_by=profile_user,
@@ -31,12 +31,14 @@ def parent_transaction(room, profile_user):
 
 @pytest.mark.e2e
 class TestTransactionEditCategory:
-    def test_the_edit_form_starts_from_the_current_category(self, page, base_url, room, parent_transaction, logged_in):
+    def test_the_edit_form_starts_from_the_current_category(
+        self, page, base_url, room, parent_transaction, logged_in
+    ) -> None:
         edit_page = self._open_edit_form(page, base_url, room, parent_transaction, logged_in)
 
         edit_page.expect_selected_category(GROCERIES)
 
-    def test_the_category_can_be_changed(self, page, base_url, room, parent_transaction, logged_in):
+    def test_the_category_can_be_changed(self, page, base_url, room, parent_transaction, logged_in) -> None:
         edit_page = self._open_edit_form(page, base_url, room, parent_transaction, logged_in)
 
         detail_path = reverse("transaction:detail", kwargs={"room_slug": room.slug, "pk": parent_transaction.id})

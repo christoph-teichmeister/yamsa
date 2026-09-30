@@ -13,10 +13,10 @@ class UserConnectionToRoomCreateView(RoomNotClosedRequiredMixin, AccountBaseCont
     form_class = UserConnectionToRoomCreateForm
     template_name = "room/userconnectiontoroom_create.html"
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(viewname="account:list", kwargs={"room_slug": self.request.room.slug})
 
-    def get_context_data(self, **kwargs: object):
+    def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
         context["suggested_guests"] = SuggestedGuestService(user=self.request.user).get_suggested_guests()
         return context

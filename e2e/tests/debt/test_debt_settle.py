@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 import pytest
 from django.urls import reverse
 
@@ -8,12 +10,12 @@ from e2e.pages.debt_list_page import DebtListPage
 
 
 @pytest.fixture
-def open_debt(room_with_open_debt):
+def open_debt(room_with_open_debt) -> Debt:
     return Debt.objects.get(room=room_with_open_debt)
 
 
 @pytest.fixture
-def debt_list_as(page, base_url, room_with_open_debt):
+def debt_list_as(page, base_url, room_with_open_debt) -> Callable:
     def _open(user) -> DebtListPage:
         _login(page, base_url, user.email, DEFAULT_PASSWORD)
         debt_list_page = DebtListPage(
@@ -27,7 +29,7 @@ def debt_list_as(page, base_url, room_with_open_debt):
 
 @pytest.mark.e2e
 class TestDebtSettle:
-    def test_the_debtor_can_mark_a_debt_as_paid(self, debt_list_as, roommate, profile_user, open_debt):
+    def test_the_debtor_can_mark_a_debt_as_paid(self, debt_list_as, roommate, profile_user, open_debt) -> None:
         debt_list_page = debt_list_as(roommate)
         debt_list_page.expect_row(open_debt.id, text=f"You owe {profile_user.name}", amount="12.50")
 
@@ -40,7 +42,7 @@ class TestDebtSettle:
         assert open_debt.settled
         assert open_debt.settled_at is not None
 
-    def test_cancelling_the_confirmation_leaves_the_debt_open(self, debt_list_as, roommate, open_debt):
+    def test_cancelling_the_confirmation_leaves_the_debt_open(self, debt_list_as, roommate, open_debt) -> None:
         debt_list_page = debt_list_as(roommate)
 
         debt_list_page.open_settle_confirmation(open_debt.id)
@@ -50,7 +52,9 @@ class TestDebtSettle:
         open_debt.refresh_from_db()
         assert not open_debt.settled
 
-    def test_the_creditor_cannot_settle_on_the_debtors_behalf(self, debt_list_as, profile_user, roommate, open_debt):
+    def test_the_creditor_cannot_settle_on_the_debtors_behalf(
+        self, debt_list_as, profile_user, roommate, open_debt
+    ) -> None:
         debt_list_page = debt_list_as(profile_user)
 
         debt_list_page.expect_row(open_debt.id, text=f"{roommate.name} owes you", amount="12.50")

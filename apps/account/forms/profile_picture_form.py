@@ -1,7 +1,7 @@
 """Form around the profile picture, which is uploaded on its own rather than with the profile."""
 
 from django.core.exceptions import ValidationError
-from django.core.files.uploadedfile import UploadedFile
+from django.core.files.uploadedfile import InMemoryUploadedFile, UploadedFile
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 from PIL import Image, UnidentifiedImageError
@@ -31,7 +31,7 @@ class ProfilePictureForm(ModelForm):
         """
         return self.files.get("profile_picture")
 
-    def clean_profile_picture(self):
+    def clean_profile_picture(self) -> UploadedFile | InMemoryUploadedFile | None:
         """Ensure the uploaded file is a valid image before accepting it."""
         picture = self.cleaned_data.get("profile_picture")
         if not self._uploaded_picture():
@@ -55,7 +55,7 @@ class ProfilePictureForm(ModelForm):
         self._compressed_profile_picture = compressed_picture
         return compressed_picture
 
-    def save(self, commit=True):
+    def save(self, commit=True) -> User:
         """Persist the compressed picture produced while cleaning."""
         picture = self.cleaned_data.get("profile_picture")
         if picture and self._uploaded_picture():

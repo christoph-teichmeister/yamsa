@@ -13,7 +13,7 @@ pytestmark = pytest.mark.django_db
 
 
 @freeze_time("2020-04-04 04:20")
-def test_get_regular(authenticated_client, room):
+def test_get_regular(authenticated_client, room) -> None:
     response = authenticated_client.get(reverse("account:guest-create", kwargs={"room_slug": room.slug}))
 
     assert response.status_code == http.HTTPStatus.OK
@@ -24,7 +24,7 @@ def test_get_regular(authenticated_client, room):
 
 
 @freeze_time("2020-04-04 04:20")
-def test_post_regular(authenticated_client, room, user):
+def test_post_regular(authenticated_client, room, user) -> None:
     guest_name = "Guest Name"
 
     response = authenticated_client.post(
@@ -47,7 +47,7 @@ def test_post_regular(authenticated_client, room, user):
     assert UserConnectionToRoom.objects.filter(user=new_guest, room=room).exists()
 
 
-def test_post_closed_room_is_rejected(authenticated_client, closed_room):
+def test_post_closed_room_is_rejected(authenticated_client, closed_room) -> None:
     guest_name = "Guest Name"
 
     response = authenticated_client.post(

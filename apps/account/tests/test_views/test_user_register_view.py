@@ -11,7 +11,7 @@ from apps.core.views import WelcomePartialView
 pytestmark = pytest.mark.django_db
 
 
-def test_get_regular(client):
+def test_get_regular(client) -> None:
     response = client.get(reverse("account:register"))
 
     assert response.status_code == http.HTTPStatus.OK
@@ -22,7 +22,7 @@ def test_get_regular(client):
     assert "Login here!" in content
 
 
-def test_get_from_invitation_email(client, guest_user):
+def test_get_from_invitation_email(client, guest_user) -> None:
     email_from_invitation_email = "invitation@local.local"
     response = client.get(
         f"{reverse('account:register')}?with_email={email_from_invitation_email}&for_guest={guest_user.id}"
@@ -40,7 +40,7 @@ def test_get_from_invitation_email(client, guest_user):
     assert "Login here!" in content
 
 
-def test_post_regular(client, monkeypatch):
+def test_post_regular(client, monkeypatch) -> None:
     new_name = "new_name"
     new_email = "new_email@local.local"
     new_password = "a_password"
@@ -68,7 +68,7 @@ def test_post_regular(client, monkeypatch):
     assert response.wsgi_request.user.email == new_email
 
 
-def test_post_from_invitation_email(client, guest_user, monkeypatch):
+def test_post_from_invitation_email(client, guest_user, monkeypatch) -> None:
     guest_name = "guest_name"
     guest_email = "guest_email@local.local"
     guest_password = "guest_password"
@@ -104,7 +104,7 @@ def test_post_from_invitation_email(client, guest_user, monkeypatch):
     assert not guest_user.is_guest
 
 
-def test_post_from_invitation_email_preserves_room_membership(client, room, guest_user, monkeypatch):
+def test_post_from_invitation_email_preserves_room_membership(client, room, guest_user, monkeypatch) -> None:
     guest_name = "guest_room"
     guest_email = "guest_room@local.local"
     guest_password = "guest_password"
@@ -137,7 +137,7 @@ def test_post_from_invitation_email_preserves_room_membership(client, room, gues
     assert response.wsgi_request.user.rooms.filter(id=room.id).exists()
 
 
-def test_post_from_share_link_adds_user_to_room(client, room, monkeypatch):
+def test_post_from_share_link_adds_user_to_room(client, room, monkeypatch) -> None:
     share_url = reverse("room:share", kwargs={"share_hash": room.share_hash})
     client.get(share_url)
 
@@ -167,7 +167,7 @@ def test_post_from_share_link_adds_user_to_room(client, room, monkeypatch):
     assert response.wsgi_request.user.rooms.filter(id=room.id).exists()
 
 
-def test_post_email_invalid(client):
+def test_post_email_invalid(client) -> None:
     response = client.post(reverse("account:register"))
 
     assert response.status_code == http.HTTPStatus.OK

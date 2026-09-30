@@ -7,7 +7,7 @@ from apps.room.services.room_closure_reminder_service import RoomClosureReminder
 class Command(BaseCommand):
     help = "Send reminder emails for rooms with stale activity."
 
-    def handle(self, *args: object, **options: object):
+    def handle(self, *args: object, **options: object) -> None:
         payment_service = PaymentReminderService()
         payment_candidates = payment_service.run()
 

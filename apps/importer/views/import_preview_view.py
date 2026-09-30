@@ -1,6 +1,6 @@
 from django.contrib.auth import mixins
 from django.db import transaction
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -22,7 +22,7 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
     template_name = "importer/preview.html"
     form_class = ImportPreviewForm
 
-    def dispatch(self, request, *args: object, **kwargs: object):
+    def dispatch(self, request, *args: object, **kwargs: object) -> HttpResponse:
         # This runs before LoginRequiredMixin.dispatch, so anonymous visitors must fall through
         # to the mixin instead of being redirected to the upload page.
         if request.user.is_authenticated and self._payload is None:
@@ -47,13 +47,13 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
     def source_label(self) -> str:
         return get_parser(self.parsed.source_key).label
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()
         kwargs["parsed"] = self.parsed
         kwargs["user"] = self.request.user
         return kwargs
 
-    def get_initial(self):
+    def get_initial(self) -> dict:
         initial = super().get_initial()
         name_limit = Room._meta.get_field("name").max_length
         description_limit = Room._meta.get_field("description").max_length
@@ -68,7 +68,7 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
                 break
         return initial
 
-    def get_context_data(self, **kwargs: object):
+    def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
         currencies = resolve_currencies_by_code(self.parsed.currency_codes)
         context["parsed"] = self.parsed
@@ -81,7 +81,7 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
         context["unknown_currency_codes"] = [code for code in self.parsed.currency_codes if not currencies.get(code)]
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponse:
         service = ImportService(parsed=self.parsed, user=self.request.user)
 
         with transaction.atomic():
@@ -120,7 +120,7 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
 
         return HttpResponseRedirect(reverse("transaction:list", kwargs={"room_slug": result.room.slug}))
 
-    def form_invalid(self, form):
+    def form_invalid(self, form) -> HttpResponse:
         for error in form.non_field_errors():
             self.request.toast_queue.error(str(error))
         return super().form_invalid(form)

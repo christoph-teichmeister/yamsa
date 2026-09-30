@@ -7,7 +7,7 @@ from apps.account.messages.events.user_removed_from_room import UserRemovedFromR
 
 @pytest.mark.django_db
 class TestRemoveUserFromRoomHandler:
-    def test_regular(self, room, user, superuser):
+    def test_regular(self, room, user, superuser) -> None:
         room.users.add(user)
 
         context = {

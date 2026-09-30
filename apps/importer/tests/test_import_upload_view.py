@@ -20,17 +20,17 @@ def _stored_payload(session) -> object | None:
 
 
 class TestImportUploadView:
-    def test_login_is_required(self, db, client):
+    def test_login_is_required(self, db, client) -> None:
         response = client.get(reverse("importer:upload"))
 
         assert response.status_code == 302
 
-    def test_page_renders_for_a_logged_in_user(self, db, authenticated_client):
+    def test_page_renders_for_a_logged_in_user(self, db, authenticated_client) -> None:
         response = authenticated_client.get(reverse("importer:upload"))
 
         assert response.status_code == 200
 
-    def test_valid_upload_stores_the_parsed_file_in_the_session(self, db, authenticated_client):
+    def test_valid_upload_stores_the_parsed_file_in_the_session(self, db, authenticated_client) -> None:
         response = authenticated_client.post(
             reverse("importer:upload"),
             data={"source": "splitwise-csv", "file": build_upload(ROWS)},
@@ -41,7 +41,7 @@ class TestImportUploadView:
         payload = _stored_payload(authenticated_client.session)
         assert len(payload["transactions"]) == 2
 
-    def test_non_csv_file_is_rejected(self, db, authenticated_client):
+    def test_non_csv_file_is_rejected(self, db, authenticated_client) -> None:
         upload = SimpleUploadedFile("export.txt", b"whatever", content_type="text/plain")
 
         response = authenticated_client.post(
@@ -51,7 +51,7 @@ class TestImportUploadView:
         assert response.status_code == 200
         assert _stored_payload(authenticated_client.session) is None
 
-    def test_empty_file_is_rejected(self, db, authenticated_client):
+    def test_empty_file_is_rejected(self, db, authenticated_client) -> None:
         upload = SimpleUploadedFile("export.csv", b"", content_type="text/csv")
 
         response = authenticated_client.post(
@@ -61,7 +61,7 @@ class TestImportUploadView:
         assert response.status_code == 200
         assert _stored_payload(authenticated_client.session) is None
 
-    def test_file_without_importable_rows_is_rejected(self, db, authenticated_client):
+    def test_file_without_importable_rows_is_rejected(self, db, authenticated_client) -> None:
         response = authenticated_client.post(
             reverse("importer:upload"),
             data={"source": "splitwise-csv", "file": build_upload(["2026-09-05,Gesamtbilanz,,,EUR,1.00,-1.00"])},

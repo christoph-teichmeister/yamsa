@@ -10,7 +10,7 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 pytestmark = pytest.mark.django_db
 
 
-def test_post_closed_room_is_rejected(authenticated_client, closed_room, user):
+def test_post_closed_room_is_rejected(authenticated_client, closed_room, user) -> None:
     parent_transaction = ParentTransactionFactory(room=closed_room, paid_by=user)
 
     response = authenticated_client.post(

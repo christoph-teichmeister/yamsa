@@ -8,7 +8,7 @@ from apps.transaction.views import TransactionListView
 pytestmark = pytest.mark.django_db
 
 
-def test_post_as_anonymous_user(client, room, guest_user):
+def test_post_as_anonymous_user(client, room, guest_user) -> None:
     response = client.post(
         reverse("account:guest-login"),
         data={"room_slug": room.slug, "user_id": guest_user.id},
@@ -20,7 +20,7 @@ def test_post_as_anonymous_user(client, room, guest_user):
     assert "Room transactions" in response.content.decode()
 
 
-def test_post_as_registered_user(authenticated_client, room, user):
+def test_post_as_registered_user(authenticated_client, room, user) -> None:
     response = authenticated_client.post(
         reverse("account:guest-login"),
         data={"room_slug": room.slug, "user_id": user.id},

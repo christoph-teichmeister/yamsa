@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import View
 
@@ -9,7 +9,7 @@ from apps.room.views.mixins.room_sheet_response import RoomSheetResponseMixin
 class RoomSealResetView(RoomNotClosedRequiredMixin, RoomSheetResponseMixin, View):
     """Clear any chosen icon or uploaded image, back to the room's derived default seal."""
 
-    def post(self, request, *args: object, **kwargs: object):
+    def post(self, request, *args: object, **kwargs: object) -> HttpResponse:
         room = request.room
         if room.seal_image:
             room.seal_image.delete(save=False)

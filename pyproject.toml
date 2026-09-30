@@ -208,6 +208,7 @@ select = [
     "ANN202", # Missing return type hint for private function (#455, staged ANN rollout, step 6)
     "ANN003", # Missing type hint for **kwargs (#455, staged ANN rollout, step 5)
     "ANN002", # Missing type hint for *args (#455, staged ANN rollout, step 4)
+    "ANN201", # Missing return type hint for public function (#455, staged ANN rollout, step 7)
     "ANN204", # Missing return type hint for magic method (#455, staged ANN rollout, step 3)
     "ANN401", # Disallow `typing.Any` in type hints (#455, staged ANN rollout, smallest rule count first)
     "ANN205", # Missing return type hint for @staticmethod (#455, staged ANN rollout, step 2)

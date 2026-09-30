@@ -17,7 +17,7 @@ class TestThemeSwitching:
 
         return SideMenuPage(page, base_url, reverse("core:welcome"))
 
-    def test_the_theme_is_set_without_waiting_for_the_bundles(self, page, base_url, profile_user):
+    def test_the_theme_is_set_without_waiting_for_the_bundles(self, page, base_url, profile_user) -> None:
         # The document ships one default theme for every reader, so the theme has to be applied
         # from the inline head script. Cutting the deferred bundles is how this test tells the two
         # apart: if the attribute still follows the system here, no reader ever sees the other
@@ -30,7 +30,7 @@ class TestThemeSwitching:
 
         expect(menu.html()).to_have_attribute("data-theme", "light")
 
-    def test_it_follows_the_system_until_a_theme_is_chosen(self, page, base_url, profile_user):
+    def test_it_follows_the_system_until_a_theme_is_chosen(self, page, base_url, profile_user) -> None:
         menu = self._menu(page, base_url, profile_user)
         page.emulate_media(color_scheme="light")
 
@@ -42,7 +42,7 @@ class TestThemeSwitching:
 
         expect(menu.html()).to_have_attribute("data-theme", "dark")
 
-    def test_a_chosen_theme_survives_a_reload_and_ignores_the_system(self, page, base_url, profile_user):
+    def test_a_chosen_theme_survives_a_reload_and_ignores_the_system(self, page, base_url, profile_user) -> None:
         menu = self._menu(page, base_url, profile_user)
         page.emulate_media(color_scheme="light")
         menu.navigate()
@@ -56,7 +56,7 @@ class TestThemeSwitching:
 
         expect(menu.html()).to_have_attribute("data-theme", "dark")
 
-    def test_the_system_option_hands_the_theme_back(self, page, base_url, profile_user):
+    def test_the_system_option_hands_the_theme_back(self, page, base_url, profile_user) -> None:
         menu = self._menu(page, base_url, profile_user)
         page.emulate_media(color_scheme="light")
         menu.navigate()
@@ -72,7 +72,7 @@ class TestThemeSwitching:
 
         expect(menu.html()).to_have_attribute("data-theme", "dark")
 
-    def test_the_chosen_preference_is_marked_on_its_button(self, page, base_url, profile_user):
+    def test_the_chosen_preference_is_marked_on_its_button(self, page, base_url, profile_user) -> None:
         menu = self._menu(page, base_url, profile_user)
         page.emulate_media(color_scheme="light")
         menu.navigate()

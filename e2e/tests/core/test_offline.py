@@ -79,7 +79,9 @@ class TestOffline:
         page.goto(f"{base_url}{path}")
         page.wait_for_load_state("load")
 
-    def test_a_visited_room_page_is_readable_without_a_connection(self, page, base_url, profile_user, shared_room):
+    def test_a_visited_room_page_is_readable_without_a_connection(
+        self, page, base_url, profile_user, shared_room
+    ) -> None:
         paths = self._room_paths(shared_room)
         self._sign_in(page, base_url, profile_user)
         self._open_controlled(page, base_url, paths[0])
@@ -94,7 +96,7 @@ class TestOffline:
 
     def test_the_banner_shows_even_where_the_browser_claims_to_be_online(
         self, page, base_url, profile_user, shared_room
-    ):
+    ) -> None:
         """navigator.onLine answers "attached to a network", not "reaches the server".
 
         It is true on a device behind a captive portal, and CI's browser reports it true with the
@@ -112,7 +114,9 @@ class TestOffline:
 
         expect(page.locator("[data-offline-banner]")).to_be_visible()
 
-    def test_the_rooms_other_tabs_are_warmed_before_they_are_visited(self, page, base_url, profile_user, shared_room):
+    def test_the_rooms_other_tabs_are_warmed_before_they_are_visited(
+        self, page, base_url, profile_user, shared_room
+    ) -> None:
         """Only what was clicked would be readable otherwise, which is not something to promise."""
         paths = self._room_paths(shared_room)
         debts_path = paths[1]
@@ -126,7 +130,9 @@ class TestOffline:
         expect(page.locator("#base-content")).not_to_contain_text("You seem to be offline")
         expect(page.locator("[data-offline-banner]")).to_be_visible()
 
-    def test_the_offline_page_does_not_take_the_cache_down_with_it(self, page, base_url, profile_user, shared_room):
+    def test_the_offline_page_does_not_take_the_cache_down_with_it(
+        self, page, base_url, profile_user, shared_room
+    ) -> None:
         """It is precached without an account and then shown for any unreachable page.
 
         Letting it report that account would read as a sign-out, and one unreachable page would
@@ -145,7 +151,7 @@ class TestOffline:
 
         expect(page.locator("#base-content")).not_to_contain_text("You seem to be offline")
 
-    def test_signing_out_takes_the_cached_pages_with_it(self, page, base_url, profile_user, shared_room):
+    def test_signing_out_takes_the_cached_pages_with_it(self, page, base_url, profile_user, shared_room) -> None:
         """Cache storage outlives the session, so the next person on this browser would read them."""
         paths = self._room_paths(shared_room)
         self._sign_in(page, base_url, profile_user)

@@ -11,14 +11,14 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def guest_send_invitation_url(room, guest_user):
+def guest_send_invitation_url(room, guest_user) -> str:
     return reverse(
         "account:guest-send-invitation-email",
         kwargs={"room_slug": room.slug, "pk": guest_user.id},
     )
 
 
-def test_get_regular(authenticated_client, guest_user, room, guest_send_invitation_url):
+def test_get_regular(authenticated_client, guest_user, room, guest_send_invitation_url) -> None:
     response = authenticated_client.get(guest_send_invitation_url)
 
     assert response.status_code == http.HTTPStatus.OK
@@ -27,7 +27,7 @@ def test_get_regular(authenticated_client, guest_user, room, guest_send_invitati
     assert response.context_data["active_tab"] == "people"
 
 
-def test_post_regular(authenticated_client, guest_send_invitation_url, monkeypatch):
+def test_post_regular(authenticated_client, guest_send_invitation_url, monkeypatch) -> None:
     recorded_messages = []
 
     def handle_message(message) -> Message:
@@ -54,7 +54,7 @@ def test_post_regular(authenticated_client, guest_send_invitation_url, monkeypat
     assert response.context_data["active_tab"] == "people"
 
 
-def test_post_closed_room_is_rejected(authenticated_client, closed_room, guest_user):
+def test_post_closed_room_is_rejected(authenticated_client, closed_room, guest_user) -> None:
     url = reverse(
         "account:guest-send-invitation-email",
         kwargs={"room_slug": closed_room.slug, "pk": guest_user.id},
@@ -65,7 +65,7 @@ def test_post_closed_room_is_rejected(authenticated_client, closed_room, guest_u
     assert response.status_code == http.HTTPStatus.FORBIDDEN
 
 
-def test_post_email_invalid(authenticated_client, guest_send_invitation_url):
+def test_post_email_invalid(authenticated_client, guest_send_invitation_url) -> None:
     response = authenticated_client.post(
         guest_send_invitation_url,
         data={"email": "invalid_email_format"},

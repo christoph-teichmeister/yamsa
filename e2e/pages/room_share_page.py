@@ -8,6 +8,6 @@ class RoomSharePage(BasePage):
         # The link is absolute, the way the app hands it out, so it carries its own host.
         super().__init__(page, base_url="", path=share_url)
 
-    def claim_guest_seat(self, guest_name: str):
+    def claim_guest_seat(self, guest_name: str) -> None:
         self.page.locator("#userSelect").select_option(label=guest_name)
         self.page.get_by_role("button", name="That's me!").click()

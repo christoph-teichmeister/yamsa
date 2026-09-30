@@ -11,7 +11,7 @@ ROWS_B = ["2024-01-01,Kino,Kino,10.00,EUR,5.00,-5.00"]
 class TestImportSessionIsolation:
     """A second upload tab must not overwrite the first tab's parsed file."""
 
-    def test_two_uploads_are_stored_side_by_side(self, db, authenticated_client):
+    def test_two_uploads_are_stored_side_by_side(self, db, authenticated_client) -> None:
         first = authenticated_client.post(
             reverse("importer:upload"), data={"source": "splitwise-csv", "file": build_upload(ROWS_A)}
         )
@@ -28,7 +28,7 @@ class TestImportSessionIsolation:
         assert read_parsed_import(session, token_a)["people"] == ["Kilian Karaus", "Elisabeth"]
         assert read_parsed_import(session, token_b)["people"] == ["Anna", "Ben"]
 
-    def test_preview_renders_the_file_its_token_names(self, db, authenticated_client):
+    def test_preview_renders_the_file_its_token_names(self, db, authenticated_client) -> None:
         authenticated_client.post(
             reverse("importer:upload"), data={"source": "splitwise-csv", "file": build_upload(ROWS_A)}
         )
@@ -42,13 +42,13 @@ class TestImportSessionIsolation:
 
         assert response.context["parsed"].people == ("Anna", "Ben")
 
-    def test_unknown_token_redirects_to_upload(self, db, authenticated_client):
+    def test_unknown_token_redirects_to_upload(self, db, authenticated_client) -> None:
         response = authenticated_client.get(f"{reverse('importer:preview')}?token=does-not-exist")
 
         assert response.status_code == 302
         assert response.url == reverse("importer:upload")
 
-    def test_a_consumed_token_cannot_be_replayed(self, db, authenticated_client):
+    def test_a_consumed_token_cannot_be_replayed(self, db, authenticated_client) -> None:
         session = authenticated_client.session
         token = store_parsed_import(session, {"people": []})
         session.save()

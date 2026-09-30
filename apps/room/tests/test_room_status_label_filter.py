@@ -9,8 +9,8 @@ from apps.room.templatetags.room_tags import room_status_label
 class RoomStatusLabelFilterTestCase(TestCase):
     """Test cases for the room_status_label filter."""
 
-    def test_known_status_resolves_to_its_label(self):
+    def test_known_status_resolves_to_its_label(self) -> None:
         assert room_status_label(Room.StatusChoices.OPEN.value) == Room.StatusChoices.OPEN.label
 
-    def test_unknown_status_degrades_to_an_empty_label(self):
+    def test_unknown_status_degrades_to_an_empty_label(self) -> None:
         assert room_status_label(99) == ""

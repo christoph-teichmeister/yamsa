@@ -17,7 +17,7 @@ STATUS_VIEW_MODULE = "apps.room.views.room_status_update_view.handle_message"
 
 
 class TestRoomStatusUpdateView:
-    def test_a_settled_room_closes_and_answers_with_the_sheet(self, authenticated_client, room):
+    def test_a_settled_room_closes_and_answers_with_the_sheet(self, authenticated_client, room) -> None:
         with mock.patch(STATUS_VIEW_MODULE) as handle_message:
             response = authenticated_client.post(
                 reverse("room:status", kwargs={"room_slug": room.slug}),
@@ -34,7 +34,7 @@ class TestRoomStatusUpdateView:
         handle_message.assert_called_once()
         assert isinstance(handle_message.call_args[0][0], RoomStatusChanged)
 
-    def test_open_debts_block_the_close_and_come_back_as_an_error(self, authenticated_client, room):
+    def test_open_debts_block_the_close_and_come_back_as_an_error(self, authenticated_client, room) -> None:
         create_open_debt(room)
 
         response = authenticated_client.post(
@@ -49,7 +49,7 @@ class TestRoomStatusUpdateView:
         room.refresh_from_db()
         assert room.status == Room.StatusChoices.OPEN
 
-    def test_the_force_flag_closes_the_room_and_settles_its_debts(self, authenticated_client, room):
+    def test_the_force_flag_closes_the_room_and_settles_its_debts(self, authenticated_client, room) -> None:
         create_open_debt(room)
 
         with mock.patch(STATUS_VIEW_MODULE) as handle_message:
@@ -67,7 +67,7 @@ class TestRoomStatusUpdateView:
         assert debt.settled_at == timezone.localdate()
         handle_message.assert_called_once()
 
-    def test_a_closed_room_reopens(self, authenticated_client, closed_room):
+    def test_a_closed_room_reopens(self, authenticated_client, closed_room) -> None:
         with mock.patch(STATUS_VIEW_MODULE) as handle_message:
             response = authenticated_client.post(
                 reverse("room:status", kwargs={"room_slug": closed_room.slug}),
@@ -82,7 +82,7 @@ class TestRoomStatusUpdateView:
         assert closed_room.status == Room.StatusChoices.OPEN
         handle_message.assert_called_once()
 
-    def test_the_rooms_own_fields_are_ignored(self, authenticated_client, room):
+    def test_the_rooms_own_fields_are_ignored(self, authenticated_client, room) -> None:
         """Htmx posts the enclosing sheet along, and none of it may reach the room."""
         with mock.patch(STATUS_VIEW_MODULE):
             authenticated_client.post(
@@ -98,7 +98,7 @@ class TestRoomStatusUpdateView:
         assert room.name != "Renamed by the status post"
         assert room.status == Room.StatusChoices.CLOSED
 
-    def test_a_post_that_repeats_the_status_fires_no_event(self, authenticated_client, room):
+    def test_a_post_that_repeats_the_status_fires_no_event(self, authenticated_client, room) -> None:
         with mock.patch(STATUS_VIEW_MODULE) as handle_message:
             authenticated_client.post(
                 reverse("room:status", kwargs={"room_slug": room.slug}),

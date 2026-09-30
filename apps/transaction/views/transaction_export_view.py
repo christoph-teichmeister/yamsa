@@ -1,7 +1,7 @@
 from collections.abc import Iterator
 
 from django.db.models import Prefetch
-from django.http import StreamingHttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -18,7 +18,7 @@ class TransactionExportView(RoomMembershipRequiredMixin, TransactionBaseContext,
 
     HEADER = [_("Paid by"), _("Paid for"), _("Description"), _("Amount"), _("Currency"), _("Category"), _("Paid at")]
 
-    def get(self, request, *args: object, **kwargs: object):
+    def get(self, request, *args: object, **kwargs: object) -> HttpResponse:
         """Stream room transactions while respecting prefetching and metadata."""
         room = request.room
         parents = (

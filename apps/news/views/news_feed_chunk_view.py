@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 from django.views import generic
 
 from apps.news.constants import NEWS_FEED_PAGE_SIZE
@@ -7,17 +8,17 @@ from apps.news.views.mixins import NewsBaseContext, NewsForRoomMixin
 class NewsFeedChunkView(NewsBaseContext, NewsForRoomMixin, generic.TemplateView):
     template_name = "shared_partials/news_batch.html"
 
-    def get_paginate_by(self):
+    def get_paginate_by(self) -> int:
         try:
             limit = int(self.request.GET.get("limit", NEWS_FEED_PAGE_SIZE))
         except (TypeError, ValueError):
             return NEWS_FEED_PAGE_SIZE
         return max(1, min(limit, 50))
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return self.get_feed_queryset()
 
-    def get_context_data(self, **kwargs: object):
+    def get_context_data(self, **kwargs: object) -> dict:
         context_data = super().get_context_data(**kwargs)
         queryset = self.get_queryset()
         cursor_value = self.request.GET.get("cursor")

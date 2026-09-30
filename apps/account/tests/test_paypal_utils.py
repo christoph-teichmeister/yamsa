@@ -25,11 +25,11 @@ class TestNormalizePaypalMeUsername:
             "https://www.paypal.com/paypalme/creditorname/42.50EUR",
         ],
     )
-    def test_paste_shapes_reduce_to_the_bare_handle(self, raw_value):
+    def test_paste_shapes_reduce_to_the_bare_handle(self, raw_value) -> None:
         assert normalize_paypal_me_username(raw_value) == "creditorname"
 
     @pytest.mark.parametrize("raw_value", [None, "", "   ", "@", "https://paypal.me/"])
-    def test_blank_input_clears_the_field(self, raw_value):
+    def test_blank_input_clears_the_field(self, raw_value) -> None:
         assert normalize_paypal_me_username(raw_value) is None
 
     @pytest.mark.parametrize(
@@ -43,10 +43,10 @@ class TestNormalizePaypalMeUsername:
             "a" * 21,
         ],
     )
-    def test_values_that_cannot_be_a_handle_are_rejected(self, raw_value):
+    def test_values_that_cannot_be_a_handle_are_rejected(self, raw_value) -> None:
         with pytest.raises(ValidationError):
             normalize_paypal_me_username(raw_value)
 
-    def test_case_is_kept(self):
+    def test_case_is_kept(self) -> None:
         """PayPal.Me resolves case-insensitively, but the profile shows back what the user typed."""
         assert normalize_paypal_me_username("CreditorName") == "CreditorName"

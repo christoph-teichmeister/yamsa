@@ -1,4 +1,5 @@
 from django.contrib.auth import mixins
+from django.http import HttpResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
@@ -14,16 +15,16 @@ class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
     form_class = RoomCreateForm
     template_name = "room/create.html"
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(viewname="room:detail", kwargs={"room_slug": self.object.slug})
 
-    def get_context_data(self, **kwargs: object):
+    def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
         context["suggested_guests"] = SuggestedGuestService(user=self.request.user).get_suggested_guests()
         context["dashboard_url"] = self._build_dashboard_url()
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form) -> HttpResponse:
         created_room: Room = form.instance
 
         created_room.created_at = timezone.now()

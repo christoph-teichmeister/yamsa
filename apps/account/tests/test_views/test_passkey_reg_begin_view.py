@@ -11,13 +11,13 @@ pytestmark = pytest.mark.django_db
 
 
 class TestPasskeyRegBeginView:
-    def test_get_requires_login(self, client):
+    def test_get_requires_login(self, client) -> None:
         response = client.get(reverse("account:passkey-reg-begin"))
 
         assert response.status_code == http.HTTPStatus.FOUND
         assert "login" in response["Location"]
 
-    def test_get_returns_400_when_passkey_already_exists(self, hx_client, user):
+    def test_get_returns_400_when_passkey_already_exists(self, hx_client, user) -> None:
         UserPasskeyFactory(user=user)
         client = hx_client(user)
         response = client.get(reverse("account:passkey-reg-begin"))
@@ -26,7 +26,7 @@ class TestPasskeyRegBeginView:
         data = json.loads(response.content)
         assert data["status"] == "ERR"
 
-    def test_get_delegates_to_library_when_no_passkey(self, hx_client, user, monkeypatch):
+    def test_get_delegates_to_library_when_no_passkey(self, hx_client, user, monkeypatch) -> None:
         fake_state = {"challenge": "abc"}
         fake_options = {"publicKey": {"challenge": "abc"}}
 

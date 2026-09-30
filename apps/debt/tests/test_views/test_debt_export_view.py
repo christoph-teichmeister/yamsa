@@ -11,7 +11,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestDebtExportView:
-    def test_debt_export_returns_unsettled_debts(self, client, room, user, guest_user):
+    def test_debt_export_returns_unsettled_debts(self, client, room, user, guest_user) -> None:
         create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -47,7 +47,7 @@ class TestDebtExportView:
         assert user.name in data_rows[0] or guest_user.name in data_rows[0]
         assert all(other_user.name not in row and other_guest.name not in row for row in data_rows)
 
-    def test_debt_export_requires_membership(self, client, room):
+    def test_debt_export_requires_membership(self, client, room) -> None:
         outsider = UserFactory()
         client.force_login(outsider)
         response = client.get(reverse("debt:export", kwargs={"room_slug": room.slug}))

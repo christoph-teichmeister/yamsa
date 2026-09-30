@@ -23,7 +23,7 @@ def test_send_notification_on_transaction_update_localizes_body_per_recipient_la
     user,
     guest_user,
     create_parent_transaction_with_optimisation,
-):
+) -> None:
     another_user = UserFactory(language="de")
     room.users.add(another_user)
 
@@ -61,7 +61,7 @@ def test_send_notification_on_child_transaction_deleted_localizes_body_per_recip
     user,
     guest_user,
     create_parent_transaction_with_optimisation,
-):
+) -> None:
     another_user = UserFactory(language="de")
     room.users.add(another_user)
 
@@ -96,7 +96,7 @@ def test_send_notification_on_child_transaction_deleted_localizes_body_per_recip
 
 
 @pytest.mark.django_db
-def test_send_notification_on_debt_settled_localizes_body_to_creditor_language(room, user):
+def test_send_notification_on_debt_settled_localizes_body_to_creditor_language(room, user) -> None:
     creditor = UserFactory(language="de")
     debitor = user
 
@@ -122,7 +122,9 @@ def test_send_notification_on_debt_settled_localizes_body_to_creditor_language(r
 
 
 @pytest.mark.django_db
-def test_send_notification_on_user_removed_from_room_localizes_body_per_recipient_language(room, user, guest_user):
+def test_send_notification_on_user_removed_from_room_localizes_body_per_recipient_language(
+    room, user, guest_user
+) -> None:
     another_user = UserFactory(language="de")
     room.users.add(another_user)
     remover = user

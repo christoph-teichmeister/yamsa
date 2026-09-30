@@ -9,14 +9,14 @@ from apps.core.icons import ICON_SOURCE_DIR, SPRITE_PATH, build_sprite, collect_
 class Command(BaseCommand):
     help = "Rebuild apps/static/icons/sprite.svg from the icons the templates use."
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser) -> None:
         parser.add_argument(
             "--check",
             action="store_true",
             help="Report whether the sprite carries what the templates ask for, and write nothing.",
         )
 
-    def handle(self, *args: object, **options: object):
+    def handle(self, *args: object, **options: object) -> None:
         names = collect_icon_names(Path(settings.APPS_DIR))
 
         # Deliberately name-only, and deliberately without touching node_modules: the check

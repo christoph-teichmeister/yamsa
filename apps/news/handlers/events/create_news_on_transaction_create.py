@@ -7,7 +7,7 @@ from apps.transaction.messages.events.transaction import ParentTransactionCreate
 
 
 @message_registry.register_event(event=ParentTransactionCreated)
-def create_news_on_transaction_create(context: ParentTransactionCreated.Context):
+def create_news_on_transaction_create(context: ParentTransactionCreated.Context) -> None:
     parent_transaction = context.parent_transaction
 
     if not parent_transaction.created_by or parent_transaction.created_by == parent_transaction.paid_by:
