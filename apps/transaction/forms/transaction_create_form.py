@@ -52,7 +52,7 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
             "category",
         )
 
-    def __init__(self, *args, request=None, room=None, **kwargs):
+    def __init__(self, *args, request=None, room=None, **kwargs) -> None:
         self._request = request
         super().__init__(*args, **kwargs)
         self.narrow_category_field_to(room)

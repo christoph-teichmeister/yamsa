@@ -10,7 +10,7 @@ from apps.core.toast_constants import (
 class ToastQueue:
     """Simple queue that tracks toast messages and their CSS classes."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._items: list[ToastItem] = []
 
     def add(self, message: str, toast_type: str) -> None:

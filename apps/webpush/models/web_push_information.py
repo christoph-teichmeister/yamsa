@@ -20,5 +20,5 @@ class WebpushInformation(FullCleanOnSaveMixin, CommonInfo):
         verbose_name = _lazy("Webpush Information")
         verbose_name_plural = _lazy("Webpush Informations")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return _("Webpush Information for {user}").format(user=self.user)

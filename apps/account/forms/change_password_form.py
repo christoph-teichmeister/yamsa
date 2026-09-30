@@ -21,7 +21,7 @@ class ChangePasswordForm(forms.ModelForm):
         model = User
         fields = ("id", "old_password", "new_password", "new_password_confirmation")
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self._request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
 

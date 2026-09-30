@@ -21,5 +21,5 @@ class ReminderLog(CommonInfo):
         verbose_name = _("Reminder log")
         verbose_name_plural = _("Reminder logs")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.reminder_type} @ {self.created_at.isoformat()}"

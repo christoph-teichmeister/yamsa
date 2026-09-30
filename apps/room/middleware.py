@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.urls import get_resolver
 
 from apps.room.models import Room
@@ -5,11 +6,11 @@ from apps.room.services.request_room_service import assign_room_to_request
 
 
 class RoomToRequestMiddleware:
-    def __init__(self, get_response):
+    def __init__(self, get_response) -> None:
         # One-time configuration and initialization.
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request) -> HttpResponse:
         # Code to be executed for each request before the view (and later middleware) are called.
 
         resolver_match = get_resolver().resolve(request.path_info)

@@ -7,7 +7,7 @@ from apps.room.models import Room
 class DashboardTabService:
     room: Room
 
-    def __init__(self, room: Room):
+    def __init__(self, room: Room) -> None:
         self.room = room
 
     def get_tabs_as_list(self) -> list[DashboardTab]:

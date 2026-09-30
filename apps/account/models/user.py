@@ -155,7 +155,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
         verbose_name = _("User")
         verbose_name_plural = _("Users")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     def get_full_name(self) -> str:
