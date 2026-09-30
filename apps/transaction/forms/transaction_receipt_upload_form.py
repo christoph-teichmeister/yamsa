@@ -22,7 +22,7 @@ class TransactionReceiptUploadForm(forms.Form):
         help_text="Upload a PDF or image (max 5 MB).",
     )
 
-    def __init__(self, *args: object, request: HttpRequest = None, **kwargs: object) -> None:
+    def __init__(self, *args: object, request: HttpRequest | None = None, **kwargs: object) -> None:
         self._request = request
         super().__init__(*args, **kwargs)
 

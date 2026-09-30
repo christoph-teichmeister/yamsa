@@ -955,7 +955,7 @@ TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST = [
 
 # PASSKEYS
 # ------------------------------------------------------------------------------
-def _passkey_rp_id(request: HttpRequest = None) -> str:
+def _passkey_rp_id(request: HttpRequest | None = None) -> str:
     from urllib.parse import urlparse
 
     return urlparse(BACKEND_URL).hostname or "localhost"
