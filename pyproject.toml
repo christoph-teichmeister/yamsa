@@ -166,6 +166,7 @@ select = [
     "E", # pycodestyle errors
     "EM", # flake8-errmsg
     "F", # Pyflakes
+    "G", # flake8-logging-format
     "I", # isort
     "INT", # Validates your gettext translation strings
     "N", # pep8-naming
