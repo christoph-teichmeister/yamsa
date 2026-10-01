@@ -81,7 +81,10 @@ def rooms_by_recency(profile_user: User, roommate: User, euro: Currency) -> dict
         roommate=roommate,
         currency=euro,
         owed_by_owner=Decimal("1234.50"),
-        last_transaction_at=now - timedelta(days=30),
+        # days=29, not 30: Django's month chunk is exactly 30 days, and the time that passes
+        # between this line and the filter's own now() always pushes a days=30 delta over that
+        # boundary, rendering "1 month ago" instead of the "4 weeks ago" asserted below.
+        last_transaction_at=now - timedelta(days=29),
     )
     small_debt = _room_with_balance(
         name="Small Debt Room",

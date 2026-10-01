@@ -13,8 +13,10 @@ class RoomLastUsedFilterTestCase(TestCase):
 
     def test_a_past_timestamp_is_rendered_in_one_unit(self) -> None:
         # naturaltime would answer "4 weeks, 2 days ago" here; the compact room row cannot
-        # spare that width.
-        assert room_last_used(timezone.now() - timedelta(days=30)) == "4\xa0weeks ago"
+        # spare that width. days=29, not 30: Django's month chunk is exactly 30 days, and the
+        # microseconds that pass between this line and timesince()'s own now() always push a
+        # days=30 delta over that boundary, making "4 weeks ago" unreachable.
+        assert room_last_used(timezone.now() - timedelta(days=29)) == "4\xa0weeks ago"
 
     def test_a_recent_timestamp_keeps_its_precision(self) -> None:
         assert room_last_used(timezone.now() - timedelta(minutes=5)) == "5\xa0minutes ago"
