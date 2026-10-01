@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from django.core.files.uploadedfile import UploadedFile
+
 from apps.importer.dataclasses import ParsedImport
 
 MAX_IMPORT_FILE_SIZE = 2 * 1024 * 1024  # 2 MB
@@ -12,5 +14,5 @@ class BaseImportParser(ABC):
     accepted_extensions: tuple[str, ...] = (".csv",)
 
     @abstractmethod
-    def parse(self, uploaded_file) -> ParsedImport:
+    def parse(self, uploaded_file: UploadedFile) -> ParsedImport:
         """Turn an uploaded file into a ParsedImport without touching the database."""

@@ -12,7 +12,7 @@ class PwaScopeHeaderMiddleware:
     def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
         self.get_response = get_response
 
-    def __call__(self, request) -> HttpResponse:
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         response = self.get_response(request)
 
         if response.get("Content-Type", "").startswith("text/html"):

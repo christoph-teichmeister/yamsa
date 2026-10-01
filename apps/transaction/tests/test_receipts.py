@@ -6,12 +6,15 @@ from typing import Any
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import RequestFactory
+from django.test import Client, RequestFactory
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDict
+from pytest_django.fixtures import Settings
 
+from apps.account.models import User
 from apps.currency.models import Currency
 from apps.currency.tests.factories import CurrencyFactory
+from apps.room.models import Room
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.models import Category, Receipt
 
@@ -19,7 +22,7 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture(autouse=True)
-def enforce_media_root(tmp_path, settings) -> Path:
+def enforce_media_root(tmp_path: Path, settings: Settings) -> Path:
     settings.MEDIA_ROOT = tmp_path
     return tmp_path
 
@@ -29,7 +32,7 @@ def currency() -> Currency:
     return CurrencyFactory()
 
 
-def _transaction_payload(user, room, currency_id) -> dict[str, Any]:
+def _transaction_payload(user: User, room: Room, currency_id: int) -> dict[str, Any]:
     members = list(room.users.all())
     return {
         "category": Category.objects.get(slug="groceries").id,
@@ -47,7 +50,9 @@ def _transaction_payload(user, room, currency_id) -> dict[str, Any]:
 
 
 class TestTransactionReceipt:
-    def test_receipt_uploads_with_transaction_and_is_visible(self, authenticated_client, user, room, currency) -> None:
+    def test_receipt_uploads_with_transaction_and_is_visible(
+        self, authenticated_client: Client, user: User, room: Room, currency: Currency
+    ) -> None:
         client = authenticated_client
         receipt_file = SimpleUploadedFile(
             "receipt.pdf",
@@ -74,7 +79,7 @@ class TestTransactionReceipt:
         assert receipt.original_name in detail_response.content.decode()
         receipt.file.delete(save=False)
 
-    def test_receipt_validation_blocks_unsupported_types(self, user, room, currency) -> None:
+    def test_receipt_validation_blocks_unsupported_types(self, user: User, room: Room, currency: Currency) -> None:
         invalid_file = SimpleUploadedFile(
             "receipt.txt",
             b"not allowed",

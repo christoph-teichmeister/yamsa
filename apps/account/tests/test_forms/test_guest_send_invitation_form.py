@@ -9,7 +9,7 @@ pytestmark = pytest.mark.django_db
 class TestGuestSendInvitationEmailForm:
     form_class = GuestSendInvitationEmailForm
 
-    def test_new_email_is_set(self, user) -> None:
+    def test_new_email_is_set(self, user: User) -> None:
         new_email = "new_email@local.local"
         form = self.form_class(instance=user, data={"email": new_email})
         assert form.is_valid()
@@ -20,13 +20,13 @@ class TestGuestSendInvitationEmailForm:
 
         assert user.email == new_email
 
-    def test_form_raises_error_if_email_already_exists(self, user, superuser) -> None:
+    def test_form_raises_error_if_email_already_exists(self, user: User, superuser: User) -> None:
         form = self.form_class(instance=user, data={"email": superuser.email})
         assert not form.is_valid()
 
         assert form.errors["email"][0] == form.ExceptionMessage.EMAIL_ALREADY_EXISTS.format(email=superuser.email)
 
-    def test_case_insensitive_email_duplicate(self, user, superuser) -> None:
+    def test_case_insensitive_email_duplicate(self, user: User, superuser: User) -> None:
         uppercased_email = superuser.email.upper()
         form = self.form_class(instance=user, data={"email": uppercased_email})
         assert not form.is_valid()

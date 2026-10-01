@@ -1,8 +1,10 @@
 import pytest
 from django.urls import reverse
-from playwright.sync_api import expect
+from playwright.sync_api import Page, expect
 
+from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
+from apps.room.models import Room
 from e2e.pages.login_page import LoginPage
 
 # Polls the cache rather than waiting for an event: warming runs on an idle callback in the worker,
@@ -26,7 +28,7 @@ PAGES_ARE_NOT_CACHED = f"async (paths) => !(await ({PAGES_ARE_CACHED})(paths))"
 # page.wait_for_function() polls its predicate synchronously and reads a returned Promise as
 # truthy, so it cannot wait on anything that has to be awaited - and reading cache storage does.
 # page.evaluate() does await, so the polling happens here instead.
-def _wait_until(page, expression, arg, timeout_ms=10_000, interval_ms=100) -> None:
+def _wait_until(page: Page, expression: str, arg: list[str], timeout_ms: int = 10_000, interval_ms: int = 100) -> None:
     for _ in range(timeout_ms // interval_ms):
         if page.evaluate(expression, arg):
             return
@@ -39,7 +41,7 @@ def _wait_until(page, expression, arg, timeout_ms=10_000, interval_ms=100) -> No
 @pytest.mark.e2e
 class TestOffline:
     @staticmethod
-    def _room_paths(room) -> list[str]:
+    def _room_paths(room: Room) -> list[str]:
         return [
             reverse("transaction:list", kwargs={"room_slug": room.slug}),
             reverse("debt:list", kwargs={"room_slug": room.slug}),
@@ -51,13 +53,13 @@ class TestOffline:
         ]
 
     @staticmethod
-    def _sign_in(page, base_url, profile_user) -> None:
+    def _sign_in(page: Page, base_url: str, profile_user: User) -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login(profile_user.email, DEFAULT_PASSWORD)
 
     @staticmethod
-    def _go_offline(page) -> None:
+    def _go_offline(page: Page) -> None:
         """Cut the connection for the worker too.
 
         page.context.set_offline() only reaches requests the page itself makes; a fetch the service
@@ -68,7 +70,7 @@ class TestOffline:
         page.context.set_offline(True)
 
     @staticmethod
-    def _open_controlled(page, base_url, path) -> None:
+    def _open_controlled(page: Page, base_url: str, path: str) -> None:
         """Open a path and come back once a service worker is actually driving the page.
 
         The first navigation of a fresh profile installs the worker but is not yet controlled by
@@ -80,7 +82,7 @@ class TestOffline:
         page.wait_for_load_state("load")
 
     def test_a_visited_room_page_is_readable_without_a_connection(
-        self, page, base_url, profile_user, shared_room
+        self, page: Page, base_url: str, profile_user: User, shared_room: Room
     ) -> None:
         paths = self._room_paths(shared_room)
         self._sign_in(page, base_url, profile_user)
@@ -95,7 +97,7 @@ class TestOffline:
         expect(page.locator("#base-content")).not_to_contain_text("You seem to be offline")
 
     def test_the_banner_shows_even_where_the_browser_claims_to_be_online(
-        self, page, base_url, profile_user, shared_room
+        self, page: Page, base_url: str, profile_user: User, shared_room: Room
     ) -> None:
         """navigator.onLine answers "attached to a network", not "reaches the server".
 
@@ -115,7 +117,7 @@ class TestOffline:
         expect(page.locator("[data-offline-banner]")).to_be_visible()
 
     def test_the_rooms_other_tabs_are_warmed_before_they_are_visited(
-        self, page, base_url, profile_user, shared_room
+        self, page: Page, base_url: str, profile_user: User, shared_room: Room
     ) -> None:
         """Only what was clicked would be readable otherwise, which is not something to promise."""
         paths = self._room_paths(shared_room)
@@ -131,7 +133,7 @@ class TestOffline:
         expect(page.locator("[data-offline-banner]")).to_be_visible()
 
     def test_the_offline_page_does_not_take_the_cache_down_with_it(
-        self, page, base_url, profile_user, shared_room
+        self, page: Page, base_url: str, profile_user: User, shared_room: Room
     ) -> None:
         """It is precached without an account and then shown for any unreachable page.
 
@@ -151,7 +153,9 @@ class TestOffline:
 
         expect(page.locator("#base-content")).not_to_contain_text("You seem to be offline")
 
-    def test_signing_out_takes_the_cached_pages_with_it(self, page, base_url, profile_user, shared_room) -> None:
+    def test_signing_out_takes_the_cached_pages_with_it(
+        self, page: Page, base_url: str, profile_user: User, shared_room: Room
+    ) -> None:
         """Cache storage outlives the session, so the next person on this browser would read them."""
         paths = self._room_paths(shared_room)
         self._sign_in(page, base_url, profile_user)

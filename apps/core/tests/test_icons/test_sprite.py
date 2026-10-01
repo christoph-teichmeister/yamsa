@@ -1,11 +1,13 @@
 import re
 from pathlib import Path
 
+from pytest_django.fixtures import Settings
+
 from apps.core.icons import SPRITE_PATH, collect_icon_names, sprite_symbol_names
 
 
 class TestSprite:
-    def test_it_carries_exactly_the_icons_in_use(self, settings) -> None:
+    def test_it_carries_exactly_the_icons_in_use(self, settings: Settings) -> None:
         """Names only, like `sync_icons --check`: neither this nor CI has node_modules."""
         used = collect_icon_names(Path(settings.APPS_DIR))
         in_sprite = sprite_symbol_names(SPRITE_PATH.read_text(encoding="utf-8"))

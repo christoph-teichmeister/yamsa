@@ -5,7 +5,7 @@ from apps.importer.parsers.splitwise import SplitwiseCsvParser
 from apps.importer.tests.factories import build_file_like
 
 
-def parse(rows, header=None) -> ParsedImport:
+def parse(rows: list[str], header: str | None = None) -> ParsedImport:
     kwargs = {"header": header} if header else {}
     return SplitwiseCsvParser().parse(build_file_like(rows, **kwargs))
 
@@ -22,7 +22,7 @@ class TestSplitwiseCsvParserSkippedRows:
             ("2023-03-06,Kostenfehler,Allgemein,abc,EUR,5.00,-5.00", "cost"),
         ],
     )
-    def test_row_is_skipped_with_reason(self, row, expected_fragment) -> None:
+    def test_row_is_skipped_with_reason(self, row: str, expected_fragment: str) -> None:
         result = parse([row])
 
         assert result.transactions == ()

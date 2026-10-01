@@ -1,16 +1,18 @@
 import http
+from collections.abc import Callable
 
 import pytest
 from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.account.views import LogInUserView
 
 pytestmark = pytest.mark.django_db
 
 
 @pytest.mark.parametrize("authenticated_user", ["user", "guest_user"], indirect=True)
-def test_get_regular_as_user_and_guest_user(hx_client, authenticated_user) -> None:
+def test_get_regular_as_user_and_guest_user(hx_client: Callable, authenticated_user: User) -> None:
     client = hx_client(authenticated_user)
 
     response = client.get(reverse("account:logout"), follow=True)

@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import date, datetime, time
 
 from django.utils import timezone
 
@@ -204,7 +204,7 @@ class ImportService:
             debt.save()
 
     @staticmethod
-    def _as_aware(value) -> datetime:
+    def _as_aware(value: date) -> datetime:
         # USE_TZ is on, so a naive datetime would warn and store the wrong instant. Midday rather
         # than midnight because some zones move their DST boundary through 00:00, where make_aware
         # raises NonExistentTimeError.

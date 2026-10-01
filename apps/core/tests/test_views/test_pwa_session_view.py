@@ -1,15 +1,18 @@
 import json
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.core.pwa_constants import ANONYMOUS_SCOPE
 from apps.core.services.pwa_scope_service import resolve_scope
+from apps.room.models import Room
 
 pytestmark = pytest.mark.django_db
 
 
-def test_it_hands_out_a_token_for_the_current_session(authenticated_client, user) -> None:
+def test_it_hands_out_a_token_for_the_current_session(authenticated_client: Client, user: User) -> None:
     """The token captured with a queued form belongs to the session that rendered it."""
     response = authenticated_client.get(reverse("core:pwa-session"))
 
@@ -18,14 +21,14 @@ def test_it_hands_out_a_token_for_the_current_session(authenticated_client, user
     assert payload["scope"] == resolve_scope(user)
 
 
-def test_a_signed_out_visitor_is_named_as_such(client) -> None:
+def test_a_signed_out_visitor_is_named_as_such(client: Client) -> None:
     """This is what stops a queued entry being replayed under whoever signed in since."""
     payload = json.loads(client.get(reverse("core:pwa-session")).content)
 
     assert payload["scope"] == ANONYMOUS_SCOPE
 
 
-def test_the_token_is_accepted_by_a_form_post(authenticated_client, room, user) -> None:
+def test_the_token_is_accepted_by_a_form_post(authenticated_client: Client, room: Room, user: User) -> None:
     """A token the views refuse would strand the queue instead of draining it."""
     from datetime import UTC, datetime
 

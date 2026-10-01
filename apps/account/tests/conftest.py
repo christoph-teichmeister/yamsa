@@ -5,6 +5,8 @@ from django.http import HttpRequest
 from django.test import RequestFactory
 from django.test.client import Client
 
+from apps.account.models import User
+
 
 @pytest.fixture
 def form_request() -> HttpRequest:
@@ -12,8 +14,8 @@ def form_request() -> HttpRequest:
 
 
 @pytest.fixture
-def hx_client(client) -> Callable:
-    def _hx_client(user) -> Client:
+def hx_client(client: Client) -> Callable:
+    def _hx_client(user: User) -> Client:
         client.defaults["HTTP_HX_REQUEST"] = "true"
         client.force_login(user)
         return client

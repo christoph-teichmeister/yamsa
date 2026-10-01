@@ -23,12 +23,12 @@ class RoomStatusUpdateView(RoomSheetResponseMixin, RoomBaseContext, generic.Upda
     def get_success_url(self) -> str:
         return reverse("room:detail", kwargs={"room_slug": self.object.slug})
 
-    def get_form(self, form_class=None) -> RoomStatusForm:
+    def get_form(self, form_class: type[RoomStatusForm] | None = None) -> RoomStatusForm:
         form = super().get_form(form_class)
         form.user = self.request.user
         return form
 
-    def form_valid(self, form) -> HttpResponse:
+    def form_valid(self, form: RoomStatusForm) -> HttpResponse:
         status_changed = "status" in form.changed_data
         force_closed = form.closes_the_room and form.cleaned_data.get("force_close")
 
@@ -47,7 +47,7 @@ class RoomStatusUpdateView(RoomSheetResponseMixin, RoomBaseContext, generic.Upda
 
         return self.render_room_sheet(self.object)
 
-    def form_invalid(self, form) -> HttpResponse:
+    def form_invalid(self, form: RoomStatusForm) -> HttpResponse:
         if self.is_htmx_request():
             return self.render_room_sheet(self.object, status_form=form)
         return super().form_invalid(form)

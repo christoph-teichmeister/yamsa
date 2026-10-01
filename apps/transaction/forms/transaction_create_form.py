@@ -3,7 +3,9 @@ from decimal import Decimal
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
+from django.http import HttpRequest
 
+from apps.room.models import Room
 from apps.transaction.forms.mixins.room_category_field import RoomCategoryFieldMixin
 from apps.transaction.models import ChildTransaction, ParentTransaction, Receipt
 from apps.transaction.utils import split_total_across_paid_for
@@ -52,7 +54,9 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
             "category",
         )
 
-    def __init__(self, *args: object, request=None, room=None, **kwargs: object) -> None:
+    def __init__(
+        self, *args: object, request: HttpRequest | None = None, room: Room | None = None, **kwargs: object
+    ) -> None:
         self._request = request
         super().__init__(*args, **kwargs)
         self.narrow_category_field_to(room)
@@ -124,7 +128,7 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
 
         return cleaned_files
 
-    def save(self, commit=True) -> ParentTransaction:
+    def save(self, commit: bool = True) -> ParentTransaction:
         instance: ParentTransaction = super().save(commit)
 
         paid_for_entries = self.cleaned_data["paid_for"]

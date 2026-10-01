@@ -19,7 +19,7 @@ class ImportUploadView(mixins.LoginRequiredMixin, generic.FormView):
         context["max_file_size_mb"] = MAX_IMPORT_FILE_SIZE // (1024 * 1024)
         return context
 
-    def form_valid(self, form) -> HttpResponse:
+    def form_valid(self, form: ImportUploadForm) -> HttpResponse:
         parsed: ParsedImport = form.cleaned_data["parsed"]
         token = store_parsed_import(self.request.session, parsed.as_payload())
         return HttpResponseRedirect(f"{reverse('importer:preview')}?{TOKEN_PARAM}={token}")

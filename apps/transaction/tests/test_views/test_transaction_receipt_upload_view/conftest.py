@@ -2,19 +2,22 @@ from decimal import Decimal
 from pathlib import Path
 
 import pytest
+from pytest_django.fixtures import Settings
 
+from apps.account.models import User
+from apps.room.models import Room
 from apps.transaction.models import ParentTransaction
 from apps.transaction.tests.factories import ChildTransactionFactory, ParentTransactionFactory
 
 
 @pytest.fixture(autouse=True)
-def enforce_media_root(tmp_path, settings) -> Path:
+def enforce_media_root(tmp_path: Path, settings: Settings) -> Path:
     settings.MEDIA_ROOT = tmp_path
     return tmp_path
 
 
 @pytest.fixture
-def transaction_with_children(room, user) -> ParentTransaction:
+def transaction_with_children(room: Room, user: User) -> ParentTransaction:
     parent_transaction = ParentTransactionFactory(
         room=room,
         paid_by=user,
@@ -32,7 +35,7 @@ def transaction_with_children(room, user) -> ParentTransaction:
 
 
 @pytest.fixture
-def transaction_with_children_in_closed_room(closed_room, user) -> ParentTransaction:
+def transaction_with_children_in_closed_room(closed_room: Room, user: User) -> ParentTransaction:
     parent_transaction = ParentTransactionFactory(
         room=closed_room,
         paid_by=user,

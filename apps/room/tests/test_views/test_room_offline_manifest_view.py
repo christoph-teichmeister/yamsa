@@ -1,19 +1,22 @@
 import json
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.core.pwa_constants import PREFETCH_HEADER_NAME
+from apps.room.models import Room
 from apps.room.services.dashboard_tab_service import DashboardTabService
 
 pytestmark = pytest.mark.django_db
 
 
-def _manifest_url(room) -> str:
+def _manifest_url(room: Room) -> str:
     return reverse("room:offline-manifest", kwargs={"room_slug": room.slug})
 
 
-def test_manifest_covers_the_rooms_navigation(authenticated_client, room) -> None:
+def test_manifest_covers_the_rooms_navigation(authenticated_client: Client, room: Room) -> None:
     """A tab the manifest misses is a tab that shows the offline page instead of the room."""
     response = authenticated_client.get(_manifest_url(room))
 
@@ -25,14 +28,14 @@ def test_manifest_covers_the_rooms_navigation(authenticated_client, room) -> Non
     assert payload["urls"][: len(tab_urls)] == tab_urls
 
 
-def test_manifest_covers_the_expense_form(authenticated_client, room) -> None:
+def test_manifest_covers_the_expense_form(authenticated_client: Client, room: Room) -> None:
     """The queue for expenses entered in a dead spot is worth nothing without the form."""
     payload = json.loads(authenticated_client.get(_manifest_url(room)).content)
 
     assert reverse("transaction:create", kwargs={"room_slug": room.slug}) in payload["urls"]
 
 
-def test_every_listed_url_can_actually_be_fetched(authenticated_client, room) -> None:
+def test_every_listed_url_can_actually_be_fetched(authenticated_client: Client, room: Room) -> None:
     """A URL the manifest names but the app refuses would cache the offline page instead."""
     urls = json.loads(authenticated_client.get(_manifest_url(room)).content)["urls"]
 
@@ -41,7 +44,7 @@ def test_every_listed_url_can_actually_be_fetched(authenticated_client, room) ->
         assert response.status_code == 200, url
 
 
-def test_a_non_member_gets_no_manifest(client, room, guest_user) -> None:
+def test_a_non_member_gets_no_manifest(client: Client, room: Room, guest_user: User) -> None:
     """The manifest is the list of pages worth caching, so it may not outline a foreign room."""
     client.force_login(guest_user)
     room.users.remove(guest_user)

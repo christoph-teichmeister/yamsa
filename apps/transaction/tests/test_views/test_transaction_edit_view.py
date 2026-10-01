@@ -4,8 +4,12 @@ from decimal import Decimal
 
 import pytest
 from bs4 import BeautifulSoup
+from django.http import HttpResponse
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
+from apps.room.models import Room
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.models import ChildTransaction
 from apps.transaction.services.room_category_service import RoomCategoryService
@@ -15,7 +19,7 @@ from apps.transaction.utils import split_total_across_paid_for
 pytestmark = pytest.mark.django_db
 
 
-def _extract_total_input_attributes(response) -> tuple[str, str]:
+def _extract_total_input_attributes(response: HttpResponse) -> tuple[str, str]:
     response_html = response.content.decode()
     input_tag_match = re.search(
         r'<input\b[^>]*id=(?:["\']?)total_value_input(?:["\']?)[^>]*>', response_html, re.DOTALL
@@ -38,13 +42,13 @@ def _extract_total_input_attributes(response) -> tuple[str, str]:
 
 
 def _request_total_input_attributes(
-    authenticated_client,
-    room,
-    user,
-    guest_user,
-    monkeypatch,
-    initial_total_override,
-    child_total_value=None,
+    authenticated_client: Client,
+    room: Room,
+    user: User,
+    guest_user: User,
+    monkeypatch: pytest.MonkeyPatch,
+    initial_total_override: str | int | None,
+    child_total_value: Decimal | None = None,
 ) -> tuple[str, str]:
     parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
     if child_total_value is not None:
@@ -78,7 +82,7 @@ _INITIAL_TOTAL_VARIATIONS = [
 
 
 class TestTransactionEditView:
-    def test_post_closed_room_is_rejected(self, authenticated_client, closed_room, user) -> None:
+    def test_post_closed_room_is_rejected(self, authenticated_client: Client, closed_room: Room, user: User) -> None:
         parent_transaction = ParentTransactionFactory(room=closed_room, paid_by=user, description="Original")
         ChildTransaction.objects.create(
             parent_transaction=parent_transaction,
@@ -106,7 +110,9 @@ class TestTransactionEditView:
         parent_transaction.refresh_from_db()
         assert parent_transaction.description == "Original"
 
-    def test_edit_form_preselects_the_current_category(self, authenticated_client, room, user) -> None:
+    def test_edit_form_preselects_the_current_category(
+        self, authenticated_client: Client, room: Room, user: User
+    ) -> None:
         category = next(
             room_category.category
             for room_category in RoomCategoryService(room=room).get_categories()
@@ -123,7 +129,7 @@ class TestTransactionEditView:
         assert [radio["value"] for radio in checked] == [str(category.id)]
 
     def test_post_rebalances_child_transactions_when_total_changes(
-        self, authenticated_client, room, user, guest_user
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
     ) -> None:
         parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
         default_category = RoomCategoryService(room=room).get_default_category()
@@ -174,7 +180,9 @@ class TestTransactionEditView:
         parent_transaction.refresh_from_db()
         assert parent_transaction.value == Decimal("51.01")
 
-    def test_existing_child_values_render_in_edit_form(self, authenticated_client, room, user, guest_user) -> None:
+    def test_existing_child_values_render_in_edit_form(
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
+    ) -> None:
         parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
         ChildTransaction.objects.create(
             parent_transaction=parent_transaction,
@@ -210,14 +218,14 @@ class TestTransactionEditView:
     )
     def test_total_input_formats_edge_initial_totals(
         self,
-        authenticated_client,
-        room,
-        user,
-        guest_user,
-        monkeypatch,
-        initial_total_override,
-        child_total_value,
-        expected_formatted,
+        authenticated_client: Client,
+        room: Room,
+        user: User,
+        guest_user: User,
+        monkeypatch: pytest.MonkeyPatch,
+        initial_total_override: str | int | None,
+        child_total_value: Decimal | None,
+        expected_formatted: str,
     ) -> None:
         """Settlement-critical totals must re-render as two-decimal strings.
 
@@ -241,14 +249,14 @@ class TestTransactionEditView:
     )
     def test_lock_state_dataset_matches_formatted_total(
         self,
-        authenticated_client,
-        room,
-        user,
-        guest_user,
-        monkeypatch,
-        initial_total_override,
-        child_total_value,
-        expected_formatted,
+        authenticated_client: Client,
+        room: Room,
+        user: User,
+        guest_user: User,
+        monkeypatch: pytest.MonkeyPatch,
+        initial_total_override: str | int | None,
+        child_total_value: Decimal | None,
+        expected_formatted: str,
     ) -> None:
         """The lock-state script (Safari/Augmented iOS flow) reads the formatted dataset.
 

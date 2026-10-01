@@ -1,7 +1,10 @@
+from collections.abc import Callable
+
 import pytest
 from django.urls import reverse
-from playwright.sync_api import expect
+from playwright.sync_api import BrowserContext, Page, expect
 
+from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.currency.tests.factories import CurrencyFactory
 from apps.debt.models import Debt
@@ -20,7 +23,7 @@ GUEST_NAME = "Alex aus der Küche"
 
 
 @pytest.fixture
-def catalog(transactional_db) -> None:
+def catalog(transactional_db: None) -> None:
     # The transactional database flushes what the migrations seeded. A room created through the
     # UI links the base categories on first use, so they have to exist before it does.
     CurrencyFactory(code="EUR", sign="€")
@@ -39,7 +42,12 @@ class TestRoomSettlementJourney:
     """
 
     def test_a_room_is_created_shared_settled_and_closed(
-        self, catalog, profile_user, page, base_url, new_context
+        self,
+        catalog: None,
+        profile_user: User,
+        page: Page,
+        base_url: str,
+        new_context: Callable[..., BrowserContext],
     ) -> None:
         _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 

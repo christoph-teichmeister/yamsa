@@ -1,7 +1,12 @@
+from collections.abc import Callable
+
 import pytest
 from django.db import connection
 from django.urls import reverse
+from playwright.sync_api import Page
 
+from apps.account.models import User
+from apps.room.models import Room
 from apps.transaction.models import Category, ChildTransaction, ParentTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 from e2e.pages.transaction_create_page import TransactionCreatePage
@@ -10,7 +15,7 @@ from e2e.tests.transaction.conftest import ACTIVITIES, GROCERIES
 
 
 @pytest.fixture
-def parent_transaction(room, profile_user) -> ParentTransaction:
+def parent_transaction(room: Room, profile_user: User) -> ParentTransaction:
     parent_transaction = ParentTransactionFactory(
         room=room,
         paid_by=profile_user,
@@ -32,13 +37,15 @@ def parent_transaction(room, profile_user) -> ParentTransaction:
 @pytest.mark.e2e
 class TestTransactionEditCategory:
     def test_the_edit_form_starts_from_the_current_category(
-        self, page, base_url, room, parent_transaction, logged_in
+        self, page: Page, base_url: str, room: Room, parent_transaction: ParentTransaction, logged_in: Callable
     ) -> None:
         edit_page = self._open_edit_form(page, base_url, room, parent_transaction, logged_in)
 
         edit_page.expect_selected_category(GROCERIES)
 
-    def test_the_category_can_be_changed(self, page, base_url, room, parent_transaction, logged_in) -> None:
+    def test_the_category_can_be_changed(
+        self, page: Page, base_url: str, room: Room, parent_transaction: ParentTransaction, logged_in: Callable
+    ) -> None:
         edit_page = self._open_edit_form(page, base_url, room, parent_transaction, logged_in)
 
         detail_path = reverse("transaction:detail", kwargs={"room_slug": room.slug, "pk": parent_transaction.id})
@@ -54,7 +61,9 @@ class TestTransactionEditCategory:
         assert ParentTransaction.objects.get(pk=parent_transaction.pk).category.slug == ACTIVITIES
 
     @staticmethod
-    def _open_edit_form(page, base_url, room, parent_transaction, logged_in) -> TransactionCreatePage:
+    def _open_edit_form(
+        page: Page, base_url: str, room: Room, parent_transaction: ParentTransaction, logged_in: Callable
+    ) -> TransactionCreatePage:
         logged_in()
         # The edit form renders the very same category partial, so it is driven by the same object.
         edit_page = TransactionCreatePage(

@@ -39,7 +39,7 @@ class TestCreateNewsOnTransactionCreate:
         assert news.deeplink == expected_deeplink
 
     def test_handler_creates_news_entry_with_expected_payload_when_creator_differs_from_payer(
-        self, another_user
+        self, another_user: User
     ) -> None:
         parent_transaction = ParentTransactionFactory()
         parent_transaction.created_by = another_user

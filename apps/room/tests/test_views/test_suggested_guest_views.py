@@ -25,7 +25,7 @@ class TestSuggestedGuestViews:
         return CurrencyFactory()
 
     @pytest.fixture
-    def room(self, creator, collaborator, currency) -> Room:
+    def room(self, creator: User, collaborator: User, currency: Currency) -> Room:
         room_instance = RoomFactory(
             name="Group Trip",
             description="Desc",
@@ -37,17 +37,21 @@ class TestSuggestedGuestViews:
         return room_instance
 
     @pytest.fixture
-    def creator_client(self, client, creator) -> Client:
+    def creator_client(self, client: Client, creator: User) -> Client:
         client.force_login(creator)
         return client
 
-    def test_room_create_view_injects_suggestions(self, creator_client, room, collaborator) -> None:
+    def test_room_create_view_injects_suggestions(
+        self, creator_client: Client, room: Room, collaborator: User
+    ) -> Client:
         response = creator_client.get(reverse("room:create"))
         assert response.status_code == 200
         suggestions = response.context.get("suggested_guests", [])
         assert any(guest.user_id == collaborator.id for guest in suggestions)
 
-    def test_friend_toggle_view_flips_state(self, creator_client, room, collaborator, creator) -> None:
+    def test_friend_toggle_view_flips_state(
+        self, creator_client: Client, room: Room, collaborator: User, creator: User
+    ) -> None:
         url = reverse("room:htmx-suggested-guest-friend-toggle")
         response = creator_client.post(url, {"suggested_user_id": collaborator.id})
         assert response.status_code == 200
@@ -58,7 +62,9 @@ class TestSuggestedGuestViews:
         assert response.status_code == 200
         assert not UserFriendship.objects.filter(user=creator, friend=collaborator).exists()
 
-    def test_existing_room_view_includes_suggestions(self, creator_client, room, collaborator) -> None:
+    def test_existing_room_view_includes_suggestions(
+        self, creator_client: Client, room: Room, collaborator: User
+    ) -> None:
         url = reverse("room:userconnectiontoroom-create", kwargs={"room_slug": room.slug})
         response = creator_client.get(url)
 

@@ -1,15 +1,19 @@
 import pytest
 from django.urls import reverse
-from playwright.sync_api import expect
+from playwright.sync_api import Page, expect
 
+from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
+from apps.room.models import Room
 from e2e.pages.base_page import BasePage
 from e2e.pages.login_page import LoginPage
 
 
 @pytest.mark.e2e
 class TestRoomNavigation:
-    def test_a_room_card_can_be_opened_with_the_keyboard(self, page, base_url, profile_user, shared_room) -> None:
+    def test_a_room_card_can_be_opened_with_the_keyboard(
+        self, page: Page, base_url: str, profile_user: User, shared_room: Room
+    ) -> None:
         # The card is a div with role="button": Enter only reaches it through the delegated handler
         # in apps/static/js/navigation.js, which is what this guards. htmx cannot do it itself -
         # its trigger filters need eval, which the CSP forbids.

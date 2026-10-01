@@ -1,15 +1,16 @@
 import http
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
 from apps.account.tests.factories import UserFactory
-from apps.room.models import UserConnectionToRoom
+from apps.room.models import Room, UserConnectionToRoom
 
 pytestmark = pytest.mark.django_db
 
 
-def test_post_regular(authenticated_client, room) -> None:
+def test_post_regular(authenticated_client: Client, room: Room) -> None:
     other_user = UserFactory()
 
     response = authenticated_client.post(
@@ -22,7 +23,7 @@ def test_post_regular(authenticated_client, room) -> None:
     assert UserConnectionToRoom.objects.filter(user=other_user, room=room).exists()
 
 
-def test_post_closed_room_is_rejected(authenticated_client, closed_room) -> None:
+def test_post_closed_room_is_rejected(authenticated_client: Client, closed_room: Room) -> None:
     other_user = UserFactory()
 
     response = authenticated_client.post(
@@ -34,7 +35,7 @@ def test_post_closed_room_is_rejected(authenticated_client, closed_room) -> None
     assert not UserConnectionToRoom.objects.filter(user=other_user, room=closed_room).exists()
 
 
-def test_a_closed_room_renders_the_form_inert(authenticated_client, closed_room) -> None:
+def test_a_closed_room_renders_the_form_inert(authenticated_client: Client, closed_room: Room) -> None:
     """The POST is rejected by the mixin; the page has to say so before anyone types."""
     content = authenticated_client.get(
         reverse("room:userconnectiontoroom-create", kwargs={"room_slug": closed_room.slug})
@@ -45,7 +46,7 @@ def test_a_closed_room_renders_the_form_inert(authenticated_client, closed_room)
     assert content.count("disabled") >= 2
 
 
-def test_an_open_room_renders_a_usable_form(authenticated_client, room) -> None:
+def test_an_open_room_renders_a_usable_form(authenticated_client: Client, room: Room) -> None:
     content = authenticated_client.get(
         reverse("room:userconnectiontoroom-create", kwargs={"room_slug": room.slug})
     ).content.decode()

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from django.test import override_settings
 
 from apps.core.services.pwa_cache_version_service import FALLBACK_VERSION, resolve_cache_version
@@ -9,7 +11,7 @@ def test_the_release_is_sanitised_into_a_cache_name() -> None:
 
 
 @override_settings(RELEASE="")
-def test_without_a_release_the_assets_stand_in_for_one(tmp_path) -> None:
+def test_without_a_release_the_assets_stand_in_for_one(tmp_path: Path) -> None:
     """A run from a working copy, or a host that does not name its builds."""
     stats_file = tmp_path / "webpack-stats.json"
     stats_file.write_text('{"status": "done"}', encoding="utf-8")

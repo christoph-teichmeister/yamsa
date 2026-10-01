@@ -24,7 +24,7 @@ class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
         context["dashboard_url"] = self._build_dashboard_url()
         return context
 
-    def form_valid(self, form) -> HttpResponse:
+    def form_valid(self, form: RoomCreateForm) -> HttpResponse:
         created_room: Room = form.instance
 
         created_room.created_at = timezone.now()

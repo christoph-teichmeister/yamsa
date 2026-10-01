@@ -29,7 +29,7 @@ class RegisterForm(ModelForm):
     def clean_password(self) -> str:
         return hashers.make_password(self.cleaned_data["password"])
 
-    def save(self, commit=True) -> User:
+    def save(self, commit: bool = True) -> User:
         self.instance.id = self.cleaned_data["id"]
         self.instance.name = self.cleaned_data["name"]
         return super().save(commit)

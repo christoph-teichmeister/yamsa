@@ -1,8 +1,10 @@
 from urllib.parse import parse_qs, urlparse
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.account.utils.notification_preferences import (
     PAYMENT_REMINDER_VARIANT,
     ROOM_REMINDER_VARIANT,
@@ -12,7 +14,7 @@ from apps.account.utils.notification_preferences import (
 pytestmark = pytest.mark.django_db
 
 
-def test_valid_token_unsubscribes_user(client, user) -> None:
+def test_valid_token_unsubscribes_user(client: Client, user: User) -> None:
     url = build_payment_reminder_unsubscribe_url(user)
     query = parse_qs(urlparse(url).query)
     token = query["token"][0]
@@ -26,7 +28,7 @@ def test_valid_token_unsubscribes_user(client, user) -> None:
     assert "You are no longer subscribed to payment reminder emails." in response.content.decode()
 
 
-def test_room_variant_unsubscribes_room_reminders(client, user) -> None:
+def test_room_variant_unsubscribes_room_reminders(client: Client, user: User) -> None:
     url = build_payment_reminder_unsubscribe_url(user, variant=ROOM_REMINDER_VARIANT)
     query = parse_qs(urlparse(url).query)
     token = query["token"][0]
@@ -45,7 +47,7 @@ def test_room_variant_unsubscribes_room_reminders(client, user) -> None:
     assert "You are no longer receiving room reminders." in response.content.decode()
 
 
-def test_invalid_token_shows_error_message(client, user) -> None:
+def test_invalid_token_shows_error_message(client: Client, user: User) -> None:
     response = client.get(f"{reverse('account:payment-reminder-unsubscribe')}?token=invalid-token")
 
     user.refresh_from_db()

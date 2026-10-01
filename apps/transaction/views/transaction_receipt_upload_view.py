@@ -1,5 +1,5 @@
 from django import forms
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views import generic
 
@@ -12,7 +12,7 @@ from apps.transaction.views.mixins.transaction_base_context import TransactionBa
 class TransactionReceiptUploadView(RoomNotClosedRequiredMixin, TransactionBaseContext, generic.TemplateView):
     template_name = "transaction/partials/_receipts_section.html"
 
-    def post(self, request, room_slug, transaction_pk) -> HttpResponse:
+    def post(self, request: HttpRequest, room_slug: str, transaction_pk: int) -> HttpResponse:
         parent_transaction = get_object_or_404(
             ParentTransaction.objects.select_related("paid_by", "currency", "category"),
             pk=transaction_pk,

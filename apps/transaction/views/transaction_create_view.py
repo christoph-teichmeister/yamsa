@@ -44,13 +44,13 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
         return kwargs
 
-    def form_invalid(self, form) -> HttpResponse:
+    def form_invalid(self, form: TransactionCreateForm) -> HttpResponse:
         toast_message = self._get_toast_error_message(form)
         if toast_message:
             self.request.toast_queue.error(toast_message)
         return super().form_invalid(form)
 
-    def form_valid(self, form) -> HttpResponse:
+    def form_valid(self, form: TransactionCreateForm) -> HttpResponse:
         client_request_id = self._client_request_id()
         if client_request_id:
             if ParentTransaction.objects.filter(client_request_id=client_request_id).exists():
@@ -106,10 +106,10 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
         return HttpResponseRedirect(self.get_success_url())
 
     @staticmethod
-    def _names_the_client_request_id(exc) -> bool:
+    def _names_the_client_request_id(exc: forms.ValidationError) -> bool:
         return CLIENT_REQUEST_ID_FIELD in (getattr(exc, "error_dict", None) or {})
 
-    def _attach_validation_error(self, form, exc) -> bool:
+    def _attach_validation_error(self, form: TransactionCreateForm, exc: forms.ValidationError) -> bool:
         error_dict = getattr(exc, "error_dict", None)
         if error_dict:
             for field_name, errors in error_dict.items():
@@ -136,7 +136,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
         return False
 
-    def _get_toast_error_message(self, form) -> str | None:
+    def _get_toast_error_message(self, form: TransactionCreateForm | None) -> str | None:
         non_field_errors = form.non_field_errors()
         if non_field_errors:
             return str(non_field_errors[0])
@@ -185,7 +185,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
             return self.request.POST.get("reference_total_value", "0.00")
         return "0.00"
 
-    def _build_selected_paid_by(self, form) -> str:
+    def _build_selected_paid_by(self, form: TransactionCreateForm | None) -> str:
         posted = self.request.POST.get("paid_by")
         if posted:
             return posted
@@ -195,7 +195,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
                 return str(value)
         return str(self.request.user.id)
 
-    def _build_selected_currency(self, form) -> str:
+    def _build_selected_currency(self, form: TransactionCreateForm | None) -> str:
         if self.request.method == "POST":
             posted = self.request.POST.get("currency")
             if posted:

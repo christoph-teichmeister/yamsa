@@ -1,7 +1,8 @@
 import json
+from collections.abc import Callable
 from typing import Any
 
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 
 from apps.core.pwa_constants import PREFETCH_HEADER_NAME
 from apps.core.toast import ToastQueue
@@ -14,10 +15,10 @@ class ToastMiddleware:
     CARRIED_TOASTS_SESSION_KEY = "toast_middleware_carried_toasts"
     REDIRECT_STATUS_CODES = frozenset({301, 302, 303, 307, 308})
 
-    def __init__(self, get_response) -> None:
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
         self.get_response = get_response
 
-    def __call__(self, request) -> HttpResponse:
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         request.toast_queue = ToastQueue()
         for toast in self._take_carried_toasts(request):
             request.toast_queue.add(toast["message"], toast["type"])
@@ -36,7 +37,7 @@ class ToastMiddleware:
 
         return response
 
-    def process_template_response(self, request, response) -> HttpResponse:
+    def process_template_response(self, request: HttpRequest, response: HttpResponse) -> HttpResponse:
         # By the time __call__ gets the response back, the handler has rendered it, so the context
         # is only still open here. htmx requests are left to the headers: the toast script in a
         # swapped-in page runs again, and both would show every toast twice.
@@ -44,7 +45,7 @@ class ToastMiddleware:
             self._inject_context(response, request.toast_queue.as_trigger_payload()["triggerToast"])
         return response
 
-    def _take_carried_toasts(self, request) -> list[dict[str, str]]:
+    def _take_carried_toasts(self, request: HttpRequest) -> list[dict[str, str]]:
         # A background request that fills the offline cache would show them on a page nobody is
         # looking at.
         if request.headers.get(PREFETCH_HEADER_NAME):
@@ -66,7 +67,7 @@ class ToastMiddleware:
             context["queued_toasts"] = list(queued_toasts)
         response.context_data = context
 
-    def _is_htmx_request(self, request) -> bool:
+    def _is_htmx_request(self, request: HttpRequest) -> bool:
         return bool(request.headers.get("HX-Request"))
 
     def _attach_hx_triggers(self, response: HttpResponse, queued_toasts: list[dict[str, str]]) -> None:

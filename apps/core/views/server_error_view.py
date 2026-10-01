@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.views import generic
 
@@ -19,7 +19,7 @@ class ServerErrorView(generic.View):
     and handler500 always needs the same response regardless of it.
     """
 
-    def dispatch(self, request, *args: object, **kwargs: object) -> HttpResponse:
+    def dispatch(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
         if request.headers.get("HX-Request"):
             return HttpResponse(status=500)
         return render(request, "500.html", status=500)

@@ -1,12 +1,15 @@
+from collections.abc import Callable
 from decimal import Decimal
 from unittest import mock
 
 import pytest
 
 from apps.account.messages.events.user_removed_from_room import UserRemovedFromRoom
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
 from apps.debt.messages.events.debt_settled import DebtSettled
 from apps.debt.models import Debt
+from apps.room.models import Room
 from apps.transaction.messages.events.transaction import ParentTransactionDeleted, ParentTransactionUpdated
 from apps.webpush.handlers.events.events import (
     send_notification_on_child_transaction_deleted,
@@ -19,10 +22,10 @@ from apps.webpush.utils import Notification
 
 @pytest.mark.django_db
 def test_send_notification_on_transaction_update_localizes_body_per_recipient_language(
-    room,
-    user,
-    guest_user,
-    create_parent_transaction_with_optimisation,
+    room: Room,
+    user: User,
+    guest_user: User,
+    create_parent_transaction_with_optimisation: Callable,
 ) -> None:
     another_user = UserFactory(language="de")
     room.users.add(another_user)
@@ -57,10 +60,10 @@ def test_send_notification_on_transaction_update_localizes_body_per_recipient_la
 
 @pytest.mark.django_db
 def test_send_notification_on_child_transaction_deleted_localizes_body_per_recipient_language(
-    room,
-    user,
-    guest_user,
-    create_parent_transaction_with_optimisation,
+    room: Room,
+    user: User,
+    guest_user: User,
+    create_parent_transaction_with_optimisation: Callable,
 ) -> None:
     another_user = UserFactory(language="de")
     room.users.add(another_user)
@@ -96,7 +99,7 @@ def test_send_notification_on_child_transaction_deleted_localizes_body_per_recip
 
 
 @pytest.mark.django_db
-def test_send_notification_on_debt_settled_localizes_body_to_creditor_language(room, user) -> None:
+def test_send_notification_on_debt_settled_localizes_body_to_creditor_language(room: Room, user: User) -> None:
     creditor = UserFactory(language="de")
     debitor = user
 
@@ -123,7 +126,7 @@ def test_send_notification_on_debt_settled_localizes_body_to_creditor_language(r
 
 @pytest.mark.django_db
 def test_send_notification_on_user_removed_from_room_localizes_body_per_recipient_language(
-    room, user, guest_user
+    room: Room, user: User, guest_user: User
 ) -> None:
     another_user = UserFactory(language="de")
     room.users.add(another_user)

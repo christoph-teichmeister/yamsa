@@ -21,7 +21,7 @@ class UserChangePasswordView(mixins.LoginRequiredMixin, generic.UpdateView):
         form_kwargs.update({"instance": self.request.user, "request": self.request})
         return form_kwargs
 
-    def form_valid(self, form) -> HttpResponse:
+    def form_valid(self, form: ChangePasswordForm) -> HttpResponse:
         super_form_valid = super().form_valid(form)
         login(request=self.request, user=form.instance, backend="django.contrib.auth.backends.ModelBackend")
         return super_form_valid

@@ -1,9 +1,10 @@
 import json
 import re
 
+import pytest
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.template import Context, Template
-from django.test import override_settings
+from django.test import Client, override_settings
 from django.urls import reverse
 
 from apps.core.views.service_worker_view import ServiceWorkerView
@@ -51,7 +52,7 @@ def test_service_worker_builds_precache_urls_from_manifest() -> None:
         "precache_bundles": {},
     },
 )
-def test_service_worker_precaches_the_url_the_storage_serves(monkeypatch) -> None:
+def test_service_worker_precaches_the_url_the_storage_serves(monkeypatch: pytest.MonkeyPatch) -> None:
     """A hashing storage renames every static file; precaching the raw name would cache nothing."""
     monkeypatch.setattr(staticfiles_storage, "url", lambda name: f"/static/{name}.deadbeef.css")
 
@@ -74,7 +75,7 @@ def test_service_worker_precaches_every_asset_the_page_pulls_in() -> None:
     assert sprite_url in precached
 
 
-def test_service_worker_never_answers_app_assets_from_the_cache_first(client) -> None:
+def test_service_worker_never_answers_app_assets_from_the_cache_first(client: Client) -> None:
     """Guards the invariant that made bundle changes invisible until the caches were cleared."""
     script = client.get(reverse("core:serviceworker")).content.decode()
 
@@ -89,7 +90,7 @@ def test_service_worker_never_answers_app_assets_from_the_cache_first(client) ->
     )
 
 
-def test_service_worker_keeps_pages_out_of_the_shared_asset_cache(client) -> None:
+def test_service_worker_keeps_pages_out_of_the_shared_asset_cache(client: Client) -> None:
     """A page carries what one account was allowed to see; an asset is the same for everyone."""
     script = client.get(reverse("core:serviceworker")).content.decode()
 

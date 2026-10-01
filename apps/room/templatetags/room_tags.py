@@ -1,7 +1,9 @@
+from datetime import datetime
 from decimal import Decimal
 
 from django import template
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.template.base import Parser, Token
 from django.template.defaulttags import url
 from django.utils import timezone
 from django.utils.html import format_html
@@ -15,13 +17,13 @@ register = template.Library()
 
 
 @register.filter
-def room_seal_icon(room) -> str:
+def room_seal_icon(room: dict) -> str:
     """`room` is the `current_room` context dict - see room_context()."""
     return room["resolved_seal_icon"]
 
 
 @register.filter
-def room_seal_tilt(room) -> int:
+def room_seal_tilt(room: dict) -> int:
     return room["seal_tilt"]
 
 
@@ -36,7 +38,7 @@ def room_seal_icons() -> list[tuple[str, str]]:
 
 
 @register.simple_tag(takes_context=True)
-def parse_user_text(context, user_name: str, start_of_sentence: bool = False) -> str:
+def parse_user_text(context: template.Context, user_name: str, start_of_sentence: bool = False) -> str:
     request = context.get("request")
 
     if request.user.name == user_name:
@@ -46,7 +48,7 @@ def parse_user_text(context, user_name: str, start_of_sentence: bool = False) ->
 
 
 @register.tag
-def room_url(parser, token) -> template.Node:
+def room_url(parser: Parser, token: Token) -> template.Node:
     # The tag resolves against "current_room", which the room middleware only provides for URLs
     # carrying a room_slug. _side_menu_room_list.html renders outside such a URL and iterates a
     # room_qs instead, so it is the one template that binds "room".
@@ -61,7 +63,7 @@ def room_url(parser, token) -> template.Node:
 
 
 @register.filter
-def room_status_label(status) -> str:
+def room_status_label(status: int) -> str:
     """Render the label of a Room status value, for rows that are dicts rather than model instances."""
     from apps.room.models import Room
 
@@ -69,7 +71,7 @@ def room_status_label(status) -> str:
 
 
 @register.filter
-def room_last_used(value) -> str:
+def room_last_used(value: datetime | None) -> str:
     """Say when a room was last used, in a single unit ("3 weeks ago").
 
     naturaltime and timesince both default to two units ("4 weeks, 2 days ago"), which costs
@@ -88,7 +90,7 @@ def room_last_used(value) -> str:
 
 
 @register.filter
-def format_with_thousands(value) -> str:
+def format_with_thousands(value: object) -> str:
     """Formats a number with thousands separator using Django's locale-aware number_format.
 
     Uses django.utils.formats.number_format which respects i18n settings.

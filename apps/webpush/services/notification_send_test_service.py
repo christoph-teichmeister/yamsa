@@ -1,5 +1,6 @@
 import re
 
+from apps.account.models import User
 from apps.webpush.dataclasses import TestNotification
 
 _notification_list = []
@@ -26,7 +27,9 @@ class NotificationSendTestService:
         self._load_notification_outbox()
         return self._outbox[0]
 
-    def filter(self, user=None, head=None, body=None, click_url=None) -> list[TestNotification]:
+    def filter(
+        self, user: User | None = None, head: str | None = None, body: str | None = None, click_url: str | None = None
+    ) -> list[TestNotification]:
         # Ensure that outbox is up-to-date
         self._load_notification_outbox()
 

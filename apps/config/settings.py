@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 
 import environ
+from django.http import HttpRequest
 from django.urls import reverse_lazy
 from django.utils.csp import CSP
 from django.utils.translation import gettext_lazy as _
@@ -572,7 +573,7 @@ CSRF_TRUSTED_ORIGINS = (FRONTEND_URL, BACKEND_URL)
 
 # AXES
 # ------------------------------------------------------------------------------
-def axes_cooloff_time(request) -> datetime.timedelta:
+def axes_cooloff_time(request: HttpRequest) -> datetime.timedelta:
     return datetime.timedelta(0, LOGIN_TIMEDELTA)
 
 
@@ -954,7 +955,7 @@ TEST_STRUCTURE_VALIDATOR_IGNORED_DIRECTORY_LIST = [
 
 # PASSKEYS
 # ------------------------------------------------------------------------------
-def _passkey_rp_id(request=None) -> str:
+def _passkey_rp_id(request: HttpRequest | None = None) -> str:
     from urllib.parse import urlparse
 
     return urlparse(BACKEND_URL).hostname or "localhost"

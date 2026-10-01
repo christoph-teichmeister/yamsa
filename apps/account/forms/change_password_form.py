@@ -42,6 +42,6 @@ class ChangePasswordForm(forms.ModelForm):
         if new_password and confirmation and new_password != confirmation:
             raise ValidationError({"new_password_confirmation": self.ExceptionMessage.PASSWORDS_DO_NOT_MATCH})
 
-    def save(self, commit=True) -> User:
+    def save(self, commit: bool = True) -> User:
         self.instance.password = hashers.make_password(self.cleaned_data["new_password"])
         return super().save(commit)

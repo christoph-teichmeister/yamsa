@@ -28,7 +28,7 @@ class WebPushSaveView(generic.CreateView):
             },
         }
 
-    def form_valid(self, form) -> HttpResponse:
+    def form_valid(self, form: WebPushInformationForm) -> HttpResponse:
         if not self.request.user.is_authenticated:
             return HttpResponse(status=http.HTTPStatus.BAD_REQUEST)
 
@@ -48,5 +48,5 @@ class WebPushSaveView(generic.CreateView):
             content="Unknown status_type",
         )
 
-    def form_invalid(self, form) -> HttpResponse:
+    def form_invalid(self, form: WebPushInformationForm) -> HttpResponse:
         return HttpResponse(status=http.HTTPStatus.BAD_REQUEST, content=form.errors)

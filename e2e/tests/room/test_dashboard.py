@@ -5,8 +5,9 @@ from decimal import Decimal
 import pytest
 from django.urls import reverse
 from django.utils import timezone
-from playwright.sync_api import expect
+from playwright.sync_api import Page, expect
 
+from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.currency.models import Currency
 from apps.currency.tests.factories import CurrencyFactory
@@ -19,16 +20,16 @@ from e2e.pages.dashboard_page import DashboardPage
 from e2e.pages.login_page import LoginPage
 
 
-def _add_transaction(*, room, user, paid_at: datetime) -> ParentTransaction:
+def _add_transaction(*, room: Room, user: User, paid_at: datetime) -> ParentTransaction:
     return ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency, paid_at=paid_at)
 
 
 def _room_with_balance(
     *,
     name: str,
-    owner,
-    roommate,
-    currency,
+    owner: User,
+    roommate: User,
+    currency: Currency,
     owed_by_owner: Decimal | None = None,
     owed_to_owner: Decimal | None = None,
     status: str = Room.StatusChoices.OPEN,
@@ -45,7 +46,7 @@ def _room_with_balance(
     return room
 
 
-def _closed_room_with_debt(*, owner, roommate, currency) -> Room:
+def _closed_room_with_debt(*, owner: User, roommate: User, currency: Currency) -> Room:
     return _room_with_balance(
         name="Closed Room",
         owner=owner,
@@ -56,17 +57,17 @@ def _closed_room_with_debt(*, owner, roommate, currency) -> Room:
     )
 
 
-def _url_of(room) -> str:
+def _url_of(room: Room) -> str:
     return reverse(Room.dashboard_viewname_for(room.status), kwargs={"room_slug": room.slug})
 
 
 @pytest.fixture
-def euro(transactional_db) -> Currency:
+def euro(transactional_db: None) -> Currency:
     return CurrencyFactory(sign="€")
 
 
 @pytest.fixture
-def rooms_by_recency(profile_user, roommate, euro) -> dict[str, Room]:
+def rooms_by_recency(profile_user: User, roommate: User, euro: Currency) -> dict[str, Room]:
     """Four open rooms whose latest transaction runs opposite to their open balance.
 
     The room with the largest debt was last used a month ago and the settled one five minutes
@@ -80,7 +81,10 @@ def rooms_by_recency(profile_user, roommate, euro) -> dict[str, Room]:
         roommate=roommate,
         currency=euro,
         owed_by_owner=Decimal("1234.50"),
-        last_transaction_at=now - timedelta(days=30),
+        # days=29, not 30: Django's month chunk is exactly 30 days, and the time that passes
+        # between this line and the filter's own now() always pushes a days=30 delta over that
+        # boundary, rendering "1 month ago" instead of the "4 weeks ago" asserted below.
+        last_transaction_at=now - timedelta(days=29),
     )
     small_debt = _room_with_balance(
         name="Small Debt Room",
@@ -109,7 +113,7 @@ def rooms_by_recency(profile_user, roommate, euro) -> dict[str, Room]:
 
 
 @pytest.fixture
-def open_dashboard(page, base_url, profile_user) -> Callable:
+def open_dashboard(page: Page, base_url: str, profile_user: User) -> Callable:
     """Log in and load the dashboard, on call rather than on fixture setup.
 
     A fixture that navigated straight away would race the test's own data: pytest resolves
@@ -117,7 +121,7 @@ def open_dashboard(page, base_url, profile_user) -> Callable:
     assertion would then be about an empty dashboard.
     """
 
-    def _open(as_user=None) -> DashboardPage:
+    def _open(as_user: User | None = None) -> DashboardPage:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login((as_user or profile_user).email, DEFAULT_PASSWORD)
@@ -131,10 +135,14 @@ def open_dashboard(page, base_url, profile_user) -> Callable:
 
 @pytest.mark.e2e
 class TestDashboardRoomList:
-    def test_rooms_are_ordered_by_their_latest_transaction(self, rooms_by_recency, open_dashboard) -> None:
+    def test_rooms_are_ordered_by_their_latest_transaction(
+        self, rooms_by_recency: dict[str, Room], open_dashboard: Callable
+    ) -> None:
         open_dashboard().expect_room_order(["Settled Room", "Receiving Room", "Small Debt Room", "Big Debt Room"])
 
-    def test_a_new_transaction_lifts_its_room_to_the_top(self, rooms_by_recency, profile_user, open_dashboard) -> None:
+    def test_a_new_transaction_lifts_its_room_to_the_top(
+        self, rooms_by_recency: dict[str, Room], profile_user: User, open_dashboard: Callable
+    ) -> None:
         dashboard = open_dashboard()
         dashboard.expect_room_order(["Settled Room", "Receiving Room", "Small Debt Room", "Big Debt Room"])
 
@@ -144,7 +152,12 @@ class TestDashboardRoomList:
         dashboard.expect_room_order(["Big Debt Room", "Settled Room", "Receiving Room", "Small Debt Room"])
 
     def test_a_room_without_transactions_starts_at_the_top(
-        self, rooms_by_recency, profile_user, roommate, euro, open_dashboard
+        self,
+        rooms_by_recency: dict[str, Room],
+        profile_user: User,
+        roommate: User,
+        euro: Currency,
+        open_dashboard: Callable,
     ) -> None:
         # A room created just now has nothing to show yet and must not open at the bottom.
         brand_new_room = _room_with_balance(name="Brand New Room", owner=profile_user, roommate=roommate, currency=euro)
@@ -157,7 +170,9 @@ class TestDashboardRoomList:
         # Nothing was ever paid here, so the card has no last use to name.
         dashboard.expect_no_last_used(_url_of(brand_new_room))
 
-    def test_each_card_names_when_its_room_was_last_used(self, rooms_by_recency, open_dashboard) -> None:
+    def test_each_card_names_when_its_room_was_last_used(
+        self, rooms_by_recency: dict[str, Room], open_dashboard: Callable
+    ) -> None:
         dashboard = open_dashboard()
 
         dashboard.expect_last_used(_url_of(rooms_by_recency["settled"]), "5\xa0minutes ago")
@@ -165,22 +180,28 @@ class TestDashboardRoomList:
         # One unit, not naturaltime's "4 weeks, 2 days ago".
         dashboard.expect_last_used(_url_of(rooms_by_recency["big_debt"]), "4\xa0weeks ago")
 
-    def test_each_card_names_its_direction_and_amount(self, rooms_by_recency, open_dashboard) -> None:
+    def test_each_card_names_its_direction_and_amount(
+        self, rooms_by_recency: dict[str, Room], open_dashboard: Callable
+    ) -> None:
         dashboard = open_dashboard()
 
         dashboard.expect_amount(_url_of(rooms_by_recency["big_debt"]), label="You owe", value="1,234.50€")
         dashboard.expect_amount(_url_of(rooms_by_recency["receiving"]), label="You get back", value="7.50€")
         dashboard.expect_settled(_url_of(rooms_by_recency["settled"]))
 
-    def test_the_summary_sums_the_open_rooms_per_direction(self, rooms_by_recency, open_dashboard) -> None:
+    def test_the_summary_sums_the_open_rooms_per_direction(
+        self, rooms_by_recency: dict[str, Room], open_dashboard: Callable
+    ) -> None:
         open_dashboard().expect_summary(owed=["1,247.00€"], received=["7.50€"])
 
-    def test_cards_of_the_users_own_rooms_carry_no_status_badge(self, rooms_by_recency, open_dashboard) -> None:
+    def test_cards_of_the_users_own_rooms_carry_no_status_badge(
+        self, rooms_by_recency: dict[str, Room], open_dashboard: Callable
+    ) -> None:
         # The "Open" section heading already says it; repeating it per card only costs width.
         open_dashboard().expect_no_status_badge(_url_of(rooms_by_recency["big_debt"]))
 
     def test_a_closed_room_shows_neither_its_debt_nor_a_settled_hint(
-        self, profile_user, roommate, euro, open_dashboard
+        self, profile_user: User, roommate: User, euro: Currency, open_dashboard: Callable
     ) -> None:
         closed_room = _closed_room_with_debt(owner=profile_user, roommate=roommate, currency=euro)
 
@@ -191,7 +212,7 @@ class TestDashboardRoomList:
         dashboard.expect_no_summary()
 
     def test_closed_rooms_stay_collapsed_until_the_section_is_opened(
-        self, profile_user, roommate, euro, open_dashboard
+        self, profile_user: User, roommate: User, euro: Currency, open_dashboard: Callable
     ) -> None:
         closed_room = _closed_room_with_debt(owner=profile_user, roommate=roommate, currency=euro)
 
@@ -201,11 +222,11 @@ class TestDashboardRoomList:
         dashboard.expand_section("closedRooms")
         expect(dashboard.card_for(_url_of(closed_room))).to_be_visible()
 
-    def test_a_user_without_open_balances_gets_no_summary(self, shared_room, open_dashboard) -> None:
+    def test_a_user_without_open_balances_gets_no_summary(self, shared_room: Room, open_dashboard: Callable) -> None:
         open_dashboard().expect_no_summary()
 
     def test_open_rooms_are_one_per_row_while_closed_ones_pair_up(
-        self, profile_user, roommate, euro, page, open_dashboard
+        self, profile_user: User, roommate: User, euro: Currency, page: Page, open_dashboard: Callable
     ) -> None:
         now = timezone.now()
         open_rooms = [
@@ -247,7 +268,7 @@ class TestDashboardRoomList:
         dashboard.expect_side_by_side(*(_url_of(room) for room in closed_rooms))
 
     def test_foreign_rooms_are_shown_two_per_row_with_their_status(
-        self, profile_user, roommate, euro, superuser, open_dashboard
+        self, profile_user: User, roommate: User, euro: Currency, superuser: User, open_dashboard: Callable
     ) -> None:
         # A superuser sees every room of the instance, none of which is theirs. The section mixes
         # open and closed rooms, so each tile has to say which of the two it is.

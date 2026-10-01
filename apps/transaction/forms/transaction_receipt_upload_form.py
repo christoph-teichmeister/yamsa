@@ -2,13 +2,14 @@ import mimetypes
 
 from django import forms
 from django.core.files.uploadedfile import UploadedFile
+from django.http import HttpRequest
 
 from apps.transaction.forms.transaction_create_form import (
     MAX_RECEIPT_SIZE,
     RECEIPT_ACCEPTED_CONTENT_TYPES,
     RECEIPT_AUTH_REQUIRED_MESSAGE,
 )
-from apps.transaction.models import Receipt
+from apps.transaction.models import ParentTransaction, Receipt
 
 ACCEPTED_RECEIPT_TYPES = ",".join(RECEIPT_ACCEPTED_CONTENT_TYPES)
 
@@ -22,7 +23,7 @@ class TransactionReceiptUploadForm(forms.Form):
         help_text="Upload a PDF or image (max 5 MB).",
     )
 
-    def __init__(self, *args: object, request=None, **kwargs: object) -> None:
+    def __init__(self, *args: object, request: HttpRequest | None = None, **kwargs: object) -> None:
         self._request = request
         super().__init__(*args, **kwargs)
 
@@ -52,7 +53,7 @@ class TransactionReceiptUploadForm(forms.Form):
 
         return uploaded_file
 
-    def save(self, parent_transaction) -> Receipt:
+    def save(self, parent_transaction: ParentTransaction) -> Receipt:
         receipt_file = self.cleaned_data["receipt"]
         uploader = getattr(self._request, "user", None)
         return Receipt.objects.create(

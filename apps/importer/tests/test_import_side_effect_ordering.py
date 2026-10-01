@@ -2,10 +2,12 @@ from unittest import mock
 
 import pytest
 from django.http import HttpResponse
+from django.test import Client
 from django.urls import reverse
 
 from apps.account.models import User
 from apps.account.tests.factories import UserFactory
+from apps.currency.models import Currency
 from apps.debt.models import Debt
 from apps.importer.tests.factories import build_upload
 from apps.room.models import Room, UserConnectionToRoom
@@ -23,7 +25,7 @@ class TestImportSideEffectOrdering:
     The debt recalculation must therefore run before the connection mails, not after.
     """
 
-    def _import(self, client, currency, friend) -> HttpResponse:
+    def _import(self, client: Client, currency: Currency, friend: User) -> HttpResponse:
         redirect = client.post(reverse("importer:upload"), data={"source": "splitwise-csv", "file": build_upload(ROWS)})
         token = redirect.url.split("token=")[1]
         response = client.get(f"{reverse('importer:preview')}?token={token}")
@@ -43,12 +45,14 @@ class TestImportSideEffectOrdering:
         return client.post(reverse("importer:preview"), data=payload)
 
     @pytest.fixture
-    def friend(self, db, user, room) -> User:
+    def friend(self, db: None, user: User, room: Room) -> User:
         existing = UserFactory(name="Elisabeth")
         room.users.add(existing)
         return existing
 
-    def test_debts_survive_a_failing_connection_mail(self, db, authenticated_client, currency, friend) -> None:
+    def test_debts_survive_a_failing_connection_mail(
+        self, db: None, authenticated_client: Client, currency: Currency, friend: User
+    ) -> None:
         target = "apps.mail.services.user_added_to_room_mail_service.UserAddedToRoomEmailService.process"
         with mock.patch(target, side_effect=OSError("SMTP down")), pytest.raises(OSError, match="SMTP down"):
             self._import(authenticated_client, currency, friend)
@@ -58,7 +62,9 @@ class TestImportSideEffectOrdering:
         # The whole point: the room is not left with transactions and no debts.
         assert Debt.objects.filter(room=imported_room, settled=False).exists()
 
-    def test_a_healthy_import_connects_everyone(self, db, authenticated_client, currency, friend) -> None:
+    def test_a_healthy_import_connects_everyone(
+        self, db: None, authenticated_client: Client, currency: Currency, friend: User
+    ) -> None:
         response = self._import(authenticated_client, currency, friend)
 
         imported_room = Room.objects.get(name="Kilian & Elisabeth")

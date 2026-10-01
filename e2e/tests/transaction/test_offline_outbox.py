@@ -1,8 +1,10 @@
 import pytest
 from django.urls import reverse
-from playwright.sync_api import expect
+from playwright.sync_api import Page, expect
 
+from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
+from apps.room.models import Room
 from apps.transaction.models import ParentTransaction
 from e2e.pages.login_page import LoginPage
 from e2e.pages.transaction_create_page import TransactionCreatePage
@@ -35,7 +37,7 @@ OUTBOX_HOLDS_ONE = f"async () => (await ({OUTBOX_SIZE})()) === 1"
 @pytest.mark.expects_htmx_errors
 class TestOfflineOutbox:
     @staticmethod
-    def _room_paths(room) -> list[str]:
+    def _room_paths(room: Room) -> list[str]:
         return [
             reverse("transaction:list", kwargs={"room_slug": room.slug}),
             reverse("debt:list", kwargs={"room_slug": room.slug}),
@@ -44,7 +46,7 @@ class TestOfflineOutbox:
             reverse("transaction:create", kwargs={"room_slug": room.slug}),
         ]
 
-    def _prepare(self, page, base_url, profile_user, room) -> list[str]:
+    def _prepare(self, page: Page, base_url: str, profile_user: User, room: Room) -> list[str]:
         """Sign in and let the worker take over and warm the room.
 
         Uses the transaction suite's own room fixture: these tests run against a transactional
@@ -63,17 +65,17 @@ class TestOfflineOutbox:
         return paths
 
     @staticmethod
-    def _go_offline(page) -> None:
+    def _go_offline(page: Page) -> None:
         page.context.route("**/*", lambda route: route.abort())
         page.context.set_offline(True)
 
     @staticmethod
-    def _go_online(page) -> None:
+    def _go_online(page: Page) -> None:
         page.context.unroute("**/*")
         page.context.set_offline(False)
 
     @staticmethod
-    def _add_expense_offline(page, base_url, room, description) -> TransactionCreatePage:
+    def _add_expense_offline(page: Page, base_url: str, room: Room, description: str) -> TransactionCreatePage:
         """Enter an expense with no connection and wait for the form to hand over to the list.
 
         Waiting matters: queueing ends in a full navigation, and a test that moves on before it
@@ -89,7 +91,9 @@ class TestOfflineOutbox:
         page.wait_for_url(f"{base_url}{reverse('transaction:list', kwargs={'room_slug': room.slug})}")
         return create_page
 
-    def test_an_expense_entered_offline_is_kept_and_shown_as_waiting(self, page, base_url, profile_user, room) -> None:
+    def test_an_expense_entered_offline_is_kept_and_shown_as_waiting(
+        self, page: Page, base_url: str, profile_user: User, room: Room
+    ) -> None:
         paths = self._prepare(page, base_url, profile_user, room)
         self._go_offline(page)
         self._add_expense_offline(page, base_url, room, "Bought bread offline")
@@ -103,7 +107,9 @@ class TestOfflineOutbox:
         expect(page.locator("[data-outbox-manual-send-hint]")).to_be_hidden()
         assert not ParentTransaction.objects.filter(description="Bought bread offline").exists()
 
-    def test_a_browser_without_background_sync_says_so(self, page, base_url, profile_user, room) -> None:
+    def test_a_browser_without_background_sync_says_so(
+        self, page: Page, base_url: str, profile_user: User, room: Room
+    ) -> None:
         """Every browser on iOS. Left unsaid, a visitor puts the phone away and nothing goes out."""
         page.add_init_script("delete window.SyncManager;")
         self._prepare(page, base_url, profile_user, room)
@@ -113,7 +119,9 @@ class TestOfflineOutbox:
 
         expect(page.locator("[data-outbox-manual-send-hint]")).to_be_visible()
 
-    def test_the_queue_drains_once_the_connection_is_back(self, page, base_url, profile_user, room) -> None:
+    def test_the_queue_drains_once_the_connection_is_back(
+        self, page: Page, base_url: str, profile_user: User, room: Room
+    ) -> None:
         self._prepare(page, base_url, profile_user, room)
         self._go_offline(page)
         self._add_expense_offline(page, base_url, room, "Bought milk offline")
@@ -127,7 +135,9 @@ class TestOfflineOutbox:
         assert booked.count() == 1
         assert booked.first().child_transactions.count() == room.users.count()
 
-    def test_two_expenses_entered_offline_are_both_booked(self, page, base_url, profile_user, room) -> None:
+    def test_two_expenses_entered_offline_are_both_booked(
+        self, page: Page, base_url: str, profile_user: User, room: Room
+    ) -> None:
         """Both come from the same cached form, which was rendered with one submission name.
 
         Left as rendered, the second would reach the server looking like a replay of the first and
@@ -149,7 +159,9 @@ class TestOfflineOutbox:
         assert ParentTransaction.objects.filter(description="First offline expense").count() == 1
         assert ParentTransaction.objects.filter(description="Second offline expense").count() == 1
 
-    def test_replaying_twice_books_the_expense_once(self, page, base_url, profile_user, room) -> None:
+    def test_replaying_twice_books_the_expense_once(
+        self, page: Page, base_url: str, profile_user: User, room: Room
+    ) -> None:
         """The queue is drained by whatever gets there first; both must be safe."""
         self._prepare(page, base_url, profile_user, room)
         self._go_offline(page)

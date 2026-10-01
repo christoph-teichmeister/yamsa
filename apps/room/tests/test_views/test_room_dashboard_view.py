@@ -2,13 +2,16 @@ import http
 
 import pytest
 from bs4 import BeautifulSoup
+from django.test import Client
 from django.urls import reverse
+
+from apps.room.models import Room
 
 pytestmark = pytest.mark.django_db
 
 
 class TestRoomDashboardGuestOnboarding:
-    def test_guest_dashboard_shows_onboarding_prompts(self, client, room) -> None:
+    def test_guest_dashboard_shows_onboarding_prompts(self, client: Client, room: Room) -> None:
         response = client.get(reverse("room:dashboard", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == http.HTTPStatus.OK

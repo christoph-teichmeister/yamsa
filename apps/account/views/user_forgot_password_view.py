@@ -16,7 +16,7 @@ class UserForgotPasswordView(generic.FormView):
     def get_context_data(self, **kwargs: object) -> dict:
         return super().get_context_data(**kwargs)
 
-    def form_valid(self, form) -> HttpResponse:
+    def form_valid(self, form: UserForgotPasswordForm) -> HttpResponse:
         form_valid = super().form_valid(form)
 
         user = User.objects.get(email=form.cleaned_data["email"])

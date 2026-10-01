@@ -4,7 +4,7 @@ from decimal import Decimal
 import pytest
 from django.db import connection
 from django.urls import reverse
-from playwright.sync_api import expect
+from playwright.sync_api import Page, expect
 
 from apps.account.models import User
 from apps.account.tests.factories import UserFactory
@@ -19,14 +19,14 @@ from e2e.tests.transaction.conftest import GROCERIES
 
 
 @pytest.fixture
-def flatmate(room) -> User:
+def flatmate(room: Room) -> User:
     flatmate = UserFactory()
     room.users.add(flatmate)
     return flatmate
 
 
 @pytest.fixture
-def parent_transaction(room, profile_user, roommate, flatmate) -> ParentTransaction:
+def parent_transaction(room: Room, profile_user: User, roommate: User, flatmate: User) -> ParentTransaction:
     """30.00 paid by the profile user and split evenly with the roommate, the flatmate left out.
 
     The flatmate is a room member without a share, so the form has someone to add.
@@ -48,7 +48,9 @@ def parent_transaction(room, profile_user, roommate, flatmate) -> ParentTransact
 
 
 @pytest.fixture
-def open_edit_form(page, base_url, room, parent_transaction, logged_in) -> Callable:
+def open_edit_form(
+    page: Page, base_url: str, room: Room, parent_transaction: ParentTransaction, logged_in: Callable
+) -> Callable:
     def _open() -> TransactionEditPage:
         logged_in()
         edit_page = TransactionEditPage(
@@ -80,7 +82,14 @@ def _open_debts(room: Room) -> set[tuple[str, str, Decimal]]:
 @pytest.mark.e2e
 class TestTransactionEdit:
     def test_the_detail_page_opens_the_form_with_the_saved_shares(
-        self, page, base_url, room, parent_transaction, profile_user, roommate, logged_in
+        self,
+        page: Page,
+        base_url: str,
+        room: Room,
+        parent_transaction: ParentTransaction,
+        profile_user: User,
+        roommate: User,
+        logged_in: Callable,
     ) -> None:
         logged_in()
         detail_path = reverse("transaction:detail", kwargs={"room_slug": room.slug, "pk": parent_transaction.id})
@@ -95,7 +104,13 @@ class TestTransactionEdit:
         edit_page.expect_shares_locked(locked=False)
 
     def test_a_new_total_locks_the_shares_and_is_split_evenly_on_save(
-        self, open_edit_form, room, parent_transaction, profile_user, roommate, page
+        self,
+        open_edit_form: Callable,
+        room: Room,
+        parent_transaction: ParentTransaction,
+        profile_user: User,
+        roommate: User,
+        page: Page,
     ) -> None:
         edit_page = open_edit_form()
 
@@ -110,7 +125,7 @@ class TestTransactionEdit:
         }
         assert _open_debts(room) == {(roommate.name, profile_user.name, Decimal("25.00"))}
 
-    def test_restoring_the_total_unlocks_the_shares_again(self, open_edit_form) -> None:
+    def test_restoring_the_total_unlocks_the_shares_again(self, open_edit_form: Callable) -> None:
         edit_page = open_edit_form()
 
         edit_page.set_total("50.00")
@@ -119,7 +134,13 @@ class TestTransactionEdit:
         edit_page.expect_shares_locked(locked=False)
 
     def test_an_edited_share_is_booked_and_moves_the_debt(
-        self, open_edit_form, room, parent_transaction, profile_user, roommate, page
+        self,
+        open_edit_form: Callable,
+        room: Room,
+        parent_transaction: ParentTransaction,
+        profile_user: User,
+        roommate: User,
+        page: Page,
     ) -> None:
         edit_page = open_edit_form()
 
@@ -135,7 +156,13 @@ class TestTransactionEdit:
         assert _open_debts(room) == {(roommate.name, profile_user.name, Decimal("25.00"))}
 
     def test_a_new_payer_turns_the_debt_around(
-        self, open_edit_form, room, parent_transaction, profile_user, roommate, page
+        self,
+        open_edit_form: Callable,
+        room: Room,
+        parent_transaction: ParentTransaction,
+        profile_user: User,
+        roommate: User,
+        page: Page,
     ) -> None:
         edit_page = open_edit_form()
 
@@ -147,7 +174,14 @@ class TestTransactionEdit:
         assert _open_debts(room) == {(profile_user.name, roommate.name, Decimal("15.00"))}
 
     def test_a_participant_added_while_editing_gets_a_share_and_a_debt(
-        self, open_edit_form, room, parent_transaction, profile_user, roommate, flatmate, page
+        self,
+        open_edit_form: Callable,
+        room: Room,
+        parent_transaction: ParentTransaction,
+        profile_user: User,
+        roommate: User,
+        flatmate: User,
+        page: Page,
     ) -> None:
         edit_page = open_edit_form()
 
@@ -166,7 +200,12 @@ class TestTransactionEdit:
         }
 
     def test_removing_a_saved_share_drops_it_from_the_debts(
-        self, open_edit_form, room, parent_transaction, profile_user, roommate
+        self,
+        open_edit_form: Callable,
+        room: Room,
+        parent_transaction: ParentTransaction,
+        profile_user: User,
+        roommate: User,
     ) -> None:
         edit_page = open_edit_form()
 
@@ -179,7 +218,7 @@ class TestTransactionEdit:
         assert _open_debts(room) == set()
 
     def test_dismissing_the_removal_keeps_the_share(
-        self, open_edit_form, parent_transaction, profile_user, roommate
+        self, open_edit_form: Callable, parent_transaction: ParentTransaction, profile_user: User, roommate: User
     ) -> None:
         edit_page = open_edit_form()
 
@@ -192,7 +231,13 @@ class TestTransactionEdit:
         }
 
     def test_removing_the_last_share_deletes_the_transaction(
-        self, open_edit_form, room, parent_transaction, profile_user, roommate, page
+        self,
+        open_edit_form: Callable,
+        room: Room,
+        parent_transaction: ParentTransaction,
+        profile_user: User,
+        roommate: User,
+        page: Page,
     ) -> None:
         edit_page = open_edit_form()
 
@@ -204,7 +249,9 @@ class TestTransactionEdit:
         assert not ParentTransaction.objects.filter(pk=parent_transaction.pk).exists()
         assert _open_debts(room) == set()
 
-    def test_deleting_the_transaction_clears_its_debt(self, open_edit_form, room, parent_transaction, page) -> None:
+    def test_deleting_the_transaction_clears_its_debt(
+        self, open_edit_form: Callable, room: Room, parent_transaction: ParentTransaction, page: Page
+    ) -> None:
         edit_page = open_edit_form()
 
         edit_page.delete_transaction()
@@ -215,7 +262,12 @@ class TestTransactionEdit:
         assert _open_debts(room) == set()
 
     def test_dismissing_the_deletion_keeps_the_transaction(
-        self, open_edit_form, room, parent_transaction, profile_user, roommate
+        self,
+        open_edit_form: Callable,
+        room: Room,
+        parent_transaction: ParentTransaction,
+        profile_user: User,
+        roommate: User,
     ) -> None:
         edit_page = open_edit_form()
 
@@ -225,7 +277,9 @@ class TestTransactionEdit:
         assert ParentTransaction.objects.filter(pk=parent_transaction.pk).exists()
         assert _open_debts(room) == {(roommate.name, profile_user.name, Decimal("15.00"))}
 
-    def test_a_closed_room_offers_no_edit(self, page, base_url, room, parent_transaction, logged_in) -> None:
+    def test_a_closed_room_offers_no_edit(
+        self, page: Page, base_url: str, room: Room, parent_transaction: ParentTransaction, logged_in: Callable
+    ) -> None:
         Room.objects.filter(pk=room.pk).update(status=Room.StatusChoices.CLOSED)
         connection.close()
         logged_in()
@@ -236,7 +290,7 @@ class TestTransactionEdit:
         expect(page.get_by_role("button", name="Edit expense")).to_be_disabled()
 
     @staticmethod
-    def _wait_for_detail_page(page, room, parent_transaction) -> None:
+    def _wait_for_detail_page(page: Page, room: Room, parent_transaction: ParentTransaction) -> None:
         # Saving redirects to the detail page; reading the DB before that lands would race the
         # request still in flight.
         detail_path = reverse("transaction:detail", kwargs={"room_slug": room.slug, "pk": parent_transaction.id})

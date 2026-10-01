@@ -70,7 +70,7 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
 
         return cleaned_data
 
-    def save(self, commit=True) -> ParentTransaction:
+    def save(self, commit: bool = True) -> ParentTransaction:
         # Only persists: the transaction boundary and the ParentTransactionUpdated event belong to
         # the view, after the rows are written (see AGENTS.md, #333).
         instance: ParentTransaction = super().save(commit)

@@ -4,13 +4,22 @@ from typing import Any
 import pytest
 from django.utils import timezone
 
+from apps.account.models import User
+from apps.room.models import Room
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.models import Category
 
 pytestmark = pytest.mark.django_db
 
 
-def _base_form_data(room, user, guest_user, total_value, values, reference_total_value=None) -> dict[str, Any]:
+def _base_form_data(
+    room: Room,
+    user: User,
+    guest_user: User,
+    total_value: str,
+    values: list[str],
+    reference_total_value: str | None = None,
+) -> dict[str, Any]:
     data = {
         "description": "Dinner",
         "further_notes": "",
@@ -30,14 +39,14 @@ def _base_form_data(room, user, guest_user, total_value, values, reference_total
 
 
 class TestTransactionCreateFormTotalValue:
-    def test_splits_evenly_when_no_reference_is_given(self, room, user, guest_user) -> None:
+    def test_splits_evenly_when_no_reference_is_given(self, room: Room, user: User, guest_user: User) -> None:
         data = _base_form_data(room, user, guest_user, total_value="90.00", values=["0.00", "0.00"])
         form = TransactionCreateForm(data=data, request=None, room=room)
 
         assert form.is_valid(), form.errors
         assert form.cleaned_data["value"] == [Decimal("45.00"), Decimal("45.00")]
 
-    def test_honours_manual_shares_when_total_matches_reference(self, room, user, guest_user) -> None:
+    def test_honours_manual_shares_when_total_matches_reference(self, room: Room, user: User, guest_user: User) -> None:
         data = _base_form_data(
             room,
             user,
@@ -52,7 +61,9 @@ class TestTransactionCreateFormTotalValue:
         assert form.cleaned_data["value"] == [Decimal("80.00"), Decimal("10.00")]
         assert form.cleaned_data["total_value"] == Decimal("90.00")
 
-    def test_rebalances_shares_when_total_differs_from_reference(self, room, user, guest_user) -> None:
+    def test_rebalances_shares_when_total_differs_from_reference(
+        self, room: Room, user: User, guest_user: User
+    ) -> None:
         data = _base_form_data(
             room,
             user,
@@ -66,7 +77,9 @@ class TestTransactionCreateFormTotalValue:
         assert form.is_valid(), form.errors
         assert form.cleaned_data["value"] == [Decimal("50.00"), Decimal("50.00")]
 
-    def test_propagates_value_sum_when_manual_shares_do_not_match_total(self, room, user, guest_user) -> None:
+    def test_propagates_value_sum_when_manual_shares_do_not_match_total(
+        self, room: Room, user: User, guest_user: User
+    ) -> None:
         data = _base_form_data(
             room,
             user,

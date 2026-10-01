@@ -4,8 +4,10 @@ from pathlib import Path
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpResponse
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.currency.models import Currency
 from apps.debt.models import Debt
 from apps.importer.session import read_parsed_import
@@ -16,14 +18,14 @@ FIXTURE = Path(__file__).parent / "fixtures" / "splitwise_export_excerpt.csv"
 
 
 @pytest.fixture
-def currency(db) -> Currency:
+def currency(db: None) -> Currency:
     return Currency.objects.create(name="Euro", sign="€", code="EUR")
 
 
 class TestRealSplitwiseExport:
     """Runs an excerpt of a genuine Splitwise export through the whole flow."""
 
-    def _import(self, client, currency) -> HttpResponse:
+    def _import(self, client: Client, currency: Currency) -> HttpResponse:
         upload = SimpleUploadedFile("Splitwise_expenses.csv", FIXTURE.read_bytes(), content_type="text/csv")
         redirect = client.post(reverse("importer:upload"), data={"source": "splitwise-csv", "file": upload})
         token = redirect.url.split("token=")[1]
@@ -48,13 +50,17 @@ class TestRealSplitwiseExport:
 
         return client.post(reverse("importer:preview"), data=payload)
 
-    def test_import_writes_every_row_of_the_export(self, db, authenticated_client, currency) -> None:
+    def test_import_writes_every_row_of_the_export(
+        self, db: None, authenticated_client: Client, currency: Currency
+    ) -> None:
         self._import(authenticated_client, currency)
 
         room = Room.objects.get()
         assert ParentTransaction.objects.filter(room=room).count() == 15
 
-    def test_open_debt_matches_the_gesamtbilanz_line(self, db, authenticated_client, user, currency) -> None:
+    def test_open_debt_matches_the_gesamtbilanz_line(
+        self, db: None, authenticated_client: Client, user: User, currency: Currency
+    ) -> None:
         # The fixture's summary row says Kilian is 43.75 down, so he owes Elisabeth exactly that.
         self._import(authenticated_client, currency)
 
@@ -63,7 +69,9 @@ class TestRealSplitwiseExport:
         assert debt.debitor == user
         assert debt.value == Decimal("43.75")
 
-    def test_balance_summary_row_is_the_only_skipped_row(self, db, authenticated_client, currency) -> None:
+    def test_balance_summary_row_is_the_only_skipped_row(
+        self, db: None, authenticated_client: Client, currency: Currency
+    ) -> None:
         upload = SimpleUploadedFile("Splitwise_expenses.csv", FIXTURE.read_bytes(), content_type="text/csv")
         redirect = authenticated_client.post(
             reverse("importer:upload"), data={"source": "splitwise-csv", "file": upload}
@@ -74,7 +82,9 @@ class TestRealSplitwiseExport:
         assert len(skipped) == 1
         assert "Gesamtbilanz" in skipped[0]["excerpt"]
 
-    def test_every_transaction_lands_in_a_room_category(self, db, authenticated_client, currency) -> None:
+    def test_every_transaction_lands_in_a_room_category(
+        self, db: None, authenticated_client: Client, currency: Currency
+    ) -> None:
         self._import(authenticated_client, currency)
 
         room = Room.objects.get()

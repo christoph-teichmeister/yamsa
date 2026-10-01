@@ -2,18 +2,21 @@ from decimal import Decimal
 from http import HTTPStatus
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 from freezegun import freeze_time
 
+from apps.account.models import User
 from apps.account.tests.factories import GuestUserFactory, UserFactory
 from apps.currency.tests.factories import CurrencyFactory
 from apps.debt.models import Debt
+from apps.room.models import Room
 from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 
 
 @pytest.mark.django_db
 class TestCalculateOptimisedDebts:
-    def test_simple_reduction_single_currency_no_settle(self, room, user, guest_user) -> None:
+    def test_simple_reduction_single_currency_no_settle(self, room: Room, user: User, guest_user: User) -> None:
         currency = CurrencyFactory()
 
         create_parent_transaction_with_optimisation(
@@ -63,7 +66,9 @@ class TestCalculateOptimisedDebts:
         assert user.debts.count() == 0
 
     @freeze_time("2020-04-04 4:20:00")
-    def test_simple_reduction_single_currency_with_settle(self, room, user, guest_user, authenticated_client) -> None:
+    def test_simple_reduction_single_currency_with_settle(
+        self, room: Room, user: User, guest_user: User, authenticated_client: Client
+    ) -> None:
         currency = CurrencyFactory()
 
         create_parent_transaction_with_optimisation(
@@ -174,7 +179,7 @@ class TestCalculateOptimisedDebts:
 
         assert room.debts.filter(settled=False).count() == 1
 
-    def test_complicated_reduction_two_currencies_no_settle(self, room, user, guest_user) -> None:
+    def test_complicated_reduction_two_currencies_no_settle(self, room: Room, user: User, guest_user: User) -> None:
         currency_list = [CurrencyFactory(), CurrencyFactory()]
         currency_1 = currency_list[0]
         currency_2 = currency_list[1]
@@ -545,7 +550,7 @@ class TestCalculateOptimisedDebts:
 
     @freeze_time("2020-04-04 4:20:00")
     def test_complicated_reduction_two_currencies_with_settle(
-        self, room, user, guest_user, authenticated_client
+        self, room: Room, user: User, guest_user: User, authenticated_client: Client
     ) -> None:
         currency_list = [CurrencyFactory(), CurrencyFactory()]
         currency_1 = currency_list[0]
@@ -736,7 +741,7 @@ class TestCalculateOptimisedDebts:
         assert room.debts.filter(settled=False).count() == 0
 
     @freeze_time("2020-04-04 4:20:00")
-    def test_debt_optimisation_bug_real_life_example(self, room, user, guest_user) -> None:
+    def test_debt_optimisation_bug_real_life_example(self, room: Room, user: User, guest_user: User) -> None:
         currency_1 = CurrencyFactory()
 
         chris = user

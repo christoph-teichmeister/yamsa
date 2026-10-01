@@ -1,24 +1,29 @@
 import http
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
 from apps.account.messages.commands.send_invitation_email import SendInvitationEmail
+from apps.account.models import User
 from apps.account.views import GuestSendInvitationEmailView, UserListForRoomView
 from apps.core.event_loop.messages.message import Message
+from apps.room.models import Room
 
 pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def guest_send_invitation_url(room, guest_user) -> str:
+def guest_send_invitation_url(room: Room, guest_user: User) -> str:
     return reverse(
         "account:guest-send-invitation-email",
         kwargs={"room_slug": room.slug, "pk": guest_user.id},
     )
 
 
-def test_get_regular(authenticated_client, guest_user, room, guest_send_invitation_url) -> None:
+def test_get_regular(
+    authenticated_client: Client, guest_user: User, room: Room, guest_send_invitation_url: str
+) -> None:
     response = authenticated_client.get(guest_send_invitation_url)
 
     assert response.status_code == http.HTTPStatus.OK
@@ -27,10 +32,12 @@ def test_get_regular(authenticated_client, guest_user, room, guest_send_invitati
     assert response.context_data["active_tab"] == "people"
 
 
-def test_post_regular(authenticated_client, guest_send_invitation_url, monkeypatch) -> None:
+def test_post_regular(
+    authenticated_client: Client, guest_send_invitation_url: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
     recorded_messages = []
 
-    def handle_message(message) -> Message:
+    def handle_message(message: Message) -> Message:
         recorded_messages.append(message)
         return message
 
@@ -54,7 +61,7 @@ def test_post_regular(authenticated_client, guest_send_invitation_url, monkeypat
     assert response.context_data["active_tab"] == "people"
 
 
-def test_post_closed_room_is_rejected(authenticated_client, closed_room, guest_user) -> None:
+def test_post_closed_room_is_rejected(authenticated_client: Client, closed_room: Room, guest_user: User) -> None:
     url = reverse(
         "account:guest-send-invitation-email",
         kwargs={"room_slug": closed_room.slug, "pk": guest_user.id},
@@ -65,7 +72,7 @@ def test_post_closed_room_is_rejected(authenticated_client, closed_room, guest_u
     assert response.status_code == http.HTTPStatus.FORBIDDEN
 
 
-def test_post_email_invalid(authenticated_client, guest_send_invitation_url) -> None:
+def test_post_email_invalid(authenticated_client: Client, guest_send_invitation_url: str) -> None:
     response = authenticated_client.post(
         guest_send_invitation_url,
         data={"email": "invalid_email_format"},

@@ -1,12 +1,18 @@
+from collections.abc import Callable
 from decimal import Decimal
 
+from apps.account.models import User
+from apps.currency.models import Currency
 from apps.debt.models import Debt
+from apps.importer.dataclasses import ParsedImport
 from apps.importer.parsers.splitwise import SplitwiseCsvParser
 from apps.importer.tests.factories import build_file_like
 
 
 class TestImportServiceBalances:
-    def test_open_debt_matches_the_export_balance(self, run_import, db, user, currency, parsed) -> None:
+    def test_open_debt_matches_the_export_balance(
+        self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
+    ) -> None:
         # The sample rows net out to 47.77 in favour of Kilian, matching the Gesamtbilanz line.
         result = run_import(parsed=parsed, user=user, currency=currency)
 
@@ -14,7 +20,9 @@ class TestImportServiceBalances:
         assert debt.creditor == user
         assert debt.value == Decimal("47.77")
 
-    def test_settlement_row_becomes_a_settled_debt(self, run_import, db, user, currency) -> None:
+    def test_settlement_row_becomes_a_settled_debt(
+        self, run_import: Callable, db: None, user: User, currency: Currency
+    ) -> None:
         parsed = SplitwiseCsvParser().parse(
             build_file_like(
                 [

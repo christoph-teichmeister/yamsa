@@ -1,11 +1,16 @@
 import http
+from pathlib import Path
 
 import pytest
 from django.core.files.base import ContentFile
+from django.test import Client
 from django.urls import reverse
+from pytest_django.fixtures import Settings
 
+from apps.account.models import User
 from apps.account.tests.test_utils import build_image_bytes, contains_attribute
 from apps.account.views import UserDetailView
+from apps.room.models import Room
 
 pytestmark = pytest.mark.django_db
 
@@ -14,7 +19,7 @@ def has_superuser_admin_link(content: str) -> bool:
     return any(identifier in content for identifier in ("id=superuser-admin-link", 'id="superuser-admin-link"'))
 
 
-def test_get_as_registered_user_own_profile(authenticated_client, user) -> None:
+def test_get_as_registered_user_own_profile(authenticated_client: Client, user: User) -> None:
     user.paypal_me_username = "paypalhandle"
     user.save()
 
@@ -34,7 +39,9 @@ def test_get_as_registered_user_own_profile(authenticated_client, user) -> None:
     assert not has_superuser_admin_link(content)
 
 
-def test_get_as_registered_user_other_profile_of_room(authenticated_client, room, superuser) -> None:
+def test_get_as_registered_user_other_profile_of_room(
+    authenticated_client: Client, room: Room, superuser: User
+) -> None:
     room.users.add(superuser)
 
     response = authenticated_client.get(reverse("account:detail", args=(superuser.id,)))
@@ -49,7 +56,7 @@ def test_get_as_registered_user_other_profile_of_room(authenticated_client, room
     assert not has_superuser_admin_link(content)
 
 
-def test_get_as_registered_user_other_profile_who_is_not_in_room(authenticated_client, superuser) -> None:
+def test_get_as_registered_user_other_profile_who_is_not_in_room(authenticated_client: Client, superuser: User) -> None:
     response = authenticated_client.get(reverse("account:detail", args=(superuser.id,)))
 
     assert response.status_code == http.HTTPStatus.FORBIDDEN
@@ -59,7 +66,7 @@ def test_get_as_registered_user_other_profile_who_is_not_in_room(authenticated_c
     assert "to see this page" in content
 
 
-def test_get_as_guest_own_profile(client, guest_user) -> None:
+def test_get_as_guest_own_profile(client: Client, guest_user: User) -> None:
     client.force_login(guest_user)
     response = client.get(reverse("account:detail", args=(guest_user.id,)))
 
@@ -73,7 +80,7 @@ def test_get_as_guest_own_profile(client, guest_user) -> None:
     assert not has_superuser_admin_link(content)
 
 
-def test_get_as_guest_other_profile(client, guest_user, user, room) -> None:
+def test_get_as_guest_other_profile(client: Client, guest_user: User, user: User, room: Room) -> None:
     client.force_login(guest_user)
     user.paypal_me_username = "paypalhandle"
     user.save()
@@ -93,7 +100,7 @@ def test_get_as_guest_other_profile(client, guest_user, user, room) -> None:
     assert not has_superuser_admin_link(content)
 
 
-def test_get_as_superuser_own_profile(superuser_htmx_client, superuser) -> None:
+def test_get_as_superuser_own_profile(superuser_htmx_client: Client, superuser: User) -> None:
     response = superuser_htmx_client.get(reverse("account:detail", args=(superuser.id,)))
 
     assert response.status_code == http.HTTPStatus.OK
@@ -106,7 +113,7 @@ def test_get_as_superuser_own_profile(superuser_htmx_client, superuser) -> None:
     assert has_superuser_admin_link(content)
 
 
-def test_get_as_superuser_other_profile(superuser_htmx_client, superuser, user) -> None:
+def test_get_as_superuser_other_profile(superuser_htmx_client: Client, superuser: User, user: User) -> None:
     assert not superuser.rooms.all().exists()
 
     response = superuser_htmx_client.get(reverse("account:detail", args=(user.id,)))
@@ -121,7 +128,9 @@ def test_get_as_superuser_other_profile(superuser_htmx_client, superuser, user) 
     assert not has_superuser_admin_link(content)
 
 
-def test_profile_picture_shows_in_detail(tmp_path, authenticated_client, settings, user) -> None:
+def test_profile_picture_shows_in_detail(
+    tmp_path: Path, authenticated_client: Client, settings: Settings, user: User
+) -> None:
     media_root = tmp_path / "media"
     media_root.mkdir()
     settings.MEDIA_ROOT = str(media_root)
@@ -138,7 +147,9 @@ def test_profile_picture_shows_in_detail(tmp_path, authenticated_client, setting
     assert has_src_with_quotes or has_src_without_quotes
 
 
-def test_profile_picture_fallbacks_to_default_when_missing(tmp_path, authenticated_client, settings, user) -> None:
+def test_profile_picture_fallbacks_to_default_when_missing(
+    tmp_path: Path, authenticated_client: Client, settings: Settings, user: User
+) -> None:
     media_root = tmp_path / "media"
     media_root.mkdir()
     settings.MEDIA_ROOT = str(media_root)
@@ -156,7 +167,7 @@ def test_profile_picture_fallbacks_to_default_when_missing(tmp_path, authenticat
 
 
 def test_other_profile_picture_opens_a_full_size_dialog(
-    tmp_path, authenticated_client, settings, room, superuser
+    tmp_path: Path, authenticated_client: Client, settings: Settings, room: Room, superuser: User
 ) -> None:
     media_root = tmp_path / "media"
     media_root.mkdir()
@@ -176,7 +187,9 @@ def test_other_profile_picture_opens_a_full_size_dialog(
     assert contains_attribute(content, "src", superuser.profile_picture_url)
 
 
-def test_other_profile_without_picture_offers_no_dialog(authenticated_client, room, superuser) -> None:
+def test_other_profile_without_picture_offers_no_dialog(
+    authenticated_client: Client, room: Room, superuser: User
+) -> None:
     room.users.add(superuser)
 
     response = authenticated_client.get(reverse("account:detail", args=(superuser.id,)))

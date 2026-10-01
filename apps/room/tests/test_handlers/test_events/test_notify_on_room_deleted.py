@@ -17,7 +17,7 @@ def _build_notification_stub(record: list[tuple[Any, Any]]) -> type:
                 self.body = body
                 self.click_url = click_url
 
-        def __init__(self, payload) -> None:
+        def __init__(self, payload: "DummyNotification.Payload") -> None:
             self.payload = payload
 
         def send_to_user(self, user: User) -> None:
@@ -27,7 +27,7 @@ def _build_notification_stub(record: list[tuple[Any, Any]]) -> type:
 
 
 @pytest.mark.django_db
-def test_remaining_members_are_notified(guest_user, monkeypatch) -> None:
+def test_remaining_members_are_notified(guest_user: User, monkeypatch: pytest.MonkeyPatch) -> None:
     notifications = []
     monkeypatch.setattr(
         "apps.room.handlers.events.notify_on_room_deleted.Notification",
@@ -52,7 +52,7 @@ def test_remaining_members_are_notified(guest_user, monkeypatch) -> None:
 
 
 @pytest.mark.django_db
-def test_localizes_the_body_per_recipient_language(monkeypatch) -> None:
+def test_localizes_the_body_per_recipient_language(monkeypatch: pytest.MonkeyPatch) -> None:
     german_speaker = UserFactory(language="de")
 
     notifications = []

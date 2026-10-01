@@ -15,7 +15,7 @@ _json_script_escapes = {
 
 
 @register.simple_tag(takes_context=True)
-def json_script_nonce(context, value, element_id) -> str:
+def json_script_nonce(context: template.Context, value: object, element_id: str) -> str:
     """Like Django's json_script filter, but injects the CSP nonce from context."""
     json_str = json.dumps(value, cls=DjangoJSONEncoder).translate(_json_script_escapes)
     nonce = context.get("csp_nonce", "")
@@ -28,7 +28,7 @@ def json_script_nonce(context, value, element_id) -> str:
 
 
 @register.filter
-def get_item(dictionary, key) -> object | None:
+def get_item(dictionary: dict, key: object) -> object | None:
     """Look up a dict value by key in templates: {{ my_dict|get_item:some_var }}."""
     if isinstance(dictionary, dict):
         return dictionary.get(key)

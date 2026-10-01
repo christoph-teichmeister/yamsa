@@ -5,12 +5,13 @@ import pytest
 from apps.account.handlers.commands.send_forgot_password_email import handle_send_forgot_password_email
 from apps.account.messages.commands.send_forgot_password_email import SendForgotPasswordEmail
 from apps.account.messages.events.forgot_password_email_sent import ForgotPasswordEmailSent
+from apps.account.models import User
 from apps.mail.services.forgot_password_mail_service import ForgotPasswordEmailService
 
 
 @pytest.mark.django_db
 class TestSendForgotPasswordEmailHandler:
-    def test_regular(self, user) -> None:
+    def test_regular(self, user: User) -> None:
         context = {"user": user}
 
         with (

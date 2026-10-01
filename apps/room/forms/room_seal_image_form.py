@@ -44,7 +44,7 @@ class RoomSealImageForm(ModelForm):
         self._compressed_seal_image = compressed_picture
         return compressed_picture
 
-    def save(self, commit=True) -> Room:
+    def save(self, commit: bool = True) -> Room:
         """Persist the compressed image produced while cleaning.
 
         `construct_instance()` already set `self.instance.seal_image` to this same compressed

@@ -4,9 +4,11 @@ import pytest
 from axes.models import AccessAttempt
 from django.conf import settings
 from django.http import HttpResponse
+from django.test import Client
 from django.urls import reverse
 
 from apps.account.constants import SESSION_TTL_SESSION_KEY
+from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.views import LogInUserView
 from apps.core.views import WelcomePartialView
@@ -14,7 +16,7 @@ from apps.core.views import WelcomePartialView
 pytestmark = pytest.mark.django_db
 
 
-def test_post_with_empty_passkeys_field_still_authenticates_with_password(client, user) -> None:
+def test_post_with_empty_passkeys_field_still_authenticates_with_password(client: Client, user: User) -> None:
     response = client.post(
         reverse("account:login"),
         data={"email": user.email, "password": DEFAULT_PASSWORD, "passkeys": ""},
@@ -25,7 +27,7 @@ def test_post_with_empty_passkeys_field_still_authenticates_with_password(client
     assert response.template_name[0] == WelcomePartialView.template_name
 
 
-def test_get_regular(client) -> None:
+def test_get_regular(client: Client) -> None:
     response = client.get(reverse("account:login"))
 
     assert response.status_code == http.HTTPStatus.OK
@@ -38,7 +40,7 @@ def test_get_regular(client) -> None:
     assert "Welcome back" in content
 
 
-def test_post_regular(client, user) -> None:
+def test_post_regular(client: Client, user: User) -> None:
     response = client.post(
         reverse("account:login"),
         data={"email": user.email, "password": DEFAULT_PASSWORD},
@@ -51,7 +53,7 @@ def test_post_regular(client, user) -> None:
     assert client.session.get_expiry_age() == settings.SESSION_COOKIE_AGE
 
 
-def test_post_email_and_password_are_required(client) -> None:
+def test_post_email_and_password_are_required(client: Client) -> None:
     response = client.post(reverse("account:login"))
 
     assert response.status_code == http.HTTPStatus.OK
@@ -60,7 +62,7 @@ def test_post_email_and_password_are_required(client) -> None:
     assert content.count("This field is required") >= 2
 
 
-def test_post_with_remember_me_extends_session(client, user) -> None:
+def test_post_with_remember_me_extends_session(client: Client, user: User) -> None:
     response = client.post(
         reverse("account:login"),
         data={"email": user.email, "password": DEFAULT_PASSWORD, "remember_me": "on"},
@@ -72,7 +74,7 @@ def test_post_with_remember_me_extends_session(client, user) -> None:
     assert client.session[SESSION_TTL_SESSION_KEY] == settings.DJANGO_REMEMBER_ME_SESSION_AGE
 
 
-def test_post_email_and_password_do_not_match(client, user) -> None:
+def test_post_email_and_password_do_not_match(client: Client, user: User) -> None:
     response = client.post(
         reverse("account:login"),
         data={"email": user.email, "password": "wrong_password"},
@@ -92,7 +94,7 @@ def test_post_email_and_password_do_not_match(client, user) -> None:
     assert str(LogInUserView.ExceptionMessage.AUTH_FAILED) in response.content.decode()
 
 
-def test_axes_tracks_email_as_username(client, user) -> None:
+def test_axes_tracks_email_as_username(client: Client, user: User) -> None:
     client.defaults["HTTP_HOST"] = "127.0.0.1"
     login_url = reverse("account:login")
     AccessAttempt.objects.all().delete()
@@ -106,7 +108,7 @@ def test_axes_tracks_email_as_username(client, user) -> None:
     assert attempt.username == user.email
 
 
-def test_axes_blocks_after_failure_limit(client, user) -> None:
+def test_axes_blocks_after_failure_limit(client: Client, user: User) -> None:
     client.defaults["HTTP_HOST"] = "127.0.0.1"
     login_url = reverse("account:login")
     AccessAttempt.objects.all().delete()
@@ -122,7 +124,7 @@ def test_axes_blocks_after_failure_limit(client, user) -> None:
     assert locked_response.status_code == http.HTTPStatus.TOO_MANY_REQUESTS
 
 
-def test_axes_lockout_tracks_username_and_ip_scope(client, user) -> None:
+def test_axes_lockout_tracks_username_and_ip_scope(client: Client, user: User) -> None:
     client.defaults["HTTP_HOST"] = "127.0.0.1"
     login_url = reverse("account:login")
     AccessAttempt.objects.all().delete()
@@ -131,7 +133,7 @@ def test_axes_lockout_tracks_username_and_ip_scope(client, user) -> None:
     # so supply the headers Axes will inspect.
     assert settings.AXES_LOCKOUT_PARAMETERS == [["username", "ip_address"]]
 
-    def wrong_password_post(ip_address) -> HttpResponse:
+    def wrong_password_post(ip_address: str) -> HttpResponse:
         meta = {"REMOTE_ADDR": ip_address, "HTTP_X_FORWARDED_FOR": ip_address}
         return client.post(
             login_url,

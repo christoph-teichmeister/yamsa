@@ -2,8 +2,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from apps.account.models import User
 from apps.account.tests.factories import UserFactory
+from apps.currency.models import Currency
 from apps.currency.tests.factories import CurrencyFactory
+from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.models import Category, ParentTransaction
@@ -31,7 +34,7 @@ class TestTransactionFormStructure:
 
         assert form.initial["category"] == category.pk
 
-    def test_create_form_respects_room_specific_categories(self, room) -> None:
+    def test_create_form_respects_room_specific_categories(self, room: Room) -> None:
         service = RoomCategoryService(room=room)
         service.create_room_category(name="House Tag", emoji="🏠", color="#123456")
         form = TransactionCreateForm(room=room)
@@ -39,7 +42,7 @@ class TestTransactionFormStructure:
         slugs = [category.slug for category in form.fields["category"].queryset]
         assert any(slug.startswith("house-tag") for slug in slugs)
 
-    def test_edit_form_respects_room_specific_categories(self, room) -> None:
+    def test_edit_form_respects_room_specific_categories(self, room: Room) -> None:
         service = RoomCategoryService(room=room)
         service.create_room_category(name="Edit Tag", emoji="✏️", color="#654321")
         parent_transaction = ParentTransactionFactory(room=room)
@@ -51,7 +54,7 @@ class TestTransactionFormStructure:
         slugs = [category.slug for category in form.fields["category"].queryset]
         assert any(slug.startswith("edit-tag") for slug in slugs)
 
-    def test_create_form_requires_a_category(self, room, user) -> None:
+    def test_create_form_requires_a_category(self, room: Room, user: User) -> None:
         currency = CurrencyFactory()
         form_data = self._build_create_form_data(room, user, currency, list(room.users.all()))
         del form_data["category"]
@@ -69,7 +72,14 @@ class TestTransactionFormStructure:
 
         assert form.fields["category"].required
 
-    def _build_create_form_data(self, room, user, currency, paid_for_users, description="Test transaction") -> dict:
+    def _build_create_form_data(
+        self,
+        room: Room,
+        user: User,
+        currency: Currency,
+        paid_for_users: list[User],
+        description: str = "Test transaction",
+    ) -> dict:
         from django.utils import timezone
 
         return {

@@ -32,7 +32,7 @@ class ImportPreviewForm(forms.Form):
     room_description = forms.CharField(max_length=ROOM_DESCRIPTION_MAX_LENGTH, label=_("Description"))
     preferred_currency = forms.ModelChoiceField(queryset=Currency.objects.all(), label=_("Currency"))
 
-    def __init__(self, *args: object, parsed: ParsedImport, user, **kwargs: object) -> None:
+    def __init__(self, *args: object, parsed: ParsedImport, user: User, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
         self.parsed = parsed
         self.user = user

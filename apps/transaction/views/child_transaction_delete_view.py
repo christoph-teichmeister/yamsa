@@ -1,3 +1,4 @@
+from django.forms import BaseForm
 from django.http import HttpResponse
 from django.urls import reverse
 from django.views import generic
@@ -27,7 +28,7 @@ class ChildTransactionDeleteView(RoomNotClosedRequiredMixin, TransactionBaseCont
             kwargs={"pk": self.object.parent_transaction.id, "room_slug": self.request.room.slug},
         )
 
-    def form_valid(self, form) -> HttpResponse:
+    def form_valid(self, form: BaseForm) -> HttpResponse:
         parent_transaction = self.object.parent_transaction
         # Taken while this share still exists: it is part of what the transaction carried.
         deleted = (

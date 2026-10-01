@@ -1,19 +1,21 @@
 import http
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
 from apps.news.models import News
+from apps.room.models import Room
 
 pytestmark = pytest.mark.django_db
 
 
-def create_news(*, room, message) -> News:
+def create_news(*, room: Room, message: str) -> News:
     return News.objects.create(room=room, message=message)
 
 
 class TestNewsFeedChunkView:
-    def test_cursor_returns_only_the_older_news(self, authenticated_client, room) -> None:
+    def test_cursor_returns_only_the_older_news(self, authenticated_client: Client, room: Room) -> None:
         older_news = create_news(room=room, message="Older update")
         newer_news = create_news(room=room, message="Newer update")
 

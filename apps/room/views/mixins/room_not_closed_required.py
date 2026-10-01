@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import AccessMixin
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 from django.utils.translation import gettext_lazy as _
 
 SAFE_METHODS = ("GET", "HEAD", "OPTIONS")
@@ -10,7 +10,7 @@ class RoomNotClosedRequiredMixin(AccessMixin):
 
     closed_room_message = _("This room is closed. No changes can be made.")
 
-    def dispatch(self, request, *args: object, **kwargs: object) -> HttpResponse:
+    def dispatch(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
         room = getattr(request, "room", None)
         if request.method not in SAFE_METHODS and room is not None and room.is_closed:
             return self.handle_no_permission()

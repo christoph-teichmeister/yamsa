@@ -4,16 +4,17 @@ from unittest import mock
 
 import pytest
 from django.http import HttpResponse
-from django.test import RequestFactory
+from django.test import Client, RequestFactory
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.webpush.views import WebPushSaveView
 
 
 @pytest.mark.django_db
 class TestWebPushSaveView:
     @pytest.fixture(autouse=True)
-    def _setup(self, authenticated_client, user) -> None:
+    def _setup(self, authenticated_client: Client, user: User) -> None:
         self.client = authenticated_client
         self.url = reverse("webpush:save")
         self.factory = RequestFactory()

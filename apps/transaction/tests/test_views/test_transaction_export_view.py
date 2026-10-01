@@ -1,9 +1,12 @@
 import http
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.account.tests.factories import GuestUserFactory, UserFactory
+from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 
@@ -11,7 +14,9 @@ pytestmark = pytest.mark.django_db
 
 
 class TestTransactionExportView:
-    def test_transaction_export_returns_room_csv(self, client, room, user, guest_user) -> None:
+    def test_transaction_export_returns_room_csv(
+        self, client: Client, room: Room, user: User, guest_user: User
+    ) -> None:
         create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -47,7 +52,7 @@ class TestTransactionExportView:
         assert user.name in data_rows[0]
         assert guest_user.name in data_rows[0]
 
-    def test_transaction_export_requires_membership(self, client, room) -> None:
+    def test_transaction_export_requires_membership(self, client: Client, room: Room) -> None:
         outsider = UserFactory()
         client.force_login(outsider)
         response = client.get(reverse("transaction:export", kwargs={"room_slug": room.slug}))

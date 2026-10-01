@@ -2,18 +2,21 @@ from decimal import Decimal
 
 import pytest
 from django.urls import reverse
+from playwright.sync_api import Page
 
 from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.debt.models import Debt
-from apps.room.models import UserConnectionToRoom
+from apps.room.models import Room, UserConnectionToRoom
 from e2e.pages.login_page import LoginPage
 from e2e.pages.register_page import RegisterPage
 
 
 @pytest.mark.e2e
 class TestRegister:
-    def test_a_visitor_from_a_share_link_joins_the_room_by_registering(self, shared_room, page, base_url) -> None:
+    def test_a_visitor_from_a_share_link_joins_the_room_by_registering(
+        self, shared_room: Room, page: Page, base_url: str
+    ) -> None:
         page.goto(f"{base_url}{reverse('room:share', kwargs={'share_hash': shared_room.share_hash})}")
         page.get_by_role("link", name="Create a free account").click()
 
@@ -25,7 +28,7 @@ class TestRegister:
         assert UserConnectionToRoom.objects.filter(user=rita, room=shared_room).exists()
 
     def test_a_guest_keeps_their_history_when_registering_from_the_invitation(
-        self, shared_room, guest_user, profile_user, page, base_url
+        self, shared_room: Room, guest_user: User, profile_user: User, page: Page, base_url: str
     ) -> None:
         shared_room.users.add(guest_user)
         Debt.objects.create(

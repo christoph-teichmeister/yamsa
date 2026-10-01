@@ -17,7 +17,7 @@ class CategoryManagerPage(BasePage):
     def card_for(self, name: str) -> Locator:
         return self.cards.filter(has=self.page.get_by_text(name, exact=True))
 
-    def _submit(self, button) -> None:
+    def _submit(self, button: Locator) -> None:
         # Every action posts back to the manager's own URL.
         with self.page.expect_response(
             lambda response: response.request.method == "POST" and response.url.endswith(self.path)

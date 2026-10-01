@@ -23,7 +23,7 @@ from apps.room.models import Room, UserConnectionToRoom
 
 
 @lru_cache
-def get_has_seen_room(userconnectiontoroom_set, room_id: int) -> tuple[UserConnectionToRoom, bool]:
+def get_has_seen_room(userconnectiontoroom_set: models.Manager, room_id: int) -> tuple[UserConnectionToRoom, bool]:
     # Refactored because of Error B019
     # => https://docs.astral.sh/ruff/rules/cached-instance-method/#cached-instance-method-b019
     connections = userconnectiontoroom_set.filter(room_id=room_id)
@@ -207,7 +207,7 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
     def has_seen_room(self, room_id: int) -> tuple[UserConnectionToRoom, bool]:
         return get_has_seen_room(self.userconnectiontoroom_set, room_id)
 
-    def can_be_removed_from_room(self, room_id) -> bool:
+    def can_be_removed_from_room(self, room_id: int) -> bool:
         return not (
             Room.objects.filter(
                 Q(parent_transactions__paid_by_id=self.id)

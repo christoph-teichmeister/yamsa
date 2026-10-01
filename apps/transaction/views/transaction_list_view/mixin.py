@@ -54,7 +54,7 @@ class TransactionFeedMixin(TransactionBaseContext):
             .order_by("-paid_at", "-id")
         )
 
-    def filter_queryset(self, queryset) -> QuerySet:
+    def filter_queryset(self, queryset: QuerySet) -> QuerySet:
         search_query = self.get_search_query()
         if search_query:
             queryset = queryset.filter(
@@ -71,7 +71,7 @@ class TransactionFeedMixin(TransactionBaseContext):
 
         return queryset
 
-    def apply_cursor(self, queryset) -> QuerySet:
+    def apply_cursor(self, queryset: QuerySet) -> QuerySet:
         cursor_paid_at = self.request.GET.get("cursor_paid_at")
         cursor_id = self.request.GET.get("cursor_id")
         if not cursor_paid_at or not cursor_id:
@@ -92,7 +92,7 @@ class TransactionFeedMixin(TransactionBaseContext):
 
         return queryset.filter(Q(paid_at__lt=cursor_dt) | (Q(paid_at=cursor_dt) & Q(id__lt=cursor_pk)))
 
-    def get_feed_batch(self, queryset=None) -> tuple[list, dict | None]:
+    def get_feed_batch(self, queryset: QuerySet | None = None) -> tuple[list, dict | None]:
         queryset = queryset or self.get_base_queryset()
         queryset = self.filter_queryset(queryset)
         queryset = self.apply_cursor(queryset)
@@ -105,7 +105,7 @@ class TransactionFeedMixin(TransactionBaseContext):
 
         return transactions, next_cursor
 
-    def build_feed_context(self, *, queryset=None) -> dict:
+    def build_feed_context(self, *, queryset: QuerySet | None = None) -> dict:
         transactions, next_cursor = self.get_feed_batch(queryset=queryset)
         feed_params = self.get_feed_params()
         return {

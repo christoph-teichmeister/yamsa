@@ -1,9 +1,14 @@
 import pytest
 
+from apps.room.models import Room
+from e2e.pages.room_detail_page import RoomDetailPage
+
 
 @pytest.mark.e2e
 class TestRoomForceClose:
-    def test_a_room_with_open_debts_asks_before_closing(self, logged_in_room_detail_page, room_with_open_debt) -> None:
+    def test_a_room_with_open_debts_asks_before_closing(
+        self, logged_in_room_detail_page: RoomDetailPage, room_with_open_debt: Room
+    ) -> None:
         logged_in_room_detail_page.navigate()
         logged_in_room_detail_page.expect_status("Open")
 
@@ -17,7 +22,9 @@ class TestRoomForceClose:
         # Dismissing must not have closed the room behind the dialog.
         logged_in_room_detail_page.expect_status("Open")
 
-    def test_confirming_closes_the_room_anyway(self, logged_in_room_detail_page, room_with_open_debt) -> None:
+    def test_confirming_closes_the_room_anyway(
+        self, logged_in_room_detail_page: RoomDetailPage, room_with_open_debt: Room
+    ) -> None:
         logged_in_room_detail_page.navigate()
 
         logged_in_room_detail_page.open_force_close_dialog()

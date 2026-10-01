@@ -18,7 +18,7 @@ def _build_notification_stub(record: list[tuple[Any, Any]]) -> type:
                 self.body = body
                 self.click_url = click_url
 
-        def __init__(self, payload) -> None:
+        def __init__(self, payload: "DummyNotification.Payload") -> None:
             self.payload = payload
 
         def send_to_user(self, user: User) -> None:
@@ -27,7 +27,9 @@ def _build_notification_stub(record: list[tuple[Any, Any]]) -> type:
     return DummyNotification
 
 
-def test_notification_sent_when_room_closes(room: Room, user, guest_user, monkeypatch) -> None:
+def test_notification_sent_when_room_closes(
+    room: Room, user: User, guest_user: User, monkeypatch: pytest.MonkeyPatch
+) -> None:
     notifications = []
     monkeypatch.setattr(
         "apps.room.handlers.events.notify_on_room_status_changed.Notification",
@@ -51,7 +53,9 @@ def test_notification_sent_when_room_closes(room: Room, user, guest_user, monkey
 
 
 @pytest.mark.django_db
-def test_notification_sent_when_room_reopens(room: Room, user, guest_user, monkeypatch) -> None:
+def test_notification_sent_when_room_reopens(
+    room: Room, user: User, guest_user: User, monkeypatch: pytest.MonkeyPatch
+) -> None:
     notifications = []
     monkeypatch.setattr(
         "apps.room.handlers.events.notify_on_room_status_changed.Notification",
@@ -75,7 +79,9 @@ def test_notification_sent_when_room_reopens(room: Room, user, guest_user, monke
 
 
 @pytest.mark.django_db
-def test_notification_localizes_body_per_recipient_language(room: Room, user, guest_user, monkeypatch) -> None:
+def test_notification_localizes_body_per_recipient_language(
+    room: Room, user: User, guest_user: User, monkeypatch: pytest.MonkeyPatch
+) -> None:
     another_user = UserFactory(language="de")
     room.users.add(another_user)
 

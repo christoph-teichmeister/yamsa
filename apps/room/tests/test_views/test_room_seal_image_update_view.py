@@ -1,10 +1,14 @@
 import http
+from pathlib import Path
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client
 from django.urls import reverse
+from pytest_django.fixtures import Settings
 
 from apps.account.tests.test_utils import build_image_bytes, contains_attribute
+from apps.room.models import Room
 from apps.room.room_seal import SEAL_ICONS
 
 pytestmark = pytest.mark.django_db
@@ -16,7 +20,7 @@ def build_upload(file_name: str = "seal.png") -> SimpleUploadedFile:
 
 class TestRoomSealImageUpdateView:
     def test_post_stores_the_image_and_clears_any_chosen_icon(
-        self, tmp_path, settings, authenticated_client, room
+        self, tmp_path: Path, settings: Settings, authenticated_client: Client, room: Room
     ) -> None:
         settings.MEDIA_ROOT = str(tmp_path)
         room.seal_icon = SEAL_ICONS[0]
@@ -34,7 +38,7 @@ class TestRoomSealImageUpdateView:
         assert room.seal_icon == ""
 
     def test_post_of_an_invalid_file_keeps_the_dialog_open_with_the_error(
-        self, tmp_path, settings, authenticated_client, room
+        self, tmp_path: Path, settings: Settings, authenticated_client: Client, room: Room
     ) -> None:
         settings.MEDIA_ROOT = str(tmp_path)
         corrupted = SimpleUploadedFile("seal.bin", b"not-an-image", content_type="application/octet-stream")
@@ -52,7 +56,9 @@ class TestRoomSealImageUpdateView:
         room.refresh_from_db()
         assert not room.seal_image
 
-    def test_post_closed_room_is_rejected(self, tmp_path, settings, authenticated_client, closed_room) -> None:
+    def test_post_closed_room_is_rejected(
+        self, tmp_path: Path, settings: Settings, authenticated_client: Client, closed_room: Room
+    ) -> None:
         settings.MEDIA_ROOT = str(tmp_path)
 
         response = authenticated_client.post(
