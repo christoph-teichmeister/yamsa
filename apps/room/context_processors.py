@@ -4,7 +4,7 @@ from django.urls import reverse
 from apps.room.models import Room
 
 
-def room_context(request: HttpRequest):
+def room_context(request: HttpRequest) -> dict:
     base_context = {
         "ROOM_STATUS_OPEN": Room.StatusChoices.OPEN.value,
         "ROOM_STATUS_CLOSED": Room.StatusChoices.CLOSED.value,

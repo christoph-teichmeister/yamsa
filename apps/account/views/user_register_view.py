@@ -1,4 +1,5 @@
 from django.contrib.auth import login
+from django.http import HttpResponse
 from django.urls import reverse
 from django.views import generic
 from django_context_decorator import context
@@ -16,7 +17,7 @@ class RegisterUserView(generic.CreateView):
 
     @context
     @property
-    def email_from_invitation_email(self):
+    def email_from_invitation_email(self) -> str | None:
         return self.request.GET.get("with_email")
 
     @context
@@ -24,17 +25,17 @@ class RegisterUserView(generic.CreateView):
     def shared_room_slug(self) -> str | None:
         return self._room_slug_from_request() or self.request.session.get(SHARED_ROOM_SLUG_SESSION_KEY)
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(viewname="core:welcome")
 
-    def get_initial(self):
+    def get_initial(self) -> dict:
         return {
             **super().get_initial(),
             "id": self.request.GET.get("for_guest"),
             "email": self.request.GET.get("with_email"),
         }
 
-    def form_valid(self, form: RegisterForm):
+    def form_valid(self, form: RegisterForm) -> HttpResponse:
         response = super().form_valid(form)
 
         # Immediately log the created user in

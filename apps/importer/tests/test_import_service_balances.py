@@ -12,7 +12,7 @@ from apps.importer.tests.factories import build_file_like
 class TestImportServiceBalances:
     def test_open_debt_matches_the_export_balance(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         # The sample rows net out to 47.77 in favour of Kilian, matching the Gesamtbilanz line.
         result = run_import(parsed=parsed, user=user, currency=currency)
 
@@ -22,7 +22,7 @@ class TestImportServiceBalances:
 
     def test_settlement_row_becomes_a_settled_debt(
         self, run_import: Callable, db: None, user: User, currency: Currency
-    ):
+    ) -> None:
         parsed = SplitwiseCsvParser().parse(
             build_file_like(
                 [

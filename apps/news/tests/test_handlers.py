@@ -12,10 +12,10 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 @pytest.mark.django_db
 class TestCreateNewsOnTransactionCreate:
     @pytest.fixture
-    def another_user(self):
+    def another_user(self) -> User:
         return UserFactory()
 
-    def test_handler_creates_news_entry_with_expected_payload_when_creator_is_payer(self):
+    def test_handler_creates_news_entry_with_expected_payload_when_creator_is_payer(self) -> None:
         parent_transaction = ParentTransactionFactory(created_by=None)
         parent_transaction.created_by = parent_transaction.paid_by
         parent_transaction.save()
@@ -38,7 +38,9 @@ class TestCreateNewsOnTransactionCreate:
         )
         assert news.deeplink == expected_deeplink
 
-    def test_handler_creates_news_entry_with_expected_payload_when_creator_differs_from_payer(self, another_user: User):
+    def test_handler_creates_news_entry_with_expected_payload_when_creator_differs_from_payer(
+        self, another_user: User
+    ) -> None:
         parent_transaction = ParentTransactionFactory()
         parent_transaction.created_by = another_user
         parent_transaction.save()

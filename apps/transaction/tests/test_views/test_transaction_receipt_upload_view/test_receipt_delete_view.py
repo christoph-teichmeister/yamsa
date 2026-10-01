@@ -1,4 +1,5 @@
 import json
+from collections.abc import Iterator
 from http import HTTPStatus
 
 import pytest
@@ -15,7 +16,7 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def receipt_for_guest(transaction_with_children: ParentTransaction, guest_user: User):
+def receipt_for_guest(transaction_with_children: ParentTransaction, guest_user: User) -> Iterator[Receipt]:
     receipt = create_receipt(transaction_with_children, uploaded_by=guest_user)
     try:
         yield receipt
@@ -27,7 +28,7 @@ def receipt_for_guest(transaction_with_children: ParentTransaction, guest_user: 
 class TestTransactionReceiptDeleteView:
     def test_receipt_owner_can_delete_receipt(
         self, authenticated_client: Client, room: Room, user: User, transaction_with_children: ParentTransaction
-    ):
+    ) -> None:
         parent_transaction = transaction_with_children
         receipt = create_receipt(parent_transaction, uploaded_by=user)
 
@@ -47,7 +48,7 @@ class TestTransactionReceiptDeleteView:
 
     def test_receipt_delete_forbidden_for_other_user(
         self, authenticated_client: Client, room: Room, guest_user: User, receipt_for_guest: Receipt
-    ):
+    ) -> None:
         receipt = receipt_for_guest
 
         response = authenticated_client.post(
@@ -63,7 +64,7 @@ class TestTransactionReceiptDeleteView:
         closed_room: Room,
         user: User,
         transaction_with_children_in_closed_room: ParentTransaction,
-    ):
+    ) -> None:
         receipt = create_receipt(transaction_with_children_in_closed_room, uploaded_by=user)
 
         response = authenticated_client.post(

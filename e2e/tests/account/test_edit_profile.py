@@ -7,7 +7,9 @@ from e2e.pages.account_detail_page import AccountDetailPage
 
 @pytest.mark.e2e
 class TestEditProfile:
-    def test_the_actions_stay_disabled_until_a_field_changes(self, logged_in_profile_detail_page: AccountDetailPage):
+    def test_the_actions_stay_disabled_until_a_field_changes(
+        self, logged_in_profile_detail_page: AccountDetailPage
+    ) -> None:
         logged_in_profile_detail_page.expect_fields_editable()
         # Nothing has changed yet, so there is nothing to save or to throw away.
         logged_in_profile_detail_page.expect_actions_disabled()
@@ -16,7 +18,7 @@ class TestEditProfile:
 
         logged_in_profile_detail_page.expect_actions_enabled()
 
-    def test_typing_never_leaves_the_page(self, logged_in_profile_detail_page: AccountDetailPage):
+    def test_typing_never_leaves_the_page(self, logged_in_profile_detail_page: AccountDetailPage) -> None:
         logged_in_profile_detail_page.mark_sheet("before-typing")
 
         logged_in_profile_detail_page.fill_name("Updated E2E Name")
@@ -27,7 +29,7 @@ class TestEditProfile:
 
     def test_user_can_edit_name_and_email(
         self, logged_in_profile_detail_page: AccountDetailPage, profile_user: User, profile_detail_path: str
-    ):
+    ) -> None:
         new_name = "Updated E2E Name"
         new_email = "updated-e2e@yamsa.local"
         logged_in_profile_detail_page.fill_name(new_name)
@@ -46,7 +48,7 @@ class TestEditProfile:
 
     def test_discarding_restores_the_stored_values(
         self, logged_in_profile_detail_page: AccountDetailPage, profile_user: User
-    ):
+    ) -> None:
         original_name = profile_user.name
 
         logged_in_profile_detail_page.fill_name("Discarded Name")
@@ -61,7 +63,7 @@ class TestEditProfile:
 
     def test_user_can_toggle_webpush_notification_preference(
         self, logged_in_profile_detail_page: AccountDetailPage, profile_user: User
-    ):
+    ) -> None:
         profile_user.refresh_from_db()
         current_preference = profile_user.wants_to_receive_webpush_notifications
         new_preference = not current_preference
@@ -78,7 +80,7 @@ class TestEditProfile:
 
     def test_photo_dialog_uploads_without_touching_the_profile(
         self, logged_in_profile_detail_page: AccountDetailPage, profile_user: User
-    ):
+    ) -> None:
         original_name = profile_user.name
 
         logged_in_profile_detail_page.open_photo_dialog()
@@ -96,7 +98,7 @@ class TestEditProfile:
 
     def test_photo_dialog_deletes_the_stored_photo(
         self, logged_in_profile_detail_page: AccountDetailPage, profile_user: User
-    ):
+    ) -> None:
         logged_in_profile_detail_page.open_photo_dialog()
         logged_in_profile_detail_page.upload_photo_from_dialog("avatar.png", build_image_bytes())
 
@@ -109,15 +111,17 @@ class TestEditProfile:
         profile_user.refresh_from_db()
         assert not profile_user.profile_picture
 
-    def test_photo_dialog_closes_again(self, logged_in_profile_detail_page: AccountDetailPage):
+    def test_photo_dialog_closes_again(self, logged_in_profile_detail_page: AccountDetailPage) -> None:
         logged_in_profile_detail_page.open_photo_dialog()
         logged_in_profile_detail_page.close_photo_dialog()
 
-    def test_photo_dialog_opens_from_the_camera_badge(self, logged_in_profile_detail_page: AccountDetailPage):
+    def test_photo_dialog_opens_from_the_camera_badge(self, logged_in_profile_detail_page: AccountDetailPage) -> None:
         # The badge overhangs the avatar button, so it carries the same trigger of its own.
         logged_in_profile_detail_page.open_photo_dialog_via_badge()
 
-    def test_the_photo_hover_hint_does_not_stick_after_a_click(self, logged_in_profile_detail_page: AccountDetailPage):
+    def test_the_photo_hover_hint_does_not_stick_after_a_click(
+        self, logged_in_profile_detail_page: AccountDetailPage
+    ) -> None:
         logged_in_profile_detail_page.move_pointer_away()
         logged_in_profile_detail_page.expect_photo_hover_hint(visible=False)
 
@@ -132,12 +136,12 @@ class TestEditProfile:
         # overlay covering the photo from then on.
         logged_in_profile_detail_page.expect_photo_hover_hint(visible=False)
 
-    def test_a_guest_gets_no_editable_sheet_of_their_own(self, logged_in_guest_detail_page: AccountDetailPage):
+    def test_a_guest_gets_no_editable_sheet_of_their_own(self, logged_in_guest_detail_page: AccountDetailPage) -> None:
         logged_in_guest_detail_page.expect_actions_absent()
 
     def test_navigating_from_the_security_rows_morphs_instead_of_replacing(
         self, logged_in_profile_detail_page: AccountDetailPage
-    ):
+    ) -> None:
         # The security rows ask for hx-swap="morph:innerHTML". That only takes effect while the
         # idiomorph extension both registers and is activated under the name it registers with —
         # miss either and htmx quietly replaces the shell instead, throwing away focus and scroll.

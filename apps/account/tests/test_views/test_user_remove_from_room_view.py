@@ -33,7 +33,7 @@ def allow_removal(self: User, room_id: int) -> bool:
 
 
 @pytest.fixture
-def recorded_messages_recorder():
+def recorded_messages_recorder() -> list[object]:
     recorded_messages.clear()
     return recorded_messages
 
@@ -45,7 +45,7 @@ def test_post_user_can_not_be_removed_from_room(
     hx_client: Callable,
     monkeypatch: pytest.MonkeyPatch,
     recorded_messages_recorder: list[object],
-):
+) -> None:
     room.users.add(guest_user)
 
     monkeypatch.setattr(
@@ -84,7 +84,7 @@ def test_post_user_can_be_removed_from_room(
     hx_client: Callable,
     monkeypatch: pytest.MonkeyPatch,
     recorded_messages_recorder: list[object],
-):
+) -> None:
     room.users.add(guest_user)
 
     monkeypatch.setattr(
@@ -115,7 +115,7 @@ def test_post_closed_room_is_rejected(
     hx_client: Callable,
     monkeypatch: pytest.MonkeyPatch,
     recorded_messages_recorder: list[object],
-):
+) -> None:
     monkeypatch.setattr(
         "apps.account.views.user_remove_from_room_view.handle_message",
         handle_message,
@@ -140,7 +140,7 @@ def test_post_user_removes_themselves_from_room(
     hx_client: Callable,
     monkeypatch: pytest.MonkeyPatch,
     recorded_messages_recorder: list[object],
-):
+) -> None:
     room.users.add(user)
 
     monkeypatch.setattr(

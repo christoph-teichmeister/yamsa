@@ -24,7 +24,7 @@ ROOM_CATALOG = (
 
 
 @pytest.fixture
-def room(profile_user: User, roommate: User):
+def room(profile_user: User, roommate: User) -> Room:
     room = RoomFactory(created_by=profile_user)
     room.users.add(profile_user, roommate)
 
@@ -44,7 +44,7 @@ def room(profile_user: User, roommate: User):
 
 
 @pytest.fixture
-def logged_in(page: Page, base_url: str, profile_user: User):
+def logged_in(page: Page, base_url: str, profile_user: User) -> Callable:
     def _login() -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
@@ -54,7 +54,7 @@ def logged_in(page: Page, base_url: str, profile_user: User):
 
 
 @pytest.fixture
-def open_create_form(page: Page, base_url: str, room: Room, logged_in: Callable):
+def open_create_form(page: Page, base_url: str, room: Room, logged_in: Callable) -> Callable:
     def _open() -> TransactionCreatePage:
         logged_in()
         create_page = TransactionCreatePage(

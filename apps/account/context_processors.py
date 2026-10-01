@@ -1,7 +1,7 @@
 from django.http import HttpRequest
 
 
-def user_context(request: HttpRequest):
+def user_context(request: HttpRequest) -> dict:
     user = request.user
     if not user.is_authenticated:
         return {}

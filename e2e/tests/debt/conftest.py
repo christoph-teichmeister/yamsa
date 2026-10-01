@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 import pytest
 from django.db import connection
 from django.urls import reverse
@@ -24,24 +26,24 @@ CATEGORIES = (
 
 
 @pytest.fixture
-def euro(transactional_db: None):
+def euro(transactional_db: None) -> Currency:
     return CurrencyFactory(code="EUR", sign="€", name="Euro")
 
 
 @pytest.fixture
-def franc(transactional_db: None):
+def franc(transactional_db: None) -> Currency:
     return CurrencyFactory(code="CHF", sign="Fr", name="Swiss franc")
 
 
 @pytest.fixture
-def people(transactional_db: None):
+def people(transactional_db: None) -> tuple[User, User, User]:
     # Fixed names: the lists on "Who paid what" are ordered by name, and the assertions read them
     # in that order.
     return UserFactory(name="Alex"), UserFactory(name="Bea"), UserFactory(name="Chris")
 
 
 @pytest.fixture
-def spending_room(people: tuple[User, User, User], euro: Currency, franc: Currency):
+def spending_room(people: tuple[User, User, User], euro: Currency, franc: Currency) -> Room:
     """Three expenses across two currencies and three categories.
 
     EUR: Alex pays 1,200.00 split three ways, Bea pays 30.00 split with Alex. That leaves Chris
@@ -85,7 +87,7 @@ def spending_room(people: tuple[User, User, User], euro: Currency, franc: Curren
 
 
 @pytest.fixture
-def open_insights(page: Page, base_url: str, people: tuple[User, User, User], spending_room: Room):
+def open_insights(page: Page, base_url: str, people: tuple[User, User, User], spending_room: Room) -> Callable:
     def _open(view_name: str) -> RoomInsightsPage:
         _login(page, base_url, people[0].email, DEFAULT_PASSWORD)
         insights_page = RoomInsightsPage(page, base_url, reverse(view_name, kwargs={"room_slug": spending_room.slug}))

@@ -4,7 +4,7 @@ import uuid
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.db import IntegrityError, transaction
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
@@ -27,10 +27,10 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
     _active_tab = "transaction"
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse("transaction:list", kwargs={"room_slug": self.request.room.slug})
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()
         kwargs.setdefault("request", self.request)
         kwargs.setdefault("room", self.request.room)
@@ -44,13 +44,13 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
         return kwargs
 
-    def form_invalid(self, form: TransactionCreateForm):
+    def form_invalid(self, form: TransactionCreateForm) -> HttpResponse:
         toast_message = self._get_toast_error_message(form)
         if toast_message:
             self.request.toast_queue.error(toast_message)
         return super().form_invalid(form)
 
-    def form_valid(self, form: TransactionCreateForm):
+    def form_valid(self, form: TransactionCreateForm) -> HttpResponse:
         client_request_id = self._client_request_id()
         if client_request_id:
             if ParentTransaction.objects.filter(client_request_id=client_request_id).exists():
@@ -145,7 +145,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
                 return str(errors[0])
         return None
 
-    def get_context_data(self, **kwargs: object):
+    def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
         context["current_datetime"] = timezone.now().strftime("%Y-%m-%dT%H:%M")
         # Minted per rendered form rather than in the browser, so a submission that never reaches

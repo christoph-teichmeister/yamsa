@@ -8,7 +8,7 @@ from e2e.pages.room_detail_page import RoomDetailPage
 class TestRoomForceClose:
     def test_a_room_with_open_debts_asks_before_closing(
         self, logged_in_room_detail_page: RoomDetailPage, room_with_open_debt: Room
-    ):
+    ) -> None:
         logged_in_room_detail_page.navigate()
         logged_in_room_detail_page.expect_status("Open")
 
@@ -24,7 +24,7 @@ class TestRoomForceClose:
 
     def test_confirming_closes_the_room_anyway(
         self, logged_in_room_detail_page: RoomDetailPage, room_with_open_debt: Room
-    ):
+    ) -> None:
         logged_in_room_detail_page.navigate()
 
         logged_in_room_detail_page.open_force_close_dialog()

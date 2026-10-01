@@ -30,10 +30,10 @@ class FormHtmxResponseMixin:
     toast_success_message: str | None = None
     toast_error_message: str | None = None
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(viewname=self.default_success_url)
 
-    def form_valid(self, form: BaseForm):
+    def form_valid(self, form: BaseForm) -> HttpResponse:
         super().form_valid(form)
         response = self.get_response()
 
@@ -55,7 +55,7 @@ class FormHtmxResponseMixin:
 
         return response
 
-    def form_invalid(self, form: BaseForm):
+    def form_invalid(self, form: BaseForm) -> HttpResponse:
         response = super().form_invalid(form)
 
         # Add error toast if configured

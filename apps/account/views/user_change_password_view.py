@@ -1,4 +1,5 @@
 from django.contrib.auth import login, mixins
+from django.http import HttpResponse
 from django.urls import reverse
 from django.views import generic
 
@@ -12,15 +13,15 @@ class UserChangePasswordView(mixins.LoginRequiredMixin, generic.UpdateView):
     model = User
     form_class = ChangePasswordForm
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(viewname="account:detail", kwargs={"pk": self.request.user.id})
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
         form_kwargs = super().get_form_kwargs()
         form_kwargs.update({"instance": self.request.user, "request": self.request})
         return form_kwargs
 
-    def form_valid(self, form: ChangePasswordForm):
+    def form_valid(self, form: ChangePasswordForm) -> HttpResponse:
         super_form_valid = super().form_valid(form)
         login(request=self.request, user=form.instance, backend="django.contrib.auth.backends.ModelBackend")
         return super_form_valid

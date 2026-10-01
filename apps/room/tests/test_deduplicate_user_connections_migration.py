@@ -1,8 +1,9 @@
 import importlib
+from collections.abc import Iterator
 
 import pytest
 from django.apps import apps as django_apps
-from django.db import connection
+from django.db import connection, models
 from django.db.migrations.executor import MigrationExecutor
 from django.db.migrations.state import StateApps
 from django.db.models import Model
@@ -19,7 +20,7 @@ deduplicate_user_connections = importlib.import_module(f"apps.room.migrations.{M
 
 
 @pytest.fixture
-def pre_constraint_state():
+def pre_constraint_state() -> Iterator[StateApps]:
     """Roll the schema back to before the unique constraint, so duplicates can exist at all."""
     executor = MigrationExecutor(connection)
     # The room app's actual latest migration, not a hardcoded one: teardown must restore the real
@@ -32,7 +33,9 @@ def pre_constraint_state():
     executor.migrate([after])
 
 
-def create_connection(model: type[Model], *, user: User, room: Room, user_has_seen_this_room: bool = False):
+def create_connection(
+    model: type[Model], *, user: User, room: Room, user_has_seen_this_room: bool = False
+) -> models.Model:
     return model.objects.create(
         user_id=user.id,
         room_id=room.id,
@@ -41,7 +44,7 @@ def create_connection(model: type[Model], *, user: User, room: Room, user_has_se
 
 
 class TestDeduplicateUserConnectionsMigration:
-    def test_clean_data_is_left_untouched(self, room: Room, closed_room: Room, user: User, guest_user: User):
+    def test_clean_data_is_left_untouched(self, room: Room, closed_room: Room, user: User, guest_user: User) -> None:
         connection_ids = set(UserConnectionToRoom.objects.values_list("id", flat=True))
 
         deduplicate_user_connections(django_apps, None)
@@ -50,7 +53,7 @@ class TestDeduplicateUserConnectionsMigration:
 
     def test_duplicates_collapse_onto_the_oldest_connection(
         self, room: Room, user: User, pre_constraint_state: StateApps
-    ):
+    ) -> None:
         model = pre_constraint_state.get_model("room", "UserConnectionToRoom")
         original = model.objects.get(user_id=user.id, room_id=room.id)
         create_connection(model, user=user, room=room)
@@ -64,7 +67,7 @@ class TestDeduplicateUserConnectionsMigration:
 
     def test_a_seen_flag_on_a_duplicate_survives_the_merge(
         self, room: Room, user: User, pre_constraint_state: StateApps
-    ):
+    ) -> None:
         model = pre_constraint_state.get_model("room", "UserConnectionToRoom")
         model.objects.filter(user_id=user.id, room_id=room.id).update(user_has_seen_this_room=False)
         create_connection(model, user=user, room=room, user_has_seen_this_room=True)
@@ -77,7 +80,7 @@ class TestDeduplicateUserConnectionsMigration:
 
     def test_connections_of_other_pairs_are_untouched(
         self, room: Room, user: User, guest_user: User, pre_constraint_state: StateApps
-    ):
+    ) -> None:
         model = pre_constraint_state.get_model("room", "UserConnectionToRoom")
         create_connection(model, user=user, room=room)
 

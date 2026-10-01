@@ -8,7 +8,7 @@ from apps.account.constants import SESSION_TTL_SESSION_KEY
 pytestmark = pytest.mark.django_db
 
 
-def test_refreshes_session_ttl_on_authenticated_requests(authenticated_client: Client):
+def test_refreshes_session_ttl_on_authenticated_requests(authenticated_client: Client) -> None:
     client = authenticated_client
     session = client.session
     session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
@@ -21,7 +21,7 @@ def test_refreshes_session_ttl_on_authenticated_requests(authenticated_client: C
     assert client.session.get_expiry_age() == settings.SESSION_COOKIE_AGE
 
 
-def test_maintains_remember_me_ttl(authenticated_client: Client):
+def test_maintains_remember_me_ttl(authenticated_client: Client) -> None:
     client = authenticated_client
     session = client.session
     session[SESSION_TTL_SESSION_KEY] = settings.DJANGO_REMEMBER_ME_SESSION_AGE
@@ -34,7 +34,7 @@ def test_maintains_remember_me_ttl(authenticated_client: Client):
     assert client.session.get_expiry_age() == settings.DJANGO_REMEMBER_ME_SESSION_AGE
 
 
-def test_skips_safe_htmx_fragments(authenticated_client: Client):
+def test_skips_safe_htmx_fragments(authenticated_client: Client) -> None:
     client = authenticated_client
     session = client.session
     session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
@@ -53,7 +53,7 @@ def test_skips_safe_htmx_fragments(authenticated_client: Client):
 
 
 @override_settings(SESSION_COOKIE_AGE=1)
-def test_session_expiry_follows_idle_threshold(client: Client):
+def test_session_expiry_follows_idle_threshold(client: Client) -> None:
     session = client.session
     session[SESSION_TTL_SESSION_KEY] = settings.SESSION_COOKIE_AGE
     session.set_expiry(settings.SESSION_COOKIE_AGE)

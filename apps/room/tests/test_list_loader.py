@@ -9,7 +9,7 @@ from django.template import Context, Template
 class TestListLoaderComponent:
     """Test the _list_loader.html template component."""
 
-    def test_skeleton_renders(self):
+    def test_skeleton_renders(self) -> None:
         """Skeleton screen should render with configurable item count."""
         template = Template(
             '{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=3 %}'
@@ -20,7 +20,7 @@ class TestListLoaderComponent:
         assert "skeleton-item" in output
         assert "test-loader-skeleton" in output
 
-    def test_overlay_renders(self):
+    def test_overlay_renders(self) -> None:
         """Overlay should render with localized message."""
         template = Template(
             '{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=5 %}'
@@ -31,7 +31,7 @@ class TestListLoaderComponent:
         assert "test-loader-overlay" in output
         assert "loading-overlay-message" in output
 
-    def test_javascript_event_handlers(self):
+    def test_javascript_event_handlers(self) -> None:
         """JavaScript should set up HTMX event listeners."""
         template = Template(
             '{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=5 %}'

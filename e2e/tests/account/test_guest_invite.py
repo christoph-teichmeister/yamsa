@@ -14,7 +14,7 @@ from e2e.pages.room_share_page import RoomSharePage
 
 
 @pytest.fixture
-def people_page(page: Page, base_url: str, profile_user: User, shared_room: Room):
+def people_page(page: Page, base_url: str, profile_user: User, shared_room: Room) -> RoomPeoplePage:
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
     roster_page = RoomPeoplePage(page, base_url, reverse("account:list", kwargs={"room_slug": shared_room.slug}))
     roster_page.navigate()
@@ -23,7 +23,9 @@ def people_page(page: Page, base_url: str, profile_user: User, shared_room: Room
 
 @pytest.mark.e2e
 class TestGuestInvite:
-    def test_an_added_guest_joins_the_roster(self, people_page: RoomPeoplePage, shared_room: Room, profile_user: User):
+    def test_an_added_guest_joins_the_roster(
+        self, people_page: RoomPeoplePage, shared_room: Room, profile_user: User
+    ) -> None:
         people_page.add_guest("Alex aus der Küche")
 
         people_page.expect_member("Alex aus der Küche")
@@ -38,7 +40,7 @@ class TestGuestInvite:
         shared_room: Room,
         base_url: str,
         new_context: Callable[..., BrowserContext],
-    ):
+    ) -> None:
         people_page.add_guest("Alex aus der Küche")
         people_page.expect_member("Alex aus der Küche")
         share_url = people_page.share_url()
@@ -60,7 +62,7 @@ class TestGuestInvite:
         profile_page.navigate()
         profile_page.expect_guest_mode_banner_visible()
 
-    def test_a_room_without_guests_offers_no_seat_to_claim(self, shared_room: Room, page: Page, base_url: str):
+    def test_a_room_without_guests_offers_no_seat_to_claim(self, shared_room: Room, page: Page, base_url: str) -> None:
         share_url = f"{base_url}{reverse('room:share', kwargs={'share_hash': shared_room.share_hash})}"
 
         share_page = RoomSharePage(page, share_url)

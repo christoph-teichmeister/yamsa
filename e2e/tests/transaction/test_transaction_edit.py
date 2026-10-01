@@ -19,14 +19,14 @@ from e2e.tests.transaction.conftest import GROCERIES
 
 
 @pytest.fixture
-def flatmate(room: Room):
+def flatmate(room: Room) -> User:
     flatmate = UserFactory()
     room.users.add(flatmate)
     return flatmate
 
 
 @pytest.fixture
-def parent_transaction(room: Room, profile_user: User, roommate: User, flatmate: User):
+def parent_transaction(room: Room, profile_user: User, roommate: User, flatmate: User) -> ParentTransaction:
     """30.00 paid by the profile user and split evenly with the roommate, the flatmate left out.
 
     The flatmate is a room member without a share, so the form has someone to add.
@@ -48,7 +48,9 @@ def parent_transaction(room: Room, profile_user: User, roommate: User, flatmate:
 
 
 @pytest.fixture
-def open_edit_form(page: Page, base_url: str, room: Room, parent_transaction: ParentTransaction, logged_in: Callable):
+def open_edit_form(
+    page: Page, base_url: str, room: Room, parent_transaction: ParentTransaction, logged_in: Callable
+) -> Callable:
     def _open() -> TransactionEditPage:
         logged_in()
         edit_page = TransactionEditPage(
@@ -88,7 +90,7 @@ class TestTransactionEdit:
         profile_user: User,
         roommate: User,
         logged_in: Callable,
-    ):
+    ) -> None:
         logged_in()
         detail_path = reverse("transaction:detail", kwargs={"room_slug": room.slug, "pk": parent_transaction.id})
         TransactionDetailPage(page, base_url, detail_path).navigate()
@@ -109,7 +111,7 @@ class TestTransactionEdit:
         profile_user: User,
         roommate: User,
         page: Page,
-    ):
+    ) -> None:
         edit_page = open_edit_form()
 
         edit_page.set_total("50.00")
@@ -123,7 +125,7 @@ class TestTransactionEdit:
         }
         assert _open_debts(room) == {(roommate.name, profile_user.name, Decimal("25.00"))}
 
-    def test_restoring_the_total_unlocks_the_shares_again(self, open_edit_form: Callable):
+    def test_restoring_the_total_unlocks_the_shares_again(self, open_edit_form: Callable) -> None:
         edit_page = open_edit_form()
 
         edit_page.set_total("50.00")
@@ -139,7 +141,7 @@ class TestTransactionEdit:
         profile_user: User,
         roommate: User,
         page: Page,
-    ):
+    ) -> None:
         edit_page = open_edit_form()
 
         edit_page.set_share(profile_user.name, "5.00")
@@ -161,7 +163,7 @@ class TestTransactionEdit:
         profile_user: User,
         roommate: User,
         page: Page,
-    ):
+    ) -> None:
         edit_page = open_edit_form()
 
         edit_page.set_paid_by(roommate.name)
@@ -180,7 +182,7 @@ class TestTransactionEdit:
         roommate: User,
         flatmate: User,
         page: Page,
-    ):
+    ) -> None:
         edit_page = open_edit_form()
 
         edit_page.add_participant(flatmate.name, "12.00")
@@ -204,7 +206,7 @@ class TestTransactionEdit:
         parent_transaction: ParentTransaction,
         profile_user: User,
         roommate: User,
-    ):
+    ) -> None:
         edit_page = open_edit_form()
 
         edit_page.remove_saved_share(roommate.name)
@@ -217,7 +219,7 @@ class TestTransactionEdit:
 
     def test_dismissing_the_removal_keeps_the_share(
         self, open_edit_form: Callable, parent_transaction: ParentTransaction, profile_user: User, roommate: User
-    ):
+    ) -> None:
         edit_page = open_edit_form()
 
         edit_page.remove_saved_share(roommate.name, confirm=False)
@@ -236,7 +238,7 @@ class TestTransactionEdit:
         profile_user: User,
         roommate: User,
         page: Page,
-    ):
+    ) -> None:
         edit_page = open_edit_form()
 
         edit_page.remove_saved_share(roommate.name)
@@ -249,7 +251,7 @@ class TestTransactionEdit:
 
     def test_deleting_the_transaction_clears_its_debt(
         self, open_edit_form: Callable, room: Room, parent_transaction: ParentTransaction, page: Page
-    ):
+    ) -> None:
         edit_page = open_edit_form()
 
         edit_page.delete_transaction()
@@ -266,7 +268,7 @@ class TestTransactionEdit:
         parent_transaction: ParentTransaction,
         profile_user: User,
         roommate: User,
-    ):
+    ) -> None:
         edit_page = open_edit_form()
 
         edit_page.delete_transaction(confirm=False)
@@ -277,7 +279,7 @@ class TestTransactionEdit:
 
     def test_a_closed_room_offers_no_edit(
         self, page: Page, base_url: str, room: Room, parent_transaction: ParentTransaction, logged_in: Callable
-    ):
+    ) -> None:
         Room.objects.filter(pk=room.pk).update(status=Room.StatusChoices.CLOSED)
         connection.close()
         logged_in()

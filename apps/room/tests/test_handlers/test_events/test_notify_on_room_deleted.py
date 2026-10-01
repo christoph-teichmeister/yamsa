@@ -27,7 +27,7 @@ def _build_notification_stub(record: list[tuple[Any, Any]]) -> type:
 
 
 @pytest.mark.django_db
-def test_remaining_members_are_notified(guest_user: User, monkeypatch: pytest.MonkeyPatch):
+def test_remaining_members_are_notified(guest_user: User, monkeypatch: pytest.MonkeyPatch) -> None:
     notifications = []
     monkeypatch.setattr(
         "apps.room.handlers.events.notify_on_room_deleted.Notification",
@@ -52,7 +52,7 @@ def test_remaining_members_are_notified(guest_user: User, monkeypatch: pytest.Mo
 
 
 @pytest.mark.django_db
-def test_localizes_the_body_per_recipient_language(monkeypatch: pytest.MonkeyPatch):
+def test_localizes_the_body_per_recipient_language(monkeypatch: pytest.MonkeyPatch) -> None:
     german_speaker = UserFactory(language="de")
 
     notifications = []

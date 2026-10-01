@@ -15,7 +15,7 @@ pytestmark = pytest.mark.django_db
 NEW_PASSWORD = "my_new_password"
 
 
-def test_get_regular(authenticated_client: Client, user: User):
+def test_get_regular(authenticated_client: Client, user: User) -> None:
     response = authenticated_client.get(reverse("account:change-password", args=(user.id,)))
 
     assert response.status_code == http.HTTPStatus.OK
@@ -23,7 +23,7 @@ def test_get_regular(authenticated_client: Client, user: User):
     assert "Change your password" in response.content.decode()
 
 
-def test_post_regular(authenticated_client: Client, user: User):
+def test_post_regular(authenticated_client: Client, user: User) -> None:
     response = authenticated_client.post(
         reverse("account:change-password", args=(user.id,)),
         data={
@@ -52,7 +52,7 @@ def test_post_regular(authenticated_client: Client, user: User):
 )
 def test_post_without_every_password_re_renders_the_form(
     authenticated_client: Client, user: User, data: dict, expected_field: str
-):
+) -> None:
     """The inputs are `required`, so only a client that skips them gets here — with a 500 before."""
     response = authenticated_client.post(reverse("account:change-password", args=(user.id,)), data=data)
 
@@ -60,7 +60,9 @@ def test_post_without_every_password_re_renders_the_form(
     assert expected_field in response.context["form"].errors
 
 
-def test_post_with_a_wrong_current_password_shows_the_error_on_the_field(authenticated_client: Client, user: User):
+def test_post_with_a_wrong_current_password_shows_the_error_on_the_field(
+    authenticated_client: Client, user: User
+) -> None:
     response = authenticated_client.post(
         reverse("account:change-password", args=(user.id,)),
         data={
@@ -77,7 +79,7 @@ def test_post_with_a_wrong_current_password_shows_the_error_on_the_field(authent
 
 def test_post_with_a_mismatched_confirmation_shows_the_error_on_the_confirmation(
     authenticated_client: Client, user: User
-):
+) -> None:
     response = authenticated_client.post(
         reverse("account:change-password", args=(user.id,)),
         data={

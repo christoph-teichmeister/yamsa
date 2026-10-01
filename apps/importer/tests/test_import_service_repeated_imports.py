@@ -11,7 +11,7 @@ from apps.transaction.models import ParentTransaction
 class TestImportServiceRepeatedImports:
     def test_second_import_creates_a_separate_room(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         first = run_import(parsed=parsed, user=user, currency=currency)
         second_parsed = SplitwiseCsvParser().parse(build_file_like(DEFAULT_ROWS))
         second = run_import(parsed=second_parsed, user=user, currency=currency)
@@ -22,7 +22,7 @@ class TestImportServiceRepeatedImports:
 
     def test_repeated_import_does_not_touch_the_first_room(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         first = run_import(parsed=parsed, user=user, currency=currency)
         before = set(ParentTransaction.objects.filter(room=first.room).values_list("pk", flat=True))
 

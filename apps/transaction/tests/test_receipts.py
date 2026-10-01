@@ -22,13 +22,13 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture(autouse=True)
-def enforce_media_root(tmp_path: Path, settings: Settings):
+def enforce_media_root(tmp_path: Path, settings: Settings) -> Path:
     settings.MEDIA_ROOT = tmp_path
     return tmp_path
 
 
 @pytest.fixture
-def currency():
+def currency() -> Currency:
     return CurrencyFactory()
 
 
@@ -52,7 +52,7 @@ def _transaction_payload(user: User, room: Room, currency_id: int) -> dict[str, 
 class TestTransactionReceipt:
     def test_receipt_uploads_with_transaction_and_is_visible(
         self, authenticated_client: Client, user: User, room: Room, currency: Currency
-    ):
+    ) -> None:
         client = authenticated_client
         receipt_file = SimpleUploadedFile(
             "receipt.pdf",
@@ -79,7 +79,7 @@ class TestTransactionReceipt:
         assert receipt.original_name in detail_response.content.decode()
         receipt.file.delete(save=False)
 
-    def test_receipt_validation_blocks_unsupported_types(self, user: User, room: Room, currency: Currency):
+    def test_receipt_validation_blocks_unsupported_types(self, user: User, room: Room, currency: Currency) -> None:
         invalid_file = SimpleUploadedFile(
             "receipt.txt",
             b"not allowed",

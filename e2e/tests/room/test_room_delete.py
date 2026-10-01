@@ -10,7 +10,7 @@ from e2e.pages.room_detail_page import RoomDetailPage
 class TestRoomDelete:
     def test_a_closed_room_can_be_deleted_for_good(
         self, logged_in_room_detail_page: RoomDetailPage, shared_room: Room, page: Page
-    ):
+    ) -> None:
         Room.objects.filter(id=shared_room.id).update(status=Room.StatusChoices.CLOSED)
         logged_in_room_detail_page.navigate()
 
@@ -21,7 +21,7 @@ class TestRoomDelete:
 
     def test_deleting_a_room_leaves_its_url_behind(
         self, logged_in_room_detail_page: RoomDetailPage, shared_room: Room, page: Page, base_url: str
-    ):
+    ) -> None:
         Room.objects.filter(id=shared_room.id).update(status=Room.StatusChoices.CLOSED)
         logged_in_room_detail_page.navigate()
 
@@ -32,7 +32,7 @@ class TestRoomDelete:
         response = page.reload()
         assert response.status == 200
 
-    def test_an_open_room_offers_no_deletion(self, logged_in_room_detail_page: RoomDetailPage):
+    def test_an_open_room_offers_no_deletion(self, logged_in_room_detail_page: RoomDetailPage) -> None:
         logged_in_room_detail_page.expect_status("Open")
 
         logged_in_room_detail_page.expect_no_delete_option()

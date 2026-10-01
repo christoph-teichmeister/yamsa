@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class RoomQuerySet(models.QuerySet):
-    def visible_for(self, user: "User | AnonymousUser"):
+    def visible_for(self, user: "User | AnonymousUser") -> models.QuerySet:
         if user.is_anonymous:
             return self.none()
 
@@ -19,7 +19,7 @@ class RoomQuerySet(models.QuerySet):
 
         return self.filter(users=user)
 
-    def annotate_user_is_in_room_for_user_id(self, user_id: int):
+    def annotate_user_is_in_room_for_user_id(self, user_id: int) -> models.QuerySet:
         from apps.account.models import User
 
         return self.annotate(
@@ -29,10 +29,10 @@ class RoomQuerySet(models.QuerySet):
             ),
         )
 
-    def annotate_last_transaction_lastmodified_at_date(self):
+    def annotate_last_transaction_lastmodified_at_date(self) -> models.QuerySet:
         return self.annotate(last_transaction_created_at_date=Max("parent_transactions__lastmodified_at"))
 
-    def annotate_last_activity(self):
+    def annotate_last_activity(self) -> models.QuerySet:
         """Annotate each room with when it was last used, from two angles.
 
         ``last_transaction_at`` is when the room's most recent transaction was paid, or NULL
@@ -54,21 +54,21 @@ class RoomQuerySet(models.QuerySet):
             ),
         )
 
-    def annotate_capitalised_initials(self):
+    def annotate_capitalised_initials(self) -> models.QuerySet:
         return self.annotate(capitalised_initials=Upper(Substr("name", 1, 2)))
 
-    def filter_status_open(self):
+    def filter_status_open(self) -> models.QuerySet:
         """Return only open rooms."""
         from apps.room.models import Room
 
         return self.filter(status=Room.StatusChoices.OPEN)
 
-    def filter_status_closed(self):
+    def filter_status_closed(self) -> models.QuerySet:
         """Return only closed rooms."""
         from apps.room.models import Room
 
         return self.filter(status=Room.StatusChoices.CLOSED)
 
-    def filter_without_members(self):
+    def filter_without_members(self) -> models.QuerySet:
         """Return rooms that currently have no users at all."""
         return self.filter(users__isnull=True)

@@ -6,17 +6,18 @@ from pytest_django.fixtures import Settings
 
 from apps.account.models import User
 from apps.room.models import Room
+from apps.transaction.models import ParentTransaction
 from apps.transaction.tests.factories import ChildTransactionFactory, ParentTransactionFactory
 
 
 @pytest.fixture(autouse=True)
-def enforce_media_root(tmp_path: Path, settings: Settings):
+def enforce_media_root(tmp_path: Path, settings: Settings) -> Path:
     settings.MEDIA_ROOT = tmp_path
     return tmp_path
 
 
 @pytest.fixture
-def transaction_with_children(room: Room, user: User):
+def transaction_with_children(room: Room, user: User) -> ParentTransaction:
     parent_transaction = ParentTransactionFactory(
         room=room,
         paid_by=user,
@@ -34,7 +35,7 @@ def transaction_with_children(room: Room, user: User):
 
 
 @pytest.fixture
-def transaction_with_children_in_closed_room(closed_room: Room, user: User):
+def transaction_with_children_in_closed_room(closed_room: Room, user: User) -> ParentTransaction:
     parent_transaction = ParentTransactionFactory(
         room=closed_room,
         paid_by=user,

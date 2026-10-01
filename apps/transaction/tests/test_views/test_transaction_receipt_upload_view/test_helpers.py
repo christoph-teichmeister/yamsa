@@ -4,7 +4,7 @@ from apps.account.models import User
 from apps.transaction.models import ParentTransaction, Receipt
 
 
-def create_receipt(parent_transaction: ParentTransaction, uploaded_by: User):
+def create_receipt(parent_transaction: ParentTransaction, uploaded_by: User) -> Receipt:
     receipt_file = SimpleUploadedFile(
         "receipt.pdf",
         b"%PDF-1.4\n%%EOF",

@@ -14,22 +14,22 @@ pytestmark = pytest.mark.django_db
 
 
 class TestRoomCategoryManagerView:
-    def test_owner_can_access_manager(self, authenticated_client: Client, room: Room):
+    def test_owner_can_access_manager(self, authenticated_client: Client, room: Room) -> None:
         response = authenticated_client.get(reverse("transaction:category-manager", kwargs={"room_slug": room.slug}))
         assert response.status_code == http.HTTPStatus.OK
         assert "Manage categories" in response.content.decode()
 
-    def test_guest_member_can_access_manager(self, client: Client, guest_user: User, room: Room):
+    def test_guest_member_can_access_manager(self, client: Client, guest_user: User, room: Room) -> None:
         client.force_login(guest_user)
         response = client.get(reverse("transaction:category-manager", kwargs={"room_slug": room.slug}))
         assert response.status_code == http.HTTPStatus.OK
         assert "Manage categories" in response.content.decode()
 
-    def test_non_member_cannot_access_manager(self, client: Client, room: Room):
+    def test_non_member_cannot_access_manager(self, client: Client, room: Room) -> None:
         response = client.get(reverse("transaction:category-manager", kwargs={"room_slug": room.slug}))
         assert response.status_code == http.HTTPStatus.FORBIDDEN
 
-    def test_owner_can_create_category(self, authenticated_client: Client, room: Room):
+    def test_owner_can_create_category(self, authenticated_client: Client, room: Room) -> None:
         url = reverse("transaction:category-manager", kwargs={"room_slug": room.slug})
         payload = {
             "action": "create",
@@ -46,7 +46,7 @@ class TestRoomCategoryManagerView:
         assert RoomCategory.objects.filter(room=room, category=category).exists()
         assert RoomCategory.objects.get(room=room, category=category).is_default
 
-    def test_owner_cannot_create_category_in_closed_room(self, authenticated_client: Client, closed_room: Room):
+    def test_owner_cannot_create_category_in_closed_room(self, authenticated_client: Client, closed_room: Room) -> None:
         url = reverse("transaction:category-manager", kwargs={"room_slug": closed_room.slug})
         payload = {
             "action": "create",
@@ -59,7 +59,7 @@ class TestRoomCategoryManagerView:
         assert response.status_code == http.HTTPStatus.FORBIDDEN
         assert not RoomCategory.objects.filter(room=closed_room, category__name="Room Tag").exists()
 
-    def test_create_invalid_form_returns_error_fragment(self, authenticated_client: Client, room: Room):
+    def test_create_invalid_form_returns_error_fragment(self, authenticated_client: Client, room: Room) -> None:
         url = reverse("transaction:category-manager", kwargs={"room_slug": room.slug})
         payload = {
             "action": "create",
@@ -74,7 +74,7 @@ class TestRoomCategoryManagerView:
         assert "Enter a single emoji character." in response.content.decode()
         assert not RoomCategory.objects.filter(room=room, category__name="Room Tag").exists()
 
-    def test_create_without_htmx_redirects(self, client: Client, user: User, room: Room):
+    def test_create_without_htmx_redirects(self, client: Client, user: User, room: Room) -> None:
         client.force_login(user)
         url = reverse("transaction:category-manager", kwargs={"room_slug": room.slug})
         payload = {
@@ -89,7 +89,7 @@ class TestRoomCategoryManagerView:
         assert response.status_code == http.HTTPStatus.FOUND
         assert response["Location"] == url
 
-    def test_update_category_reorders_on_htmx_request(self, authenticated_client: Client, room: Room):
+    def test_update_category_reorders_on_htmx_request(self, authenticated_client: Client, room: Room) -> None:
         url = reverse("transaction:category-manager", kwargs={"room_slug": room.slug})
         service = RoomCategoryService(room=room)
         target = service.create_room_category(name="Custom Order", emoji="🎯", color="#123456")
@@ -109,7 +109,7 @@ class TestRoomCategoryManagerView:
         target.refresh_from_db()
         assert target.order_index == 0
 
-    def test_update_invalid_form_adds_error_toast(self, authenticated_client: Client, room: Room):
+    def test_update_invalid_form_adds_error_toast(self, authenticated_client: Client, room: Room) -> None:
         url = reverse("transaction:category-manager", kwargs={"room_slug": room.slug})
         target = RoomCategoryService(room=room).get_categories()[0]
 
@@ -131,7 +131,7 @@ class TestRoomCategoryManagerView:
             == "Unable to update that category. Please correct the highlighted fields."
         )
 
-    def test_delete_category_emits_success_toast(self, authenticated_client: Client, room: Room):
+    def test_delete_category_emits_success_toast(self, authenticated_client: Client, room: Room) -> None:
         url = reverse("transaction:category-manager", kwargs={"room_slug": room.slug})
         service = RoomCategoryService(room=room)
         target = service.create_room_category(name="Temporary", emoji="🧹", color="#123123")

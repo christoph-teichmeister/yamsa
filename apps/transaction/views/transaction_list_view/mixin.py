@@ -45,7 +45,7 @@ class TransactionFeedMixin(TransactionBaseContext):
             params["currency"] = currency_code
         return params
 
-    def get_base_queryset(self):
+    def get_base_queryset(self) -> QuerySet:
         return (
             ParentTransaction.objects.filter(room=self.request.room)
             .select_related("paid_by", "currency", "category")
@@ -92,7 +92,7 @@ class TransactionFeedMixin(TransactionBaseContext):
 
         return queryset.filter(Q(paid_at__lt=cursor_dt) | (Q(paid_at=cursor_dt) & Q(id__lt=cursor_pk)))
 
-    def get_feed_batch(self, queryset: QuerySet | None = None):
+    def get_feed_batch(self, queryset: QuerySet | None = None) -> tuple[list, dict | None]:
         queryset = queryset or self.get_base_queryset()
         queryset = self.filter_queryset(queryset)
         queryset = self.apply_cursor(queryset)
@@ -105,7 +105,7 @@ class TransactionFeedMixin(TransactionBaseContext):
 
         return transactions, next_cursor
 
-    def build_feed_context(self, *, queryset: QuerySet | None = None):
+    def build_feed_context(self, *, queryset: QuerySet | None = None) -> dict:
         transactions, next_cursor = self.get_feed_batch(queryset=queryset)
         feed_params = self.get_feed_params()
         return {

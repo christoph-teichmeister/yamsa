@@ -14,7 +14,7 @@ from e2e.tests.transaction.conftest import GROCERIES
 
 
 @pytest.fixture
-def flatmate(room: Room):
+def flatmate(room: Room) -> User:
     flatmate = UserFactory()
     room.users.add(flatmate)
     return flatmate
@@ -32,7 +32,7 @@ def _booked_shares(room: Room, description: str) -> dict[str, Decimal]:
 class TestTransactionSplit:
     def test_a_total_is_split_evenly_with_the_odd_cent_on_the_first_row(
         self, open_create_form: Callable, profile_user: User, roommate: User, flatmate: User
-    ):
+    ) -> None:
         create_page = open_create_form()
 
         create_page.set_total("10.00")
@@ -45,7 +45,7 @@ class TestTransactionSplit:
 
     def test_a_hand_edited_share_is_booked_as_entered(
         self, open_create_form: Callable, room: Room, profile_user: User, roommate: User, page: Page
-    ):
+    ) -> None:
         create_page = open_create_form()
         create_page.fill_required_fields(description="Tankfüllung", amount="30.00")
         create_page.choose_category(GROCERIES)
@@ -64,7 +64,7 @@ class TestTransactionSplit:
 
     def test_shares_that_outgrow_the_total_raise_it_to_their_sum(
         self, open_create_form: Callable, room: Room, profile_user: User, roommate: User, page: Page
-    ):
+    ) -> None:
         create_page = open_create_form()
         create_page.fill_required_fields(description="Grillabend", amount="30.00")
         create_page.choose_category(GROCERIES)
@@ -81,7 +81,7 @@ class TestTransactionSplit:
 
     def test_changing_the_total_resets_hand_edited_shares(
         self, open_create_form: Callable, profile_user: User, roommate: User
-    ):
+    ) -> None:
         create_page = open_create_form()
         create_page.set_total("30.00")
         create_page.set_share(roommate.name, "25.00")
@@ -92,7 +92,7 @@ class TestTransactionSplit:
 
     def test_removing_a_participant_folds_their_share_into_the_untouched_rows(
         self, open_create_form: Callable, profile_user: User, roommate: User, flatmate: User
-    ):
+    ) -> None:
         create_page = open_create_form()
         create_page.set_total("30.00")
         create_page.set_share(profile_user.name, "16.00")
@@ -103,7 +103,7 @@ class TestTransactionSplit:
 
     def test_adding_a_participant_rebalances_only_the_untouched_rows(
         self, open_create_form: Callable, room: Room, profile_user: User, roommate: User, flatmate: User, page: Page
-    ):
+    ) -> None:
         create_page = open_create_form()
         create_page.fill_required_fields(description="Pizzaabend", amount="30.00")
         create_page.choose_category(GROCERIES)

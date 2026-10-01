@@ -13,7 +13,7 @@ from e2e.pages.login_page import LoginPage
 class TestRoomNavigation:
     def test_a_room_card_can_be_opened_with_the_keyboard(
         self, page: Page, base_url: str, profile_user: User, shared_room: Room
-    ):
+    ) -> None:
         # The card is a div with role="button": Enter only reaches it through the delegated handler
         # in apps/static/js/navigation.js, which is what this guards. htmx cannot do it itself -
         # its trigger filters need eval, which the CSP forbids.

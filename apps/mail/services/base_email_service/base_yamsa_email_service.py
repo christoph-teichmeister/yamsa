@@ -65,18 +65,18 @@ class BaseYamsaEmailService(BaseEmailService):
     def get_language_code(self) -> str:
         return get_language_code_for_user(self.recipient)
 
-    def get_greeting(self):
+    def get_greeting(self) -> str:
         context = self.email_user_text_context
 
         if self.recipient is not None:
             return f"{context.greeting_prefix} {self.recipient.name} {context.greeting_suffix}"
         return f"{context.greeting_prefix} {context.greeting_suffix}"
 
-    def get_email_base_text_context(self):
+    def get_email_base_text_context(self) -> EmailBaseTextContext:
         return self.email_base_text_context
 
-    def get_email_user_text_context(self):
+    def get_email_user_text_context(self) -> EmailUserTextContext:
         return self.email_user_text_context
 
-    def get_email_extra_context(self):
+    def get_email_extra_context(self) -> EmailExtraContext:
         return self.email_extra_context

@@ -14,7 +14,9 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def parent_transaction_with_children(room: Room, guest_user: User, user: User):
+def parent_transaction_with_children(
+    room: Room, guest_user: User, user: User
+) -> tuple[ParentTransaction, list[ChildTransaction]]:
     parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
     first_child = ChildTransaction.objects.create(
         parent_transaction=parent_transaction,
@@ -52,7 +54,7 @@ def _base_form_data(parent_transaction: ParentTransaction, total_value: str) -> 
 class TestTransactionEditFormTotalValue:
     def test_total_value_field_exposes_correct_initial(
         self, parent_transaction_with_children: tuple[ParentTransaction, list[ChildTransaction]]
-    ):
+    ) -> None:
         parent_transaction, _ = parent_transaction_with_children
         form = TransactionEditForm(instance=parent_transaction)
 
@@ -61,7 +63,7 @@ class TestTransactionEditFormTotalValue:
 
     def test_rebalances_shares_when_total_changes(
         self, parent_transaction_with_children: tuple[ParentTransaction, list[ChildTransaction]]
-    ):
+    ) -> None:
         parent_transaction, _ = parent_transaction_with_children
         data = _base_form_data(parent_transaction, total_value="60.00")
         form = TransactionEditForm(data=data, instance=parent_transaction)
@@ -72,7 +74,7 @@ class TestTransactionEditFormTotalValue:
 
     def test_propagates_value_sum_when_shares_rebalanced(
         self, parent_transaction_with_children: tuple[ParentTransaction, list[ChildTransaction]]
-    ):
+    ) -> None:
         parent_transaction, _ = parent_transaction_with_children
         data = _base_form_data(parent_transaction, total_value=str(parent_transaction.value))
         data["value"] = ["15.00", "25.00"]

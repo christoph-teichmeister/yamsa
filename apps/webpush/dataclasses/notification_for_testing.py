@@ -9,7 +9,7 @@ class TestNotification(Notification):
     recipient: User | None = None
     text_list: list[str] = field(default_factory=list)
 
-    def send_to_user(self, user: User):
+    def send_to_user(self, user: User) -> None:
         # If the user does not want to receive webpush notifications, do not send them
         if not user.wants_to_receive_webpush_notifications:
             return

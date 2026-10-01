@@ -1,7 +1,7 @@
 from decimal import Decimal
 from functools import cached_property
 
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django_context_decorator import context
@@ -17,7 +17,7 @@ class WelcomePartialView(generic.TemplateView):
 
     template_name = "core/_welcome.html"
 
-    def get(self, request: HttpRequest, *args: object, **kwargs: object):
+    def get(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
         if request.user.is_anonymous:
             return HttpResponseRedirect(redirect_to=reverse(viewname="account:login"))
         return super().get(request, *args, **kwargs)

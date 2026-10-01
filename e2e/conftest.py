@@ -27,17 +27,17 @@ from e2e.pages.login_page import LoginPage
 from e2e.pages.room_detail_page import RoomDetailPage
 
 
-def pytest_unconfigure(config: pytest.Config):
+def pytest_unconfigure(config: pytest.Config) -> None:
     os.environ.pop("DJANGO_ALLOW_ASYNC_UNSAFE", None)
 
 
 @pytest.fixture(scope="session")
-def base_url(live_server: LiveServer):
+def base_url(live_server: LiveServer) -> str:
     return live_server.url
 
 
 @pytest.fixture
-def user_password():
+def user_password() -> str:
     return DEFAULT_PASSWORD
 
 
@@ -95,44 +95,46 @@ def _login_as_guest(page: Page, base_url: str, guest: User) -> Page:
 
 
 @pytest.fixture
-def profile_user(transactional_db: None):
+def profile_user(transactional_db: None) -> User:
     return UserFactory()
 
 
 @pytest.fixture
-def roommate(transactional_db: None):
+def roommate(transactional_db: None) -> User:
     return UserFactory()
 
 
 @pytest.fixture
-def shared_room(profile_user: User, roommate: User):
+def shared_room(profile_user: User, roommate: User) -> Room:
     room = RoomFactory(created_by=profile_user)
     room.users.add(profile_user, roommate)
     return room
 
 
 @pytest.fixture
-def unrelated_user(transactional_db: None):
+def unrelated_user(transactional_db: None) -> User:
     return UserFactory()
 
 
 @pytest.fixture
-def guest_user(transactional_db: None):
+def guest_user(transactional_db: None) -> User:
     return GuestUserFactory()
 
 
 @pytest.fixture
-def superuser(transactional_db: None):
+def superuser(transactional_db: None) -> User:
     return SuperuserFactory()
 
 
 @pytest.fixture
-def profile_detail_path(profile_user: User):
+def profile_detail_path(profile_user: User) -> str:
     return reverse("account:detail", kwargs={"pk": profile_user.id})
 
 
 @pytest.fixture
-def logged_in_profile_detail_page(page: Page, base_url: str, profile_detail_path: str, profile_user: User):
+def logged_in_profile_detail_page(
+    page: Page, base_url: str, profile_detail_path: str, profile_user: User
+) -> AccountDetailPage:
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
     detail_page = AccountDetailPage(page, base_url, profile_detail_path)
@@ -141,7 +143,7 @@ def logged_in_profile_detail_page(page: Page, base_url: str, profile_detail_path
 
 
 @pytest.fixture
-def room_with_open_debt(shared_room: Room, profile_user: User, roommate: User):
+def room_with_open_debt(shared_room: Room, profile_user: User, roommate: User) -> Room:
     from decimal import Decimal
 
     from apps.debt.models import Debt
@@ -157,7 +159,7 @@ def room_with_open_debt(shared_room: Room, profile_user: User, roommate: User):
 
 
 @pytest.fixture
-def logged_in_room_detail_page(page: Page, base_url: str, profile_user: User, shared_room: Room):
+def logged_in_room_detail_page(page: Page, base_url: str, profile_user: User, shared_room: Room) -> RoomDetailPage:
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
     detail_page = RoomDetailPage(page, base_url, reverse("room:detail", kwargs={"room_slug": shared_room.slug}))
@@ -166,7 +168,7 @@ def logged_in_room_detail_page(page: Page, base_url: str, profile_user: User, sh
 
 
 @pytest.fixture
-def logged_in_security_page(page: Page, base_url: str, profile_user: User):
+def logged_in_security_page(page: Page, base_url: str, profile_user: User) -> AccountSecurityPage:
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
     security_page = AccountSecurityPage(page, base_url, reverse("account:security", kwargs={"pk": profile_user.id}))
@@ -175,7 +177,7 @@ def logged_in_security_page(page: Page, base_url: str, profile_user: User):
 
 
 @pytest.fixture
-def logged_in_change_password_page(page: Page, base_url: str, profile_user: User):
+def logged_in_change_password_page(page: Page, base_url: str, profile_user: User) -> ChangePasswordPage:
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
     password_page = ChangePasswordPage(
@@ -186,7 +188,7 @@ def logged_in_change_password_page(page: Page, base_url: str, profile_user: User
 
 
 @pytest.fixture
-def logged_in_guest_detail_page(page: Page, base_url: str, guest_user: User):
+def logged_in_guest_detail_page(page: Page, base_url: str, guest_user: User) -> AccountDetailPage:
     _login_as_guest(page, base_url, guest_user)
 
     guest_detail_path = reverse("account:detail", kwargs={"pk": guest_user.id})

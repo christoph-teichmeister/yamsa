@@ -21,7 +21,7 @@ pytestmark = pytest.mark.django_db
 class TestDebtListView:
     def test_debt_row_shows_both_sides_of_the_debt(
         self, client: Client, room: Room, user: User, guest_user: User, attach_profile_picture: Callable
-    ):
+    ) -> None:
         attach_profile_picture(user)
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
         client.force_login(user)
@@ -40,7 +40,7 @@ class TestDebtListView:
 
     def test_debt_list_renders_outstanding_debt_and_counts(
         self, client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -64,7 +64,7 @@ class TestDebtListView:
 
     def test_debt_list_updates_when_settlement_creates_new_debt(
         self, client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -101,7 +101,7 @@ class TestDebtListView:
         assert any(debt.debitor_id == new_user.id for debt in unsettled_debts)
         assert any(debt.creditor_id == guest_user.id for debt in unsettled_debts)
 
-    def test_debt_list_shows_empty_state_without_transactions(self, authenticated_client: Client, room: Room):
+    def test_debt_list_shows_empty_state_without_transactions(self, authenticated_client: Client, room: Room) -> None:
         response = authenticated_client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))
         assert response.status_code == http.HTTPStatus.OK
         context = response.context_data
@@ -114,7 +114,7 @@ class TestDebtListView:
 
     def test_debt_list_defaults_to_the_optimised_mode(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
 
         response = authenticated_client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))
@@ -125,7 +125,7 @@ class TestDebtListView:
 
     def test_unknown_mode_falls_back_to_the_optimised_mode(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
 
         response = authenticated_client.get(
@@ -137,7 +137,7 @@ class TestDebtListView:
 
     def test_simple_mode_lists_the_unnetted_debts(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         """Two expenses that cancel each other out leave no optimised debt, but two simple rows."""
         currency = CurrencyFactory()
         create_parent_transaction_with_optimisation(
@@ -168,7 +168,7 @@ class TestDebtListView:
 
     def test_simple_mode_offers_no_settle_action(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=guest_user, paid_for_tuple=(user,))
         list_url = reverse("debt:list", kwargs={"room_slug": room.slug})
 
@@ -182,7 +182,7 @@ class TestDebtListView:
 
     def test_payment_count_comparison_counts_both_readings(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         third_user = UserFactory()
         room.users.add(third_user)
         currency = CurrencyFactory()
@@ -208,7 +208,7 @@ class TestDebtListView:
 
     def test_payment_count_comparison_is_dropped_once_a_debt_is_settled(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
         debt = room.debts.get()
         debt.settled = True

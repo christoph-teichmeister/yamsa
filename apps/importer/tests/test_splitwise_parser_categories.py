@@ -24,16 +24,16 @@ class TestSplitwiseCsvParserCategories:
             ("Voellig Unbekannt", "misc"),
         ],
     )
-    def test_category_label_maps_to_slug(self, label: str, expected_slug: str):
+    def test_category_label_maps_to_slug(self, label: str, expected_slug: str) -> None:
         assert SplitwiseCsvParser.map_category_slug(label) == expected_slug
 
-    def test_unknown_label_gets_the_fallback_emoji(self):
+    def test_unknown_label_gets_the_fallback_emoji(self) -> None:
         assert SplitwiseCsvParser.suggest_emoji("Voellig Unbekannt") == "🏷️"
 
-    def test_known_label_gets_a_specific_emoji(self):
+    def test_known_label_gets_a_specific_emoji(self) -> None:
         assert SplitwiseCsvParser.suggest_emoji("Treibstoff") == "⛽"
 
-    def test_categories_are_counted_and_sorted_by_frequency(self):
+    def test_categories_are_counted_and_sorted_by_frequency(self) -> None:
         result = parse(
             [
                 "2023-03-06,A,Restaurant,10.00,EUR,5.00,-5.00",

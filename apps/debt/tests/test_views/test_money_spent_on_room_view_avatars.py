@@ -15,7 +15,7 @@ from apps.transaction.tests.conftest import create_parent_transaction_with_optim
 class TestMoneySpentOnRoomViewAvatars:
     def test_every_bar_shows_the_face_of_the_person_it_belongs_to(
         self, client: Client, room: Room, user: User, guest_user: User, attach_profile_picture: Callable
-    ):
+    ) -> None:
         attach_profile_picture(user)
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
         client.force_login(user)

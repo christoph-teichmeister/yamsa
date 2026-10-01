@@ -13,7 +13,7 @@ class GuestSendInvitationEmailForm(forms.ModelForm):
         model = User
         fields = ("email",)
 
-    def clean_email(self):
+    def clean_email(self) -> str:
         email = self.cleaned_data["email"]
         normalized_email = validate_unique_email(
             email,

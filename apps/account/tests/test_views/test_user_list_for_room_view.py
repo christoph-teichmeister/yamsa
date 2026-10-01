@@ -17,7 +17,7 @@ def test_get_for_user_of_room_and_for_superuser_not_of_room(
     room: Room,
     user: User,
     superuser_htmx_client: Client,
-):
+) -> None:
     user_connection = user.userconnectiontoroom_set.get(room=room)
     user_connection.user_has_seen_this_room = True
     user_connection.save()
@@ -43,7 +43,7 @@ def test_get_for_user_of_room_and_for_superuser_not_of_room(
             assert "Guest access" in content
 
 
-def test_user_has_seen_annotation_scopes_to_requested_room(user: User):
+def test_user_has_seen_annotation_scopes_to_requested_room(user: User) -> None:
     room_one = RoomFactory(created_by=user)
     room_two = RoomFactory(created_by=user)
 

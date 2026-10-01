@@ -10,7 +10,7 @@ class WebPushInformationForm(forms.ModelForm):
         model = WebpushInformation
         fields = ("user", "browser", "user_agent", "endpoint", "auth", "p256dh", "status_type")
 
-    def save_or_delete(self):
+    def save_or_delete(self) -> None:
         status_type = self.cleaned_data.pop("status_type")  # pop status_type from cleaned_data, so get_or_create works
         defaults = {"browser": self.cleaned_data.pop("browser")}
 

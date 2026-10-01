@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 import pytest
 from django.db import transaction as db_transaction
 
@@ -12,17 +14,17 @@ from apps.transaction.messages.events.transaction import TransactionsImported
 
 
 @pytest.fixture
-def currency(db: None):
+def currency(db: None) -> Currency:
     return Currency.objects.create(name="Euro", sign="€", code="EUR")
 
 
 @pytest.fixture
-def parsed():
+def parsed() -> ParsedImport:
     return SplitwiseCsvParser().parse(build_file_like(DEFAULT_ROWS))
 
 
 @pytest.fixture
-def run_import():
+def run_import() -> Callable:
     """Drive ImportService the way the preview view does, including the follow-up event."""
 
     def _run_import(

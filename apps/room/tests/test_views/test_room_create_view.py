@@ -9,15 +9,15 @@ from apps.account.tests.factories import UserFactory
 @pytest.mark.django_db
 class TestRoomCreateView:
     @pytest.fixture
-    def owner(self):
+    def owner(self) -> User:
         return UserFactory(is_guest=False)
 
     @pytest.fixture
-    def owner_client(self, client: Client, owner: User):
+    def owner_client(self, client: Client, owner: User) -> Client:
         client.force_login(owner)
         return client
 
-    def test_back_button_targets_dashboard(self, owner_client: Client):
+    def test_back_button_targets_dashboard(self, owner_client: Client) -> Client:
         response = owner_client.get(reverse("room:create"))
 
         assert response.status_code == 200

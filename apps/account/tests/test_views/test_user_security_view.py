@@ -13,7 +13,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestUserSecurityViewGet:
-    def test_get_own_profile_no_passkey(self, hx_client: Callable, user: User):
+    def test_get_own_profile_no_passkey(self, hx_client: Callable, user: User) -> None:
         client = hx_client(user)
         response = client.get(reverse("account:security", kwargs={"pk": user.id}))
 
@@ -23,7 +23,7 @@ class TestUserSecurityViewGet:
         assert "Register passkey" in content
         assert "Security settings" in content
 
-    def test_get_own_profile_with_passkey(self, hx_client: Callable, user: User):
+    def test_get_own_profile_with_passkey(self, hx_client: Callable, user: User) -> None:
         passkey = UserPasskeyFactory(user=user)
         client = hx_client(user)
         response = client.get(reverse("account:security", kwargs={"pk": user.id}))
@@ -34,18 +34,18 @@ class TestUserSecurityViewGet:
         assert "Delete" in content
         assert "Register passkey" not in content
 
-    def test_get_other_users_profile_is_forbidden(self, hx_client: Callable, user: User, superuser: User):
+    def test_get_other_users_profile_is_forbidden(self, hx_client: Callable, user: User, superuser: User) -> None:
         client = hx_client(user)
         response = client.get(reverse("account:security", kwargs={"pk": superuser.id}))
 
         assert response.status_code == http.HTTPStatus.FORBIDDEN
 
-    def test_superuser_can_access_own_profile(self, superuser_htmx_client: Client, superuser: User):
+    def test_superuser_can_access_own_profile(self, superuser_htmx_client: Client, superuser: User) -> None:
         response = superuser_htmx_client.get(reverse("account:security", kwargs={"pk": superuser.id}))
 
         assert response.status_code == http.HTTPStatus.OK
 
-    def test_get_requires_login(self, client: Client, user: User):
+    def test_get_requires_login(self, client: Client, user: User) -> None:
         response = client.get(reverse("account:security", kwargs={"pk": user.id}))
 
         assert response.status_code == http.HTTPStatus.FOUND

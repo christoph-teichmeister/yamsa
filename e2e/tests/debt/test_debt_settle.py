@@ -13,12 +13,12 @@ from e2e.pages.debt_list_page import DebtListPage
 
 
 @pytest.fixture
-def open_debt(room_with_open_debt: Room):
+def open_debt(room_with_open_debt: Room) -> Debt:
     return Debt.objects.get(room=room_with_open_debt)
 
 
 @pytest.fixture
-def debt_list_as(page: Page, base_url: str, room_with_open_debt: Room):
+def debt_list_as(page: Page, base_url: str, room_with_open_debt: Room) -> Callable:
     def _open(user: User) -> DebtListPage:
         _login(page, base_url, user.email, DEFAULT_PASSWORD)
         debt_list_page = DebtListPage(
@@ -34,7 +34,7 @@ def debt_list_as(page: Page, base_url: str, room_with_open_debt: Room):
 class TestDebtSettle:
     def test_the_debtor_can_mark_a_debt_as_paid(
         self, debt_list_as: Callable, roommate: User, profile_user: User, open_debt: Debt
-    ):
+    ) -> None:
         debt_list_page = debt_list_as(roommate)
         debt_list_page.expect_row(open_debt.id, text=f"You owe {profile_user.name}", amount="12.50")
 
@@ -49,7 +49,7 @@ class TestDebtSettle:
 
     def test_cancelling_the_confirmation_leaves_the_debt_open(
         self, debt_list_as: Callable, roommate: User, open_debt: Debt
-    ):
+    ) -> None:
         debt_list_page = debt_list_as(roommate)
 
         debt_list_page.open_settle_confirmation(open_debt.id)
@@ -61,7 +61,7 @@ class TestDebtSettle:
 
     def test_the_creditor_cannot_settle_on_the_debtors_behalf(
         self, debt_list_as: Callable, profile_user: User, roommate: User, open_debt: Debt
-    ):
+    ) -> None:
         debt_list_page = debt_list_as(profile_user)
 
         debt_list_page.expect_row(open_debt.id, text=f"{roommate.name} owes you", amount="12.50")

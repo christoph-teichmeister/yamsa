@@ -16,7 +16,7 @@ from e2e.pages.register_page import RegisterPage
 class TestRegister:
     def test_a_visitor_from_a_share_link_joins_the_room_by_registering(
         self, shared_room: Room, page: Page, base_url: str
-    ):
+    ) -> None:
         page.goto(f"{base_url}{reverse('room:share', kwargs={'share_hash': shared_room.share_hash})}")
         page.get_by_role("link", name="Create a free account").click()
 
@@ -29,7 +29,7 @@ class TestRegister:
 
     def test_a_guest_keeps_their_history_when_registering_from_the_invitation(
         self, shared_room: Room, guest_user: User, profile_user: User, page: Page, base_url: str
-    ):
+    ) -> None:
         shared_room.users.add(guest_user)
         Debt.objects.create(
             room=shared_room,

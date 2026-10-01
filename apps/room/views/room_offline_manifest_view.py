@@ -1,4 +1,4 @@
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.urls import reverse
 from django.views import generic
 
@@ -19,7 +19,7 @@ class RoomOfflineManifestView(RoomMembershipRequiredMixin, generic.View):
     be opened there.
     """
 
-    def get(self, request: HttpRequest, *args: object, **kwargs: object):
+    def get(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
         room_slug = request.room.slug
         urls = [tab.get_url for tab in DashboardTabService(room=request.room).get_tabs_as_list()]
         urls.append(reverse("transaction:create", kwargs={"room_slug": room_slug}))

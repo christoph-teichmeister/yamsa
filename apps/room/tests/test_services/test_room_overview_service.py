@@ -15,12 +15,13 @@ from apps.room.dataclasses import RoomOverviewEntry
 from apps.room.models import Room
 from apps.room.services.room_overview_service import RoomOverviewService
 from apps.room.tests.factories import RoomFactory
+from apps.transaction.models import ParentTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 
 pytestmark = pytest.mark.django_db
 
 
-def create_debt(*, room: Room, debitor: User, creditor: User, currency: Currency, value: Decimal):
+def create_debt(*, room: Room, debitor: User, creditor: User, currency: Currency, value: Decimal) -> Debt:
     return Debt.objects.create(
         room=room,
         debitor=debitor,
@@ -30,28 +31,28 @@ def create_debt(*, room: Room, debitor: User, creditor: User, currency: Currency
     )
 
 
-def add_transaction(*, room: Room, user: User, paid_at: datetime):
+def add_transaction(*, room: Room, user: User, paid_at: datetime) -> ParentTransaction:
     return ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency, paid_at=paid_at)
 
 
-def entry_for(entries: list[RoomOverviewEntry], room: Room):
+def entry_for(entries: list[RoomOverviewEntry], room: Room) -> ParentTransaction:
     return next(entry for entry in entries if entry.slug == room.slug)
 
 
 class TestRoomOverviewService:
-    def test_open_room_points_at_the_transaction_list(self, room: Room, user: User):
+    def test_open_room_points_at_the_transaction_list(self, room: Room, user: User) -> None:
         entries = RoomOverviewService(user=user).get_entries()
 
         assert entry_for(entries, room).target_url == reverse("transaction:list", kwargs={"room_slug": room.slug})
 
-    def test_closed_room_points_at_the_room_detail(self, closed_room: Room, user: User):
+    def test_closed_room_points_at_the_room_detail(self, closed_room: Room, user: User) -> None:
         entries = RoomOverviewService(user=user).get_entries()
 
         entry = entry_for(entries, closed_room)
         assert entry.is_closed is True
         assert entry.target_url == reverse("room:detail", kwargs={"room_slug": closed_room.slug})
 
-    def test_a_closed_room_carries_no_balance(self, closed_room: Room, user: User, guest_user: User):
+    def test_a_closed_room_carries_no_balance(self, closed_room: Room, user: User, guest_user: User) -> None:
         currency = CurrencyFactory(sign="€")
         create_debt(room=closed_room, debitor=user, creditor=guest_user, currency=currency, value="99.00")
 
@@ -59,13 +60,15 @@ class TestRoomOverviewService:
 
         assert entry_for(entries, closed_room).balances == ()
 
-    def test_status_label_is_resolved(self, room: Room, closed_room: Room, user: User):
+    def test_status_label_is_resolved(self, room: Room, closed_room: Room, user: User) -> None:
         entries = RoomOverviewService(user=user).get_entries()
 
         assert entry_for(entries, room).status_label == Room.StatusChoices.OPEN.label
         assert entry_for(entries, closed_room).status_label == Room.StatusChoices.CLOSED.label
 
-    def test_balance_is_attached_to_the_right_room_with_the_right_sign(self, room: Room, user: User, guest_user: User):
+    def test_balance_is_attached_to_the_right_room_with_the_right_sign(
+        self, room: Room, user: User, guest_user: User
+    ) -> None:
         currency = CurrencyFactory(sign="€")
         other_room = RoomFactory(created_by=user)
         other_room.users.add(user, guest_user)
@@ -82,7 +85,7 @@ class TestRoomOverviewService:
         assert receiving_balance.user_owes is False
         assert receiving_balance.absolute_amount == Decimal("7.00")
 
-    def test_a_net_zero_balance_stays_visible_as_balanced(self, room: Room, user: User, guest_user: User):
+    def test_a_net_zero_balance_stays_visible_as_balanced(self, room: Room, user: User, guest_user: User) -> None:
         currency = CurrencyFactory()
         create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00")
         create_debt(room=room, debitor=guest_user, creditor=user, currency=currency, value="10.00")
@@ -92,10 +95,10 @@ class TestRoomOverviewService:
         assert len(balances) == 1
         assert balances[0].is_balanced is True
 
-    def test_a_room_without_open_debts_has_no_balances(self, room: Room, user: User):
+    def test_a_room_without_open_debts_has_no_balances(self, room: Room, user: User) -> None:
         assert entry_for(RoomOverviewService(user=user).get_entries(), room).balances == ()
 
-    def test_currencies_sharing_a_sign_stay_separate(self, room: Room, user: User, guest_user: User):
+    def test_currencies_sharing_a_sign_stay_separate(self, room: Room, user: User, guest_user: User) -> None:
         # Currency has no unique constraint on sign or code, so USD and CAD can both use "$".
         usd = CurrencyFactory(code="USD", sign="$")
         cad = CurrencyFactory(code="CAD", sign="$")
@@ -107,45 +110,47 @@ class TestRoomOverviewService:
         assert len(balances) == 2
         assert sorted(balance.absolute_amount for balance in balances) == [Decimal("5.00"), Decimal("10.00")]
 
-    def test_superuser_sees_foreign_rooms_without_balances(self, room: Room, superuser: User):
+    def test_superuser_sees_foreign_rooms_without_balances(self, room: Room, superuser: User) -> None:
         entries = RoomOverviewService(user=superuser).get_entries()
 
         entry = entry_for(entries, room)
         assert entry.user_is_in_room is False
         assert entry.balances == ()
 
-    def test_last_activity_is_the_timestamp_of_the_newest_transaction(self, room: Room, user: User):
+    def test_last_activity_is_the_timestamp_of_the_newest_transaction(self, room: Room, user: User) -> None:
         newest = timezone.now() - timedelta(hours=2)
         add_transaction(room=room, user=user, paid_at=timezone.now() - timedelta(days=40))
         add_transaction(room=room, user=user, paid_at=newest)
 
         assert entry_for(RoomOverviewService(user=user).get_entries(), room).last_activity_at == newest
 
-    def test_last_activity_falls_back_to_the_rooms_own_timestamp(self, room: Room, user: User):
+    def test_last_activity_falls_back_to_the_rooms_own_timestamp(self, room: Room, user: User) -> None:
         # Without the fallback a room without transactions would carry None and could not be sorted.
         entry = entry_for(RoomOverviewService(user=user).get_entries(), room)
 
         assert entry.last_activity_at == room.lastmodified_at
 
-    def test_last_transaction_at_stays_empty_without_transactions(self, room: Room, user: User):
+    def test_last_transaction_at_stays_empty_without_transactions(self, room: Room, user: User) -> None:
         # Unlike last_activity_at it has no fallback: the card must not name a time for a room
         # in which nothing was ever paid.
         assert entry_for(RoomOverviewService(user=user).get_entries(), room).last_transaction_at is None
 
-    def test_last_transaction_at_is_the_newest_paid_at(self, room: Room, user: User):
+    def test_last_transaction_at_is_the_newest_paid_at(self, room: Room, user: User) -> None:
         newest = timezone.now() - timedelta(hours=2)
         add_transaction(room=room, user=user, paid_at=timezone.now() - timedelta(days=40))
         add_transaction(room=room, user=user, paid_at=newest)
 
         assert entry_for(RoomOverviewService(user=user).get_entries(), room).last_transaction_at == newest
 
-    def test_meta_text_is_the_description_of_a_room_the_user_is_in(self, room: Room, user: User):
+    def test_meta_text_is_the_description_of_a_room_the_user_is_in(self, room: Room, user: User) -> None:
         assert entry_for(RoomOverviewService(user=user).get_entries(), room).meta_text == room.description
 
-    def test_meta_text_names_the_owner_of_a_foreign_room(self, room: Room, superuser: User):
+    def test_meta_text_names_the_owner_of_a_foreign_room(self, room: Room, superuser: User) -> None:
         assert entry_for(RoomOverviewService(user=superuser).get_entries(), room).meta_text == room.created_by.name
 
-    def test_sorted_by_last_activity_puts_the_newest_room_first(self, room: Room, closed_room: Room, user: User):
+    def test_sorted_by_last_activity_puts_the_newest_room_first(
+        self, room: Room, closed_room: Room, user: User
+    ) -> None:
         entries = RoomOverviewService(user=user).get_entries()
         shuffled = sorted(entries, key=lambda entry: entry.last_activity_at)
 
@@ -155,7 +160,9 @@ class TestRoomOverviewService:
             (entry.last_activity_at for entry in entries), reverse=True
         )
 
-    def test_sorted_by_last_activity_keeps_equal_timestamps_in_their_incoming_order(self, room: Room, user: User):
+    def test_sorted_by_last_activity_keeps_equal_timestamps_in_their_incoming_order(
+        self, room: Room, user: User
+    ) -> None:
         entry = entry_for(RoomOverviewService(user=user).get_entries(), room)
         same_moment = [replace(entry, name=name) for name in ("first", "second", "third")]
 
@@ -163,7 +170,7 @@ class TestRoomOverviewService:
 
         assert [ranked.name for ranked in ordered] == ["first", "second", "third"]
 
-    def test_entries_keep_the_ordering_of_room_qs_for_list(self, room: Room, closed_room: Room, user: User):
+    def test_entries_keep_the_ordering_of_room_qs_for_list(self, room: Room, closed_room: Room, user: User) -> None:
         entries = RoomOverviewService(user=user).get_entries()
 
         assert [entry.slug for entry in entries] == [values["slug"] for values in user.room_qs_for_list]
@@ -171,7 +178,7 @@ class TestRoomOverviewService:
     @pytest.mark.parametrize("extra_room_count", [1, 5])
     def test_building_the_entries_takes_two_queries(
         self, user: User, guest_user: User, django_assert_num_queries: DjangoAssertNumQueries, extra_room_count: int
-    ):
+    ) -> None:
         currency = CurrencyFactory()
         for _ in range(extra_room_count):
             extra_room = RoomFactory(created_by=user)
@@ -184,7 +191,7 @@ class TestRoomOverviewService:
 
         assert len(entries) == extra_room_count
 
-    def test_the_two_directions_stay_apart(self, room: Room, user: User, guest_user: User):
+    def test_the_two_directions_stay_apart(self, room: Room, user: User, guest_user: User) -> None:
         currency = CurrencyFactory(sign="€")
         other_room = RoomFactory(created_by=user)
         other_room.users.add(user, guest_user)
@@ -197,7 +204,7 @@ class TestRoomOverviewService:
         assert totals[0].owed_by_user == Decimal("10.00")
         assert totals[0].owed_to_user == Decimal("7.00")
 
-    def test_amounts_of_one_currency_are_summed_across_rooms(self, room: Room, user: User, guest_user: User):
+    def test_amounts_of_one_currency_are_summed_across_rooms(self, room: Room, user: User, guest_user: User) -> None:
         currency = CurrencyFactory(sign="€")
         other_room = RoomFactory(created_by=user)
         other_room.users.add(user, guest_user)
@@ -208,7 +215,7 @@ class TestRoomOverviewService:
 
         assert [total.owed_by_user for total in totals] == [Decimal("12.50")]
 
-    def test_currencies_sharing_a_sign_are_not_merged(self, room: Room, user: User, guest_user: User):
+    def test_currencies_sharing_a_sign_are_not_merged(self, room: Room, user: User, guest_user: User) -> None:
         # Currency has no unique constraint on sign, so grouping by sign would add USD to CAD.
         usd = CurrencyFactory(code="USD", sign="$")
         cad = CurrencyFactory(code="CAD", sign="$")
@@ -221,19 +228,19 @@ class TestRoomOverviewService:
         assert {total.currency_id for total in totals} == {usd.id, cad.id}
         assert [total.owed_by_user for total in totals] == [Decimal("10.00"), Decimal("5.00")]
 
-    def test_a_room_that_nets_to_zero_contributes_nothing(self, room: Room, user: User, guest_user: User):
+    def test_a_room_that_nets_to_zero_contributes_nothing(self, room: Room, user: User, guest_user: User) -> None:
         currency = CurrencyFactory()
         create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00")
         create_debt(room=room, debitor=guest_user, creditor=user, currency=currency, value="10.00")
 
         assert RoomOverviewService.currency_totals_for(RoomOverviewService(user=user).get_entries()) == []
 
-    def test_a_user_without_debts_has_no_totals(self, room: Room, user: User):
+    def test_a_user_without_debts_has_no_totals(self, room: Room, user: User) -> None:
         assert RoomOverviewService.currency_totals_for(RoomOverviewService(user=user).get_entries()) == []
 
     def test_totals_need_no_further_query(
         self, room: Room, user: User, guest_user: User, django_assert_num_queries: DjangoAssertNumQueries
-    ):
+    ) -> None:
         create_debt(room=room, debitor=user, creditor=guest_user, currency=CurrencyFactory(), value="4.00")
         entries = RoomOverviewService(user=user).get_entries()
 

@@ -1,5 +1,5 @@
 from django.contrib.auth import mixins
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import View
 
@@ -7,7 +7,7 @@ from apps.account.views.mixins.profile_partial_response import ProfilePartialRes
 
 
 class UserProfilePictureDeleteView(ProfilePartialResponseMixin, mixins.LoginRequiredMixin, View):
-    def post(self, request: HttpRequest, *args: object, **kwargs: object):
+    def post(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
         user = request.user
         if user.profile_picture:
             user.profile_picture.delete(save=False)

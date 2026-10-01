@@ -6,7 +6,7 @@ from apps.webpush.models import WebpushInformation
 class TestEditUserForm:
     form_class = EditUserForm
 
-    def test_regular(self, user: User):
+    def test_regular(self, user: User) -> None:
         new_data = {
             "name": "new_name",
             "email": "new_email@local.local",
@@ -24,7 +24,7 @@ class TestEditUserForm:
         for key, value in new_data.items():
             assert getattr(user, key) == value
 
-    def test_required_fields(self, user: User):
+    def test_required_fields(self, user: User) -> None:
         form = self.form_class(instance=user, data={})
         assert not form.is_valid()
 
@@ -33,13 +33,15 @@ class TestEditUserForm:
         assert form.errors["name"][0] == required_message
         assert form.errors["email"][0] == required_message
 
-    def test_email_format(self, user: User):
+    def test_email_format(self, user: User) -> None:
         form = self.form_class(instance=user, data={"email": "wrong_format"})
         assert not form.is_valid()
 
         assert form.errors["email"][0] == "Enter a valid email address."
 
-    def test_setting_wants_to_receive_webpush_notifications_to_false_deleted_any_webpush_infos(self, user: User):
+    def test_setting_wants_to_receive_webpush_notifications_to_false_deleted_any_webpush_infos(
+        self, user: User
+    ) -> None:
         user.wants_to_receive_webpush_notifications = True
         user.save()
         WebpushInformation.objects.create(
@@ -68,7 +70,7 @@ class TestEditUserForm:
         assert not user.wants_to_receive_webpush_notifications
         assert not WebpushInformation.objects.filter(user=user).exists()
 
-    def test_pasted_paypal_link_is_reduced_to_the_handle(self, user: User):
+    def test_pasted_paypal_link_is_reduced_to_the_handle(self, user: User) -> None:
         form = self.form_class(
             instance=user,
             data={
@@ -85,7 +87,7 @@ class TestEditUserForm:
 
         assert user.paypal_me_username == "creditorname"
 
-    def test_paypal_username_that_cannot_resolve_is_rejected_on_its_own_field(self, user: User):
+    def test_paypal_username_that_cannot_resolve_is_rejected_on_its_own_field(self, user: User) -> None:
         form = self.form_class(
             instance=user,
             data={

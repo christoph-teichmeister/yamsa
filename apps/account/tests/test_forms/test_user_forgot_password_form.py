@@ -8,11 +8,11 @@ from apps.account.models import User
 class TestUserForgotPasswordForm:
     form_class = UserForgotPasswordForm
 
-    def test_regular(self, user: User):
+    def test_regular(self, user: User) -> None:
         form = self.form_class(data={"email": user.email})
         assert form.is_valid()
 
-    def test_form_raises_error_if_email_is_unknown(self):
+    def test_form_raises_error_if_email_is_unknown(self) -> None:
         unknown_email = "unknown_email@local.local"
         form = self.form_class(data={"email": unknown_email})
         assert not form.is_valid()

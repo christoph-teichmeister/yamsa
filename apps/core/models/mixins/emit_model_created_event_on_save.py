@@ -52,7 +52,7 @@ class EmitModelCreatedEventOnSaveMixin:
     def expand_model_event_context(self) -> dict:
         return {}
 
-    def save(self, *args: object, **kwargs: object):
+    def save(self, *args: object, **kwargs: object) -> None:
         model_event_type = self.ModelEvents.Created if not self.id else self.ModelEvents.Changed
 
         super().save(*args, **kwargs)
@@ -61,7 +61,7 @@ class EmitModelCreatedEventOnSaveMixin:
             model_event_class=getattr(self, model_event_type.attr_name), context_label=model_event_type.label
         )
 
-    def delete(self, using: str | None = None, keep_parents: bool = False):
+    def delete(self, using: str | None = None, keep_parents: bool = False) -> tuple[int, dict[str, int]]:
         del_operation = super().delete(using, keep_parents)
 
         self._send_message(

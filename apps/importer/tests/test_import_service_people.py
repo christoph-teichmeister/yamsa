@@ -11,7 +11,7 @@ from apps.transaction.models import ParentTransaction
 class TestImportServicePeople:
     def test_guest_is_created_for_a_guest_assignment(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         result = run_import(parsed=parsed, user=user, currency=currency)
 
         guest = User.objects.get(name="Elisabeth")
@@ -21,7 +21,7 @@ class TestImportServicePeople:
 
     def test_existing_person_is_reused_instead_of_duplicated(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         existing = GuestUserFactory(name="Elisabeth")
         assignments = [
             PersonAssignment(column="Kilian Karaus", kind=PersonAssignment.ME),
@@ -36,7 +36,7 @@ class TestImportServicePeople:
 
     def test_importer_is_never_created_as_a_guest(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         result = run_import(parsed=parsed, user=user, currency=currency)
 
         assert User.objects.filter(name=user.name).count() == 1
@@ -44,7 +44,7 @@ class TestImportServicePeople:
 
     def test_room_has_one_member_per_person_column(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         result = run_import(parsed=parsed, user=user, currency=currency)
 
         assert result.room.users.count() == len(parsed.people)

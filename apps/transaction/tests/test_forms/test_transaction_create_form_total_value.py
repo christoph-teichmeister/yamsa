@@ -39,14 +39,14 @@ def _base_form_data(
 
 
 class TestTransactionCreateFormTotalValue:
-    def test_splits_evenly_when_no_reference_is_given(self, room: Room, user: User, guest_user: User):
+    def test_splits_evenly_when_no_reference_is_given(self, room: Room, user: User, guest_user: User) -> None:
         data = _base_form_data(room, user, guest_user, total_value="90.00", values=["0.00", "0.00"])
         form = TransactionCreateForm(data=data, request=None, room=room)
 
         assert form.is_valid(), form.errors
         assert form.cleaned_data["value"] == [Decimal("45.00"), Decimal("45.00")]
 
-    def test_honours_manual_shares_when_total_matches_reference(self, room: Room, user: User, guest_user: User):
+    def test_honours_manual_shares_when_total_matches_reference(self, room: Room, user: User, guest_user: User) -> None:
         data = _base_form_data(
             room,
             user,
@@ -61,7 +61,9 @@ class TestTransactionCreateFormTotalValue:
         assert form.cleaned_data["value"] == [Decimal("80.00"), Decimal("10.00")]
         assert form.cleaned_data["total_value"] == Decimal("90.00")
 
-    def test_rebalances_shares_when_total_differs_from_reference(self, room: Room, user: User, guest_user: User):
+    def test_rebalances_shares_when_total_differs_from_reference(
+        self, room: Room, user: User, guest_user: User
+    ) -> None:
         data = _base_form_data(
             room,
             user,
@@ -75,7 +77,9 @@ class TestTransactionCreateFormTotalValue:
         assert form.is_valid(), form.errors
         assert form.cleaned_data["value"] == [Decimal("50.00"), Decimal("50.00")]
 
-    def test_propagates_value_sum_when_manual_shares_do_not_match_total(self, room: Room, user: User, guest_user: User):
+    def test_propagates_value_sum_when_manual_shares_do_not_match_total(
+        self, room: Room, user: User, guest_user: User
+    ) -> None:
         data = _base_form_data(
             room,
             user,

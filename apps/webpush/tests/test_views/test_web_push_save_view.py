@@ -38,17 +38,17 @@ class TestWebPushSaveView:
             content_type="application/json",
         )
 
-    def test_subscribe_status_returns_created(self):
+    def test_subscribe_status_returns_created(self) -> None:
         response = self._post("subscribe")
 
         assert response.status_code == http.HTTPStatus.CREATED
 
-    def test_unsubscribe_status_returns_accepted(self):
+    def test_unsubscribe_status_returns_accepted(self) -> None:
         response = self._post("unsubscribe")
 
         assert response.status_code == http.HTTPStatus.ACCEPTED
 
-    def test_form_valid_rejects_unknown_status_type(self):
+    def test_form_valid_rejects_unknown_status_type(self) -> None:
         view = WebPushSaveView()
         request = self.factory.post(self.url)
         request.user = self.user

@@ -4,7 +4,7 @@ from django.urls import reverse
 from apps.core.toast_constants import TOAST_TYPE_CLASSES
 
 
-def test_toast_htmx_view_returns_toast_payload(client: Client):
+def test_toast_htmx_view_returns_toast_payload(client: Client) -> None:
     response = client.get(reverse("core:toast"), {"toast_message": "Hello", "toast_type": "warning"})
     response.render()
 
@@ -17,7 +17,7 @@ def test_toast_htmx_view_returns_toast_payload(client: Client):
     ]
 
 
-def test_toast_htmx_view_defaults_to_info_for_unknown_type(client: Client):
+def test_toast_htmx_view_defaults_to_info_for_unknown_type(client: Client) -> None:
     response = client.get(reverse("core:toast"), {"toast_message": "Hi", "toast_type": "missing"})
     response.render()
 
@@ -25,14 +25,14 @@ def test_toast_htmx_view_defaults_to_info_for_unknown_type(client: Client):
     assert toast_entry["type"] == TOAST_TYPE_CLASSES["info"]
 
 
-def test_toast_htmx_view_without_message_skips_toasts(client: Client):
+def test_toast_htmx_view_without_message_skips_toasts(client: Client) -> None:
     response = client.get(reverse("core:toast"))
     response.render()
 
     assert response.context_data["queued_toasts"] == []
 
 
-def test_toast_type_classes_match_expected_styles():
+def test_toast_type_classes_match_expected_styles() -> None:
     expected_classes = {
         "info": "toast-primary",
         "success": "toast-success",

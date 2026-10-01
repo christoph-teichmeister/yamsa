@@ -11,14 +11,14 @@ from apps.transaction.models import Category, ParentTransaction, RoomCategory
 class TestImportServiceCategories:
     def test_new_room_receives_the_full_base_category_set(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         result = run_import(parsed=parsed, user=user, currency=currency)
 
         assert RoomCategory.objects.filter(room=result.room).count() >= 10
 
     def test_every_transaction_category_belongs_to_the_room(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         result = run_import(parsed=parsed, user=user, currency=currency)
 
         room_category_ids = set(RoomCategory.objects.filter(room=result.room).values_list("category_id", flat=True))
@@ -29,7 +29,7 @@ class TestImportServiceCategories:
 
     def test_mapping_only_creates_no_new_categories(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         before = Category.objects.count()
 
         run_import(parsed=parsed, user=user, currency=currency)
@@ -38,7 +38,7 @@ class TestImportServiceCategories:
 
     def test_new_category_is_created_when_requested(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         assignments = [
             CategoryAssignment(label="Möbel", kind=CategoryAssignment.NEW, name="Möbel", emoji="🛋️"),
             CategoryAssignment(label="Allgemein", kind=CategoryAssignment.EXISTING, slug="misc"),
@@ -53,7 +53,7 @@ class TestImportServiceCategories:
 
     def test_new_category_is_invisible_in_another_room(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         assignments = [
             CategoryAssignment(label="Möbel", kind=CategoryAssignment.NEW, name="Möbel", emoji="🛋️"),
             CategoryAssignment(label="Allgemein", kind=CategoryAssignment.EXISTING, slug="misc"),
@@ -68,7 +68,7 @@ class TestImportServiceCategories:
 
     def test_unknown_slug_falls_back_to_the_room_default(
         self, run_import: Callable, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         assignments = [
             CategoryAssignment(label=entry.label, kind=CategoryAssignment.EXISTING, slug="does-not-exist")
             for entry in parsed.categories
@@ -80,7 +80,7 @@ class TestImportServiceCategories:
 
     def test_two_labels_mapped_to_the_same_new_name_create_one_category(
         self, db: None, user: User, currency: Currency, run_import: Callable
-    ):
+    ) -> None:
         parsed = SplitwiseCsvParser().parse(
             build_file_like(
                 [

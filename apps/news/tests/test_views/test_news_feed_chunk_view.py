@@ -10,12 +10,12 @@ from apps.room.models import Room
 pytestmark = pytest.mark.django_db
 
 
-def create_news(*, room: Room, message: str):
+def create_news(*, room: Room, message: str) -> News:
     return News.objects.create(room=room, message=message)
 
 
 class TestNewsFeedChunkView:
-    def test_cursor_returns_only_the_older_news(self, authenticated_client: Client, room: Room):
+    def test_cursor_returns_only_the_older_news(self, authenticated_client: Client, room: Room) -> None:
         older_news = create_news(room=room, message="Older update")
         newer_news = create_news(room=room, message="Newer update")
 

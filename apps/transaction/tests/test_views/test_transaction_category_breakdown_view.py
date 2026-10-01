@@ -24,7 +24,7 @@ def _make_child(parent_transaction: ParentTransaction, paid_for: User, value: De
 class TestTransactionCategoryBreakdownView:
     def test_category_breakdown_view_sums_values_by_category(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         groceries = Category.objects.get(slug="groceries")
         transport = Category.objects.get(slug="transport")
 
@@ -62,7 +62,7 @@ class TestTransactionCategoryBreakdownView:
 
     def test_category_breakdown_legend_renders_amount_once_per_category(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         groceries = Category.objects.get(slug="groceries")
         transport = Category.objects.get(slug="transport")
 
@@ -117,7 +117,7 @@ class TestTransactionCategoryBreakdownView:
 
     def test_category_breakdown_view_splits_charts_per_currency(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         groceries = Category.objects.get(slug="groceries")
         transport = Category.objects.get(slug="transport")
 
@@ -166,7 +166,7 @@ class TestTransactionCategoryBreakdownView:
 
     def test_category_breakdown_legend_links_to_filtered_transaction_list(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         groceries = Category.objects.get(slug="groceries")
         parent_groceries = ParentTransactionFactory(
             room=room,
@@ -202,7 +202,7 @@ class TestTransactionCategoryBreakdownView:
 
     def test_category_breakdown_legend_entry_needs_no_scripted_keyboard_trigger(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         groceries = Category.objects.get(slug="groceries")
         parent_groceries = ParentTransactionFactory(
             room=room,
@@ -231,7 +231,7 @@ class TestTransactionCategoryBreakdownView:
 
     def test_category_breakdown_chart_data_carries_formatted_amount(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         groceries = Category.objects.get(slug="groceries")
         parent_groceries = ParentTransactionFactory(
             room=room,
@@ -254,7 +254,7 @@ class TestTransactionCategoryBreakdownView:
 
     def test_category_breakdown_collapses_small_slices_into_one_bucket(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         big_category = Category.objects.get(slug="restaurants-and-bars")
         first_small_category = Category.objects.get(slug="groceries")
         second_small_category = Category.objects.get(slug="transport")
@@ -292,7 +292,7 @@ class TestTransactionCategoryBreakdownView:
 
     def test_category_breakdown_keeps_a_lone_small_slice_as_its_own_category(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         big_category = Category.objects.get(slug="restaurants-and-bars")
         small_category = Category.objects.get(slug="groceries")
 
@@ -314,7 +314,7 @@ class TestTransactionCategoryBreakdownView:
 
     def test_category_breakdown_measures_small_slices_per_currency(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         other_currency = CurrencyFactory(code="ALT")
         big_category = Category.objects.get(slug="restaurants-and-bars")
         first_small_category = Category.objects.get(slug="groceries")
@@ -359,7 +359,7 @@ class TestTransactionCategoryBreakdownView:
 
     def test_category_breakdown_never_buckets_a_category_that_is_tappable_on_its_own(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         # The three slivers add up to 0.7%, so the bucket stays under the threshold. It must not
         # grow by swallowing the 22% category next to it - that would hide real spend.
         amounts_by_slug = {
@@ -390,7 +390,7 @@ class TestTransactionCategoryBreakdownView:
 
     def test_category_breakdown_never_collapses_every_category_into_the_bucket(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         # Six equal categories are each below the threshold; collapsing all of them would leave a
         # donut of one full ring that shows nothing.
         slugs = ("restaurants-and-bars", "transport", "groceries", "household", "shopping", "health")
@@ -412,7 +412,7 @@ class TestTransactionCategoryBreakdownView:
 
     def test_category_breakdown_bucket_color_is_not_a_seeded_category_color(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         seeded_colors = {(category.color or "").lower() for category in Category.objects.exclude(color="")}
         # Two adjacent slices in the exact same grey are indistinguishable.
         assert CHART_SMALL_SLICE_BUCKET_COLOR.lower() not in seeded_colors

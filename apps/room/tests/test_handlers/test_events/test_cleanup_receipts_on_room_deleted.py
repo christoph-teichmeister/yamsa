@@ -13,7 +13,7 @@ class _StubStorage:
 
 
 @pytest.mark.django_db
-def test_every_captured_receipt_file_is_deleted_from_its_storage():
+def test_every_captured_receipt_file_is_deleted_from_its_storage() -> None:
     storage_a = _StubStorage()
     storage_b = _StubStorage()
 
@@ -31,7 +31,7 @@ def test_every_captured_receipt_file_is_deleted_from_its_storage():
 
 
 @pytest.mark.django_db
-def test_no_receipts_is_a_no_op():
+def test_no_receipts_is_a_no_op() -> None:
     delete_receipt_files_on_room_deleted(
         RoomHardDeleted.Context(
             room_name="Ski trip",

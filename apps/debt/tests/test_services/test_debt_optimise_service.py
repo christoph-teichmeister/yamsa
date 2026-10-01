@@ -15,7 +15,7 @@ from apps.transaction.tests.conftest import create_parent_transaction_with_optim
 class TestDebtOptimiseService:
     def test_aggregated_balances_include_settled_debts_across_currencies(
         self, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         other_user = UserFactory()
         room.users.add(other_user)
 

@@ -15,7 +15,7 @@ class InvitationEmailService(BaseYamsaEmailService):
         self.invited_by = invited_by
         super().__init__(*args, **kwargs)
 
-    def get_email_user_text_context(self):
+    def get_email_user_text_context(self) -> EmailUserTextContext:
         return EmailUserTextContext(
             text_list=[
                 _("You have been invited by %(inviter)s to join your friends on yamsa")
@@ -27,7 +27,7 @@ class InvitationEmailService(BaseYamsaEmailService):
             ]
         )
 
-    def get_email_extra_context(self):
+    def get_email_extra_context(self) -> EmailExtraContext:
         return EmailExtraContext(
             show_cta=True,
             cta_link=f"{settings.BACKEND_URL}{reverse(viewname='account:register')}?with_email={self.recipient_email_list[0]}&for_guest={self.recipient.id}",

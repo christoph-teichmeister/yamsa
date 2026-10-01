@@ -16,7 +16,7 @@ pytestmark = pytest.mark.django_db
 
 def create_debt(
     *, room: Room, debitor: User, creditor: User, currency: Currency, value: Decimal, settled: bool = False
-):
+) -> Debt:
     return Debt.objects.create(
         room=room,
         debitor=debitor,
@@ -27,7 +27,7 @@ def create_debt(
     )
 
 
-def balance_rows_for(user: User):
+def balance_rows_for(user: User) -> list:
     return list(
         Debt.objects.filter_open()
         .filter_involving_user(user_id=user.id)
@@ -36,7 +36,7 @@ def balance_rows_for(user: User):
 
 
 class TestDebtQuerySet:
-    def test_currencies_of_one_room_stay_separate(self, room: Room, user: User, guest_user: User):
+    def test_currencies_of_one_room_stay_separate(self, room: Room, user: User, guest_user: User) -> None:
         currency_1 = CurrencyFactory(sign="€")
         currency_2 = CurrencyFactory(sign="$")
         create_debt(room=room, debitor=user, creditor=guest_user, currency=currency_1, value="10.00")
@@ -49,7 +49,7 @@ class TestDebtQuerySet:
         assert by_sign["€"]["owed_by_user"] == Decimal("10.00")
         assert by_sign["$"]["owed_by_user"] == Decimal("4.00")
 
-    def test_currencies_sharing_a_sign_stay_separate(self, room: Room, user: User, guest_user: User):
+    def test_currencies_sharing_a_sign_stay_separate(self, room: Room, user: User, guest_user: User) -> None:
         # Currency has no unique constraint on sign or code, so USD and CAD can both use "$".
         usd = CurrencyFactory(code="USD", sign="$")
         cad = CurrencyFactory(code="CAD", sign="$")
@@ -63,7 +63,7 @@ class TestDebtQuerySet:
 
     def test_both_sides_of_the_same_room_and_currency_are_aggregated_into_one_row(
         self, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         currency = CurrencyFactory()
         create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00")
         create_debt(room=room, debitor=guest_user, creditor=user, currency=currency, value="4.00")
@@ -74,13 +74,13 @@ class TestDebtQuerySet:
         assert rows[0]["owed_by_user"] == Decimal("10.00")
         assert rows[0]["owed_to_user"] == Decimal("4.00")
 
-    def test_settled_debts_are_excluded(self, room: Room, user: User, guest_user: User):
+    def test_settled_debts_are_excluded(self, room: Room, user: User, guest_user: User) -> None:
         currency = CurrencyFactory()
         create_debt(room=room, debitor=user, creditor=guest_user, currency=currency, value="10.00", settled=True)
 
         assert balance_rows_for(user) == []
 
-    def test_debts_between_other_users_are_excluded(self, room: Room, user: User, guest_user: User):
+    def test_debts_between_other_users_are_excluded(self, room: Room, user: User, guest_user: User) -> None:
         other_user = UserFactory()
         room.users.add(other_user)
         currency = CurrencyFactory()
@@ -88,7 +88,7 @@ class TestDebtQuerySet:
 
         assert balance_rows_for(user) == []
 
-    def test_rooms_without_debts_produce_no_row(self, room: Room, user: User, guest_user: User):
+    def test_rooms_without_debts_produce_no_row(self, room: Room, user: User, guest_user: User) -> None:
         currency = CurrencyFactory()
         other_room = RoomFactory(created_by=user)
         other_room.users.add(user)
@@ -100,7 +100,7 @@ class TestDebtQuerySet:
 
     def test_aggregation_takes_a_single_query_regardless_of_room_count(
         self, user: User, guest_user: User, django_assert_num_queries: DjangoAssertNumQueries
-    ):
+    ) -> None:
         currency = CurrencyFactory()
         for _ in range(5):
             extra_room = RoomFactory(created_by=user)

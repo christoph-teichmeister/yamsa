@@ -17,7 +17,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestTransactionFormStructure:
-    def test_create_form_exposes_category_field_ordered(self):
+    def test_create_form_exposes_category_field_ordered(self) -> None:
         form = TransactionCreateForm()
         assert "category" in form.fields
 
@@ -25,7 +25,7 @@ class TestTransactionFormStructure:
         slugs = {category.slug for category in queryset}
         assert "accommodation" in slugs
 
-    def test_edit_form_initial_category_matches_instance(self):
+    def test_edit_form_initial_category_matches_instance(self) -> None:
         from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 
         category = Category.objects.get(slug="groceries")
@@ -34,7 +34,7 @@ class TestTransactionFormStructure:
 
         assert form.initial["category"] == category.pk
 
-    def test_create_form_respects_room_specific_categories(self, room: Room):
+    def test_create_form_respects_room_specific_categories(self, room: Room) -> None:
         service = RoomCategoryService(room=room)
         service.create_room_category(name="House Tag", emoji="🏠", color="#123456")
         form = TransactionCreateForm(room=room)
@@ -42,7 +42,7 @@ class TestTransactionFormStructure:
         slugs = [category.slug for category in form.fields["category"].queryset]
         assert any(slug.startswith("house-tag") for slug in slugs)
 
-    def test_edit_form_respects_room_specific_categories(self, room: Room):
+    def test_edit_form_respects_room_specific_categories(self, room: Room) -> None:
         service = RoomCategoryService(room=room)
         service.create_room_category(name="Edit Tag", emoji="✏️", color="#654321")
         parent_transaction = ParentTransactionFactory(room=room)
@@ -54,7 +54,7 @@ class TestTransactionFormStructure:
         slugs = [category.slug for category in form.fields["category"].queryset]
         assert any(slug.startswith("edit-tag") for slug in slugs)
 
-    def test_create_form_requires_a_category(self, room: Room, user: User):
+    def test_create_form_requires_a_category(self, room: Room, user: User) -> None:
         currency = CurrencyFactory()
         form_data = self._build_create_form_data(room, user, currency, list(room.users.all()))
         del form_data["category"]
@@ -64,7 +64,7 @@ class TestTransactionFormStructure:
         assert not form.is_valid()
         assert "category" in form.errors
 
-    def test_edit_form_requires_a_category(self):
+    def test_edit_form_requires_a_category(self) -> None:
         from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 
         parent_transaction = ParentTransactionFactory()
@@ -96,7 +96,7 @@ class TestTransactionFormStructure:
             "reference_total_value": "0.00",
         }
 
-    def test_save_two_consecutive_transactions_both_persist(self):
+    def test_save_two_consecutive_transactions_both_persist(self) -> None:
         """Regression test for #333: two consecutive saves must both succeed.
 
         Previously the second failed because the DB connection was blocked by

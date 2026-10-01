@@ -10,7 +10,7 @@ from apps.webpush.utils import Notification
 
 
 @message_registry.register_event(event=RoomStatusChanged)
-def send_notification_on_room_status_changed(context: RoomStatusChanged.Context):
+def send_notification_on_room_status_changed(context: RoomStatusChanged.Context) -> None:
     room = context.room
 
     # Notify users when a room is closed

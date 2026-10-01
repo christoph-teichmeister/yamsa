@@ -4,7 +4,7 @@ from apps.core.tests.helpers.dummy_instance import DummyInstance
 from apps.core.utils import determine_upload_to
 
 
-def test_generates_uuid_prefixed_filename_when_folder_is_configured():
+def test_generates_uuid_prefixed_filename_when_folder_is_configured() -> None:
     instance = DummyInstance("account", "user", "profile_picture")
     path = determine_upload_to(instance, "avatar.png")
     assert path.startswith("account/user/profile_picture/")
@@ -15,14 +15,14 @@ def test_generates_uuid_prefixed_filename_when_folder_is_configured():
     assert stored_name == "avatar.png"
 
 
-def test_generates_distinct_values_for_same_filename():
+def test_generates_distinct_values_for_same_filename() -> None:
     instance = DummyInstance("account", "user", "profile_picture")
     first_path = determine_upload_to(instance, "avatar.png")
     second_path = determine_upload_to(instance, "avatar.png")
     assert first_path != second_path
 
 
-def test_appends_uuid_without_folder_when_not_configured():
+def test_appends_uuid_without_folder_when_not_configured() -> None:
     instance = DummyInstance("room", "booking", None)
     path = determine_upload_to(instance, "room.jpg")
     assert path.startswith("room/booking/")

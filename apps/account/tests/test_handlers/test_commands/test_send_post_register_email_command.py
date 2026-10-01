@@ -11,7 +11,7 @@ from apps.mail.services.post_register_mail_service import PostRegisterEmailServi
 
 @pytest.mark.django_db
 class TestSendPostRegisterEmailHandler:
-    def test_regular(self, user: User):
+    def test_regular(self, user: User) -> None:
         context = {"user": user}
 
         with (

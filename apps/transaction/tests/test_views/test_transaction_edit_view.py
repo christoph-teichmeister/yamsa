@@ -82,7 +82,7 @@ _INITIAL_TOTAL_VARIATIONS = [
 
 
 class TestTransactionEditView:
-    def test_post_closed_room_is_rejected(self, authenticated_client: Client, closed_room: Room, user: User):
+    def test_post_closed_room_is_rejected(self, authenticated_client: Client, closed_room: Room, user: User) -> None:
         parent_transaction = ParentTransactionFactory(room=closed_room, paid_by=user, description="Original")
         ChildTransaction.objects.create(
             parent_transaction=parent_transaction,
@@ -110,7 +110,9 @@ class TestTransactionEditView:
         parent_transaction.refresh_from_db()
         assert parent_transaction.description == "Original"
 
-    def test_edit_form_preselects_the_current_category(self, authenticated_client: Client, room: Room, user: User):
+    def test_edit_form_preselects_the_current_category(
+        self, authenticated_client: Client, room: Room, user: User
+    ) -> None:
         category = next(
             room_category.category
             for room_category in RoomCategoryService(room=room).get_categories()
@@ -128,7 +130,7 @@ class TestTransactionEditView:
 
     def test_post_rebalances_child_transactions_when_total_changes(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
         default_category = RoomCategoryService(room=room).get_default_category()
         if default_category:
@@ -180,7 +182,7 @@ class TestTransactionEditView:
 
     def test_existing_child_values_render_in_edit_form(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         parent_transaction = ParentTransactionFactory(room=room, paid_by=user)
         ChildTransaction.objects.create(
             parent_transaction=parent_transaction,
@@ -224,7 +226,7 @@ class TestTransactionEditView:
         initial_total_override: str | int | None,
         child_total_value: Decimal | None,
         expected_formatted: str,
-    ):
+    ) -> None:
         """Settlement-critical totals must re-render as two-decimal strings.
 
         This holds even when the form's stored total arrives as None, zero, or empty.
@@ -255,7 +257,7 @@ class TestTransactionEditView:
         initial_total_override: str | int | None,
         child_total_value: Decimal | None,
         expected_formatted: str,
-    ):
+    ) -> None:
         """The lock-state script (Safari/Augmented iOS flow) reads the formatted dataset.
 
         It must match the rendered total for these edge cases.

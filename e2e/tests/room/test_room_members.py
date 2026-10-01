@@ -20,7 +20,7 @@ def _dashboard_url(room: Room) -> str:
 
 
 @pytest.fixture
-def people_page(page: Page, base_url: str, profile_user: User, shared_room: Room):
+def people_page(page: Page, base_url: str, profile_user: User, shared_room: Room) -> RoomPeoplePage:
     _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
     roster_page = RoomPeoplePage(page, base_url, reverse("account:list", kwargs={"room_slug": shared_room.slug}))
     roster_page.navigate()
@@ -29,7 +29,7 @@ def people_page(page: Page, base_url: str, profile_user: User, shared_room: Room
 
 @pytest.mark.e2e
 class TestRoomMembers:
-    def test_an_existing_user_is_added_by_email(self, people_page: RoomPeoplePage, shared_room: Room):
+    def test_an_existing_user_is_added_by_email(self, people_page: RoomPeoplePage, shared_room: Room) -> None:
         newcomer = UserFactory(name="Nora Neu")
 
         people_page.add_existing_user(newcomer.email)
@@ -37,7 +37,9 @@ class TestRoomMembers:
         people_page.expect_member("Nora Neu")
         assert shared_room.users.filter(id=newcomer.id).exists()
 
-    def test_an_unknown_email_is_reported_instead_of_added(self, people_page: RoomPeoplePage, shared_room: Room):
+    def test_an_unknown_email_is_reported_instead_of_added(
+        self, people_page: RoomPeoplePage, shared_room: Room
+    ) -> None:
         people_page.add_existing_user("niemand@yamsa.local")
 
         people_page.expect_field_error("Email does not exist")
@@ -45,7 +47,7 @@ class TestRoomMembers:
 
     def test_a_roommate_without_expenses_can_be_removed(
         self, people_page: RoomPeoplePage, shared_room: Room, roommate: User
-    ):
+    ) -> None:
         people_page.remove_member(roommate.name)
 
         people_page.expect_no_member(roommate.name)
@@ -53,7 +55,7 @@ class TestRoomMembers:
 
     def test_a_roommate_with_open_debts_stays(
         self, people_page: RoomPeoplePage, shared_room: Room, profile_user: User, roommate: User
-    ):
+    ) -> None:
         Debt.objects.create(
             room=shared_room,
             debitor=roommate,
@@ -70,7 +72,7 @@ class TestRoomMembers:
 
     def test_leaving_a_room_takes_it_off_the_dashboard(
         self, people_page: RoomPeoplePage, shared_room: Room, profile_user: User, page: Page, base_url: str
-    ):
+    ) -> None:
         other_room = RoomFactory(created_by=profile_user, name="Bleibt")
         other_room.users.add(profile_user)
 

@@ -18,7 +18,9 @@ from apps.webpush.utils import Notification
 pytestmark = pytest.mark.django_db
 
 
-def test_post_closed_room_is_rejected(authenticated_client: Client, closed_room: Room, user: User, guest_user: User):
+def test_post_closed_room_is_rejected(
+    authenticated_client: Client, closed_room: Room, user: User, guest_user: User
+) -> None:
     parent_transaction = ParentTransactionFactory(room=closed_room, paid_by=user)
     child_transaction = ChildTransactionFactory(
         parent_transaction=parent_transaction,
@@ -44,7 +46,7 @@ def test_post_closed_room_is_rejected(authenticated_client: Client, closed_room:
 
 def test_removing_a_share_recalculates_the_debts_without_a_save(
     authenticated_client: Client, room: Room, user: User, guest_user: User
-):
+) -> None:
     parent_transaction, (_, guest_share) = create_parent_transaction_with_optimisation(
         room=room, paid_by=user, paid_for_tuple=(user, guest_user)
     )
@@ -64,7 +66,7 @@ def test_removing_a_share_recalculates_the_debts_without_a_save(
 
 def test_removing_the_last_share_reports_what_the_transaction_carried(
     authenticated_client: Client, room: Room, user: User, guest_user: User
-):
+) -> None:
     parent_transaction, (guest_share,) = create_parent_transaction_with_optimisation(
         room=room, paid_by=user, paid_for_tuple=(guest_user,)
     )

@@ -93,7 +93,7 @@ class TestOfflineOutbox:
 
     def test_an_expense_entered_offline_is_kept_and_shown_as_waiting(
         self, page: Page, base_url: str, profile_user: User, room: Room
-    ):
+    ) -> None:
         paths = self._prepare(page, base_url, profile_user, room)
         self._go_offline(page)
         self._add_expense_offline(page, base_url, room, "Bought bread offline")
@@ -107,7 +107,9 @@ class TestOfflineOutbox:
         expect(page.locator("[data-outbox-manual-send-hint]")).to_be_hidden()
         assert not ParentTransaction.objects.filter(description="Bought bread offline").exists()
 
-    def test_a_browser_without_background_sync_says_so(self, page: Page, base_url: str, profile_user: User, room: Room):
+    def test_a_browser_without_background_sync_says_so(
+        self, page: Page, base_url: str, profile_user: User, room: Room
+    ) -> None:
         """Every browser on iOS. Left unsaid, a visitor puts the phone away and nothing goes out."""
         page.add_init_script("delete window.SyncManager;")
         self._prepare(page, base_url, profile_user, room)
@@ -119,7 +121,7 @@ class TestOfflineOutbox:
 
     def test_the_queue_drains_once_the_connection_is_back(
         self, page: Page, base_url: str, profile_user: User, room: Room
-    ):
+    ) -> None:
         self._prepare(page, base_url, profile_user, room)
         self._go_offline(page)
         self._add_expense_offline(page, base_url, room, "Bought milk offline")
@@ -135,7 +137,7 @@ class TestOfflineOutbox:
 
     def test_two_expenses_entered_offline_are_both_booked(
         self, page: Page, base_url: str, profile_user: User, room: Room
-    ):
+    ) -> None:
         """Both come from the same cached form, which was rendered with one submission name.
 
         Left as rendered, the second would reach the server looking like a replay of the first and
@@ -157,7 +159,9 @@ class TestOfflineOutbox:
         assert ParentTransaction.objects.filter(description="First offline expense").count() == 1
         assert ParentTransaction.objects.filter(description="Second offline expense").count() == 1
 
-    def test_replaying_twice_books_the_expense_once(self, page: Page, base_url: str, profile_user: User, room: Room):
+    def test_replaying_twice_books_the_expense_once(
+        self, page: Page, base_url: str, profile_user: User, room: Room
+    ) -> None:
         """The queue is drained by whatever gets there first; both must be safe."""
         self._prepare(page, base_url, profile_user, room)
         self._go_offline(page)

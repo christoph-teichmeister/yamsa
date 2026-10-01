@@ -7,7 +7,9 @@ from e2e.pages.change_password_page import ChangePasswordPage
 
 @pytest.mark.e2e
 class TestChangePassword:
-    def test_the_reveal_toggle_shows_and_hides_the_password(self, logged_in_change_password_page: ChangePasswordPage):
+    def test_the_reveal_toggle_shows_and_hides_the_password(
+        self, logged_in_change_password_page: ChangePasswordPage
+    ) -> None:
         password_page = logged_in_change_password_page
         password_page.expect_loaded()
         assert password_page.field_type("old_password") == "password"
@@ -24,7 +26,7 @@ class TestChangePassword:
 
     def test_a_wrong_current_password_is_reported_on_its_own_field(
         self, logged_in_change_password_page: ChangePasswordPage
-    ):
+    ) -> None:
         logged_in_change_password_page.fill_passwords(current="not-my-password", new="a-brand-new-password")
 
         logged_in_change_password_page.save()
@@ -33,7 +35,7 @@ class TestChangePassword:
 
     def test_a_mismatched_confirmation_is_reported_on_the_confirmation(
         self, logged_in_change_password_page: ChangePasswordPage
-    ):
+    ) -> None:
         logged_in_change_password_page.fill_passwords(
             current=DEFAULT_PASSWORD, new="a-brand-new-password", confirmation="something-else"
         )
@@ -44,7 +46,7 @@ class TestChangePassword:
 
     def test_saving_returns_to_the_profile_without_signing_the_user_out(
         self, logged_in_change_password_page: ChangePasswordPage, profile_detail_path: str
-    ):
+    ) -> None:
         logged_in_change_password_page.fill_passwords(current=DEFAULT_PASSWORD, new="a-brand-new-password")
 
         logged_in_change_password_page.save_and_expect_the_profile(profile_detail_path)

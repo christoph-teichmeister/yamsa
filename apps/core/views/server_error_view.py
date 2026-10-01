@@ -19,7 +19,7 @@ class ServerErrorView(generic.View):
     and handler500 always needs the same response regardless of it.
     """
 
-    def dispatch(self, request: HttpRequest, *args: object, **kwargs: object):
+    def dispatch(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
         if request.headers.get("HX-Request"):
             return HttpResponse(status=500)
         return render(request, "500.html", status=500)

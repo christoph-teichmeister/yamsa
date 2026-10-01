@@ -13,12 +13,12 @@ from apps.room.tests.factories import RoomFactory
 pytestmark = pytest.mark.django_db
 
 
-def create_news(*, room: Room, message: str, highlighted: bool = False):
+def create_news(*, room: Room, message: str, highlighted: bool = False) -> News:
     return News.objects.create(room=room, message=message, highlighted=highlighted)
 
 
 class TestNewsListView:
-    def test_highlighted_news_and_the_first_batch_are_rendered(self, authenticated_client: Client, room: Room):
+    def test_highlighted_news_and_the_first_batch_are_rendered(self, authenticated_client: Client, room: Room) -> None:
         create_news(room=room, message="Highlighted update", highlighted=True)
         create_news(room=room, message="Regular update")
 
@@ -31,7 +31,7 @@ class TestNewsListView:
         assert "Highlighted update" in content
         assert "Regular update" in content
 
-    def test_news_of_other_rooms_are_hidden(self, authenticated_client: Client, room: Room, user: User):
+    def test_news_of_other_rooms_are_hidden(self, authenticated_client: Client, room: Room, user: User) -> None:
         other_room = RoomFactory()
         other_room.users.add(user)
         create_news(room=other_room, message="Not for this room")
@@ -41,7 +41,7 @@ class TestNewsListView:
         messages = [news.message for news in response.context_data["news"]]
         assert "Not for this room" not in messages
 
-    def test_a_full_batch_exposes_a_cursor(self, authenticated_client: Client, room: Room):
+    def test_a_full_batch_exposes_a_cursor(self, authenticated_client: Client, room: Room) -> None:
         for index in range(NEWS_FEED_PAGE_SIZE + 1):
             create_news(room=room, message=f"Update {index}")
 

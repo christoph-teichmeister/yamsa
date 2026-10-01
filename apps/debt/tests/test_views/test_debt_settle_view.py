@@ -16,7 +16,7 @@ pytestmark = pytest.mark.django_db
 class TestDebtSettleView:
     def test_post_closed_room_is_rejected(
         self, authenticated_client: Client, closed_room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         create_parent_transaction_with_optimisation(
             room=closed_room,
             paid_by=user,
@@ -35,7 +35,7 @@ class TestDebtSettleView:
 
     def test_settle_page_shows_the_creditor(
         self, client: Client, room: Room, user: User, guest_user: User, attach_profile_picture: Callable
-    ):
+    ) -> None:
         attach_profile_picture(user)
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
         debt = room.debts.filter(settled=False).first()
@@ -49,7 +49,7 @@ class TestDebtSettleView:
 
     def test_paypal_link_carries_the_amount_and_currency(
         self, client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         """Regression: the paypal.me short link drops the amount segment on redirect."""
         user.paypal_me_username = "creditorname"
         user.save()

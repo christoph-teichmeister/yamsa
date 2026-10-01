@@ -27,7 +27,7 @@ class PaymentReminderEmailService(BaseYamsaEmailService):
         self.subject = (_("%(room_name)s | Payment reminder") % {"room_name": self.room_name}) + " ⚡"
         super().__init__(recipient=recipient)
 
-    def get_email_user_text_context(self):
+    def get_email_user_text_context(self) -> EmailUserTextContext:
         return EmailUserTextContext(
             text_list=[
                 _("Hey there! It has been %(inactivity_days)d days since any activity in %(room_name)s.")
@@ -44,14 +44,14 @@ class PaymentReminderEmailService(BaseYamsaEmailService):
             ]
         )
 
-    def get_email_base_text_context(self):
+    def get_email_base_text_context(self) -> EmailBaseTextContext:
         return EmailBaseTextContext(
             header=_("Payment reminder: %(room_name)s") % {"room_name": self.room_name},
             footer=_("This reminder is generated automatically for overdue balances. We're cheering for you!"),
             sub_footer=_("Need a hand? Reach out to your room admin if the numbers look off."),
         )
 
-    def get_email_extra_context(self):
+    def get_email_extra_context(self) -> EmailExtraContext:
         return EmailExtraContext(
             show_unsubscribe=True,
             unsubscribe_link=build_payment_reminder_unsubscribe_url(

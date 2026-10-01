@@ -43,12 +43,12 @@ def _create_transactions(room: Room, paid_by: User, count: int) -> Room:
 
 
 @pytest.fixture
-def room_with_transactions(room: Room, profile_user: User):
+def room_with_transactions(room: Room, profile_user: User) -> Room:
     return _create_transactions(room, profile_user, SINGLE_BATCH_COUNT)
 
 
 @pytest.fixture
-def room_with_two_feed_batches(room: Room, profile_user: User):
+def room_with_two_feed_batches(room: Room, profile_user: User) -> Room:
     return _create_transactions(room, profile_user, TRANSACTION_FEED_PAGE_SIZE * 2)
 
 
@@ -63,14 +63,16 @@ class TestTransactionListAddButton:
         list_page.wait_for_feed()
         return list_page
 
-    def test_it_starts_visible(self, page: Page, base_url: str, room_with_transactions: Room, logged_in: Callable):
+    def test_it_starts_visible(
+        self, page: Page, base_url: str, room_with_transactions: Room, logged_in: Callable
+    ) -> None:
         list_page = self._open_list(page, base_url, room_with_transactions, logged_in)
 
         list_page.expect_add_button_visible()
 
     def test_it_springs_back_into_place_when_it_returns(
         self, page: Page, base_url: str, room_with_transactions: Room, logged_in: Callable
-    ):
+    ) -> None:
         list_page = self._open_list(page, base_url, room_with_transactions, logged_in)
 
         list_page.scroll_by(400)
@@ -82,7 +84,7 @@ class TestTransactionListAddButton:
 
     def test_scrolling_down_hides_it(
         self, page: Page, base_url: str, room_with_transactions: Room, logged_in: Callable
-    ):
+    ) -> None:
         list_page = self._open_list(page, base_url, room_with_transactions, logged_in)
 
         list_page.scroll_by(200)
@@ -91,7 +93,7 @@ class TestTransactionListAddButton:
 
     def test_scrolling_back_up_brings_it_back(
         self, page: Page, base_url: str, room_with_transactions: Room, logged_in: Callable
-    ):
+    ) -> None:
         list_page = self._open_list(page, base_url, room_with_transactions, logged_in)
 
         list_page.scroll_by(400)
@@ -103,7 +105,7 @@ class TestTransactionListAddButton:
 
     def test_it_stays_visible_at_the_end_of_the_list(
         self, page: Page, base_url: str, room_with_transactions: Room, logged_in: Callable
-    ):
+    ) -> None:
         # Arriving at the bottom is a downward scroll, so only the end-of-page rule can keep the
         # pill up — which is where a reader who has been through the whole list wants it.
         list_page = self._open_list(page, base_url, room_with_transactions, logged_in)
@@ -114,7 +116,7 @@ class TestTransactionListAddButton:
 
     def test_loading_the_next_feed_batch_leaves_it_hidden(
         self, page: Page, base_url: str, room_with_two_feed_batches: Room, logged_in: Callable
-    ):
+    ) -> None:
         # The next batch arrives as an htmx swap while the reader is scrolling down, and a swap
         # that does not carry the pill must not count as a fresh page.
         list_page = self._open_list(page, base_url, room_with_two_feed_batches, logged_in)
@@ -137,7 +139,7 @@ class TestTransactionListAddButton:
     )
     def test_it_still_reacts_after_a_tab_switch_and_back(
         self, page: Page, base_url: str, room_with_transactions: Room, logged_in: Callable
-    ):
+    ) -> None:
         # The tabs swap #body by morphing it, which both replaces the pill and can carry its
         # hidden state across — the listeners have to outlive that and the state has to be reset.
         list_page = self._open_list(page, base_url, room_with_transactions, logged_in)

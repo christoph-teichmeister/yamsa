@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 from django.views import generic
 
 from apps.account.models import User
@@ -9,7 +10,7 @@ class UserListForRoomView(AccountBaseContext, generic.ListView):
     context_object_name = "user_qs_for_room"
     template_name = "account/list.html"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return (
             self.model.objects.get_for_room_slug(room_slug=self.request.room.slug)
             .annotate_user_has_seen_this_room(room_id=self.request.room.id)
@@ -17,7 +18,7 @@ class UserListForRoomView(AccountBaseContext, generic.ListView):
             .order_by("user_has_seen_this_room", "name")
         )
 
-    def get_context_data(self, **kwargs: object):
+    def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
         request = self.request
         room = getattr(request, "room", None)

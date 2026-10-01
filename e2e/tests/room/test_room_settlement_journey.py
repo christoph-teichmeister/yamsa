@@ -23,7 +23,7 @@ GUEST_NAME = "Alex aus der Küche"
 
 
 @pytest.fixture
-def catalog(transactional_db: None):
+def catalog(transactional_db: None) -> None:
     # The transactional database flushes what the migrations seeded. A room created through the
     # UI links the base categories on first use, so they have to exist before it does.
     CurrencyFactory(code="EUR", sign="€")
@@ -48,7 +48,7 @@ class TestRoomSettlementJourney:
         page: Page,
         base_url: str,
         new_context: Callable[..., BrowserContext],
-    ):
+    ) -> None:
         _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
         create_page = RoomCreatePage(page, base_url, reverse("room:create"))

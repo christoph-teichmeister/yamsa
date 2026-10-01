@@ -14,7 +14,7 @@ from e2e.tests.transaction.conftest import GROCERIES
 
 
 @pytest.fixture
-def open_category_manager(page: Page, base_url: str, room: Room, logged_in: Callable):
+def open_category_manager(page: Page, base_url: str, room: Room, logged_in: Callable) -> Callable:
     def _open() -> CategoryManagerPage:
         logged_in()
         manager_page = CategoryManagerPage(
@@ -30,7 +30,7 @@ def open_category_manager(page: Page, base_url: str, room: Room, logged_in: Call
 class TestCategoryManager:
     def test_a_new_category_is_offered_on_the_transaction_form(
         self, open_category_manager: Callable, room: Room, page: Page, base_url: str
-    ):
+    ) -> None:
         manager_page = open_category_manager()
 
         manager_page.add_category(name="Haustier", emoji="🐶")
@@ -44,7 +44,7 @@ class TestCategoryManager:
             create_page.category_field.locator("label[data-category-slug]").filter(has_text="Haustier")
         ).to_be_visible()
 
-    def test_a_category_without_a_single_emoji_is_rejected(self, open_category_manager: Callable):
+    def test_a_category_without_a_single_emoji_is_rejected(self, open_category_manager: Callable) -> None:
         manager_page = open_category_manager()
 
         manager_page.add_category(name="Ohne Emoji", emoji="abc")
@@ -53,14 +53,14 @@ class TestCategoryManager:
         manager_page.expect_order(["Groceries", "Restaurants & Bars", "Activities"])
         assert not Category.objects.filter(name="Ohne Emoji").exists()
 
-    def test_a_category_can_be_moved_to_the_front(self, open_category_manager: Callable):
+    def test_a_category_can_be_moved_to_the_front(self, open_category_manager: Callable) -> None:
         manager_page = open_category_manager()
 
         manager_page.move_to("Activities", 0)
 
         manager_page.expect_order(["Activities", "Groceries", "Restaurants & Bars"])
 
-    def test_another_category_can_become_the_default(self, open_category_manager: Callable):
+    def test_another_category_can_become_the_default(self, open_category_manager: Callable) -> None:
         manager_page = open_category_manager()
         manager_page.expect_default("Groceries")
 
@@ -70,7 +70,7 @@ class TestCategoryManager:
 
     def test_removing_the_default_moves_its_transactions_to_the_next_one(
         self, open_category_manager: Callable, room: Room, profile_user: User
-    ):
+    ) -> None:
         groceries = Category.objects.get(slug=GROCERIES)
         transaction = ParentTransactionFactory(
             room=room, paid_by=profile_user, currency=room.preferred_currency, category=groceries

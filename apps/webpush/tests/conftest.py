@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from decimal import Decimal
 
 import pytest
@@ -11,7 +12,7 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 
 
 @pytest.fixture
-def create_parent_transaction_with_optimisation():
+def create_parent_transaction_with_optimisation() -> Callable:
     def _create(
         room: Room,
         paid_by: User,

@@ -1,11 +1,11 @@
-from django.urls import include, path
+from django.urls import URLResolver, include, path
 from django.views.generic import RedirectView
 
 from apps.room import views
 from apps.room.views.user_connection_to_room_create_view import UserConnectionToRoomCreateView
 
 
-def build_room_specific_paths(list_of_url_paths: list):
+def build_room_specific_paths(list_of_url_paths: list) -> URLResolver:
     return path("<str:room_slug>/", include(list_of_url_paths))
 
 

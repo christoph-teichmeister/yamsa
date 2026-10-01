@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from datetime import timedelta
 from io import BytesIO
 
@@ -20,17 +21,17 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 
 
 @pytest.fixture
-def user(db: None):
+def user(db: None) -> User:
     return UserFactory()
 
 
 @pytest.fixture
-def guest_user(db: None):
+def guest_user(db: None) -> User:
     return GuestUserFactory()
 
 
 @pytest.fixture
-def authenticated_user(request: pytest.FixtureRequest, user: User, guest_user: User):
+def authenticated_user(request: pytest.FixtureRequest, user: User, guest_user: User) -> User:
     param = request.param
     if param == "user":
         return user
@@ -43,26 +44,26 @@ def authenticated_user(request: pytest.FixtureRequest, user: User, guest_user: U
 
 
 @pytest.fixture
-def room(db: None, user: User, guest_user: User):
+def room(db: None, user: User, guest_user: User) -> Room:
     room_instance = RoomFactory(created_by=user)
     room_instance.users.add(user, guest_user)
     return room_instance
 
 
 @pytest.fixture
-def closed_room(db: None, user: User, guest_user: User):
+def closed_room(db: None, user: User, guest_user: User) -> Room:
     room_instance = RoomFactory(created_by=user, status=Room.StatusChoices.CLOSED)
     room_instance.users.add(user, guest_user)
     return room_instance
 
 
 @pytest.fixture
-def superuser(db: None):
+def superuser(db: None) -> User:
     return SuperuserFactory()
 
 
 @pytest.fixture
-def authenticated_client(client: Client, user: User):
+def authenticated_client(client: Client, user: User) -> Client:
     client.defaults["HTTP_HX_REQUEST"] = "true"
     request = RequestFactory().get("/")
     assert client.login(request=request, email=user.email, password=DEFAULT_PASSWORD)
@@ -78,7 +79,7 @@ def superuser_htmx_client(superuser: User) -> Client:
 
 
 @pytest.fixture
-def room_with_stale_activity(room: Room, user: User):
+def room_with_stale_activity(room: Room, user: User) -> Room:
     reminder_category = CategoryFactory(
         slug=f"room-reminder-{room.pk}",
         name="Room reminder",
@@ -96,7 +97,7 @@ def room_with_stale_activity(room: Room, user: User):
 
 
 @pytest.fixture
-def attach_profile_picture():
+def attach_profile_picture() -> Callable:
     """Give a user a real picture, so their avatar renders as an image rather than as an initial."""
 
     def _attach(user_instance: User) -> User:

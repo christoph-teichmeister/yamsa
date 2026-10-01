@@ -25,7 +25,7 @@ class TestProfilePictureForm:
         buffer.seek(0)
         return SimpleUploadedFile("avatar.png", buffer.read(), content_type="image/png")
 
-    def test_upload_saves_file(self, user: User):
+    def test_upload_saves_file(self, user: User) -> None:
         image_file = self._build_image_file()
 
         with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
@@ -38,7 +38,7 @@ class TestProfilePictureForm:
             stored_name = user.profile_picture.name
             assert user.profile_picture.storage.exists(stored_name)
 
-    def test_upload_saves_file_with_long_filename(self, user: User):
+    def test_upload_saves_file_with_long_filename(self, user: User) -> None:
         """Regression test for #YAMSA-45.
 
         uuid4()-prefixed long Android filenames overflowed the old ImageField max_length=100,
@@ -59,7 +59,7 @@ class TestProfilePictureForm:
             assert user.profile_picture
             assert user.profile_picture.storage.exists(user.profile_picture.name)
 
-    def test_upload_resizes_to_maximum_dimensions(self, user: User):
+    def test_upload_resizes_to_maximum_dimensions(self, user: User) -> None:
         image_file = self._build_image_file(
             width=MAX_PROFILE_PICTURE_DIMENSION * 2,
             height=MAX_PROFILE_PICTURE_DIMENSION * 2,
@@ -79,7 +79,7 @@ class TestProfilePictureForm:
 
             assert user.profile_picture.storage.size(stored_name) <= MAX_PROFILE_PICTURE_FILE_SIZE
 
-    def test_rejects_invalid_uploads(self, user: User):
+    def test_rejects_invalid_uploads(self, user: User) -> None:
         corrupted_file = SimpleUploadedFile(
             "avatar.bin",
             b"not-an-image",
@@ -92,7 +92,7 @@ class TestProfilePictureForm:
             assert not form.is_valid()
             assert "profile_picture" in form.errors
 
-    def test_surfaces_compressor_errors(self, user: User, monkeypatch: pytest.MonkeyPatch):
+    def test_surfaces_compressor_errors(self, user: User, monkeypatch: pytest.MonkeyPatch) -> None:
         image_file = self._build_image_file()
 
         def fail(self: CompressPictureService) -> None:
@@ -107,7 +107,7 @@ class TestProfilePictureForm:
             assert not form.is_valid()
             assert form.errors.get("profile_picture") or form.non_field_errors()
 
-    def test_rejects_uncompressed_oversized_images(self, user: User, monkeypatch: pytest.MonkeyPatch):
+    def test_rejects_uncompressed_oversized_images(self, user: User, monkeypatch: pytest.MonkeyPatch) -> None:
         image_file = self._build_image_file()
 
         def return_large_file(self: CompressPictureService) -> InMemoryUploadedFile:
@@ -130,7 +130,7 @@ class TestProfilePictureForm:
             assert not form.is_valid()
             assert form.errors.get("profile_picture") or form.non_field_errors()
 
-    def test_saving_without_a_file_keeps_the_stored_picture(self, user: User):
+    def test_saving_without_a_file_keeps_the_stored_picture(self, user: User) -> None:
         """The profile save posts no file, so an empty form must never clear the avatar."""
         with tempfile.TemporaryDirectory() as tmp_media_root, override_settings(MEDIA_ROOT=tmp_media_root):
             setup_form = self.form_class(instance=user, data={}, files={"profile_picture": self._build_image_file()})

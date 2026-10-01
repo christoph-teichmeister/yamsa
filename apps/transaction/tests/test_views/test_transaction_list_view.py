@@ -18,7 +18,7 @@ pytestmark = pytest.mark.django_db
 class TestTransactionListViewFiltering:
     def test_list_view_exposes_active_filter(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         groceries = Category.objects.get(slug="groceries")
         create_parent_transaction_with_optimisation(
             room=room,
@@ -47,7 +47,7 @@ class TestTransactionListViewFiltering:
 
     def test_list_view_wires_the_filters_into_every_feed_request(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
 
         response = authenticated_client.get(reverse("transaction:list", kwargs={"room_slug": room.slug}))
@@ -65,7 +65,7 @@ class TestTransactionListViewFiltering:
 
     def test_list_view_without_filter_renders_no_filter_chip(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
 
         response = authenticated_client.get(reverse("transaction:list", kwargs={"room_slug": room.slug}))
@@ -78,7 +78,7 @@ class TestTransactionListViewFiltering:
 
     def test_list_view_ignores_a_category_from_another_room(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
         other_room = RoomFactory(created_by=user)
         other_room.users.add(user)
@@ -108,7 +108,7 @@ class TestTransactionListViewFiltering:
 
     def test_list_view_falls_back_to_raw_value_for_unknown_category(
         self, authenticated_client: Client, room: Room, user: User
-    ):
+    ) -> None:
         response = authenticated_client.get(
             reverse("transaction:list", kwargs={"room_slug": room.slug}),
             data={"category": "does-not-exist"},

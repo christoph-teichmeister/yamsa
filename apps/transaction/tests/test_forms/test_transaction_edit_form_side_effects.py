@@ -18,7 +18,7 @@ DEBT_RECALCULATION = "apps.debt.handlers.events.optimise_debts.DebtOptimiseServi
 
 
 @pytest.fixture
-def parent_transaction(room: Room, user: User, guest_user: User):
+def parent_transaction(room: Room, user: User, guest_user: User) -> ParentTransaction:
     parent_transaction = ParentTransactionFactory(
         room=room, paid_by=user, category=RoomCategoryService(room=room).get_default_category()
     )
@@ -44,7 +44,7 @@ def _form_data(parent_transaction: ParentTransaction, *, values: list[str]) -> d
 
 
 class TestTransactionEditFormSideEffects:
-    def test_saving_the_form_only_persists(self, parent_transaction: ParentTransaction):
+    def test_saving_the_form_only_persists(self, parent_transaction: ParentTransaction) -> None:
         form = TransactionEditForm(
             data=_form_data(parent_transaction, values=["10.00", "20.00"]), instance=parent_transaction
         )
@@ -62,7 +62,7 @@ class TestTransactionEditFormSideEffects:
 
     def test_saving_through_the_view_recalculates_the_debts(
         self, authenticated_client: Client, room: Room, parent_transaction: ParentTransaction
-    ):
+    ) -> None:
         with mock.patch(DEBT_RECALCULATION) as recalculate:
             response = authenticated_client.post(
                 reverse("transaction:edit", kwargs={"room_slug": room.slug, "pk": parent_transaction.id}),

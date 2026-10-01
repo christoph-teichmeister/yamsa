@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.urls import reverse
 from django.views import generic
 
@@ -12,10 +13,10 @@ class UserForgotPasswordView(generic.FormView):
     form_class = UserForgotPasswordForm
     context_object_name = "user"
 
-    def get_context_data(self, **kwargs: object):
+    def get_context_data(self, **kwargs: object) -> dict:
         return super().get_context_data(**kwargs)
 
-    def form_valid(self, form: UserForgotPasswordForm):
+    def form_valid(self, form: UserForgotPasswordForm) -> HttpResponse:
         form_valid = super().form_valid(form)
 
         user = User.objects.get(email=form.cleaned_data["email"])
@@ -24,5 +25,5 @@ class UserForgotPasswordView(generic.FormView):
 
         return form_valid
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(viewname="account:login")

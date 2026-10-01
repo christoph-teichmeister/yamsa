@@ -25,7 +25,7 @@ from apps.core.views.service_worker_view import ServiceWorkerView
     STATIC_URL="/static/",
     RELEASE="release/1",
 )
-def test_service_worker_builds_precache_urls_from_manifest():
+def test_service_worker_builds_precache_urls_from_manifest() -> None:
     view = ServiceWorkerView()
     context = view.get_context_data()
 
@@ -52,7 +52,7 @@ def test_service_worker_builds_precache_urls_from_manifest():
         "precache_bundles": {},
     },
 )
-def test_service_worker_precaches_the_url_the_storage_serves(monkeypatch: pytest.MonkeyPatch):
+def test_service_worker_precaches_the_url_the_storage_serves(monkeypatch: pytest.MonkeyPatch) -> None:
     """A hashing storage renames every static file; precaching the raw name would cache nothing."""
     monkeypatch.setattr(staticfiles_storage, "url", lambda name: f"/static/{name}.deadbeef.css")
 
@@ -61,7 +61,7 @@ def test_service_worker_precaches_the_url_the_storage_serves(monkeypatch: pytest
     assert precache_urls == ["/offline/", "/static/base.css.deadbeef.css"]
 
 
-def test_service_worker_precaches_every_asset_the_page_pulls_in():
+def test_service_worker_precaches_every_asset_the_page_pulls_in() -> None:
     """An asset the page asks for but the worker skips is a page that loses it offline."""
     precached = set(json.loads(ServiceWorkerView().get_context_data()["precache_urls"]))
 
@@ -75,7 +75,7 @@ def test_service_worker_precaches_every_asset_the_page_pulls_in():
     assert sprite_url in precached
 
 
-def test_service_worker_never_answers_app_assets_from_the_cache_first(client: Client):
+def test_service_worker_never_answers_app_assets_from_the_cache_first(client: Client) -> None:
     """Guards the invariant that made bundle changes invisible until the caches were cleared."""
     script = client.get(reverse("core:serviceworker")).content.decode()
 
@@ -90,7 +90,7 @@ def test_service_worker_never_answers_app_assets_from_the_cache_first(client: Cl
     )
 
 
-def test_service_worker_keeps_pages_out_of_the_shared_asset_cache(client: Client):
+def test_service_worker_keeps_pages_out_of_the_shared_asset_cache(client: Client) -> None:
     """A page carries what one account was allowed to see; an asset is the same for everyone."""
     script = client.get(reverse("core:serviceworker")).content.decode()
 

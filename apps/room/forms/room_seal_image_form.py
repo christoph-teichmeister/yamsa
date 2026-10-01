@@ -1,6 +1,7 @@
 """Form around uploading a custom seal image, on its own rather than with the room's fields."""
 
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 from PIL import Image, UnidentifiedImageError
@@ -20,7 +21,7 @@ class RoomSealImageForm(ModelForm):
         model = Room
         fields = ("seal_image",)
 
-    def clean_seal_image(self):
+    def clean_seal_image(self) -> InMemoryUploadedFile:
         picture = self.cleaned_data.get("seal_image")
         if not self.files.get("seal_image"):
             raise ValidationError(SEAL_IMAGE_INVALID_IMAGE_ERROR)
@@ -43,7 +44,7 @@ class RoomSealImageForm(ModelForm):
         self._compressed_seal_image = compressed_picture
         return compressed_picture
 
-    def save(self, commit: bool = True):
+    def save(self, commit: bool = True) -> Room:
         """Persist the compressed image produced while cleaning.
 
         `construct_instance()` already set `self.instance.seal_image` to this same compressed

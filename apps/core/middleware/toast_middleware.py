@@ -37,7 +37,7 @@ class ToastMiddleware:
 
         return response
 
-    def process_template_response(self, request: HttpRequest, response: HttpResponse):
+    def process_template_response(self, request: HttpRequest, response: HttpResponse) -> HttpResponse:
         # By the time __call__ gets the response back, the handler has rendered it, so the context
         # is only still open here. htmx requests are left to the headers: the toast script in a
         # swapped-in page runs again, and both would show every toast twice.

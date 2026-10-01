@@ -14,7 +14,7 @@ pytestmark = pytest.mark.django_db
 class TestPasskeyLoginView:
     def test_post_with_valid_passkey_returns_ok_and_redirect(
         self, client: Client, user: User, monkeypatch: pytest.MonkeyPatch
-    ):
+    ) -> None:
         monkeypatch.setattr("apps.account.backends.auth_complete", lambda request: user)
 
         session = client.session
@@ -31,7 +31,7 @@ class TestPasskeyLoginView:
         assert data["status"] == "OK"
         assert "redirect" in data
 
-    def test_post_with_invalid_passkey_returns_401(self, client: Client, monkeypatch: pytest.MonkeyPatch):
+    def test_post_with_invalid_passkey_returns_401(self, client: Client, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setattr("apps.account.backends.auth_complete", lambda request: None)
 
         session = client.session
@@ -47,7 +47,9 @@ class TestPasskeyLoginView:
         data = json.loads(response.content)
         assert data["status"] == "ERR"
 
-    def test_post_sets_session_ttl_on_success(self, client: Client, user: User, monkeypatch: pytest.MonkeyPatch):
+    def test_post_sets_session_ttl_on_success(
+        self, client: Client, user: User, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         from django.conf import settings
 
         monkeypatch.setattr("apps.account.backends.auth_complete", lambda request: user)

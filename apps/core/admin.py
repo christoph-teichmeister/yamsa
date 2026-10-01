@@ -6,7 +6,7 @@ from django.http import HttpRequest
 class YamsaCommonInfoAdminMixin(CommonInfoAdminMixin):
     extra_fields_for_fieldset: tuple = ()
 
-    def get_fieldsets(self, request: HttpRequest, obj: Model | None = None):
+    def get_fieldsets(self, request: HttpRequest, obj: Model | None = None) -> tuple:
         fieldsets = super().get_fieldsets(request, obj)
 
         fieldsets += (

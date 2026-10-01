@@ -6,7 +6,7 @@ from apps.account.admin import UserAdmin
 from apps.account.models import User
 
 
-def test_get_readonly_fields(superuser: User):
+def test_get_readonly_fields(superuser: User) -> None:
     expected_readonly_fields = ("created_by", "lastmodified_by", "created_at", "lastmodified_at", "last_login")
 
     user_admin = UserAdmin(model=User, admin_site=AdminSite())

@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from apps.account.models import User
 from apps.room.models import Room
-from apps.transaction.models import ChildTransaction
+from apps.transaction.models import ChildTransaction, ParentTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 
 
@@ -12,7 +12,7 @@ def create_parent_transaction_with_optimisation(
     paid_for_tuple: tuple[User, ...],
     parent_transaction_kwargs: dict | None = None,
     child_transaction_kwargs: dict | None = None,
-):
+) -> tuple[ParentTransaction, tuple[ChildTransaction, ...]]:
     parent_transaction_kwargs = parent_transaction_kwargs or {}
     child_transaction_kwargs = child_transaction_kwargs or {}
     created_parent_transaction = ParentTransactionFactory(room=room, paid_by=paid_by, **parent_transaction_kwargs)

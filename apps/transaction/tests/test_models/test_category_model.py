@@ -6,7 +6,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestCategoryModel:
-    def test_default_categories_seeded(self):
+    def test_default_categories_seeded(self) -> None:
         expected = [
             {"slug": "accommodation", "name": "Accommodation", "color": "#6C5CE7"},
             {"slug": "groceries", "name": "Groceries", "color": "#00B894"},

@@ -15,7 +15,7 @@ from apps.room.tests.factories import RoomFactory, UserConnectionToRoomFactory
 
 @pytest.mark.django_db
 class TestSendEmailOnUserConnectionToRoomCreated:
-    def test_returns_none_for_non_guest_non_creator(self, room: Room, user: User):
+    def test_returns_none_for_non_guest_non_creator(self, room: Room, user: User) -> None:
         another_user = UserFactory()
         ucr = UserConnectionToRoomFactory(user=another_user, room=room, created_by=user)
 
@@ -31,7 +31,7 @@ class TestSendEmailOnUserConnectionToRoomCreated:
         mocked_init.assert_called_once_with(recipient=another_user, new_room=room)
         mocked_process.assert_called_once()
 
-    def test_returns_none_for_creator(self, user: User):
+    def test_returns_none_for_creator(self, user: User) -> None:
         ucr = UserConnectionToRoomFactory(user=user, room=RoomFactory(created_by=user), created_by=user)
 
         result = send_email_on_user_connection_to_room_created(
@@ -40,7 +40,7 @@ class TestSendEmailOnUserConnectionToRoomCreated:
 
         assert result is None
 
-    def test_returns_none_for_guest(self, guest_user: User, user: User):
+    def test_returns_none_for_guest(self, guest_user: User, user: User) -> None:
         ucr = UserConnectionToRoomFactory(user=guest_user, room=RoomFactory(created_by=user), created_by=user)
 
         result = send_email_on_user_connection_to_room_created(

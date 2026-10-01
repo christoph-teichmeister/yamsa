@@ -11,7 +11,7 @@ def parse(rows: list[str], header: str | None = None) -> ParsedImport:
 
 
 class TestSplitwiseCsvParserSerialisation:
-    def test_parsed_import_survives_a_json_round_trip(self):
+    def test_parsed_import_survives_a_json_round_trip(self) -> None:
         result = parse(
             [
                 "2023-03-06,Ikea,Möbel,72.97,EUR,72.97,-72.97",

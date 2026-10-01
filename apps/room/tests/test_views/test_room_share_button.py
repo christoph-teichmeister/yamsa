@@ -13,15 +13,15 @@ from apps.room.tests.factories import RoomFactory, UserConnectionToRoomFactory
 @pytest.mark.django_db
 class TestRoomShareButton:
     @pytest.fixture
-    def owner(self):
+    def owner(self) -> User:
         return UserFactory(is_guest=False)
 
     @pytest.fixture
-    def currency(self):
+    def currency(self) -> Currency:
         return CurrencyFactory()
 
     @pytest.fixture
-    def room(self, owner: User, currency: Currency):
+    def room(self, owner: User, currency: Currency) -> Room:
         room = RoomFactory(
             name="Trip Space",
             description="Group",
@@ -32,18 +32,20 @@ class TestRoomShareButton:
         return room
 
     @pytest.fixture
-    def owner_client(self, client: Client, owner: User):
+    def owner_client(self, client: Client, owner: User) -> Client:
         client.force_login(owner)
         return client
 
-    def test_share_button_shows_on_people_tab_for_open_rooms_without_guests(self, owner_client: Client, room: Room):
+    def test_share_button_shows_on_people_tab_for_open_rooms_without_guests(
+        self, owner_client: Client, room: Room
+    ) -> Client:
         response = owner_client.get(reverse("account:list", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == 200
         assert "data-copy-share-url" in response.content.decode()
         assert reverse("room:share", kwargs={"share_hash": room.share_hash}) in response.content.decode()
 
-    def test_share_button_shows_on_people_tab_for_open_room_with_guests(self, owner_client: Client, room: Room):
+    def test_share_button_shows_on_people_tab_for_open_room_with_guests(self, owner_client: Client, room: Room) -> None:
         guest = GuestUserFactory()
         UserConnectionToRoomFactory(user=guest, room=room)
 
@@ -53,7 +55,7 @@ class TestRoomShareButton:
         assert "data-copy-share-url" in response.content.decode()
         assert reverse("room:share", kwargs={"share_hash": room.share_hash}) in response.content.decode()
 
-    def test_share_button_stays_on_people_tab_when_room_closed(self, owner_client: Client, room: Room):
+    def test_share_button_stays_on_people_tab_when_room_closed(self, owner_client: Client, room: Room) -> None:
         room.status = Room.StatusChoices.CLOSED
         room.save(update_fields=["status"])
 
@@ -62,7 +64,7 @@ class TestRoomShareButton:
         assert response.status_code == 200
         assert "data-copy-share-url" in response.content.decode()
 
-    def test_room_settings_icon_replaces_nav_button_when_room_closed(self, owner_client: Client, room: Room):
+    def test_room_settings_icon_replaces_nav_button_when_room_closed(self, owner_client: Client, room: Room) -> None:
         room.status = Room.StatusChoices.CLOSED
         room.save(update_fields=["status"])
 
@@ -74,13 +76,13 @@ class TestRoomShareButton:
         # Icons are <use> references into the sprite now, not font classes.
         assert "#dash-circle" in content
 
-    def test_nav_bar_no_longer_shows_share_button_for_open_rooms(self, owner_client: Client, room: Room):
+    def test_nav_bar_no_longer_shows_share_button_for_open_rooms(self, owner_client: Client, room: Room) -> None:
         response = owner_client.get(reverse("room:dashboard", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == 200
         assert "data-copy-share-url" not in response.content.decode()
 
-    def test_who_are_you_partial_calls_out_registration_cta(self, owner_client: Client, room: Room):
+    def test_who_are_you_partial_calls_out_registration_cta(self, owner_client: Client, room: Room) -> None:
         owner_client.logout()
         guest = GuestUserFactory()
         UserConnectionToRoomFactory(user=guest, room=room)
@@ -92,7 +94,7 @@ class TestRoomShareButton:
         assert "Claim your invitation" in content
         assert "Create a free account" in content
 
-    def test_who_are_you_without_guests_promotes_account_creation(self, owner_client: Client, room: Room):
+    def test_who_are_you_without_guests_promotes_account_creation(self, owner_client: Client, room: Room) -> None:
         owner_client.logout()
 
         response = owner_client.get(reverse("room:detail", kwargs={"room_slug": room.slug}))

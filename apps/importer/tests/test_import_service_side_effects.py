@@ -43,7 +43,7 @@ class TestImportServiceSideEffects:
 
     def test_existing_user_is_not_connected_inside_the_atomic_block(
         self, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         existing = UserFactory(name="Elisabeth")
 
         _service, result = self._run(parsed=parsed, user=user, currency=currency, existing=existing)
@@ -53,7 +53,7 @@ class TestImportServiceSideEffects:
 
     def test_no_mail_is_sent_while_the_transaction_is_open(
         self, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         existing = UserFactory(name="Elisabeth")
         mail.outbox.clear()
 
@@ -63,7 +63,7 @@ class TestImportServiceSideEffects:
 
     def test_connecting_afterwards_completes_the_membership(
         self, db: None, user: User, currency: Currency, parsed: ParsedImport
-    ):
+    ) -> None:
         existing = UserFactory(name="Elisabeth")
 
         service, result = self._run(parsed=parsed, user=user, currency=currency, existing=existing)
@@ -75,7 +75,7 @@ class TestImportServiceSideEffects:
 
     def test_guests_are_still_connected_inside_the_service(
         self, db: None, user: User, currency: Currency, parsed: ParsedImport, run_import: Callable
-    ):
+    ) -> None:
         # Both handlers return early for guests, so those connections are safe in the block.
         result = run_import(parsed=parsed, user=user, currency=currency)
 

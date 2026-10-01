@@ -45,14 +45,14 @@ class TestImportSideEffectOrdering:
         return client.post(reverse("importer:preview"), data=payload)
 
     @pytest.fixture
-    def friend(self, db: None, user: User, room: Room):
+    def friend(self, db: None, user: User, room: Room) -> User:
         existing = UserFactory(name="Elisabeth")
         room.users.add(existing)
         return existing
 
     def test_debts_survive_a_failing_connection_mail(
         self, db: None, authenticated_client: Client, currency: Currency, friend: User
-    ):
+    ) -> None:
         target = "apps.mail.services.user_added_to_room_mail_service.UserAddedToRoomEmailService.process"
         with mock.patch(target, side_effect=OSError("SMTP down")), pytest.raises(OSError, match="SMTP down"):
             self._import(authenticated_client, currency, friend)
@@ -64,7 +64,7 @@ class TestImportSideEffectOrdering:
 
     def test_a_healthy_import_connects_everyone(
         self, db: None, authenticated_client: Client, currency: Currency, friend: User
-    ):
+    ) -> None:
         response = self._import(authenticated_client, currency, friend)
 
         imported_room = Room.objects.get(name="Kilian & Elisabeth")

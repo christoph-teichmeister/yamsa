@@ -9,7 +9,7 @@ from apps.room.models import Room
 
 @pytest.mark.django_db
 class TestRemoveUserFromRoomHandler:
-    def test_regular(self, room: Room, user: User, superuser: User):
+    def test_regular(self, room: Room, user: User, superuser: User) -> None:
         room.users.add(user)
 
         context = {

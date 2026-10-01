@@ -14,7 +14,7 @@ def parse(rows: list[str], header: str | None = None) -> ParsedImport:
 
 class TestSplitwiseCsvParserSettlements:
     @pytest.mark.parametrize("label", ["Zahlung", "payment", "  ZAHLUNG  "])
-    def test_payment_row_becomes_a_settlement(self, label: str):
+    def test_payment_row_becomes_a_settlement(self, label: str) -> None:
         result = parse([f"2024-10-04,Zahlung,{label},276.16,EUR,276.16,-276.16"])
 
         assert result.transactions == ()
@@ -25,14 +25,14 @@ class TestSplitwiseCsvParserSettlements:
         assert settlement.value == Decimal("276.16")
         assert settlement.settled_at.isoformat() == "2024-10-04"
 
-    def test_settlement_with_three_involved_columns_is_skipped(self):
+    def test_settlement_with_three_involved_columns_is_skipped(self) -> None:
         header = "Datum,Beschreibung,Kategorie,Kosten,Währung,Anna,Ben,Cleo"
         result = parse(["2024-10-04,Zahlung,Zahlung,10.00,EUR,10.00,-4.00,-6.00"], header=header)
 
         assert result.settlements == ()
         assert "exactly one payer" in result.skipped_rows[0].reason
 
-    def test_settlement_is_not_counted_as_a_category(self):
+    def test_settlement_is_not_counted_as_a_category(self) -> None:
         result = parse(["2024-10-04,Zahlung,Zahlung,10.00,EUR,10.00,-10.00"])
 
         assert result.categories == ()

@@ -8,7 +8,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestRoomListRedirect:
-    def test_the_legacy_room_list_url_redirects_to_the_dashboard(self, client: Client):
+    def test_the_legacy_room_list_url_redirects_to_the_dashboard(self, client: Client) -> None:
         response = client.get(reverse("room:list"))
 
         assert response.status_code == http.HTTPStatus.FOUND

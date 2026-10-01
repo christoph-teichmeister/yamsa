@@ -12,7 +12,7 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 
 @pytest.mark.django_db
 class TestRoomQsForListOrdering:
-    def test_rooms_ordered_by_most_recent_activity_first(self, user: User):
+    def test_rooms_ordered_by_most_recent_activity_first(self, user: User) -> None:
         now = timezone.now()
 
         old_room = RoomFactory(created_by=user)
@@ -37,7 +37,7 @@ class TestRoomQsForListOrdering:
             "new_room (more recent activity) should appear before old_room in the side nav"
         )
 
-    def test_room_without_transactions_sorts_after_room_with_transactions(self, user: User):
+    def test_room_without_transactions_sorts_after_room_with_transactions(self, user: User) -> None:
         now = timezone.now()
 
         no_tx_room = RoomFactory(created_by=user)

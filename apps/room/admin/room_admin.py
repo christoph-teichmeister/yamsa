@@ -9,7 +9,9 @@ from apps.room.models import Room
 
 
 @admin.action(description="Optimise debts of selected Rooms")
-def optimise_debts_for_room(modeladmin: ModelAdmin, request: HttpRequest, queryset: QuerySet):  # pragma: no cover
+def optimise_debts_for_room(
+    modeladmin: ModelAdmin, request: HttpRequest, queryset: QuerySet
+) -> None:  # pragma: no cover
     for room in queryset:
         DebtOptimiseService.process(room_id=room.id)
 
@@ -35,7 +37,7 @@ class RoomAdmin(YamsaCommonInfoAdminMixin, admin.ModelAdmin):
         ),
     )
 
-    def get_inlines(self, request: HttpRequest, obj: Model | None):
+    def get_inlines(self, request: HttpRequest, obj: Model | None) -> tuple:
         from apps.room.admin.user_connection_to_room_admin import UserConnectionToRoomForRoomAdminInline
 
         return *super().get_inlines(request, obj), UserConnectionToRoomForRoomAdminInline

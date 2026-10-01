@@ -13,7 +13,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestPasskeyDeleteView:
-    def test_post_deletes_own_passkey(self, hx_client: Callable, user: User):
+    def test_post_deletes_own_passkey(self, hx_client: Callable, user: User) -> None:
         passkey = UserPasskeyFactory(user=user)
         client = hx_client(user)
         response = client.post(
@@ -24,7 +24,7 @@ class TestPasskeyDeleteView:
         assert response.status_code == http.HTTPStatus.FOUND
         assert not UserPasskey.objects.filter(id=passkey.id).exists()
 
-    def test_post_cannot_delete_other_users_passkey(self, hx_client: Callable, user: User, superuser: User):
+    def test_post_cannot_delete_other_users_passkey(self, hx_client: Callable, user: User, superuser: User) -> None:
         passkey = UserPasskeyFactory(user=superuser)
         client = hx_client(user)
         response = client.post(
@@ -35,7 +35,7 @@ class TestPasskeyDeleteView:
         assert response.status_code == http.HTTPStatus.FORBIDDEN
         assert UserPasskey.objects.filter(id=passkey.id).exists()
 
-    def test_post_requires_login(self, client: Client, user: User):
+    def test_post_requires_login(self, client: Client, user: User) -> None:
         passkey = UserPasskeyFactory(user=user)
         response = client.post(
             reverse("account:passkey-delete"),

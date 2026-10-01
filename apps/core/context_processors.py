@@ -6,7 +6,7 @@ from apps.core.services.pwa_scope_service import resolve_scope
 from apps.core.toast_constants import TOAST_TYPE_CLASSES
 
 
-def core_context(request: HttpRequest):
+def core_context(request: HttpRequest) -> dict:
     return {
         "core": {
             # Calculated info

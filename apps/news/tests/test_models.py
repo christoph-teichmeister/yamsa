@@ -6,7 +6,7 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 
 @pytest.mark.django_db
 class TestNewsModel:
-    def test_heading_prefers_type_icon_and_room_initials(self):
+    def test_heading_prefers_type_icon_and_room_initials(self) -> None:
         room = ParentTransactionFactory().room
         room.name = "Holiday"
         room.save(update_fields=["name"])
@@ -23,7 +23,7 @@ class TestNewsModel:
 
         assert news.heading == f"{expected_icon} {expected_initials}: {expected_label}"
 
-    def test_heading_falls_back_to_title_when_type_missing(self):
+    def test_heading_falls_back_to_title_when_type_missing(self) -> None:
         room = ParentTransactionFactory().room
         room.name = "Atlas"
         room.save(update_fields=["name"])
@@ -33,7 +33,7 @@ class TestNewsModel:
 
         assert news.heading == f"{room.capitalised_initials}: {title}"
 
-    def test_heading_uses_default_label_without_type_or_title(self):
+    def test_heading_uses_default_label_without_type_or_title(self) -> None:
         room = ParentTransactionFactory().room
         room.name = "Beacon"
         room.save(update_fields=["name"])
@@ -42,7 +42,7 @@ class TestNewsModel:
 
         assert news.heading == f"{room.capitalised_initials}: {News.DEFAULT_HEADING_LABEL}"
 
-    def test_highlighted_flag_resets_other_records(self):
+    def test_highlighted_flag_resets_other_records(self) -> None:
         room = ParentTransactionFactory().room
         existing = News.objects.create(message="Existing", room=room, highlighted=True)
 

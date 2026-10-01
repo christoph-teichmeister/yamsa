@@ -20,7 +20,7 @@ class TestMoneySpentOnRoomViewContext:
         view.request = SimpleNamespace(room=room, GET={})
         return view
 
-    def test_money_spent_per_person_qs_scopes_to_room(self, room: Room, user: User, guest_user: User):
+    def test_money_spent_per_person_qs_scopes_to_room(self, room: Room, user: User, guest_user: User) -> None:
         other_room = RoomFactory(created_by=user)
         other_room.users.add(user)
         alien_currency = CurrencyFactory(sign="¤")
@@ -36,7 +36,7 @@ class TestMoneySpentOnRoomViewContext:
         assert alien_currency.sign not in currency_signs
         assert room.preferred_currency.sign in currency_signs
 
-    def test_money_views_aggregate_totals_and_exclude_self_pay(self, room: Room, guest_user: User):
+    def test_money_views_aggregate_totals_and_exclude_self_pay(self, room: Room, guest_user: User) -> None:
         payer_primary = UserFactory(name="Primary Payer")
         payer_secondary = UserFactory(name="Secondary Payer")
         payee_third = UserFactory(name="Third Payee")
@@ -77,7 +77,7 @@ class TestMoneySpentOnRoomViewContext:
         assert covered_map[(payer_primary.name, currency_b.sign)] == Decimal(3)
         assert (payer_primary.name, currency_a.sign) not in covered_map
 
-    def test_open_debts_per_person_qs_only_returns_unsettled(self, room: Room, user: User, guest_user: User):
+    def test_open_debts_per_person_qs_only_returns_unsettled(self, room: Room, user: User, guest_user: User) -> None:
         currency = room.preferred_currency
         open_debt = Debt.objects.create(
             debitor=guest_user,
@@ -103,7 +103,7 @@ class TestMoneySpentOnRoomViewContext:
         assert open_debts[0]["debitor_name"] == guest_user.name
         assert open_debts[0]["total_open_debt"] == open_debt.value
 
-    def test_max_open_debt_per_currency_reflects_max_unsettled(self, room: Room, user: User, guest_user: User):
+    def test_max_open_debt_per_currency_reflects_max_unsettled(self, room: Room, user: User, guest_user: User) -> None:
         currency_a = room.preferred_currency
         currency_b = CurrencyFactory(sign="¤")
         extra_user = UserFactory(name="Extra")

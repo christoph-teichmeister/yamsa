@@ -16,7 +16,7 @@ from apps.transaction.views import TransactionDetailView
 pytestmark = pytest.mark.django_db
 
 
-def test_transaction_detail_shows_receipt_empty_state(client: Client, room: Room, user: User):
+def test_transaction_detail_shows_receipt_empty_state(client: Client, room: Room, user: User) -> None:
     parent_transaction = ParentTransactionFactory(room=room, paid_by=user, currency=room.preferred_currency)
     client.force_login(user)
 
@@ -29,7 +29,7 @@ def test_transaction_detail_shows_receipt_empty_state(client: Client, room: Room
 
 def test_transaction_detail_shows_an_avatar_per_split_participant(
     client: Client, room: Room, user: User, guest_user: User, attach_profile_picture: Callable
-):
+) -> None:
     attach_profile_picture(user)
     parent_transaction, _ = create_parent_transaction_with_optimisation(
         room=room,
@@ -53,7 +53,7 @@ def test_transaction_detail_shows_an_avatar_per_split_participant(
 
 def test_split_rows_do_not_query_per_participant(
     room: Room, user: User, guest_user: User, django_assert_num_queries: DjangoAssertNumQueries
-):
+) -> None:
     """Regression test: the breakdown prints a name and an avatar per row."""
     parent_transaction, _ = create_parent_transaction_with_optimisation(
         room=room,

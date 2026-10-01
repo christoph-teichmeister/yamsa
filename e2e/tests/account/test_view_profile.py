@@ -14,7 +14,9 @@ from e2e.pages.login_page import LoginPage
 
 @pytest.mark.e2e
 class TestViewProfile:
-    def test_user_can_view_own_profile(self, logged_in_profile_detail_page: AccountDetailPage, profile_user: User):
+    def test_user_can_view_own_profile(
+        self, logged_in_profile_detail_page: AccountDetailPage, profile_user: User
+    ) -> None:
         logged_in_profile_detail_page.expect_name(profile_user.name)
         logged_in_profile_detail_page.expect_email(profile_user.email)
         logged_in_profile_detail_page.expect_actions_present()
@@ -22,7 +24,7 @@ class TestViewProfile:
 
     def test_user_can_view_profile_of_roommate(
         self, page: Page, base_url: str, profile_user: User, roommate: User, shared_room: Room, user_password: str
-    ):
+    ) -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login(profile_user.email, user_password)
@@ -37,7 +39,7 @@ class TestViewProfile:
 
     def test_user_can_look_at_the_photo_of_a_roommate_full_size(
         self, page: Page, base_url: str, profile_user: User, roommate: User, shared_room: Room, user_password: str
-    ):
+    ) -> None:
         roommate.profile_picture.save("avatar.png", ContentFile(build_image_bytes()), save=True)
 
         login_page = LoginPage(page, base_url, reverse("account:login"))
@@ -54,7 +56,7 @@ class TestViewProfile:
 
     def test_a_roommate_without_a_photo_offers_no_preview(
         self, page: Page, base_url: str, profile_user: User, roommate: User, shared_room: Room, user_password: str
-    ):
+    ) -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login(profile_user.email, user_password)
@@ -67,7 +69,7 @@ class TestViewProfile:
 
     def test_user_cannot_view_profile_of_unrelated_user(
         self, page: Page, base_url: str, profile_user: User, unrelated_user: User, user_password: str
-    ):
+    ) -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login(profile_user.email, user_password)
@@ -80,7 +82,7 @@ class TestViewProfile:
 
     def test_superuser_can_view_any_profile(
         self, page: Page, base_url: str, superuser: User, unrelated_user: User, user_password: str
-    ):
+    ) -> None:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login(superuser.email, user_password)
@@ -91,10 +93,10 @@ class TestViewProfile:
 
         detail_page.expect_member_name(unrelated_user.name)
 
-    def test_guest_sees_guest_mode_banner_on_own_profile(self, logged_in_guest_detail_page: AccountDetailPage):
+    def test_guest_sees_guest_mode_banner_on_own_profile(self, logged_in_guest_detail_page: AccountDetailPage) -> None:
         logged_in_guest_detail_page.expect_guest_mode_banner_visible()
 
-    def test_anonymous_visitor_is_redirected_to_login(self, page: Page, base_url: str, profile_user: User):
+    def test_anonymous_visitor_is_redirected_to_login(self, page: Page, base_url: str, profile_user: User) -> None:
         path = reverse("account:detail", kwargs={"pk": profile_user.id})
         page.goto(f"{base_url}{path}")
 

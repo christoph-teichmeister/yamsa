@@ -1,4 +1,4 @@
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
 from apps.account.messages.commands.remove_user_from_room import RemoveUserFromRoom
@@ -9,7 +9,7 @@ from apps.room.views.mixins import RoomNotClosedRequiredMixin
 
 
 class UserRemoveFromRoomView(RoomNotClosedRequiredMixin, UserListForRoomView):
-    def post(self, request: HttpRequest, *args: object, **kwargs: object):
+    def post(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
         response = super().get(request, *args, **kwargs)
 
         user_to_be_removed = User.objects.get(id=kwargs.get("pk"))

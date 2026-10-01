@@ -18,7 +18,7 @@ pytestmark = pytest.mark.django_db
 class TestMoneySpentViews:
     def test_money_spent_on_room_displays_aggregated_context(
         self, client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         _, child_transactions = create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -51,7 +51,7 @@ class TestMoneySpentViews:
 
     def test_money_spent_trend_view_builds_chart_payload(
         self, client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         _, child_transactions = create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -86,7 +86,7 @@ class TestMoneySpentViews:
 
     def test_money_spent_trend_view_steps_per_transaction_not_per_week(
         self, client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         """Regression: weekly buckets collapsed a whole trip into a single jump."""
         now = timezone.now()
         for offset_hours in (5, 4, 3):
@@ -112,7 +112,7 @@ class TestMoneySpentViews:
 
     def test_money_spent_trend_view_keeps_currencies_apart(
         self, client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         """Regression: same-bucket rows of a second currency silently overwrote the first."""
         now = timezone.now()
         second_currency = CurrencyFactory(sign="Ft")
@@ -149,7 +149,7 @@ class TestMoneySpentViews:
 
     def test_money_spent_trend_view_starts_from_spending_before_the_range(
         self, client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         """Regression: the running total restarted at zero whenever the window cut off older expenses."""
         now = timezone.now()
         create_parent_transaction_with_optimisation(
@@ -181,7 +181,7 @@ class TestMoneySpentViews:
 
     def test_money_spent_trend_view_range_matches_the_selected_period(
         self, client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         """Regression: the start was snapped back to a Monday, so '7 days' spanned up to 14."""
         create_parent_transaction_with_optimisation(
             room=room,
@@ -201,7 +201,7 @@ class TestMoneySpentViews:
 
     def test_money_spent_trend_view_shows_empty_state_without_transactions(
         self, client: Client, room: Room, user: User
-    ):
+    ) -> None:
         response = client.get(reverse("debt:money-spent-trend", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == http.HTTPStatus.OK
@@ -210,7 +210,7 @@ class TestMoneySpentViews:
 
     def test_money_spent_on_room_omits_self_owed_entries(
         self, client: Client, room: Room, user: User, guest_user: User
-    ):
+    ) -> None:
         _, child_transactions = create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -228,7 +228,9 @@ class TestMoneySpentViews:
             transaction.value for transaction in child_transactions if transaction.paid_for == guest_user
         )
 
-    def test_money_spent_on_room_shows_empty_state_without_transactions(self, client: Client, room: Room, user: User):
+    def test_money_spent_on_room_shows_empty_state_without_transactions(
+        self, client: Client, room: Room, user: User
+    ) -> None:
         client.force_login(user)
         response = client.get(reverse("debt:money-spent-on-room", kwargs={"room_slug": room.slug}))
 

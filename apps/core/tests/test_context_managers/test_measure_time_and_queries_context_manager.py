@@ -10,7 +10,7 @@ from apps.core.context_managers import MeasureTimeAndQueriesContextManager
 
 @pytest.mark.django_db
 class TestMeasureTimeAndQueriesContextManager:
-    def test_prints_measurement_when_debug_true(self, settings: Settings):
+    def test_prints_measurement_when_debug_true(self, settings: Settings) -> None:
         settings.DEBUG = True
         buffer = io.StringIO()
 
@@ -24,7 +24,7 @@ class TestMeasureTimeAndQueriesContextManager:
         assert "context-manager took" in output
         assert "and made" in output
 
-    def test_suppresses_output_when_debug_false(self, settings: Settings):
+    def test_suppresses_output_when_debug_false(self, settings: Settings) -> None:
         settings.DEBUG = False
         buffer = io.StringIO()
 

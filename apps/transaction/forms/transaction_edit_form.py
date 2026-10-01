@@ -49,7 +49,7 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
         self.fields["total_value"].initial = self._initial_total_value
         self.initial["total_value"] = self._initial_total_value
 
-    def clean(self):
+    def clean(self) -> dict:
         cleaned_data = super().clean()
         total_value = cleaned_data.get("total_value")
 
@@ -70,7 +70,7 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
 
         return cleaned_data
 
-    def save(self, commit: bool = True):
+    def save(self, commit: bool = True) -> ParentTransaction:
         # Only persists: the transaction boundary and the ParentTransactionUpdated event belong to
         # the view, after the rows are written (see AGENTS.md, #333).
         instance: ParentTransaction = super().save(commit)
