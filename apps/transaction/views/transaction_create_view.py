@@ -4,7 +4,7 @@ import uuid
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.db import IntegrityError, transaction
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
@@ -27,10 +27,10 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
     _active_tab = "transaction"
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse("transaction:list", kwargs={"room_slug": self.request.room.slug})
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()
         kwargs.setdefault("request", self.request)
         kwargs.setdefault("room", self.request.room)
@@ -44,13 +44,13 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
         return kwargs
 
-    def form_invalid(self, form):
+    def form_invalid(self, form: TransactionCreateForm) -> HttpResponse:
         toast_message = self._get_toast_error_message(form)
         if toast_message:
             self.request.toast_queue.error(toast_message)
         return super().form_invalid(form)
 
-    def form_valid(self, form):
+    def form_valid(self, form: TransactionCreateForm) -> HttpResponse:
         client_request_id = self._client_request_id()
         if client_request_id:
             if ParentTransaction.objects.filter(client_request_id=client_request_id).exists():
@@ -97,7 +97,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
             # still better than refusing it.
             return None
 
-    def _already_booked(self):
+    def _already_booked(self) -> HttpResponseRedirect:
         """Answer a replay with the outcome of the submission that got here first.
 
         No event: the transaction exists, so its debts were recalculated and everyone was notified
@@ -106,10 +106,10 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
         return HttpResponseRedirect(self.get_success_url())
 
     @staticmethod
-    def _names_the_client_request_id(exc) -> bool:
+    def _names_the_client_request_id(exc: forms.ValidationError) -> bool:
         return CLIENT_REQUEST_ID_FIELD in (getattr(exc, "error_dict", None) or {})
 
-    def _attach_validation_error(self, form, exc):
+    def _attach_validation_error(self, form: TransactionCreateForm, exc: forms.ValidationError) -> bool:
         error_dict = getattr(exc, "error_dict", None)
         if error_dict:
             for field_name, errors in error_dict.items():
@@ -136,7 +136,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
         return False
 
-    def _get_toast_error_message(self, form):
+    def _get_toast_error_message(self, form: TransactionCreateForm | None) -> str | None:
         non_field_errors = form.non_field_errors()
         if non_field_errors:
             return str(non_field_errors[0])
@@ -145,7 +145,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
                 return str(errors[0])
         return None
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
         context["current_datetime"] = timezone.now().strftime("%Y-%m-%dT%H:%M")
         # Minted per rendered form rather than in the browser, so a submission that never reaches
@@ -164,7 +164,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
 
         return context
 
-    def _build_split_rows(self):
+    def _build_split_rows(self) -> list[dict]:
         """One row per beneficiary, each with the amount to pre-fill in its split-row input.
 
         Reconstructed from POST on a failed submission, so a validation error does not discard
@@ -180,12 +180,12 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
         room_user_ids = self.request.room.users.values_list("id", flat=True)
         return [{"paid_for_id": str(user_id), "value": "0.00"} for user_id in room_user_ids]
 
-    def _build_reference_total_value(self):
+    def _build_reference_total_value(self) -> str:
         if self.request.method == "POST":
             return self.request.POST.get("reference_total_value", "0.00")
         return "0.00"
 
-    def _build_selected_paid_by(self, form):
+    def _build_selected_paid_by(self, form: TransactionCreateForm | None) -> str:
         posted = self.request.POST.get("paid_by")
         if posted:
             return posted
@@ -195,7 +195,7 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
                 return str(value)
         return str(self.request.user.id)
 
-    def _build_selected_currency(self, form):
+    def _build_selected_currency(self, form: TransactionCreateForm | None) -> str:
         if self.request.method == "POST":
             posted = self.request.POST.get("currency")
             if posted:

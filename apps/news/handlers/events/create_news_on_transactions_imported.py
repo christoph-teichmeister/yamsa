@@ -7,7 +7,7 @@ from apps.transaction.messages.events.transaction import TransactionsImported
 
 
 @message_registry.register_event(event=TransactionsImported)
-def create_news_on_transactions_imported(context: TransactionsImported.Context):
+def create_news_on_transactions_imported(context: TransactionsImported.Context) -> None:
     room = context.room
 
     message = _('{importer} imported {count} entries from {source} into "{room}"').format(

@@ -10,38 +10,38 @@ class AccountDetailPage(BasePage):
     something differs from what was rendered, so the assertions below read that row.
     """
 
-    def discard(self):
+    def discard(self) -> None:
         self.page.locator("#discard-profile-button").click()
 
-    def save(self):
+    def save(self) -> None:
         with self.page.expect_response(lambda response: "/update/" in response.url):
             self.page.locator("#save-profile-button").click()
         self.expect_actions_disabled()
 
-    def expect_actions_disabled(self):
+    def expect_actions_disabled(self) -> None:
         expect(self.page.locator("#save-profile-button")).to_be_disabled()
         expect(self.page.locator("#discard-profile-button")).to_be_disabled()
 
-    def expect_actions_enabled(self):
+    def expect_actions_enabled(self) -> None:
         expect(self.page.locator("#save-profile-button")).to_be_enabled()
         expect(self.page.locator("#discard-profile-button")).to_be_enabled()
 
-    def mark_sheet(self, marker: str):
+    def mark_sheet(self, marker: str) -> None:
         """Tag the sheet element so a later read proves whether it survived or was replaced."""
         self.page.locator("#profile-sheet").evaluate("(sheet, value) => (sheet.dataset.e2eMarker = value)", marker)
 
     def read_sheet_marker(self) -> str | None:
         return self.page.locator("#profile-sheet").evaluate("(sheet) => sheet.dataset.e2eMarker || null")
 
-    def open_photo_dialog(self):
+    def open_photo_dialog(self) -> None:
         self.page.locator("button[data-dialog-open='profile-photo-dialog']").click()
         expect(self.page.locator("#profile-photo-dialog")).to_be_visible()
 
-    def open_photo_dialog_via_badge(self):
+    def open_photo_dialog_via_badge(self) -> None:
         self.page.locator("span[data-dialog-open='profile-photo-dialog']").click()
         expect(self.page.locator("#profile-photo-dialog")).to_be_visible()
 
-    def expect_photo_hover_hint(self, *, visible: bool):
+    def expect_photo_hover_hint(self, *, visible: bool) -> None:
         """The camera overlay may only show while the avatar is hovered.
 
         to_have_css retries, which a plain read cannot: the overlay fades in over a transition.
@@ -50,42 +50,42 @@ class AccountDetailPage(BasePage):
             "opacity", "1" if visible else "0"
         )
 
-    def hover_photo(self):
+    def hover_photo(self) -> None:
         self.page.locator("#profile-photo").hover()
 
-    def move_pointer_away(self):
+    def move_pointer_away(self) -> None:
         self.page.mouse.move(0, 0)
 
-    def close_photo_dialog(self):
+    def close_photo_dialog(self) -> None:
         self.page.locator("#profile-photo-dialog [data-dialog-close]").click()
         expect(self.page.locator("#profile-photo-dialog")).not_to_be_visible()
 
-    def expect_photo_dialog_offers(self, *, delete: bool):
+    def expect_photo_dialog_offers(self, *, delete: bool) -> None:
         expect(self.page.locator("label[for='profile-picture-input']")).to_be_visible()
         matcher = expect(self.page.locator("[data-profile-photo-delete]"))
         matcher.to_be_visible() if delete else matcher.to_have_count(0)
 
-    def upload_photo_from_dialog(self, file_name: str, content: bytes):
+    def upload_photo_from_dialog(self, file_name: str, content: bytes) -> None:
         with self.page.expect_response(lambda response: "/profile-picture/update/" in response.url):
             self.page.set_input_files(
                 "#profile-picture-input",
                 files=[{"name": file_name, "mimeType": "image/png", "buffer": content}],
             )
 
-    def delete_photo_from_dialog(self):
+    def delete_photo_from_dialog(self) -> None:
         self.page.once("dialog", lambda confirmation: confirmation.accept())
         with self.page.expect_response(lambda response: "/profile-picture/delete/" in response.url):
             self.page.locator("[data-profile-photo-delete]").click()
 
-    def open_photo_preview_dialog(self):
+    def open_photo_preview_dialog(self) -> None:
         self.page.locator("button[data-dialog-open='profile-photo-preview-dialog']").click()
         expect(self.page.locator("#profile-photo-preview-dialog")).to_be_visible()
 
-    def close_photo_preview_dialog(self):
+    def close_photo_preview_dialog(self) -> None:
         self.page.locator("#profile-photo-preview-dialog [data-dialog-close]").click()
         expect(self.page.locator("#profile-photo-preview-dialog")).not_to_be_visible()
 
-    def expect_photo_preview_is_larger_than_the_avatar(self):
+    def expect_photo_preview_is_larger_than_the_avatar(self) -> None:
         """The dialog shows the picture bigger than the avatar — that is what it is for.
 
         Not which picture: MEDIA_URL does not resolve under the test settings, so navigation.js
@@ -102,64 +102,64 @@ class AccountDetailPage(BasePage):
             f"preview {preview_box['width']}px is not bigger than the avatar {avatar_box['width']}px"
         )
 
-    def expect_no_photo_preview(self):
+    def expect_no_photo_preview(self) -> None:
         """An avatar that is only an initial has nothing to enlarge and offers no dialog."""
         expect(self.page.locator("#profile-photo-preview-dialog")).to_have_count(0)
 
-    def expect_photo_present(self):
+    def expect_photo_present(self) -> None:
         expect(self.page.locator("#profile-photo button img")).to_be_visible()
 
-    def expect_no_photo(self):
+    def expect_no_photo(self) -> None:
         expect(self.page.locator("#profile-photo button img")).to_have_count(0)
 
-    def fill_name(self, name: str):
+    def fill_name(self, name: str) -> None:
         self.page.fill("#name", name)
 
-    def fill_email(self, email: str):
+    def fill_email(self, email: str) -> None:
         self.page.fill("#email", email)
 
-    def choose_language(self, language_code: str):
+    def choose_language(self, language_code: str) -> None:
         self.page.select_option("#id_language", language_code)
 
-    def choose_wants_notifications(self, *, wants_notifications: bool):
+    def choose_wants_notifications(self, *, wants_notifications: bool) -> None:
         checkbox = self.page.locator("#wants_to_receive_webpush_notifications")
         if wants_notifications:
             checkbox.check()
         else:
             checkbox.uncheck()
 
-    def expect_name(self, name: str):
+    def expect_name(self, name: str) -> None:
         expect(self.page.locator("#profile-name")).to_have_text(name)
         expect(self.page.locator("#name")).to_have_value(name)
 
-    def expect_email(self, email: str):
+    def expect_email(self, email: str) -> None:
         expect(self.page.locator("#email")).to_have_value(email)
 
-    def expect_member_name(self, name: str):
+    def expect_member_name(self, name: str) -> None:
         """The name as shown on someone else's profile, which carries no editable fields."""
         expect(self.page.locator("#profile-name")).to_have_text(name)
 
-    def expect_fields_editable(self):
+    def expect_fields_editable(self) -> None:
         expect(self.page.locator("#name")).to_be_editable()
         expect(self.page.locator("#id_language")).to_be_enabled()
 
-    def expect_actions_present(self):
+    def expect_actions_present(self) -> None:
         expect(self.page.locator("#save-profile-button")).to_have_count(1)
 
-    def expect_actions_absent(self):
+    def expect_actions_absent(self) -> None:
         """Someone else's profile carries no editable field, so it carries no action row."""
         expect(self.page.locator("#save-profile-button")).to_have_count(0)
 
-    def expect_security_section_visible(self):
+    def expect_security_section_visible(self) -> None:
         expect(self.page.locator("#security-section")).to_be_visible()
 
-    def expect_security_section_hidden(self):
+    def expect_security_section_hidden(self) -> None:
         expect(self.page.locator("#security-section")).to_have_count(0)
 
-    def expect_guest_mode_banner_visible(self):
+    def expect_guest_mode_banner_visible(self) -> None:
         expect(self.page.locator("#guest-mode-banner")).to_be_visible()
 
-    def mark_body_shell(self):
+    def mark_body_shell(self) -> None:
         """Tag the loading spinner with a JS property, which only survives if the node itself does.
 
         An attribute would be a false negative: morphing keeps the element but syncs its attributes
@@ -170,11 +170,11 @@ class AccountDetailPage(BasePage):
     def body_shell_survived(self) -> bool:
         return self.page.locator("#body-loading-spinner").evaluate("(element) => element.e2eSurvivedSwap === true")
 
-    def open_change_password_via_security_row(self):
+    def open_change_password_via_security_row(self) -> None:
         with self.page.expect_response(lambda response: "/change-password/" in response.url):
             self.page.locator("#security-section button[hx-get*='change-password']").click()
 
-    def expect_notifications_radio_checked(self, *, wants_notifications: bool):
+    def expect_notifications_radio_checked(self, *, wants_notifications: bool) -> None:
         checkbox = self.page.locator("#wants_to_receive_webpush_notifications")
         if wants_notifications:
             expect(checkbox).to_be_checked()

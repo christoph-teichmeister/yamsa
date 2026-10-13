@@ -4,7 +4,7 @@ from apps.webpush.dataclasses import Notification
 
 
 class TestNotificationPayload:
-    def test_action_urls_are_preserved(self):
+    def test_action_urls_are_preserved(self) -> None:
         action = {"action": "open", "title": "Open", "url": "https://example.com"}
         payload = Notification.Payload(
             head="Test Headline",

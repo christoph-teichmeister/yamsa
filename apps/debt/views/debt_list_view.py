@@ -1,8 +1,9 @@
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
+from apps.debt.dataclasses import SimpleDebtRow
 from apps.debt.models import Debt
 from apps.debt.services.simple_debt_service import SimpleDebtService
 from apps.debt.views.mixins.debt_base_context import DebtBaseContext
@@ -34,12 +35,12 @@ class DebtListView(DebtBaseContext, generic.ListView):
 
     @context
     @property
-    def has_transactions(self):
+    def has_transactions(self) -> bool:
         return ParentTransaction.objects.filter(room_id=self.request.room.id).exists()
 
     @context
     @property
-    def active_debt_count(self):
+    def active_debt_count(self) -> int:
         return self.model.objects.filter(room_id=self.request.room.id, settled=False).count()
 
     @context
@@ -62,10 +63,10 @@ class DebtListView(DebtBaseContext, generic.ListView):
         return {"optimised": optimised_count, "simple": simple_count}
 
     @cached_property
-    def _simple_debt_rows(self):
+    def _simple_debt_rows(self) -> list[SimpleDebtRow]:
         return SimpleDebtService.get_rows(room_id=self.request.room.id, viewer_id=self.request.user.id)
 
-    def get_queryset(self):
+    def get_queryset(self) -> list[SimpleDebtRow] | QuerySet:
         if not self.showing_optimised_debts:
             return self._simple_debt_rows
 

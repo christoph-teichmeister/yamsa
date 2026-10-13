@@ -7,6 +7,6 @@ class BasePage:
         self.base_url = base_url
         self.path = path
 
-    def navigate(self):
+    def navigate(self) -> None:
         self.page.goto(f"{self.base_url}{self.path}")
         self.page.wait_for_load_state("load")

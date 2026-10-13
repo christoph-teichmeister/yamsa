@@ -1,18 +1,22 @@
 import json
+from collections.abc import Iterator
 from http import HTTPStatus
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.core.toast_constants import SUCCESS_TOAST_CLASS
-from apps.transaction.models import Receipt
+from apps.room.models import Room
+from apps.transaction.models import ParentTransaction, Receipt
 
 pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def cleanup_receipts():
+def cleanup_receipts() -> Iterator[None]:
     yield
     for receipt in Receipt.objects.all():
         receipt.file.delete(save=False)
@@ -21,8 +25,13 @@ def cleanup_receipts():
 
 class TestTransactionReceiptUploadView:
     def test_receipt_uploads_for_transaction_detail(
-        self, authenticated_client, room, user, transaction_with_children, cleanup_receipts
-    ):
+        self,
+        authenticated_client: Client,
+        room: Room,
+        user: User,
+        transaction_with_children: ParentTransaction,
+        cleanup_receipts: None,
+    ) -> None:
         parent_transaction = transaction_with_children
         receipt_file = SimpleUploadedFile(
             "receipt.pdf",
@@ -53,8 +62,12 @@ class TestTransactionReceiptUploadView:
         receipt.file.delete(save=False)
 
     def test_receipt_upload_rejects_invalid_file(
-        self, authenticated_client, room, transaction_with_children, cleanup_receipts
-    ):
+        self,
+        authenticated_client: Client,
+        room: Room,
+        transaction_with_children: ParentTransaction,
+        cleanup_receipts: None,
+    ) -> None:
         parent_transaction = transaction_with_children
         invalid_file = SimpleUploadedFile(
             "receipt.txt",
@@ -77,8 +90,12 @@ class TestTransactionReceiptUploadView:
         assert "HX-Trigger" not in response.headers
 
     def test_receipt_upload_rejected_for_closed_room(
-        self, authenticated_client, closed_room, transaction_with_children_in_closed_room, cleanup_receipts
-    ):
+        self,
+        authenticated_client: Client,
+        closed_room: Room,
+        transaction_with_children_in_closed_room: ParentTransaction,
+        cleanup_receipts: None,
+    ) -> None:
         parent_transaction = transaction_with_children_in_closed_room
         receipt_file = SimpleUploadedFile(
             "receipt.pdf",

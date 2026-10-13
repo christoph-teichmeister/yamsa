@@ -3,7 +3,9 @@ from decimal import Decimal
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
+from django.http import HttpRequest
 
+from apps.room.models import Room
 from apps.transaction.forms.mixins.room_category_field import RoomCategoryFieldMixin
 from apps.transaction.models import ChildTransaction, ParentTransaction, Receipt
 from apps.transaction.utils import split_total_across_paid_for
@@ -52,12 +54,14 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
             "category",
         )
 
-    def __init__(self, *args, request=None, room=None, **kwargs) -> None:
+    def __init__(
+        self, *args: object, request: HttpRequest | None = None, room: Room | None = None, **kwargs: object
+    ) -> None:
         self._request = request
         super().__init__(*args, **kwargs)
         self.narrow_category_field_to(room)
 
-    def clean(self):
+    def clean(self) -> dict:
         cleaned_data = super().clean()
         total_value = cleaned_data.get("total_value")
         paid_for_entries = cleaned_data.get("paid_for")
@@ -77,7 +81,7 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
 
         return cleaned_data
 
-    def clean_receipts(self):
+    def clean_receipts(self) -> list:
         field_name = self.add_prefix("receipts")
         uploaded_files = self.files.getlist(field_name)
         cleaned_files = []
@@ -124,7 +128,7 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
 
         return cleaned_files
 
-    def save(self, commit=True):
+    def save(self, commit: bool = True) -> ParentTransaction:
         instance: ParentTransaction = super().save(commit)
 
         paid_for_entries = self.cleaned_data["paid_for"]
@@ -136,7 +140,7 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
 
         return instance
 
-    def _save_receipts(self, parent_transaction: ParentTransaction):
+    def _save_receipts(self, parent_transaction: ParentTransaction) -> None:
         receipt_files = self.cleaned_data.get("receipts") or []
         if not receipt_files:
             return

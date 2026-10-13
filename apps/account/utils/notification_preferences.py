@@ -2,6 +2,8 @@ from django.conf import settings
 from django.core.signing import Signer
 from django.urls import reverse
 
+from apps.account.models import User
+
 PAYMENT_REMINDER_UNSUBSCRIBE_SALT = "payment-reminder-unsubscribe"
 PAYMENT_REMINDER_VARIANT = "payment"
 ROOM_REMINDER_VARIANT = "room"
@@ -15,7 +17,7 @@ def normalize_reminder_variant(variant: str | None) -> str:
     return PAYMENT_REMINDER_VARIANT
 
 
-def build_payment_reminder_unsubscribe_url(user, *, variant: str | None = None) -> str:
+def build_payment_reminder_unsubscribe_url(user: User, *, variant: str | None = None) -> str:
     signer = Signer(salt=PAYMENT_REMINDER_UNSUBSCRIBE_SALT)
     token = signer.sign(user.pk)
     backend = settings.BACKEND_URL.rstrip("/")

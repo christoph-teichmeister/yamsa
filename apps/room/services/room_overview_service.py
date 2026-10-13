@@ -5,6 +5,7 @@ from functools import cached_property
 
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.debt.models import Debt
 from apps.room.dataclasses import CurrencyTotal, RoomBalance, RoomOverviewEntry
 from apps.room.models import Room
@@ -18,7 +19,7 @@ class RoomOverviewService:
     each room across several rows.
     """
 
-    def __init__(self, *, user) -> None:
+    def __init__(self, *, user: User) -> None:
         self.user = user
 
     @cached_property

@@ -1,6 +1,6 @@
 import re
 
-from playwright.sync_api import expect
+from playwright.sync_api import Locator, expect
 
 from e2e.pages.base_page import BasePage
 
@@ -13,20 +13,20 @@ class TransactionListPage(BasePage):
     """
 
     @property
-    def add_transaction_button(self):
+    def add_transaction_button(self) -> Locator:
         return self.page.locator("[data-hide-on-scroll]")
 
     @property
-    def rows(self):
+    def rows(self) -> Locator:
         return self.page.locator("#transaction-feed .transaction-row")
 
-    def wait_for_feed(self):
+    def wait_for_feed(self) -> None:
         expect(self.rows.first).to_be_visible()
 
-    def scroll_by(self, delta_y: int):
+    def scroll_by(self, delta_y: int) -> None:
         self.page.mouse.wheel(0, delta_y)
 
-    def scroll_until_row_count(self, expected_count: int, *, max_steps: int = 15, step: int = 300):
+    def scroll_until_row_count(self, expected_count: int, *, max_steps: int = 15, step: int = 300) -> None:
         """Scroll down in steps until the feed has loaded its next batch.
 
         One long scroll would land at the end of the page, where the pill is meant to come back
@@ -40,7 +40,7 @@ class TransactionListPage(BasePage):
 
         expect(self.rows).to_have_count(expected_count)
 
-    def expect_add_button_springs_back(self):
+    def expect_add_button_springs_back(self) -> None:
         """The reveal overshoots its resting place; the hide does not.
 
         Asserted on the declared timing rather than on a frame of the movement: a Tailwind
@@ -50,11 +50,11 @@ class TransactionListPage(BasePage):
             "transition-timing-function", re.compile(r"cubic-bezier\(0\.34, 1\.56, 0\.64, 1\)")
         )
 
-    def expect_add_button_hidden(self):
+    def expect_add_button_hidden(self) -> None:
         expect(self.add_transaction_button).to_have_attribute("data-scroll-hidden", "")
         expect(self.add_transaction_button).to_have_css("opacity", "0")
         expect(self.add_transaction_button).not_to_have_css("transition-timing-function", re.compile(r"1\.56"))
 
-    def expect_add_button_visible(self):
+    def expect_add_button_visible(self) -> None:
         expect(self.add_transaction_button).not_to_have_attribute("data-scroll-hidden", "")
         expect(self.add_transaction_button).to_have_css("opacity", "1")

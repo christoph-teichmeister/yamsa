@@ -3,16 +3,18 @@ import json
 from unittest import mock
 
 import pytest
-from django.test import RequestFactory
+from django.http import HttpResponse
+from django.test import Client, RequestFactory
 from django.urls import reverse
 
+from apps.account.models import User
 from apps.webpush.views import WebPushSaveView
 
 
 @pytest.mark.django_db
 class TestWebPushSaveView:
     @pytest.fixture(autouse=True)
-    def _setup(self, authenticated_client, user):
+    def _setup(self, authenticated_client: Client, user: User) -> None:
         self.client = authenticated_client
         self.url = reverse("webpush:save")
         self.factory = RequestFactory()
@@ -29,24 +31,24 @@ class TestWebPushSaveView:
             "status_type": status_type,
         }
 
-    def _post(self, status_type: str):
+    def _post(self, status_type: str) -> HttpResponse:
         return self.client.post(
             self.url,
             data=json.dumps(self._build_payload(status_type)),
             content_type="application/json",
         )
 
-    def test_subscribe_status_returns_created(self):
+    def test_subscribe_status_returns_created(self) -> None:
         response = self._post("subscribe")
 
         assert response.status_code == http.HTTPStatus.CREATED
 
-    def test_unsubscribe_status_returns_accepted(self):
+    def test_unsubscribe_status_returns_accepted(self) -> None:
         response = self._post("unsubscribe")
 
         assert response.status_code == http.HTTPStatus.ACCEPTED
 
-    def test_form_valid_rejects_unknown_status_type(self):
+    def test_form_valid_rejects_unknown_status_type(self) -> None:
         view = WebPushSaveView()
         request = self.factory.post(self.url)
         request.user = self.user

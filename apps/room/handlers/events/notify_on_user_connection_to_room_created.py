@@ -10,7 +10,7 @@ from apps.webpush.utils import Notification
 
 
 @message_registry.register_event(event=UserConnectionToRoomCreated)
-def send_notification_on_user_connection_to_room_created(context: UserConnectionToRoomCreated.Context):
+def send_notification_on_user_connection_to_room_created(context: UserConnectionToRoomCreated.Context) -> None:
     user_connection_to_room = context.instance
 
     # Do not notify the user who has just created the room (and hence a user_connection_to_room for himself)
@@ -33,7 +33,7 @@ def send_notification_on_user_connection_to_room_created(context: UserConnection
 
 
 @message_registry.register_event(event=UserConnectionToRoomCreated)
-def send_email_on_user_connection_to_room_created(context: UserConnectionToRoomCreated.Context):
+def send_email_on_user_connection_to_room_created(context: UserConnectionToRoomCreated.Context) -> None:
     user_connection_to_room = context.instance
 
     # Do not email the user who has just created the room (and hence a user_connection_to_room for himself),

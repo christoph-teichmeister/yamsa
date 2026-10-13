@@ -8,7 +8,7 @@ from apps.core.event_loop.registry import message_registry
 logger = logging.getLogger(__name__)
 
 
-def handle_message(message_list: Message | list[Message]):
+def handle_message(message_list: Message | list[Message]) -> None:
     """Process commands/events once Django has populated the registry on startup."""
     # The message registry is populated when `apps.core.apps.CoreConfig.ready()` runs,
     # so the runner never has to import or autodiscover handlers itself.
@@ -29,7 +29,7 @@ def handle_message(message_list: Message | list[Message]):
         raise TypeError(msg)
 
 
-def handle_command(command: Command, queue: list[Message]):
+def handle_command(command: Command, queue: list[Message]) -> None:
     handler_list = message_registry.command_dict.get(command.__class__, [])
     for handler in handler_list:
         try:
@@ -57,7 +57,7 @@ def handle_command(command: Command, queue: list[Message]):
             raise
 
 
-def handle_event(event: Event, queue: list[Message]):
+def handle_event(event: Event, queue: list[Message]) -> None:
     handler_list = message_registry.event_dict.get(event.__class__, [])
     for handler in handler_list:
         try:

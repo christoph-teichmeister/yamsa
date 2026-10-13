@@ -2,6 +2,7 @@ import json
 from http import HTTPStatus
 from typing import Any
 
+from django.forms import BaseForm
 from django.http import HttpResponse
 from django.urls import reverse
 
@@ -29,10 +30,10 @@ class FormHtmxResponseMixin:
     toast_success_message: str | None = None
     toast_error_message: str | None = None
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         return reverse(viewname=self.default_success_url)
 
-    def form_valid(self, form):
+    def form_valid(self, form: BaseForm) -> HttpResponse:
         super().form_valid(form)
         response = self.get_response()
 
@@ -54,7 +55,7 @@ class FormHtmxResponseMixin:
 
         return response
 
-    def form_invalid(self, form):
+    def form_invalid(self, form: BaseForm) -> HttpResponse:
         response = super().form_invalid(form)
 
         # Add error toast if configured
@@ -66,7 +67,7 @@ class FormHtmxResponseMixin:
 
         return response
 
-    def _create_toast_trigger(self, *, message, toast_class):
+    def _create_toast_trigger(self, *, message: str | None, toast_class: str) -> dict[str, Any]:
         """Helper method to create toast trigger data."""
         if message:
             return {"triggerToast": {"message": message, "type": toast_class}}

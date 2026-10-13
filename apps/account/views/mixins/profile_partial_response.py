@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 
 from apps.account.forms import EditUserForm, ProfilePictureForm
+from apps.account.models import User
 
 PROFILE_SHEET_TEMPLATE = "account/partials/_profile_sheet.html"
 PROFILE_PHOTO_TEMPLATE = "account/partials/_profile_photo.html"
@@ -13,7 +14,9 @@ class ProfilePartialResponseMixin:
     def is_htmx_request(self) -> bool:
         return self.request.headers.get("HX-Request") == "true"
 
-    def render_profile_sheet(self, user, *, form=None) -> HttpResponse:
+    def render_profile_sheet(
+        self, user: User, *, form: EditUserForm | ProfilePictureForm | None = None
+    ) -> HttpResponse:
         """Answer with just the sheet, so the browser keeps the page it is already on."""
         return HttpResponse(
             render_to_string(
@@ -26,7 +29,9 @@ class ProfilePartialResponseMixin:
             )
         )
 
-    def render_profile_photo(self, user, *, picture_form=None, dialog_is_open: bool = False) -> HttpResponse:
+    def render_profile_photo(
+        self, user: User, *, picture_form: ProfilePictureForm | None = None, dialog_is_open: bool = False
+    ) -> HttpResponse:
         """Answer with just the photo and its dialog.
 
         The photo has its own cycle, so swapping only this part leaves the surrounding sheet — and

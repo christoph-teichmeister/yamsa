@@ -14,7 +14,7 @@ class DashboardBaseContext:
 
     @context
     @cached_property
-    def active_tab(self):
+    def active_tab(self) -> str:
         return self.request.GET.get("active_tab", self._active_tab)
 
     @context
@@ -25,7 +25,7 @@ class DashboardBaseContext:
 
     @context
     @cached_property
-    def reminder_heartbeat(self):
+    def reminder_heartbeat(self) -> str:
         from apps.debt.services.payment_reminder_service import PaymentReminderService
         from apps.room.services.room_closure_reminder_service import RoomClosureReminderService
 

@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from datetime import timedelta
 from io import BytesIO
 
@@ -9,6 +10,7 @@ from django.test.client import Client
 from django.utils import timezone
 from PIL import Image
 
+from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.tests.factories import GuestUserFactory, SuperuserFactory, UserFactory
 from apps.room.models import Room
@@ -19,17 +21,17 @@ from apps.transaction.tests.factories import ParentTransactionFactory
 
 
 @pytest.fixture
-def user(db):
+def user(db: None) -> User:
     return UserFactory()
 
 
 @pytest.fixture
-def guest_user(db):
+def guest_user(db: None) -> User:
     return GuestUserFactory()
 
 
 @pytest.fixture
-def authenticated_user(request, user, guest_user):
+def authenticated_user(request: pytest.FixtureRequest, user: User, guest_user: User) -> User:
     param = request.param
     if param == "user":
         return user
@@ -42,26 +44,26 @@ def authenticated_user(request, user, guest_user):
 
 
 @pytest.fixture
-def room(db, user, guest_user):
+def room(db: None, user: User, guest_user: User) -> Room:
     room_instance = RoomFactory(created_by=user)
     room_instance.users.add(user, guest_user)
     return room_instance
 
 
 @pytest.fixture
-def closed_room(db, user, guest_user):
+def closed_room(db: None, user: User, guest_user: User) -> Room:
     room_instance = RoomFactory(created_by=user, status=Room.StatusChoices.CLOSED)
     room_instance.users.add(user, guest_user)
     return room_instance
 
 
 @pytest.fixture
-def superuser(db):
+def superuser(db: None) -> User:
     return SuperuserFactory()
 
 
 @pytest.fixture
-def authenticated_client(client, user):
+def authenticated_client(client: Client, user: User) -> Client:
     client.defaults["HTTP_HX_REQUEST"] = "true"
     request = RequestFactory().get("/")
     assert client.login(request=request, email=user.email, password=DEFAULT_PASSWORD)
@@ -69,7 +71,7 @@ def authenticated_client(client, user):
 
 
 @pytest.fixture
-def superuser_htmx_client(superuser) -> Client:
+def superuser_htmx_client(superuser: User) -> Client:
     client = Client()
     client.defaults["HTTP_HX_REQUEST"] = "true"
     client.force_login(superuser)
@@ -77,7 +79,7 @@ def superuser_htmx_client(superuser) -> Client:
 
 
 @pytest.fixture
-def room_with_stale_activity(room, user):
+def room_with_stale_activity(room: Room, user: User) -> Room:
     reminder_category = CategoryFactory(
         slug=f"room-reminder-{room.pk}",
         name="Room reminder",
@@ -95,10 +97,10 @@ def room_with_stale_activity(room, user):
 
 
 @pytest.fixture
-def attach_profile_picture():
+def attach_profile_picture() -> Callable:
     """Give a user a real picture, so their avatar renders as an image rather than as an initial."""
 
-    def _attach(user_instance):
+    def _attach(user_instance: User) -> User:
         buffer = BytesIO()
         Image.new("RGB", (64, 64), color=(255, 255, 255)).save(buffer, format="PNG")
         user_instance.profile_picture.save("avatar.png", ContentFile(buffer.getvalue()), save=True)

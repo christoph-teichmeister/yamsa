@@ -1,5 +1,8 @@
+from django.http import HttpRequest
 from passkeys.backend import PasskeyModelBackend
 from passkeys.FIDO2 import auth_complete
+
+from apps.account.models import User
 
 
 class YamsaPasskeyBackend(PasskeyModelBackend):
@@ -10,7 +13,9 @@ class YamsaPasskeyBackend(PasskeyModelBackend):
     (e.g. client.login() in tests, admin login, or management commands).
     """
 
-    def authenticate(self, request, username="", password="", **kwargs):
+    def authenticate(
+        self, request: HttpRequest, username: str = "", password: str = "", **kwargs: object
+    ) -> User | None:
         if username != "" and password != "":
             # Regular password branch — let the parent handle it (sets session["passkey"]).
             return super().authenticate(request, username=username, password=password, **kwargs)

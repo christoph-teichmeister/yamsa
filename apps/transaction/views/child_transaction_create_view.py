@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
@@ -16,5 +17,5 @@ class ChildTransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseCont
 
     @context
     @cached_property
-    def room_users(self):
+    def room_users(self) -> QuerySet:
         return User.objects.filter(room=self.request.room)

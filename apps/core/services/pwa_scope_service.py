@@ -1,12 +1,13 @@
 from django.utils.crypto import salted_hmac
 
+from apps.account.models import User
 from apps.core.pwa_constants import ANONYMOUS_SCOPE
 
 _SCOPE_KEY_SALT = "apps.core.services.pwa_scope_service"
 _SCOPE_LENGTH = 16
 
 
-def resolve_scope(user) -> str:
+def resolve_scope(user: User | None) -> str:
     """Name the cache partition that the pages rendered for this visitor belong to.
 
     The service worker's caches live per origin, not per session. Without a partition the pages one

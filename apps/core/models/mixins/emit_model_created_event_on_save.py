@@ -1,3 +1,4 @@
+from apps.core.event_loop.messages.message import Message
 from apps.core.event_loop.registry import message_registry
 from apps.core.event_loop.runner import handle_message
 
@@ -31,7 +32,7 @@ class EmitModelCreatedEventOnSaveMixin:
         def get_model_events_as_tuple(self) -> tuple:
             return self.Created, self.Changed, self.Deleted
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
 
         for model_event in self.ModelEvents().get_model_events_as_tuple():
@@ -51,7 +52,7 @@ class EmitModelCreatedEventOnSaveMixin:
     def expand_model_event_context(self) -> dict:
         return {}
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: object, **kwargs: object) -> None:
         model_event_type = self.ModelEvents.Created if not self.id else self.ModelEvents.Changed
 
         super().save(*args, **kwargs)
@@ -60,7 +61,7 @@ class EmitModelCreatedEventOnSaveMixin:
             model_event_class=getattr(self, model_event_type.attr_name), context_label=model_event_type.label
         )
 
-    def delete(self, using=None, keep_parents=False):
+    def delete(self, using: str | None = None, keep_parents: bool = False) -> tuple[int, dict[str, int]]:
         del_operation = super().delete(using, keep_parents)
 
         self._send_message(
@@ -70,7 +71,7 @@ class EmitModelCreatedEventOnSaveMixin:
 
         return del_operation
 
-    def _send_message(self, model_event_class, context_label: str):
+    def _send_message(self, model_event_class: type[Message] | None, context_label: str) -> None:
         if model_event_class is None:
             return
 

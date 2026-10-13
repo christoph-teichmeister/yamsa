@@ -1,4 +1,9 @@
-from django.http import StreamingHttpResponse
+import io
+from collections.abc import Iterator
+from datetime import datetime
+
+from django.db.models import QuerySet
+from django.http import HttpRequest, HttpResponse, StreamingHttpResponse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -15,7 +20,7 @@ class DebtExportView(RoomMembershipRequiredMixin, DebtBaseContext, CsvExportMixi
 
     HEADER = [_("Debitor"), _("Creditor"), _("Amount"), _("Currency")]
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
         """Build a streaming response containing metadata and unsettled debt rows."""
         room = request.room
         debts = (
@@ -32,7 +37,7 @@ class DebtExportView(RoomMembershipRequiredMixin, DebtBaseContext, CsvExportMixi
 
         return response
 
-    def _write_rows(self, writer, buffer, debts, timestamp):
+    def _write_rows(self, writer: object, buffer: io.StringIO, debts: QuerySet, timestamp: datetime) -> Iterator[str]:
         for debt in debts:
             row = [
                 self._safe(debt.debitor.name),

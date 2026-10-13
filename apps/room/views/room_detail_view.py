@@ -16,10 +16,10 @@ class RoomDetailView(RoomBaseContext, generic.DetailView):
 
     @context
     @cached_property
-    def form(self):
+    def form(self) -> RoomEditForm:
         return RoomEditForm(instance=self.object)
 
     @context
     @cached_property
-    def open_debt_count(self):
+    def open_debt_count(self) -> int:
         return self.object.debts.filter(settled=False).count()

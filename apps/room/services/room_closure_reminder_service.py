@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Q, QuerySet
 from django.urls import reverse
 from django.utils import timezone
 
+from apps.account.models import User
 from apps.debt.models import ReminderLog
 from apps.mail.services.room_closure_reminder_mail_service import RoomClosureReminderEmailService
 from apps.room.models import Room, UserConnectionToRoom
@@ -72,7 +73,7 @@ class RoomClosureReminderService:
 
         return last_log.created_at + self.HEARTBEAT_INTERVAL <= self.now
 
-    def _collect_rooms(self):
+    def _collect_rooms(self) -> QuerySet[Room]:
         """Find open rooms that have been idle past the inactivity threshold.
 
         Only includes rooms where the creator is still an active member, so
@@ -107,7 +108,7 @@ class RoomClosureReminderService:
         return Room.objects.filter_status_open().filter_without_members().update(status=Room.StatusChoices.CLOSED)
 
     @staticmethod
-    def _should_notify_creator(creator) -> bool:
+    def _should_notify_creator(creator: User | None) -> bool:
         """Skip guests or creators who opted out of room-related reminders."""
         if not creator:
             return False

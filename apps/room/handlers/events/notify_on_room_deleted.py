@@ -10,7 +10,7 @@ from apps.webpush.utils import Notification
 
 
 @message_registry.register_event(event=RoomHardDeleted)
-def send_notification_on_room_deleted(context: RoomHardDeleted.Context):
+def send_notification_on_room_deleted(context: RoomHardDeleted.Context) -> None:
     for user in User.objects.filter(id__in=context.member_user_ids):
         with translation.override(get_language_code_for_user(user)):
             head = _("Room deleted")

@@ -7,12 +7,12 @@ class MaintenanceOrOfflineView:
 
     @context
     @property
-    def is_in_maintenance(self):
+    def is_in_maintenance(self) -> bool:
         return settings.MAINTENANCE
 
     @context
     @property
-    def called_by_offline_view(self):
+    def called_by_offline_view(self) -> bool:
         from apps.core.views import OfflineView
 
         return isinstance(self, OfflineView)

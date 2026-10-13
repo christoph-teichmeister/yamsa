@@ -11,83 +11,83 @@ from apps.room.templatetags.room_tags import format_with_thousands
 class FormatWithThousandsFilterTestCase(TestCase):
     """Test cases for the format_with_thousands template filter."""
 
-    def test_integer_with_thousands_german_locale(self):
+    def test_integer_with_thousands_german_locale(self) -> None:
         """Test integer formatting with German locale."""
         with override_settings(LANGUAGE_CODE="de", USE_L10N=True):
             result = format_with_thousands(1234)
             assert result == "1.234,00"
 
-    def test_decimal_with_thousands_german_locale(self):
+    def test_decimal_with_thousands_german_locale(self) -> None:
         """Test decimal formatting with German locale."""
         with override_settings(LANGUAGE_CODE="de", USE_L10N=True):
             result = format_with_thousands(1234.56)
             assert result == "1.234,56"
 
-    def test_large_number_german_locale(self):
+    def test_large_number_german_locale(self) -> None:
         """Test large number formatting with German locale."""
         with override_settings(LANGUAGE_CODE="de", USE_L10N=True):
             result = format_with_thousands(1000000.99)
             assert result == "1.000.000,99"
 
-    def test_integer_with_thousands_english_locale(self):
+    def test_integer_with_thousands_english_locale(self) -> None:
         """Test integer formatting with English locale."""
         with override_settings(LANGUAGE_CODE="en-us", USE_L10N=True):
             result = format_with_thousands(1234)
             assert result == "1,234.00"
 
-    def test_decimal_with_thousands_english_locale(self):
+    def test_decimal_with_thousands_english_locale(self) -> None:
         """Test decimal formatting with English locale."""
         with override_settings(LANGUAGE_CODE="en-us", USE_L10N=True):
             result = format_with_thousands(1234.56)
             assert result == "1,234.56"
 
-    def test_large_number_english_locale(self):
+    def test_large_number_english_locale(self) -> None:
         """Test large number formatting with English locale."""
         with override_settings(LANGUAGE_CODE="en-us", USE_L10N=True):
             result = format_with_thousands(1000000.99)
             assert result == "1,000,000.99"
 
-    def test_small_number_no_thousands(self):
+    def test_small_number_no_thousands(self) -> None:
         """Test small number that doesn't need thousands separator."""
         with override_settings(LANGUAGE_CODE="de", USE_L10N=True):
             result = format_with_thousands(999)
             assert result == "999,00"
 
-    def test_decimal_type_input(self):
+    def test_decimal_type_input(self) -> None:
         """Test with Decimal type input."""
         with override_settings(LANGUAGE_CODE="de", USE_L10N=True):
             result = format_with_thousands(Decimal("1234.56"))
             assert result == "1.234,56"
 
-    def test_string_numeric_input(self):
+    def test_string_numeric_input(self) -> None:
         """Test with string numeric input."""
         with override_settings(LANGUAGE_CODE="de", USE_L10N=True):
             result = format_with_thousands("1234.56")
             assert result == "1.234,56"
 
-    def test_zero_value(self):
+    def test_zero_value(self) -> None:
         """Test with zero value."""
         with override_settings(LANGUAGE_CODE="de", USE_L10N=True):
             result = format_with_thousands(0)
             assert result == "0,00"
 
-    def test_negative_number(self):
+    def test_negative_number(self) -> None:
         """Test with negative number."""
         with override_settings(LANGUAGE_CODE="de", USE_L10N=True):
             result = format_with_thousands(-1234.56)
             assert result == "-1.234,56"
 
-    def test_invalid_string_input(self):
+    def test_invalid_string_input(self) -> None:
         """Test with invalid string input - should return original value."""
         result = format_with_thousands("not a number")
         assert result == "not a number"
 
-    def test_none_input(self):
+    def test_none_input(self) -> None:
         """Test with None input - should return 'None'."""
         result = format_with_thousands(None)
         assert result == "None"
 
-    def test_in_template(self):
+    def test_in_template(self) -> None:
         """Test filter usage in a Django template."""
         with override_settings(LANGUAGE_CODE="de", USE_L10N=True):
             template = Template("{% load room_tags %}{{ value|format_with_thousands }}")
@@ -95,7 +95,7 @@ class FormatWithThousandsFilterTestCase(TestCase):
             result = template.render(context)
             assert result == "1.234,56"
 
-    def test_in_template_english(self):
+    def test_in_template_english(self) -> None:
         """Test filter usage in a Django template with English locale."""
         with override_settings(LANGUAGE_CODE="en-us", USE_L10N=True):
             template = Template("{% load room_tags %}{{ value|format_with_thousands }}")
@@ -103,19 +103,19 @@ class FormatWithThousandsFilterTestCase(TestCase):
             result = template.render(context)
             assert result == "1,234.56"
 
-    def test_very_large_number(self):
+    def test_very_large_number(self) -> None:
         """Test with very large number (millions)."""
         with override_settings(LANGUAGE_CODE="de", USE_L10N=True):
             result = format_with_thousands(123456789.99)
             assert result == "123.456.789,99"
 
-    def test_fractional_number(self):
+    def test_fractional_number(self) -> None:
         """Test with number less than 1."""
         with override_settings(LANGUAGE_CODE="de", USE_L10N=True):
             result = format_with_thousands(0.99)
             assert result == "0,99"
 
-    def test_french_locale(self):
+    def test_french_locale(self) -> None:
         """Test with French locale."""
         with override_settings(LANGUAGE_CODE="fr", USE_L10N=True):
             result = format_with_thousands(1234.56)

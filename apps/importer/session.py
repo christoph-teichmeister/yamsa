@@ -1,5 +1,7 @@
 import uuid
 
+from django.contrib.sessions.backends.base import SessionBase
+
 from apps.currency.models import Currency
 from apps.importer.constants import SESSION_KEY_PREFIX
 
@@ -8,24 +10,24 @@ def _session_key(token: str) -> str:
     return f"{SESSION_KEY_PREFIX}:{token}"
 
 
-def store_parsed_import(session, payload: dict) -> str:
+def store_parsed_import(session: SessionBase, payload: dict) -> str:
     """Park a parsed file under its own token so a second upload tab cannot overwrite the first."""
     token = uuid.uuid4().hex
     session[_session_key(token)] = payload
     return token
 
 
-def read_parsed_import(session, token: str) -> dict | None:
+def read_parsed_import(session: SessionBase, token: str) -> dict | None:
     if not token:
         return None
     return session.get(_session_key(token))
 
 
-def pop_parsed_import(session, token: str) -> dict | None:
+def pop_parsed_import(session: SessionBase, token: str) -> dict | None:
     return session.pop(_session_key(token), None)
 
 
-def resolve_currencies_by_code(codes) -> dict[str, Currency | None]:
+def resolve_currencies_by_code(codes: list[str]) -> dict[str, Currency | None]:
     """Map source currency codes onto Currency rows.
 
     Currency.code carries no unique constraint, so .get() could raise MultipleObjectsReturned.

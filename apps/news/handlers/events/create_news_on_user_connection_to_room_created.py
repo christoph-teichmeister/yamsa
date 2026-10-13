@@ -7,7 +7,7 @@ from apps.room.messages.events.user_connection_to_room_created import UserConnec
 
 
 @message_registry.register_event(event=UserConnectionToRoomCreated)
-def create_news_on_user_connection_to_room_created(context: UserConnectionToRoomCreated.Context):
+def create_news_on_user_connection_to_room_created(context: UserConnectionToRoomCreated.Context) -> None:
     user_connection_to_room = context.instance
 
     added_user_name = (

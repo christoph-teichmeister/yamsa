@@ -1,7 +1,7 @@
 import logging
 
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
@@ -21,12 +21,12 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
     slug_url_kwarg = "room_slug"
     template_name = "transaction/category_manager.html"
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
         self.object = self.get_object()
         self._ensure_room_member()
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
         context.update(
             self._build_context(
@@ -37,7 +37,7 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
         )
         return context
 
-    def post(self, request, *args, **kwargs):  # noqa: PLR0911 - one early return per validated action/error case
+    def post(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:  # noqa: PLR0911 - one early return per validated action/error case
         action = request.POST.get("action")
         service = self._get_service()
 
@@ -84,17 +84,21 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
 
         return self.get(request, *args, **kwargs)
 
-    def _return_after_action(self):
+    def _return_after_action(self) -> HttpResponse:
         if self.request.headers.get("HX-Request") == "true":
             list_fragment = self._render_category_list_fragment()
             creation_form_fragment = self._render_category_creation_form_fragment(RoomCategoryCreateForm(), is_oob=True)
             return HttpResponse(list_fragment + creation_form_fragment)
         return redirect(self.request.path)
 
-    def _render_category_list(self, update_form=None, failed_room_category_id=None):
+    def _render_category_list(
+        self, update_form: RoomCategoryUpdateForm | None = None, failed_room_category_id: str | None = None
+    ) -> HttpResponse:
         return HttpResponse(self._render_category_list_fragment(update_form, failed_room_category_id))
 
-    def _render_category_list_fragment(self, update_form=None, failed_room_category_id=None):
+    def _render_category_list_fragment(
+        self, update_form: RoomCategoryUpdateForm | None = None, failed_room_category_id: str | None = None
+    ) -> str:
         service = self._get_service()
         return render_to_string(
             "transaction/partials/_room_category_list.html",
@@ -106,14 +110,20 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
             request=self.request,
         )
 
-    def _render_category_creation_form_fragment(self, form, *, is_oob=False):
+    def _render_category_creation_form_fragment(self, form: RoomCategoryCreateForm, *, is_oob: bool = False) -> str:
         return render_to_string(
             "transaction/partials/_room_category_creation_form.html",
             {"category_creation_form": form, "is_oob": is_oob},
             request=self.request,
         )
 
-    def _build_context(self, *, category_creation_form=None, category_update_form=None, failed_room_category_id=None):
+    def _build_context(
+        self,
+        *,
+        category_creation_form: RoomCategoryCreateForm | None = None,
+        category_update_form: RoomCategoryUpdateForm | None = None,
+        failed_room_category_id: str | None = None,
+    ) -> dict:
         service = self._get_service()
         return {
             "category_creation_form": category_creation_form or RoomCategoryCreateForm(),
@@ -122,7 +132,7 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
             "failed_room_category_id": failed_room_category_id,
         }
 
-    def _handle_create(self, service: RoomCategoryService, cleaned_data: dict):
+    def _handle_create(self, service: RoomCategoryService, cleaned_data: dict) -> None:
         order_index = cleaned_data.get("order_index")
         if order_index is None:
             order_index = service.get_next_order_index()
@@ -135,7 +145,7 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
         )
         self.request.toast_queue.success(self._get_category_creation_success_message())
 
-    def _handle_update(self, service: RoomCategoryService, cleaned_data: dict):
+    def _handle_update(self, service: RoomCategoryService, cleaned_data: dict) -> None:
         service.update_room_category(
             room_category_id=cleaned_data["room_category_id"],
             order_index=cleaned_data["order_index"],

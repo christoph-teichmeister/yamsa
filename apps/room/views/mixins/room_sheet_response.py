@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
-from apps.room.forms import RoomEditForm
+from apps.room.forms import RoomEditForm, RoomSealIconForm, RoomSealImageForm, RoomStatusForm
+from apps.room.models import Room
 
 ROOM_SHEET_TEMPLATE = "room/partials/_room_sheet.html"
 
@@ -13,7 +14,13 @@ class RoomSheetResponseMixin:
         return self.request.headers.get("HX-Request") == "true"
 
     def render_room_sheet(
-        self, room, *, form=None, status_form=None, seal_form=None, seal_dialog_is_open: bool = False
+        self,
+        room: Room,
+        *,
+        form: RoomEditForm | None = None,
+        status_form: RoomStatusForm | None = None,
+        seal_form: RoomSealIconForm | RoomSealImageForm | None = None,
+        seal_dialog_is_open: bool = False,
     ) -> HttpResponse:
         """Answer with the sheet alone, so the browser keeps the page it is already on.
 

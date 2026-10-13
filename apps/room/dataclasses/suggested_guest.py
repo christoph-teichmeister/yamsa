@@ -1,6 +1,8 @@
 import re
 from dataclasses import dataclass
 
+from apps.account.models import User
+
 
 @dataclass
 class SuggestedGuest:
@@ -22,7 +24,7 @@ class SuggestedGuest:
         return initials.upper()
 
     @classmethod
-    def from_user(cls, user, is_friend: bool, rooms_together: int) -> "SuggestedGuest":
+    def from_user(cls, user: User, is_friend: bool, rooms_together: int) -> "SuggestedGuest":
         return cls(
             user_id=user.id,
             name=user.name,

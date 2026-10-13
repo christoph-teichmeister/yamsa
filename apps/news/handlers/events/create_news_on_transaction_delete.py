@@ -6,7 +6,7 @@ from apps.transaction.messages.events.transaction import ParentTransactionDelete
 
 
 @message_registry.register_event(event=ParentTransactionDeleted)
-def create_news_on_transaction_deleted(context: ParentTransactionDeleted.Context):
+def create_news_on_transaction_deleted(context: ParentTransactionDeleted.Context) -> None:
     parent_transaction = context.parent_transaction
 
     message = _('{actor} deleted the transaction "{description}" ({amount}{currency}) in "{room}"').format(

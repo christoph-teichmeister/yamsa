@@ -14,7 +14,7 @@ class ServiceWorkerView(generic.TemplateView):
     template_name = "core/pwa/serviceworker.js"
     content_type = "application/javascript"
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
         cache_settings = settings.PWA_SERVICE_WORKER
         precache_urls = self._build_precache_urls(cache_settings)
@@ -39,7 +39,7 @@ class ServiceWorkerView(generic.TemplateView):
         )
         return context
 
-    def _build_precache_urls(self, cache_settings):
+    def _build_precache_urls(self, cache_settings: dict) -> list[str]:
         manifest = settings.MANIFEST
         urls = set()
 

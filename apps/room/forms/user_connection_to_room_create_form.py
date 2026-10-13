@@ -17,19 +17,19 @@ class UserConnectionToRoomCreateForm(forms.ModelForm):
         model = UserConnectionToRoom
         fields = ("email", "room_slug")
 
-    def clean_email(self):
+    def clean_email(self) -> str:
         if not User.objects.filter(email=self.cleaned_data["email"]).exists():
             raise ValidationError(self.ExceptionMessage.EMAIL_UNKNOWN)
 
         return self.cleaned_data["email"]
 
-    def clean(self):
+    def clean(self) -> None:
         if UserConnectionToRoom.objects.filter(
             user__email=self.data["email"], room__slug=self.data["room_slug"]
         ).exists():
             raise ValidationError({"email": self.ExceptionMessage.EMAIL_ALREADY_IN_ROOM})
 
-    def _post_clean(self):
+    def _post_clean(self) -> None:
         if len(self.errors) == 0:
             self.instance.user = User.objects.get(email=self.cleaned_data["email"])
             self.instance.room = Room.objects.get(slug=self.cleaned_data["room_slug"])

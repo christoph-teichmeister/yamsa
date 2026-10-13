@@ -1,9 +1,11 @@
 import csv
 import io
 import re
+from collections.abc import Callable
 from datetime import date
 from decimal import Decimal, InvalidOperation
 
+from django.core.files.uploadedfile import UploadedFile
 from django.utils.translation import gettext as _
 
 from apps.importer.dataclasses import (
@@ -94,7 +96,7 @@ class SplitwiseCsvParser(BaseImportParser):
     source_key = "splitwise-csv"
     label = "Splitwise (CSV)"
 
-    def parse(self, uploaded_file) -> ParsedImport:
+    def parse(self, uploaded_file: UploadedFile) -> ParsedImport:
         rows = self._read_rows(uploaded_file)
         if not rows:
             raise ImportParseError(_("The file is empty."))
@@ -128,7 +130,7 @@ class SplitwiseCsvParser(BaseImportParser):
             categories=self._collect_categories(transactions),
         )
 
-    def _read_rows(self, uploaded_file) -> list[list[str]]:
+    def _read_rows(self, uploaded_file: UploadedFile) -> list[list[str]]:
         raw = uploaded_file.read()
         if isinstance(raw, bytes):
             try:
@@ -268,7 +270,7 @@ class SplitwiseCsvParser(BaseImportParser):
         currency_code: str,
         row_number: int,
         settlements: list[ParsedSettlement],
-        skip,
+        skip: Callable[[str], None],
     ) -> None:
         positives = [index for index, value in enumerate(nets) if value > 0]
         negatives = [index for index, value in enumerate(nets) if value < 0]

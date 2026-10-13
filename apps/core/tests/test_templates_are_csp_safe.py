@@ -21,7 +21,7 @@ class TestTemplatesAreCspSafe:
         assert paths, "No templates found - the glob is wrong, not the templates"
         return paths
 
-    def test_no_template_relies_on_htmx_evaluating_a_string(self):
+    def test_no_template_relies_on_htmx_evaluating_a_string(self) -> None:
         offenders = []
         for path in self._template_paths():
             content = path.read_text()
@@ -31,7 +31,7 @@ class TestTemplatesAreCspSafe:
 
         assert offenders == [], "These templates need new Function(), which the CSP blocks: " + ", ".join(offenders)
 
-    def test_every_scripted_button_role_is_keyboard_activatable(self):
+    def test_every_scripted_button_role_is_keyboard_activatable(self) -> None:
         # role="button" promises Enter/Space. On a native control the browser delivers that; on
         # anything else it only works if the delegated handler in navigation.js can see the
         # element, which it does by the data-keyboard-click marker.
