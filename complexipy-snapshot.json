@@ -78,19 +78,5 @@
         "complexity": 16
       }
     ]
-  },
-  {
-    "path": "scripts/check_palette_contrast.py",
-    "file_name": "check_palette_contrast.py",
-    "functions": [
-      {
-        "name": "read_themes",
-        "complexity": 18
-      },
-      {
-        "name": "failures",
-        "complexity": 29
-      }
-    ]
   }
 ]
