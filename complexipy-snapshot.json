@@ -1,12 +1,1 @@
-[
-  {
-    "path": "apps/core/management/commands/create_intensive_test_data.py",
-    "file_name": "create_intensive_test_data.py",
-    "functions": [
-      {
-        "name": "Command::_create_transactions",
-        "complexity": 17
-      }
-    ]
-  }
-]
+[]
