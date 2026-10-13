@@ -10,16 +10,6 @@
     ]
   },
   {
-    "path": "apps/importer/forms/import_preview_form.py",
-    "file_name": "import_preview_form.py",
-    "functions": [
-      {
-        "name": "ImportPreviewForm::_clean_people",
-        "complexity": 16
-      }
-    ]
-  },
-  {
     "path": "apps/importer/parsers/splitwise.py",
     "file_name": "splitwise.py",
     "functions": [
