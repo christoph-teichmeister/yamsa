@@ -27,6 +27,9 @@ jobs:
       - name: Run Ruff
         run: uv run ruff check --output-format=github .
 
+      - name: Run complexipy
+        run: uvx prek run complexipy --all-files
+
       - name: Check the icon sprite is in sync
         run: uv run python manage.py sync_icons --check
         env:

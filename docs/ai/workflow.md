@@ -14,6 +14,11 @@
 - `yarn build` — one-shot production JS/CSS bundle via webpack.
 - `yarn watch` — watch mode for local frontend development with source maps.
 
+- `uvx prek run complexipy --all-files` — cognitive-complexity check (threshold in `[tool.complexipy]`). Functions
+  already over the limit are baselined in `complexipy-snapshot.json` and fail only if they get worse. On failure,
+  refactor; a justified exception gets `# complexipy: ignore (reason)` on the `def` line. Never hand-edit the
+  snapshot: when a baselined function improves, the hook rewrites it, so stage the file and commit again.
+
 ## Commit & Pull Request Guidelines
 
 History follows Conventional Commits (`feat: add split animation`, `fix: correct room balance`). Keep messages in the

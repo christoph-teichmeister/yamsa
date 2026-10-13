@@ -1,0 +1,126 @@
+[
+  {
+    "path": "apps/core/event_loop/registry.py",
+    "file_name": "registry.py",
+    "functions": [
+      {
+        "name": "MessageRegistry::autodiscover",
+        "complexity": 22
+      }
+    ]
+  },
+  {
+    "path": "apps/core/management/commands/create_intensive_test_data.py",
+    "file_name": "create_intensive_test_data.py",
+    "functions": [
+      {
+        "name": "Command::_create_transactions",
+        "complexity": 17
+      }
+    ]
+  },
+  {
+    "path": "apps/debt/services/debt_optimise_service.py",
+    "file_name": "debt_optimise_service.py",
+    "functions": [
+      {
+        "name": "DebtOptimiseService::process",
+        "complexity": 30
+      }
+    ]
+  },
+  {
+    "path": "apps/importer/forms/import_preview_form.py",
+    "file_name": "import_preview_form.py",
+    "functions": [
+      {
+        "name": "ImportPreviewForm::_clean_people",
+        "complexity": 16
+      }
+    ]
+  },
+  {
+    "path": "apps/importer/parsers/splitwise.py",
+    "file_name": "splitwise.py",
+    "functions": [
+      {
+        "name": "SplitwiseCsvParser::_handle_row",
+        "complexity": 17
+      }
+    ]
+  },
+  {
+    "path": "apps/transaction/forms/transaction_create_form.py",
+    "file_name": "transaction_create_form.py",
+    "functions": [
+      {
+        "name": "TransactionCreateForm::clean_receipts",
+        "complexity": 17
+      }
+    ]
+  },
+  {
+    "path": "apps/transaction/views/category_manager_view.py",
+    "file_name": "category_manager_view.py",
+    "functions": [
+      {
+        "name": "RoomCategoryManagerView::post",
+        "complexity": 16
+      }
+    ]
+  },
+  {
+    "path": "apps/transaction/views/transaction_create_view.py",
+    "file_name": "transaction_create_view.py",
+    "functions": [
+      {
+        "name": "TransactionCreateView::_attach_validation_error",
+        "complexity": 22
+      }
+    ]
+  },
+  {
+    "path": "apps/webpush/services/notification_send_test_service.py",
+    "file_name": "notification_send_test_service.py",
+    "functions": [
+      {
+        "name": "NotificationSendTestService::filter",
+        "complexity": 16
+      }
+    ]
+  },
+  {
+    "path": "scripts/check_palette_contrast.py",
+    "file_name": "check_palette_contrast.py",
+    "functions": [
+      {
+        "name": "read_themes",
+        "complexity": 18
+      },
+      {
+        "name": "failures",
+        "complexity": 29
+      }
+    ]
+  },
+  {
+    "path": "scripts/remove_all_assignments.py",
+    "file_name": "remove_all_assignments.py",
+    "functions": [
+      {
+        "name": "iter_python_files",
+        "complexity": 26
+      }
+    ]
+  },
+  {
+    "path": "scripts/remove_future_imports.py",
+    "file_name": "remove_future_imports.py",
+    "functions": [
+      {
+        "name": "iter_python_files",
+        "complexity": 26
+      }
+    ]
+  }
+]

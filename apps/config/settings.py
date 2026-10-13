@@ -9,7 +9,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import datetime
+import datetime as dt
 import logging
 import os
 import socket
@@ -573,8 +573,8 @@ CSRF_TRUSTED_ORIGINS = (FRONTEND_URL, BACKEND_URL)
 
 # AXES
 # ------------------------------------------------------------------------------
-def axes_cooloff_time(request: HttpRequest) -> datetime.timedelta:
-    return datetime.timedelta(0, LOGIN_TIMEDELTA)
+def axes_cooloff_time(request: HttpRequest) -> dt.timedelta:
+    return dt.timedelta(0, LOGIN_TIMEDELTA)
 
 
 LOGIN_TIMEDELTA = 15 * 60
