@@ -92,25 +92,5 @@
         "complexity": 29
       }
     ]
-  },
-  {
-    "path": "scripts/remove_all_assignments.py",
-    "file_name": "remove_all_assignments.py",
-    "functions": [
-      {
-        "name": "iter_python_files",
-        "complexity": 26
-      }
-    ]
-  },
-  {
-    "path": "scripts/remove_future_imports.py",
-    "file_name": "remove_future_imports.py",
-    "functions": [
-      {
-        "name": "iter_python_files",
-        "complexity": 26
-      }
-    ]
   }
 ]

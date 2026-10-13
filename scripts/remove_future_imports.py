@@ -42,27 +42,25 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def python_files_under(path: Path) -> Iterable[Path]:
+    if path.is_dir():
+        return path.rglob("*.py")
+    if path.is_file() and path.suffix == ".py":
+        return [path]
+    return []
+
+
 def iter_python_files(paths: Iterable[Path], *, exclude_dirs: Iterable[str]) -> Iterable[Path]:
     exclude_dirs = set(exclude_dirs)
     seen: set[Path] = set()
-    for path in paths:
-        if not path.exists():
+    for candidate in (candidate for path in paths for candidate in python_files_under(path)):
+        # Match the path as given, not the resolved one, so the checkout's own location never excludes it.
+        if any(part in exclude_dirs for part in candidate.parts):
             continue
-        if path.is_file() and path.suffix == ".py":
-            resolved = path.resolve()
-            if resolved in seen or any(part in exclude_dirs for part in resolved.parts):
-                continue
+        resolved = candidate.resolve()
+        if resolved not in seen:
             seen.add(resolved)
             yield resolved
-        elif path.is_dir():
-            for candidate in path.rglob("*.py"):
-                if any(part in exclude_dirs for part in candidate.parts):
-                    continue
-                resolved = candidate.resolve()
-                if resolved in seen:
-                    continue
-                seen.add(resolved)
-                yield resolved
 
 
 def merge_ranges(ranges: list[tuple[int, int]]) -> list[tuple[int, int]]:
