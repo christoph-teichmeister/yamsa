@@ -8,15 +8,5 @@
         "complexity": 17
       }
     ]
-  },
-  {
-    "path": "apps/transaction/views/category_manager_view.py",
-    "file_name": "category_manager_view.py",
-    "functions": [
-      {
-        "name": "RoomCategoryManagerView::post",
-        "complexity": 16
-      }
-    ]
   }
 ]

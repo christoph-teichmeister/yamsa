@@ -37,52 +37,57 @@ class RoomCategoryManagerView(RoomNotClosedRequiredMixin, RoomBaseContext, gener
         )
         return context
 
-    def post(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:  # noqa: PLR0911 - one early return per validated action/error case
-        action = request.POST.get("action")
+    def post(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
         service = self._get_service()
+        handler = {
+            "create": self._post_create,
+            "update": self._post_update,
+            "delete": self._post_delete,
+        }.get(request.POST.get("action"))
+        if handler is None:
+            return self.get(request, *args, **kwargs)
+        return handler(request, service)
 
-        if action == "create":
-            form = RoomCategoryCreateForm(request.POST)
-            if form.is_valid():
-                self._handle_create(service, form.cleaned_data)
-                return self._return_after_action()
-            if request.headers.get("HX-Request") == "true":
-                list_fragment = self._render_category_list_fragment()
-                creation_form_fragment = self._render_category_creation_form_fragment(form, is_oob=True)
-                return HttpResponse(list_fragment + creation_form_fragment)
-            return self.render_to_response(self._build_context(category_creation_form=form))
-
-        if action == "update":
-            form = RoomCategoryUpdateForm(request.POST)
-            if form.is_valid():
-                self._handle_update(service, form.cleaned_data)
-                return self._return_after_action()
-            failed_room_category_id = form.data.get("room_category_id")
-            logger.warning(
-                "RoomCategoryUpdateForm invalid for room %s: %s",
-                self.object.pk,
-                form.errors.as_json(),
-            )
-            self.request.toast_queue.error(_("Unable to update that category. Please correct the highlighted fields."))
-            if request.headers.get("HX-Request") == "true":
-                return self._render_category_list(update_form=form, failed_room_category_id=failed_room_category_id)
-            return self.render_to_response(
-                self._build_context(
-                    category_creation_form=RoomCategoryCreateForm(),
-                    category_update_form=form,
-                    failed_room_category_id=failed_room_category_id,
-                )
-            )
-
-        if action == "delete":
-            room_category_id = request.POST.get("room_category_id")
-            if room_category_id:
-                deleted_category = service.delete_room_category(int(room_category_id))
-                if deleted_category:
-                    self.request.toast_queue.success(self._get_category_deletion_success_message(deleted_category.name))
+    def _post_create(self, request: HttpRequest, service: RoomCategoryService) -> HttpResponse:
+        form = RoomCategoryCreateForm(request.POST)
+        if form.is_valid():
+            self._handle_create(service, form.cleaned_data)
             return self._return_after_action()
+        if request.headers.get("HX-Request") == "true":
+            list_fragment = self._render_category_list_fragment()
+            creation_form_fragment = self._render_category_creation_form_fragment(form, is_oob=True)
+            return HttpResponse(list_fragment + creation_form_fragment)
+        return self.render_to_response(self._build_context(category_creation_form=form))
 
-        return self.get(request, *args, **kwargs)
+    def _post_update(self, request: HttpRequest, service: RoomCategoryService) -> HttpResponse:
+        form = RoomCategoryUpdateForm(request.POST)
+        if form.is_valid():
+            self._handle_update(service, form.cleaned_data)
+            return self._return_after_action()
+        failed_room_category_id = form.data.get("room_category_id")
+        logger.warning(
+            "RoomCategoryUpdateForm invalid for room %s: %s",
+            self.object.pk,
+            form.errors.as_json(),
+        )
+        self.request.toast_queue.error(_("Unable to update that category. Please correct the highlighted fields."))
+        if request.headers.get("HX-Request") == "true":
+            return self._render_category_list(update_form=form, failed_room_category_id=failed_room_category_id)
+        return self.render_to_response(
+            self._build_context(
+                category_creation_form=RoomCategoryCreateForm(),
+                category_update_form=form,
+                failed_room_category_id=failed_room_category_id,
+            )
+        )
+
+    def _post_delete(self, request: HttpRequest, service: RoomCategoryService) -> HttpResponse:
+        room_category_id = request.POST.get("room_category_id")
+        if room_category_id:
+            deleted_category = service.delete_room_category(int(room_category_id))
+            if deleted_category:
+                self.request.toast_queue.success(self._get_category_deletion_success_message(deleted_category.name))
+        return self._return_after_action()
 
     def _return_after_action(self) -> HttpResponse:
         if self.request.headers.get("HX-Request") == "true":
