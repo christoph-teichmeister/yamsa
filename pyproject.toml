@@ -119,6 +119,9 @@ env = [
 [tool.coverage.html]
 directory = "coverage_html_report"
 
+[tool.complexipy]
+max-complexity-allowed = 15
+
 [tool.djlint]
 ignore = ["H021"]
 profile = "django"

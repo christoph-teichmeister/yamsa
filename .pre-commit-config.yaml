@@ -9,6 +9,13 @@ repos:
       - id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
 
+  - repo: https://github.com/rohaquinlop/complexipy-pre-commit
+    # https://github.com/rohaquinlop/complexipy-pre-commit/releases
+    rev: v8.0.1
+    hooks:
+      - id: complexipy
+        exclude: (^|/)migrations/
+
   - repo: https://github.com/djlint/djLint
     # https://github.com/djlint/djLint/releases
     rev: v1.46.3
