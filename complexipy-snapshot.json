@@ -10,16 +10,6 @@
     ]
   },
   {
-    "path": "apps/importer/parsers/splitwise.py",
-    "file_name": "splitwise.py",
-    "functions": [
-      {
-        "name": "SplitwiseCsvParser::_handle_row",
-        "complexity": 17
-      }
-    ]
-  },
-  {
     "path": "apps/transaction/views/category_manager_view.py",
     "file_name": "category_manager_view.py",
     "functions": [

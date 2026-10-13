@@ -169,7 +169,7 @@ class SplitwiseCsvParser(BaseImportParser):
             )
         return people
 
-    def _handle_row(  # noqa: C901, PLR0911 - Splitwise row shapes branch heavily, refactor candidate tracked separately
+    def _handle_row(  # noqa: PLR0911 - one early return per reason a row is skipped
         self,
         row: list[str],
         row_number: int,
@@ -187,28 +187,14 @@ class SplitwiseCsvParser(BaseImportParser):
 
         raw_date, raw_description, raw_category, raw_cost, raw_currency = cells[:FIXED_COLUMN_COUNT]
 
-        if not raw_cost:
-            # The Splitwise export ends with a "Gesamtbilanz" summary row that has no cost.
-            skip(_("Row without a cost value (e.g. the balance summary line)"))
+        date_and_cost = self._parse_date_and_cost(raw_date, raw_cost, skip)
+        if date_and_cost is None:
             return
+        paid_at, cost = date_and_cost
 
-        paid_at = self._parse_date(raw_date)
-        if paid_at is None:
-            skip(_("Unreadable date '%(value)s'") % {"value": raw_date})
+        nets = self._parse_nets(cells, people, skip)
+        if nets is None:
             return
-
-        cost = self._parse_decimal(raw_cost)
-        if cost is None:
-            skip(_("Unreadable cost '%(value)s'") % {"value": raw_cost})
-            return
-
-        nets: list[Decimal] = []
-        for offset, label in people:
-            value = self._parse_decimal(cells[FIXED_COLUMN_COUNT + offset] or "0")
-            if value is None:
-                skip(_("Unreadable value for %(person)s") % {"person": label})
-                return
-            nets.append(value)
 
         if abs(sum(nets, Decimal(0))) > BALANCE_TOLERANCE:
             skip(_("The person columns do not cancel out"))
@@ -231,15 +217,9 @@ class SplitwiseCsvParser(BaseImportParser):
             skip(_("Cost is zero or negative"))
             return
 
-        payer_indexes = [index for index, value in enumerate(nets) if value > 0]
-        if not payer_indexes:
-            skip(_("No payer — everybody covered their own share"))
+        payer_index = self._single_payer_index(nets, skip)
+        if payer_index is None:
             return
-        if len(payer_indexes) > 1:
-            skip(_("More than one payer, which a single transaction cannot represent"))
-            return
-
-        payer_index = payer_indexes[0]
         shares = self._build_shares(people=people, nets=nets, cost=cost, payer_index=payer_index)
         if shares is None:
             skip(_("The shares do not add up to the cost"))
@@ -259,6 +239,46 @@ class SplitwiseCsvParser(BaseImportParser):
                 shares=shares,
             )
         )
+
+    def _parse_date_and_cost(
+        self, raw_date: str, raw_cost: str, skip: Callable[[str], None]
+    ) -> tuple[date, Decimal] | None:
+        if not raw_cost:
+            # The Splitwise export ends with a "Gesamtbilanz" summary row that has no cost.
+            skip(_("Row without a cost value (e.g. the balance summary line)"))
+            return None
+        paid_at = self._parse_date(raw_date)
+        if paid_at is None:
+            skip(_("Unreadable date '%(value)s'") % {"value": raw_date})
+            return None
+        cost = self._parse_decimal(raw_cost)
+        if cost is None:
+            skip(_("Unreadable cost '%(value)s'") % {"value": raw_cost})
+            return None
+        return paid_at, cost
+
+    def _parse_nets(
+        self, cells: list[str], people: list[tuple[int, str]], skip: Callable[[str], None]
+    ) -> list[Decimal] | None:
+        nets: list[Decimal] = []
+        for offset, label in people:
+            value = self._parse_decimal(cells[FIXED_COLUMN_COUNT + offset] or "0")
+            if value is None:
+                skip(_("Unreadable value for %(person)s") % {"person": label})
+                return None
+            nets.append(value)
+        return nets
+
+    @staticmethod
+    def _single_payer_index(nets: list[Decimal], skip: Callable[[str], None]) -> int | None:
+        payer_indexes = [index for index, value in enumerate(nets) if value > 0]
+        if not payer_indexes:
+            skip(_("No payer — everybody covered their own share"))
+            return None
+        if len(payer_indexes) > 1:
+            skip(_("More than one payer, which a single transaction cannot represent"))
+            return None
+        return payer_indexes[0]
 
     def _handle_settlement(
         self,
