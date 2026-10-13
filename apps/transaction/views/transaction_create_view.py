@@ -113,28 +113,19 @@ class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, 
         error_dict = getattr(exc, "error_dict", None)
         if error_dict:
             for field_name, errors in error_dict.items():
-                target_field = None if field_name == NON_FIELD_ERRORS else field_name
-                for error in errors:
-                    form.add_error(target_field, error)
+                form.add_error(None if field_name == NON_FIELD_ERRORS else field_name, errors)
             return True
 
         error_list = getattr(exc, "error_list", None)
-        if error_list:
-            receipt_errors = []
-            for error in error_list:
-                message = str(error).lower()
-                if "receipt" in message:
-                    receipt_errors.append(error)
-            if receipt_errors:
-                for error in receipt_errors:
-                    form.add_error("receipts", error)
-                return True
+        if not error_list:
+            return False
 
-            for error in error_list:
-                form.add_error(None, error)
-            return True
-
-        return False
+        receipt_errors = [error for error in error_list if "receipt" in str(error).lower()]
+        if receipt_errors:
+            form.add_error("receipts", receipt_errors)
+        else:
+            form.add_error(None, error_list)
+        return True
 
     def _get_toast_error_message(self, form: TransactionCreateForm | None) -> str | None:
         non_field_errors = form.non_field_errors()

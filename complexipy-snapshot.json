@@ -50,16 +50,6 @@
     ]
   },
   {
-    "path": "apps/transaction/views/transaction_create_view.py",
-    "file_name": "transaction_create_view.py",
-    "functions": [
-      {
-        "name": "TransactionCreateView::_attach_validation_error",
-        "complexity": 22
-      }
-    ]
-  },
-  {
     "path": "apps/webpush/services/notification_send_test_service.py",
     "file_name": "notification_send_test_service.py",
     "functions": [
