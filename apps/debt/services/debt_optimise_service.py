@@ -1,4 +1,5 @@
 from collections import defaultdict, deque
+from collections.abc import Iterable
 from decimal import Decimal
 
 from django.db.models import F, Sum
@@ -12,7 +13,7 @@ class DebtOptimiseService:
     """Service responsible for refreshing unsettled debts for a room from current transactions."""
 
     @staticmethod
-    def process(room_id: int) -> None:  # noqa: C901, PLR0912, PLR0915 - debt-settlement algorithm, refactor candidate tracked separately
+    def process(room_id: int) -> None:
         """Rebuild the unsettled squad of debts for the requested room.
 
         Steps:
@@ -21,118 +22,78 @@ class DebtOptimiseService:
         3. Fold settled debts back into those aggregates so existing settlements are preserved.
         4. Pair debtors with creditors per currency and create fresh Debt records for the residual transfers.
         """
-        # Delete all unsettled debts of the room
         Debt.objects.filter(room_id=room_id).filter(settled=False).delete()
 
-        # Keep a reference to already settled debts so we can reapply their values later.
-        settled_debts_qs = Debt.objects.filter(room_id=room_id, settled=True)
+        balances_by_currency = DebtOptimiseService._balances_by_currency(room_id)
 
-        # Work with all child transactions within the room to build per-user balances.
-        child_transactions_qs = ChildTransaction.objects.filter(parent_transaction__room_id=room_id)
+        Debt.objects.bulk_create(
+            Debt(
+                debitor_id=debtor,
+                creditor_id=creditor,
+                room_id=room_id,
+                value=transfer_amount,
+                currency_id=currency.id,
+            )
+            for currency in Currency.objects.filter(id__in=balances_by_currency.keys())
+            for debtor, creditor, transfer_amount in DebtOptimiseService._transfers(balances_by_currency[currency.id])
+        )
 
+    @staticmethod
+    def _balances_by_currency(room_id: int) -> dict[int, dict[int, Decimal]]:
+        """Net balance per currency and user: positive means the user is owed money."""
         balances_by_currency = defaultdict(lambda: defaultdict(lambda: Decimal(0)))
 
-        # Users who paid with their own money for others contribute to a positive balance.
-        spent_annotations = (
+        def apply(rows: Iterable[dict], user_key: str, sign: int) -> None:
+            for row in rows:
+                balances_by_currency[row["currency_id"]][row[user_key]] += sign * row["total"]
+
+        child_transactions_qs = ChildTransaction.objects.filter(parent_transaction__room_id=room_id)
+        apply(
             child_transactions_qs.exclude(paid_for_id=F("parent_transaction__paid_by_id"))
-            .values(
-                currency_id=F("parent_transaction__currency_id"),
-                user_id=F("parent_transaction__paid_by_id"),
-            )
-            .annotate(total_spent=Sum("value"))
+            .values(currency_id=F("parent_transaction__currency_id"), user_id=F("parent_transaction__paid_by_id"))
+            .annotate(total=Sum("value")),
+            "user_id",
+            1,
         )
-        for entry in spent_annotations:
-            currency_id = entry["currency_id"]
-            user_id = entry["user_id"]
-            balances_by_currency[currency_id][user_id] += entry["total_spent"]
-
-        # Users who were paid for by another party owe money (negative contribution).
-        owed_annotations = (
+        apply(
             child_transactions_qs.exclude(parent_transaction__paid_by_id=F("paid_for_id"))
-            .values(
-                currency_id=F("parent_transaction__currency_id"),
-                user_id=F("paid_for_id"),
-            )
-            .annotate(total_owed=Sum("value"))
+            .values(currency_id=F("parent_transaction__currency_id"), user_id=F("paid_for_id"))
+            .annotate(total=Sum("value")),
+            "user_id",
+            -1,
         )
-        for entry in owed_annotations:
-            currency_id = entry["currency_id"]
-            user_id = entry["user_id"]
-            balances_by_currency[currency_id][user_id] -= entry["total_owed"]
 
-        # Add back settled debitor totals so their negative movement is not lost.
-        settled_debitor_annotations = settled_debts_qs.values("currency_id", "debitor_id").annotate(
-            total_settled=Sum("value")
+        # Settled debts already moved money, so they offset the transaction-based balances.
+        settled_debts_qs = Debt.objects.filter(room_id=room_id, settled=True)
+        apply(settled_debts_qs.values("currency_id", "debitor_id").annotate(total=Sum("value")), "debitor_id", 1)
+        apply(settled_debts_qs.values("currency_id", "creditor_id").annotate(total=Sum("value")), "creditor_id", -1)
+
+        return balances_by_currency
+
+    @staticmethod
+    def _transfers(currency_balances: dict[int, Decimal]) -> list[tuple[int, int, Decimal]]:
+        """Greedily pair the largest debtors with the largest creditors into (debtor, creditor, amount) transfers."""
+        balances = {person: balance for person, balance in currency_balances.items() if balance != Decimal(0)}
+        debtors_queue = deque(sorted(((p, b) for p, b in balances.items() if b < 0), key=lambda x: x[1]))
+        creditors_queue = deque(
+            sorted(((p, b) for p, b in balances.items() if b > 0), key=lambda x: x[1], reverse=True)
         )
-        for entry in settled_debitor_annotations:
-            balances_by_currency[entry["currency_id"]][entry["debitor_id"]] += entry["total_settled"]
 
-        # Subtract settled creditor totals because they already received the funds.
-        settled_creditor_annotations = settled_debts_qs.values("currency_id", "creditor_id").annotate(
-            total_settled=Sum("value")
-        )
-        for entry in settled_creditor_annotations:
-            balances_by_currency[entry["currency_id"]][entry["creditor_id"]] -= entry["total_settled"]
+        transfers = []
+        while debtors_queue and creditors_queue:
+            debtor, debt = debtors_queue.popleft()
+            creditor, credit = creditors_queue.popleft()
 
-        currencies_qs = Currency.objects.filter(id__in=balances_by_currency.keys())
+            transfer_amount = min(-debt, credit)
+            debt += transfer_amount
+            credit -= transfer_amount
+            # Zero transfers can occur from rounding or exact cancellations.
+            if transfer_amount != Decimal(0):
+                transfers.append((debtor, creditor, transfer_amount))
 
-        # Iterate through every currency to keep currency-specific debts separate.
-        for currency in currencies_qs:
-            currency_id = currency.id
-            currency_balances = balances_by_currency.get(currency_id, {})
-            # Drop users whose net balance is zero after aggregations.
-            balances = {person: balance for person, balance in currency_balances.items() if balance != Decimal(0)}
-            if not balances:
-                continue
+            if debt != 0:
+                debtors_queue.append((debtor, debt))
+            if credit != 0:
+                creditors_queue.append((creditor, credit))
 
-            debtors = []
-            creditors = []
-
-            for person, balance in balances.items():
-                if balance < 0:
-                    debtors.append((person, balance))
-                elif balance > 0:
-                    creditors.append((person, balance))
-
-            # Sort debtors ascending (most negative first) and creditors descending (largest positive first).
-            debtors.sort(key=lambda x: x[1])
-            creditors.sort(key=lambda x: x[1], reverse=True)
-            transactions_list = []
-
-            debtors_queue = deque(debtors)
-            creditors_queue = deque(creditors)
-
-            while debtors_queue and creditors_queue:
-                debtor, debt = debtors_queue.popleft()
-                creditor, credit = creditors_queue.popleft()
-
-                transfer_amount = min(-debt, credit)
-                balances[debtor] += transfer_amount
-                debt += transfer_amount
-
-                balances[creditor] -= transfer_amount
-                credit -= transfer_amount
-
-                transactions_list.append((debtor, creditor, transfer_amount))
-
-                # If a participant still has a residual balance, put them back into the queue.
-                if balances[debtor] != 0:
-                    debtors_queue.append((debtor, debt))
-                if balances[creditor] != 0:
-                    creditors_queue.append((creditor, credit))
-
-            debts_to_create = []
-            for debtor, creditor, transfer_amount in transactions_list:
-                # Skip zero transfers that can occur from rounding or exact cancellations.
-                if transfer_amount != Decimal(0):
-                    debts_to_create.append(
-                        Debt(
-                            debitor_id=debtor,
-                            creditor_id=creditor,
-                            room_id=room_id,
-                            value=transfer_amount,
-                            currency_id=currency_id,
-                        ),
-                    )
-
-            Debt.objects.bulk_create(debts_to_create)
+        return transfers

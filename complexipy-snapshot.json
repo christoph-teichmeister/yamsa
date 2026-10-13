@@ -20,16 +20,6 @@
     ]
   },
   {
-    "path": "apps/debt/services/debt_optimise_service.py",
-    "file_name": "debt_optimise_service.py",
-    "functions": [
-      {
-        "name": "DebtOptimiseService::process",
-        "complexity": 30
-      }
-    ]
-  },
-  {
     "path": "apps/importer/forms/import_preview_form.py",
     "file_name": "import_preview_form.py",
     "functions": [
