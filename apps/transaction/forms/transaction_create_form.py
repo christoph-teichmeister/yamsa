@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
+from django.core.files.uploadedfile import UploadedFile
 from django.http import HttpRequest
 
 from apps.room.models import Room
@@ -82,43 +83,20 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
         return cleaned_data
 
     def clean_receipts(self) -> list:
-        field_name = self.add_prefix("receipts")
-        uploaded_files = self.files.getlist(field_name)
-        cleaned_files = []
+        uploaded_files = self.files.getlist(self.add_prefix("receipts"))
         errors = []
-
         for uploaded_file in uploaded_files:
-            content_type = getattr(uploaded_file, "content_type", None)
-            if not content_type:
-                content_type, _ = mimetypes.guess_type(uploaded_file.name)
-            if not content_type:
-                content_type = "application/octet-stream"
-            uploaded_file.content_type = content_type
-
-            file_errors = []
-
-            if content_type not in RECEIPT_ACCEPTED_CONTENT_TYPES:
-                file_errors.append(
-                    forms.ValidationError(
-                        "Receipts must be PDF or an image (PNG, JPEG, WebP, GIF).",
-                        code="invalid_content_type",
-                    )
-                )
-
-            if uploaded_file.size > MAX_RECEIPT_SIZE:
-                file_errors.append(
-                    forms.ValidationError("Each receipt must be 5 MB or smaller.", code="file_too_large")
-                )
-
-            if file_errors:
-                errors.extend(file_errors)
-            else:
-                cleaned_files.append(uploaded_file)
+            uploaded_file.content_type = (
+                getattr(uploaded_file, "content_type", None)
+                or mimetypes.guess_type(uploaded_file.name)[0]
+                or "application/octet-stream"
+            )
+            errors += self._receipt_errors(uploaded_file)
 
         if errors:
             raise forms.ValidationError(errors)
 
-        if cleaned_files:
+        if uploaded_files:
             uploader = getattr(self._request, "user", None)
             if not uploader or not uploader.is_authenticated:
                 raise forms.ValidationError(
@@ -126,7 +104,21 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
                     code="authentication_required",
                 )
 
-        return cleaned_files
+        return uploaded_files
+
+    @staticmethod
+    def _receipt_errors(uploaded_file: UploadedFile) -> list[forms.ValidationError]:
+        errors = []
+        if uploaded_file.content_type not in RECEIPT_ACCEPTED_CONTENT_TYPES:
+            errors.append(
+                forms.ValidationError(
+                    "Receipts must be PDF or an image (PNG, JPEG, WebP, GIF).",
+                    code="invalid_content_type",
+                )
+            )
+        if uploaded_file.size > MAX_RECEIPT_SIZE:
+            errors.append(forms.ValidationError("Each receipt must be 5 MB or smaller.", code="file_too_large"))
+        return errors
 
     def save(self, commit: bool = True) -> ParentTransaction:
         instance: ParentTransaction = super().save(commit)

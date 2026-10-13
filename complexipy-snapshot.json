@@ -30,16 +30,6 @@
     ]
   },
   {
-    "path": "apps/transaction/forms/transaction_create_form.py",
-    "file_name": "transaction_create_form.py",
-    "functions": [
-      {
-        "name": "TransactionCreateForm::clean_receipts",
-        "complexity": 17
-      }
-    ]
-  },
-  {
     "path": "apps/transaction/views/category_manager_view.py",
     "file_name": "category_manager_view.py",
     "functions": [
