@@ -1,15 +1,5 @@
 [
   {
-    "path": "apps/core/event_loop/registry.py",
-    "file_name": "registry.py",
-    "functions": [
-      {
-        "name": "MessageRegistry::autodiscover",
-        "complexity": 22
-      }
-    ]
-  },
-  {
     "path": "apps/core/management/commands/create_intensive_test_data.py",
     "file_name": "create_intensive_test_data.py",
     "functions": [
