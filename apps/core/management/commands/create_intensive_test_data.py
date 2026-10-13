@@ -15,6 +15,7 @@ from apps.debt.models import Debt
 from apps.room.models import Room, UserConnectionToRoom
 from apps.transaction.models import Category, ChildTransaction, ParentTransaction, RoomCategory
 from apps.transaction.models.constants import BASE_CATEGORY_SLUGS, DEFAULT_CATEGORY_SLUG
+from apps.transaction.utils import split_amount_exact
 
 MIN_MEMBERS_FOR_TRANSACTION = 2
 
@@ -274,38 +275,19 @@ class Command(BaseCommand):
             creator = config["creator"]
 
             for day_offset, (desc, cat_slug, payer_idx, split_idxs, total_amount) in enumerate(_TRANSACTION_SCENARIOS):
-                payer_id = member_ids[payer_idx % len(member_ids)]
-
-                seen = set()
-                unique_split_ids = []
-                for i in split_idxs:
-                    uid = member_ids[i % len(member_ids)]
-                    if uid not in seen:
-                        seen.add(uid)
-                        unique_split_ids.append(uid)
-
-                category = categories.get(cat_slug, categories[DEFAULT_CATEGORY_SLUG])
+                # Indexes wrap around in small rooms, so the same member can come up twice.
+                split_ids = list(dict.fromkeys(member_ids[i % len(member_ids)] for i in split_idxs))
 
                 parent = ParentTransaction.objects.create(
                     description=desc,
-                    paid_by_id=payer_id,
+                    paid_by_id=member_ids[payer_idx % len(member_ids)],
                     room=room,
                     currency=currency,
-                    category=category,
+                    category=categories.get(cat_slug, categories[DEFAULT_CATEGORY_SLUG]),
                     paid_at=base_date + timedelta(days=day_offset),
                     created_by_id=creator.id,
                 )
-
-                # Convert to cents to avoid rounding issues
-                total_cents = int(total_amount * 100)
-                num_split = len(unique_split_ids)
-                base_share_cents, remainder_cents = divmod(total_cents, num_split)
-
-                for idx, uid in enumerate(unique_split_ids):
-                    # Add one extra cent to the first 'remainder_cents' children
-                    share_cents = base_share_cents + (1 if idx < remainder_cents else 0)
-                    share_value = Decimal(share_cents) / Decimal(100)
-
+                for uid, share_value in zip(split_ids, split_amount_exact(total_amount, len(split_ids)), strict=True):
                     ChildTransaction.objects.create(
                         parent_transaction=parent,
                         paid_for_id=uid,

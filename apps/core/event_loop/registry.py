@@ -61,32 +61,32 @@ class MessageRegistry:
         if len(self.command_dict) + len(self.event_dict) > 0:
             return
 
-        # Import all notification.pys in all installed apps to trigger notification class registration via decorator
         for app in settings.INSTALLED_APPS:
-            if app[:5] != "apps.":
-                continue
-            custom_package = app.replace("apps.", "")
-            for message_type in ["commands", "events"]:
-                try:
-                    for module in (settings.APPS_DIR / custom_package / "handlers" / message_type).iterdir():
-                        if module.suffix == ".py":
-                            with contextlib.suppress(ModuleNotFoundError):
-                                importlib.import_module(f"{app}.handlers.{message_type}.{module.stem}")
-                except FileNotFoundError:
-                    pass
+            if app.startswith("apps."):
+                self._import_handler_modules(app)
 
-        # Log to shell which functions have been detected
-        print("\nMessage autodiscovery running for commands...")
-        for command in self.command_dict:
-            handler_list = ", ".join(x.__name__ for x in self.command_dict[command])
-            print(f"* {command.__name__}: [{handler_list}]")
-
-        print("\nMessage autodiscovery running for events...")
-        for event in self.event_dict:
-            handler_list = ", ".join(x.__name__ for x in self.event_dict[event])
-            print(f"* {event.__name__}: [{handler_list}]")
-
+        self._log_detected("commands", self.command_dict)
+        self._log_detected("events", self.event_dict)
         print(f"\n### {len(self.command_dict) + len(self.event_dict)} message functions detected. ###\n")
+
+    @staticmethod
+    def _import_handler_modules(app: str) -> None:
+        """Import the app's handler modules so their "register_*" decorators run."""
+        for message_type in ("commands", "events"):
+            handler_dir = settings.APPS_DIR / app.removeprefix("apps.") / "handlers" / message_type
+            if not handler_dir.is_dir():
+                continue
+            for module in handler_dir.iterdir():
+                if module.suffix == ".py":
+                    with contextlib.suppress(ModuleNotFoundError):
+                        importlib.import_module(f"{app}.handlers.{message_type}.{module.stem}")
+
+    @staticmethod
+    def _log_detected(message_type: str, message_dict: dict) -> None:
+        print(f"\nMessage autodiscovery running for {message_type}...")
+        for message, handlers in message_dict.items():
+            handler_list = ", ".join(handler.__name__ for handler in handlers)
+            print(f"* {message.__name__}: [{handler_list}]")
 
 
 message_registry = MessageRegistry()

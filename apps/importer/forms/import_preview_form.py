@@ -102,7 +102,6 @@ class ImportPreviewForm(forms.Form):
 
     def _clean_people(self, cleaned_data: dict) -> None:
         assignments: list[PersonAssignment] = []
-        me_count = 0
         seen_user_ids: set[int] = set()
         seen_guest_names: set[str] = set()
 
@@ -111,38 +110,45 @@ class ImportPreviewForm(forms.Form):
             choice = cleaned_data.get(field_name)
             if not choice:
                 continue
-
             if choice == PersonAssignment.ME:
-                me_count += 1
-                assignments.append(PersonAssignment(column=person, kind=PersonAssignment.ME))
-                continue
+                assignment = PersonAssignment(column=person, kind=PersonAssignment.ME)
+            elif choice == PersonAssignment.GUEST:
+                assignment = self._guest_assignment(cleaned_data, field_name, person, seen_guest_names)
+            else:
+                assignment = self._user_assignment(choice, field_name, person, seen_user_ids)
+            if assignment is not None:
+                assignments.append(assignment)
 
-            if choice == PersonAssignment.GUEST:
-                # The fallback is the file's column heading, which carries no length bound of its own.
-                guest_name = (cleaned_data.get(f"{field_name}_name") or person).strip()[:GUEST_NAME_MAX_LENGTH]
-                if not guest_name:
-                    self.add_error(f"{field_name}_name", _("Please provide a name for this guest."))
-                    continue
-                if guest_name.casefold() in seen_guest_names:
-                    self.add_error(f"{field_name}_name", _("This guest name is already used for another column."))
-                    continue
-                seen_guest_names.add(guest_name.casefold())
-                assignments.append(PersonAssignment(column=person, kind=PersonAssignment.GUEST, guest_name=guest_name))
-                continue
-
-            # Safe without a further check: ChoiceField.validate() already rejected anything the
-            # candidate list did not produce, so an arbitrary pk cannot reach this line.
-            user_id = int(choice.removeprefix("user-"))
-            if user_id in seen_user_ids:
-                self.add_error(field_name, _("This person is already assigned to another column."))
-                continue
-            seen_user_ids.add(user_id)
-            assignments.append(PersonAssignment(column=person, kind=PersonAssignment.EXISTING, user_id=user_id))
-
-        if me_count != 1:
+        if sum(assignment.kind == PersonAssignment.ME for assignment in assignments) != 1:
             raise forms.ValidationError(_("Mark exactly one column as 'That is me'."))
 
         cleaned_data["person_assignments"] = assignments
+
+    def _guest_assignment(
+        self, cleaned_data: dict, field_name: str, person: str, seen_guest_names: set[str]
+    ) -> PersonAssignment | None:
+        # The fallback is the file's column heading, which carries no length bound of its own.
+        guest_name = (cleaned_data.get(f"{field_name}_name") or person).strip()[:GUEST_NAME_MAX_LENGTH]
+        if not guest_name:
+            self.add_error(f"{field_name}_name", _("Please provide a name for this guest."))
+            return None
+        if guest_name.casefold() in seen_guest_names:
+            self.add_error(f"{field_name}_name", _("This guest name is already used for another column."))
+            return None
+        seen_guest_names.add(guest_name.casefold())
+        return PersonAssignment(column=person, kind=PersonAssignment.GUEST, guest_name=guest_name)
+
+    def _user_assignment(
+        self, choice: str, field_name: str, person: str, seen_user_ids: set[int]
+    ) -> PersonAssignment | None:
+        # Safe without a further check: ChoiceField.validate() already rejected anything the
+        # candidate list did not produce, so an arbitrary pk cannot reach this line.
+        user_id = int(choice.removeprefix("user-"))
+        if user_id in seen_user_ids:
+            self.add_error(field_name, _("This person is already assigned to another column."))
+            return None
+        seen_user_ids.add(user_id)
+        return PersonAssignment(column=person, kind=PersonAssignment.EXISTING, user_id=user_id)
 
     def _clean_categories(self, cleaned_data: dict) -> None:
         assignments: list[CategoryAssignment] = []

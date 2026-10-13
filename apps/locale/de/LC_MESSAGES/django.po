@@ -673,6 +673,9 @@ msgstr "Kategoriename"
 msgid "Emoji"
 msgstr "Emoji"
 
+msgid "Mark exactly one column as 'That is me'."
+msgstr "Markiere genau eine Spalte als „Das bin ich“."
+
 msgid "Please provide a name for this guest."
 msgstr "Bitte gib einen Namen für diesen Gast an."
 
@@ -681,9 +684,6 @@ msgstr "Dieser Gastname ist bereits einer anderen Spalte zugeordnet."
 
 msgid "This person is already assigned to another column."
 msgstr "Diese Person ist bereits einer anderen Spalte zugeordnet."
-
-msgid "Mark exactly one column as 'That is me'."
-msgstr "Markiere genau eine Spalte als „Das bin ich“."
 
 msgid "Please provide a name for this category."
 msgstr "Bitte gib einen Namen für diese Kategorie an."
@@ -721,6 +721,18 @@ msgstr "Die Datei konnte nicht als CSV gelesen werden."
 msgid "No person columns found. A Splitwise export has one column per person after the currency column."
 msgstr "Keine Personenspalten gefunden. Ein Splitwise-Export hat nach der Währungsspalte eine Spalte je Person."
 
+msgid "The person columns do not cancel out"
+msgstr "Die Personenspalten heben sich nicht auf"
+
+msgid "Cost is zero or negative"
+msgstr "Kosten sind null oder negativ"
+
+msgid "The shares do not add up to the cost"
+msgstr "Die Anteile ergeben nicht die Kosten"
+
+msgid "Import"
+msgstr "Import"
+
 msgid "Row without a cost value (e.g. the balance summary line)"
 msgstr "Zeile ohne Kostenwert (z. B. die Gesamtbilanz-Zeile)"
 
@@ -736,23 +748,11 @@ msgstr "Unlesbare Kosten „%(value)s“"
 msgid "Unreadable value for %(person)s"
 msgstr "Unlesbarer Wert für %(person)s"
 
-msgid "The person columns do not cancel out"
-msgstr "Die Personenspalten heben sich nicht auf"
-
-msgid "Cost is zero or negative"
-msgstr "Kosten sind null oder negativ"
-
 msgid "No payer — everybody covered their own share"
 msgstr "Kein Zahler — alle haben ihren eigenen Anteil selbst getragen"
 
 msgid "More than one payer, which a single transaction cannot represent"
 msgstr "Mehr als ein Zahler, das kann eine einzelne Transaktion nicht abbilden"
-
-msgid "The shares do not add up to the cost"
-msgstr "Die Anteile ergeben nicht die Kosten"
-
-msgid "Import"
-msgstr "Import"
 
 msgid "A settlement needs exactly one payer and one recipient"
 msgstr "Eine Ausgleichszahlung braucht genau einen Zahler und einen Empfänger"

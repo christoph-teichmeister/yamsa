@@ -88,80 +88,106 @@ def hue(color: str) -> int:
     return round(colorsys.rgb_to_hls(red, green, blue)[0] * 360)
 
 
-def read_themes(css: str) -> dict[str, dict[str, str]]:  # noqa: C901 - dev script, refactor candidate tracked separately
+def read_themes(css: str) -> dict[str, dict[str, str]]:
     """Resolve the `--yamsa-*` tokens per theme, following the `rgb(var(--…-rgb))` indirection."""
+    themes, shared = _declared_tokens(css)
+    for theme in themes.values():
+        for name, value in shared.items():
+            theme.setdefault(name, value)
+        for name, value in list(theme.items()):
+            theme[name] = _resolve(value, theme)
+    return themes
+
+
+def _declared_tokens(css: str) -> tuple[dict[str, dict[str, str]], dict[str, str]]:
+    """The tokens each theme block declares, plus the `:root` ones both themes share."""
     themes: dict[str, dict[str, str]] = {"light": {}, "dark": {}}
     shared: dict[str, str] = {}
-
     for match in BLOCK_PATTERN.finditer(COMMENT_PATTERN.sub("", css)):
         # Everything up to the last statement is an at-rule that happens to precede this block -
         # `@custom-variant dark ([data-theme="dark"] &);` would otherwise read as the selector.
         selector = match.group("selector").split(";")[-1]
         declarations = dict(DECLARATION_PATTERN.findall(match.group("body")))
-        if not declarations:
-            continue
         if 'data-theme="dark"' in selector:
             themes["dark"].update(declarations)
         elif 'data-theme="light"' in selector:
             themes["light"].update(declarations)
         elif ":root" in selector:
             shared.update(declarations)
-
-    for theme in themes.values():
-        for name, value in shared.items():
-            theme.setdefault(name, value)
-        for name, value in list(theme.items()):
-            reference = re.fullmatch(r"rgb\(var\(--yamsa-([a-z-]+)\)\)", value.strip())
-            if reference:
-                theme[name] = theme[reference.group(1)]
-            # `rgb(var(--yamsa-brand-rgb), 0.12)` keeps its alpha but needs the triplet inlined.
-            tinted = re.fullmatch(r"rgb\(var\(--yamsa-([a-z-]+)\),\s*([\d.]+)\)", value.strip())
-            if tinted:
-                red, green, blue = _channels(theme[tinted.group(1)])
-                theme[name] = f"rgb({red} {green} {blue} / {tinted.group(2)})"
-    return themes
+    return themes, shared
 
 
-def failures(themes: dict[str, dict[str, str]]) -> list[str]:  # noqa: C901 - dev script, refactor candidate tracked separately
-    found: list[str] = []
-    for name, tokens in themes.items():
-        for ground in GROUNDS:
-            for token in TEXT_TOKENS:
-                ratio = contrast(tokens[token], tokens[ground])
-                if ratio < BODY_TEXT_RATIO:
-                    found.append(f"{name}: {token} on {ground} is {ratio:.2f}:1, needs {BODY_TEXT_RATIO}:1")
+def _resolve(value: str, theme: dict[str, str]) -> str:
+    reference = re.fullmatch(r"rgb\(var\(--yamsa-([a-z-]+)\)\)", value.strip())
+    if reference:
+        return theme[reference.group(1)]
+    # `rgb(var(--yamsa-brand-rgb), 0.12)` keeps its alpha but needs the triplet inlined.
+    tinted = re.fullmatch(r"rgb\(var\(--yamsa-([a-z-]+)\),\s*([\d.]+)\)", value.strip())
+    if tinted:
+        red, green, blue = _channels(theme[tinted.group(1)])
+        return f"rgb({red} {green} {blue} / {tinted.group(2)})"
+    return value
 
-        for tint_name in TINTED:
-            for ground in GROUNDS:
-                tint = flatten(tokens[f"{tint_name}-soft"], tokens[ground])
-                ratio = contrast(tokens[f"{tint_name}-text"], tint)
-                if ratio < BODY_TEXT_RATIO:
-                    found.append(
-                        f"{name}: {tint_name}-text on {tint_name}-soft over {ground} ({tint}) is "
-                        f"{ratio:.2f}:1, needs {BODY_TEXT_RATIO}:1"
-                    )
 
-        checks = (
-            ("on-brand", "brand", BODY_TEXT_RATIO, "a button label on the brand fill"),
-            ("on-brand", "brand-hover", BODY_TEXT_RATIO, "a button label on the hovered brand fill"),
-            ("brand", "surface", NON_TEXT_RATIO, "the focus ring on a surface"),
-            ("line-strong", "surface", NON_TEXT_RATIO, "a control border on a surface"),
-        )
-        for first, second, needed, label in checks:
-            ratio = contrast(tokens[first], tokens[second])
-            if ratio < needed:
-                found.append(f"{name}: {label} is {ratio:.2f}:1, needs {needed}:1")
-
-        hues = {token: hue(tokens[token]) for token in NEUTRALS}
-        spread = max(hues.values()) - min(hues.values())
-        if spread > MAX_HUE_SPREAD:
-            found.append(f"{name}: the neutrals span {spread}° of hue ({hues}), at most {MAX_HUE_SPREAD}°")
-
+def failures(themes: dict[str, dict[str, str]]) -> list[str]:
+    found = [
+        failure
+        for name, tokens in themes.items()
+        for check in (_text_failures, _tint_failures, _control_failures, _neutral_hue_failures)
+        for failure in check(name, tokens)
+    ]
     light = sum(hue(themes["light"][token]) for token in NEUTRALS) / len(NEUTRALS)
     dark = sum(hue(themes["dark"][token]) for token in NEUTRALS) / len(NEUTRALS)
     if abs(light - dark) > MAX_HUE_SPREAD:
         found.append(f"the two themes sit {abs(light - dark):.0f}° apart in hue, at most {MAX_HUE_SPREAD}°")
     return found
+
+
+def _text_failures(name: str, tokens: dict[str, str]) -> list[str]:
+    found = []
+    for ground in GROUNDS:
+        for token in TEXT_TOKENS:
+            ratio = contrast(tokens[token], tokens[ground])
+            if ratio < BODY_TEXT_RATIO:
+                found.append(f"{name}: {token} on {ground} is {ratio:.2f}:1, needs {BODY_TEXT_RATIO}:1")
+    return found
+
+
+def _tint_failures(name: str, tokens: dict[str, str]) -> list[str]:
+    found = []
+    for tint_name in TINTED:
+        for ground in GROUNDS:
+            tint = flatten(tokens[f"{tint_name}-soft"], tokens[ground])
+            ratio = contrast(tokens[f"{tint_name}-text"], tint)
+            if ratio < BODY_TEXT_RATIO:
+                found.append(
+                    f"{name}: {tint_name}-text on {tint_name}-soft over {ground} ({tint}) is "
+                    f"{ratio:.2f}:1, needs {BODY_TEXT_RATIO}:1"
+                )
+    return found
+
+
+def _control_failures(name: str, tokens: dict[str, str]) -> list[str]:
+    checks = (
+        ("on-brand", "brand", BODY_TEXT_RATIO, "a button label on the brand fill"),
+        ("on-brand", "brand-hover", BODY_TEXT_RATIO, "a button label on the hovered brand fill"),
+        ("brand", "surface", NON_TEXT_RATIO, "the focus ring on a surface"),
+        ("line-strong", "surface", NON_TEXT_RATIO, "a control border on a surface"),
+    )
+    found = []
+    for first, second, needed, label in checks:
+        ratio = contrast(tokens[first], tokens[second])
+        if ratio < needed:
+            found.append(f"{name}: {label} is {ratio:.2f}:1, needs {needed}:1")
+    return found
+
+
+def _neutral_hue_failures(name: str, tokens: dict[str, str]) -> list[str]:
+    hues = {token: hue(tokens[token]) for token in NEUTRALS}
+    spread = max(hues.values()) - min(hues.values())
+    if spread > MAX_HUE_SPREAD:
+        return [f"{name}: the neutrals span {spread}° of hue ({hues}), at most {MAX_HUE_SPREAD}°"]
+    return []
 
 
 def main() -> int:
