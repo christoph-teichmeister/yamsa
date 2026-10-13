@@ -36,21 +36,11 @@ class NotificationSendTestService:
         if not any([user, head, body, click_url]):
             raise ValueError(self._ExceptionMessages.FILTER_WITH_NOT_PARAMS)
 
-        match_list = []
-        for notification in self._outbox:
-            # Check conditions
-            match = True
-            if user and user != notification.recipient:
-                match = False
-            if head and not re.search(head, str(notification.payload.head)):
-                match = False
-            if body and not re.search(body, str(notification.payload.body)):
-                match = False
-            if click_url and click_url not in notification.payload.click_url:
-                match = False
-
-            # Add email if all set conditions are valid
-            if match:
-                match_list.append(notification)
-
-        return match_list
+        return [
+            notification
+            for notification in self._outbox
+            if (not user or user == notification.recipient)
+            and (not head or re.search(head, str(notification.payload.head)))
+            and (not body or re.search(body, str(notification.payload.body)))
+            and (not click_url or click_url in notification.payload.click_url)
+        ]

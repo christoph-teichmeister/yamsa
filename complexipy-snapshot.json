@@ -48,15 +48,5 @@
         "complexity": 16
       }
     ]
-  },
-  {
-    "path": "apps/webpush/services/notification_send_test_service.py",
-    "file_name": "notification_send_test_service.py",
-    "functions": [
-      {
-        "name": "NotificationSendTestService::filter",
-        "complexity": 16
-      }
-    ]
   }
 ]
