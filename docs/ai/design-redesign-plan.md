@@ -23,7 +23,7 @@ this pass):
   terracotta accent read as alarm/negative, not warm, and it was reverted to the original
   blue-on-cool-gray values the same session. `apps/static_src/tailwind.css`, contrast-verified
   both ways.
-- `font-ledger` (Courier Prime, self-hosted) for amounts/dates/balances — `docs/ai/design.md`'s
+- `font-ledger` (Courier Prime, self-hosted; later replaced by Inter with tabular figures) for amounts/dates/balances — `docs/ai/design.md`'s
   "The index-card box" section documents the exact rule for where it applies. Kept: the color
   complaint was about the accent hue, not the typed-digit amounts.
 

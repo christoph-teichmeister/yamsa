@@ -169,10 +169,12 @@
 }
 
 @theme {
-  /* The ledger's typed digits - amounts, dates, balances - the one place this world's index-card
-     character shows in the type itself rather than in layout. Nothing else takes it: the rest of
-     the app keeps the system-ui stack in apps/static/base.css. */
-  --font-ledger: "Courier Prime", ui-monospace, "SF Mono", "Cascadia Code", monospace;
+  /* One family for everything (self-hosted, @font-face in apps/static/customClasses.css); the
+     system stack only shows while it loads or if it fails. Amounts keep `font-ledger`, which
+     now only switches on Inter's tabular figures so their digits line up. */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+  --font-ledger: var(--font-sans);
+  --font-ledger--font-feature-settings: "tnum";
 
   /* The only additions to Tailwind's own scales: its default shadows vanish on a dark ground. */
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);

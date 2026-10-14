@@ -1,9 +1,5 @@
-/* The stack is written down here rather than left to whichever reset is loaded: the app's
-   proportions - where a label wraps, how wide a pill sits - were drawn against this one, and
-   Preflight's own leads with -apple-system where Reboot led with system-ui, which resolves to a
-   different face outside Apple's platforms. */
+/* No font-family here: Preflight puts --font-sans (Inter, tailwind.css) on html. */
 html {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     scroll-behavior: smooth;
 }
 
