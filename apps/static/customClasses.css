@@ -1,25 +1,28 @@
-/* Self-hosted (OFL-licensed) rather than linked to Google Fonts: the app is a PWA with an offline
-   page, and a font a visitor's browser fetched once still has to render from the service worker's
-   own cache on the next offline visit - a CDN link the worker doesn't control can't promise that.
-   Lives here, not in tailwind.css: this file is loaded by a plain <link>, unprocessed by webpack's
-   css-loader, which otherwise tries to resolve a root-relative url() as a JS module import and
-   fails to find it. Latin subset only; the German diacritics the app ships (ä/ö/ü/ß) sit in
-   U+0000-00FF, covered by this subset, not the latin-ext one. The `--font-ledger` token that names
-   this family lives in tailwind.css, next to the rest of the palette. */
+/* Self-hosted (OFL-licensed, see fonts/Inter-OFL.txt) rather than linked to Google Fonts: the app
+   is a PWA with an offline page, and a font a visitor's browser fetched once still has to render
+   from the service worker's own cache on the next offline visit - a CDN link the worker doesn't
+   control can't promise that. Lives here, not in tailwind.css: this file is loaded by a plain
+   <link>, unprocessed by webpack's css-loader, which otherwise tries to resolve a root-relative
+   url() as a JS module import and fails to find it. One variable file per subset (Google Fonts'
+   split): latin covers the German diacritics and the euro sign, latin-ext only loads when a page
+   actually shows a character from its range. The `--font-sans` token that names this family
+   lives in tailwind.css. */
 @font-face {
-    font-family: "Courier Prime";
+    font-family: "Inter";
     font-style: normal;
-    font-weight: 400;
+    font-weight: 100 900;
     font-display: swap;
-    src: url("/static/fonts/courier-prime-400.woff2") format("woff2");
+    src: url("/static/fonts/inter-latin-ext-var.woff2") format("woff2");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-    font-family: "Courier Prime";
+    font-family: "Inter";
     font-style: normal;
-    font-weight: 700;
+    font-weight: 100 900;
     font-display: swap;
-    src: url("/static/fonts/courier-prime-700.woff2") format("woff2");
+    src: url("/static/fonts/inter-latin-var.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /* The icon contract the bootstrap-icons font used to provide, now that the icons come out of

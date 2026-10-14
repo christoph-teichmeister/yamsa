@@ -231,10 +231,11 @@ variant — genuinely side-by-side objects, `_room_overview_card.html`'s `tile=T
 its own `rounded-lg border` per item, because a 2-column grid has no meaningful hairline to divide
 along.
 
-Amounts, balances, and dates that read as ledger figures take `font-ledger` (Courier Prime,
-self-hosted in `apps/static/fonts/`, `@font-face` in `apps/static/customClasses.css` — not
-`tailwind.css`, since css-loader tries and fails to resolve a root-relative `url()` as a module
-import). Nothing else takes it; the rest of the app keeps the system-ui stack in `base.css`.
+The whole app uses one font, Inter (`--font-sans`, self-hosted variable woff2 in
+`apps/static/fonts/`, `@font-face` in `apps/static/customClasses.css` — not `tailwind.css`, since
+css-loader tries and fails to resolve a root-relative `url()` as a module import). Amounts,
+balances, and dates that read as ledger figures take `font-ledger`: the same Inter with tabular
+figures (`tnum`) so digits line up.
 
 ## Form pages behind a sheet
 
