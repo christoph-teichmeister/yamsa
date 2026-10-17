@@ -587,10 +587,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bootstrap-icons@npm:^1.13.1":
-  version: 1.13.1
-  resolution: "bootstrap-icons@npm:1.13.1"
-  checksum: 10c0/2c1adeb1796502e67b476ce049c86bc3a7ff7984c61777e056820389a8db5ec6535c12a33f76f3ed52674bca4c01472065a7fbcde6cc384ebb86c2eae51390bd
+"bootstrap-icons@npm:^1.13.2":
+  version: 1.13.2
+  resolution: "bootstrap-icons@npm:1.13.2"
+  checksum: 10c0/865f6e036836432cbbf7587406a2822674bcb79d4e5f454c081d6c664ee3b429ec9e5807851be6245a2059be32055790a6e23cceacc1badd38d2d271aff9c77b
   languageName: node
   linkType: hard
 
@@ -2173,7 +2173,7 @@ __metadata:
   resolution: "yamsa@workspace:."
   dependencies:
     "@tailwindcss/postcss": "npm:^4.3.3"
-    bootstrap-icons: "npm:^1.13.1"
+    bootstrap-icons: "npm:^1.13.2"
     css-loader: "npm:^7.1.5"
     d3: "npm:^7.9.0"
     htmx.org: "npm:^2.0.11"
