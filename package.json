@@ -19,13 +19,13 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
-    "bootstrap-icons": "^1.13.1",
+    "bootstrap-icons": "^1.13.2",
     "css-loader": "^7.1.5",
     "mini-css-extract-plugin": "^2.10.2",
-    "postcss": "^8.5.28",
+    "postcss": "^8.5.31",
     "postcss-loader": "^8.2.1",
     "tailwindcss": "^4.3.3",
-    "webpack": "^5.111.1",
+    "webpack": "^5.112.0",
     "webpack-bundle-tracker": "^3.2.4",
     "webpack-cli": "^7.2.3"
   }
