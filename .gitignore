@@ -63,3 +63,4 @@ docker-compose.override.yml
 
 # Impeccable skill run state (mocks, build state) - session-local, not project artifacts
 .impeccable/
+graft/

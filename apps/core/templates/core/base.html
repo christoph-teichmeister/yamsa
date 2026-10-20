@@ -51,7 +51,7 @@
     <meta name="htmx-config"
           content='{"includeIndicatorStyles": false, "inlineScriptNonce": "{{ csp_nonce }}"}'>
   </head>
-  <body hx-ext="morph" id="body">
+  <body hx-ext="morph" id="body" class="flex min-h-dvh flex-col">
     {% if core.DEBUG %}
       <div class="debug-banner">
         <h1 class="m-0 text-2xl">💀 Deadzone 💀</h1>
@@ -69,8 +69,10 @@
       stood in for that height and drifted from it (a room's two-line name+description, OS font
       scaling, a missing safe-area term on the ko-fi nav), letting content paint under a bar
       taller than the guess. `sticky` removes the guess entirely instead of correcting it.
+      Being in flow, a bottom bar only pins once the page outgrows the viewport; flex-1 makes
+      #base-content fill a short page so the bar still lands at the bottom on a tall screen.
     {% endcomment %}
-    <div class="app-container px-2 py-12" id="base-content">
+    <div class="app-container flex-1 px-2 py-12" id="base-content">
       {% include "core/partials/_offline_state.html" %}
       {% block content %}
       {% endblock content %}
