@@ -37,7 +37,7 @@
      hx-swap="morph:innerHTML"
      hx-push-url="true">
     {% icon "chevron-left" %}
-    {{ back_label|default:default_back_label }}
+    {% firstof back_label default_back_label %}
   </a>
 {% endif %}
 <form class="@container overflow-hidden rounded-3xl border border-line bg-surface shadow-card"
@@ -63,7 +63,8 @@
       {% if hero_subtitle %}<p class="m-0 text-sm text-ink-muted">{{ hero_subtitle }}</p>{% endif %}
     </div>
     <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
-      {% icon hero_badge_icon|default:"people" %}
+      {% firstof hero_badge_icon "people" as badge_icon %}
+      {% icon badge_icon %}
       {% if hero_badge_label %}
         {{ hero_badge_label }}
       {% else %}
@@ -83,10 +84,10 @@
       <input id="{{ field.id_for_label }}"
              class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand disabled:cursor-not-allowed disabled:opacity-60"
              name="{{ field.name }}"
-             type="{{ field_type|default:'text' }}"
-             placeholder="{{ field_placeholder }}"
+             type="{% firstof field_type 'text' %}"
+             placeholder="{% firstof field_placeholder '' %}"
              value="{{ field.value|default_if_none:'' }}"
-             autocomplete="{{ field_autocomplete|default:'off' }}"
+             autocomplete="{% firstof field_autocomplete 'off' %}"
              {% if field.field.required %}required{% endif %}
              {% if submit_disabled %}disabled{% endif %}>
       {% for error in field.errors %}
@@ -108,7 +109,8 @@
     <button class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none"
             type="submit"
             {% if submit_disabled %}disabled aria-disabled="true"{% endif %}>
-      {% icon submit_icon|default:"check-lg" %}
+      {% firstof submit_icon "check-lg" as button_icon %}
+      {% icon button_icon %}
       {% if submit_label %}
         {{ submit_label }}
       {% else %}

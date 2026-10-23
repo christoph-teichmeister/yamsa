@@ -158,9 +158,9 @@
             console.info('ServiceWorker registration successful with scope: ', registration.scope);
           {% endif %}
 
-          if ("{{ user.wants_to_receive_webpush_notifications }}" === "True") {
+          {% if user.wants_to_receive_webpush_notifications %}
             handleRegistrationSuccess(registration);
-          }
+          {% endif %}
         })
         .catch(err => {
           // Registration failed :(

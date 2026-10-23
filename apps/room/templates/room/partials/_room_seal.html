@@ -9,7 +9,7 @@
   seal next to it would repeat that signal in a second color that reads as an alert rather than an
   identity mark.
 {% endcomment %}
-<span class="room-seal relative inline-flex {{ size_class|default:"size-10" }} shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-soft text-brand-text"
+<span class="room-seal relative inline-flex {% firstof size_class "size-10" %} shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-soft text-brand-text"
       style="rotate: {{ tilt }}deg">
   {% if image_url %}
     <img class="absolute inset-0 h-full w-full object-cover"

@@ -54,7 +54,7 @@
         <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
       {% endfor %}
     </div>
-    {% include "account/partials/_password_field.html" with field_id="password" field_label=form.fields.password.label field_errors=form.errors.password field_autocomplete="new-password" %}
+    {% include "account/partials/_password_field.html" with field_id="password" field_label=form.fields.password.label field_errors=form.password.errors field_autocomplete="new-password" %}
     {% comment %}
       Decided by the request, not by the person filling the form in: the id comes from the session
       and the room from the invite link. Hidden inputs rather than a hidden fieldset with labels -

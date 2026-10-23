@@ -53,7 +53,7 @@
       {% endfor %}
     </div>
     {% trans "Password" as password_label %}
-    {% include "account/partials/_password_field.html" with field_id="id_password" field_name="password" field_label=password_label field_errors=form.errors.password field_autocomplete="current-password" %}
+    {% include "account/partials/_password_field.html" with field_id="id_password" field_name="password" field_label=password_label field_errors=form.password.errors field_autocomplete="current-password" %}
     <div class="flex flex-col gap-3 @lg:flex-row @lg:items-start @lg:justify-between">
       <div class="min-w-0">
         <label class="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink"
