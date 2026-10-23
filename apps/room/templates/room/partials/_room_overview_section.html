@@ -19,7 +19,7 @@ open state is the details element's own and needs no aria-expanded to mirror it.
         <div class="room-overview-entries mt-2 grid grid-cols-2 gap-2 @md:gap-3"
              id="{{ section_id }}">
           {% for entry in entries %}
-            {% include "room/partials/_room_overview_card.html" with entry=entry tile=tile %}
+            {% include "room/partials/_room_overview_card.html" with entry=entry %}
           {% endfor %}
         </div>
       </details>
@@ -35,7 +35,7 @@ open state is the details element's own and needs no aria-expanded to mirror it.
       {% endcomment %}
       <div class="room-overview-entries divide-y divide-line">
         {% for entry in entries %}
-          {% include "room/partials/_room_overview_card.html" with entry=entry tile=tile %}
+          {% include "room/partials/_room_overview_card.html" with entry=entry %}
         {% endfor %}
       </div>
     {% endif %}

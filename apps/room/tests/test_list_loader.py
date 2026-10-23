@@ -14,7 +14,7 @@ class TestListLoaderComponent:
         template = Template(
             '{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=3 %}'
         )
-        output = template.render(Context({}))
+        output = template.render(Context({"csp_nonce": "test-nonce"}))
 
         # Should contain skeleton items
         assert "skeleton-item" in output
@@ -25,7 +25,7 @@ class TestListLoaderComponent:
         template = Template(
             '{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=5 %}'
         )
-        output = template.render(Context({}))
+        output = template.render(Context({"csp_nonce": "test-nonce"}))
 
         # Should contain overlay
         assert "test-loader-overlay" in output
@@ -36,7 +36,7 @@ class TestListLoaderComponent:
         template = Template(
             '{% include "shared_partials/_list_loader.html" with loader_id="test-loader" skeleton_count=5 %}'
         )
-        output = template.render(Context({}))
+        output = template.render(Context({"csp_nonce": "test-nonce"}))
 
         # Should contain HTMX event handler setup
         assert "htmx:beforeRequest" in output

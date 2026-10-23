@@ -16,7 +16,7 @@
       </div>
       <p class="m-0 shrink-0 text-sm text-ink-muted @xl:max-w-64 @xl:text-right">{% trans "Add or reorder categories that match how your group tracks spending." %}</p>
     </div>
-    {% include "transaction/partials/_room_category_creation_form.html" with category_creation_form=category_creation_form category_creation_success_message=category_creation_success_message %}
-    {% include "transaction/partials/_room_category_list.html" with room_category_update_form=room_category_update_form failed_room_category_id=failed_room_category_id %}
+    {% include "transaction/partials/_room_category_creation_form.html" %}
+    {% include "transaction/partials/_room_category_list.html" %}
   </section>
 {% endblock tab_content %}

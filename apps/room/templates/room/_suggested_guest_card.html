@@ -39,13 +39,13 @@
       <input type="hidden" name="suggested_user_id" value="{{ guest.user_id }}">
       <input type="hidden"
              name="suggested_guest_context"
-             value="{{ suggested_guest_context|default:'create' }}">
+             value="{% firstof suggested_guest_context 'create' %}">
       <input type="hidden"
              name="suggested_guest_action_url"
-             value="{{ add_inline_form_action_url|default:'' }}">
+             value="{% firstof add_inline_form_action_url '' %}">
       <input type="hidden"
              name="suggested_guest_room_slug"
-             value="{{ add_inline_room_slug|default:'' }}">
+             value="{% firstof add_inline_room_slug '' %}">
       <button class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-3 py-2 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               type="submit">
         {% if guest.is_friend %}

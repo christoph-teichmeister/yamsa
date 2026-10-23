@@ -8,6 +8,19 @@ in `factories.py` (app-level if specific to one app, or a shared `conftest.py`/`
 Aim for coverage parity with existing badges (>85%); add regression tests when touching business-critical flows such as
 settlement math or transaction rendering.
 
+## Undefined template variables fail the tests
+
+`addopts` in `pyproject.toml` passes pytest-django's `--fail-on-template-vars`: a template that renders a variable
+missing from its context raises, naming the variable and the template. Django-internal templates are exempt.
+
+- `{{ foo|default:"x" }}` raises too — with `string_if_invalid` set Django skips filters on an undefined variable. Use
+  `{% firstof foo "x" %}` (add `as name` where a tag argument needs the value). `{% if %}`, `{% for %}` and
+  `{% firstof %}` are not affected.
+- An `{% include ... with a=b %}` resolves `b` eagerly. Included templates already see the parent context, so only pass
+  what the parent does not have.
+- Hand-built `Context({})` renders need the context-processor values the template reads, e.g. `csp_nonce`.
+- Only templates a test actually renders are checked.
+
 ## Logging in for manual or Playwright-driven testing
 
 Auth is a custom `account.User` model with email-based login (django-axes reads `email` as the

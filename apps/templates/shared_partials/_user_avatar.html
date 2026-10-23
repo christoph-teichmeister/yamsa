@@ -15,7 +15,7 @@
           avatar_name), avatar_fallback_url (optional), avatar_class (optional extra classes,
           e.g. avatar-lg or avatar-square).
 {% endcomment %}
-<span class="avatar {{ avatar_class|default:'avatar-sm' }}"
+<span class="avatar {% firstof avatar_class 'avatar-sm' %}"
       aria-hidden="true">
   {% if avatar_url %}
     <img src="{{ avatar_url }}"
