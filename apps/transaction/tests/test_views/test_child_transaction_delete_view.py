@@ -85,3 +85,23 @@ def test_removing_the_last_share_reports_what_the_transaction_carried(
     news = News.objects.get(room=room, type=News.TypeChoices.TRANSACTION_DELETED)
     assert amount_and_sign in news.message
     assert guest_user in [call.args[0] for call in mocked_send.call_args_list]
+
+
+def test_removing_a_share_keeps_the_total_by_handing_its_value_to_the_others(
+    authenticated_client: Client, room: Room, user: User, guest_user: User
+) -> None:
+    parent_transaction, (user_share, guest_share) = create_parent_transaction_with_optimisation(
+        room=room, paid_by=user, paid_for_tuple=(user, guest_user)
+    )
+    total = parent_transaction.value
+
+    authenticated_client.post(
+        reverse(
+            "transaction:child-transaction-delete",
+            kwargs={"room_slug": room.slug, "pk": guest_share.pk},
+        ),
+    )
+
+    user_share.refresh_from_db()
+    assert user_share.value == total
+    assert ParentTransaction.objects.get(pk=parent_transaction.pk).value == total

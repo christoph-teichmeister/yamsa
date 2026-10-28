@@ -4,6 +4,7 @@ from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from apps.account.models import User
 from apps.room.models import Room
@@ -68,6 +69,9 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
         elif sum_values != total_value:
             cleaned_data["total_value"] = sum_values
 
+        if values and not any(cleaned_data.get("value", values)):
+            self.add_error("value", _("At least one share needs an amount above zero."))
+
         return cleaned_data
 
     def save(self, commit: bool = True) -> ParentTransaction:
@@ -85,10 +89,7 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
         updated_child_transactions = []
 
         # Iterate over the submitted child transactions
-        for index, child_transaction_id in enumerate(self.cleaned_data["child_transaction_id"]):
-            debtor = self.cleaned_data["paid_for"][index]
-            value = self.cleaned_data["value"][index]
-
+        for child_transaction_id, debtor, value in self._shares_to_save(instance):
             # Check if the child transaction is being updated or if its value is being modified
             update_value_of_child_transaction = (
                 self.cleaned_data["paid_for"].count(debtor) > 1 and child_transaction_id == 0
@@ -135,6 +136,22 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
         ChildTransaction.objects.bulk_update(
             objs=updated_child_transactions, fields=("paid_for", "value", "lastmodified_by", "lastmodified_at")
         )
+
+    def _shares_to_save(self, instance: ParentTransaction) -> list[tuple[int, int, Decimal]]:
+        # A share set to zero is how a debtor is taken out of the transaction: it is deleted here and
+        # never reaches the create/update path.
+        shares = []
+        for child_transaction_id, debtor, value in zip(
+            self.cleaned_data["child_transaction_id"],
+            self.cleaned_data["paid_for"],
+            self.cleaned_data["value"],
+            strict=True,
+        ):
+            if value != 0:
+                shares.append((child_transaction_id, debtor, value))
+            elif child_transaction_id != 0:
+                instance.child_transactions.filter(id=child_transaction_id).delete()
+        return shares
 
     def _current_total_value(self) -> Decimal:
         raw_value = getattr(self.instance, "value", None)
