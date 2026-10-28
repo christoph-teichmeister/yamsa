@@ -10,93 +10,90 @@ from django.urls import reverse
 from apps.core.views.service_worker_view import ServiceWorkerView
 
 
-@override_settings(
-    MANIFEST={
-        "icons": [{"src": "/static/images/icons/icon.png"}],
-        "splash_screens": [{"src": "/static/images/splash/splash.png"}],
-    },
-    PWA_SERVICE_WORKER={
-        "cache_prefix": "test-prefix",
-        "offline_url": "/offline-custom/",
-        "precache_static": ["app.css", "", None],
-        "precache_bundles": {"navigation": "js", "": "js"},
-        "static_url_prefix": "/custom-static/",
-    },
-    STATIC_URL="/static/",
-    RELEASE="release/1",
-)
-def test_service_worker_builds_precache_urls_from_manifest() -> None:
-    view = ServiceWorkerView()
-    context = view.get_context_data()
-
-    assert context["cache_name"] == "test-prefix-static-release-1"
-    assert context["cache_prefix"] == "test-prefix"
-    assert context["offline_url"] == "/offline-custom/"
-    assert context["static_url_prefix"] == "/custom-static/"
-
-    precache_urls = json.loads(context["precache_urls"])
-    assert precache_urls == [
-        "/offline-custom/",
-        "/static/app.css",
-        "/static/images/icons/icon.png",
-        "/static/images/splash/splash.png",
-        "http://localhost/static/webpack_bundles/test.bundle.js",
-    ]
-
-
-@override_settings(
-    MANIFEST={},
-    PWA_SERVICE_WORKER={
-        "offline_url": "/offline/",
-        "precache_static": ["base.css"],
-        "precache_bundles": {},
-    },
-)
-def test_service_worker_precaches_the_url_the_storage_serves(monkeypatch: pytest.MonkeyPatch) -> None:
-    """A hashing storage renames every static file; precaching the raw name would cache nothing."""
-    monkeypatch.setattr(staticfiles_storage, "url", lambda name: f"/static/{name}.deadbeef.css")
-
-    precache_urls = json.loads(ServiceWorkerView().get_context_data()["precache_urls"])
-
-    assert precache_urls == ["/offline/", "/static/base.css.deadbeef.css"]
-
-
-def test_service_worker_precaches_every_asset_the_page_pulls_in() -> None:
-    """An asset the page asks for but the worker skips is a page that loses it offline."""
-    precached = set(json.loads(ServiceWorkerView().get_context_data()["precache_urls"]))
-
-    head = Template("{% include 'core/partials/_head_links_and_scripts.html' %}").render(Context())
-    stylesheets = set(re.findall(r"<link[^>]+href=\"([^\"]+)\"", head))
-    assert stylesheets
-    assert stylesheets <= precached
-
-    icon = Template('{% icon "x-lg" %}').render(Context())
-    sprite_url = re.search(r'href="([^"#]+)#', icon).group(1)
-    assert sprite_url in precached
-
-
-def test_service_worker_never_answers_app_assets_from_the_cache_first(client: Client) -> None:
-    """Guards the invariant that made bundle changes invisible until the caches were cleared."""
-    script = client.get(reverse("core:serviceworker")).content.decode()
-
-    assert "cacheFirst" not in script
-    assert re.search(
-        r"if \(isDocument\) \{\s*event\.respondWith\(networkFirstPage\(request\)\);",
-        script,
+class TestServiceWorkerView:
+    @override_settings(
+        MANIFEST={
+            "icons": [{"src": "/static/images/icons/icon.png"}],
+            "splash_screens": [{"src": "/static/images/splash/splash.png"}],
+        },
+        PWA_SERVICE_WORKER={
+            "cache_prefix": "test-prefix",
+            "offline_url": "/offline-custom/",
+            "precache_static": ["app.css", "", None],
+            "precache_bundles": {"navigation": "js", "": "js"},
+            "static_url_prefix": "/custom-static/",
+        },
+        STATIC_URL="/static/",
+        RELEASE="release/1",
     )
-    assert re.search(
-        r"if \(isAppAsset\) \{\s*event\.respondWith\(networkFirstAsset\(request\)\);",
-        script,
+    def test_service_worker_builds_precache_urls_from_manifest(self) -> None:
+        view = ServiceWorkerView()
+        context = view.get_context_data()
+
+        assert context["cache_name"] == "test-prefix-static-release-1"
+        assert context["cache_prefix"] == "test-prefix"
+        assert context["offline_url"] == "/offline-custom/"
+        assert context["static_url_prefix"] == "/custom-static/"
+
+        precache_urls = json.loads(context["precache_urls"])
+        assert precache_urls == [
+            "/offline-custom/",
+            "/static/app.css",
+            "/static/images/icons/icon.png",
+            "/static/images/splash/splash.png",
+            "http://localhost/static/webpack_bundles/test.bundle.js",
+        ]
+
+    @override_settings(
+        MANIFEST={},
+        PWA_SERVICE_WORKER={
+            "offline_url": "/offline/",
+            "precache_static": ["base.css"],
+            "precache_bundles": {},
+        },
     )
+    def test_service_worker_precaches_the_url_the_storage_serves(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A hashing storage renames every static file; precaching the raw name would cache nothing."""
+        monkeypatch.setattr(staticfiles_storage, "url", lambda name: f"/static/{name}.deadbeef.css")
 
+        precache_urls = json.loads(ServiceWorkerView().get_context_data()["precache_urls"])
 
-def test_service_worker_keeps_pages_out_of_the_shared_asset_cache(client: Client) -> None:
-    """A page carries what one account was allowed to see; an asset is the same for everyone."""
-    script = client.get(reverse("core:serviceworker")).content.decode()
+        assert precache_urls == ["/offline/", "/static/base.css.deadbeef.css"]
 
-    assert 'const PAGES_CACHE_PREFIX = "yamsa-pages-' in script
-    # storePage() is the only writer of the page cache, and it refuses a response the scope
-    # middleware did not label.
-    assert "const scope = response.headers.get(SCOPE_HEADER);" in script
-    assert "networkFirstAsset" in script
-    assert "STATIC_CACHE_NAME" in script
+    def test_service_worker_precaches_every_asset_the_page_pulls_in(self) -> None:
+        """An asset the page asks for but the worker skips is a page that loses it offline."""
+        precached = set(json.loads(ServiceWorkerView().get_context_data()["precache_urls"]))
+
+        head = Template("{% include 'core/partials/_head_links_and_scripts.html' %}").render(Context())
+        stylesheets = set(re.findall(r"<link[^>]+href=\"([^\"]+)\"", head))
+        assert stylesheets
+        assert stylesheets <= precached
+
+        icon = Template('{% icon "x-lg" %}').render(Context())
+        sprite_url = re.search(r'href="([^"#]+)#', icon).group(1)
+        assert sprite_url in precached
+
+    def test_service_worker_never_answers_app_assets_from_the_cache_first(self, client: Client) -> None:
+        """Guards the invariant that made bundle changes invisible until the caches were cleared."""
+        script = client.get(reverse("core:serviceworker")).content.decode()
+
+        assert "cacheFirst" not in script
+        assert re.search(
+            r"if \(isDocument\) \{\s*event\.respondWith\(networkFirstPage\(request\)\);",
+            script,
+        )
+        assert re.search(
+            r"if \(isAppAsset\) \{\s*event\.respondWith\(networkFirstAsset\(request\)\);",
+            script,
+        )
+
+    def test_service_worker_keeps_pages_out_of_the_shared_asset_cache(self, client: Client) -> None:
+        """A page carries what one account was allowed to see; an asset is the same for everyone."""
+        script = client.get(reverse("core:serviceworker")).content.decode()
+
+        assert 'const PAGES_CACHE_PREFIX = "yamsa-pages-' in script
+        # storePage() is the only writer of the page cache, and it refuses a response the scope
+        # middleware did not label.
+        assert "const scope = response.headers.get(SCOPE_HEADER);" in script
+        assert "networkFirstAsset" in script
+        assert "STATIC_CACHE_NAME" in script
