@@ -7,10 +7,11 @@ from apps.debt.dataclasses import SimpleDebtRow
 from apps.debt.models import Debt
 from apps.debt.services.simple_debt_service import SimpleDebtService
 from apps.debt.views.mixins.debt_base_context import DebtBaseContext
+from apps.room.views.mixins import RoomMembershipRequiredMixin
 from apps.transaction.models import ParentTransaction
 
 
-class DebtListView(DebtBaseContext, generic.ListView):
+class DebtListView(RoomMembershipRequiredMixin, DebtBaseContext, generic.ListView):
     model = Debt
     context_object_name = "debts"
     template_name = "debt/list.html"

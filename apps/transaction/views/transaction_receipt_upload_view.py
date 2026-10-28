@@ -3,13 +3,15 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views import generic
 
-from apps.room.views.mixins import RoomNotClosedRequiredMixin
+from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_receipt_upload_form import TransactionReceiptUploadForm
 from apps.transaction.models import ParentTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class TransactionReceiptUploadView(RoomNotClosedRequiredMixin, TransactionBaseContext, generic.TemplateView):
+class TransactionReceiptUploadView(
+    RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin, TransactionBaseContext, generic.TemplateView
+):
     template_name = "transaction/partials/_receipts_section.html"
 
     def post(self, request: HttpRequest, room_slug: str, transaction_pk: int) -> HttpResponse:

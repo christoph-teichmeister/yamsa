@@ -1,12 +1,12 @@
 import http
 from collections.abc import Callable
+from datetime import date
 
 import pytest
 from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
 from django.test import Client
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.translation import gettext
 
 from apps.account.models import User
@@ -16,6 +16,8 @@ from apps.room.models import Room
 from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 
 pytestmark = pytest.mark.django_db
+
+SETTLED_ON = date(2026, 3, 14)
 
 
 class TestDebtListView:
@@ -39,7 +41,7 @@ class TestDebtListView:
         assert creditor_avatar.find("img")["src"] == user.avatar_url
 
     def test_debt_list_renders_outstanding_debt_and_counts(
-        self, client: Client, room: Room, user: User, guest_user: User
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
     ) -> None:
         create_parent_transaction_with_optimisation(
             room=room,
@@ -47,7 +49,7 @@ class TestDebtListView:
             paid_for_tuple=(guest_user,),
         )
 
-        response = client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))
+        response = authenticated_client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == http.HTTPStatus.OK
         context = response.context_data
@@ -63,7 +65,7 @@ class TestDebtListView:
         assert outstanding_debt.creditor_id == user.id
 
     def test_debt_list_updates_when_settlement_creates_new_debt(
-        self, client: Client, room: Room, user: User, guest_user: User
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
     ) -> None:
         create_parent_transaction_with_optimisation(
             room=room,
@@ -73,7 +75,7 @@ class TestDebtListView:
 
         debt_to_settle = room.debts.filter(settled=False).first()
         debt_to_settle.settled = True
-        debt_to_settle.settled_at = timezone.now().date()
+        debt_to_settle.settled_at = SETTLED_ON
         debt_to_settle.save()
 
         new_user = UserFactory()
@@ -85,7 +87,7 @@ class TestDebtListView:
             paid_for_tuple=(new_user,),
         )
 
-        response = client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))
+        response = authenticated_client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == http.HTTPStatus.OK
         context = response.context_data
@@ -212,7 +214,7 @@ class TestDebtListView:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
         debt = room.debts.get()
         debt.settled = True
-        debt.settled_at = timezone.now().date()
+        debt.settled_at = SETTLED_ON
         debt.save()
 
         response = authenticated_client.get(reverse("debt:list", kwargs={"room_slug": room.slug}))

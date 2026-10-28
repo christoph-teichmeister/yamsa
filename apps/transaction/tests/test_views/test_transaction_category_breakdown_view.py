@@ -1,10 +1,10 @@
+from datetime import UTC, datetime
 from decimal import Decimal
 
 import pytest
 from bs4 import BeautifulSoup
 from django.test import Client
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.formats import number_format
 
 from apps.account.models import User
@@ -15,6 +15,8 @@ from apps.transaction.models import Category, ChildTransaction, ParentTransactio
 from apps.transaction.tests.factories import ParentTransactionFactory
 
 pytestmark = pytest.mark.django_db
+
+PAID_AT = datetime(2026, 3, 14, 12, 0, tzinfo=UTC)
 
 
 def _make_child(parent_transaction: ParentTransaction, paid_for: User, value: Decimal) -> ChildTransaction:
@@ -33,7 +35,7 @@ class TestTransactionCategoryBreakdownView:
             paid_by=user,
             currency=room.preferred_currency,
             category=groceries,
-            paid_at=timezone.now(),
+            paid_at=PAID_AT,
         )
         _make_child(parent_groceries, user, Decimal("34.25"))
 
@@ -42,7 +44,7 @@ class TestTransactionCategoryBreakdownView:
             paid_by=user,
             currency=room.preferred_currency,
             category=transport,
-            paid_at=timezone.now(),
+            paid_at=PAID_AT,
         )
         _make_child(parent_transport, user, Decimal("12.75"))
 
@@ -71,7 +73,7 @@ class TestTransactionCategoryBreakdownView:
             paid_by=user,
             currency=room.preferred_currency,
             category=groceries,
-            paid_at=timezone.now(),
+            paid_at=PAID_AT,
         )
         _make_child(parent_groceries, user, Decimal("34.25"))
 
@@ -80,7 +82,7 @@ class TestTransactionCategoryBreakdownView:
             paid_by=user,
             currency=room.preferred_currency,
             category=transport,
-            paid_at=timezone.now(),
+            paid_at=PAID_AT,
         )
         _make_child(parent_transport, user, Decimal("12.75"))
 
@@ -127,7 +129,7 @@ class TestTransactionCategoryBreakdownView:
             paid_by=user,
             currency=room.preferred_currency,
             category=groceries,
-            paid_at=timezone.now(),
+            paid_at=PAID_AT,
         )
         _make_child(parent_groceries, user, Decimal(20))
 
@@ -136,7 +138,7 @@ class TestTransactionCategoryBreakdownView:
             paid_by=user,
             currency=other_currency,
             category=transport,
-            paid_at=timezone.now(),
+            paid_at=PAID_AT,
         )
         _make_child(parent_transport, user, Decimal("5.5"))
 
@@ -173,7 +175,7 @@ class TestTransactionCategoryBreakdownView:
             paid_by=user,
             currency=room.preferred_currency,
             category=groceries,
-            paid_at=timezone.now(),
+            paid_at=PAID_AT,
         )
         _make_child(parent_groceries, user, Decimal("34.25"))
 
@@ -209,7 +211,7 @@ class TestTransactionCategoryBreakdownView:
             paid_by=user,
             currency=room.preferred_currency,
             category=groceries,
-            paid_at=timezone.now(),
+            paid_at=PAID_AT,
         )
         _make_child(parent_groceries, user, Decimal("34.25"))
 
@@ -238,7 +240,7 @@ class TestTransactionCategoryBreakdownView:
             paid_by=user,
             currency=room.preferred_currency,
             category=groceries,
-            paid_at=timezone.now(),
+            paid_at=PAID_AT,
         )
         _make_child(parent_groceries, user, Decimal("1234.50"))
 
@@ -270,7 +272,7 @@ class TestTransactionCategoryBreakdownView:
                 paid_by=user,
                 currency=room.preferred_currency,
                 category=category,
-                paid_at=timezone.now(),
+                paid_at=PAID_AT,
             )
             _make_child(parent_transaction, user, amount)
 
@@ -302,7 +304,7 @@ class TestTransactionCategoryBreakdownView:
                 paid_by=user,
                 currency=room.preferred_currency,
                 category=category,
-                paid_at=timezone.now(),
+                paid_at=PAID_AT,
             )
             _make_child(parent_transaction, user, amount)
 
@@ -330,7 +332,7 @@ class TestTransactionCategoryBreakdownView:
                 paid_by=user,
                 currency=room.preferred_currency,
                 category=category,
-                paid_at=timezone.now(),
+                paid_at=PAID_AT,
             )
             _make_child(parent_transaction, user, amount)
 
@@ -341,7 +343,7 @@ class TestTransactionCategoryBreakdownView:
                 paid_by=user,
                 currency=other_currency,
                 category=category,
-                paid_at=timezone.now(),
+                paid_at=PAID_AT,
             )
             _make_child(parent_transaction, user, amount)
 
@@ -375,7 +377,7 @@ class TestTransactionCategoryBreakdownView:
                 paid_by=user,
                 currency=room.preferred_currency,
                 category=Category.objects.get(slug=slug),
-                paid_at=timezone.now(),
+                paid_at=PAID_AT,
             )
             _make_child(parent_transaction, user, amount)
 
@@ -400,7 +402,7 @@ class TestTransactionCategoryBreakdownView:
                 paid_by=user,
                 currency=room.preferred_currency,
                 category=Category.objects.get(slug=slug),
-                paid_at=timezone.now(),
+                paid_at=PAID_AT,
             )
             _make_child(parent_transaction, user, Decimal("10.00"))
 

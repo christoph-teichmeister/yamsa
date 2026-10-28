@@ -1,7 +1,6 @@
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 
 import pytest
-from django.utils import timezone
 
 from apps.account.models import User
 from apps.room.models import Room
@@ -9,11 +8,13 @@ from apps.room.tests.factories import RoomFactory
 from apps.transaction.models import ParentTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 
+FIXED_NOW = datetime(2026, 3, 14, 12, 0, tzinfo=UTC)
+
 
 @pytest.mark.django_db
 class TestRoomQsForListOrdering:
     def test_rooms_ordered_by_most_recent_activity_first(self, user: User) -> None:
-        now = timezone.now()
+        now = FIXED_NOW
 
         old_room = RoomFactory(created_by=user)
         old_room.users.add(user)
@@ -38,7 +39,7 @@ class TestRoomQsForListOrdering:
         )
 
     def test_room_without_transactions_sorts_after_room_with_transactions(self, user: User) -> None:
-        now = timezone.now()
+        now = FIXED_NOW
 
         no_tx_room = RoomFactory(created_by=user)
         no_tx_room.users.add(user)

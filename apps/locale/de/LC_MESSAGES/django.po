@@ -1579,6 +1579,21 @@ msgstr "Gib ein einzelnes Emoji-Zeichen ein."
 msgid "At least one share needs an amount above zero."
 msgstr "Mindestens ein Anteil muss größer als 0 sein."
 
+msgid "Every debtor must be a member of the room."
+msgstr "Jeder Schuldner muss Mitglied des Raums sein."
+
+msgid "Every share needs a debtor and an amount."
+msgstr "Jeder Anteil braucht einen Schuldner und einen Betrag."
+
+msgid "A share cannot be negative."
+msgstr "Ein Anteil darf nicht negativ sein."
+
+msgid "Select at least one debtor."
+msgstr "Wähle mindestens einen Schuldner aus."
+
+msgid "Unknown share."
+msgstr "Unbekannter Anteil."
+
 #, python-brace-format
 msgid "{paid_by} paid {value}{currency} for {paid_for}"
 msgstr "{paid_by} hat {value}{currency} für {paid_for} bezahlt"

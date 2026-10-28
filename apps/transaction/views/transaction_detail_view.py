@@ -3,12 +3,13 @@ from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
+from apps.room.views.mixins import RoomMembershipRequiredMixin
 from apps.transaction.forms.transaction_receipt_upload_form import TransactionReceiptUploadForm
 from apps.transaction.models import ParentTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class TransactionDetailView(TransactionBaseContext, generic.DetailView):
+class TransactionDetailView(RoomMembershipRequiredMixin, TransactionBaseContext, generic.DetailView):
     model = ParentTransaction
     context_object_name = "parent_transaction"
     template_name = "transaction/detail.html"
@@ -17,6 +18,7 @@ class TransactionDetailView(TransactionBaseContext, generic.DetailView):
         return (
             super()
             .get_queryset()
+            .filter(room=self.request.room)
             .select_related("paid_by", "currency", "category")
             .prefetch_related("receipts__uploaded_by")
         )
