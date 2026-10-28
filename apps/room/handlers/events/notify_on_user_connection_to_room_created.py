@@ -9,7 +9,7 @@ from apps.room.messages.events.user_connection_to_room_created import UserConnec
 from apps.webpush.utils import Notification
 
 
-@message_registry.register_event(event=UserConnectionToRoomCreated)
+@message_registry.register_event(event=UserConnectionToRoomCreated, atomic=False)
 def send_notification_on_user_connection_to_room_created(context: UserConnectionToRoomCreated.Context) -> None:
     user_connection_to_room = context.instance
 
@@ -32,7 +32,7 @@ def send_notification_on_user_connection_to_room_created(context: UserConnection
     notification.send_to_user(user_connection_to_room.user)
 
 
-@message_registry.register_event(event=UserConnectionToRoomCreated)
+@message_registry.register_event(event=UserConnectionToRoomCreated, atomic=False)
 def send_email_on_user_connection_to_room_created(context: UserConnectionToRoomCreated.Context) -> None:
     user_connection_to_room = context.instance
 
