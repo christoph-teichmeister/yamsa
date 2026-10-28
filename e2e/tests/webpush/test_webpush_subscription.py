@@ -1,5 +1,6 @@
 import http
 import json
+import re
 
 import pytest
 from django.db import connection
@@ -34,14 +35,20 @@ class TestWebpushSubscription:
             }
         )
 
-    def _post(self, page: Page, base_url: str, body: str) -> int:
-        response = page.request.post(
-            f"{base_url}{reverse('webpush:save')}", data=body, headers={"Content-Type": "application/json"}
-        )
-        return response.status
+    def _post(self, page: Page, base_url: str, body: str, with_csrf: bool = True) -> int:
+        headers = {"Content-Type": "application/json"}
+        if with_csrf:
+            # The token the page's own subscribe script sends, as the template rendered it. Fetched
+            # fresh because the DOM may come from the service worker cache, which holds an older token.
+            # The HTML minifier may rewrite the quote style, so accept any.
+            html = page.request.get(page.url).text()
+            match = re.search(r"X-CSRFToken['\"]?:\s*[`'\"]([^`'\"]+)", html)
+            assert match, "subscribe script renders no CSRF token"
+            headers["X-CSRFToken"] = match.group(1)
+        return page.request.post(f"{base_url}{reverse('webpush:save')}", data=body, headers=headers).status
 
     def test_an_anonymous_session_is_rejected_and_stores_nothing(self, page: Page, base_url: str) -> None:
-        assert self._post(page, base_url, self._body()) == http.HTTPStatus.FORBIDDEN
+        assert self._post(page, base_url, self._body(), with_csrf=False) == http.HTTPStatus.FORBIDDEN
 
         connection.close()
         assert not WebpushInformation.objects.exists()
@@ -64,3 +71,15 @@ class TestWebpushSubscription:
         _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
 
         assert self._post(page, base_url, "not json") == http.HTTPStatus.BAD_REQUEST
+
+    def test_a_signed_in_post_without_the_csrf_header_is_rejected(
+        self, page: Page, base_url: str, profile_user: User
+    ) -> None:
+        profile_user.wants_to_receive_webpush_notifications = True
+        profile_user.save()
+        _login(page, base_url, profile_user.email, DEFAULT_PASSWORD)
+
+        assert self._post(page, base_url, self._body(), with_csrf=False) == http.HTTPStatus.FORBIDDEN
+
+        connection.close()
+        assert not WebpushInformation.objects.exists()
