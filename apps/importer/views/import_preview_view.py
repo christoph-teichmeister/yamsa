@@ -13,6 +13,7 @@ from apps.core.event_loop.runner import handle_message
 from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY, TOKEN_PARAM
 from apps.importer.dataclasses import ImportResult, ParsedImport
 from apps.importer.forms import ImportPreviewForm
+from apps.importer.models import ConsumedImportToken
 from apps.importer.registry import get_parser
 from apps.importer.services.import_service import ImportService
 from apps.importer.session import (
@@ -93,11 +94,15 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
     def form_valid(self, form: ImportPreviewForm) -> HttpResponse:
         service = ImportService(parsed=self.parsed, user=self.request.user)
 
-        # Consumed before the import so a second confirm POST (double click) finds no payload and
-        # redirects to the upload page instead of creating a second room.
+        # Consumed before the import so a later confirm POST finds no payload and redirects to the
+        # upload page. Two POSTs that read the session before either popped it are stopped by the
+        # token row inside the atomic block.
         payload = pop_parsed_import(self.request.session, self._token)
         try:
             with transaction.atomic():
+                _, claimed = ConsumedImportToken.objects.get_or_create(token=self._token)
+                if not claimed:
+                    return redirect("importer:upload")
                 result = service.process(
                     room_name=form.cleaned_data["room_name"],
                     room_description=form.cleaned_data["room_description"],

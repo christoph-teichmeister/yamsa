@@ -173,3 +173,12 @@ class TestImport:
         previewed_import.expect_preview()
         expect(previewed_import.category_assignment("Kino")).to_have_value("new")
         assert not Room.objects.exists()
+
+    def test_a_double_click_on_import_now_creates_one_room(self, previewed_import: ImportPage, page: Page) -> None:
+        previewed_import.assign_person(ME, "me")
+        previewed_import.set_room_name("WG Doppelklick")
+
+        page.get_by_role("button", name="Import now").dblclick()
+
+        previewed_import.expect_toast("2 transactions imported")
+        assert Room.objects.filter(name="WG Doppelklick").count() == 1
