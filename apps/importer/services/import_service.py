@@ -16,6 +16,10 @@ from apps.room.models import Room, UserConnectionToRoom
 from apps.transaction.models import Category, ChildTransaction, ParentTransaction
 from apps.transaction.services.room_category_service import RoomCategoryService
 
+BULK_BATCH_SIZE = 500
+PARENT_RELATION_FIELDS = ["paid_by", "room", "currency", "category", "created_by", "lastmodified_by"]
+CHILD_RELATION_FIELDS = ["parent_transaction", "paid_for", "created_by", "lastmodified_by"]
+
 
 class ImportService:
     """Writes a ParsedImport into a brand-new room.
@@ -160,6 +164,8 @@ class ImportService:
         categories_by_label: dict,
         currencies_by_code: dict[str, Currency],
     ) -> None:
+        parents: list[ParentTransaction] = []
+        children: list[tuple[ParentTransaction, ChildTransaction]] = []
         for parsed_transaction in self.parsed.transactions:
             parent = ParentTransaction(
                 description=parsed_transaction.description,
@@ -170,18 +176,25 @@ class ImportService:
                 currency=currencies_by_code[parsed_transaction.currency_code],
                 category=categories_by_label[parsed_transaction.category_label],
             )
-            parent.created_by = self.user
-            # bulk_create would skip FullCleanOnSaveMixin, which enforces the 50 character description cap.
-            parent.save()
-
+            self._prepare(parent, exclude=PARENT_RELATION_FIELDS)
+            parents.append(parent)
             for share in parsed_transaction.shares:
-                child = ChildTransaction(
-                    parent_transaction=parent,
-                    paid_for=users_by_column[share.person],
-                    value=share.value,
-                )
-                child.created_by = self.user
-                child.save()
+                child = ChildTransaction(paid_for=users_by_column[share.person], value=share.value)
+                self._prepare(child, exclude=CHILD_RELATION_FIELDS)
+                children.append((parent, child))
+
+        # bulk_create skips save(), so FullCleanOnSaveMixin (the 50 character description cap) is
+        # replayed in _prepare. Relation fields are excluded there because each points at a row this
+        # import just loaded or created; re-checking them costs one query per row.
+        ParentTransaction.objects.bulk_create(parents, batch_size=BULK_BATCH_SIZE)
+        for parent, child in children:
+            child.parent_transaction = parent
+        ChildTransaction.objects.bulk_create([child for _parent, child in children], batch_size=BULK_BATCH_SIZE)
+
+    def _prepare(self, instance: ParentTransaction | ChildTransaction, *, exclude: list[str]) -> None:
+        instance.created_by = self.user
+        instance.lastmodified_by = self.user
+        instance.full_clean(exclude=exclude)
 
     def _create_settlements(
         self,

@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth import mixins
 from django.db import transaction
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -13,9 +15,16 @@ from apps.importer.dataclasses import ImportResult, ParsedImport
 from apps.importer.forms import ImportPreviewForm
 from apps.importer.registry import get_parser
 from apps.importer.services.import_service import ImportService
-from apps.importer.session import pop_parsed_import, read_parsed_import, resolve_currencies_by_code
+from apps.importer.session import (
+    pop_parsed_import,
+    read_parsed_import,
+    resolve_currencies_by_code,
+    restore_parsed_import,
+)
 from apps.room.models import Room
 from apps.transaction.messages.events.transaction import TransactionsImported
+
+logger = logging.getLogger(__name__)
 
 
 class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
@@ -84,41 +93,53 @@ class ImportPreviewView(mixins.LoginRequiredMixin, generic.FormView):
     def form_valid(self, form: ImportPreviewForm) -> HttpResponse:
         service = ImportService(parsed=self.parsed, user=self.request.user)
 
-        with transaction.atomic():
-            result = service.process(
-                room_name=form.cleaned_data["room_name"],
-                room_description=form.cleaned_data["room_description"],
-                currency=form.cleaned_data["preferred_currency"],
-                person_assignments=form.cleaned_data["person_assignments"],
-                category_assignments=form.cleaned_data["category_assignments"],
-            )
+        # Consumed before the import so a second confirm POST (double click) finds no payload and
+        # redirects to the upload page instead of creating a second room.
+        payload = pop_parsed_import(self.request.session, self._token)
+        try:
+            with transaction.atomic():
+                result = service.process(
+                    room_name=form.cleaned_data["room_name"],
+                    room_description=form.cleaned_data["room_description"],
+                    currency=form.cleaned_data["preferred_currency"],
+                    person_assignments=form.cleaned_data["person_assignments"],
+                    category_assignments=form.cleaned_data["category_assignments"],
+                )
+        except Exception:
+            restore_parsed_import(self.request.session, self._token, payload)
+            raise
 
-        # Consumed before the side effects: a handler that raises would otherwise leave the payload
-        # in place and let a retry import the same file a second time.
-        pop_parsed_import(self.request.session, self._token)
-
-        # Both of these emit webpush/email, so they belong outside the atomic block (#333).
-        # The event runs first because it recalculates the room's debts: handle_event re-raises,
-        # so a failing connection mail would otherwise leave a room full of transactions and no
-        # debts at all. In this order the same failure costs one missing membership instead.
-        handle_message(
-            TransactionsImported(
-                context_data={
-                    "room": result.room,
-                    "imported_count": result.transaction_count,
-                    "settled_count": result.settlement_count,
-                    "source_label": self.source_label,
-                    "triggered_by": self.request.user,
-                }
-            )
-        )
-        for user in result.deferred_connections:
-            service.connect(user=user, room=result.room)
+        self._run_side_effects(service, result)
 
         self.request.session[IMPORT_SHARE_HINT_SESSION_KEY] = str(result.room.slug)
         self.request.toast_queue.success(self._build_success_message(result))
 
         return HttpResponseRedirect(reverse("transaction:list", kwargs={"room_slug": result.room.slug}))
+
+    def _run_side_effects(self, service: ImportService, result: ImportResult) -> None:
+        # Both of these emit webpush/email, so they belong outside the atomic block (#333). The room
+        # is committed by now, so a failure is logged instead of turned into a 500 for a room that
+        # exists. The event runs first because it recalculates the room's debts.
+        try:
+            handle_message(
+                TransactionsImported(
+                    context_data={
+                        "room": result.room,
+                        "imported_count": result.transaction_count,
+                        "settled_count": result.settlement_count,
+                        "source_label": self.source_label,
+                        "triggered_by": self.request.user,
+                    }
+                )
+            )
+        except Exception:
+            logger.exception("TransactionsImported handlers failed for imported room %s", result.room.pk)
+
+        for user in result.deferred_connections:
+            try:
+                service.connect(user=user, room=result.room)
+            except Exception:
+                logger.exception("Connecting user %s to imported room %s failed", user.pk, result.room.pk)
 
     def form_invalid(self, form: ImportPreviewForm) -> HttpResponse:
         for error in form.non_field_errors():

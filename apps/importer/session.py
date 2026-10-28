@@ -3,7 +3,7 @@ import uuid
 from django.contrib.sessions.backends.base import SessionBase
 
 from apps.currency.models import Currency
-from apps.importer.constants import SESSION_KEY_PREFIX
+from apps.importer.constants import MAX_PARKED_IMPORTS, SESSION_KEY_PREFIX
 
 
 def _session_key(token: str) -> str:
@@ -12,9 +12,18 @@ def _session_key(token: str) -> str:
 
 def store_parsed_import(session: SessionBase, payload: dict) -> str:
     """Park a parsed file under its own token so a second upload tab cannot overwrite the first."""
+    # SessionBase defines keys() but no __iter__, so iterating it directly would index it with 0.
+    parked = [key for key in session.keys() if key.startswith(f"{SESSION_KEY_PREFIX}:")]  # noqa: SIM118
+    # Session dicts keep insertion order, so the front of the list is the oldest preview.
+    for key in parked[: max(0, len(parked) - MAX_PARKED_IMPORTS + 1)]:
+        del session[key]
     token = uuid.uuid4().hex
     session[_session_key(token)] = payload
     return token
+
+
+def restore_parsed_import(session: SessionBase, token: str, payload: dict) -> None:
+    session[_session_key(token)] = payload
 
 
 def read_parsed_import(session: SessionBase, token: str) -> dict | None:

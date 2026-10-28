@@ -50,17 +50,30 @@ class TestImportSideEffectOrdering:
         room.users.add(existing)
         return existing
 
-    def test_debts_survive_a_failing_connection_mail(
-        self, db: None, authenticated_client: Client, currency: Currency, friend: User
+    def test_a_failing_connection_mail_still_redirects_to_the_created_room(
+        self, db: None, authenticated_client: Client, currency: Currency, friend: User, caplog: pytest.LogCaptureFixture
     ) -> None:
         target = "apps.mail.services.user_added_to_room_mail_service.UserAddedToRoomEmailService.process"
-        with mock.patch(target, side_effect=OSError("SMTP down")), pytest.raises(OSError, match="SMTP down"):
-            self._import(authenticated_client, currency, friend)
+        with mock.patch(target, side_effect=OSError("SMTP down")):
+            response = self._import(authenticated_client, currency, friend)
 
         imported_room = Room.objects.get(name="Kilian & Elisabeth")
+        assert response.status_code == 302
         assert ParentTransaction.objects.filter(room=imported_room).count() == 2
-        # The whole point: the room is not left with transactions and no debts.
+        # The room is not left with transactions and no debts.
         assert Debt.objects.filter(room=imported_room, settled=False).exists()
+        assert "failed" in caplog.text
+
+    def test_a_failing_event_handler_still_redirects_to_the_created_room(
+        self, db: None, authenticated_client: Client, currency: Currency, friend: User
+    ) -> None:
+        target = "apps.importer.views.import_preview_view.handle_message"
+        with mock.patch(target, side_effect=OSError("handler down")):
+            response = self._import(authenticated_client, currency, friend)
+
+        imported_room = Room.objects.get(name="Kilian & Elisabeth")
+        assert response.status_code == 302
+        assert UserConnectionToRoom.objects.filter(room=imported_room, user=friend).exists()
 
     def test_a_healthy_import_connects_everyone(
         self, db: None, authenticated_client: Client, currency: Currency, friend: User
