@@ -6,7 +6,7 @@ from apps.core.event_loop.registry import message_registry
 from apps.mail.services.invitation_mail_service import InvitationEmailService
 
 
-@message_registry.register_command(command=SendInvitationEmail)
+@message_registry.register_command(command=SendInvitationEmail, atomic=False)
 def handle_send_invitation_email(context: SendInvitationEmail.Context) -> InvitationEmailSent:
     service = InvitationEmailService(
         invited_by=context.inviter, recipient=context.invitee, recipient_email_list=[context.invitee_email]

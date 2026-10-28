@@ -9,7 +9,7 @@ from apps.room.models import Room
 from apps.webpush.utils import Notification
 
 
-@message_registry.register_event(event=RoomStatusChanged)
+@message_registry.register_event(event=RoomStatusChanged, atomic=False)
 def send_notification_on_room_status_changed(context: RoomStatusChanged.Context) -> None:
     room = context.room
 

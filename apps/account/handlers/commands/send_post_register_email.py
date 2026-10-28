@@ -4,7 +4,7 @@ from apps.core.event_loop.registry import message_registry
 from apps.mail.services.post_register_mail_service import PostRegisterEmailService
 
 
-@message_registry.register_command(command=SendPostRegisterEmail)
+@message_registry.register_command(command=SendPostRegisterEmail, atomic=False)
 def handle_send_post_register_mail(context: SendPostRegisterEmail.Context) -> PostRegisterEmailSent:
     service = PostRegisterEmailService(recipient=context.user)
     service.process()
