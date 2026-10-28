@@ -4,10 +4,13 @@ from decimal import Decimal
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
 from django.core.files.uploadedfile import UploadedFile
+from django.db.models import QuerySet
 from django.http import HttpRequest
 
+from apps.account.models import User
 from apps.room.models import Room
 from apps.transaction.forms.mixins.room_category_field import RoomCategoryFieldMixin
+from apps.transaction.forms.mixins.split_shares import SplitSharesMixin
 from apps.transaction.models import ChildTransaction, ParentTransaction, Receipt
 from apps.transaction.utils import split_total_across_paid_for
 
@@ -22,7 +25,7 @@ MAX_RECEIPT_SIZE = 5 * 1024 * 1024  # 5 MB
 RECEIPT_AUTH_REQUIRED_MESSAGE = "Authenticated user is required to upload receipts."
 
 
-class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
+class TransactionCreateForm(SplitSharesMixin, RoomCategoryFieldMixin, forms.ModelForm):
     total_value = forms.DecimalField(decimal_places=2, max_digits=10)
     # The total the currently submitted `value` row values were last computed against - carried
     # in a hidden field because, unlike the edit form, there is no persisted split to compare to.
@@ -59,27 +62,36 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
         self, *args: object, request: HttpRequest | None = None, room: Room | None = None, **kwargs: object
     ) -> None:
         self._request = request
+        self._room = room
         super().__init__(*args, **kwargs)
         self.narrow_category_field_to(room)
+
+    def _share_room_users(self) -> QuerySet:
+        return User.objects.filter(room=self._room)
 
     def clean(self) -> dict:
         cleaned_data = super().clean()
         total_value = cleaned_data.get("total_value")
-        paid_for_entries = cleaned_data.get("paid_for")
+        paid_for = cleaned_data.get("paid_for")
+        values = cleaned_data.get("value")
 
-        if total_value is None or not paid_for_entries:
+        if total_value is None or not paid_for or values is None:
+            return cleaned_data
+        if not self.shares_have_equal_length(paid_for, values):
             return cleaned_data
 
-        values = cleaned_data.get("value") or []
         reference_total_value = cleaned_data.get("reference_total_value") or Decimal("0.00")
-        sum_values = sum(values, Decimal("0.00"))
-        total_changed = total_value != reference_total_value
+        if total_value != reference_total_value:
+            values = split_total_across_paid_for(total_value, paid_for)
 
-        if total_changed:
-            cleaned_data["value"] = split_total_across_paid_for(total_value, paid_for_entries)
-        elif sum_values != total_value:
-            cleaned_data["total_value"] = sum_values
+        if not self.share_amounts_are_valid(values):
+            return cleaned_data
 
+        # A zero share is no debt; the edit form drops it the same way.
+        shares = [(debtor, value) for debtor, value in zip(paid_for, values, strict=True) if value != 0]
+        cleaned_data["paid_for"] = [debtor for debtor, _ in shares]
+        cleaned_data["value"] = [value for _, value in shares]
+        cleaned_data["total_value"] = sum(cleaned_data["value"], Decimal("0.00"))
         return cleaned_data
 
     def clean_receipts(self) -> list:
@@ -125,7 +137,7 @@ class TransactionCreateForm(RoomCategoryFieldMixin, forms.ModelForm):
 
         paid_for_entries = self.cleaned_data["paid_for"]
         values = self.cleaned_data["value"]
-        for debtor_id, share in zip(paid_for_entries, values, strict=False):
+        for debtor_id, share in zip(paid_for_entries, values, strict=True):
             ChildTransaction.objects.create(parent_transaction=instance, paid_for_id=debtor_id, value=share)
 
         self._save_receipts(instance)

@@ -9,6 +9,7 @@ from django.utils.translation import ngettext
 from django.views import generic
 
 from apps.core.utils import format_number_with_thousands
+from apps.room.views.mixins import RoomMembershipRequiredMixin
 from apps.transaction.constants import (
     CHART_SMALL_SLICE_BUCKET_COLOR,
     CHART_SMALL_SLICE_MINIMUM_BUCKET_SIZE,
@@ -18,7 +19,7 @@ from apps.transaction.models import ParentTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class TransactionCategoryBreakdownView(TransactionBaseContext, generic.TemplateView):
+class TransactionCategoryBreakdownView(RoomMembershipRequiredMixin, TransactionBaseContext, generic.TemplateView):
     template_name = "transaction/category_breakdown.html"
 
     def get_context_data(self, **kwargs: object) -> dict:

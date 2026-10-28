@@ -1,33 +1,9 @@
 from collections.abc import Callable
 
 import pytest
-from django.urls import reverse
-from playwright.sync_api import Page
 
 from apps.account.models import User
-from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.debt.models import Debt
-from apps.room.models import Room
-from e2e.conftest import _login
-from e2e.pages.debt_list_page import DebtListPage
-
-
-@pytest.fixture
-def open_debt(room_with_open_debt: Room) -> Debt:
-    return Debt.objects.get(room=room_with_open_debt)
-
-
-@pytest.fixture
-def debt_list_as(page: Page, base_url: str, room_with_open_debt: Room) -> Callable:
-    def _open(user: User) -> DebtListPage:
-        _login(page, base_url, user.email, DEFAULT_PASSWORD)
-        debt_list_page = DebtListPage(
-            page, base_url, reverse("debt:list", kwargs={"room_slug": room_with_open_debt.slug})
-        )
-        debt_list_page.navigate()
-        return debt_list_page
-
-    return _open
 
 
 @pytest.mark.e2e

@@ -7,21 +7,23 @@ from django.views import generic
 from django_context_decorator import context
 
 from apps.core.event_loop.runner import handle_message
-from apps.room.views.mixins import RoomNotClosedRequiredMixin
+from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.messages.events.transaction import ParentTransactionUpdated
 from apps.transaction.models import ParentTransaction
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
-class TransactionEditView(RoomNotClosedRequiredMixin, TransactionBaseContext, generic.UpdateView):
+class TransactionEditView(
+    RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin, TransactionBaseContext, generic.UpdateView
+):
     model = ParentTransaction
     form_class = TransactionEditForm
     template_name = "transaction/edit.html"
     context_object_name = "parent_transaction"
 
     def get_queryset(self) -> QuerySet:
-        return super().get_queryset().select_related("paid_by", "currency", "category")
+        return super().get_queryset().filter(room=self.request.room).select_related("paid_by", "currency", "category")
 
     def get_form_kwargs(self) -> dict:
         form_kwargs = super().get_form_kwargs()

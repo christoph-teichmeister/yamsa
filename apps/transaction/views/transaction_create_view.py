@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
-from apps.room.views.mixins import RoomNotClosedRequiredMixin
+from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
 from apps.transaction.models import ParentTransaction
@@ -20,7 +20,9 @@ from apps.transaction.views.mixins.transaction_base_context import TransactionBa
 CLIENT_REQUEST_ID_FIELD = "client_request_id"
 
 
-class TransactionCreateView(RoomNotClosedRequiredMixin, TransactionBaseContext, generic.CreateView):
+class TransactionCreateView(
+    RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin, TransactionBaseContext, generic.CreateView
+):
     model = ParentTransaction
     form_class = TransactionCreateForm
     template_name = "transaction/create.html"

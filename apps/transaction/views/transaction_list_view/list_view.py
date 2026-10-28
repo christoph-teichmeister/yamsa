@@ -3,11 +3,12 @@ from django.views import generic
 from apps.core.pwa_constants import PREFETCH_HEADER_NAME
 from apps.currency.models import Currency
 from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY
+from apps.room.views.mixins import RoomMembershipRequiredMixin
 from apps.transaction.models import Category
 from apps.transaction.views.transaction_list_view.mixin import TransactionFeedMixin
 
 
-class TransactionListView(TransactionFeedMixin, generic.TemplateView):
+class TransactionListView(RoomMembershipRequiredMixin, TransactionFeedMixin, generic.TemplateView):
     template_name = "transaction/list.html"
 
     def get_context_data(self, **kwargs: object) -> dict[str, object]:

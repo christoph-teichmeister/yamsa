@@ -1,11 +1,11 @@
 import http
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 import pytest
 from django.test import Client
 from django.urls import reverse
-from django.utils import timezone
+from freezegun import freeze_time
 
 from apps.account.models import User
 from apps.currency.tests.factories import CurrencyFactory
@@ -14,10 +14,12 @@ from apps.transaction.tests.conftest import create_parent_transaction_with_optim
 
 pytestmark = pytest.mark.django_db
 
+FROZEN_NOW = datetime(2026, 3, 14, 12, 0, tzinfo=UTC)
+
 
 class TestMoneySpentViews:
     def test_money_spent_on_room_displays_aggregated_context(
-        self, client: Client, room: Room, user: User, guest_user: User
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
     ) -> None:
         _, child_transactions = create_parent_transaction_with_optimisation(
             room=room,
@@ -27,7 +29,7 @@ class TestMoneySpentViews:
 
         expected_total = sum(transaction.value for transaction in child_transactions)
 
-        response = client.get(reverse("debt:money-spent-on-room", kwargs={"room_slug": room.slug}))
+        response = authenticated_client.get(reverse("debt:money-spent-on-room", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == http.HTTPStatus.OK
         context = response.context_data
@@ -50,7 +52,7 @@ class TestMoneySpentViews:
         assert covered_per_person[0]["total_covered_for_person"] == expected_total
 
     def test_money_spent_trend_view_builds_chart_payload(
-        self, client: Client, room: Room, user: User, guest_user: User
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
     ) -> None:
         _, child_transactions = create_parent_transaction_with_optimisation(
             room=room,
@@ -60,7 +62,7 @@ class TestMoneySpentViews:
 
         expected_total = sum(transaction.value for transaction in child_transactions)
 
-        response = client.get(reverse("debt:money-spent-trend", kwargs={"room_slug": room.slug}))
+        response = authenticated_client.get(reverse("debt:money-spent-trend", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == http.HTTPStatus.OK
         context = response.context_data
@@ -84,11 +86,12 @@ class TestMoneySpentViews:
         assert chart_data["rangeStart"] < chart_data["rangeEnd"]
         assert [entry["currency"] for entry in chart_data["series"]] == [room.preferred_currency.sign]
 
+    @freeze_time(FROZEN_NOW)
     def test_money_spent_trend_view_steps_per_transaction_not_per_week(
-        self, client: Client, room: Room, user: User, guest_user: User
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
     ) -> None:
         """Regression: weekly buckets collapsed a whole trip into a single jump."""
-        now = timezone.now()
+        now = FROZEN_NOW
         for offset_hours in (5, 4, 3):
             create_parent_transaction_with_optimisation(
                 room=room,
@@ -98,7 +101,7 @@ class TestMoneySpentViews:
                 child_transaction_kwargs={"value": Decimal(10)},
             )
 
-        response = client.get(
+        response = authenticated_client.get(
             reverse("debt:money-spent-trend", kwargs={"room_slug": room.slug}),
             {"period": "1w"},
         )
@@ -110,11 +113,12 @@ class TestMoneySpentViews:
         assert [point["value"] for point in points] == [0.0, 10.0, 20.0, 30.0, 30.0]
         assert [point["delta"] for point in points] == [0.0, 10.0, 10.0, 10.0, 0.0]
 
+    @freeze_time(FROZEN_NOW)
     def test_money_spent_trend_view_keeps_currencies_apart(
-        self, client: Client, room: Room, user: User, guest_user: User
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
     ) -> None:
         """Regression: same-bucket rows of a second currency silently overwrote the first."""
-        now = timezone.now()
+        now = FROZEN_NOW
         second_currency = CurrencyFactory(sign="Ft")
 
         create_parent_transaction_with_optimisation(
@@ -132,7 +136,7 @@ class TestMoneySpentViews:
             child_transaction_kwargs={"value": Decimal(2500)},
         )
 
-        response = client.get(
+        response = authenticated_client.get(
             reverse("debt:money-spent-trend", kwargs={"room_slug": room.slug}),
             {"period": "1w"},
         )
@@ -147,11 +151,12 @@ class TestMoneySpentViews:
         # Totals across currencies are not comparable, so the room's own currency leads.
         assert series[0]["currency"] == room.preferred_currency.sign
 
+    @freeze_time(FROZEN_NOW)
     def test_money_spent_trend_view_starts_from_spending_before_the_range(
-        self, client: Client, room: Room, user: User, guest_user: User
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
     ) -> None:
         """Regression: the running total restarted at zero whenever the window cut off older expenses."""
-        now = timezone.now()
+        now = FROZEN_NOW
         create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
@@ -167,7 +172,7 @@ class TestMoneySpentViews:
             child_transaction_kwargs={"value": Decimal(10)},
         )
 
-        response = client.get(
+        response = authenticated_client.get(
             reverse("debt:money-spent-trend", kwargs={"room_slug": room.slug}),
             {"period": "1w"},
         )
@@ -180,7 +185,7 @@ class TestMoneySpentViews:
         assert series["total"] == 50.0
 
     def test_money_spent_trend_view_range_matches_the_selected_period(
-        self, client: Client, room: Room, user: User, guest_user: User
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
     ) -> None:
         """Regression: the start was snapped back to a Monday, so '7 days' spanned up to 14."""
         create_parent_transaction_with_optimisation(
@@ -189,7 +194,7 @@ class TestMoneySpentViews:
             paid_for_tuple=(guest_user,),
         )
 
-        response = client.get(
+        response = authenticated_client.get(
             reverse("debt:money-spent-trend", kwargs={"room_slug": room.slug}),
             {"period": "1w"},
         )
@@ -200,16 +205,16 @@ class TestMoneySpentViews:
         assert context["trend_range_end"] - context["trend_range_start"] == timedelta(weeks=1)
 
     def test_money_spent_trend_view_shows_empty_state_without_transactions(
-        self, client: Client, room: Room, user: User
+        self, authenticated_client: Client, room: Room, user: User
     ) -> None:
-        response = client.get(reverse("debt:money-spent-trend", kwargs={"room_slug": room.slug}))
+        response = authenticated_client.get(reverse("debt:money-spent-trend", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == http.HTTPStatus.OK
         assert response.context_data["trend_series"] == []
         assert "No data available" in response.content.decode()
 
     def test_money_spent_on_room_omits_self_owed_entries(
-        self, client: Client, room: Room, user: User, guest_user: User
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
     ) -> None:
         _, child_transactions = create_parent_transaction_with_optimisation(
             room=room,
@@ -217,7 +222,7 @@ class TestMoneySpentViews:
             paid_for_tuple=(user, guest_user),
         )
 
-        response = client.get(reverse("debt:money-spent-on-room", kwargs={"room_slug": room.slug}))
+        response = authenticated_client.get(reverse("debt:money-spent-on-room", kwargs={"room_slug": room.slug}))
         assert response.status_code == http.HTTPStatus.OK
         covered_per_person = list(response.context_data["money_covered_for_person_qs"])
 
@@ -229,10 +234,9 @@ class TestMoneySpentViews:
         )
 
     def test_money_spent_on_room_shows_empty_state_without_transactions(
-        self, client: Client, room: Room, user: User
+        self, authenticated_client: Client, room: Room, user: User
     ) -> None:
-        client.force_login(user)
-        response = client.get(reverse("debt:money-spent-on-room", kwargs={"room_slug": room.slug}))
+        response = authenticated_client.get(reverse("debt:money-spent-on-room", kwargs={"room_slug": room.slug}))
 
         assert response.status_code == http.HTTPStatus.OK
         content = response.content.decode()

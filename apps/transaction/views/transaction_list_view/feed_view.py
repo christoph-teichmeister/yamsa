@@ -2,10 +2,11 @@ from collections.abc import MutableMapping
 
 from django.views import generic
 
+from apps.room.views.mixins import RoomMembershipRequiredMixin
 from apps.transaction.views.transaction_list_view.mixin import TransactionFeedMixin
 
 
-class TransactionFeedView(TransactionFeedMixin, generic.TemplateView):
+class TransactionFeedView(RoomMembershipRequiredMixin, TransactionFeedMixin, generic.TemplateView):
     template_name = "transaction/partials/_transaction_batch.html"
 
     def get_context_data(self, **kwargs: object) -> MutableMapping[str, object]:

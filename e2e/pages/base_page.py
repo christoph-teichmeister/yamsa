@@ -1,4 +1,6 @@
-from playwright.sync_api import Page
+from urllib.parse import urlencode
+
+from playwright.sync_api import APIResponse, Page
 
 
 class BasePage:
@@ -10,3 +12,23 @@ class BasePage:
     def navigate(self) -> None:
         self.page.goto(f"{self.base_url}{self.path}")
         self.page.wait_for_load_state("load")
+
+    def post(self, path: str, data: dict[str, str | list[str]] | None = None) -> APIResponse:
+        """POST as the logged-in browser session, the way a form would, but without a UI to click.
+
+        For requests the interface offers no button for (un-settling a debt) or deliberately
+        hides (editing in a closed room).
+        """
+        csrf_token = next(
+            cookie["value"] for cookie in self.page.context.cookies(self.base_url) if cookie["name"] == "csrftoken"
+        )
+        return self.page.request.post(
+            f"{self.base_url}{path}",
+            data=urlencode(data or {}, doseq=True),
+            headers={
+                "X-CSRFToken": csrf_token,
+                "Referer": f"{self.base_url}{path}",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            max_redirects=0,
+        )

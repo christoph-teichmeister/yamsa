@@ -3,17 +3,19 @@ from decimal import Decimal
 from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
+from django.db.models import QuerySet
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.account.models import User
 from apps.room.models import Room
 from apps.transaction.forms.mixins.room_category_field import RoomCategoryFieldMixin
+from apps.transaction.forms.mixins.split_shares import SplitSharesMixin
 from apps.transaction.models import ChildTransaction, ParentTransaction
 from apps.transaction.utils import split_total_across_paid_for
 
 
-class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
+class TransactionEditForm(SplitSharesMixin, RoomCategoryFieldMixin, forms.ModelForm):
     total_value = forms.DecimalField(decimal_places=2, max_digits=10)
 
     category = RoomCategoryFieldMixin.build_category_field()
@@ -42,37 +44,73 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
     def __init__(self, *args: object, room: Room | None = None, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
         self.narrow_category_field_to(room or getattr(self.instance, "room", None))
-        room_users_qs = User.objects.filter(room=self.instance.room)
-
-        self.fields["paid_by"].queryset = room_users_qs
-        self.fields["paid_for"].queryset = room_users_qs
+        self.fields["paid_by"].queryset = self._share_room_users()
         self._initial_total_value = self._current_total_value()
         self.fields["total_value"].initial = self._initial_total_value
         self.initial["total_value"] = self._initial_total_value
 
+    def _share_room_users(self) -> QuerySet:
+        return User.objects.filter(room=self.instance.room)
+
+    def clean_child_transaction_id(self) -> list[int]:
+        # 0 marks a new row; any other id is looked up on the instance when saving.
+        submitted = set(self.cleaned_data["child_transaction_id"]) - {0}
+        own = set(self.instance.child_transactions.filter(id__in=submitted).values_list("id", flat=True))
+        if submitted != own:
+            raise forms.ValidationError(_("Unknown share."), code="invalid_share")
+        return self.cleaned_data["child_transaction_id"]
+
     def clean(self) -> dict:
         cleaned_data = super().clean()
         total_value = cleaned_data.get("total_value")
+        paid_for = cleaned_data.get("paid_for")
+        values = cleaned_data.get("value")
+        share_ids = cleaned_data.get("child_transaction_id")
 
-        if total_value is None:
+        # A missing key means its field already reported an error.
+        if total_value is None or paid_for is None or values is None or share_ids is None:
+            return cleaned_data
+        if not self.shares_have_equal_length(share_ids, paid_for, values):
             return cleaned_data
 
-        values = cleaned_data.get("value") or []
-        paid_for_entries = cleaned_data.get("paid_for") or []
-        sum_values = sum(values, Decimal("0.00"))
-        total_changed = total_value != self._initial_total_value
+        if total_value != self._initial_total_value:
+            if not paid_for:
+                self.add_error("paid_for", _("Select at least one debtor."))
+                return cleaned_data
+            values = split_total_across_paid_for(total_value, paid_for)
 
-        if total_changed and paid_for_entries:
-            recalculated_values = split_total_across_paid_for(total_value, paid_for_entries)
-            cleaned_data["value"] = recalculated_values
-            cleaned_data["total_value"] = total_value
-        elif sum_values != total_value:
-            cleaned_data["total_value"] = sum_values
+        if not self.share_amounts_are_valid(values):
+            return cleaned_data
 
-        if values and not any(cleaned_data.get("value", values)):
-            self.add_error("value", _("At least one share needs an amount above zero."))
-
+        share_ids, paid_for, values = self._merge_new_rows_into_debtor_rows(share_ids, paid_for, values)
+        cleaned_data.update(
+            child_transaction_id=share_ids, paid_for=paid_for, value=values, total_value=sum(values, Decimal("0.00"))
+        )
         return cleaned_data
+
+    @staticmethod
+    def _merge_new_rows_into_debtor_rows(
+        share_ids: list[int], paid_for: list[int], values: list[Decimal]
+    ) -> tuple[list[int], list[int], list[Decimal]]:
+        """Fold rows without an id into the debtor's other row, so each debtor is saved once.
+
+        A debtor's anchor is their first row that already has an id, else their first new row.
+        """
+        rows = [[share_id, debtor, value] for share_id, debtor, value in zip(share_ids, paid_for, values, strict=True)]
+        anchors: dict[int, list] = {}
+        for row in rows:
+            anchor = anchors.get(row[1])
+            if anchor is None or (anchor[0] == 0 and row[0] != 0):
+                anchors[row[1]] = row
+
+        kept = []
+        for row in rows:
+            anchor = anchors[row[1]]
+            if row[0] == 0 and anchor is not row:
+                anchor[2] += row[2]
+            else:
+                kept.append(row)
+        return [r[0] for r in kept], [r[1] for r in kept], [r[2] for r in kept]
 
     def save(self, commit: bool = True) -> ParentTransaction:
         # Only persists: the transaction boundary and the ParentTransactionUpdated event belong to
@@ -82,57 +120,29 @@ class TransactionEditForm(RoomCategoryFieldMixin, forms.ModelForm):
         return instance
 
     def _save_child_transactions(self, instance: ParentTransaction) -> None:
-        # Get the user making the request
         request_user = CurrentRequestMiddleware.get_current_user()
+        now = timezone.now()
+        existing = {child.id: child for child in instance.child_transactions.all()}
 
-        # Initialize an empty list to keep track of updated ChildTransaction instances
         updated_child_transactions = []
-
-        # Iterate over the submitted child transactions
         for child_transaction_id, debtor, value in self._shares_to_save(instance):
-            # Check if the child transaction is being updated or if its value is being modified
-            update_value_of_child_transaction = (
-                self.cleaned_data["paid_for"].count(debtor) > 1 and child_transaction_id == 0
-            )
-
-            # Check if a new child transaction is being added
-            add_child_transaction = child_transaction_id == 0 and not update_value_of_child_transaction
-
-            # Check if an existing child transaction is being edited
-            edit_child_transaction = not add_child_transaction
-
-            if edit_child_transaction or update_value_of_child_transaction:
-                # Retrieve the child transaction to be updated
-                child_transaction = (
-                    instance.child_transactions.get(id=child_transaction_id)
-                    if not update_value_of_child_transaction
-                    else instance.child_transactions.get(paid_for=debtor)
-                )
-
-                # Update the child transaction fields
-                child_transaction.paid_for_id = debtor
-                child_transaction.value = (
-                    child_transaction.value + value if update_value_of_child_transaction else value
-                )
-                child_transaction.lastmodified_by = request_user
-                child_transaction.lastmodified_at = timezone.now()
-
-                updated_child_transactions = (
-                    *list(filter(lambda ct: ct.id != child_transaction.id, updated_child_transactions)),
-                    child_transaction,
-                )
-
-            if add_child_transaction:
-                # Create a new child transaction
+            if child_transaction_id == 0:
                 ChildTransaction.objects.create(
                     parent_transaction=instance,
                     paid_for_id=debtor,
                     value=value,
                     created_by=request_user,
-                    created_at=timezone.now(),
+                    created_at=now,
                 )
+                continue
 
-        # Use a bulk update to efficiently update multiple child transactions
+            child_transaction = existing[child_transaction_id]
+            child_transaction.paid_for_id = debtor
+            child_transaction.value = value
+            child_transaction.lastmodified_by = request_user
+            child_transaction.lastmodified_at = now
+            updated_child_transactions.append(child_transaction)
+
         ChildTransaction.objects.bulk_update(
             objs=updated_child_transactions, fields=("paid_for", "value", "lastmodified_by", "lastmodified_at")
         )

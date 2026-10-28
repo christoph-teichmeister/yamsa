@@ -10,9 +10,12 @@ from apps.debt.views.mixins.debt_base_context import DebtBaseContext
 from apps.debt.views.money_spent_on_room_view.room_child_transaction_queryset_mixin import (
     RoomChildTransactionQuerysetMixin,
 )
+from apps.room.views.mixins import RoomMembershipRequiredMixin
 
 
-class MoneySpentTrendPartialView(RoomChildTransactionQuerysetMixin, DebtBaseContext, generic.TemplateView):
+class MoneySpentTrendPartialView(
+    RoomMembershipRequiredMixin, RoomChildTransactionQuerysetMixin, DebtBaseContext, generic.TemplateView
+):
     template_name = "transaction/partials/_money_spent_trend.html"
 
     PERIOD_OPTIONS = {

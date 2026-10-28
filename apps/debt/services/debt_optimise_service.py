@@ -2,10 +2,12 @@ from collections import defaultdict, deque
 from collections.abc import Iterable
 from decimal import Decimal
 
+from django.db import transaction
 from django.db.models import F, Sum
 
 from apps.currency.models import Currency
 from apps.debt.models import Debt
+from apps.room.models import Room
 from apps.transaction.models import ChildTransaction
 
 
@@ -22,21 +24,27 @@ class DebtOptimiseService:
         3. Fold settled debts back into those aggregates so existing settlements are preserved.
         4. Pair debtors with creditors per currency and create fresh Debt records for the residual transfers.
         """
-        Debt.objects.filter(room_id=room_id).filter(settled=False).delete()
+        # The room row is the lock: two rebuilds of one room must not interleave their delete and insert,
+        # or both would insert a full set of debts.
+        with transaction.atomic():
+            Room.objects.select_for_update().get(pk=room_id)
+            Debt.objects.filter(room_id=room_id).filter(settled=False).delete()
 
-        balances_by_currency = DebtOptimiseService._balances_by_currency(room_id)
+            balances_by_currency = DebtOptimiseService._balances_by_currency(room_id)
 
-        Debt.objects.bulk_create(
-            Debt(
-                debitor_id=debtor,
-                creditor_id=creditor,
-                room_id=room_id,
-                value=transfer_amount,
-                currency_id=currency.id,
+            Debt.objects.bulk_create(
+                Debt(
+                    debitor_id=debtor,
+                    creditor_id=creditor,
+                    room_id=room_id,
+                    value=transfer_amount,
+                    currency_id=currency.id,
+                )
+                for currency in Currency.objects.filter(id__in=balances_by_currency.keys())
+                for debtor, creditor, transfer_amount in DebtOptimiseService._transfers(
+                    balances_by_currency[currency.id]
+                )
             )
-            for currency in Currency.objects.filter(id__in=balances_by_currency.keys())
-            for debtor, creditor, transfer_amount in DebtOptimiseService._transfers(balances_by_currency[currency.id])
-        )
 
     @staticmethod
     def _balances_by_currency(room_id: int) -> dict[int, dict[int, Decimal]]:
