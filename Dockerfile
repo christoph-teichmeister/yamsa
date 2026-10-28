@@ -24,7 +24,7 @@ FROM python:${PYTHON_MINOR_VERSION}-slim AS production
 ARG PYTHON_MINOR_VERSION
 
 # Install required OS dependencies
-# We have to have "gettext" here as well to be able to run "makemigrations"
+# gettext is needed at runtime for compilemessages / makemessages
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
       # https://github.com/Kozea/WeasyPrint/issues/2011#issuecomment-2129234529
@@ -34,7 +34,7 @@ RUN apt-get update && \
       locales && \
     sed -i -e "s/# en_GB.UTF-8.*/en_GB.UTF-8 UTF-8/" /etc/locale.gen && \
     sed -i -e "s/# de_DE.UTF-8.*/de_DE.UTF-8 UTF-8/" /etc/locale.gen && \
-    locale-gen de_DE.UTF-8 \
+    locale-gen de_DE.UTF-8 && \
     update-locale LANG=de_DE.UTF-8 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -68,12 +68,6 @@ COPY --chown=web:web . $PROJECT_HOME
 # Create empty env-file to avoid warnings by django
 RUN touch "$PROJECT_HOME/apps/config/.env"
 RUN touch "$PROJECT_HOME/apps/config/development.env"
-
-# Run collectstatic for whitenoise
-RUN #python ./manage.py collectstatic --noinput
-
-# Compile translated messages
-RUN #python ./manage.py compilemessages
 
 # EXPOSE port 8000 to allow communication to/from server
 EXPOSE 8000

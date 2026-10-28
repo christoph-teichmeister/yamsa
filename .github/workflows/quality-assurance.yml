@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: '3.13.4'
+          python-version-file: .python-version
           cache: 'pip'
 
       - name: Install uv runtime tooling
@@ -62,7 +62,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: '3.13.4'
+          python-version-file: .python-version
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y git
@@ -82,7 +82,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: '3.13.4'
+          python-version-file: .python-version
 
       - name: Install uv runtime tooling
         run: python -m pip install --upgrade pip uv
@@ -104,7 +104,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: '3.13.4'
+          python-version-file: .python-version
 
       - name: Install uv runtime tooling
         run: python -m pip install --upgrade pip uv
@@ -126,7 +126,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: '3.13.4'
+          python-version-file: .python-version
 
       - name: Install uv runtime tooling
         run: python -m pip install --upgrade pip uv
@@ -170,7 +170,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: '3.13.4'
+          python-version-file: .python-version
 
       - name: Install uv runtime tooling
         run: python -m pip install --upgrade pip uv

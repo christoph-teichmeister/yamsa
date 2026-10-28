@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = "==3.13.*"
 
 [[package]]
@@ -443,19 +443,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-htmx"
-version = "1.29.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "asgiref" },
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/66/cc/b0619004ed73a4a2bfa50d14b00a8228407b01994df73613584523ab3056/django_htmx-1.29.0.tar.gz", hash = "sha256:337dfa35b8da13fd68bf968f2b9cc9a4144a4e71f06c204d7ff10f7343988102", size = 204340, upload-time = "2026-08-05T23:42:09.457Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ec/72/1f5f35d719b355e5c051378ae4859586f59c9db08708f02fea358376c130/django_htmx-1.29.0-py3-none-any.whl", hash = "sha256:0ec5be1645ed71e6787bd75e0250624f00274ac3bb1730f07b6629a95688929b", size = 224954, upload-time = "2026-08-05T23:42:08.142Z" },
-]
-
-[[package]]
 name = "django-minify-html"
 version = "1.14.0"
 source = { registry = "https://pypi.org/simple" }
@@ -763,18 +750,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/fd/c0/ed804ea3722cdc828518556e9b40ea21230e0ccc8d326bacb8b98f90004f/minify_html-0.18.1-cp313-cp313-musllinux_1_1_aarch64.whl", hash = "sha256:0e1592a4efc56848129d60f95bdcf79e32e1cce045aa004ab57233b7b16e126f", size = 3082149, upload-time = "2025-10-25T22:31:14.339Z" },
     { url = "https://files.pythonhosted.org/packages/55/4f/dc937c47aab7d7b692a916bd85b90830244c0b17a988bde019063a832b11/minify_html-0.18.1-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:a0e557e7e43b233b5416cd0b0874ac369ce168f2024f7199925350f5bc09af15", size = 3327698, upload-time = "2025-10-25T22:27:16.688Z" },
     { url = "https://files.pythonhosted.org/packages/aa/22/59c7751f8b029dee05b3b46c3b21f1fe4bb1fa9450176533d92da823bb5e/minify_html-0.18.1-cp313-cp313-win_amd64.whl", hash = "sha256:f8fca598b171ee603b8ed399bedd2de00d202cfcb0e98feadb21deb11d5d669b", size = 3116928, upload-time = "2025-10-25T22:37:01.598Z" },
-]
-
-[[package]]
-name = "model-bakery"
-version = "1.24.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/b2/39/a5c5e2263e6d4448c255ee19b1e5ffb8dcd1edf57f8b2391116e3724bb8a/model_bakery-1.24.2.tar.gz", hash = "sha256:de9ffb98acaaf558aa5522425db7f2a714358ef3d98d318b3a37c837a61932e3", size = 30314, upload-time = "2026-10-06T15:53:09.058Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/79/a6/cada15b3d9e1e9505179b5701c95b47d5ac662b86bac0f28e7eda1e4a832/model_bakery-1.24.2-py3-none-any.whl", hash = "sha256:1823831965ad99edc83ff0dd009fe15a88e91f0ed8573cadb5a52d77b30b2a60", size = 32676, upload-time = "2026-10-06T15:53:07.845Z" },
 ]
 
 [[package]]
@@ -1315,18 +1290,14 @@ dependencies = [
     { name = "django-context-decorator" },
     { name = "django-environ" },
     { name = "django-extensions" },
-    { name = "django-htmx" },
     { name = "django-minify-html" },
     { name = "django-passkeys" },
     { name = "django-pony-express" },
     { name = "django-webpack-loader" },
     { name = "emoji" },
     { name = "gunicorn" },
-    { name = "minify-html" },
-    { name = "model-bakery" },
     { name = "pillow" },
     { name = "psycopg2-binary" },
-    { name = "pytest" },
     { name = "pywebpush" },
     { name = "sentry-sdk", extra = ["django"] },
     { name = "whitenoise" },
@@ -1367,7 +1338,6 @@ requires-dist = [
     { name = "django-debug-toolbar", marker = "extra == 'dev'" },
     { name = "django-environ", specifier = "==0.*" },
     { name = "django-extensions", specifier = "==4.*" },
-    { name = "django-htmx", specifier = "==1.*" },
     { name = "django-minify-html", specifier = "==1.*" },
     { name = "django-passkeys", specifier = "==2.*" },
     { name = "django-pony-express", specifier = "==3.*" },
@@ -1379,12 +1349,9 @@ requires-dist = [
     { name = "freezegun", marker = "extra == 'dev'" },
     { name = "gunicorn", specifier = "==26.*" },
     { name = "html5lib", marker = "extra == 'dev'", specifier = ">=1.1" },
-    { name = "minify-html", specifier = "==0.18.*" },
-    { name = "model-bakery", specifier = "==1.*" },
     { name = "pillow", specifier = "==12.*" },
     { name = "playwright", marker = "extra == 'dev'" },
     { name = "psycopg2-binary", specifier = "==2.*" },
-    { name = "pytest", specifier = "==9.*" },
     { name = "pytest-django", marker = "extra == 'dev'" },
     { name = "pytest-env", marker = "extra == 'dev'" },
     { name = "pytest-factoryboy", marker = "extra == 'dev'" },
