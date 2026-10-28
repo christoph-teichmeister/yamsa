@@ -10,12 +10,14 @@ from apps.account.tests.constants import DEFAULT_PASSWORD
 from apps.account.tests.factories import UserFactory
 from apps.currency.models import Currency
 from apps.currency.tests.factories import CurrencyFactory
+from apps.debt.models import Debt
 from apps.debt.services.debt_optimise_service import DebtOptimiseService
 from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.models import Category, ChildTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
 from e2e.conftest import _login
+from e2e.pages.debt_list_page import DebtListPage
 from e2e.pages.room_insights_page import RoomInsightsPage
 
 CATEGORIES = (
@@ -93,5 +95,23 @@ def open_insights(page: Page, base_url: str, people: tuple[User, User, User], sp
         insights_page = RoomInsightsPage(page, base_url, reverse(view_name, kwargs={"room_slug": spending_room.slug}))
         insights_page.navigate()
         return insights_page
+
+    return _open
+
+
+@pytest.fixture
+def open_debt(room_with_open_debt: Room) -> Debt:
+    return Debt.objects.get(room=room_with_open_debt)
+
+
+@pytest.fixture
+def debt_list_as(page: Page, base_url: str, room_with_open_debt: Room) -> Callable:
+    def _open(user: User) -> DebtListPage:
+        _login(page, base_url, user.email, DEFAULT_PASSWORD)
+        debt_list_page = DebtListPage(
+            page, base_url, reverse("debt:list", kwargs={"room_slug": room_with_open_debt.slug})
+        )
+        debt_list_page.navigate()
+        return debt_list_page
 
     return _open
