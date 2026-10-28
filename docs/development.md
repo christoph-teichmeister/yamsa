@@ -41,6 +41,13 @@
   `pyproject.toml`.
 - Run `uv run ruff check --fix .` followed by `uv run djlint apps --reformat`.
 
+## Production security environment
+
+`DJANGO_SECURE_HSTS_SECONDS` defaults to `0` (no HSTS) so local/dev/test over plain HTTP keep working, and
+`SECURE_SSL_REDIRECT` is `False` because TLS terminates at the proxy (it forwards `X-Forwarded-Proto`). Production must
+set `DJANGO_SECURE_HSTS_SECONDS` (e.g. `31536000`) and keep `DJANGO_SESSION_COOKIE_SECURE=True` (the default), and the
+proxy must redirect HTTP to HTTPS. `manage.py check --deploy` (run in CI) flags a missing HSTS value.
+
 ## Session management
 
 - Logging in stores the target TTL under `apps.account.constants.SESSION_TTL_SESSION_KEY` and the new

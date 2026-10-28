@@ -72,7 +72,9 @@ native (non-Docker) runtime. Without them Render silently falls back to its acco
 default, which drifts over time independently of this repo (e.g. Render bumped its default Python
 from 3.13 to 3.14 and its default Node from 22 to 24 during 2026) and can break a deploy with no
 local warning. Keep these files in sync with `pyproject.toml`'s Python constraint and
-`package.json`'s `engines.node` range. Prefer these files over setting `PYTHON_VERSION`/
+`package.json`'s `engines.node` range. CI reads the Python version from `.python-version`
+(`python-version-file`), so it needs no separate edit; the Dockerfile's `PYTHON_MINOR_VERSION`
+and ruff's `target-version` still do. Prefer these files over setting `PYTHON_VERSION`/
 `NODE_VERSION` by hand in Render's dashboard — a dashboard override takes precedence over the repo
 file and silently pins an exact patch version that no longer moves as `uv.lock`/CI pick up new
 Python patch releases, so drop the dashboard variable once the repo file covers it.

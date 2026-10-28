@@ -9,6 +9,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import contextlib
 import datetime as dt
 import logging
 import os
@@ -232,8 +233,8 @@ STORAGES = {
     "staticfiles": {
         # Turn on WhiteNoise storage backend that takes care of compressing static files
         # and creating unique names for each version, so they can safely be cached forever.
-        # TODO(CT): Workaround for missing bootstrap-toggle.min.js.map in django-passkeys — revert to
-        #       "whitenoise.storage.CompressedManifestStaticFilesStorage" once fixed upstream.
+        # Custom subclass because django-passkeys (still as of 2.1) ships bootstrap-toggle.min.js without its
+        # .map file; plain CompressedManifestStaticFilesStorage would abort collectstatic on that reference.
         "BACKEND": "apps.config.storage.ManifestStaticFilesStorage",
     },
 }
@@ -350,8 +351,9 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS")
 
-# adds the container's internal IP to the allowed hosts to enable healthchecks w/o Host-header:
-ALLOWED_HOSTS.append(socket.gethostbyname(socket.gethostname()))
+# Container-internal IP lets healthchecks pass without a Host header; the hostname may not resolve outside Docker.
+with contextlib.suppress(OSError):
+    ALLOWED_HOSTS = [*ALLOWED_HOSTS, socket.gethostbyname(socket.gethostname())]
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -371,7 +373,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = False
 CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE = env("DJANGO_SESSION_COOKIE_SECURE")
-SECURE_BROWSER_XSS_FILTER = SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # https://docs.djangoproject.com/en/5.1/ref/settings/#silenced-system-checks
 SILENCED_SYSTEM_CHECKS = ()
