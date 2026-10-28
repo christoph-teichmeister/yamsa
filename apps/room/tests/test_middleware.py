@@ -1,4 +1,5 @@
 import http
+import uuid
 
 import pytest
 from django.test import Client
@@ -28,3 +29,11 @@ class TestRoomToRequestMiddleware:
 
         response = client.get(reverse("room:detail", kwargs={"room_slug": room.slug}))
         assert response.status_code == http.HTTPStatus.OK
+
+    @pytest.mark.parametrize("slug", [str(uuid.uuid4()), "not-a-uuid"])
+    def test_middleware_answers_404_for_an_unknown_or_malformed_slug(
+        self, authenticated_client: Client, slug: str
+    ) -> None:
+        response = authenticated_client.get(reverse("room:detail", kwargs={"room_slug": slug}))
+
+        assert response.status_code == http.HTTPStatus.NOT_FOUND

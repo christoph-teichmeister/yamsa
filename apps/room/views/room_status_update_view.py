@@ -7,11 +7,12 @@ from apps.core.event_loop.runner import handle_message
 from apps.room.forms import RoomStatusForm
 from apps.room.messages.events.room_status_changed import RoomStatusChanged
 from apps.room.models import Room
+from apps.room.views.mixins import RoomMembershipRequiredMixin
 from apps.room.views.mixins.room_base_context import RoomBaseContext
 from apps.room.views.mixins.room_sheet_response import RoomSheetResponseMixin
 
 
-class RoomStatusUpdateView(RoomSheetResponseMixin, RoomBaseContext, generic.UpdateView):
+class RoomStatusUpdateView(RoomMembershipRequiredMixin, RoomSheetResponseMixin, RoomBaseContext, generic.UpdateView):
     # Answers with the sheet, never with a page of its own: closing a room changes its badge, its
     # readiness row and whether its fields can be edited at all, so the whole sheet comes back.
     template_name = "room/detail.html"

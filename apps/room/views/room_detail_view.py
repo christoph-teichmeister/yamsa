@@ -8,6 +8,8 @@ from apps.room.views.mixins.room_base_context import RoomBaseContext
 
 
 class RoomDetailView(RoomBaseContext, generic.DetailView):
+    # Open to non-members like the dashboard (guest picker); member-only data stays behind the
+    # template's user_is_member check.
     # The room reads and edits in the same place, so this template carries both states.
     template_name = "room/detail.html"
     context_object_name = "room"

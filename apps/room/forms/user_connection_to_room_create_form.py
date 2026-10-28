@@ -11,6 +11,7 @@ class UserConnectionToRoomCreateForm(forms.ModelForm):
 
     class ExceptionMessage:
         EMAIL_UNKNOWN = "Email does not exist"
+        ROOM_UNKNOWN = "Room does not exist"
         EMAIL_ALREADY_IN_ROOM = "User with this email address is already in this room"
 
     class Meta:
@@ -23,11 +24,28 @@ class UserConnectionToRoomCreateForm(forms.ModelForm):
 
         return self.cleaned_data["email"]
 
-    def clean(self) -> None:
-        if UserConnectionToRoom.objects.filter(
-            user__email=self.data["email"], room__slug=self.data["room_slug"]
-        ).exists():
+    def clean_room_slug(self) -> str:
+        room_slug = self.cleaned_data["room_slug"]
+        try:
+            room_exists = Room.objects.filter(slug=room_slug).exists()
+        except ValidationError:
+            room_exists = False
+        if not room_exists:
+            raise ValidationError(self.ExceptionMessage.ROOM_UNKNOWN)
+
+        return room_slug
+
+    def clean(self) -> dict:
+        cleaned_data = super().clean()
+        email, room_slug = cleaned_data.get("email"), cleaned_data.get("room_slug")
+        if (
+            email
+            and room_slug
+            and UserConnectionToRoom.objects.filter(user__email=email, room__slug=room_slug).exists()
+        ):
             raise ValidationError({"email": self.ExceptionMessage.EMAIL_ALREADY_IN_ROOM})
+
+        return cleaned_data
 
     def _post_clean(self) -> None:
         if len(self.errors) == 0:

@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from apps.account.tests.factories import UserFactory
 from apps.room.models import Room, UserConnectionToRoom
+from apps.room.tests.factories import RoomFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -20,6 +21,19 @@ def test_post_regular(authenticated_client: Client, room: Room) -> None:
     )
 
     assert response.status_code == http.HTTPStatus.OK
+    assert UserConnectionToRoom.objects.filter(user=other_user, room=room).exists()
+
+
+def test_a_posted_slug_cannot_target_another_room(authenticated_client: Client, room: Room) -> None:
+    foreign_room = RoomFactory()
+    other_user = UserFactory()
+
+    authenticated_client.post(
+        reverse("room:userconnectiontoroom-create", kwargs={"room_slug": room.slug}),
+        data={"email": other_user.email, "room_slug": foreign_room.slug},
+    )
+
+    assert not UserConnectionToRoom.objects.filter(user=other_user, room=foreign_room).exists()
     assert UserConnectionToRoom.objects.filter(user=other_user, room=room).exists()
 
 

@@ -5,9 +5,10 @@ from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
 from apps.room.messages.commands.delete_room import DeleteRoom
+from apps.room.views.mixins import RoomMembershipRequiredMixin
 
 
-class RoomHardDeleteView(generic.View):
+class RoomHardDeleteView(RoomMembershipRequiredMixin, generic.View):
     """Permanently delete a closed room and everything that exists only because of it.
 
     There is nothing to validate or persist, so this isn't a `ModelForm` and doesn't answer with

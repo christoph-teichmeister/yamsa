@@ -3,9 +3,10 @@ from django.views import generic
 
 from apps.account.models import User
 from apps.account.views.mixins.account_base_context import AccountBaseContext
+from apps.room.views.mixins import RoomMembershipRequiredMixin
 
 
-class UserListForRoomView(AccountBaseContext, generic.ListView):
+class UserListForRoomView(RoomMembershipRequiredMixin, AccountBaseContext, generic.ListView):
     model = User
     context_object_name = "user_qs_for_room"
     template_name = "account/list.html"
@@ -20,11 +21,5 @@ class UserListForRoomView(AccountBaseContext, generic.ListView):
 
     def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)
-        request = self.request
-        room = getattr(request, "room", None)
-        is_member = False
-        if room and request.user.is_authenticated:
-            is_member = room.users.filter(pk=request.user.pk).exists()
-
-        context["is_member"] = is_member
+        context["is_member"] = self.request.room.users.filter(pk=self.request.user.pk).exists()
         return context
