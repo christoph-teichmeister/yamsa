@@ -1576,6 +1576,9 @@ msgstr "Gib eine Farbe im Format #RRGGBB ein."
 msgid "Enter a single emoji character."
 msgstr "Gib ein einzelnes Emoji-Zeichen ein."
 
+msgid "At least one share needs an amount above zero."
+msgstr "Mindestens ein Anteil muss größer als 0 sein."
+
 #, python-brace-format
 msgid "{paid_by} paid {value}{currency} for {paid_for}"
 msgstr "{paid_by} hat {value}{currency} für {paid_for} bezahlt"
