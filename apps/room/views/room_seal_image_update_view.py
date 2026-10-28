@@ -3,11 +3,11 @@ from django.urls import reverse
 from django.views import View
 
 from apps.room.forms import RoomSealImageForm
-from apps.room.views.mixins import RoomNotClosedRequiredMixin
+from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 from apps.room.views.mixins.room_sheet_response import RoomSheetResponseMixin
 
 
-class RoomSealImageUpdateView(RoomNotClosedRequiredMixin, RoomSheetResponseMixin, View):
+class RoomSealImageUpdateView(RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin, RoomSheetResponseMixin, View):
     """Upload a custom seal image, replacing any predefined icon choice."""
 
     def post(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:

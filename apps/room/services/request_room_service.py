@@ -11,10 +11,6 @@ def assign_room_to_request(request: HttpRequest, room: Room) -> None:
 
     connection, has_seen_room = request.user.has_seen_room(room.id)
 
-    request_user_is_superuser_and_does_not_belong_to_room = connection is None and request.user.is_superuser
-    if request_user_is_superuser_and_does_not_belong_to_room:
-        return
-
     if connection is None:
         return
 

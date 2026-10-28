@@ -1,6 +1,7 @@
 from collections.abc import Callable
 
-from django.http import HttpRequest, HttpResponse
+from django.core.exceptions import ValidationError
+from django.http import Http404, HttpRequest, HttpResponse
 from django.urls import get_resolver
 
 from apps.room.models import Room
@@ -20,7 +21,12 @@ class RoomToRequestMiddleware:
         # If the request tries to access a room...
         if (room_slug := resolver_match.kwargs.get("room_slug")) is not None:
             # ...add room to the request
-            room = Room.objects.get(slug=room_slug)
+            try:
+                room = Room.objects.filter(slug=room_slug).first()
+            except ValidationError:
+                room = None
+            if room is None:
+                raise Http404
             assign_room_to_request(request, room)
 
         return self.get_response(request)

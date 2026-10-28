@@ -7,10 +7,12 @@ from apps.account.messages.commands.send_invitation_email import SendInvitationE
 from apps.account.models import User
 from apps.account.views.mixins.account_base_context import AccountBaseContext
 from apps.core.event_loop.runner import handle_message
-from apps.room.views.mixins import RoomNotClosedRequiredMixin
+from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 
 
-class GuestSendInvitationEmailView(RoomNotClosedRequiredMixin, AccountBaseContext, generic.UpdateView):
+class GuestSendInvitationEmailView(
+    RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin, AccountBaseContext, generic.UpdateView
+):
     model = User
     template_name = "account/invite_guest.html"
     form_class = GuestSendInvitationEmailForm

@@ -52,3 +52,16 @@ class TestUserConnectionToRoomCreateForm:
 
         assert not form.is_valid()
         assert form.errors["email"][0] == form.ExceptionMessage.EMAIL_ALREADY_IN_ROOM
+
+    def test_missing_fields_are_field_errors_not_a_crash(self) -> None:
+        form = self.form_class(data={})
+
+        assert not form.is_valid()
+        assert {"email", "room_slug"} <= set(form.errors)
+
+    @pytest.mark.parametrize("slug", ["not-a-uuid", "00000000-0000-0000-0000-000000000000"])
+    def test_unknown_room_slug_is_a_field_error(self, user: User, slug: str) -> None:
+        form = self.form_class(data={"email": user.email, "room_slug": slug})
+
+        assert not form.is_valid()
+        assert form.errors["room_slug"][0] == form.ExceptionMessage.ROOM_UNKNOWN
