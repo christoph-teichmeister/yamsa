@@ -18,7 +18,7 @@ from apps.transaction.models import ChildTransaction
 from apps.webpush.utils import Notification
 
 
-@message_registry.register_event(event=ParentTransactionCreated)
+@message_registry.register_event(event=ParentTransactionCreated, atomic=False)
 def send_notification_on_transaction_create(context: ParentTransactionCreated.Context) -> None:
     parent_transaction = context.parent_transaction
 
@@ -66,8 +66,8 @@ def send_notification_on_transaction_create(context: ParentTransactionCreated.Co
         build_notification_for_user(child_transaction.paid_for).send_to_user(child_transaction.paid_for)
 
 
-@message_registry.register_event(event=ChildTransactionDeleted)
-@message_registry.register_event(event=ParentTransactionUpdated)
+@message_registry.register_event(event=ChildTransactionDeleted, atomic=False)
+@message_registry.register_event(event=ParentTransactionUpdated, atomic=False)
 def send_notification_on_transaction_update(context: ParentTransactionUpdated.Context) -> None:
     parent_transaction = context.parent_transaction
 
@@ -102,7 +102,7 @@ def send_notification_on_transaction_update(context: ParentTransactionUpdated.Co
         build_notification_for_user(child_transaction.paid_for).send_to_user(child_transaction.paid_for)
 
 
-@message_registry.register_event(event=ParentTransactionDeleted)
+@message_registry.register_event(event=ParentTransactionDeleted, atomic=False)
 def send_notification_on_child_transaction_deleted(context: ParentTransactionDeleted.Context) -> None:
     parent_transaction = context.parent_transaction
 
@@ -137,7 +137,7 @@ def send_notification_on_child_transaction_deleted(context: ParentTransactionDel
         build_notification_for_user(debtor).send_to_user(debtor)
 
 
-@message_registry.register_event(event=DebtSettled)
+@message_registry.register_event(event=DebtSettled, atomic=False)
 def send_notification_on_debt_settled(context: DebtSettled.Context) -> None:
     debt = context.debt
 
@@ -158,7 +158,7 @@ def send_notification_on_debt_settled(context: DebtSettled.Context) -> None:
     ).send_to_user(debt.creditor)
 
 
-@message_registry.register_event(event=UserRemovedFromRoom)
+@message_registry.register_event(event=UserRemovedFromRoom, atomic=False)
 def send_notification_on_user_removed_from_room(context: UserRemovedFromRoom.Context) -> None:
     def build_notification_for_user(user: User) -> Notification:
         with translation.override(get_language_code_for_user(user)):
@@ -181,7 +181,7 @@ def send_notification_on_user_removed_from_room(context: UserRemovedFromRoom.Con
         build_notification_for_user(user).send_to_user(user)
 
 
-@message_registry.register_event(event=TransactionsImported)
+@message_registry.register_event(event=TransactionsImported, atomic=False)
 def send_notification_on_transactions_imported(context: TransactionsImported.Context) -> None:
     """One summary notification for the whole import, never one per imported row."""
     room = context.room

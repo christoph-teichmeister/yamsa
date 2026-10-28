@@ -9,6 +9,7 @@ from apps.room.models import Room
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
 from apps.transaction.models import ChildTransaction, ParentTransaction
 from apps.transaction.tests.factories import ParentTransactionFactory
+from apps.webpush.services.notification_send_test_service import NotificationSendTestService
 
 
 @pytest.fixture
@@ -45,3 +46,21 @@ def create_parent_transaction_with_optimisation() -> Callable:
         return parent_transaction, tuple(children)
 
     return _create
+
+
+@pytest.fixture
+def outbox() -> NotificationSendTestService:
+    """The test push boundary: `TestNotification.send_to_user` appends here instead of calling a push service."""
+    service = NotificationSendTestService()
+    service.empty()
+    return service
+
+
+@pytest.fixture
+def opt_in_to_webpush() -> Callable[..., None]:
+    def _opt_in(*users: User) -> None:
+        for user in users:
+            user.wants_to_receive_webpush_notifications = True
+            user.save(update_fields=["wants_to_receive_webpush_notifications"])
+
+    return _opt_in

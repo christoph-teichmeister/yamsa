@@ -1,6 +1,5 @@
 from collections.abc import Callable
 from decimal import Decimal
-from unittest import mock
 
 import pytest
 
@@ -17,133 +16,109 @@ from apps.webpush.handlers.events.events import (
     send_notification_on_transaction_update,
     send_notification_on_user_removed_from_room,
 )
-from apps.webpush.utils import Notification
+from apps.webpush.services.notification_send_test_service import NotificationSendTestService
 
 
 @pytest.mark.django_db
-def test_send_notification_on_transaction_update_localizes_body_per_recipient_language(
-    room: Room,
-    user: User,
-    guest_user: User,
-    create_parent_transaction_with_optimisation: Callable,
-) -> None:
-    another_user = UserFactory(language="de")
-    room.users.add(another_user)
+class TestNotificationLocalization:
+    @pytest.fixture(autouse=True)
+    def _setup(self, outbox: NotificationSendTestService, opt_in_to_webpush: Callable[..., None]) -> None:
+        self.outbox = outbox
+        self.opt_in = opt_in_to_webpush
 
-    parent_transaction, _ = create_parent_transaction_with_optimisation(
-        room=room,
-        paid_by=user,
-        paid_for_tuple=(guest_user, another_user),
-        parent_transaction_kwargs={"created_by": user, "lastmodified_by": user},
-        child_transaction_kwargs={"value": Decimal(10)},
-    )
+    def _bodies(self) -> dict[User, str]:
+        return {notification.recipient: notification.payload.body for notification in self.outbox.all()}
 
-    with (
-        mock.patch.object(Notification, "send_to_user") as mocked_send,
-        mock.patch("apps.webpush.handlers.events.events.Notification", wraps=Notification) as mocked_notification,
-    ):
+    def test_transaction_update_localizes_body_per_recipient_language(
+        self,
+        room: Room,
+        user: User,
+        guest_user: User,
+        create_parent_transaction_with_optimisation: Callable,
+    ) -> None:
+        another_user = UserFactory(language="de")
+        room.users.add(another_user)
+        self.opt_in(user, guest_user, another_user)
+        parent_transaction, _ = create_parent_transaction_with_optimisation(
+            room=room,
+            paid_by=user,
+            paid_for_tuple=(guest_user, another_user),
+            parent_transaction_kwargs={"created_by": user, "lastmodified_by": user},
+            child_transaction_kwargs={"value": Decimal(10)},
+        )
+
         send_notification_on_transaction_update(
             context=ParentTransactionUpdated.Context(parent_transaction=parent_transaction, room=room)
         )
 
-    recipients = [call.args[0] for call in mocked_send.call_args_list]
-    bodies = [call.kwargs["payload"].body for call in mocked_notification.call_args_list]
-    body_by_recipient = dict(zip(recipients, bodies, strict=True))
+        bodies = self._bodies()
+        assert bodies[guest_user] == f'{user.name} just updated a transaction ("{parent_transaction.description}")'
+        assert bodies[another_user] == (
+            f'{user.name} hat eine Transaktion aktualisiert ("{parent_transaction.description}")'
+        )
 
-    assert body_by_recipient[guest_user] == (
-        f'{user.name} just updated a transaction ("{parent_transaction.description}")'
-    )
-    assert body_by_recipient[another_user] == (
-        f'{user.name} hat eine Transaktion aktualisiert ("{parent_transaction.description}")'
-    )
+    def test_child_transaction_deleted_localizes_body_per_recipient_language(
+        self,
+        room: Room,
+        user: User,
+        guest_user: User,
+        create_parent_transaction_with_optimisation: Callable,
+    ) -> None:
+        another_user = UserFactory(language="de")
+        room.users.add(another_user)
+        self.opt_in(user, guest_user, another_user)
+        parent_transaction, _ = create_parent_transaction_with_optimisation(
+            room=room,
+            paid_by=user,
+            paid_for_tuple=(guest_user, another_user),
+            parent_transaction_kwargs={"created_by": user, "lastmodified_by": user},
+            child_transaction_kwargs={"value": Decimal(10)},
+        )
 
-
-@pytest.mark.django_db
-def test_send_notification_on_child_transaction_deleted_localizes_body_per_recipient_language(
-    room: Room,
-    user: User,
-    guest_user: User,
-    create_parent_transaction_with_optimisation: Callable,
-) -> None:
-    another_user = UserFactory(language="de")
-    room.users.add(another_user)
-
-    parent_transaction, _ = create_parent_transaction_with_optimisation(
-        room=room,
-        paid_by=user,
-        paid_for_tuple=(guest_user, another_user),
-        parent_transaction_kwargs={"created_by": user, "lastmodified_by": user},
-        child_transaction_kwargs={"value": Decimal(10)},
-    )
-
-    with (
-        mock.patch.object(Notification, "send_to_user") as mocked_send,
-        mock.patch("apps.webpush.handlers.events.events.Notification", wraps=Notification) as mocked_notification,
-    ):
         send_notification_on_child_transaction_deleted(
             context=ParentTransactionDeleted(
                 context_data=ParentTransactionDeleted.context_before_deletion(parent_transaction, user_who_deleted=user)
             ).Context
         )
 
-    recipients = [call.args[0] for call in mocked_send.call_args_list]
-    bodies = [call.kwargs["payload"].body for call in mocked_notification.call_args_list]
-    body_by_recipient = dict(zip(recipients, bodies, strict=True))
-
-    assert body_by_recipient[guest_user] == (
-        f'{user.name} just deleted a transaction ("{parent_transaction.description}")'
-    )
-    assert body_by_recipient[another_user] == (
-        f'{user.name} hat eine Transaktion gelöscht ("{parent_transaction.description}")'
-    )
-
-
-@pytest.mark.django_db
-def test_send_notification_on_debt_settled_localizes_body_to_creditor_language(room: Room, user: User) -> None:
-    creditor = UserFactory(language="de")
-    debitor = user
-
-    debt = Debt.objects.create(
-        debitor=debitor,
-        creditor=creditor,
-        room=room,
-        currency=room.preferred_currency,
-        value=Decimal(10),
-    )
-
-    with (
-        mock.patch.object(Notification, "send_to_user") as mocked_send,
-        mock.patch("apps.webpush.handlers.events.events.Notification", wraps=Notification) as mocked_notification,
-    ):
-        send_notification_on_debt_settled(context=DebtSettled.Context(debt=debt))
-
-    mocked_send.assert_called_once_with(creditor)
-    body = mocked_notification.call_args.kwargs["payload"].body
-    head = mocked_notification.call_args.kwargs["payload"].head
-    assert head == "Schuld beglichen"
-    assert body == f"{debitor} hat seine Schuld von {debt.value}{debt.currency.sign} bei dir beglichen"
-
-
-@pytest.mark.django_db
-def test_send_notification_on_user_removed_from_room_localizes_body_per_recipient_language(
-    room: Room, user: User, guest_user: User
-) -> None:
-    another_user = UserFactory(language="de")
-    room.users.add(another_user)
-    remover = user
-    removed = guest_user
-
-    with (
-        mock.patch.object(Notification, "send_to_user") as mocked_send,
-        mock.patch("apps.webpush.handlers.events.events.Notification", wraps=Notification) as mocked_notification,
-    ):
-        send_notification_on_user_removed_from_room(
-            context=UserRemovedFromRoom.Context(room=room, user_to_be_removed=removed, user_requesting_removal=remover)
+        bodies = self._bodies()
+        assert bodies[guest_user] == f'{user.name} just deleted a transaction ("{parent_transaction.description}")'
+        assert bodies[another_user] == (
+            f'{user.name} hat eine Transaktion gelöscht ("{parent_transaction.description}")'
         )
 
-    recipients = [call.args[0] for call in mocked_send.call_args_list]
-    bodies = [call.kwargs["payload"].body for call in mocked_notification.call_args_list]
-    body_by_recipient = dict(zip(recipients, bodies, strict=True))
+    def test_debt_settled_localizes_body_to_creditor_language(self, room: Room, user: User) -> None:
+        creditor = UserFactory(language="de")
+        self.opt_in(creditor)
+        debt = Debt.objects.create(
+            debitor=user,
+            creditor=creditor,
+            room=room,
+            currency=room.preferred_currency,
+            value=Decimal(10),
+        )
 
-    assert body_by_recipient[guest_user] == f"{remover.name} just removed {removed.name} from {room.name}"
-    assert body_by_recipient[another_user] == f"{remover.name} hat {removed.name} aus {room.name} entfernt"
+        send_notification_on_debt_settled(context=DebtSettled.Context(debt=debt))
+
+        [notification] = self.outbox.all()
+        assert notification.recipient == creditor
+        assert notification.payload.head == "Schuld beglichen"
+        assert (
+            notification.payload.body
+            == f"{user} hat seine Schuld von {debt.value}{debt.currency.sign} bei dir beglichen"
+        )
+
+    def test_user_removed_from_room_localizes_body_per_recipient_language(
+        self, room: Room, user: User, guest_user: User
+    ) -> None:
+        another_user = UserFactory(language="de")
+        room.users.add(another_user)
+        self.opt_in(guest_user, another_user)
+
+        send_notification_on_user_removed_from_room(
+            context=UserRemovedFromRoom.Context(room=room, user_to_be_removed=guest_user, user_requesting_removal=user)
+        )
+
+        bodies = self._bodies()
+        assert bodies[guest_user] == f"{user.name} just removed {guest_user.name} from {room.name}"
+        assert bodies[another_user] == f"{user.name} hat {guest_user.name} aus {room.name} entfernt"
