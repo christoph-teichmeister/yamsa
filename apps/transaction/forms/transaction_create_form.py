@@ -51,7 +51,6 @@ class TransactionCreateForm(SplitSharesMixin, RoomCategoryFieldMixin, forms.Mode
             "currency",
             "paid_by",
             "paid_at",
-            "room",
             "paid_for",
             "room_slug",
             "value",
@@ -64,6 +63,10 @@ class TransactionCreateForm(SplitSharesMixin, RoomCategoryFieldMixin, forms.Mode
         self._request = request
         self._room = room
         super().__init__(*args, **kwargs)
+        # Never a posted field: the URL's room (already membership- and closed-checked by the view)
+        # is the only room a transaction may land in.
+        if room is not None:
+            self.instance.room = room
         self.narrow_category_field_to(room)
 
     def _share_room_users(self) -> QuerySet:
