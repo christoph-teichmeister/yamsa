@@ -1,13 +1,10 @@
 import hashlib
-import secrets
-import string
 from functools import cached_property, lru_cache
 from time import time
 
 from ambient_toolbox.mixins.validation import CleanOnSaveMixin
 from ambient_toolbox.models import CommonInfo
 from django.conf import settings
-from django.contrib.auth import hashers
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.core.cache import cache
@@ -219,12 +216,3 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
             .distinct()
             .exists()
         )
-
-    def generate_random_password_with_length(self, length: int) -> str:
-        characters = string.ascii_letters + string.digits
-        new_password = "".join(secrets.choice(characters) for _ in range(length))
-
-        self.password = hashers.make_password(new_password)
-        self.save()
-
-        return new_password

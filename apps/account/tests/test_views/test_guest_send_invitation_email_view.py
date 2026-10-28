@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from apps.account.messages.commands.send_invitation_email import SendInvitationEmail
 from apps.account.models import User
+from apps.account.tests.factories import GuestUserFactory
 from apps.account.views import GuestSendInvitationEmailView, UserListForRoomView
 from apps.core.event_loop.messages.message import Message
 from apps.room.models import Room
@@ -83,3 +84,23 @@ def test_post_email_invalid(authenticated_client: Client, guest_send_invitation_
     assert response.template_name[0] == GuestSendInvitationEmailView.template_name
     assert "Enter a valid email address." in response.content.decode()
     assert response.context_data["active_tab"] == "people"
+
+
+def test_post_for_registered_user_is_404_and_keeps_email(authenticated_client: Client, room: Room, user: User) -> None:
+    original_email = user.email
+    url = reverse("account:guest-send-invitation-email", kwargs={"room_slug": room.slug, "pk": user.id})
+
+    response = authenticated_client.post(url, data={"email": "hijack@local.local"})
+
+    assert response.status_code == http.HTTPStatus.NOT_FOUND
+    user.refresh_from_db()
+    assert user.email == original_email
+
+
+def test_post_for_guest_of_another_room_is_404(authenticated_client: Client, room: Room) -> None:
+    outsider = GuestUserFactory()
+    url = reverse("account:guest-send-invitation-email", kwargs={"room_slug": room.slug, "pk": outsider.id})
+
+    response = authenticated_client.post(url, data={"email": "hijack@local.local"})
+
+    assert response.status_code == http.HTTPStatus.NOT_FOUND

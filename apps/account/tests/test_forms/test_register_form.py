@@ -33,7 +33,6 @@ class TestRegisterForm:
         assert guest_user.is_guest, "This test does not make sense if guest_user is no guest"
 
         new_data = {
-            "id": guest_user.id,
             "is_guest": False,
             "name": "new_name",
             "email": "new_user_email@local.local",
@@ -58,6 +57,28 @@ class TestRegisterForm:
 
         authenticated_user = authenticate(request=form_request, email=new_data["email"], password=new_data["password"])
         assert authenticated_user == guest_user
+
+    def test_posted_id_cannot_target_another_account(self, user: User) -> None:
+        original_email = user.email
+        form = self.form_class(
+            data={"id": user.id, "name": "attacker", "email": "attacker@local.local", "password": "pw"}
+        )
+        assert form.is_valid()
+
+        created_user = form.save()
+
+        user.refresh_from_db()
+        assert created_user.id != user.id
+        assert user.email == original_email
+
+    def test_guest_may_keep_the_email_the_invitation_went_to(self, guest_user: User) -> None:
+        User.objects.filter(pk=guest_user.pk).update(email="invitee@local.local")
+        guest_user.refresh_from_db()
+
+        form = self.form_class(
+            instance=guest_user, data={"name": "name", "email": "invitee@local.local", "password": "my_password"}
+        )
+        assert form.is_valid(), form.errors
 
     def test_duplicate_email_raises_error(self, user: User) -> None:
         form = self.form_class(data={"email": user.email})

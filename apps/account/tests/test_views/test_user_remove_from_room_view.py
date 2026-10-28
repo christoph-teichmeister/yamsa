@@ -3,10 +3,12 @@ import json
 from collections.abc import Callable
 
 import pytest
+from django.test import Client
 from django.urls import reverse
 
 from apps.account.messages.commands.remove_user_from_room import RemoveUserFromRoom
 from apps.account.models import User
+from apps.account.tests.factories import UserFactory
 from apps.account.views import UserListForRoomView
 from apps.core.event_loop.messages.message import Message
 from apps.core.toast_constants import ERROR_TOAST_CLASS
@@ -162,3 +164,53 @@ def test_post_user_removes_themselves_from_room(
     assert len(recorded_messages_recorder) == 1
     assert isinstance(recorded_messages_recorder[0], RemoveUserFromRoom)
     assert response.template_name[0] == WelcomePartialView.template_name
+
+
+def test_post_user_outside_the_room_is_404(
+    room: Room,
+    user: User,
+    hx_client: Callable,
+    monkeypatch: pytest.MonkeyPatch,
+    recorded_messages_recorder: list[object],
+) -> None:
+    outsider = UserFactory()
+    monkeypatch.setattr("apps.account.views.user_remove_from_room_view.handle_message", handle_message)
+    monkeypatch.setattr(User, "can_be_removed_from_room", allow_removal)
+
+    response = hx_client(user).post(
+        reverse("account:remove-from-room", kwargs={"room_slug": room.slug, "pk": outsider.id})
+    )
+
+    assert response.status_code == http.HTTPStatus.NOT_FOUND
+    assert not recorded_messages_recorder
+
+
+def test_post_unknown_user_is_404(room: Room, user: User, hx_client: Callable) -> None:
+    response = hx_client(user).post(reverse("account:remove-from-room", kwargs={"room_slug": room.slug, "pk": 999999}))
+
+    assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+
+def test_post_by_non_member_is_forbidden(
+    room: Room,
+    guest_user: User,
+    hx_client: Callable,
+    monkeypatch: pytest.MonkeyPatch,
+    recorded_messages_recorder: list[object],
+) -> None:
+    stranger = UserFactory()
+    monkeypatch.setattr("apps.account.views.user_remove_from_room_view.handle_message", handle_message)
+    monkeypatch.setattr(User, "can_be_removed_from_room", allow_removal)
+
+    response = hx_client(stranger).post(
+        reverse("account:remove-from-room", kwargs={"room_slug": room.slug, "pk": guest_user.id})
+    )
+
+    assert response.status_code == http.HTTPStatus.FORBIDDEN
+    assert not recorded_messages_recorder
+
+
+def test_post_by_anonymous_is_forbidden(room: Room, guest_user: User, client: Client) -> None:
+    response = client.post(reverse("account:remove-from-room", kwargs={"room_slug": room.slug, "pk": guest_user.id}))
+
+    assert response.status_code == http.HTTPStatus.FORBIDDEN

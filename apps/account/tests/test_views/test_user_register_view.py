@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from apps.account.messages.commands.send_post_register_email import SendPostRegisterEmail
 from apps.account.models import User
+from apps.account.utils.guest_registration_token import build_guest_registration_token
 from apps.account.views import RegisterUserView
 from apps.core.views import WelcomePartialView
 from apps.room.models import Room
@@ -28,7 +29,8 @@ def test_get_regular(client: Client) -> None:
 def test_get_from_invitation_email(client: Client, guest_user: User) -> None:
     email_from_invitation_email = "invitation@local.local"
     response = client.get(
-        f"{reverse('account:register')}?with_email={email_from_invitation_email}&for_guest={guest_user.id}"
+        f"{reverse('account:register')}?with_email={email_from_invitation_email}"
+        f"&guest_token={build_guest_registration_token(guest_user.id)}"
     )
 
     assert response.status_code == http.HTTPStatus.OK
@@ -36,7 +38,8 @@ def test_get_from_invitation_email(client: Client, guest_user: User) -> None:
 
     assert response.context_data["email_from_invitation_email"] == email_from_invitation_email
     assert response.context_data["form"].initial["email"] == email_from_invitation_email
-    assert response.context_data["form"].initial["id"] == str(guest_user.id)
+    assert "id" not in response.context_data["form"].initial
+    assert response.context_data["form"].instance == guest_user
     content = response.content.decode()
     assert "Register" in content
     assert "Already have an account?" in content
@@ -86,7 +89,7 @@ def test_post_from_invitation_email(client: Client, guest_user: User, monkeypatc
     response = client.post(
         reverse("account:register"),
         data={
-            "id": guest_user.id,
+            "guest_token": build_guest_registration_token(guest_user.id),
             "name": guest_name,
             "email": guest_email,
             "password": guest_password,
@@ -124,7 +127,7 @@ def test_post_from_invitation_email_preserves_room_membership(
     response = client.post(
         reverse("account:register"),
         data={
-            "id": guest_user.id,
+            "guest_token": build_guest_registration_token(guest_user.id),
             "name": guest_name,
             "email": guest_email,
             "password": guest_password,
@@ -180,3 +183,59 @@ def test_post_email_invalid(client: Client) -> None:
 
     content = response.content.decode()
     assert content.count("This field is required") >= 3
+
+
+def test_post_with_foreign_id_does_not_touch_that_account(client: Client, user: User) -> None:
+    original_email = user.email
+    original_password = user.password
+
+    response = client.post(
+        reverse("account:register"),
+        data={"id": user.id, "name": "attacker", "email": "attacker@local.local", "password": "attacker_pw"},
+    )
+
+    assert response.status_code == http.HTTPStatus.FOUND
+    user.refresh_from_db()
+    assert (user.email, user.password) == (original_email, original_password)
+    assert response.wsgi_request.user.id != user.id
+
+
+def test_post_with_forged_guest_token_registers_a_new_account(client: Client, guest_user: User) -> None:
+    client.post(
+        reverse("account:register"),
+        data={"guest_token": f"{guest_user.id}:forged", "name": "x", "email": "x@local.local", "password": "pw"},
+    )
+
+    guest_user.refresh_from_db()
+    assert guest_user.is_guest
+    assert User.objects.filter(email="x@local.local").exists()
+
+
+def test_post_with_token_of_a_registered_user_does_not_touch_that_account(client: Client, user: User) -> None:
+    original_email = user.email
+
+    client.post(
+        reverse("account:register"),
+        data={
+            "guest_token": build_guest_registration_token(user.id),
+            "name": "x",
+            "email": "x@local.local",
+            "password": "pw",
+        },
+    )
+
+    user.refresh_from_db()
+    assert user.email == original_email
+
+
+def test_post_as_logged_in_guest_converts_that_guest(client: Client, guest_user: User) -> None:
+    client.force_login(guest_user)
+
+    client.post(
+        reverse("account:register"),
+        data={"name": "now_real", "email": "now_real@local.local", "password": "pw"},
+    )
+
+    guest_user.refresh_from_db()
+    assert not guest_user.is_guest
+    assert guest_user.email == "now_real@local.local"

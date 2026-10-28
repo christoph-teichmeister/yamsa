@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.urls import reverse
 from django.views import generic
@@ -15,6 +16,9 @@ class GuestSendInvitationEmailView(RoomNotClosedRequiredMixin, AccountBaseContex
     template_name = "account/invite_guest.html"
     form_class = GuestSendInvitationEmailForm
     context_object_name = "user"
+
+    def get_queryset(self) -> QuerySet:
+        return User.objects.filter(is_guest=True, rooms=self.request.room)
 
     def form_valid(self, form: GuestSendInvitationEmailForm) -> HttpResponse:
         form_valid = super().form_valid(form)

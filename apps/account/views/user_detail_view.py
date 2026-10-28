@@ -17,17 +17,14 @@ class UserDetailView(mixins.LoginRequiredMixin, generic.DetailView):
         if not request.user.is_authenticated:
             return self.handle_no_permission()
 
-        request_user_shares_room_with_profile_user = request.user.rooms.filter(
-            id__in=self.get_object().rooms.values_list("id", flat=True)
+        # A superuser may see all profiles. Everyone else may only see their own profile or the profiles of users
+        # they share a room with. The check runs before the profile is loaded, so an unknown pk is not told apart.
+        may_see_profile = (
+            request.user.is_superuser
+            or request.user.id == kwargs["pk"]
+            or User.objects.filter(pk=kwargs["pk"], rooms__in=request.user.rooms.all()).exists()
         )
-        request_user_checks_their_own_profile = request.user.id == kwargs["pk"]
-
-        if (
-            not (request.user.is_superuser or request_user_shares_room_with_profile_user)
-            and not request_user_checks_their_own_profile
-        ):
-            # A superuser may see all profiles. If request_user is no superuser, then they may only see their own
-            # profile or profiles of users they share a room-connection with
+        if not may_see_profile:
             return self.handle_no_permission()
 
         return super().dispatch(request, *args, **kwargs)

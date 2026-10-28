@@ -6,6 +6,8 @@ from django_context_decorator import context
 
 from apps.account.forms import RegisterForm
 from apps.account.messages.commands.send_post_register_email import SendPostRegisterEmail
+from apps.account.models import User
+from apps.account.utils.guest_registration_token import decode_guest_registration_token
 from apps.core.event_loop.runner import handle_message
 from apps.room.constants import SHARED_ROOM_SLUG_SESSION_KEY
 from apps.room.models import Room, UserConnectionToRoom
@@ -25,15 +27,30 @@ class RegisterUserView(generic.CreateView):
     def shared_room_slug(self) -> str | None:
         return self._room_slug_from_request() or self.request.session.get(SHARED_ROOM_SLUG_SESSION_KEY)
 
+    @context
+    @property
+    def guest_token(self) -> str | None:
+        return self.request.POST.get("guest_token") or self.request.GET.get("guest_token")
+
     def get_success_url(self) -> str:
         return reverse(viewname="core:welcome")
 
     def get_initial(self) -> dict:
         return {
             **super().get_initial(),
-            "id": self.request.GET.get("for_guest"),
             "email": self.request.GET.get("with_email"),
         }
+
+    def get_form_kwargs(self) -> dict:
+        return {**super().get_form_kwargs(), "instance": self._guest_to_claim()}
+
+    def _guest_to_claim(self) -> User | None:
+        """The guest account this registration turns into a real one: a signed invitation token or the guest session."""
+        user = self.request.user
+        if user.is_authenticated:
+            return user if user.is_guest else None
+        guest_id = decode_guest_registration_token(self.guest_token)
+        return User.objects.filter(pk=guest_id, is_guest=True).first() if guest_id else None
 
     def form_valid(self, form: RegisterForm) -> HttpResponse:
         response = super().form_valid(form)

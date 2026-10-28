@@ -52,10 +52,6 @@ msgstr "Das Profilbild konnte nicht ausreichend verkleinert werden. Versuche es 
 msgid "The email address '{email}' is already in use"
 msgstr "Die E-Mail-Adresse '{email}' wird bereits verwendet"
 
-#, python-brace-format
-msgid "The email address '{email}' is not registered with yamsa"
-msgstr "Die E-Mail-Adresse '{email}' ist nicht bei yamsa registriert"
-
 msgid "Email"
 msgstr "E-Mail"
 
@@ -883,26 +879,11 @@ msgstr "yamsa | Noch eine App zum Geldteilen"
 msgid "Hey"
 msgstr "Hey"
 
-msgid "New Password"
-msgstr "Neues Passwort"
-
-msgid "Log in with new password"
-msgstr "Mit neuem Passwort anmelden"
-
 msgid "Forgotten your password?"
 msgstr "Passwort vergessen?"
 
 msgid "No worries - happens to the best!"
 msgstr "Keine Sorge – passiert den Besten!"
-
-msgid "Your new password is:"
-msgstr "Dein neues Passwort lautet:"
-
-msgid "Log in with your new password, by clicking the button below"
-msgstr "Melde dich mit deinem neuen Passwort an, indem du auf den Button unten klickst"
-
-msgid "(And don't forget to change your password afterwards!)"
-msgstr "(Und vergiss nicht, dein Passwort danach zu ändern!)"
 
 #, python-format
 msgid "You have been invited by %(inviter)s to join your friends on yamsa"
@@ -2152,3 +2133,30 @@ msgstr "Transaktionen importiert"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
+
+msgid "Reset your password"
+msgstr "Passwort zurücksetzen"
+
+msgid "Click the button below to choose a new password"
+msgstr "Klicke auf den Button unten, um ein neues Passwort zu wählen"
+
+msgid "If you did not ask for this, you can ignore this email - your password stays as it is."
+msgstr "Falls du das nicht angefordert hast, kannst du diese E-Mail ignorieren – dein Passwort bleibt unverändert."
+
+msgid "Choose a new password"
+msgstr "Neues Passwort wählen"
+
+msgid "If this address is registered, we have sent you a link to reset your password."
+msgstr "Falls diese Adresse registriert ist, haben wir dir einen Link zum Zurücksetzen des Passworts geschickt."
+
+msgid "This password reset link is invalid or has expired."
+msgstr "Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen."
+
+msgid "Your password has been changed. You can log in now."
+msgstr "Dein Passwort wurde geändert. Du kannst dich jetzt anmelden."
+
+msgid "Unsubscribe from reminders?"
+msgstr "Erinnerungen abbestellen?"
+
+msgid "Unsubscribe"
+msgstr "Abbestellen"

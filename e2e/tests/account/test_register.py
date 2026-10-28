@@ -6,6 +6,7 @@ from playwright.sync_api import Page
 
 from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
+from apps.account.utils.guest_registration_token import build_guest_registration_token
 from apps.debt.models import Debt
 from apps.room.models import Room, UserConnectionToRoom
 from e2e.pages.login_page import LoginPage
@@ -39,7 +40,9 @@ class TestRegister:
             currency=shared_room.preferred_currency,
         )
         # The link the invitation mail carries (InvitationMailService).
-        page.goto(f"{base_url}{reverse('account:register')}?with_email=gast@yamsa.local&for_guest={guest_user.id}")
+        page.goto(
+            f"{base_url}{reverse('account:register')}?with_email=gast@yamsa.local&guest_token={build_guest_registration_token(guest_user.id)}"
+        )
 
         RegisterPage(page, base_url).register(name="Gabi Gast", email=None, password=DEFAULT_PASSWORD)
         page.wait_for_url(lambda url: url.endswith(reverse("core:welcome")))
