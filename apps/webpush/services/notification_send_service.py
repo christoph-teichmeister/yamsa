@@ -9,6 +9,9 @@ from apps.webpush.models import WebpushInformation
 
 logger = logging.getLogger(__name__)
 
+# pywebpush defaults to no timeout; a hung push endpoint would stall the request that triggered the event.
+PUSH_TIMEOUT_SECONDS = 5
+
 
 class NotificationSendService:
     def send_notification_to_user(self, user: User, payload: str, ttl: int = 0) -> list:
@@ -31,12 +34,14 @@ class NotificationSendService:
                 },
                 data=payload,
                 ttl=ttl,
+                timeout=PUSH_TIMEOUT_SECONDS,
                 **NotificationSendService._get_vapid_data(),
             )
         except WebPushException as e:
             # If the subscription has expired, delete it.
             if getattr(e, "response", None) and e.response.status_code == http.HTTPStatus.GONE:
-                return web_push_info.delete()
+                web_push_info.delete()
+                return None
 
             logger.debug(
                 "webpush send failed for user %s (id=%s): %s",

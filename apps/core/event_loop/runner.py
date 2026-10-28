@@ -30,54 +30,44 @@ def handle_message(message_list: Message | list[Message]) -> None:
 
 
 def handle_command(command: Command, queue: list[Message]) -> None:
-    handler_list = message_registry.command_dict.get(command.__class__, [])
-    for handler in handler_list:
-        try:
-            # TODO(CT): Warum ist der rückgabewert hier wichtig?
-            logger.info(
-                "Handling command '%s' (%s) with handler '%s'",
-                command.__class__.__name__,
-                command.uuid,
-                handler.__name__,
-            )
-            # TODO(CT): das sollte um das ganze handle_message
-            with transaction.atomic():
-                new_messages = handler(command.Context) or []
-                new_messages = new_messages if isinstance(new_messages, list) else [new_messages]
-                uuid_list = [f"{m!s}" for m in new_messages]
-                logger.debug("New messages: %s", uuid_list)
-                queue.extend(new_messages)
-        except Exception:
-            logger.exception(
-                "Exception handling command %s (%s) with handler '%s'",
-                command.__class__.__name__,
-                command.uuid,
-                handler.__name__,
-            )
-            raise
+    _dispatch(message_registry.command_dict, "command", command, command.Context, queue)
 
 
 def handle_event(event: Event, queue: list[Message]) -> None:
-    handler_list = message_registry.event_dict.get(event.__class__, [])
-    for handler in handler_list:
+    _dispatch(message_registry.event_dict, "event", event, event.Context, queue)
+
+
+def _dispatch(registry: dict, kind: str, message: Message, context: object, queue: list[Message]) -> None:
+    """Run every handler of the message, then re-raise the first failure.
+
+    A failing handler must not keep later handlers of the same message from running (e.g. a failed push must not
+    skip debt recalculation), so failures are collected instead of aborting the loop.
+    """
+    first_error: Exception | None = None
+    for handler in registry.get(message.__class__, []):
+        logger.info(
+            "Handling %s '%s' (%s) with handler '%s'", kind, message.__class__.__name__, message.uuid, handler.__name__
+        )
         try:
-            logger.info(
-                "Handling event '%s' (%s) with handler '%s'",
-                event.__class__.__name__,
-                event.uuid,
-                handler.__name__,
-            )
-            with transaction.atomic():
-                new_messages = handler(event.Context) or []
-                new_messages = new_messages if isinstance(new_messages, list) else [new_messages]
-                uuid_list = [f"{m!s}" for m in new_messages]
-                logger.debug("New messages: %s", uuid_list)
-                queue.extend(new_messages)
-        except Exception:
+            if getattr(handler, "atomic", True):
+                with transaction.atomic():
+                    new_messages = handler(context) or []
+            else:
+                new_messages = handler(context) or []
+        except Exception as error:
             logger.exception(
-                "Exception handling event %s (%s) with handler '%s'",
-                event.__class__.__name__,
-                event.uuid,
+                "Exception handling %s %s (%s) with handler '%s'",
+                kind,
+                message.__class__.__name__,
+                message.uuid,
                 handler.__name__,
             )
-            raise
+            first_error = first_error or error
+            continue
+
+        new_messages = new_messages if isinstance(new_messages, list) else [new_messages]
+        logger.debug("New messages: %s", [f"{m!s}" for m in new_messages])
+        queue.extend(new_messages)
+
+    if first_error:
+        raise first_error

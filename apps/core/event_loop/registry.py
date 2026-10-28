@@ -14,7 +14,7 @@ class MessageRegistry:
         self.command_dict: dict = {}
         self.event_dict: dict = {}
 
-    def register_command(self, command: Command) -> Callable:
+    def register_command(self, command: Command, *, atomic: bool = True) -> Callable:
         def decorator(decoratee: Callable) -> Callable:
             # Ensure that registered message is of correct type
             if not (issubclass(command, Command)):
@@ -23,6 +23,9 @@ class MessageRegistry:
                     f'on handler "{decoratee.__name__}".'
                 )
                 raise TypeError(msg)
+
+            # The runner reads this flag: handlers doing slow I/O (push, mail) must not hold a DB transaction open.
+            decoratee.atomic = atomic
 
             # Add decoratee to dependency list
             if command not in self.command_dict:
@@ -35,7 +38,7 @@ class MessageRegistry:
 
         return decorator
 
-    def register_event(self, event: Event) -> Callable:
+    def register_event(self, event: Event, *, atomic: bool = True) -> Callable:
         def decorator(decoratee: Callable) -> Callable:
             # Ensure that registered message is of correct type
             if not (issubclass(event, Event)):
@@ -44,6 +47,9 @@ class MessageRegistry:
                     f'on handler "{decoratee.__name__}".'
                 )
                 raise TypeError(msg)
+
+            # The runner reads this flag: handlers doing slow I/O (push, mail) must not hold a DB transaction open.
+            decoratee.atomic = atomic
 
             # Add decoratee to dependency list
             if event not in self.event_dict:
