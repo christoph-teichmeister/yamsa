@@ -27,4 +27,6 @@ def load_serviceworker(context: Context) -> dict:
         "PWA_SERVICE_WORKER_DEBUG": settings.PWA_SERVICE_WORKER_DEBUG,
         "WEBPUSH_SETTINGS": settings.WEBPUSH_SETTINGS,
         "csp_nonce": context.get("csp_nonce", ""),
+        # The CSRF cookie is HttpOnly, so the page script can only get the token from the template.
+        "csrf_token": context.get("csrf_token", ""),
     }

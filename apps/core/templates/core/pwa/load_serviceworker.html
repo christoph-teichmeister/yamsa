@@ -25,7 +25,8 @@
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
       },
       credentials: "include"
     })
