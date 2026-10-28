@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.forms import BaseForm
 from django.http import HttpResponse
 from django.urls import reverse
@@ -7,6 +8,7 @@ from apps.core.event_loop.runner import handle_message
 from apps.room.views.mixins import RoomNotClosedRequiredMixin
 from apps.transaction.messages.events.transaction import ChildTransactionDeleted, ParentTransactionDeleted
 from apps.transaction.models import ChildTransaction
+from apps.transaction.utils import split_amount_exact
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -37,7 +39,9 @@ class ChildTransactionDeleteView(RoomNotClosedRequiredMixin, TransactionBaseCont
             else None
         )
 
-        form_valid_return = super().form_valid(form)
+        with transaction.atomic():
+            self._hand_value_to_remaining_shares()
+            form_valid_return = super().form_valid(form)
 
         if deleted is not None:
             parent_transaction.delete()
@@ -54,3 +58,12 @@ class ChildTransactionDeleteView(RoomNotClosedRequiredMixin, TransactionBaseCont
             )
 
         return form_valid_return
+
+    def _hand_value_to_remaining_shares(self) -> None:
+        # The transaction total is the sum of its shares, so a removed share would silently lower it.
+        remaining = list(self.object.parent_transaction.child_transactions.exclude(pk=self.object.pk))
+        if not remaining:
+            return
+        for share, extra in zip(remaining, split_amount_exact(self.object.value, len(remaining)), strict=True):
+            share.value += extra
+        ChildTransaction.objects.bulk_update(remaining, fields=("value",))

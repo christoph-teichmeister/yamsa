@@ -125,6 +125,40 @@ class TestTransactionEdit:
         }
         assert _open_debts(room) == {(roommate.name, profile_user.name, Decimal("25.00"))}
 
+    def test_a_share_set_to_zero_takes_the_debtor_out_of_the_transaction(
+        self,
+        open_edit_form: Callable,
+        room: Room,
+        parent_transaction: ParentTransaction,
+        profile_user: User,
+        roommate: User,
+        page: Page,
+    ) -> None:
+        edit_page = open_edit_form()
+
+        edit_page.set_share(roommate.name, "0")
+        edit_page.set_share(profile_user.name, "30.00")
+        edit_page.save()
+        self._wait_for_detail_page(page, room, parent_transaction)
+
+        assert _booked_shares(parent_transaction) == {profile_user.name: Decimal("30.00")}
+        assert _open_debts(room) == set()
+
+    def test_removing_a_share_stays_possible_while_the_total_is_edited(
+        self,
+        open_edit_form: Callable,
+        parent_transaction: ParentTransaction,
+        profile_user: User,
+        roommate: User,
+    ) -> None:
+        edit_page = open_edit_form()
+
+        edit_page.set_total("50.00")
+        edit_page.expect_shares_locked(locked=True)
+        edit_page.remove_saved_share(roommate.name)
+
+        assert _booked_shares(parent_transaction) == {profile_user.name: Decimal("30.00")}
+
     def test_restoring_the_total_unlocks_the_shares_again(self, open_edit_form: Callable) -> None:
         edit_page = open_edit_form()
 
@@ -199,7 +233,7 @@ class TestTransactionEdit:
             (flatmate.name, profile_user.name, Decimal("12.00")),
         }
 
-    def test_removing_a_saved_share_drops_it_from_the_debts(
+    def test_removing_a_saved_share_hands_its_amount_to_the_remaining_ones(
         self,
         open_edit_form: Callable,
         room: Room,
@@ -213,9 +247,30 @@ class TestTransactionEdit:
 
         # The share is gone on the server the moment the confirmation is accepted, without a save;
         # a visitor who leaves the form here must not find the old debt still standing.
-        edit_page.expect_shares({profile_user.name: "15.00"})
-        assert _booked_shares(parent_transaction) == {profile_user.name: Decimal("15.00")}
+        # The total stays: the removed share's amount moves to the remaining share.
+        edit_page.expect_shares({profile_user.name: "30.00"})
+        assert _booked_shares(parent_transaction) == {profile_user.name: Decimal("30.00")}
         assert _open_debts(room) == set()
+
+    def test_removing_a_share_keeps_the_debt_total_with_three_people(
+        self,
+        open_edit_form: Callable,
+        room: Room,
+        parent_transaction: ParentTransaction,
+        profile_user: User,
+        roommate: User,
+        flatmate: User,
+    ) -> None:
+        edit_page = open_edit_form()
+        edit_page.add_participant(flatmate.name, "10.00")
+        edit_page.save()
+        edit_page = open_edit_form()
+
+        edit_page.remove_saved_share(flatmate.name)
+
+        edit_page.expect_shares({profile_user.name: "20.00", roommate.name: "20.00"})
+        assert sum(_booked_shares(parent_transaction).values()) == Decimal("40.00")
+        assert _open_debts(room) == {(roommate.name, profile_user.name, Decimal("20.00"))}
 
     def test_dismissing_the_removal_keeps_the_share(
         self, open_edit_form: Callable, parent_transaction: ParentTransaction, profile_user: User, roommate: User
@@ -242,7 +297,7 @@ class TestTransactionEdit:
         edit_page = open_edit_form()
 
         edit_page.remove_saved_share(roommate.name)
-        edit_page.expect_shares({profile_user.name: "15.00"})
+        edit_page.expect_shares({profile_user.name: "30.00"})
         edit_page.remove_saved_share(profile_user.name)
 
         page.wait_for_url(lambda url: url.endswith(reverse("transaction:list", kwargs={"room_slug": room.slug})))
