@@ -18,7 +18,7 @@ dependencies = [
     "django[argon2]==6.*",
     "emoji==2.*",
     "gunicorn==26.*",
-    "pillow==12.*",
+    "pillow>=12,<14",
     "psycopg2-binary==2.*",
     "pywebpush==2.*",
     "sentry-sdk[django]==2.*",
