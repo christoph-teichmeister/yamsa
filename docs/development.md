@@ -48,6 +48,13 @@
 set `DJANGO_SECURE_HSTS_SECONDS` (e.g. `31536000`) and keep `DJANGO_SESSION_COOKIE_SECURE=True` (the default), and the
 proxy must redirect HTTP to HTTPS. `manage.py check --deploy` (run in CI) flags a missing HSTS value.
 
+`DJANGO_TRUSTED_PROXY_COUNT` (default `0`) is the number of reverse proxies in front of the app that append to
+`X-Forwarded-For`. The client IP used by the Axes login lockout and the forgot-password per-IP limit
+(`apps.core.utils.get_client_ip`) is the entry that many hops from the right; at `0` it is `REMOTE_ADDR`, i.e. the
+proxy's address behind a proxy, so all clients share one counter. Production must set the real hop count (too high
+lets clients spoof their IP). The counters live in the default cache; with the `locmemcache://` default they are per
+worker process, so use a shared `DJANGO_CACHE_URL` (e.g. Redis) for an exact limit.
+
 ## Session management
 
 - Logging in stores the target TTL under `apps.account.constants.SESSION_TTL_SESSION_KEY` and the new

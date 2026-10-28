@@ -39,6 +39,7 @@ env = environ.Env(
     DJANGO_FRONTEND_URL=(str, "http://localhost:8002"),
     DJANGO_SECRET_KEY=(str, ""),
     DJANGO_SECURE_HSTS_SECONDS=(int, 0),
+    DJANGO_TRUSTED_PROXY_COUNT=(int, 0),
     DJANGO_SESSION_COOKIE_SECURE=(bool, True),
     DJANGO_REMEMBER_ME_SESSION_AGE=(int, 60 * 60 * 24 * 30),  # 30 days
     DJANGO_USE_DEBUG_TOOLBAR=(bool, False),
@@ -361,6 +362,10 @@ CACHES = {"default": env.cache("DJANGO_CACHE_URL")}
 
 # SECURITY
 # ------------------------------------------------------------------------------
+# Number of reverse proxies in front of the app that append to X-Forwarded-For (see apps.core.utils.get_client_ip).
+# 0 ignores the header and uses REMOTE_ADDR. Behind a proxy that makes every client share the proxy's address, so
+# production must set the real hop count; a value larger than the real one lets clients spoof their IP.
+TRUSTED_PROXY_COUNT = env("DJANGO_TRUSTED_PROXY_COUNT")
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
 SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
@@ -589,10 +594,10 @@ AXES_CLEANUP_DAYS = 30
 # slot before applying lockouts, so AXES_LOCKOUT_PARAMETERS now contains a single entry that pairs
 # "username" and "ip_address" to key attempts per user/IP combination.
 AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
-# Allow Axes to resolve the client IP address normally so the ip_address entry tracked by
-# AXES_LOCKOUT_PARAMETERS stays aligned with the username/IP lockout tuple.
+# Axes and the forgot-password limit share one client-IP resolver (django-ipware is not installed, so Axes would
+# otherwise only ever see REMOTE_ADDR, i.e. the proxy).
 # Keep sensitive parameters masked via AXES_SENSITIVE_PARAMETERS.
-AXES_CLIENT_IP_CALLABLE = None
+AXES_CLIENT_IP_CALLABLE = "apps.core.utils.get_client_ip"
 # Mask user-sensitive parameters in logging stream
 AXES_SENSITIVE_PARAMETERS = ["username", "email", "ip_address"]
 
