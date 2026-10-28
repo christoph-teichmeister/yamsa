@@ -57,3 +57,32 @@ class TestRegister:
         login_page = LoginPage(page, base_url, reverse("account:login"))
         login_page.navigate()
         login_page.login("gast@yamsa.local", DEFAULT_PASSWORD)
+
+    def test_a_foreign_id_and_a_foreign_token_never_touch_another_account(
+        self, profile_user: User, roommate: User, page: Page, base_url: str
+    ) -> None:
+        victims = {profile_user.id: profile_user.password, roommate.id: roommate.password}
+        page.goto(f"{base_url}{reverse('account:register')}")
+        page.evaluate(
+            """([victimId, token]) => {
+                const form = document.querySelector("form");
+                for (const [name, value] of [["id", victimId], ["guest_token", token]]) {
+                    const input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = name;
+                    input.value = value;
+                    form.appendChild(input);
+                }
+            }""",
+            [str(profile_user.id), build_guest_registration_token(roommate.id)],
+        )
+
+        RegisterPage(page, base_url).register(name="Mallory", email="mallory@yamsa.local", password=DEFAULT_PASSWORD)
+        page.wait_for_url(lambda url: url.endswith(reverse("core:welcome")))
+
+        mallory = User.objects.get(email="mallory@yamsa.local")
+        assert mallory.id not in victims
+        for victim_id, password_hash in victims.items():
+            victim = User.objects.get(id=victim_id)
+            assert victim.password == password_hash
+            assert victim.email != "mallory@yamsa.local"
