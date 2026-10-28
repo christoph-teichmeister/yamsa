@@ -348,6 +348,9 @@ msgstr "Administrator"
 msgid "Payment reminders"
 msgstr "Zahlungserinnerungen"
 
+msgid "Unsubscribe from reminders?"
+msgstr "Erinnerungen abbestellen?"
+
 msgid "Unsubscribed"
 msgstr "Abgemeldet"
 
@@ -359,6 +362,9 @@ msgstr "Hoppla"
 
 msgid "We couldn’t process the unsubscribe."
 msgstr "Wir konnten die Abmeldung nicht verarbeiten."
+
+msgid "Unsubscribe"
+msgstr "Abbestellen"
 
 msgid "Sign in"
 msgstr "Anmelden"
@@ -395,6 +401,9 @@ msgstr "Name"
 
 msgid "Register now"
 msgstr "Jetzt registrieren"
+
+msgid "Choose a new password"
+msgstr "Neues Passwort wählen"
 
 msgid "Passkeys"
 msgstr "Passkeys"
@@ -441,8 +450,17 @@ msgstr "Diesen Passkey löschen?"
 msgid "Enter your PayPal.Me username - letters and numbers only, at most 20 characters."
 msgstr "Gib deinen PayPal.Me-Benutzernamen ein - nur Buchstaben und Zahlen, maximal 20 Zeichen."
 
+msgid "If this address is registered, we have sent you a link to reset your password."
+msgstr "Falls diese Adresse registriert ist, haben wir dir einen Link zum Zurücksetzen des Passworts geschickt."
+
 msgid "The combination of email and password does not match"
 msgstr "Die Kombination aus E-Mail und Passwort ist nicht korrekt"
+
+msgid "This password reset link is invalid or has expired."
+msgstr "Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen."
+
+msgid "Your password has been changed. You can log in now."
+msgstr "Dein Passwort wurde geändert. Du kannst dich jetzt anmelden."
 
 msgid "English"
 msgstr "Englisch"
@@ -879,11 +897,20 @@ msgstr "yamsa | Noch eine App zum Geldteilen"
 msgid "Hey"
 msgstr "Hey"
 
+msgid "Reset your password"
+msgstr "Passwort zurücksetzen"
+
 msgid "Forgotten your password?"
 msgstr "Passwort vergessen?"
 
 msgid "No worries - happens to the best!"
 msgstr "Keine Sorge – passiert den Besten!"
+
+msgid "Click the button below to choose a new password"
+msgstr "Klicke auf den Button unten, um ein neues Passwort zu wählen"
+
+msgid "If you did not ask for this, you can ignore this email - your password stays as it is."
+msgstr "Falls du das nicht angefordert hast, kannst du diese E-Mail ignorieren – dein Passwort bleibt unverändert."
 
 #, python-format
 msgid "You have been invited by %(inviter)s to join your friends on yamsa"
@@ -2133,30 +2160,3 @@ msgstr "Transaktionen importiert"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
-
-msgid "Reset your password"
-msgstr "Passwort zurücksetzen"
-
-msgid "Click the button below to choose a new password"
-msgstr "Klicke auf den Button unten, um ein neues Passwort zu wählen"
-
-msgid "If you did not ask for this, you can ignore this email - your password stays as it is."
-msgstr "Falls du das nicht angefordert hast, kannst du diese E-Mail ignorieren – dein Passwort bleibt unverändert."
-
-msgid "Choose a new password"
-msgstr "Neues Passwort wählen"
-
-msgid "If this address is registered, we have sent you a link to reset your password."
-msgstr "Falls diese Adresse registriert ist, haben wir dir einen Link zum Zurücksetzen des Passworts geschickt."
-
-msgid "This password reset link is invalid or has expired."
-msgstr "Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen."
-
-msgid "Your password has been changed. You can log in now."
-msgstr "Dein Passwort wurde geändert. Du kannst dich jetzt anmelden."
-
-msgid "Unsubscribe from reminders?"
-msgstr "Erinnerungen abbestellen?"
-
-msgid "Unsubscribe"
-msgstr "Abbestellen"
