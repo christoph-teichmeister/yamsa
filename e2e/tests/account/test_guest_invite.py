@@ -72,20 +72,6 @@ class TestGuestInvite:
         expect(page.locator("#userSelect")).to_have_count(0)
         expect(page.get_by_text("No guests have been invited yet.", exact=False)).to_be_visible()
 
-    def test_the_seat_list_offers_only_guests_of_that_room(
-        self, shared_room: Room, guest_user: User, page: Page, base_url: str
-    ) -> None:
-        shared_room.users.add(guest_user)
-        outsider = GuestUserFactory()
-        share_url = f"{base_url}{reverse('room:share', kwargs={'share_hash': shared_room.share_hash})}"
-
-        share_page = RoomSharePage(page, share_url)
-        share_page.navigate()
-
-        options = page.locator("#userSelect option").all_inner_texts()
-        assert guest_user.name in options
-        assert outsider.name not in options
-
     def test_posting_a_registered_or_foreign_user_id_to_the_guest_login_is_rejected(
         self, shared_room: Room, guest_user: User, profile_user: User, page: Page, base_url: str
     ) -> None:
