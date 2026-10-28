@@ -56,14 +56,13 @@
     </div>
     {% include "account/partials/_password_field.html" with field_id="password" field_label=form.fields.password.label field_errors=form.password.errors field_autocomplete="new-password" %}
     {% comment %}
-      Decided by the request, not by the person filling the form in: the id comes from the session
-      and the room from the invite link. Hidden inputs rather than a hidden fieldset with labels -
-      there is nothing here for anyone to read.
+      Decided by the request, not by the person filling the form in: the room comes from the invite link.
+      Hidden input rather than a hidden fieldset with a label - there is nothing here for anyone to read.
     {% endcomment %}
-    <input id="id"
-           name="id"
+    <input id="guest_token"
+           name="guest_token"
            type="hidden"
-           value="{% if form.initial.id %}{{ form.initial.id }}{% elif not request.user.is_anonymous %}{{ request.user.id }}{% endif %}" />
+           value="{{ guest_token|default_if_none:'' }}" />
     <input id="room_slug"
            name="room_slug"
            type="hidden"

@@ -104,17 +104,6 @@ def test_can_be_removed_from_room_false(user: User, room: Room) -> None:
     assert user.can_be_removed_from_room(room.id) is False
 
 
-def test_generate_random_password_with_length(user: User) -> None:
-    password_hash_before = user.password
-
-    length = 10
-    new_password = user.generate_random_password_with_length(length)
-    assert len(new_password) == length
-
-    user.refresh_from_db()
-    assert user.password != password_hash_before
-
-
 def test_profile_picture_url_defaults_to_placeholder(user: User) -> None:
     fallback_url = user.profile_picture_fallback_url
     assert user.profile_picture_url == fallback_url

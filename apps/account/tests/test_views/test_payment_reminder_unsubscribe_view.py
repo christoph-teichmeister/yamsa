@@ -21,7 +21,7 @@ def test_valid_token_unsubscribes_user(client: Client, user: User) -> None:
     variant = query["variant"][0]
     assert variant == PAYMENT_REMINDER_VARIANT
 
-    response = client.get(f"{reverse('account:payment-reminder-unsubscribe')}?token={token}")
+    response = client.post(f"{reverse('account:payment-reminder-unsubscribe')}?token={token}")
 
     user.refresh_from_db()
     assert not user.wants_to_receive_payment_reminders
@@ -38,7 +38,7 @@ def test_room_variant_unsubscribes_room_reminders(client: Client, user: User) ->
     user.wants_to_receive_room_reminders = True
     user.save(update_fields=["wants_to_receive_room_reminders"])
 
-    response = client.get(
+    response = client.post(
         f"{reverse('account:payment-reminder-unsubscribe')}?token={token}&variant={ROOM_REMINDER_VARIANT}"
     )
 
@@ -52,4 +52,15 @@ def test_invalid_token_shows_error_message(client: Client, user: User) -> None:
 
     user.refresh_from_db()
     assert user.wants_to_receive_payment_reminders
-    assert "expired or is invalid" in response.content.decode()
+    assert "unsubscribe link is invalid" in response.content.decode()
+
+
+def test_get_only_asks_for_confirmation(client: Client, user: User) -> None:
+    url = build_payment_reminder_unsubscribe_url(user)
+    token = parse_qs(urlparse(url).query)["token"][0]
+
+    response = client.get(f"{reverse('account:payment-reminder-unsubscribe')}?token={token}")
+
+    user.refresh_from_db()
+    assert user.wants_to_receive_payment_reminders
+    assert "confirm-unsubscribe-button" in response.content.decode()

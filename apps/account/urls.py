@@ -21,6 +21,11 @@ urlpatterns = [
     path("logout/", views.LogOutUserView.as_view(), name="logout"),
     path("forgot-password/", views.UserForgotPasswordView.as_view(), name="forgot-password"),
     path(
+        "reset-password/<str:uidb64>/<str:token>/",
+        views.UserResetPasswordView.as_view(),
+        name="reset-password",
+    ),
+    path(
         "notifications/payment-reminder/unsubscribe/",
         views.PaymentReminderUnsubscribeView.as_view(),
         name="payment-reminder-unsubscribe",

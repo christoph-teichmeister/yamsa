@@ -6,6 +6,7 @@ from playwright.sync_api import BrowserContext, Page, expect
 
 from apps.account.models import User
 from apps.account.tests.constants import DEFAULT_PASSWORD
+from apps.account.tests.factories import GuestUserFactory
 from apps.room.models import Room
 from e2e.conftest import _login
 from e2e.pages.account_detail_page import AccountDetailPage
@@ -70,3 +71,27 @@ class TestGuestInvite:
 
         expect(page.locator("#userSelect")).to_have_count(0)
         expect(page.get_by_text("No guests have been invited yet.", exact=False)).to_be_visible()
+
+    def test_posting_a_registered_or_foreign_user_id_to_the_guest_login_is_rejected(
+        self, shared_room: Room, guest_user: User, profile_user: User, page: Page, base_url: str
+    ) -> None:
+        shared_room.users.add(guest_user)
+        outsider = GuestUserFactory()
+        share_url = f"{base_url}{reverse('room:share', kwargs={'share_hash': shared_room.share_hash})}"
+        RoomSharePage(page, share_url).navigate()
+
+        def post_guest_login(user_id: int) -> int:
+            return page.evaluate(
+                """async ([path, slug, userId]) => {
+                    const token = document.querySelector("input[name=csrfmiddlewaretoken]").value;
+                    const body = new URLSearchParams({room_slug: slug, user_id: userId});
+                    const response = await fetch(path, {
+                        method: "POST", body, headers: {"X-CSRFToken": token}, redirect: "manual",
+                    });
+                    return response.status;
+                }""",
+                [reverse("account:guest-login"), str(shared_room.slug), str(user_id)],
+            )
+
+        assert post_guest_login(profile_user.id) == 404
+        assert post_guest_login(outsider.id) == 404

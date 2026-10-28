@@ -40,6 +40,11 @@ class TestUserSecurityViewGet:
 
         assert response.status_code == http.HTTPStatus.FORBIDDEN
 
+    def test_superuser_cannot_open_another_users_security_page(self, superuser_htmx_client: Client, user: User) -> None:
+        response = superuser_htmx_client.get(reverse("account:security", kwargs={"pk": user.id}))
+
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
+
     def test_superuser_can_access_own_profile(self, superuser_htmx_client: Client, superuser: User) -> None:
         response = superuser_htmx_client.get(reverse("account:security", kwargs={"pk": superuser.id}))
 

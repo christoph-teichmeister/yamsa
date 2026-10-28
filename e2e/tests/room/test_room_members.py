@@ -85,3 +85,22 @@ class TestRoomMembers:
         dashboard_page.expect_room_order([other_room.name])
         expect(dashboard_page.card_for(_dashboard_url(shared_room))).to_have_count(0)
         assert not shared_room.users.filter(id=profile_user.id).exists()
+
+    def test_a_non_member_cannot_remove_a_member_by_posting_directly(
+        self, shared_room: Room, roommate: User, unrelated_user: User, page: Page, base_url: str
+    ) -> None:
+        _login(page, base_url, unrelated_user.email, DEFAULT_PASSWORD)
+        # A page the stranger may use, only to obtain a CSRF token: the roster hides its forms from non-members.
+        page.goto(f"{base_url}{reverse('account:change-password', kwargs={'pk': unrelated_user.id})}")
+        remove_path = reverse("account:remove-from-room", kwargs={"room_slug": shared_room.slug, "pk": roommate.id})
+
+        status = page.evaluate(
+            """async (path) => {
+                const token = document.querySelector("input[name=csrfmiddlewaretoken]").value;
+                return (await fetch(path, {method: "POST", headers: {"X-CSRFToken": token}})).status;
+            }""",
+            remove_path,
+        )
+
+        assert status == 403
+        assert shared_room.users.filter(id=roommate.id).exists()

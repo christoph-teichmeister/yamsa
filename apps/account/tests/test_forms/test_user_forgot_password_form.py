@@ -12,11 +12,6 @@ class TestUserForgotPasswordForm:
         form = self.form_class(data={"email": user.email})
         assert form.is_valid()
 
-    def test_form_raises_error_if_email_is_unknown(self) -> None:
-        unknown_email = "unknown_email@local.local"
-        form = self.form_class(data={"email": unknown_email})
-        assert not form.is_valid()
-
-        assert form.errors["email"][0] == self.form_class.ExceptionMessage.UNKNOWN_EMAIL_ADDRESS.format(
-            email=unknown_email
-        )
+    def test_unknown_email_is_valid_so_the_form_does_not_reveal_registrations(self) -> None:
+        form = self.form_class(data={"email": "unknown_email@local.local"})
+        assert form.is_valid()

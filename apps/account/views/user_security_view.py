@@ -12,7 +12,7 @@ class UserSecurityView(LoginRequiredMixin, generic.DetailView):
     model = User
 
     def dispatch(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
-        if not request.user.is_superuser and request.user.id != kwargs["pk"]:
+        if request.user.id != kwargs["pk"]:
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)
 
