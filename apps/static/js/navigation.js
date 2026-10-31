@@ -1,3 +1,5 @@
+import "./invalid-field-reveal.js";
+
 (function () {
   if (window.__yamsaNavigationInitialized) {
     return;
