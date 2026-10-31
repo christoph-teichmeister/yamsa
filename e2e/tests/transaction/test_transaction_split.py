@@ -121,3 +121,24 @@ class TestTransactionSplit:
             roommate.name: Decimal("20.00"),
             flatmate.name: Decimal("5.00"),
         }
+
+    def test_an_added_participant_left_at_zero_does_not_block_the_submit(
+        self, open_create_form: Callable, room: Room, profile_user: User, roommate: User, flatmate: User, page: Page
+    ) -> None:
+        create_page = open_create_form()
+        create_page.fill_required_fields(description="Nullrunde", amount="30.00")
+        create_page.choose_category(GROCERIES)
+        create_page.remove_share(flatmate.name)
+        create_page.set_share(profile_user.name, "15.00")
+        create_page.set_share(roommate.name, "15.00")
+
+        # The hand-edited rows already cover the total, so the added row is left at zero.
+        create_page.add_participant(flatmate.name)
+        create_page.expect_shares({profile_user.name: "15.00", roommate.name: "15.00", flatmate.name: "0.00"})
+
+        create_page.submit()
+        page.wait_for_url(lambda url: url.endswith(reverse("transaction:list", kwargs={"room_slug": room.slug})))
+        assert _booked_shares(room, "Nullrunde") == {
+            profile_user.name: Decimal("15.00"),
+            roommate.name: Decimal("15.00"),
+        }
