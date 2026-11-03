@@ -82,6 +82,24 @@ _INITIAL_TOTAL_VARIATIONS = [
 
 
 class TestTransactionEditView:
+    def test_get_marks_a_payer_who_left_the_room(
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
+    ) -> None:
+        parent_transaction = ParentTransactionFactory(room=room, paid_by=guest_user)
+        ChildTransaction.objects.create(parent_transaction=parent_transaction, paid_for=user, value=Decimal("10.00"))
+        room.users.remove(guest_user)
+
+        response = authenticated_client.get(
+            reverse("transaction:edit", kwargs={"room_slug": room.slug, "pk": parent_transaction.id})
+        )
+
+        options = {
+            option["value"]: option.get_text(strip=True)
+            for option in BeautifulSoup(response.content, "html5lib").select("#paid_by_select option")
+        }
+        assert options[str(guest_user.id)] == f"{guest_user.name} (Left)"
+        assert options[str(user.id)] == user.name
+
     def test_post_closed_room_is_rejected(self, authenticated_client: Client, closed_room: Room, user: User) -> None:
         parent_transaction = ParentTransactionFactory(room=closed_room, paid_by=user, description="Original")
         ChildTransaction.objects.create(
