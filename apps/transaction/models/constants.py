@@ -1,3 +1,5 @@
+from django.utils.translation import gettext_lazy as _lazy
+
 DEFAULT_CATEGORY_SLUG = "misc"
 BASE_CATEGORY_SLUGS = (
     "accommodation",
@@ -27,3 +29,6 @@ def resolve_default_category_pk() -> int:
         },
     )
     return category.pk
+
+
+FORMER_MEMBER_MESSAGE = _lazy("This transaction involves someone who left the room, so it can't be edited.")

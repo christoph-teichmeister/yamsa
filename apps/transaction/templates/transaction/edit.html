@@ -1,5 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load room_tags i18n core_tags %}
+{% load room_tags i18n %}
 {% block tab_content %}
   <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% trans "Back to list" as back_to_list_label %}
@@ -63,11 +63,8 @@
                       name="paid_by"
                       required>
                 {% for user in form.fields.paid_by.queryset %}
-                  {% is_former_member user.id as user_left %}
                   <option value="{{ user.id }}"
-                          {% if user.id == form.initial.paid_by %}selected{% endif %}>
-                    {% if user_left %}({% trans "Left" %}) {% endif %}{{ user.name }}
-                  </option>
+                          {% if user.id == form.initial.paid_by %}selected{% endif %}>{{ user.name }}</option>
                 {% endfor %}
               </select>
               {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle" %}

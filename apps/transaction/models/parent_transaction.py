@@ -47,6 +47,16 @@ class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
         return f"{self.id}: {self.description}"
 
     @property
+    def involves_former_member(self) -> bool:
+        """Whether the payer or a debtor has left the room.
+
+        Saving an edit recalculates the room's debts, which could open a debt between a member and
+        someone who can no longer see or settle it. Such a transaction therefore stays read-only.
+        """
+        involved = {self.paid_by_id, *self.child_transactions.values_list("paid_for_id", flat=True)}
+        return not involved <= set(self.room.users.values_list("id", flat=True))
+
+    @property
     def value(self) -> Decimal:
         aggregate = self.child_transactions.aggregate(Sum("value"))
         total = aggregate["value__sum"]

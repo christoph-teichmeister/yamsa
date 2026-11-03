@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import QuerySet
 from django.forms import BaseForm
@@ -9,6 +10,7 @@ from apps.core.event_loop.runner import handle_message
 from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 from apps.transaction.messages.events.transaction import ChildTransactionDeleted, ParentTransactionDeleted
 from apps.transaction.models import ChildTransaction, ParentTransaction
+from apps.transaction.models.constants import FORMER_MEMBER_MESSAGE
 from apps.transaction.utils import split_amount_exact
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
@@ -23,6 +25,12 @@ class ChildTransactionDeleteView(
 
     def get_queryset(self) -> QuerySet:
         return super().get_queryset().filter(parent_transaction__room=self.request.room)
+
+    def get_object(self, queryset: QuerySet | None = None) -> ChildTransaction:
+        child_transaction = super().get_object(queryset)
+        if child_transaction.parent_transaction.involves_former_member:
+            raise PermissionDenied(FORMER_MEMBER_MESSAGE)
+        return child_transaction
 
     def get_success_url(self) -> str:
         # Decided in form_valid(), where the share count is read under the parent's lock.

@@ -2178,3 +2178,6 @@ msgstr "Webpush-Information für {user}"
 
 msgid "Left"
 msgstr "Ausgetreten"
+
+msgid "This transaction involves someone who left the room, so it can't be edited."
+msgstr "Diese Transaktion betrifft jemanden, der den Raum verlassen hat, und kann deshalb nicht bearbeitet werden."

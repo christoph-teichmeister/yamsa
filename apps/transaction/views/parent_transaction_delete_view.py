@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import QuerySet
 from django.forms import BaseForm
@@ -9,6 +10,7 @@ from apps.core.event_loop.runner import handle_message
 from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 from apps.transaction.messages.events.transaction import ParentTransactionDeleted
 from apps.transaction.models import ParentTransaction
+from apps.transaction.models.constants import FORMER_MEMBER_MESSAGE
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -20,6 +22,13 @@ class ParentTransactionDeleteView(
 
     def get_queryset(self) -> QuerySet:
         return super().get_queryset().filter(room=self.request.room)
+
+    def get_object(self, queryset: QuerySet | None = None) -> ParentTransaction:
+        # Deleting rebuilds the room's debts just like an edit, so it is closed for the same reason.
+        parent_transaction = super().get_object(queryset)
+        if parent_transaction.involves_former_member:
+            raise PermissionDenied(FORMER_MEMBER_MESSAGE)
+        return parent_transaction
 
     def get_success_url(self) -> str:
         return reverse(
