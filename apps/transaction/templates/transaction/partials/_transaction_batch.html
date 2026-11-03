@@ -37,8 +37,8 @@ needs. `.transaction-row` stays as the hook the highlight script and the e2e sui
           {% autoescape off %}
             {% parse_user_text parent_transaction.paid_by.name True %}
           {% endautoescape %}
-          {% former_member_tag parent_transaction.paid_by_id %}
         </span>
+        {% former_member_tag parent_transaction.paid_by_id %}
       </span>
     </span>
     <span class="shrink-0 text-right">
