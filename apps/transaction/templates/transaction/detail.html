@@ -13,11 +13,14 @@
               hx-indicator="#body-loading-spinner"
               hx-swap="morph:innerHTML"
               hx-push-url="true">{% icon "arrow-left" %}</button>
-      <div class="min-w-0 flex-1 text-center">
+      {# Below @md the title takes its own row under the two buttons; squeezed between them a long name wrapped to a sliver and the avatar shrank into the back button. #}
+      <div class="order-last w-full min-w-0 text-center @md:order-none @md:w-auto @md:flex-1">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Expense" %}</p>
         <p class="m-0 flex items-center justify-center gap-2 text-ink">
-          {% include "shared_partials/_user_avatar.html" with avatar_url=parent_transaction.paid_by.avatar_url avatar_name=parent_transaction.paid_by.name avatar_fallback_url=parent_transaction.paid_by.profile_picture_fallback_url %}
-          <span>
+          <span class="shrink-0">
+            {% include "shared_partials/_user_avatar.html" with avatar_url=parent_transaction.paid_by.avatar_url avatar_name=parent_transaction.paid_by.name avatar_fallback_url=parent_transaction.paid_by.profile_picture_fallback_url %}
+          </span>
+          <span class="min-w-0">
             {% autoescape off %}
               {% parse_user_text parent_transaction.paid_by.name True %}
             {% endautoescape %}
