@@ -105,10 +105,12 @@
             <div class="flex min-w-0 items-center gap-2">
               {% include "shared_partials/_user_avatar.html" with avatar_url=child_transaction.paid_for.avatar_url avatar_name=child_transaction.paid_for.name avatar_fallback_url=child_transaction.paid_for.profile_picture_fallback_url %}
               <div class="min-w-0">
-                <p class="mt-0 mb-1 truncate font-semibold text-ink">
-                  {% autoescape off %}
-                    {% parse_user_text child_transaction.paid_for.name True %}
-                  {% endautoescape %}
+                <p class="mt-0 mb-1 flex min-w-0 items-center gap-2 font-semibold text-ink">
+                  <span class="truncate">
+                    {% autoescape off %}
+                      {% parse_user_text child_transaction.paid_for.name True %}
+                    {% endautoescape %}
+                  </span>
                   {% former_member_tag child_transaction.paid_for_id %}
                 </p>
                 <p class="m-0 text-sm text-ink-muted">

@@ -66,7 +66,7 @@
                   {% is_former_member user.id as user_left %}
                   <option value="{{ user.id }}"
                           {% if user.id == form.initial.paid_by %}selected{% endif %}>
-                    {{ user.name }}{% if user_left %} ({% trans "Left" %}){% endif %}
+                    {% if user_left %}({% trans "Left" %}) {% endif %}{{ user.name }}
                   </option>
                 {% endfor %}
               </select>

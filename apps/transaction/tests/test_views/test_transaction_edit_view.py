@@ -97,7 +97,7 @@ class TestTransactionEditView:
             option["value"]: option.get_text(strip=True)
             for option in BeautifulSoup(response.content, "html5lib").select("#paid_by_select option")
         }
-        assert options[str(guest_user.id)] == f"{guest_user.name} (Left)"
+        assert options[str(guest_user.id)] == f"(Left) {guest_user.name}"
         assert options[str(user.id)] == user.name
 
     def test_post_closed_room_is_rejected(self, authenticated_client: Client, closed_room: Room, user: User) -> None:
