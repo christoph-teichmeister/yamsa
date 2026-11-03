@@ -83,9 +83,7 @@ class PaymentReminderService:
         candidates: list[PaymentReminderCandidate] = []
         for room in rooms:
             last_activity = getattr(room, "last_transaction_created_at_date", None)
-            builders = self._builders_for_room(room)
-            for builder in builders:
-                candidates.append(builder.build(last_activity))
+            candidates.extend(builder.build(last_activity) for builder in self._builders_for_room(room))
 
         return candidates
 

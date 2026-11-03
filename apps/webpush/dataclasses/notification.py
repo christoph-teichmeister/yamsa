@@ -46,12 +46,9 @@ class Notification:
             return settings.BACKEND_URL + static("images/32x32.webp")
 
         def _build_data(self) -> dict:
-            action_click_urls = []
-
-            for action in self.actions:
-                action_click_urls.append(
-                    {"action": action.get("action", ""), "url": action.get("url", "")},
-                )
+            action_click_urls = [
+                {"action": action.get("action", ""), "url": action.get("url", "")} for action in self.actions
+            ]
 
             return {"actionClickUrls": action_click_urls, "notificationClickUrl": self.click_url}
 
