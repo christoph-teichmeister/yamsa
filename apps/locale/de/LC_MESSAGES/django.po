@@ -1485,6 +1485,9 @@ msgstr "Neu"
 msgid "Bring your data from another app"
 msgstr "Hol deine Daten aus einer anderen App"
 
+msgid "Left"
+msgstr "Ausgetreten"
+
 msgid "Couldn't load this. Check your connection and try again."
 msgstr "Konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut."
 
@@ -1780,33 +1783,17 @@ msgstr "Zurück zur Liste"
 msgid "Expense"
 msgstr "Ausgabe"
 
-msgid "paid"
-msgstr "bezahlt"
-
-msgid "Edit transaction"
-msgstr "Transaktion bearbeiten"
-
 msgid "Edit expense"
 msgstr "Ausgabe bearbeiten"
+
+msgid "paid"
+msgstr "bezahlt"
 
 msgid "This room is closed, so the breakdown is read-only."
 msgstr "Dieser Raum ist geschlossen, daher ist die Aufschlüsselung read-only."
 
-msgid "Total amount"
-msgstr "Gesamtbetrag"
-
-msgid "Paid by"
-msgstr "Bezahlt von"
-
-msgid "on"
-msgstr "am"
-
-#, python-format
-msgid "Recorded at %(recorded_time)s"
-msgstr "Erfasst um %(recorded_time)s"
-
-msgid "No description"
-msgstr "Keine Beschreibung"
+msgid "This transaction involves someone who left the room, so it can't be edited."
+msgstr "Diese Transaktion betrifft jemanden, der den Raum verlassen hat, und kann deshalb nicht bearbeitet werden."
 
 msgid "Tap a row to edit the breakdown."
 msgstr "Tippe auf eine Zeile, um die Aufschlüsselung zu bearbeiten."
@@ -1827,11 +1814,17 @@ msgstr "Für diese Transaktion liegen noch keine Splits-Daten vor."
 msgid "Editing expense"
 msgstr "Ausgabe bearbeiten"
 
+msgid "No description"
+msgstr "Keine Beschreibung"
+
 msgid "Adjust who paid and how it is split."
 msgstr "Leg fest, wer bezahlt hat und wie geteilt wird."
 
 msgid "Are you sure you wish to delete this transaction?"
 msgstr "Bist du sicher, dass du diese Transaktion löschen möchtest?"
+
+msgid "Paid by"
+msgstr "Bezahlt von"
 
 #, python-format
 msgid "Current split: %(split_total)s%(split_currency)s"
@@ -2175,9 +2168,3 @@ msgstr "Transaktionen importiert"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
-
-msgid "Left"
-msgstr "Ausgetreten"
-
-msgid "This transaction involves someone who left the room, so it can't be edited."
-msgstr "Diese Transaktion betrifft jemanden, der den Raum verlassen hat, und kann deshalb nicht bearbeitet werden."
