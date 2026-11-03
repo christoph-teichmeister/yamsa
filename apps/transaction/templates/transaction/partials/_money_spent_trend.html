@@ -25,7 +25,7 @@ The chart's own SVG rules stay in a stylesheet: d3 generates .trend-line-path, .
            role="group"
            aria-label="{% trans "Spending trend ranges" %}">
         {% for option in period_options %}
-          <button class="inline-flex min-w-0 cursor-pointer items-center justify-center border-0 px-3.5 py-1.5 text-[0.65rem] tracking-[0.08em] uppercase transition focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand {% if option.is_wide %}flex-3 text-[0.6rem] tracking-[0.04em]{% else %}flex-1{% endif %} {% if option.active %}bg-brand text-on-brand{% else %}bg-transparent text-ink-muted hover:bg-surface-hover{% endif %}"
+          <button class="inline-flex min-w-0 cursor-pointer items-center justify-center border-0 min-h-11 px-3.5 py-1.5 text-[0.7rem] tracking-[0.08em] uppercase transition focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand {% if option.is_wide %}flex-3 text-[0.7rem] tracking-[0.04em]{% else %}flex-1{% endif %} {% if option.active %}bg-brand text-on-brand{% else %}bg-transparent text-ink-muted hover:bg-surface-hover{% endif %}"
                   type="button"
                   title="{{ option.label }}"
                   aria-pressed="{% if option.active %}true{% else %}false{% endif %}"

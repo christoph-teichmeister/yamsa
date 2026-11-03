@@ -6,7 +6,7 @@
   <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     {% trans "Back to transactions" as back_to_list_label %}
     {# An anchor, not a button: the back link then works without the bundle and can be opened in a new tab. #}
-    <a class="inline-flex cursor-pointer items-center gap-1.5 self-start rounded-lg border-0 bg-transparent px-1 py-1 text-sm font-semibold text-ink-muted no-underline transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+    <a class="inline-flex cursor-pointer items-center gap-1.5 min-h-11 self-start rounded-lg border-0 bg-transparent px-1 py-1 text-sm font-semibold text-ink-muted no-underline transition hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
        href="{% room_url 'transaction:list' %}"
        hx-get="{% room_url 'transaction:list' %}"
        hx-target="#body"
@@ -193,7 +193,7 @@
                     {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle" %}
                   </div>
                 </div>
-                <button class="inline-flex cursor-pointer items-center justify-center gap-2 justify-self-end rounded-lg border border-danger-text/60 bg-transparent px-3 py-2 text-sm font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50"
+                <button class="inline-flex cursor-pointer items-center justify-center gap-2 min-h-11 justify-self-end rounded-lg border border-danger-text/60 bg-transparent px-3 py-2 text-sm font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50"
                         type="button"
                         aria-label="{% trans "Remove this share" %}"
                         hx-confirm="{% trans "Remove this participant?" %}"

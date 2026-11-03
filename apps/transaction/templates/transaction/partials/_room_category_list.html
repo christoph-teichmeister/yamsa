@@ -29,7 +29,7 @@
               {% csrf_token %}
               <input type="hidden" name="action" value="delete" />
               <input type="hidden" name="room_category_id" value="{{ room_category.id }}" />
-              <button class="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-danger-text/60 bg-transparent px-2.5 py-1 text-xs font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              <button class="inline-flex cursor-pointer items-center gap-1 min-h-11 rounded-lg border border-danger-text/60 bg-transparent px-2.5 py-1 text-xs font-semibold text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                       type="submit">
                 {% icon "trash" %}
                 {% trans "Remove" %}
@@ -63,13 +63,13 @@
                                  id="order-label-{{ room_category.id }}"
                                  for="order-input-{{ room_category.id }}">{% trans "Order" %}</label>
                           <input id="order-input-{{ room_category.id }}"
-                                 class="min-w-0 flex-1 rounded-lg border bg-surface px-3 py-1.5 text-sm tabular-nums text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand {% if update_form.order_index.errors %}border-danger-text/60{% else %}border-line-strong{% endif %}"
+                                 class="min-w-0 flex-1 rounded-lg border bg-surface px-3 py-1.5 text-base tabular-nums text-ink sm:text-sm transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand {% if update_form.order_index.errors %}border-danger-text/60{% else %}border-line-strong{% endif %}"
                                  type="number"
                                  name="order_index"
                                  aria-describedby="order-label-{{ room_category.id }}"
                                  min="0"
                                  value="{{ update_form.order_index.value|default:room_category.order_index }}" />
-                          <button class="inline-flex shrink-0 cursor-pointer items-center rounded-lg border border-brand bg-transparent px-2.5 text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                          <button class="inline-flex min-h-11 shrink-0 cursor-pointer items-center rounded-lg border border-brand bg-transparent px-2.5 text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                                   type="submit"
                                   aria-label='{% trans "Save order for this category" %}'>
                             {% icon "arrow-repeat" %}
@@ -91,13 +91,13 @@
                              id="order-label-{{ room_category.id }}"
                              for="order-input-{{ room_category.id }}">{% trans "Order" %}</label>
                       <input id="order-input-{{ room_category.id }}"
-                             class="min-w-0 flex-1 rounded-lg border border-line-strong bg-surface px-3 py-1.5 text-sm tabular-nums text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
+                             class="min-w-0 flex-1 rounded-lg border border-line-strong bg-surface px-3 py-1.5 text-base tabular-nums text-ink sm:text-sm transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                              type="number"
                              name="order_index"
                              aria-describedby="order-label-{{ room_category.id }}"
                              min="0"
                              value="{{ room_category.order_index }}" />
-                      <button class="inline-flex shrink-0 cursor-pointer items-center rounded-lg border border-brand bg-transparent px-2.5 text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                      <button class="inline-flex min-h-11 shrink-0 cursor-pointer items-center rounded-lg border border-brand bg-transparent px-2.5 text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                               type="submit"
                               aria-label='{% trans "Save order for this category" %}'>
                         {% icon "arrow-repeat" %}
