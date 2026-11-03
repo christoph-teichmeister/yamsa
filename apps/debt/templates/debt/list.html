@@ -35,7 +35,7 @@
               reopens the same reading, and the page still switches without HTMX.
             {% endcomment %}
             <a href="{% room_url 'debt:list' %}"
-               class="inline-flex cursor-pointer items-center rounded-full px-4 py-1.5 text-sm font-semibold no-underline transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand {% if showing_optimised_debts %}bg-brand text-on-brand{% else %}text-ink hover:bg-surface-hover{% endif %}"
+               class="inline-flex cursor-pointer items-center min-h-11 rounded-full px-4 py-1.5 text-sm font-semibold no-underline transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand {% if showing_optimised_debts %}bg-brand text-on-brand{% else %}text-ink hover:bg-surface-hover{% endif %}"
                aria-current="{% if showing_optimised_debts %}page{% else %}false{% endif %}"
                hx-get="{% room_url 'debt:list' %}"
                hx-target="#body"
@@ -43,7 +43,7 @@
                hx-swap="morph:innerHTML"
                hx-push-url="true">{% trans "Optimised" %}</a>
             <a href="{% room_url 'debt:list' %}?mode=simple"
-               class="inline-flex cursor-pointer items-center rounded-full px-4 py-1.5 text-sm font-semibold no-underline transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand {% if showing_optimised_debts %}text-ink hover:bg-surface-hover{% else %}bg-brand text-on-brand{% endif %}"
+               class="inline-flex cursor-pointer items-center min-h-11 rounded-full px-4 py-1.5 text-sm font-semibold no-underline transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand {% if showing_optimised_debts %}text-ink hover:bg-surface-hover{% else %}bg-brand text-on-brand{% endif %}"
                aria-current="{% if showing_optimised_debts %}false{% else %}page{% endif %}"
                hx-get="{% room_url 'debt:list' %}?mode=simple"
                hx-target="#body"
