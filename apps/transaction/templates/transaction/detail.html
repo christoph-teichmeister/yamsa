@@ -1,5 +1,5 @@
 {% extends "room/dashboard.html" %}
-{% load room_tags i18n %}
+{% load room_tags i18n core_tags %}
 {% block tab_content %}
   <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -21,6 +21,7 @@
             {% autoescape off %}
               {% parse_user_text parent_transaction.paid_by.name True %}
             {% endautoescape %}
+            {% former_member_tag parent_transaction.paid_by_id %}
             {% trans "paid" %}
             <strong>{{ parent_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}</strong>
           </span>
@@ -63,6 +64,7 @@
             {% autoescape off %}
               {% parse_user_text parent_transaction.paid_by.name True %}
             {% endautoescape %}
+            {% former_member_tag parent_transaction.paid_by_id %}
             {% trans "on" %} {{ parent_transaction.paid_at|date }}
           </p>
           <p class="transaction-meta m-0 text-sm text-ink-muted">
@@ -107,6 +109,7 @@
                   {% autoescape off %}
                     {% parse_user_text child_transaction.paid_for.name True %}
                   {% endautoescape %}
+                  {% former_member_tag child_transaction.paid_for_id %}
                 </p>
                 <p class="m-0 text-sm text-ink-muted">
                   {% blocktrans trimmed with owed_value=child_transaction.value owed_currency=parent_transaction.currency.sign %}

@@ -36,3 +36,22 @@ class TestEditFormDebtors:
 
         assert not form.is_valid()
         assert "child_transaction_id" in form.errors
+
+    def test_a_debtor_who_left_the_room_stays_editable(
+        self, parent_transaction: ParentTransaction, room: Room, guest_user: User
+    ) -> None:
+        room.users.remove(guest_user)
+        data = edit_data(parent_transaction)
+
+        form = TransactionEditForm(data=data, instance=parent_transaction)
+
+        assert form.is_valid(), form.errors
+
+    def test_a_payer_who_left_the_room_stays_selectable(
+        self, parent_transaction: ParentTransaction, room: Room, user: User
+    ) -> None:
+        room.users.remove(user)
+
+        form = TransactionEditForm(data=edit_data(parent_transaction), instance=parent_transaction)
+
+        assert user in form.fields["paid_by"].queryset

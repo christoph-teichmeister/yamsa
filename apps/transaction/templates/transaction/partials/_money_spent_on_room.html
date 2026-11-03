@@ -65,6 +65,7 @@
                   {% autoescape off %}
                     {% parse_user_text money_spent.paid_by_name True %}
                   {% endautoescape %}
+                  {% former_member_tag money_spent.parent_transaction__paid_by_id %}
                 </span>
               </p>
               <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap text-ink">
@@ -107,6 +108,7 @@
                     {% autoescape off %}
                       {% parse_user_text debt_row.debitor_name True %}
                     {% endautoescape %}
+                    {% former_member_tag debt_row.debitor_id %}
                   </span>
                 </p>
                 <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap text-ink">{{ debt_row.total_open_debt|format_with_thousands }} {{ debt_row.currency_sign }}</p>
@@ -139,6 +141,7 @@
                       {% autoescape off %}
                         {% parse_user_text covered.paid_for__name True %}
                       {% endautoescape %}
+                      {% former_member_tag covered.paid_for_id %}
                     </span>
                   </p>
                   <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap text-ink">{{ covered.total_covered_for_person|format_with_thousands }} {{ covered.currency_sign }}</p>

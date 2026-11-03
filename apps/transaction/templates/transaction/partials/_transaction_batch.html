@@ -1,4 +1,4 @@
-{% load humanize room_tags i18n %}
+{% load humanize room_tags i18n core_tags %}
 {% comment %}
 One batch of the transaction feed, swapped into #transaction-feed by htmx.
 
@@ -37,6 +37,7 @@ needs. `.transaction-row` stays as the hook the highlight script and the e2e sui
           {% autoescape off %}
             {% parse_user_text parent_transaction.paid_by.name True %}
           {% endautoescape %}
+          {% former_member_tag parent_transaction.paid_by_id %}
         </span>
       </span>
     </span>

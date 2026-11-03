@@ -3,7 +3,7 @@ from decimal import Decimal
 from ambient_toolbox.middleware.current_request import CurrentRequestMiddleware
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -50,7 +50,13 @@ class TransactionEditForm(SplitSharesMixin, RoomCategoryFieldMixin, forms.ModelF
         self.initial["total_value"] = self._initial_total_value
 
     def _share_room_users(self) -> QuerySet:
-        return User.objects.filter(room=self.instance.room)
+        # Someone who left the room stays on the transactions they took part in; without them here the
+        # payer select and the debtor check would reject every edit of such a transaction.
+        involved_ids = {
+            self.instance.paid_by_id,
+            *self.instance.child_transactions.values_list("paid_for_id", flat=True),
+        }
+        return User.objects.filter(Q(room=self.instance.room) | Q(id__in=involved_ids)).distinct()
 
     def clean_child_transaction_id(self) -> list[int]:
         # 0 marks a new row; any other id is looked up on the instance when saving.
