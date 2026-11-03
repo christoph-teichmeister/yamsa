@@ -31,6 +31,17 @@ class TransactionDetailView(RoomMembershipRequiredMixin, TransactionBaseContext,
 
     @context
     @cached_property
+    def has_former_member(self) -> bool:
+        return self.object.involves_former_member
+
+    @context
+    @cached_property
+    def is_editable(self) -> bool:
+        room = self.request.room
+        return room.status == room.StatusChoices.OPEN and not self.has_former_member
+
+    @context
+    @cached_property
     def receipts(self) -> QuerySet:
         return self.object.receipts.all()
 

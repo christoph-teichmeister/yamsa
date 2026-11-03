@@ -205,14 +205,10 @@ class User(CleanOnSaveMixin, CommonInfo, AbstractBaseUser, PermissionsMixin):
         return get_has_seen_room(self.userconnectiontoroom_set, room_id)
 
     def can_be_removed_from_room(self, room_id: int) -> bool:
-        return not (
-            Room.objects.filter(
-                Q(parent_transactions__paid_by_id=self.id)
-                | Q(parent_transactions__child_transactions__paid_for_id=self.id)
-                | Q(debts__debitor_id=self.id)
-                | Q(debts__creditor_id=self.id),
-                id=room_id,
-            )
-            .distinct()
-            .exists()
-        )
+        """Only unsettled debts block removal; transactions and settled debts stay as history.
+
+        Removal drops the membership only, so rows that reference the user keep their FK. Views that
+        list people from those rows must not assume every person is still a room member.
+        """
+        unsettled = Q(room_id=room_id, settled=False)
+        return not (self.debts.filter(unsettled).exists() or self.debts_to_be_settled.filter(unsettled).exists())

@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import QuerySet
 from django.http import HttpResponse, HttpResponseRedirect
@@ -11,6 +12,7 @@ from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedReq
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.messages.events.transaction import ParentTransactionUpdated
 from apps.transaction.models import ParentTransaction
+from apps.transaction.models.constants import FORMER_MEMBER_MESSAGE
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -24,6 +26,12 @@ class TransactionEditView(
 
     def get_queryset(self) -> QuerySet:
         return super().get_queryset().filter(room=self.request.room).select_related("paid_by", "currency", "category")
+
+    def get_object(self, queryset: QuerySet | None = None) -> ParentTransaction:
+        parent_transaction = super().get_object(queryset)
+        if parent_transaction.involves_former_member:
+            raise PermissionDenied(FORMER_MEMBER_MESSAGE)
+        return parent_transaction
 
     def get_form_kwargs(self) -> dict:
         form_kwargs = super().get_form_kwargs()

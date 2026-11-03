@@ -51,6 +51,29 @@ def test_transaction_detail_shows_an_avatar_per_split_participant(
     assert rendered_avatars == {user.avatar_url, guest_user.name[:1].upper()}
 
 
+def test_transaction_detail_names_the_payer_once_and_marks_who_left(
+    client: Client, room: Room, user: User, guest_user: User
+) -> None:
+    parent_transaction, _ = create_parent_transaction_with_optimisation(
+        room=room,
+        paid_by=guest_user,
+        paid_for_tuple=(user, guest_user),
+    )
+    room.users.remove(guest_user)
+    client.force_login(user)
+
+    response = client.get(reverse("transaction:detail", kwargs={"room_slug": room.slug, "pk": parent_transaction.pk}))
+
+    page = BeautifulSoup(response.content.decode(), "html5lib")
+    assert page.get_text().count(guest_user.name) == 2  # hero and the split row, not a third "Paid by" line
+    assert page.find("button", attrs={"aria-label": "Edit expense"}) is not None
+    assert "Edit expense" not in page.get_text()  # icon-only; a stray label means markup leaked out of the button
+    assert "hx-get" not in page.get_text()
+    assert [
+        chip.get_text(strip=True) for chip in page.select("span.rounded-full") if chip.get_text(strip=True) == "Left"
+    ]
+
+
 def test_split_rows_do_not_query_per_participant(
     room: Room, user: User, guest_user: User, django_assert_num_queries: DjangoAssertNumQueries
 ) -> None:

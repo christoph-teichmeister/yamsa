@@ -73,8 +73,7 @@ def test_post_user_can_not_be_removed_from_room(
     toasts = payload["triggerToast"]
     assert isinstance(toasts, list)
     assert toasts[0]["message"] == (
-        f'"{guest_user.name}" can not be removed from this room, '
-        "because they still have either transactions or open debts."
+        f'"{guest_user.name}" can not be removed from this room, because they still have unsettled debts.'
     )
     assert toasts[0]["type"] == ERROR_TOAST_CLASS
 

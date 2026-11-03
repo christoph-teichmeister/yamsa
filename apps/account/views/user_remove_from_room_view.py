@@ -19,7 +19,7 @@ class UserRemoveFromRoomView(RoomNotClosedRequiredMixin, UserListForRoomView):
         if not user_to_be_removed.can_be_removed_from_room(room_id=room.id):
             request.toast_queue.error(
                 f'"{user_to_be_removed.name}" can not be removed from this room, because they still '
-                f"have either transactions or open debts."
+                f"have unsettled debts."
             )
             return super().get(request, *args, **kwargs)
 

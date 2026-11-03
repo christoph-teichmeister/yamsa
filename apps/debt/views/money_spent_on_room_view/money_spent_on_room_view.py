@@ -22,8 +22,8 @@ class MoneySpentOnRoomView(
         """Avatar per member id, so the aggregate rows below can show a face without carrying a user.
 
         The rows are `.values()` dicts, which cannot reach the picture of a user. Every person in
-        them is still a member of the room - a user with a transaction or a debt cannot be removed
-        from it (User.can_be_removed_from_room) - so one pass over the members covers all of them.
+        them may have left the room (User.can_be_removed_from_room only blocks on unsettled debts),
+        so a missing id means "no avatar" and the template falls back to the name.
         """
         return {member.id: member.avatar_url for member in self.request.room.users.all()}
 

@@ -1,5 +1,7 @@
+from django.core.exceptions import PermissionDenied
 from django.db.models import QuerySet
 from django.forms import BaseModelForm
+from django.http import HttpResponse
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
@@ -7,6 +9,7 @@ from django_context_decorator import context
 from apps.account.models import User
 from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 from apps.transaction.models import ChildTransaction, ParentTransaction
+from apps.transaction.models.constants import FORMER_MEMBER_MESSAGE
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -23,6 +26,11 @@ class ChildTransactionCreateView(
         form.fields["parent_transaction"].queryset = ParentTransaction.objects.filter(room=self.request.room)
         form.fields["paid_for"].queryset = User.objects.filter(room=self.request.room)
         return form
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        if form.cleaned_data["parent_transaction"].involves_former_member:
+            raise PermissionDenied(FORMER_MEMBER_MESSAGE)
+        return super().form_valid(form)
 
     @context
     @cached_property

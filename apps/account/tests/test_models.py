@@ -1,3 +1,5 @@
+from datetime import date
+from decimal import Decimal
 from io import BytesIO
 from pathlib import Path
 from time import time
@@ -13,6 +15,7 @@ from freezegun import freeze_time
 from PIL import Image
 
 from apps.account.models import User, UserFriendship
+from apps.debt.models import Debt
 from apps.room.models import Room, UserConnectionToRoom
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.tests.factories import ParentTransactionFactory
@@ -98,10 +101,44 @@ def test_can_be_removed_from_room_true(user: User, room: Room) -> None:
     assert user.can_be_removed_from_room(room.id) is True
 
 
-def test_can_be_removed_from_room_false(user: User, room: Room) -> None:
-    ParentTransactionFactory(room=room, paid_by=user)
+def _create_debt(room: Room, debitor: User, creditor: User, *, settled: bool) -> Debt:
+    return Debt.objects.create(
+        room=room,
+        debitor=debitor,
+        creditor=creditor,
+        currency=room.preferred_currency,
+        value=Decimal("5.00"),
+        settled=settled,
+        settled_at=date(2026, 1, 1) if settled else None,
+    )
+
+
+@pytest.mark.parametrize("as_debitor", [True, False])
+def test_can_be_removed_from_room_false_with_unsettled_debt(
+    user: User, guest_user: User, room: Room, as_debitor: bool
+) -> None:
+    debitor, creditor = (user, guest_user) if as_debitor else (guest_user, user)
+    _create_debt(room, debitor, creditor, settled=False)
 
     assert user.can_be_removed_from_room(room.id) is False
+
+
+def test_can_be_removed_from_room_true_with_transactions_and_settled_debts(
+    user: User, guest_user: User, room: Room
+) -> None:
+    ParentTransactionFactory(room=room, paid_by=user)
+    _create_debt(room, user, guest_user, settled=True)
+
+    assert user.can_be_removed_from_room(room.id) is True
+
+
+def test_can_be_removed_from_room_ignores_unsettled_debt_in_other_room(
+    user: User, guest_user: User, room: Room
+) -> None:
+    other_room = RoomFactory()
+    _create_debt(other_room, user, guest_user, settled=False)
+
+    assert user.can_be_removed_from_room(room.id) is True
 
 
 def test_profile_picture_url_defaults_to_placeholder(user: User) -> None:
