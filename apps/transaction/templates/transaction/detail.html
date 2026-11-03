@@ -78,7 +78,9 @@
       <div class="flex items-center justify-between gap-2 px-5 py-4">
         <div class="min-w-0">
           <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Split between" %}</p>
-          <p class="m-0 text-sm text-ink-muted">{% trans "Tap a row to edit the breakdown." %}</p>
+          {% if is_editable %}
+            <p class="m-0 text-sm text-ink-muted">{% trans "Tap a row to edit the breakdown." %}</p>
+          {% endif %}
         </div>
         <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-surface-sunken px-2.5 py-1 text-xs font-semibold text-ink">
           {% blocktrans count member_count=child_transactions|length %}{{ member_count }} person{% plural %}{{ member_count }} people{% endblocktrans %}

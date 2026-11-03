@@ -136,6 +136,7 @@ def test_detail_is_read_only_and_says_why(
     assert not edit_button.has_attr("hx-get")
     assert str(FORMER_MEMBER_MESSAGE) in page.get_text()
     assert page.select(".transaction-breakdown-item[role=button]") == []
+    assert "Tap a row" not in page.get_text()
 
 
 def test_detail_stays_editable_for_members(
@@ -151,3 +152,4 @@ def test_detail_stays_editable_for_members(
     assert edit_button.has_attr("hx-get")
     assert str(FORMER_MEMBER_MESSAGE) not in page.get_text()
     assert len(page.select(".transaction-breakdown-item[role=button]")) == 2
+    assert "Tap a row" in page.get_text()
