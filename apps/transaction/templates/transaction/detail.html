@@ -2,9 +2,9 @@
 {% load room_tags i18n core_tags %}
 {% block tab_content %}
   <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
-    <div class="flex flex-wrap items-center justify-between gap-2">
+    <div class="flex items-center justify-between gap-3">
       {% trans "Back to list" as back_to_list_label %}
-      <button class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-xl border border-line-strong bg-transparent px-3 py-2 text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+      <button class="inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-line-strong bg-transparent text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               type="button"
               aria-label="{{ back_to_list_label }}"
               hx-trigger="click"
@@ -13,35 +13,35 @@
               hx-indicator="#body-loading-spinner"
               hx-swap="morph:innerHTML"
               hx-push-url="true">{% icon "arrow-left" %}</button>
-      {# Below @md the title takes its own row under the two buttons; squeezed between them a long name wrapped to a sliver and the avatar shrank into the back button. #}
-      <div class="order-last w-full min-w-0 text-center @md:order-none @md:w-auto @md:flex-1">
-        <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Expense" %}</p>
-        <p class="m-0 flex items-center justify-center gap-2 text-ink">
-          <span class="shrink-0">
-            {% include "shared_partials/_user_avatar.html" with avatar_url=parent_transaction.paid_by.avatar_url avatar_name=parent_transaction.paid_by.name avatar_fallback_url=parent_transaction.paid_by.profile_picture_fallback_url %}
-          </span>
-          <span class="min-w-0">
-            {% autoescape off %}
-              {% parse_user_text parent_transaction.paid_by.name True %}
-            {% endautoescape %}
-            {% former_member_tag parent_transaction.paid_by_id %}
-            {% trans "paid" %}
-            <strong>{{ parent_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}</strong>
-          </span>
-        </p>
-      </div>
+      <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Expense" %}</p>
       {% comment %}
         A closed room has nothing to edit, so the button carries the real `disabled` attribute -
         which makes it inert, not merely dimmed - and the `disabled:` utilities render that state.
+        Icon-only: a labelled button next to a long payer name left the title no room on a phone.
       {% endcomment %}
-      <button class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-4 py-2 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+      {% trans "Edit expense" as edit_expense_label %}
+      <button class="inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent bg-brand text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
               type="button"
-              title="{% trans "Edit transaction" %}"
+              aria-label="{{ edit_expense_label }}"
+              title="{{ edit_expense_label }}"
               {% if current_room.is_closed %}disabled aria-disabled="true"{% endif %}
               {% if current_room.is_open %} hx-trigger="click" hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
         {% icon "pencil-square" %}
-        {% trans "Edit expense" %}
       </button>
+    </div>
+    {# The payer is named here once; a long name wraps over the full width instead of fighting the buttons. #}
+    <div class="flex flex-col items-center gap-2 px-2 pt-1 text-center">
+      {% include "shared_partials/_user_avatar.html" with avatar_url=parent_transaction.paid_by.avatar_url avatar_name=parent_transaction.paid_by.name avatar_fallback_url=parent_transaction.paid_by.profile_picture_fallback_url avatar_class="avatar-xl" %}
+      <p class="m-0 text-2xl leading-tight font-bold text-balance break-words text-ink">
+        {% autoescape off %}
+          {% parse_user_text parent_transaction.paid_by.name True %}
+        {% endautoescape %}
+      </p>
+      {% former_member_tag parent_transaction.paid_by_id %}
+      <p class="mt-2 mb-0 text-sm text-ink-muted">{% trans "paid" %}</p>
+      <p class="m-0 text-[clamp(2.25rem,9vw,2.75rem)] leading-none font-bold tabular-nums text-ink">
+        {{ parent_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}
+      </p>
     </div>
     {% if current_room.is_closed %}
       <div class="flex items-start gap-2 rounded-2xl border border-warning-text/40 bg-warning-soft px-4 py-3"
@@ -50,41 +50,19 @@
         <p class="m-0 text-sm text-warning-text">{% trans "This room is closed, so the breakdown is read-only." %}</p>
       </div>
     {% endif %}
-    <div class="@container rounded-2xl border border-line bg-surface p-6">
-      <div class="flex flex-col justify-between gap-3 @md:flex-row">
-        <div class="min-w-0">
-          <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Total amount" %}</p>
-          <p class="mt-1 mb-2 text-[clamp(1.75rem,4vw,2.5rem)] font-semibold tabular-nums text-ink">
-            {{ parent_transaction.value|format_with_thousands }}{{ parent_transaction.currency.sign }}
-          </p>
-          {# .transaction-meta stays as the hook e2e/pages/transaction_detail_page.py reads first. #}
-          <p class="transaction-meta mt-0 mb-2 text-sm text-ink-muted">
-            <span class="mr-1">{{ parent_transaction.category.emoji }}</span>
-            {{ parent_transaction.category.name }}
-          </p>
-          <p class="transaction-meta m-0 text-sm text-ink-muted">
-            {% trans "Paid by" %}
-            {% autoescape off %}
-              {% parse_user_text parent_transaction.paid_by.name True %}
-            {% endautoescape %}
-            {% former_member_tag parent_transaction.paid_by_id %}
-            {% trans "on" %} {{ parent_transaction.paid_at|date }}
-          </p>
-          <p class="transaction-meta m-0 text-sm text-ink-muted">
-            {% blocktrans with recorded_time=parent_transaction.paid_at|time %}Recorded at {{ recorded_time }}{% endblocktrans %}
-          </p>
-        </div>
-        <div class="min-w-0 @md:text-right">
-          {% if parent_transaction.description %}
-            <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Description" %}</p>
-            <p class="mt-1 mb-0 break-words text-ink italic">"{{ parent_transaction.description }}"</p>
-          {% else %}
-            <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "No description" %}</p>
-          {% endif %}
-        </div>
-      </div>
+    <div class="@container flex flex-col gap-2 rounded-2xl border border-line bg-surface p-6">
+      <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Details" %}</p>
+      {# .transaction-meta stays as the hook e2e/pages/transaction_detail_page.py reads first. #}
+      <p class="transaction-meta m-0 text-ink">
+        <span class="mr-1">{{ parent_transaction.category.emoji }}</span>
+        {{ parent_transaction.category.name }}
+      </p>
+      <p class="transaction-meta m-0 text-sm text-ink-muted">{{ parent_transaction.paid_at|date }}, {{ parent_transaction.paid_at|time }}</p>
+      {% if parent_transaction.description %}
+        <p class="m-0 break-words text-ink-muted italic">"{{ parent_transaction.description }}"</p>
+      {% endif %}
       {% if parent_transaction.further_notes %}
-        <div class="mt-5 border-t border-line pt-5">
+        <div class="mt-3 border-t border-line pt-4">
           <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Notes" %}</p>
           <p class="mt-1 mb-0 break-words text-ink italic">"{{ parent_transaction.further_notes }}"</p>
         </div>
@@ -103,9 +81,9 @@
       <div class="divide-y divide-line border-t border-line">
         {% for child_transaction in child_transactions %}
           {# .transaction-breakdown-item stays as the hook test_transaction_detail_view.py addresses. #}
-          <div class="transaction-breakdown-item flex flex-wrap items-center justify-between gap-2 px-5 py-3 transition{% if current_room.is_open %} cursor-pointer hover:translate-x-1 hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand motion-reduce:transition-none motion-reduce:hover:translate-x-0{% endif %}"
+          <div class="transaction-breakdown-item flex items-center justify-between gap-3 px-5 py-3 transition{% if current_room.is_open %} cursor-pointer hover:translate-x-1 hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand motion-reduce:transition-none motion-reduce:hover:translate-x-0{% endif %}"
                {% if current_room.is_open %} role="button" tabindex="0" data-keyboard-click hx-get="{% room_url 'transaction:edit' pk=parent_transaction.id %}" hx-target="#body" hx-indicator="#body-loading-spinner" hx-swap="morph:innerHTML" hx-push-url="true" {% endif %}>
-            <div class="flex min-w-0 items-center gap-2">
+            <div class="flex min-w-0 flex-1 items-center gap-3">
               {% include "shared_partials/_user_avatar.html" with avatar_url=child_transaction.paid_for.avatar_url avatar_name=child_transaction.paid_for.name avatar_fallback_url=child_transaction.paid_for.profile_picture_fallback_url %}
               <div class="min-w-0">
                 <p class="mt-0 mb-1 flex min-w-0 items-center gap-2 font-semibold text-ink">

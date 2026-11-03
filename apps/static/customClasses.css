@@ -223,6 +223,12 @@
     font-size: 1.3rem;
 }
 
+.avatar-xl {
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.7rem;
+}
+
 .avatar-square {
     border-radius: 0.85rem;
 }
