@@ -27,6 +27,9 @@ class Room(EmitModelCreatedEventOnSaveMixin, FullCleanOnSaveMixin, CommonInfo):
 
     slug = models.UUIDField(unique=True)
     share_hash = models.CharField(max_length=16, unique=True, blank=True, editable=False, db_index=True)
+    # Issued with the create form; the unique index (enforced across workers) turns a second POST of
+    # the same form - double click, retry - into an IntegrityError instead of a second room.
+    creation_token = models.UUIDField(null=True, blank=True, unique=True, editable=False)
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=50)
     status = models.SmallIntegerField(choices=StatusChoices.choices, default=StatusChoices.OPEN)
