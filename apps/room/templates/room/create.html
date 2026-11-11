@@ -20,6 +20,7 @@
           method="post"
           action="{% url 'room:create' %}">
       {% csrf_token %}
+      <input type="hidden" name="creation_token" value="{{ creation_token }}">
       <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "New room" %}</p>
         <h1 class="mt-1 mb-1 text-xl font-semibold text-ink">{% trans "Create Room" %}</h1>
@@ -81,8 +82,9 @@
       </div>
       <div class="flex justify-end border-t border-line px-5 py-4 @md:px-6">
         <button id="create-room-button"
-                class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
-                type="submit">
+                class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+                type="submit"
+                data-disable-on-submit="true">
           {% icon "plus-circle" %}
           {% trans "Create" %}
         </button>
@@ -100,4 +102,5 @@
     </div>
   </section>
   {% render_bundle "suggested-guests" attrs="defer" %}
+  {% render_bundle "disable-on-submit" attrs="defer" %}
 {% endblock content %}
