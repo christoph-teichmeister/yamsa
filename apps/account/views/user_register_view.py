@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth import login
 from django.http import HttpResponse
 from django.urls import reverse
@@ -11,6 +13,8 @@ from apps.account.utils.guest_registration_token import decode_guest_registratio
 from apps.core.event_loop.runner import handle_message
 from apps.room.constants import SHARED_ROOM_SLUG_SESSION_KEY
 from apps.room.models import Room, UserConnectionToRoom
+
+logger = logging.getLogger(__name__)
 
 
 class RegisterUserView(generic.CreateView):
@@ -61,8 +65,11 @@ class RegisterUserView(generic.CreateView):
 
         self._join_shared_room_if_needed()
 
-        # Send PostRegisterEmail
-        handle_message(SendPostRegisterEmail(context_data={"user": self.request.user}))
+        # The account exists and is logged in by now; a mail outage must not turn that into a 500.
+        try:
+            handle_message(SendPostRegisterEmail(context_data={"user": self.request.user}))
+        except Exception:
+            logger.exception("Post-register mail failed for user %s", self.object.pk)
 
         return response
 
