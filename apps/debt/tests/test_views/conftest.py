@@ -30,3 +30,10 @@ def remind_url(debt: Debt) -> str:
 
 def list_url(room: Room) -> str:
     return reverse("debt:list", kwargs={"room_slug": room.slug})
+
+
+@pytest.fixture
+def pending_debt(debt: Debt) -> Debt:
+    Debt.objects.filter(pk=debt.pk).update(awaiting_confirmation=True)
+    debt.refresh_from_db()
+    return debt
