@@ -7,7 +7,7 @@ from django.test import Client
 
 from apps.account.models import User
 from apps.debt.models import Debt, ReminderLog
-from apps.debt.tests.test_views.remind_helpers import PUSH, list_url, remind_url
+from apps.debt.tests.test_views.conftest import PUSH, list_url, remind_url
 
 pytestmark = pytest.mark.django_db
 
