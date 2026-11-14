@@ -9,7 +9,21 @@
        hidden>
     <div id="toast-type-div"
          class="toast-yamsa-inner flex w-full items-center justify-between gap-3 px-4 py-3">
-      <span id="toast-message-span" class="min-w-0 flex-1 truncate font-semibold"></span>
+      <span id="toast-message-span"
+            class="min-w-0 flex-1 font-semibold break-words"></span>
+      {% comment %}
+      The action (undo) posts like any htmx button; the script fills in hx-post per toast. The
+      token is in the header because the CSRF cookie is HttpOnly and no form surrounds the toast.
+      {% endcomment %}
+      <button type="button"
+              class="inline-flex min-h-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-line-strong bg-transparent px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              data-toast-action
+              hx-target="#body"
+              hx-indicator="#body-loading-spinner"
+              hx-swap="morph:innerHTML"
+              hx-push-url="true"
+              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+              hidden></button>
       <button type="button"
               class="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-transparent bg-transparent text-ink-muted transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               data-toast-dismiss
@@ -48,9 +62,19 @@
         const defaultErrorMessage = "⚠️ {{ something_went_wrong|escapejs }} 🥺"
         const connectionErrorMessage = "📡 {{ connection_lost|escapejs }}"
 
+        const toastActionButton = toastElement.querySelector("[data-toast-action]")
+
         let toastIsVisible = false
         let autohideTimer = null
+        // The timer is paused while the pointer or keyboard focus is on the toast, so there is
+        // time to read it and reach the action; it picks up with what was left.
+        let remainingMs = 0
+        let timerStartedAt = 0
+        let toastIsHeld = false
+        let shownKey = ""
+        let shownDetail = null
         const toastQueue = []
+        const toastKey = (toastDetail) => `${toastDetail.message}|${toastDetail.action_url || ""}`
 
         const applyToastClasses = (classString = "") => {
             toastTypeDiv.className = baseToastClasses
@@ -66,6 +90,14 @@
                 return
             }
 
+            // The middleware sends every toast in both HX-Trigger and HX-Trigger-After-Settle, so
+            // each arrives twice. Shown a second time after the first, an undo would outlive its
+            // window.
+            const key = toastKey(toastDetail)
+            if ((toastIsVisible && key === shownKey) || toastQueue.some((queued) => toastKey(queued) === key)) {
+                return
+            }
+
             toastQueue.push(toastDetail)
         }
 
@@ -75,6 +107,7 @@
             }
 
             window.clearTimeout(autohideTimer)
+            toastIsHeld = false
             delete toastElement.dataset.visible
             window.setTimeout(() => {
                 // Hidden rather than merely transparent: the toast sits above the page's bottom
@@ -85,7 +118,29 @@
             }, TRANSITION_MS)
         }
 
-        const showToast = () => {
+        const startAutohide = () => {
+            timerStartedAt = Date.now()
+            autohideTimer = window.setTimeout(hideToast, remainingMs)
+        }
+
+        const holdToast = () => {
+            if (!toastIsVisible || toastIsHeld) {
+                return
+            }
+            toastIsHeld = true
+            window.clearTimeout(autohideTimer)
+            remainingMs = Math.max(remainingMs - (Date.now() - timerStartedAt), 0)
+        }
+
+        const releaseToast = () => {
+            if (!toastIsVisible || !toastIsHeld || toastElement.matches(":hover, :focus-within")) {
+                return
+            }
+            toastIsHeld = false
+            startAutohide()
+        }
+
+        const showToast = (durationMs) => {
             toastIsVisible = true
             toastElement.hidden = false
             // A transition needs a frame in which the element is laid out at its from-state;
@@ -93,7 +148,29 @@
             window.requestAnimationFrame(() => {
                 toastElement.dataset.visible = "true"
             })
-            autohideTimer = window.setTimeout(hideToast, AUTOHIDE_MS)
+            remainingMs = durationMs
+            startAutohide()
+        }
+
+        const showAction = (toastDetail) => {
+            if (!toastActionButton) {
+                return
+            }
+            if (!toastDetail.action_url) {
+                toastActionButton.hidden = true
+                toastActionButton.removeAttribute("hx-post")
+                return
+            }
+            toastActionButton.textContent = toastDetail.action_label
+            toastActionButton.setAttribute("hx-post", toastDetail.action_url)
+            toastActionButton.hidden = false
+            window.htmx?.process(toastActionButton)
+        }
+
+        const renderToast = (toastDetail) => {
+            toastMessageSpan.innerText = toastDetail.message
+            applyToastClasses(toastDetail.type)
+            showAction(toastDetail)
         }
 
         const showNextToast = () => {
@@ -101,11 +178,23 @@
                 return
             }
 
-            const toastDetail = toastQueue.shift()
-            toastMessageSpan.innerText = toastDetail.message
-            applyToastClasses(toastDetail.type)
-            showToast()
+            shownDetail = toastQueue.shift()
+            shownKey = toastKey(shownDetail)
+            renderToast(shownDetail)
+            showToast(shownDetail.duration_ms || AUTOHIDE_MS)
         }
+
+        // A morph swap of #body puts the toast back to its markup from the server: hidden, empty,
+        // no action. The response's HX-Trigger shows the toast just before that swap, so what is
+        // on screen is put back once the swap has settled; the timer keeps running throughout.
+        document.body.addEventListener("htmx:afterSettle", () => {
+            if (!toastIsVisible || !toastElement.hidden) {
+                return
+            }
+            renderToast(shownDetail)
+            toastElement.hidden = false
+            toastElement.dataset.visible = "true"
+        })
 
         const normalizeToastPayloads = (payload) => {
             if (!payload) {
@@ -151,10 +240,14 @@
         }
 
         toastElement.addEventListener("click", (event) => {
-            if (event.target.closest("[data-toast-dismiss]")) {
+            if (event.target.closest("[data-toast-dismiss], [data-toast-action]")) {
                 hideToast()
             }
         })
+        toastElement.addEventListener("mouseenter", holdToast)
+        toastElement.addEventListener("focusin", holdToast)
+        toastElement.addEventListener("mouseleave", releaseToast)
+        toastElement.addEventListener("focusout", () => window.setTimeout(releaseToast))
 
         document.body.addEventListener("triggerToast", (evt) => {
             const payloads = normalizeToastPayloads(evt.detail)
