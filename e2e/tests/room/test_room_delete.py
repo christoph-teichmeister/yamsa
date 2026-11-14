@@ -14,7 +14,7 @@ class TestRoomDelete:
         Room.objects.filter(id=shared_room.id).update(status=Room.StatusChoices.CLOSED)
         logged_in_room_detail_page.navigate()
 
-        logged_in_room_detail_page.delete_room()
+        logged_in_room_detail_page.delete_room(shared_room.name)
 
         expect(page.locator("#room-sheet")).to_have_count(0)
         assert not Room.objects.filter(id=shared_room.id).exists()
@@ -25,7 +25,7 @@ class TestRoomDelete:
         Room.objects.filter(id=shared_room.id).update(status=Room.StatusChoices.CLOSED)
         logged_in_room_detail_page.navigate()
 
-        logged_in_room_detail_page.delete_room()
+        logged_in_room_detail_page.delete_room(shared_room.name)
 
         # A reload must land on the dashboard, not on the deleted room's address.
         expect(page).to_have_url(f"{base_url}{reverse('core:welcome')}")
