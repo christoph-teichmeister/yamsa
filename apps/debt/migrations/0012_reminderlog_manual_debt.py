@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('debt', '0010_reminderlog'),
+        ('debt', '0011_debt_force_settled_at'),
         ('room', '0013_room_creation_token'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]

@@ -15,6 +15,7 @@ class ManualPaymentReminderEmailService(PaymentReminderEmailService):
             recipient,
             room_name=room_name,
             amount_summary=amount_summary,
+            creditor_names=(creditor_name,),
             inactivity_days=0,
             payment_link=payment_link,
         )

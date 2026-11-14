@@ -717,9 +717,6 @@ msgstr "Betrag"
 msgid "debts"
 msgstr "schulden"
 
-msgid "Debt marked as settled."
-msgstr "Schuld als beglichen markiert."
-
 #, python-format
 msgid "%(name)s was reminded recently. The next reminder is possible at %(time)s."
 msgstr "%(name)s wurde kürzlich erinnert. Die nächste Erinnerung ist am %(time)s möglich."
@@ -727,6 +724,9 @@ msgstr "%(name)s wurde kürzlich erinnert. Die nächste Erinnerung ist am %(time
 #, python-format
 msgid "%(name)s has been reminded."
 msgstr "%(name)s wurde erinnert."
+
+msgid "Debt marked as settled."
+msgstr "Schuld als beglichen markiert."
 
 msgid "Room name"
 msgstr "Raumname"
@@ -1020,10 +1020,6 @@ msgstr "Du schuldest noch %(amount_summary)s an %(creditors)s."
 
 msgid "Whenever you have a moment, the link below shows what is open and lets you settle it."
 msgstr "Wenn du kurz Zeit hast: Über den Link unten siehst du, was offen ist, und kannst es begleichen."
-
-#, python-format
-msgid "Payment reminder: %(room_name)s"
-msgstr "Zahlungserinnerung: %(room_name)s"
 
 msgid "This reminder is sent automatically when a room has been quiet and a balance is still open."
 msgstr "Diese Erinnerung wird automatisch verschickt, wenn ein Raum ruhig geworden ist und noch ein Betrag offen ist."
