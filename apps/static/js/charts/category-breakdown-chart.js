@@ -62,7 +62,10 @@ const renderSingleChart = (d3, container, dataset) => {
         .select(container)
         .append("svg")
         .attr("viewBox", `0 0 ${width} ${height}`)
-        .attr("preserveAspectRatio", "xMidYMid meet");
+        .attr("preserveAspectRatio", "xMidYMid meet")
+        // The slices are the focusable parts; the group names the set they belong to.
+        .attr("role", "group")
+        .attr("aria-label", container.dataset.chartLabel || "");
     const chartGroup = svg.append("g").attr("transform", `translate(${width / 2}, ${height / 2})`);
     const pie = d3.pie().value(d => d.value).sort(null);
     const arc = d3.arc().innerRadius(innerRadius).outerRadius(radius * 0.95);
