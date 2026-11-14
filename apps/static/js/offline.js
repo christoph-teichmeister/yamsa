@@ -79,10 +79,12 @@ import {OUTBOX_SYNC_TAG, buildEntry, putEntry, readEntries} from './outbox.js';
       return null;
     }
 
+    // The page's own language, not the device's, so the stamp matches the server-rendered text.
+    const locale = document.documentElement.lang || undefined;
     const isToday = cachedAt.toDateString() === new Date().toDateString();
     return isToday
-      ? cachedAt.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
-      : cachedAt.toLocaleString();
+      ? cachedAt.toLocaleTimeString(locale, {hour: '2-digit', minute: '2-digit'})
+      : cachedAt.toLocaleString(locale);
   };
 
   const readCachedAt = async (state) => {

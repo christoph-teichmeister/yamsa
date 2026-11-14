@@ -8,12 +8,17 @@
 
   const DIALOG_SELECTOR = "[data-dialog]";
 
+  // Keyed by dialog id, not element: a swap replaces the dialog element, and the opener may be
+  // replaced along with it.
+  const openers = new Map();
+
   document.addEventListener("click", (event) => {
     const trigger = event.target.closest("[data-dialog-open], [data-dialog-close]");
 
     if (trigger && trigger.matches("[data-dialog-open]")) {
       const dialog = document.getElementById(trigger.dataset.dialogOpen);
       if (dialog) {
+        openers.set(dialog.id, trigger);
         dialog.showModal();
       }
       return;
@@ -32,6 +37,30 @@
       event.target.close();
     }
   });
+
+  // The browser returns focus to the opener itself, but only while that element is still in the
+  // document; when a swap removed it, focus would fall to <body> and a keyboard user loses their place.
+  // `close` does not bubble, hence the capture phase.
+  document.addEventListener(
+    "close",
+    (event) => {
+      const dialog = event.target;
+      if (!dialog.matches || !dialog.matches(DIALOG_SELECTOR) || dialog.open) {
+        return; // Open again: the re-open below closed it on purpose.
+      }
+      const opener = openers.get(dialog.id);
+      openers.delete(dialog.id);
+      if (opener && opener.isConnected) {
+        return;
+      }
+      const fallback = document.getElementById("base-content");
+      if (fallback) {
+        fallback.setAttribute("tabindex", "-1");
+        fallback.focus({ preventScroll: true });
+      }
+    },
+    true,
+  );
 
   // A swap that replaces a dialog brings it back with the `open` attribute when it has to stay
   // open — which does not put it in the top layer, leaving the backdrop and Escape dead. Re-open

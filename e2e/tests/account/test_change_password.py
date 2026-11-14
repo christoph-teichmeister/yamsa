@@ -17,12 +17,12 @@ class TestChangePassword:
         password_page.toggle_reveal("old_password")
 
         assert password_page.field_type("old_password") == "text"
-        assert password_page.toggle_label("old_password") == "Hide password"
+        assert password_page.toggle_pressed("old_password") == "true"
 
         password_page.toggle_reveal("old_password")
 
         assert password_page.field_type("old_password") == "password"
-        assert password_page.toggle_label("old_password") == "Show password"
+        assert password_page.toggle_pressed("old_password") == "false"
 
     def test_a_wrong_current_password_is_reported_on_its_own_field(
         self, logged_in_change_password_page: ChangePasswordPage
