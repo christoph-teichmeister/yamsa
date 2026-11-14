@@ -7,14 +7,19 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="{{ manifest.name }}">
   <!-- Chrome for Android theme color -->
-  <meta name="theme-color" content="{{ manifest.theme_color }}">
+  <meta name="theme-color"
+        content="#eef1f7"
+        media="(prefers-color-scheme: light)">
+  <meta name="theme-color"
+        content="#14161b"
+        media="(prefers-color-scheme: dark)">
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="{{ manifest.name }}">
   <meta name="apple-mobile-web-app-status-bar-style"
         content="black-translucent">
   {% for icon in manifest.icons %}
-    <link rel="apple-touch-icon" href="{{ icon.src }}" sizes="{{ icon.sizes }}">
+    {% if icon.sizes == "180x180" %}<link rel="apple-touch-icon" href="{{ icon.src }}" sizes="180x180">{% endif %}
   {% endfor %}
   {% for splash in manifest.splash_screens %}
     <link href="{{ splash.src }}"

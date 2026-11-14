@@ -300,3 +300,22 @@
     }
   }
 }
+
+/* iOS Safari zooms the page when a focused control's text is under 16px, and never zooms back.
+   Unlayered on purpose: it must outrank the `text-sm` utilities the form controls carry. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="hidden"]),
+  select,
+  textarea {
+    font-size: max(1rem, 16px);
+  }
+}
+
+/* Keep the page behind an open modal from scrolling, and a scroll inside it from chaining out. */
+body:has(dialog[open]) {
+  overflow: hidden;
+}
+
+dialog {
+  overscroll-behavior: contain;
+}
