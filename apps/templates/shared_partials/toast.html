@@ -1,17 +1,27 @@
 {% load i18n core_tags %}
 {% trans "Close" as toast_close_label %}
 <div class="yamsa-toast-container pointer-events-none fixed bottom-0 left-1/2 z-[1400] mb-12 max-h-[calc(100%_-_1rem)] w-full -translate-x-1/2 px-1 pb-12">
-  <div class="translate-y-2 opacity-0 transition duration-250 data-visible:translate-y-0 data-visible:opacity-100"
-       id="toast-id"
+  {# Always rendered and empty until a toast is shown: a live region inserted already filled is not announced. The visible toast is aria-hidden text; these two carry it to assistive tech. #}
+  <div id="toast-live-polite"
+       class="sr-only"
+       role="status"
+       aria-live="polite"
+       aria-atomic="true"></div>
+  <div id="toast-live-assertive"
+       class="sr-only"
        role="alert"
        aria-live="assertive"
-       aria-atomic="true"
+       aria-atomic="true"></div>
+  <div class="pointer-events-auto translate-y-2 opacity-0 transition duration-250 data-visible:translate-y-0 data-visible:opacity-100"
+       id="toast-id"
        hidden>
     <div id="toast-type-div"
          class="toast-yamsa-inner flex w-full items-center justify-between gap-3 px-4 py-3">
-      <span id="toast-message-span" class="min-w-0 flex-1 truncate font-semibold"></span>
+      <span id="toast-message-span"
+            class="min-w-0 flex-1 font-semibold [overflow-wrap:anywhere]"
+            aria-hidden="true"></span>
       <button type="button"
-              class="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-transparent bg-transparent text-ink-muted transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              class="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-transparent bg-transparent text-ink-muted transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               data-toast-dismiss
               aria-label="{{ toast_close_label }}">{% icon "x-lg" %}</button>
     </div>
@@ -47,10 +57,48 @@
         const defaultErrorToastClasses = "{{ toast_classes.error|escapejs }}"
         const defaultErrorMessage = "⚠️ {{ something_went_wrong|escapejs }} 🥺"
         const connectionErrorMessage = "📡 {{ connection_lost|escapejs }}"
+        const politeRegion = document.getElementById("toast-live-polite")
+        const assertiveRegion = document.getElementById("toast-live-assertive")
 
         let toastIsVisible = false
         let autohideTimer = null
+        let currentToastIsError = false
         const toastQueue = []
+
+        // Emoji are decoration: a screen reader would read "warning sign" and "pleading face"
+        // out of every error. They stay on screen, aria-hidden, and out of the live regions.
+        const EMOJI = /\p{Extended_Pictographic}️?/gu
+        const renderMessage = (message) => {
+            toastMessageSpan.replaceChildren()
+            let lastIndex = 0
+            for (const match of message.matchAll(EMOJI)) {
+                toastMessageSpan.append(message.slice(lastIndex, match.index))
+                const emoji = document.createElement("span")
+                emoji.setAttribute("aria-hidden", "true")
+                emoji.textContent = match[0]
+                toastMessageSpan.append(emoji)
+                lastIndex = match.index + match[0].length
+            }
+            toastMessageSpan.append(message.slice(lastIndex))
+        }
+
+        const announce = (message, isError) => {
+            const region = isError ? assertiveRegion : politeRegion
+            const other = isError ? politeRegion : assertiveRegion
+            other.textContent = ""
+            region.textContent = message.replace(EMOJI, "").replace(/\s+/g, " ").trim()
+        }
+
+        // The timer is the only thing that ever dismisses a non-error toast, so it must give way
+        // to a reader still reading (WCAG 2.2.1): hover and focus hold it, leaving restarts it.
+        // An error stays until it is dismissed - five seconds is too short to read, understand
+        // and react to "your change was not saved".
+        const startAutohide = () => {
+            window.clearTimeout(autohideTimer)
+            if (!currentToastIsError) {
+                autohideTimer = window.setTimeout(hideToast, AUTOHIDE_MS)
+            }
+        }
 
         const applyToastClasses = (classString = "") => {
             toastTypeDiv.className = baseToastClasses
@@ -93,7 +141,7 @@
             window.requestAnimationFrame(() => {
                 toastElement.dataset.visible = "true"
             })
-            autohideTimer = window.setTimeout(hideToast, AUTOHIDE_MS)
+            startAutohide()
         }
 
         const showNextToast = () => {
@@ -102,7 +150,9 @@
             }
 
             const toastDetail = toastQueue.shift()
-            toastMessageSpan.innerText = toastDetail.message
+            currentToastIsError = toastDetail.type === defaultErrorToastClasses
+            renderMessage(toastDetail.message)
+            announce(toastDetail.message, currentToastIsError)
             applyToastClasses(toastDetail.type)
             showToast()
         }
@@ -149,6 +199,11 @@
                 // swallow parsing errors
             }
         }
+
+        toastElement.addEventListener("mouseenter", () => window.clearTimeout(autohideTimer))
+        toastElement.addEventListener("focusin", () => window.clearTimeout(autohideTimer))
+        toastElement.addEventListener("mouseleave", () => toastElement.dataset.visible && startAutohide())
+        toastElement.addEventListener("focusout", () => toastElement.dataset.visible && startAutohide())
 
         toastElement.addEventListener("click", (event) => {
             if (event.target.closest("[data-toast-dismiss]")) {

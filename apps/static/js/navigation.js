@@ -309,6 +309,29 @@ import "./invalid-field-reveal.js";
     });
   };
 
+  /*
+   * An HTMX navigation swaps #body without a page load, so the browser never moves focus or
+   * announces the new page: a keyboard user is left on a control that no longer exists and a screen
+   * reader hears nothing. Focus goes to the new h1 (the main landmark when a page has none).
+   * Skipped when a script already put focus inside the page, e.g. on the first invalid field.
+   */
+  const focusNewPage = (event) => {
+    if (event.detail?.target?.id !== 'body') {
+      return;
+    }
+
+    const main = document.getElementById('base-content');
+    if (!main || main.contains(document.activeElement)) {
+      return;
+    }
+
+    const heading = main.querySelector('h1') || main;
+    if (!heading.hasAttribute('tabindex')) {
+      heading.setAttribute('tabindex', '-1');
+    }
+    heading.focus({ preventScroll: true });
+  };
+
   const init = () => {
     initThemeToggle();
     initShareButtons();
@@ -321,6 +344,7 @@ import "./invalid-field-reveal.js";
     if (document.body) {
       document.body.addEventListener('htmx:afterSwap', refreshDynamicElements);
       document.body.addEventListener('htmx:historyRestore', refreshDynamicElements);
+      document.body.addEventListener('htmx:afterSettle', focusNewPage);
     }
   };
 

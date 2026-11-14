@@ -57,6 +57,8 @@
         <h1 class="m-0 text-2xl">💀 Deadzone 💀</h1>
       </div>
     {% endif %}
+    <a href="#base-content"
+       class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[1500] focus:rounded-lg focus:bg-brand focus:px-4 focus:py-2 focus:font-semibold focus:text-on-brand">{% trans "Skip to content" %}</a>
     {% include "shared_partials/toast.html" %}
     {% include "shared_partials/loading_spinner.html" with spinner_id="body-loading-spinner" %}
     {% if not is_in_maintenance and not called_by_offline_view and not request.user.is_anonymous %}
@@ -72,25 +74,28 @@
       Being in flow, a bottom bar only pins once the page outgrows the viewport; flex-1 makes
       #base-content fill a short page so the bar still lands at the bottom on a tall screen.
     {% endcomment %}
-    <div class="app-container flex-1 px-2 py-12" id="base-content">
+    <main class="app-container flex-1 px-2 py-12"
+          id="base-content"
+          tabindex="-1">
       {% include "core/partials/_offline_state.html" %}
       {% block content %}
       {% endblock content %}
-    </div>
+    </main>
     {% if dashboard_tabs and not request.user.is_anonymous %}
       {% include "room/partials/_dashboard_nav.html" with dashboard_tabs=dashboard_tabs %}
     {% endif %}
     {% if not dashboard_tabs %}
       {% load room_tags %}
-      <nav class="sticky bottom-0 z-0 bg-surface-sunken pt-2 pb-[calc(1.5rem_+_env(safe-area-inset-bottom,0px))]">
+      <nav aria-label="{% trans "Support" %}"
+           class="sticky bottom-0 z-0 bg-surface-sunken pt-2 pb-[calc(1.5rem_+_env(safe-area-inset-bottom,0px))]">
         <div class="app-container">
           <div class="flex w-full flex-row justify-around">
             <div class="px-4 py-2">
-              <a href='https://ko-fi.com/K3K01EDQN8' target='_blank'>
+              <a href="https://ko-fi.com/K3K01EDQN8" target="_blank" rel="noopener">
                 <img height="36"
                      width="141"
                      src="{% static 'images/ko-fi.png' %}"
-                     alt="Buy Me a Coffee at ko-fi.com" />
+                     alt="{% trans 'Buy me a coffee on Ko-fi' %} ({% trans 'opens in new tab' %})" />
               </a>
             </div>
           </div>

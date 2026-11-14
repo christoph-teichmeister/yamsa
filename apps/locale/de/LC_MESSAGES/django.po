@@ -2168,3 +2168,28 @@ msgstr "Transaktionen importiert"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
+
+msgid "Skip to content"
+msgstr "Zum Inhalt springen"
+
+msgid "Support"
+msgstr "Unterstützen"
+
+msgid "Main"
+msgstr "Hauptnavigation"
+
+msgid "Room sections"
+msgstr "Raumbereiche"
+
+msgid "Buy me a coffee on Ko-fi"
+msgstr "Spendiere mir einen Kaffee auf Ko-fi"
+
+msgid "opens in new tab"
+msgstr "öffnet in neuem Tab"
+
+msgid "Spending by category"
+msgstr "Ausgaben nach Kategorie"
+
+#, python-brace-format
+msgid "Spending timeline in {currency}: {count} expenses, total {total}"
+msgstr "Ausgabenverlauf in {currency}: {count} Ausgaben, insgesamt {total}"

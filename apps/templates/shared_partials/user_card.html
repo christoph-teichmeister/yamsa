@@ -16,14 +16,14 @@ pointer, the lift and data-keyboard-click.
       <div class="min-w-0">
         <p class="mt-0 mb-1.5 font-semibold break-words text-ink">{{ user.name }}</p>
         <div class="flex flex-wrap gap-2">
-          <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] uppercase {% if user.is_guest %}bg-warning-soft text-warning-text{% else %}bg-brand-soft text-brand-text{% endif %}">
+          <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold tracking-[0.08em] uppercase {% if user.is_guest %}bg-warning-soft text-warning-text{% else %}bg-brand-soft text-brand-text{% endif %}">
             {% if user.is_guest %}
               {% trans "Guest" %}
             {% else %}
               {% trans "Member" %}
             {% endif %}
           </span>
-          <span class="inline-flex items-center gap-1 rounded-full bg-surface-hover px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.08em] text-ink-muted uppercase">
+          <span class="inline-flex items-center gap-1 rounded-full bg-surface-hover px-2.5 py-1 text-xs font-semibold tracking-[0.08em] text-ink-muted uppercase">
             {% if user.user_has_seen_this_room %}
               {% icon "check2" %}
               {% trans "Seen room" %}

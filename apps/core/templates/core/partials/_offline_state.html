@@ -20,10 +20,12 @@ visitor had signed out and take the whole offline cache down with it.
      data-rejected-message="{% trans 'A saved expense could not be sent. Open the room to see why.' %}"
      {% if request.room %}data-offline-manifest-url="{% url 'room:offline-manifest' room_slug=request.room.slug %}"{% endif %}>
 </div>
-<div hidden data-offline-banner role="status">
-  <div class="mb-6 flex items-center gap-3 rounded-2xl border border-line bg-warning-soft px-4 py-3 text-sm text-warning-text">
+{# The status region stays in the DOM and only its content toggles: a live region that is inserted already filled is not announced. #}
+<div data-offline-banner role="status">
+  <div hidden
+       class="mb-6 flex items-center gap-3 rounded-2xl border border-line bg-warning-soft px-4 py-3 text-sm text-warning-text">
     <span class="min-w-0 flex-1">
-      <span class="font-semibold">📡 {% trans "Offline" %}</span>
+      <span class="font-semibold"><span aria-hidden="true">📡</span> {% trans "Offline" %}</span>
       <span data-offline-hint>{% trans "Changes cannot be saved right now" %}</span>
       <span hidden data-offline-stale>
         {% trans "Saved data from" %} <time data-offline-cached-at></time>
