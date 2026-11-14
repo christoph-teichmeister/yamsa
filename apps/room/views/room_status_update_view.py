@@ -48,7 +48,12 @@ class RoomStatusUpdateView(RoomMembershipRequiredMixin, RoomSheetResponseMixin, 
                 affected_user_ids = list(
                     {user_id for pair in open_debts.values_list("debitor_id", "creditor_id") for user_id in pair}
                 )
-                open_debts.update(settled=True, settled_at=timezone.localdate(), force_settled_at=timezone.now())
+                open_debts.update(
+                    settled=True,
+                    awaiting_confirmation=False,
+                    settled_at=timezone.localdate(),
+                    force_settled_at=timezone.now(),
+                )
 
             if reopened:
                 self._release_force_settled_debts(revert=form.cleaned_data["revert_force_settled"])

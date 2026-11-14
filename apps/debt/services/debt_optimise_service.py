@@ -3,7 +3,7 @@ from collections.abc import Iterable
 from decimal import Decimal
 
 from django.db import transaction
-from django.db.models import F, Sum
+from django.db.models import F, Q, Sum
 
 from apps.currency.models import Currency
 from apps.debt.models import Debt
@@ -19,7 +19,7 @@ class DebtOptimiseService:
         """Rebuild the unsettled squad of debts for the requested room.
 
         Steps:
-        1. Purge unsettled debts so the recalculation starts from a clean slate.
+        1. Purge open debts (settled or awaiting confirmation ones stay) so the recalculation starts from a clean slate.
         2. Aggregated spent and owed values per user+currency via annotated ChildTransactions.
         3. Fold settled debts back into those aggregates so existing settlements are preserved.
         4. Pair debtors with creditors per currency and create fresh Debt records for the residual transfers.
@@ -28,7 +28,7 @@ class DebtOptimiseService:
         # or both would insert a full set of debts.
         with transaction.atomic():
             Room.objects.select_for_update().get(pk=room_id)
-            Debt.objects.filter(room_id=room_id).filter(settled=False).delete()
+            Debt.objects.filter(room_id=room_id, settled=False, awaiting_confirmation=False).delete()
 
             balances_by_currency = DebtOptimiseService._balances_by_currency(room_id)
 
@@ -71,10 +71,12 @@ class DebtOptimiseService:
             -1,
         )
 
-        # Settled debts already moved money, so they offset the transaction-based balances.
-        settled_debts_qs = Debt.objects.filter(room_id=room_id, settled=True)
-        apply(settled_debts_qs.values("currency_id", "debitor_id").annotate(total=Sum("value")), "debitor_id", 1)
-        apply(settled_debts_qs.values("currency_id", "creditor_id").annotate(total=Sum("value")), "creditor_id", -1)
+        # Settled debts already moved money, so they offset the transaction-based balances. Debts awaiting
+        # confirmation survive the purge as rows, so their amount is offset here too - otherwise the rebuild
+        # would create a second debt for the same money.
+        paid_debts_qs = Debt.objects.filter(room_id=room_id).filter(Q(settled=True) | Q(awaiting_confirmation=True))
+        apply(paid_debts_qs.values("currency_id", "debitor_id").annotate(total=Sum("value")), "debitor_id", 1)
+        apply(paid_debts_qs.values("currency_id", "creditor_id").annotate(total=Sum("value")), "creditor_id", -1)
 
         return balances_by_currency
 
