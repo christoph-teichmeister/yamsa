@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "description": "Frontend helper tooling for yamsa",
-  "main": "apps/static/js/vendor/d3-entry.js",
+  "main": "webpack.config.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --config webpack.config.js --mode development --devtool=source-map --watch --color"

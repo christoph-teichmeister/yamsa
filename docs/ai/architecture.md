@@ -4,9 +4,9 @@
 
 The project is a Django monolith rooted at `manage.py`. Domain-specific logic lives inside `apps/`, e.g.
 `apps/transaction`, `apps/room`, and `apps/account`; each app contains its own `models`, `views`, `templates`, and
-`tests`. Shared templates and assets belong in `apps/templates` and `static/`, while compiled artefacts land in
-`staticfiles/`. Developer tooling scripts sit in `scripts/` and container assets in `Dockerfile`, `docker-compose.yml`,
-and `entrypoint.sh`. Documentation, including AI prompt history, lives in `docs/`.
+`tests`. Shared templates belong in `apps/templates`, shared assets in `apps/static/`; compiled artefacts land in
+`apps/staticfiles/` and `apps/static/bundles/`. Developer tooling scripts sit in `scripts/` and container assets in `Dockerfile`, `docker-compose.yml`,
+and `entrypoint.sh`. Documentation lives in `docs/`.
 
 ## Coding Style & Naming Conventions
 
@@ -14,9 +14,9 @@ Follow Python's 4-space indentation and keep modules typed where practical. Use 
 for classes, and `SCREAMING_SNAKE_CASE` for settings. Run `uv run ruff check --fix .` before committing; it handles
 import order, linting, and selected auto-fixes. Templates must pass `uv run djlint apps --reformat`; lean on
 Tailwind utilities (`flex`, `px-2`, `gap-2`, etc.) and HTMX attributes instead of custom CSS whenever
-possible. Keep static JS modular inside `static/js/` and co-locate SCSS/CSS with the component it styles. **Edit
-canonical static assets under `apps/static/…` (e.g., `apps/static/js/navigation.js`) and let hashed copies
-in `static/`/`staticfiles/` be generated artifacts.**
+possible. Keep static JS modular inside `apps/static/js/`; styling is Tailwind plus plain CSS (`apps/static/*.css`,
+`apps/static_src/tailwind.css`), there is no SCSS. **Edit canonical static assets under `apps/static/…`
+(e.g., `apps/static/js/navigation.js`) and let hashed copies in `apps/staticfiles/` be generated artifacts.**
 
 Avoid module-level `__all__` exports; we prefer importers to rely on explicit names so tooling can track usage without
 additional declarations. Never use relative imports inside the apps — prefer absolute imports anchored at the project
