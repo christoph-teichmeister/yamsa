@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% block title %}
+  yamsa | {{ room.name }}
+{% endblock title %}
+{% block content %}
+  <section class="@container mx-auto flex w-full max-w-3xl flex-col gap-4">
+    <div class="rounded-3xl border border-line bg-surface px-6 py-8 text-center shadow-card">
+      <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{{ room.name }}</p>
+      <h1 class="mt-2 mb-3 text-xl font-semibold break-words text-ink">
+        {% blocktrans trimmed with name=guest_user.name %}
+          Continue as {{ name }}?
+        {% endblocktrans %}
+      </h1>
+      <p id="guest-login-hint" class="mt-0 mb-6 text-sm text-ink-muted">
+        {% blocktrans trimmed with name=guest_user.name %}
+          You will act as {{ name }}. Everything you do in this room will count as theirs.
+        {% endblocktrans %}
+      </p>
+      <form method="post"
+            action="{% url 'account:guest-login' %}"
+            class="m-0 flex flex-col-reverse gap-3 @md:flex-row @md:justify-center">
+        {% csrf_token %}
+        <input type="hidden" name="room_slug" value="{{ room.slug }}" />
+        <input type="hidden" name="user_id" value="{{ guest_user.id }}" />
+        <input type="hidden" name="confirm" value="1" />
+        <a id="guest-login-back"
+           class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-5 py-2.5 text-sm font-semibold text-ink no-underline transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
+           href="{% url 'room:dashboard' room_slug=room.slug %}">{% trans "Back" %}</a>
+        <button id="guest-login-continue"
+                class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
+                type="submit"
+                aria-describedby="guest-login-hint"
+                autofocus>{% trans "Continue" %}</button>
+      </form>
+    </div>
+  </section>
+{% endblock content %}

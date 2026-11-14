@@ -13,3 +13,5 @@ class RoomSharePage(BasePage):
     def claim_guest_seat(self, guest_name: str) -> None:
         self.page.locator("#userSelect").select_option(label=guest_name)
         self.page.get_by_role("button", name="That's me!").click()
+        self.page.get_by_role("heading", name=f"Continue as {guest_name}?").wait_for()
+        self.page.get_by_role("button", name="Continue").click()
