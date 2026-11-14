@@ -21,8 +21,17 @@ RECEIPT_ACCEPTED_CONTENT_TYPES = (
     "image/png",
     "image/webp",
 )
+RECEIPT_ACCEPTED_EXTENSIONS = (".pdf", ".gif", ".jpg", ".jpeg", ".png", ".webp")
 MAX_RECEIPT_SIZE = 5 * 1024 * 1024  # 5 MB
 RECEIPT_AUTH_REQUIRED_MESSAGE = "Authenticated user is required to upload receipts."
+
+
+def receipt_name_matches_content_type(name: str, content_type: str) -> bool:
+    """The client declares the content type, so the file name has to agree with it and be on the allowlist."""
+    if not name.lower().endswith(RECEIPT_ACCEPTED_EXTENSIONS):
+        return False
+    guessed_type, _ = mimetypes.guess_type(name)
+    return guessed_type == content_type
 
 
 class TransactionCreateForm(SplitSharesMixin, RoomCategoryFieldMixin, forms.ModelForm):
@@ -125,7 +134,9 @@ class TransactionCreateForm(SplitSharesMixin, RoomCategoryFieldMixin, forms.Mode
     @staticmethod
     def _receipt_errors(uploaded_file: UploadedFile) -> list[forms.ValidationError]:
         errors = []
-        if uploaded_file.content_type not in RECEIPT_ACCEPTED_CONTENT_TYPES:
+        if uploaded_file.content_type not in RECEIPT_ACCEPTED_CONTENT_TYPES or not receipt_name_matches_content_type(
+            uploaded_file.name, uploaded_file.content_type
+        ):
             errors.append(
                 forms.ValidationError(
                     "Receipts must be PDF or an image (PNG, JPEG, WebP, GIF).",
