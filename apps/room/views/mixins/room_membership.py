@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import AccessMixin
 from django.contrib.auth.views import redirect_to_login
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import resolve_url
 
 
@@ -21,7 +22,7 @@ class RoomMembershipRequiredMixin(AccessMixin):
         return super().dispatch(request, *args, **kwargs)
 
     def handle_no_permission(self) -> HttpResponse:
-        """Signal a forbidden response when membership checks fail."""
+        """Redirect anonymous visitors to the login, render the 403 page for everyone else."""
         request = getattr(self, "request", None)
         if request and not request.user.is_authenticated:
             return redirect_to_login(
@@ -30,4 +31,4 @@ class RoomMembershipRequiredMixin(AccessMixin):
                 self.get_redirect_field_name(),
             )
 
-        return HttpResponseForbidden()
+        raise PermissionDenied

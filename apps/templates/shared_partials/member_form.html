@@ -47,7 +47,8 @@
       hx-target="#body"
       hx-indicator="#body-loading-spinner"
       hx-swap="morph:innerHTML"
-      hx-push-url="true">
+      hx-push-url="true"
+      hx-disabled-elt="find button[type=submit]">
   {% csrf_token %}
   <input type="hidden" name="room_slug" value="{{ room_slug_value }}">
   <div class="flex flex-col gap-3 bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:flex-row @md:items-start @md:px-6">

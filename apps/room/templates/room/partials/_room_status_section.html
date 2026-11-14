@@ -36,7 +36,7 @@
       {% if current_room.is_open %}
         {% if current_room.can_be_closed %}
           <button id="close-room-button"
-                  class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-danger-text/60 bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
                   aria-haspopup="dialog"
                   data-dialog-open="close-room-dialog">
@@ -60,7 +60,8 @@
                 hx-post="{% room_url 'room:status' %}"
                 hx-vals='{"status": "{{ ROOM_STATUS_OPEN }}"}'
                 hx-target="#room-sheet"
-                hx-swap="outerHTML">
+                hx-swap="outerHTML"
+                hx-disabled-elt="this">
           {% icon "unlock" %}
           {% trans "Reopen room" %}
         </button>
@@ -90,12 +91,13 @@
                   type="button"
                   data-dialog-close>{% trans "Cancel" %}</button>
           <button id="close-room-confirm-button"
-                  class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-danger-text/60 bg-danger-soft px-4 py-2 text-sm font-semibold text-danger-text transition hover:border-danger-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-4 py-2 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
                   hx-post="{% room_url 'room:status' %}"
                   hx-vals='{"status": "{{ ROOM_STATUS_CLOSED }}"}'
                   hx-target="#room-sheet"
-                  hx-swap="outerHTML">{% trans "Close room" %}</button>
+                  hx-swap="outerHTML"
+                  hx-disabled-elt="this">{% trans "Close room" %}</button>
         </div>
       </div>
     </dialog>
@@ -117,12 +119,12 @@
       <div class="flex flex-col gap-3 p-5">
         <p class="m-0 text-ink">
           {% blocktrans trimmed count debt_count=open_debt_count %}
-            There is still {{ debt_count }} open debt. Closing the room anyway will mark it as settled.
+            There is still {{ debt_count }} open debt. Closing the room anyway marks it as settled without a payment being recorded, and the person owed is not told.
           {% plural %}
-            There are still {{ debt_count }} open debts. Closing the room anyway will mark them as settled.
+            There are still {{ debt_count }} open debts. Closing the room anyway marks them as settled without a payment being recorded, and the people owed are not told.
           {% endblocktrans %}
         </p>
-        <p class="m-0 text-sm text-ink-subtle">{% trans "Use this option only if you want to skip manual settlement." %}</p>
+        <p class="m-0 text-sm text-ink-subtle">{% trans "You can reopen the room later, but the debts stay settled. Use this only if you want to skip manual settlement." %}</p>
         <div class="mt-1 flex flex-col gap-2 @md:flex-row @md:justify-end">
           <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
@@ -133,7 +135,8 @@
                   hx-post="{% room_url 'room:status' %}"
                   hx-vals='{"status": "{{ ROOM_STATUS_CLOSED }}", "force_close": "true"}'
                   hx-target="#room-sheet"
-                  hx-swap="outerHTML">{% trans "Close anyway" %}</button>
+                  hx-swap="outerHTML"
+                  hx-disabled-elt="this">{% trans "Close anyway" %}</button>
         </div>
       </div>
     </dialog>

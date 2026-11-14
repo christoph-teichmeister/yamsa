@@ -103,8 +103,8 @@
                   {% former_member_tag child_transaction.paid_for_id %}
                 </p>
                 <p class="m-0 text-sm text-ink-muted">
-                  {% blocktrans trimmed with owed_value=child_transaction.value owed_currency=parent_transaction.currency.sign %}
-                    Owes {{ owed_value }}{{ owed_currency }}
+                  {% blocktrans trimmed with owed_amount=child_transaction.value|money:parent_transaction.currency.sign %}
+                    Owes {{ owed_amount }}
                   {% endblocktrans %}
                 </p>
               </div>

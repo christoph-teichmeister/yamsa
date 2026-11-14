@@ -171,7 +171,7 @@ def test_post_from_share_link_adds_user_to_room(client: Client, room: Room, monk
     assert len(recorded_messages) == 1
     assert isinstance(recorded_messages[0], SendPostRegisterEmail)
 
-    assert response.template_name[0] == WelcomePartialView.template_name
+    assert response.redirect_chain[-1][0] == reverse("room:detail", kwargs={"room_slug": room.slug})
     assert response.wsgi_request.user.rooms.filter(id=room.id).exists()
 
 

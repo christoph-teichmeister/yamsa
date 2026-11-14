@@ -36,6 +36,7 @@ class PaymentReminderService:
                 recipient=candidate.user,
                 room_name=candidate.room.name,
                 amount_summary=candidate.amount_summary(),
+                creditor_names=candidate.creditor_names,
                 inactivity_days=settings.INACTIVITY_REMINDER_DAYS,
                 payment_link=self._build_payment_link(candidate.room),
             ).process()
@@ -89,7 +90,7 @@ class PaymentReminderService:
 
     def _builders_for_room(self, room: Room) -> list[_PaymentReminderBuilder]:
         """Accumulate debt totals per user so each recipient receives a single email."""
-        debts = Debt.objects.filter(room=room, settled=False).select_related("debitor", "currency")
+        debts = Debt.objects.filter(room=room, settled=False).select_related("debitor", "creditor", "currency")
         builders: dict[int, _PaymentReminderBuilder] = {}
         for debt in debts:
             if debt.debitor.is_guest:

@@ -4,6 +4,7 @@ from django.forms import BaseModelForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
@@ -38,6 +39,7 @@ class DebtSettleView(RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin, De
         # re-posting an already settled one tells nobody anything.
         if became_settled:
             handle_message(DebtSettled(context_data={"debt": debt}))
+            self.request.toast_queue.success(_("Debt marked as settled."))
 
         return HttpResponseRedirect(self.get_success_url())
 

@@ -7,6 +7,7 @@ from django.db import IntegrityError, transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
@@ -47,9 +48,8 @@ class TransactionCreateView(
         return kwargs
 
     def form_invalid(self, form: TransactionCreateForm) -> HttpResponse:
-        toast_message = self._get_toast_error_message(form)
-        if toast_message:
-            self.request.toast_queue.error(toast_message)
+        # The field errors are already inline; the toast only says that the form needs another look.
+        self.request.toast_queue.error(_("Please fix the highlighted fields."))
         return super().form_invalid(form)
 
     def form_valid(self, form: TransactionCreateForm) -> HttpResponse:
@@ -79,6 +79,7 @@ class TransactionCreateView(
         handle_message(
             ParentTransactionCreated(context_data={"parent_transaction": self.object, "room": self.object.room})
         )
+        self.request.toast_queue.success(_("Expense added."))
         return HttpResponseRedirect(self.get_success_url())
 
     def _client_request_id(self) -> str | None:
@@ -128,15 +129,6 @@ class TransactionCreateView(
         else:
             form.add_error(None, error_list)
         return True
-
-    def _get_toast_error_message(self, form: TransactionCreateForm | None) -> str | None:
-        non_field_errors = form.non_field_errors()
-        if non_field_errors:
-            return str(non_field_errors[0])
-        for errors in form.errors.values():
-            if errors:
-                return str(errors[0])
-        return None
 
     def get_context_data(self, **kwargs: object) -> dict:
         context = super().get_context_data(**kwargs)

@@ -1,6 +1,7 @@
 from django import forms
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
@@ -32,7 +33,7 @@ class TransactionReceiptUploadView(
             else:
                 upload_success = True
                 form = TransactionReceiptUploadForm(request=request)
-                request.toast_queue.success("Receipt uploaded successfully.")
+                request.toast_queue.success(_("Receipt uploaded successfully."))
 
         receipts = parent_transaction.receipts.select_related("uploaded_by").all()
 

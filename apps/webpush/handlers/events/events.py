@@ -160,14 +160,22 @@ def send_notification_on_debt_settled(context: DebtSettled.Context) -> None:
 
 @message_registry.register_event(event=UserRemovedFromRoom, atomic=False)
 def send_notification_on_user_removed_from_room(context: UserRemovedFromRoom.Context) -> None:
+    left_on_their_own = context.user_requesting_removal.pk == context.user_to_be_removed.pk
+
     def build_notification_for_user(user: User) -> Notification:
         with translation.override(get_language_code_for_user(user)):
-            body = _("{remover} just removed {removed} from {room}").format(
-                remover=context.user_requesting_removal.name,
-                removed=context.user_to_be_removed.name,
-                room=context.room.name,
-            )
-            head = _("User removed")
+            if left_on_their_own:
+                body = _("{removed} just left {room}").format(
+                    removed=context.user_to_be_removed.name, room=context.room.name
+                )
+                head = _("User left")
+            else:
+                body = _("{remover} just removed {removed} from {room}").format(
+                    remover=context.user_requesting_removal.name,
+                    removed=context.user_to_be_removed.name,
+                    room=context.room.name,
+                )
+                head = _("User removed")
 
         return Notification(
             payload=Notification.Payload(

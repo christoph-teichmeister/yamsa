@@ -4,6 +4,7 @@ from django.db.models import QuerySet
 from django.forms import BaseForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.core.event_loop.runner import handle_message
@@ -43,4 +44,5 @@ class ParentTransactionDeleteView(
             self.object.delete()
 
         handle_message(ParentTransactionDeleted(context_data=deleted))
+        self.request.toast_queue.success(_("Expense deleted."))
         return HttpResponseRedirect(self.get_success_url())
