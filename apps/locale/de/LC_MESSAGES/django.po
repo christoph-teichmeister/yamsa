@@ -1609,6 +1609,65 @@ msgstr "Wähle mindestens einen Schuldner aus."
 msgid "{paid_by} paid {value}{currency} for {paid_for}"
 msgstr "{paid_by} hat {value}{currency} für {paid_for} bezahlt"
 
+msgid "Someone"
+msgstr "Jemand"
+
+#, python-format
+msgid "%(user)s created this expense"
+msgstr "%(user)s hat diese Ausgabe erstellt"
+
+#, python-format
+msgid "%(user)s added the receipt %(name)s"
+msgstr "%(user)s hat den Beleg %(name)s hinzugefügt"
+
+#, python-format
+msgid "%(user)s removed the receipt %(name)s"
+msgstr "%(user)s hat den Beleg %(name)s entfernt"
+
+#, python-format
+msgid "%(user)s edited this expense"
+msgstr "%(user)s hat diese Ausgabe bearbeitet"
+
+#, python-format
+msgid "%(who)s added to the split: %(new)s"
+msgstr "%(who)s zur Aufteilung hinzugefügt: %(new)s"
+
+#, python-format
+msgid "%(who)s removed from the split (was %(old)s)"
+msgstr "%(who)s aus der Aufteilung entfernt (war %(old)s)"
+
+#, python-format
+msgid "Share of %(who)s: %(old)s → %(new)s"
+msgstr "Anteil von %(who)s: %(old)s → %(new)s"
+
+#, python-format
+msgid "Amount: %(old)s → %(new)s"
+msgstr "Betrag: %(old)s → %(new)s"
+
+#, python-format
+msgid "Paid by: %(old)s → %(new)s"
+msgstr "Bezahlt von: %(old)s → %(new)s"
+
+#, python-format
+msgid "Category: %(old)s → %(new)s"
+msgstr "Kategorie: %(old)s → %(new)s"
+
+#, python-format
+msgid "Currency: %(old)s → %(new)s"
+msgstr "Währung: %(old)s → %(new)s"
+
+#, python-format
+msgid "Description: %(old)s → %(new)s"
+msgstr "Beschreibung: %(old)s → %(new)s"
+
+#, python-format
+msgid "Notes: %(old)s → %(new)s"
+msgstr "Notizen: %(old)s → %(new)s"
+
+#, python-format
+msgid "Date: %(old)s → %(new)s"
+msgstr "Datum: %(old)s → %(new)s"
+
 msgid "Back to transactions"
 msgstr "Zurück zu den Transaktionen"
 
@@ -1925,6 +1984,12 @@ msgstr "Aus der Beschreibung vorgeschlagen — du kannst jederzeit eine andere w
 
 msgid "Manage categories"
 msgstr "Kategorien verwalten"
+
+msgid "History"
+msgstr "Verlauf"
+
+msgid "No history was recorded for this expense."
+msgstr "Für diese Ausgabe wurde kein Verlauf aufgezeichnet."
 
 msgid "Back to debts"
 msgstr "Zurück zu Schulden"

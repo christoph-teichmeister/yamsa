@@ -1,0 +1,29 @@
+{% load i18n icon_tags %}
+<details id="transaction-history"
+         class="group @container rounded-2xl border border-line bg-surface">
+  <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-2xl px-5 py-3 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand [&::-webkit-details-marker]:hidden">
+    <span class="text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "History" %}</span>
+    <span class="inline-flex items-center gap-2">
+      <span class="inline-flex shrink-0 items-center rounded-full bg-surface-sunken px-2.5 py-1 text-xs font-semibold tabular-nums text-ink">{{ history|length }}</span>
+      <span class="text-ink-muted transition group-open:rotate-180 motion-reduce:transition-none"
+            aria-hidden="true">{% icon "chevron-down" %}</span>
+    </span>
+  </summary>
+  <ol class="m-0 flex list-none flex-col divide-y divide-line border-t border-line p-0">
+    {% for entry in history %}
+      <li class="flex flex-col gap-1 px-5 py-3">
+        <p class="m-0 text-sm font-semibold break-words text-ink">{{ entry.headline }}</p>
+        <p class="m-0 text-xs text-ink-subtle">
+          <time datetime="{{ entry.change.created_at|date:'c' }}">{{ entry.change.created_at|date:"SHORT_DATETIME_FORMAT" }}</time>
+        </p>
+        {% if entry.lines %}
+          <ul class="m-0 flex list-none flex-col gap-0.5 p-0 text-sm break-words text-ink-muted">
+            {% for line in entry.lines %}<li>{{ line }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+    {% empty %}
+      <li class="px-5 py-4 text-sm text-ink-muted">{% trans "No history was recorded for this expense." %}</li>
+    {% endfor %}
+  </ol>
+</details>

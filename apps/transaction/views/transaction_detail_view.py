@@ -6,6 +6,7 @@ from django_context_decorator import context
 from apps.room.views.mixins import RoomMembershipRequiredMixin
 from apps.transaction.forms.transaction_receipt_upload_form import TransactionReceiptUploadForm
 from apps.transaction.models import ParentTransaction
+from apps.transaction.services import change_history
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -44,6 +45,18 @@ class TransactionDetailView(RoomMembershipRequiredMixin, TransactionBaseContext,
     @cached_property
     def receipts(self) -> QuerySet:
         return self.object.receipts.all()
+
+    @context
+    @cached_property
+    def history(self) -> list[dict]:
+        return [
+            {
+                "change": change,
+                "headline": change_history.describe_headline(change),
+                "lines": change_history.describe_lines(change),
+            }
+            for change in self.object.changes.select_related("user")
+        ]
 
     @context
     def receipt_upload_form(self) -> TransactionReceiptUploadForm:

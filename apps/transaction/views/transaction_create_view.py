@@ -13,7 +13,8 @@ from apps.core.event_loop.runner import handle_message
 from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_create_form import TransactionCreateForm
 from apps.transaction.messages.events.transaction import ParentTransactionCreated
-from apps.transaction.models import ParentTransaction
+from apps.transaction.models import ParentTransaction, TransactionChange
+from apps.transaction.services import change_history
 from apps.transaction.services.category_suggestion_service import CategorySuggestionService
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
@@ -62,6 +63,7 @@ class TransactionCreateView(
         try:
             with transaction.atomic():
                 self.object = form.save()
+                change_history.record(self.object, self.request.user, TransactionChange.Kind.CREATED)
         except forms.ValidationError as exc:
             # The model's full_clean() reports the unique index as a validation error, which is what
             # a replay looks like when the first attempt landed between the check above and here.

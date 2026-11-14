@@ -4,7 +4,8 @@ from django.views import generic
 
 from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_receipt_upload_form import TransactionReceiptUploadForm
-from apps.transaction.models import Receipt
+from apps.transaction.models import Receipt, TransactionChange
+from apps.transaction.services import change_history
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -26,6 +27,9 @@ class TransactionReceiptDeleteView(
         parent_transaction = receipt.parent_transaction
         receipt.file.delete(save=False)
         receipt.delete()
+        change_history.record(
+            parent_transaction, request.user, TransactionChange.Kind.RECEIPT_REMOVED, detail=receipt.original_name
+        )
 
         receipts = parent_transaction.receipts.select_related("uploaded_by").all()
         form = TransactionReceiptUploadForm(request=request)
