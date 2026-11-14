@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 import pytest
 from django.urls import reverse
-from playwright.sync_api import Page
+from playwright.sync_api import Page, expect
 
 from apps.account.models import User
 from apps.account.tests.factories import UserFactory
@@ -25,8 +25,9 @@ class TestTransactionCreateInvalidShares:
         create_page.set_share(roommate.name, "-10.00")
 
         create_page.submit()
-        page.wait_for_timeout(500)
 
+        # The browser blocks the submit on the negative share itself, so no request goes out.
+        expect(page.locator(".split-row input[name='value']:invalid")).to_have_count(1)
         assert page.url.endswith(reverse("transaction:create", kwargs={"room_slug": room.slug}))
         assert not ParentTransaction.objects.filter(room=room, description="Negativ").exists()
         assert not Debt.objects.filter(room=room).exists()
@@ -77,8 +78,9 @@ class TestTransactionCreateInvalidShares:
         create_page.set_share(profile_user.name, "0")
         create_page.set_share(roommate.name, "0")
 
-        create_page.submit()
-        page.wait_for_timeout(500)
+        with page.expect_response(lambda response: response.request.method == "POST"):
+            create_page.submit()
+        page.wait_for_load_state("load")
 
         assert page.url.endswith(reverse("transaction:create", kwargs={"room_slug": room.slug}))
         assert not ParentTransaction.objects.filter(room=room, description="Alles null").exists()
