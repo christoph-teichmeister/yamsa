@@ -10,7 +10,7 @@ from apps.news.models import News
 from apps.room.models import Room
 from apps.transaction.constants import DELETE_UNDO_SECONDS
 from apps.transaction.models import ChildTransaction, ParentTransaction
-from apps.transaction.tests.undo_helpers import delete_url, restore_url
+from apps.transaction.tests.conftest import delete_url, restore_url
 from apps.webpush.utils import Notification
 
 pytestmark = pytest.mark.django_db

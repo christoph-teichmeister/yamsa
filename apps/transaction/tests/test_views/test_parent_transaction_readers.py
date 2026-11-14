@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from apps.room.models import Room
 from apps.transaction.models import ParentTransaction
-from apps.transaction.tests.undo_helpers import delete_url
+from apps.transaction.tests.conftest import delete_url
 
 pytestmark = pytest.mark.django_db
 
