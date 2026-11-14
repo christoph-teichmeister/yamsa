@@ -12,10 +12,44 @@ from apps.transaction.views import TransactionListView
 pytestmark = pytest.mark.django_db
 
 
+def test_picker_post_shows_confirm_step_without_logging_in(client: Client, room: Room, guest_user: User) -> None:
+    response = client.post(reverse("account:guest-login"), data={"room_slug": room.slug, "user_id": guest_user.id})
+
+    content = response.content.decode()
+    assert response.status_code == http.HTTPStatus.OK
+    assert f"Continue as {guest_user.name}?" in content
+    assert "name=confirm" in content
+    assert reverse("room:dashboard", kwargs={"room_slug": room.slug}) in content
+    assert "_auth_user_id" not in client.session
+
+
+@pytest.mark.parametrize("confirm", ["0", "", "true"])
+def test_post_with_other_confirm_value_does_not_log_in(
+    client: Client, room: Room, guest_user: User, confirm: str
+) -> None:
+    response = client.post(
+        reverse("account:guest-login"),
+        data={"room_slug": room.slug, "user_id": guest_user.id, "confirm": confirm},
+    )
+
+    assert response.status_code == http.HTTPStatus.OK
+    assert "_auth_user_id" not in client.session
+
+
+def test_confirm_post_logs_in_as_guest(client: Client, room: Room, guest_user: User) -> None:
+    response = client.post(
+        reverse("account:guest-login"),
+        data={"room_slug": room.slug, "user_id": guest_user.id, "confirm": "1"},
+    )
+
+    assert response.status_code == http.HTTPStatus.FOUND
+    assert client.session["_auth_user_id"] == str(guest_user.id)
+
+
 def test_post_as_anonymous_user(client: Client, room: Room, guest_user: User) -> None:
     response = client.post(
         reverse("account:guest-login"),
-        data={"room_slug": room.slug, "user_id": guest_user.id},
+        data={"room_slug": room.slug, "user_id": guest_user.id, "confirm": "1"},
         follow=True,
     )
 
@@ -36,17 +70,22 @@ def test_post_as_registered_user(authenticated_client: Client, room: Room, user:
     assert "Room transactions" in response.content.decode()
 
 
-def test_post_registered_user_id_is_rejected(client: Client, room: Room, user: User) -> None:
-    response = client.post(reverse("account:guest-login"), data={"room_slug": room.slug, "user_id": user.id})
+@pytest.mark.parametrize("confirm", [None, "1"])
+def test_post_registered_user_id_is_rejected(client: Client, room: Room, user: User, confirm: str | None) -> None:
+    data = {"room_slug": room.slug, "user_id": user.id} | ({"confirm": confirm} if confirm else {})
+
+    response = client.post(reverse("account:guest-login"), data=data)
 
     assert response.status_code == http.HTTPStatus.NOT_FOUND
     assert "_auth_user_id" not in client.session
 
 
-def test_post_guest_of_another_room_is_rejected(client: Client, room: Room) -> None:
+@pytest.mark.parametrize("confirm", [None, "1"])
+def test_post_guest_of_another_room_is_rejected(client: Client, room: Room, confirm: str | None) -> None:
     outsider = GuestUserFactory()
+    data = {"room_slug": room.slug, "user_id": outsider.id} | ({"confirm": confirm} if confirm else {})
 
-    response = client.post(reverse("account:guest-login"), data={"room_slug": room.slug, "user_id": outsider.id})
+    response = client.post(reverse("account:guest-login"), data=data)
 
     assert response.status_code == http.HTTPStatus.NOT_FOUND
     assert "_auth_user_id" not in client.session

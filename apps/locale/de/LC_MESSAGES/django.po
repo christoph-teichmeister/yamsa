@@ -177,6 +177,20 @@ msgstr "Möchtest du dein Passwort zurücksetzen?"
 msgid "Request a new password"
 msgstr "Neues Passwort anfordern"
 
+#, python-format
+msgid "Continue as %(name)s?"
+msgstr "Weiter als %(name)s?"
+
+#, python-format
+msgid "You will act as %(name)s. Everything you do in this room will count as theirs."
+msgstr "Du handelst als %(name)s. Alles, was du in diesem Raum tust, zählt für diese Person."
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "Continue"
+msgstr "Weiter"
+
 msgid "Invitation"
 msgstr "Einladung"
 
@@ -1517,9 +1531,6 @@ msgstr "Einladungs-E-Mail gesendet"
 
 msgid "You can resend an invitation email five minutes after one has been sent."
 msgstr "Du kannst eine Einladungs-E-Mail fünf Minuten nach dem Versand erneut senden."
-
-msgid "Back"
-msgstr "Zurück"
 
 msgid "Room access"
 msgstr "Raumzugang"
