@@ -313,7 +313,7 @@ class TestTransactionEdit:
 
         page.wait_for_url(lambda url: url.endswith(reverse("transaction:list", kwargs={"room_slug": room.slug})))
         assert not ParentTransaction.objects.filter(pk=parent_transaction.pk).exists()
-        assert not ChildTransaction.objects.filter(parent_transaction_id=parent_transaction.pk).exists()
+        assert ParentTransaction.all_objects.get(pk=parent_transaction.pk).deleted_at is not None
         assert _open_debts(room) == set()
 
     def test_dismissing_the_deletion_keeps_the_transaction(

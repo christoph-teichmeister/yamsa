@@ -2057,11 +2057,15 @@ msgstr "Detailansicht öffnen"
 msgid "Receipts stay on the detail page, so upload PDFs there instead of here."
 msgstr "Belege bleiben auf der Detailseite, lade PDFs dort statt hier hoch."
 
-msgid "Delete this expense?"
-msgstr "Diese Ausgabe löschen?"
+msgid "Delete this transaction?"
+msgstr "Diese Transaktion löschen?"
 
-msgid "The expense and its shares are deleted and the debts of this room are recalculated."
-msgstr "Die Ausgabe und ihre Anteile werden gelöscht und die Schulden dieses Raums neu berechnet."
+msgid "You can undo this for a few seconds."
+msgstr "Du kannst das wenige Sekunden lang rückgängig machen."
+
+#, python-format
+msgid "\"%(description)s\" is removed from the room's expenses and the debts are recalculated."
+msgstr "„%(description)s“ wird aus den Ausgaben des Raums entfernt und die Schulden werden neu berechnet."
 
 msgid "Delete expense"
 msgstr "Ausgabe löschen"
@@ -2348,8 +2352,19 @@ msgstr "Kategorie hinzugefügt."
 msgid "Category \"%(category)s\" deleted."
 msgstr "Kategorie \"%(category)s\" gelöscht."
 
-msgid "Expense deleted."
-msgstr "Ausgabe gelöscht."
+#, python-brace-format
+msgid "Deleted \"{description}\"."
+msgstr "„{description}“ gelöscht."
+
+msgid "Undo"
+msgstr "Rückgängig"
+
+msgid "Too late: the transaction is deleted for good."
+msgstr "Zu spät: Die Transaktion ist endgültig gelöscht."
+
+#, python-brace-format
+msgid "Restored \"{description}\"."
+msgstr "„{description}“ wiederhergestellt."
 
 #, python-format
 msgid "%(count)s more category"

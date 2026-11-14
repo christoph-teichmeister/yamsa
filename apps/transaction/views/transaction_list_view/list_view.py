@@ -5,6 +5,7 @@ from apps.currency.models import Currency
 from apps.importer.constants import IMPORT_SHARE_HINT_SESSION_KEY
 from apps.room.views.mixins import RoomMembershipRequiredMixin
 from apps.transaction.models import Category
+from apps.transaction.services.transaction_deletion_service import TransactionDeletionService
 from apps.transaction.views.transaction_list_view.mixin import TransactionFeedMixin
 
 
@@ -12,6 +13,9 @@ class TransactionListView(RoomMembershipRequiredMixin, TransactionFeedMixin, gen
     template_name = "transaction/list.html"
 
     def get_context_data(self, **kwargs: object) -> dict[str, object]:
+        # Nothing runs on a timer, so a delete whose undo window has passed is made final, and the
+        # room notified, by the next visit here.
+        TransactionDeletionService.finalise_expired(self.request.room)
         context = super().get_context_data(**kwargs)
         base_queryset = self.get_base_queryset()
         total_count = base_queryset.count()
@@ -45,7 +49,11 @@ class TransactionListView(RoomMembershipRequiredMixin, TransactionFeedMixin, gen
         # only ever comes from a breakdown legend entry, and that lists exactly the categories this
         # room has spent on - a room that never opened the category manager has no RoomCategory rows.
         category = (
-            Category.objects.filter(slug=category_slug, transactions__room=self.request.room).distinct().first()
+            Category.objects.filter(
+                slug=category_slug, transactions__room=self.request.room, transactions__deleted_at__isnull=True
+            )
+            .distinct()
+            .first()
             if category_slug
             else None
         )
