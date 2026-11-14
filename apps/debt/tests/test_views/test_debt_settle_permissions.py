@@ -13,12 +13,6 @@ from apps.transaction.tests.conftest import create_parent_transaction_with_optim
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture
-def debt(room: Room, user: User, guest_user: User) -> Debt:
-    create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
-    return Debt.objects.get(room=room, settled=False)
-
-
 def settle_url(debt: Debt) -> str:
     return reverse("debt:settle", kwargs={"room_slug": debt.room.slug, "pk": debt.pk})
 

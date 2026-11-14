@@ -46,6 +46,20 @@ class TestPaymentReminderService:
         log = ReminderLog.objects.get(reminder_type=reminder_service.REMINDER_TYPE)
         assert log.recipients == [user.email]
 
+    def test_debtors_who_reported_payment_are_not_reminded(
+        self, reminder_service: PaymentReminderService, user: User, guest_user: User, debt_factory: Callable
+    ) -> None:
+        debt = debt_factory(debitor=user, creditor=guest_user, value=Decimal("42.00"))
+        debt.mark_as_paid()
+
+        with mock.patch(
+            "apps.mail.services.payment_reminder_mail_service.PaymentReminderEmailService.process"
+        ) as mocked_process:
+            candidates = reminder_service.run()
+
+        assert candidates == []
+        assert not mocked_process.called
+
     def test_opted_out_users_are_skipped(
         self, reminder_service: PaymentReminderService, user: User, guest_user: User, debt_factory: Callable
     ) -> None:

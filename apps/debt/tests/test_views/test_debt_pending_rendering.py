@@ -10,15 +10,10 @@ from apps.room.models import Room
 pytestmark = pytest.mark.django_db
 
 SETTLE_MESSAGES = "apps.debt.views.debt_settle_view.handle_message"
-REOPEN_MESSAGES = "apps.debt.views.debt_reopen_view.handle_message"
 
 
 def settle_url(debt: Debt) -> str:
     return reverse("debt:settle", kwargs={"room_slug": debt.room.slug, "pk": debt.pk})
-
-
-def reopen_url(debt: Debt) -> str:
-    return reverse("debt:reopen", kwargs={"room_slug": debt.room.slug, "pk": debt.pk})
 
 
 def login(client: Client, who: User) -> Client:

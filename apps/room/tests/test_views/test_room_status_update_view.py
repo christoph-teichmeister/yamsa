@@ -72,6 +72,21 @@ class TestRoomStatusUpdateView:
         assert debt.settled_at == timezone.localdate()
         handle_message.assert_called_once()
 
+    def test_the_force_flag_also_settles_debts_awaiting_confirmation(
+        self, authenticated_client: Client, room: Room
+    ) -> None:
+        debt = create_open_debt(room)
+        debt.mark_as_paid()
+
+        with mock.patch(STATUS_VIEW_MODULE):
+            authenticated_client.post(
+                reverse("room:status", kwargs={"room_slug": room.slug}),
+                data={"status": Room.StatusChoices.CLOSED, "force_close": "true"},
+            )
+
+        debt.refresh_from_db()
+        assert (debt.settled, debt.awaiting_confirmation) == (True, False)
+
     def test_a_closed_room_reopens(self, authenticated_client: Client, closed_room: Room) -> None:
         with mock.patch(STATUS_VIEW_MODULE) as handle_message:
             response = authenticated_client.post(
