@@ -13,7 +13,7 @@ from apps.room.models import Room
 from apps.room.tests.factories import RoomFactory
 from apps.transaction.models import ParentTransaction
 from apps.transaction.services.transaction_deletion_service import TransactionDeletionService
-from apps.transaction.tests.undo_helpers import delete_url, let_window_pass, restore_url
+from apps.transaction.tests.conftest import delete_url, let_window_pass, restore_url
 from apps.webpush.utils import Notification
 
 pytestmark = pytest.mark.django_db

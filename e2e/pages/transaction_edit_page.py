@@ -32,7 +32,7 @@ class TransactionEditPage(TransactionCreatePage):
 
     @property
     def delete_button(self) -> Locator:
-        return self.page.get_by_role("button", name="Delete", exact=True)
+        return self.page.locator("#delete-transaction-button")
 
     def delete_transaction(self, *, confirm: bool = True) -> None:
         self.delete_button.click()
@@ -43,7 +43,7 @@ class TransactionEditPage(TransactionCreatePage):
             expect(dialog).not_to_be_visible()
             return
         with self.page.expect_response(lambda response: "/parent-transaction/delete/" in response.url):
-            dialog.get_by_role("button", name="Delete expense").click()
+            self.page.locator("#delete-transaction-confirm-button").click()
 
     def expect_shares_locked(self, *, locked: bool) -> None:
         values = self.page.locator(".split-row input[name='value']")

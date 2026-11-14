@@ -11,7 +11,7 @@ from apps.news.models import News
 from apps.room.models import Room
 from apps.transaction.models import ChildTransaction, ParentTransaction
 from apps.transaction.services.transaction_deletion_service import TransactionDeletionService
-from apps.transaction.tests.undo_helpers import delete_url, let_window_pass
+from apps.transaction.tests.conftest import delete_url, let_window_pass
 from apps.webpush.utils import Notification
 
 pytestmark = pytest.mark.django_db
