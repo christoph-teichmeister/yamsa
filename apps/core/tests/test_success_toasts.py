@@ -33,7 +33,7 @@ class TestSuccessToasts:
             )
         )
 
-        assert carried_toast_messages(authenticated_client) == ["Expense deleted."]
+        assert carried_toast_messages(authenticated_client) == [f'Deleted "{parent_transaction.description}".']
 
     def test_settling_a_debt_confirms(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User

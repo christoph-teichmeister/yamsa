@@ -2029,16 +2029,6 @@ msgstr "Keine Beschreibung"
 msgid "Adjust who paid and how it is split."
 msgstr "Leg fest, wer bezahlt hat und wie geteilt wird."
 
-msgid "Delete this transaction?"
-msgstr "Diese Transaktion löschen?"
-
-msgid "You can undo this for a few seconds."
-msgstr "Du kannst das wenige Sekunden lang rückgängig machen."
-
-#, python-format
-msgid "\"%(description)s\" is removed from the room's expenses and the debts are recalculated."
-msgstr "„%(description)s“ wird aus den Ausgaben des Raums entfernt und die Schulden werden neu berechnet."
-
 msgid "Paid by"
 msgstr "Bezahlt von"
 
@@ -2067,11 +2057,15 @@ msgstr "Detailansicht öffnen"
 msgid "Receipts stay on the detail page, so upload PDFs there instead of here."
 msgstr "Belege bleiben auf der Detailseite, lade PDFs dort statt hier hoch."
 
-msgid "Delete this expense?"
-msgstr "Diese Ausgabe löschen?"
+msgid "Delete this transaction?"
+msgstr "Diese Transaktion löschen?"
 
-msgid "The expense and its shares are deleted and the debts of this room are recalculated."
-msgstr "Die Ausgabe und ihre Anteile werden gelöscht und die Schulden dieses Raums neu berechnet."
+msgid "You can undo this for a few seconds."
+msgstr "Du kannst das wenige Sekunden lang rückgängig machen."
+
+#, python-format
+msgid "\"%(description)s\" is removed from the room's expenses and the debts are recalculated."
+msgstr "„%(description)s“ wird aus den Ausgaben des Raums entfernt und die Schulden werden neu berechnet."
 
 msgid "Delete expense"
 msgstr "Ausgabe löschen"
