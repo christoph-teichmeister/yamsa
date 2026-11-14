@@ -10,7 +10,7 @@
 {% endcomment %}
 <div>
   {% if cta_hint %}<p class="mt-0 mb-2 text-sm text-white/70">{{ cta_hint }}</p>{% endif %}
-  <a class="inline-flex w-full cursor-pointer items-center justify-center rounded-full px-6 py-2 text-sm font-semibold tracking-[0.04em] no-underline transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white {% if cta_filled %}border border-white bg-white text-brand-strong hover:bg-white/90{% else %}border border-white/70 bg-transparent text-white hover:bg-white/10{% endif %}"
+  <a class="inline-flex w-full cursor-pointer items-center justify-center rounded-full px-6 py-2 text-sm font-semibold tracking-wider no-underline transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white {% if cta_filled %}border border-white bg-white text-brand-strong hover:bg-white/90{% else %}border border-white/70 bg-transparent text-white hover:bg-white/10{% endif %}"
      href="{{ cta_url }}"
      hx-get="{{ cta_url }}"
      hx-target="#body"
