@@ -9,6 +9,8 @@ from apps.account.messages.events.user_removed_from_room import UserRemovedFromR
 from apps.account.models import User
 from apps.account.utils.language import get_language_code_for_user
 from apps.core.event_loop.registry import message_registry
+from apps.debt.messages.events.debt_marked_paid import DebtMarkedPaid
+from apps.debt.messages.events.debt_payment_rejected import DebtPaymentRejected
 from apps.debt.messages.events.debt_settled import DebtSettled
 from apps.transaction.messages.events.transaction import (
     ChildTransactionDeleted,
@@ -174,6 +176,46 @@ def send_notification_on_debt_settled(context: DebtSettled.Context) -> None:
             click_url=reverse(viewname="debt:list", kwargs={"room_slug": debt.room.slug}),
         ),
     ).send_to_user(recipient)
+
+
+@message_registry.register_event(event=DebtMarkedPaid, atomic=False)
+def send_notification_on_debt_marked_paid(context: DebtMarkedPaid.Context) -> None:
+    debt = context.debt
+    with translation.override(get_language_code_for_user(debt.creditor)):
+        head = _("Payment to confirm")
+        body = _("{debitor} says they paid their debt of {amount}{currency} to you. Please confirm.").format(
+            debitor=debt.debitor,
+            amount=_amount(debt.value),
+            currency=debt.currency.sign,
+        )
+
+    Notification(
+        payload=Notification.Payload(
+            head=head,
+            body=body,
+            click_url=reverse(viewname="debt:list", kwargs={"room_slug": debt.room.slug}),
+        ),
+    ).send_to_user(debt.creditor)
+
+
+@message_registry.register_event(event=DebtPaymentRejected, atomic=False)
+def send_notification_on_debt_payment_rejected(context: DebtPaymentRejected.Context) -> None:
+    debt = context.debt
+    with translation.override(get_language_code_for_user(debt.debitor)):
+        head = _("Payment not received")
+        body = _("{creditor} did not receive your payment of {amount}{currency}. The debt is open again.").format(
+            creditor=debt.creditor,
+            amount=_amount(debt.value),
+            currency=debt.currency.sign,
+        )
+
+    Notification(
+        payload=Notification.Payload(
+            head=head,
+            body=body,
+            click_url=reverse(viewname="debt:list", kwargs={"room_slug": debt.room.slug}),
+        ),
+    ).send_to_user(debt.debitor)
 
 
 @message_registry.register_event(event=UserRemovedFromRoom, atomic=False)
