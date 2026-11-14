@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.room.forms import RoomCreateForm
@@ -53,6 +54,7 @@ class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
 
         UserConnectionToRoom.objects.create(user=self.request.user, room=created_room)
         self._populate_suggested_guests(created_room)
+        self.request.toast_queue.success(_("Room created."))
 
         return ret
 
