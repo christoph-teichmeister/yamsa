@@ -1,6 +1,6 @@
 {% load i18n core_tags %}
 {% trans "Close" as toast_close_label %}
-<div class="yamsa-toast-container pointer-events-none fixed bottom-0 left-1/2 z-[1400] mb-12 max-h-[calc(100%_-_1rem)] w-full -translate-x-1/2 px-1 pb-12">
+<div class="yamsa-toast-container pointer-events-none fixed bottom-0 left-1/2 z-[1400] mb-12 max-h-[calc(100%_-_1rem)] w-full -translate-x-1/2 px-1 pb-[calc(3rem_+_env(safe-area-inset-bottom,0px))]">
   {# Always rendered and empty until a toast is shown: a live region inserted already filled is not announced. The visible toast is aria-hidden text; these two carry it to assistive tech. #}
   <div id="toast-live-polite"
        class="sr-only"

@@ -31,25 +31,22 @@
           </h1>
         </div>
       </div>
-      <div class="flex flex-col gap-3 border-t border-line px-5 py-5 @md:px-6">
+      <div class="flex flex-col gap-4 border-t border-line px-5 py-5 @md:px-6">
+        {% if debt.creditor.paypal_me_username %}
+          <a class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-5 py-2.5 text-sm font-semibold text-ink no-underline transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+             href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
+             target="_blank"
+             rel="noopener">
+            {% blocktrans with creditor_name=debt.creditor.name debt_amount=debt.value|money:debt.currency.sign trimmed %}
+              Pay {{ debt_amount }} to {{ creditor_name }} via PayPal
+            {% endblocktrans %}
+          </a>
+        {% endif %}
         <p class="m-0 text-ink">
-          {% blocktrans with creditor_name=debt.creditor.name debt_value=debt.value|format_with_thousands debt_currency=debt.currency.sign trimmed %}
-            Are you sure that you have settled your debt ({{ debt_value }}{{ debt_currency }}) to {{ creditor_name }}?
+          {% blocktrans with creditor_name=debt.creditor.name debt_amount=debt.value|money:debt.currency.sign trimmed %}
+            Did you pay {{ debt_amount }} to {{ creditor_name }}?
           {% endblocktrans %}
         </p>
-        {% if debt.creditor.paypal_me_username %}
-          <p class="m-0 text-sm text-ink-muted">
-            {% trans "Not paid yet?" %}
-            <a class="font-semibold text-brand-text no-underline transition hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-               href="https://www.paypal.com/paypalme/{{ debt.creditor.paypal_me_username }}/{{ debt.value|unlocalize }}{{ debt.currency.code }}"
-               target="_blank"
-               rel="noopener">
-              {% blocktrans with creditor_name=debt.creditor.name trimmed %}
-                Pay {{ creditor_name }} via PayPal
-              {% endblocktrans %}
-            </a>
-          </p>
-        {% endif %}
       </div>
       <div class="flex flex-col gap-2 border-t border-line px-5 py-4 @md:flex-row @md:items-center @md:justify-end @md:px-6">
         <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-4 py-2.5 text-sm font-semibold whitespace-nowrap text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"

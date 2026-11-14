@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from django.urls import reverse
 from django.utils import translation
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import get_supported_language_variant
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
@@ -19,7 +20,19 @@ class LogInUserView(generic.FormView):
         AUTH_FAILED = _("The combination of email and password does not match")
 
     def get_success_url(self) -> str:
-        return reverse(viewname="core:welcome")
+        return self.next_url or reverse(viewname="core:welcome")
+
+    @property
+    def next_url(self) -> str:
+        """The page that sent the visitor to the login, or "" unless it stays on this host."""
+        candidate = self.request.POST.get("next") or self.request.GET.get("next") or ""
+        is_safe = url_has_allowed_host_and_scheme(
+            candidate, allowed_hosts={self.request.get_host()}, require_https=self.request.is_secure()
+        )
+        return candidate if is_safe else ""
+
+    def get_context_data(self, **kwargs: object) -> dict:
+        return {**super().get_context_data(**kwargs), "next_url": self.next_url}
 
     def form_valid(self, form: LoginForm) -> HttpResponse:
         cleaned_data = form.cleaned_data

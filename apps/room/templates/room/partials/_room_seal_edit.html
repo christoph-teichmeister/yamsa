@@ -20,12 +20,12 @@
     {% include "room/partials/_room_seal.html" with icon=room|room_seal_icon tilt=room|room_seal_tilt image_url=room.seal_image_url size_class="size-12" %}
     {# A closed room's seal cannot change, so it offers no camera to hint that it could. #}
     {% if not room.is_closed %}
-      <span class="pointer-events-none absolute inset-0 flex items-center justify-center rounded-full bg-black/45 text-sm text-white opacity-0 transition-opacity group-hover/seal:opacity-100 group-has-focus-visible/seal:opacity-100"
+      <span class="pointer-events-none absolute inset-0 flex items-center justify-center rounded-full bg-scrim text-sm text-on-scrim opacity-0 transition-opacity group-hover/seal:opacity-100 group-has-focus-visible/seal:opacity-100"
             aria-hidden="true">{% icon "camera" %}</span>
     {% endif %}
   </button>
   <dialog id="room-seal-dialog"
-          class="m-auto w-[min(24rem,calc(100vw_-_2rem))] rounded-lg border border-line bg-surface p-0 text-ink backdrop:bg-black/60"
+          class="m-auto w-[min(24rem,calc(100vw_-_2rem))] rounded-3xl border border-line bg-surface p-0 text-ink backdrop:bg-scrim"
           data-dialog
           {% if seal_dialog_is_open %}open{% endif %}>
     <div class="flex items-center justify-between gap-3 border-b border-line px-5 py-3">
@@ -58,7 +58,7 @@
         </div>
       </div>
       <div class="flex flex-col gap-2">
-        <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover"
+        <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-brand active:scale-95"
                for="room-seal-image-input">
           {% icon "upload" %}
           {% trans "Upload a custom image" %}

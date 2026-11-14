@@ -23,7 +23,7 @@ class TestRegister:
 
         RegisterPage(page, base_url).register(name="Rita Reg", email="rita@yamsa.local", password=DEFAULT_PASSWORD)
 
-        page.wait_for_url(lambda url: url.endswith(reverse("core:welcome")))
+        page.wait_for_url(lambda url: url.endswith(reverse("room:detail", kwargs={"room_slug": shared_room.slug})))
         rita = User.objects.get(email="rita@yamsa.local")
         assert not rita.is_guest
         assert UserConnectionToRoom.objects.filter(user=rita, room=shared_room).exists()

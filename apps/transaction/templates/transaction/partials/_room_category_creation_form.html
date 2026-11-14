@@ -66,6 +66,7 @@
           <input id="category-order"
                  class="w-full rounded-xl border bg-surface-sunken px-4 py-2.5 text-ink transition tabular-nums focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand {% if category_creation_form.order_index.errors %}border-danger-text/60{% else %}border-line-strong{% endif %}"
                  type="number"
+                 inputmode="numeric"
                  name="order_index"
                  min="0"
                  value="{{ category_creation_form.order_index.value|default_if_none:'' }}" />

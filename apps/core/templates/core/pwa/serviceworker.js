@@ -552,8 +552,6 @@ self.addEventListener('notificationclick', function (event) {
       navigateClientToUrl(event, getURLForAction('click-me-action', actionClickUrls));
       break;
     default:
-      // Log unknown actions to the console
-      console.log(`Unknown action clicked: '${event.action}'`);
       break;
   }
 });

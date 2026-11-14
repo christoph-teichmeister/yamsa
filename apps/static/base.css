@@ -30,7 +30,7 @@ h1, h2, h3, h4, h5, h6 {
     pointer-events: auto;
     border-radius: 0.9rem;
     min-height: 3.5rem;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    box-shadow: var(--shadow-card);
 }
 
 .toast-yamsa-inner.toast-primary {

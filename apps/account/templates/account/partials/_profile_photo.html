@@ -29,14 +29,14 @@
         {% with avatar_source=user.name|default:user.email %}{{ avatar_source|slice:':1'|upper }}{% endwith %}
       </span>
     {% endif %}
-    <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/45 text-lg text-white opacity-0 transition-opacity group-hover:opacity-100 group-has-focus-visible:opacity-100"
+    <span class="pointer-events-none absolute inset-0 flex items-center justify-center bg-scrim text-lg text-on-scrim opacity-0 transition-opacity group-hover:opacity-100 group-has-focus-visible:opacity-100"
           aria-hidden="true">{% icon "camera" %}</span>
   </button>
   <span class="absolute -right-1 -bottom-1 flex size-7 cursor-pointer items-center justify-center rounded-full border-2 border-surface bg-brand text-xs text-on-brand shadow-sm transition group-hover:bg-brand-hover"
         aria-hidden="true"
         data-dialog-open="profile-photo-dialog">{% icon "camera" %}</span>
   <dialog id="profile-photo-dialog"
-          class="m-auto w-[min(24rem,calc(100vw_-_2rem))] rounded-3xl border border-line bg-surface p-0 text-ink backdrop:bg-black/60"
+          class="m-auto w-[min(24rem,calc(100vw_-_2rem))] rounded-3xl border border-line bg-surface p-0 text-ink backdrop:bg-scrim"
           data-dialog
           {% if photo_dialog_is_open %}open{% endif %}>
     <div class="flex items-center justify-between gap-3 border-b border-line px-5 py-3">
@@ -64,7 +64,7 @@
         <p class="m-0 rounded-lg bg-danger-soft px-3 py-2 text-sm text-danger-text">{{ error_message.message }}</p>
       {% endfor %}
       <div class="flex flex-col gap-2">
-        <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover"
+        <label class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-brand transition hover:bg-brand-hover has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-brand active:scale-95"
                for="profile-picture-input">
           {% icon "upload" %}
           {% trans "Upload a new photo" %}

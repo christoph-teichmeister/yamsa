@@ -19,9 +19,8 @@
 
     const revealing = field.type === "password";
     field.type = revealing ? "text" : "password";
+    // The label stays constant; aria-pressed carries the state, and the template swaps the icon
+    // through group-aria-pressed.
     toggle.setAttribute("aria-pressed", String(revealing));
-    // Both labels are rendered by the template, so they stay translatable.
-    toggle.setAttribute("aria-label", revealing ? toggle.dataset.passwordHideLabel : toggle.dataset.passwordShowLabel);
-    toggle.querySelector("i").className = revealing ? "bi bi-eye" : "bi bi-eye-slash";
   });
 })();

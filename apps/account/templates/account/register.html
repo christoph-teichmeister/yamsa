@@ -23,7 +23,8 @@
         hx-target="#body"
         hx-indicator="#body-loading-spinner"
         hx-swap="morph:innerHTML"
-        hx-push-url="true">
+        hx-push-url="true"
+        hx-disabled-elt="find button[type=submit]">
     {% csrf_token %}
     <div>
       <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Start now" %}</p>

@@ -1,11 +1,13 @@
 from django import forms
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_receipt_upload_form import TransactionReceiptUploadForm
-from apps.transaction.models import ParentTransaction
+from apps.transaction.models import ParentTransaction, TransactionChange
+from apps.transaction.services import change_history
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -26,13 +28,16 @@ class TransactionReceiptUploadView(
 
         if form.is_valid():
             try:
-                form.save(parent_transaction)
+                receipt = form.save(parent_transaction)
             except forms.ValidationError as exc:
                 form.add_error(None, exc)
             else:
+                change_history.record(
+                    parent_transaction, request.user, TransactionChange.Kind.RECEIPT_ADDED, detail=receipt.original_name
+                )
                 upload_success = True
                 form = TransactionReceiptUploadForm(request=request)
-                request.toast_queue.success("Receipt uploaded successfully.")
+                request.toast_queue.success(_("Receipt uploaded successfully."))
 
         receipts = parent_transaction.receipts.select_related("uploaded_by").all()
 

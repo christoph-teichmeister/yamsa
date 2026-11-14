@@ -1,9 +1,10 @@
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import QuerySet
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django.utils.translation import gettext as _
 from django.views import generic
 from django_context_decorator import context
 
@@ -11,8 +12,9 @@ from apps.core.event_loop.runner import handle_message
 from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
 from apps.transaction.forms.transaction_edit_form import TransactionEditForm
 from apps.transaction.messages.events.transaction import ParentTransactionUpdated
-from apps.transaction.models import ParentTransaction
+from apps.transaction.models import ParentTransaction, TransactionChange
 from apps.transaction.models.constants import FORMER_MEMBER_MESSAGE
+from apps.transaction.services import change_history
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -32,6 +34,11 @@ class TransactionEditView(
         if parent_transaction.involves_former_member:
             raise PermissionDenied(FORMER_MEMBER_MESSAGE)
         return parent_transaction
+
+    def post(self, request: HttpRequest, *args: object, **kwargs: object) -> HttpResponse:
+        # Read before the form validates: validation already writes the submitted values onto the instance.
+        self._before = change_history.snapshot(self.get_object())
+        return super().post(request, *args, **kwargs)
 
     def get_form_kwargs(self) -> dict:
         form_kwargs = super().get_form_kwargs()
@@ -54,10 +61,14 @@ class TransactionEditView(
         # once they are committed, so its handlers never run inside the transaction (#333).
         with transaction.atomic():
             self.object = form.save()
+            changes = change_history.diff(self._before, change_history.snapshot(self.object))
+            if changes:
+                change_history.record(self.object, self.request.user, TransactionChange.Kind.EDITED, changes=changes)
 
         handle_message(
             ParentTransactionUpdated(context_data={"parent_transaction": self.object, "room": self.object.room})
         )
+        self.request.toast_queue.success(_("Expense updated."))
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self) -> str:

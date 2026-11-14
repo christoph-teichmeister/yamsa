@@ -18,6 +18,9 @@
         <h1 class="mt-1 mb-0 text-xl font-semibold text-ink">{% trans "Who paid what" %}</h1>
       </div>
     </div>
+    {% if total_money_spent|length > 1 %}
+      <p class="m-0 text-sm text-ink-subtle">{% trans "This room uses several currencies. Totals are shown per currency and never converted." %}</p>
+    {% endif %}
     <div class="grid grid-cols-1 gap-3 @lg:grid-cols-3">
       {% for total_money_spent_entry in total_money_spent %}
         <div class="rounded-2xl border border-line bg-surface p-5">

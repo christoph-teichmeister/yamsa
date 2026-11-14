@@ -33,11 +33,7 @@ class RoomClosureReminderEmailService(BaseYamsaEmailService):
                     "inactivity_days": self.inactivity_days,
                 }
                 + " 🌙",
-                _(
-                    "If everyone already settled up, please mark the debts as paid "
-                    "and close the room so it stops lingering."
-                )
-                + " ✨",
+                _("If everyone has settled up, mark the debts as paid. There is no need to close the room."),
                 _("If you still need the room, feel free to ignore this reminder and keep it open."),
             ]
         )
