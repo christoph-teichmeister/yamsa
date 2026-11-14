@@ -73,7 +73,7 @@
               </p>
             </div>
             {% for total_entry in total_money_spent %}
-              {% if total_entry.currency_sign == money_spent.currency_sign %}
+              {% if total_entry.currency_id == money_spent.currency_id %}
                 {% widthratio money_spent.total_spent_per_person total_entry.total_spent 100 as spent_percent %}
                 {% include "transaction/partials/_spend_bar.html" with bar_percent=spent_percent bar_tone="spent" %}
               {% endif %}
@@ -113,7 +113,7 @@
                 </p>
                 <p class="m-0 shrink-0 font-semibold tabular-nums whitespace-nowrap text-ink">{{ debt_row.total_open_debt|format_with_thousands }} {{ debt_row.currency_sign }}</p>
               </div>
-              {% with max_val=max_open_debt_per_currency|get_item:debt_row.currency_sign %}
+              {% with max_val=max_open_debt_per_currency|get_item:debt_row.currency_id %}
                 {% if max_val %}
                   {% widthratio debt_row.total_open_debt max_val 100 as open_debt_percent %}
                   {% include "transaction/partials/_spend_bar.html" with bar_percent=open_debt_percent bar_tone="owed" %}
@@ -148,7 +148,7 @@
                 </div>
                 {# Scaled against the currency's total spend, so the three groups share one reading. #}
                 {% for total_entry in total_money_spent %}
-                  {% if total_entry.currency_sign == covered.currency_sign %}
+                  {% if total_entry.currency_id == covered.currency_id %}
                     {% widthratio covered.total_covered_for_person total_entry.total_spent 100 as covered_percent %}
                     {% include "transaction/partials/_spend_bar.html" with bar_percent=covered_percent bar_tone="covered" %}
                   {% endif %}
