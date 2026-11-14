@@ -1,5 +1,6 @@
 from apps.account.forms import EditUserForm
 from apps.account.models import User
+from apps.account.tests.factories import UserFactory
 from apps.webpush.models import WebpushInformation
 
 
@@ -101,3 +102,16 @@ class TestEditUserForm:
         assert not form.is_valid()
         # On the field rather than as a non-field error: the profile sheet renders it under the input.
         assert "paypal_me_username" in form.errors
+
+    def test_email_taken_by_another_account_in_other_case_is_rejected(self, user: User) -> None:
+        other = UserFactory(email="Taken@Local.Local")
+
+        form = self.form_class(instance=user, data={"name": user.name, "email": other.email.lower()})
+
+        assert not form.is_valid()
+        assert "already in use" in form.errors["email"][0]
+
+    def test_own_email_stays_valid(self, user: User) -> None:
+        form = self.form_class(instance=user, data={"name": user.name, "email": user.email})
+
+        assert form.is_valid()

@@ -1,5 +1,5 @@
 import hashlib
-from functools import cached_property, lru_cache
+from functools import cached_property
 from time import time
 
 from ambient_toolbox.mixins.validation import CleanOnSaveMixin
@@ -19,10 +19,7 @@ from apps.core.utils import determine_upload_to
 from apps.room.models import Room, UserConnectionToRoom
 
 
-@lru_cache
 def get_has_seen_room(userconnectiontoroom_set: models.Manager, room_id: int) -> tuple[UserConnectionToRoom, bool]:
-    # Refactored because of Error B019
-    # => https://docs.astral.sh/ruff/rules/cached-instance-method/#cached-instance-method-b019
     connections = userconnectiontoroom_set.filter(room_id=room_id)
     return connections.first(), connections.filter(user_has_seen_this_room=True).exists()
 
