@@ -519,6 +519,13 @@ msgstr "Währung"
 msgid "Currencies"
 msgstr "Währungen"
 
+msgid "Payment reminder"
+msgstr "Zahlungserinnerung"
+
+#, python-brace-format
+msgid "{creditor} gently reminds you of {amount} in \"{room}\""
+msgstr "{creditor} erinnert dich freundlich an {amount} in \"{room}\""
+
 #, python-brace-format
 msgid "Settled: {debitor} owes {value}{currency} to {creditor}"
 msgstr "Beglichen: {debitor} schuldet {value}{currency} an {creditor}"
@@ -532,6 +539,9 @@ msgstr "Erinnerung für inaktive Schulden"
 
 msgid "Inactive room reminder"
 msgstr "Erinnerung für inaktiven Raum"
+
+msgid "Manual debt reminder"
+msgstr "Manuelle Schuldenerinnerung"
 
 msgid "Reminder log"
 msgstr "Erinnerungsprotokoll"
@@ -630,6 +640,16 @@ msgstr "Mit PayPal bezahlen"
 msgid "Mark as paid"
 msgstr "Als bezahlt markieren"
 
+msgid "Reminder sent"
+msgstr "Erinnerung gesendet"
+
+#, python-format
+msgid "Next reminder possible at %(next_at)s"
+msgstr "Nächste Erinnerung möglich am %(next_at)s"
+
+msgid "Send reminder"
+msgstr "Erinnern"
+
 msgid "Settle debt"
 msgstr "Schuld begleichen"
 
@@ -665,6 +685,14 @@ msgstr "Betrag"
 
 msgid "debts"
 msgstr "schulden"
+
+#, python-format
+msgid "%(name)s was reminded recently. The next reminder is possible at %(time)s."
+msgstr "%(name)s wurde kürzlich erinnert. Die nächste Erinnerung ist am %(time)s möglich."
+
+#, python-format
+msgid "%(name)s has been reminded."
+msgstr "%(name)s wurde erinnert."
 
 msgid "Room name"
 msgstr "Raumname"
@@ -923,6 +951,28 @@ msgid "Register here"
 msgstr "Hier registrieren"
 
 #, python-format
+msgid "%(creditor_name)s sent you a payment reminder | %(room_name)s"
+msgstr "%(creditor_name)s erinnert dich an eine Zahlung | %(room_name)s"
+
+#, python-format
+msgid "Hey there! %(creditor_name)s gently reminds you of %(amount_summary)s in %(room_name)s."
+msgstr "Hallo! %(creditor_name)s erinnert dich freundlich an %(amount_summary)s in %(room_name)s."
+
+msgid "No rush - follow the link below whenever it suits you to review the debt and mark it as paid."
+msgstr "Kein Stress - folge dem Link unten, wann immer es dir passt, um die Schuld anzusehen und als bezahlt zu markieren."
+
+#, python-format
+msgid "Payment reminder: %(room_name)s"
+msgstr "Zahlungserinnerung: %(room_name)s"
+
+#, python-format
+msgid "%(creditor_name)s sent this reminder from yamsa."
+msgstr "%(creditor_name)s hat diese Erinnerung über yamsa geschickt."
+
+msgid "Already paid? Just mark the debt as paid and this reminder is out of the way."
+msgstr "Schon bezahlt? Markiere die Schuld einfach als bezahlt, dann ist die Erinnerung erledigt."
+
+#, python-format
 msgid "%(room_name)s | Payment reminder"
 msgstr "%(room_name)s | Zahlungserinnerung"
 
@@ -936,10 +986,6 @@ msgstr "Du schuldest aktuell %(amount_summary)s."
 
 msgid "Please follow the link below to review and settle the outstanding balance before it grows stale."
 msgstr "Bitte folge dem Link unten, um den offenen Betrag zu prüfen und zu begleichen, bevor er veraltet."
-
-#, python-format
-msgid "Payment reminder: %(room_name)s"
-msgstr "Zahlungserinnerung: %(room_name)s"
 
 msgid "This reminder is generated automatically for overdue balances. We're cheering for you!"
 msgstr "Diese Erinnerung wird automatisch bei überfälligen Beträgen erzeugt. Wir drücken dir die Daumen!"
