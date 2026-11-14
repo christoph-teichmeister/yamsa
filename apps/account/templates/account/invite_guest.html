@@ -27,6 +27,8 @@
                type="email"
                name="email"
                autocomplete="email"
+               autocapitalize="none"
+               autocorrect="off"
                required />
         {% for error_message in form.errors.email.data %}
           <p id="emailError" class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>

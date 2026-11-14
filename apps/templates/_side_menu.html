@@ -13,8 +13,8 @@ in the app, the toasts included - a toast raised while the menu is open waits be
 <nav class="sticky top-0 z-[1300] bg-surface-sunken pt-[calc(1.5rem_+_env(safe-area-inset-top))] pb-2">
   <div class="app-container pt-6">
     <div class="flex w-full items-center justify-between gap-2">
-      <div class="flex w-10 shrink-0 items-center">
-        <button class="inline-flex size-10 cursor-pointer items-center justify-center rounded-xl border border-transparent bg-transparent text-2xl text-brand-text transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+      <div class="flex w-11 shrink-0 items-center">
+        <button class="inline-flex size-11 cursor-pointer items-center justify-center rounded-xl border border-transparent bg-transparent text-2xl text-brand-text transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 type="button"
                 aria-haspopup="dialog"
                 aria-controls="side-menu-panel"
@@ -26,9 +26,9 @@ in the app, the toasts included - a toast raised while the menu is open waits be
           <h6 class="m-0 truncate text-base font-semibold text-ink-strong">{{ current_room.name }}</h6>
           <span class="block truncate text-sm text-ink-subtle">{{ current_room.description|truncatechars:50 }}</span>
         </div>
-        <div class="flex w-10 shrink-0 items-center justify-end">
+        <div class="flex w-11 shrink-0 items-center justify-end">
           {% if current_room.is_closed %}
-            <button class="inline-flex size-10 cursor-pointer items-center justify-center rounded-xl border border-transparent bg-transparent text-2xl text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            <button class="inline-flex size-11 cursor-pointer items-center justify-center rounded-xl border border-transparent bg-transparent text-2xl text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                     type="button"
                     aria-label="{{ room_settings_label }}"
                     hx-get="{% room_url 'room:detail' %}"
@@ -55,7 +55,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
       <h5 class="m-0 text-xl font-semibold text-ink-strong"
           id="side-menu-panel-label">{% trans "Menu" %}</h5>
       <button type="button"
-              class="inline-flex size-9 cursor-pointer items-center justify-center rounded-full border border-transparent bg-transparent text-ink-muted transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              class="inline-flex size-11 cursor-pointer items-center justify-center rounded-full border border-transparent bg-transparent text-ink-muted transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               aria-label="{% trans "Close" %}"
               data-dialog-close>{% icon "x-lg" %}</button>
     </div>

@@ -88,6 +88,7 @@
              placeholder="{% firstof field_placeholder '' %}"
              value="{{ field.value|default_if_none:'' }}"
              autocomplete="{% firstof field_autocomplete 'off' %}"
+             {% if field_type == "email" %}autocapitalize="none" autocorrect="off"{% endif %}
              {% if field.field.required %}required{% endif %}
              {% if submit_disabled %}disabled{% endif %}>
       {% for error in field.errors %}
