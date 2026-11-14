@@ -2152,6 +2152,16 @@ msgstr "{deleter} hat eine Transaktion gelöscht (\"{description}\")"
 msgid "{debitor} just settled their debt of {amount}{currency} to you"
 msgstr "{debitor} hat seine Schuld von {amount}{currency} bei dir beglichen"
 
+#, python-brace-format
+msgid "{creditor} marked your debt of {amount}{currency} as settled"
+msgstr "{creditor} hat deine Schuld von {amount}{currency} als beglichen markiert"
+
+msgid "Only the people this debt is between can settle it."
+msgstr "Nur die beiden Beteiligten dieser Schuld können sie begleichen."
+
+msgid "A settled debt cannot be reopened."
+msgstr "Eine beglichene Schuld kann nicht wieder geöffnet werden."
+
 msgid "Debt settled"
 msgstr "Schuld beglichen"
 

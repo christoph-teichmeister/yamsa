@@ -1,5 +1,8 @@
+from decimal import Decimal
+
 from django.urls import reverse
 from django.utils import translation
+from django.utils.formats import number_format
 from django.utils.translation import gettext as _
 
 from apps.account.messages.events.user_removed_from_room import UserRemovedFromRoom
@@ -18,6 +21,11 @@ from apps.transaction.models import ChildTransaction
 from apps.webpush.utils import Notification
 
 
+def _amount(value: Decimal) -> str:
+    """Format for the active language; only meaningful inside the recipient's `translation.override`."""
+    return number_format(value, use_l10n=True)
+
+
 @message_registry.register_event(event=ParentTransactionCreated, atomic=False)
 def send_notification_on_transaction_create(context: ParentTransactionCreated.Context) -> None:
     parent_transaction = context.parent_transaction
@@ -28,7 +36,7 @@ def send_notification_on_transaction_create(context: ParentTransactionCreated.Co
             if not parent_transaction.created_by or parent_transaction.created_by == parent_transaction.paid_by:
                 body = _('{payer} logged a payment of {amount}{currency} ("{description}")').format(
                     payer=parent_transaction.paid_by.name,
-                    amount=parent_transaction.value,
+                    amount=_amount(parent_transaction.value),
                     currency=parent_transaction.currency.sign,
                     description=parent_transaction.description,
                 )
@@ -36,7 +44,7 @@ def send_notification_on_transaction_create(context: ParentTransactionCreated.Co
                 body = _('{creator} logged that {payer} paid {amount}{currency} ("{description}")').format(
                     creator=parent_transaction.created_by.name,
                     payer=parent_transaction.paid_by.name,
-                    amount=parent_transaction.value,
+                    amount=_amount(parent_transaction.value),
                     currency=parent_transaction.currency.sign,
                     description=parent_transaction.description,
                 )
@@ -127,11 +135,12 @@ def send_notification_on_child_transaction_deleted(context: ParentTransactionDel
             ),
         )
 
-    build_notification_for_user(parent_transaction.paid_by).send_to_user(parent_transaction.paid_by)
+    if parent_transaction.paid_by != context.user_who_deleted:
+        build_notification_for_user(parent_transaction.paid_by).send_to_user(parent_transaction.paid_by)
 
     for debtor in context.debtors:
-        # If a user updated this transaction on another ones behalf and is a debtor, do not notify them
-        if parent_transaction.lastmodified_by == debtor:
+        # The deleter knows; someone else may have deleted it on the payer's or a debtor's behalf.
+        if debtor == context.user_who_deleted:
             continue
 
         build_notification_for_user(debtor).send_to_user(debtor)
@@ -140,13 +149,22 @@ def send_notification_on_child_transaction_deleted(context: ParentTransactionDel
 @message_registry.register_event(event=DebtSettled, atomic=False)
 def send_notification_on_debt_settled(context: DebtSettled.Context) -> None:
     debt = context.debt
+    settled_by_creditor = context.settled_by == debt.creditor
+    recipient = debt.debitor if settled_by_creditor else debt.creditor
 
-    with translation.override(get_language_code_for_user(debt.creditor)):
-        body = _("{debitor} just settled their debt of {amount}{currency} to you").format(
-            debitor=debt.debitor,
-            amount=debt.value,
-            currency=debt.currency.sign,
-        )
+    with translation.override(get_language_code_for_user(recipient)):
+        if settled_by_creditor:
+            body = _("{creditor} marked your debt of {amount}{currency} as settled").format(
+                creditor=debt.creditor,
+                amount=_amount(debt.value),
+                currency=debt.currency.sign,
+            )
+        else:
+            body = _("{debitor} just settled their debt of {amount}{currency} to you").format(
+                debitor=debt.debitor,
+                amount=_amount(debt.value),
+                currency=debt.currency.sign,
+            )
         head = _("Debt settled")
 
     Notification(
@@ -155,7 +173,7 @@ def send_notification_on_debt_settled(context: DebtSettled.Context) -> None:
             body=body,
             click_url=reverse(viewname="debt:list", kwargs={"room_slug": debt.room.slug}),
         ),
-    ).send_to_user(debt.creditor)
+    ).send_to_user(recipient)
 
 
 @message_registry.register_event(event=UserRemovedFromRoom, atomic=False)

@@ -1,3 +1,4 @@
+import http
 from datetime import date
 from unittest import mock
 
@@ -51,16 +52,23 @@ class TestSettling:
         handle_message.assert_called_once()
         assert settled_when_notified == [True]
 
-    def test_unsettling_notifies_nobody_and_clears_the_date(self, authenticated_client: Client, debt: Debt) -> None:
+    def test_unsettling_is_refused(self, authenticated_client: Client, debt: Debt) -> None:
         Debt.objects.filter(pk=debt.pk).update(settled=True, settled_at=date(2026, 3, 1))
 
         with mock.patch(HANDLE_MESSAGE) as handle_message:
-            authenticated_client.post(settle_url(debt), data={})
+            response = authenticated_client.post(settle_url(debt), data={})
 
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
         handle_message.assert_not_called()
         debt.refresh_from_db()
-        assert debt.settled is False
-        assert debt.settled_at is None
+        assert debt.settled is True
+        assert debt.settled_at == date(2026, 3, 1)
+
+    def test_the_event_names_who_settled(self, authenticated_client: Client, debt: Debt, user: User) -> None:
+        with mock.patch(HANDLE_MESSAGE) as handle_message:
+            authenticated_client.post(settle_url(debt), data={"settled": "true"})
+
+        assert handle_message.call_args.args[0].Context.settled_by == user
 
     def test_settling_an_already_settled_debt_again_is_silent_and_keeps_its_date(
         self, authenticated_client: Client, debt: Debt
