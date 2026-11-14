@@ -45,6 +45,7 @@
         <label class="m-0 text-sm text-ink-muted @md:w-44 @md:shrink-0" for="name">{{ form.fields.name.label }}</label>
         <div class="min-w-0 flex-1">
           <input id="name"
+                 {% if form.errors.name.data %}aria-invalid="true" aria-describedby="name-error"{% endif %}
                  class="w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand disabled:cursor-not-allowed disabled:opacity-60"
                  type="text"
                  name="name"
@@ -52,7 +53,8 @@
                  value="{{ form.name.value|default_if_none:current_room.name }}"
                  {% if current_room.is_closed %}disabled{% endif %}>
           {% for error_message in form.errors.name.data %}
-            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p {% if forloop.first %}id="name-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -61,6 +63,7 @@
                for="description">{{ form.fields.description.label }}</label>
         <div class="min-w-0 flex-1">
           <input id="description"
+                 {% if form.errors.description.data %}aria-invalid="true" aria-describedby="description-error"{% endif %}
                  class="w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand disabled:cursor-not-allowed disabled:opacity-60"
                  type="text"
                  name="description"
@@ -72,7 +75,8 @@
             {{ form.description.value|default_if_none:current_room.description|length }}/50
           </p>
           {% for error_message in form.errors.description.data %}
-            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p {% if forloop.first %}id="description-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -82,6 +86,7 @@
         <div class="min-w-0 flex-1">
           <div class="relative">
             <select id="preferred_currency"
+                    {% if form.errors.preferred_currency.data %}aria-invalid="true" aria-describedby="preferred_currency-error"{% endif %}
                     class="w-full appearance-none rounded-lg border border-line-strong bg-surface-sunken py-2 pr-9 pl-3 font-medium text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand disabled:cursor-not-allowed disabled:opacity-60"
                     name="preferred_currency"
                     required
@@ -96,7 +101,8 @@
             {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle" %}
           </div>
           {% for error_message in form.errors.preferred_currency.data %}
-            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p {% if forloop.first %}id="preferred_currency-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -178,7 +184,7 @@
           <p class="m-0 font-semibold text-ink">{% trans "Delete this room?" %}</p>
           <p class="m-0 text-sm text-ink-subtle">{% trans "This can not be undone." %}</p>
         </div>
-        <button class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-ink-subtle transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+        <button class="flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-ink-subtle transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 type="button"
                 aria-label="{% trans "Close" %}"
                 data-dialog-close>{% icon "x-lg" %}</button>

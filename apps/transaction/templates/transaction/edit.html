@@ -95,6 +95,7 @@
                 {% with safe_total=normalized_total|default:0 %}
                   {% with formatted_total=safe_total|stringformat:"0.2f" %}
                     <input id="total_value_input"
+                           {% if form.total_value.errors %}aria-invalid="true" aria-describedby="total_value_input-error"{% endif %}
                            class="w-full rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-4 pl-9 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                            type="number"
                            name="total_value"
@@ -107,7 +108,8 @@
               {% endwith %}
             </div>
             {% for error_message in form.total_value.errors %}
-              <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
+              <p {% if forloop.first %}id="total_value_input-error"{% endif %}
+                 class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
             {% endfor %}
             <p class="mt-1.5 mb-0 text-sm text-ink-subtle">
               {% blocktrans with split_total=parent_transaction.value split_currency=parent_transaction.currency.sign %}Current split: {{ split_total }}{{ split_currency }}{% endblocktrans %}
