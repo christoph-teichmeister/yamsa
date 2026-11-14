@@ -1,6 +1,8 @@
+from django.db import transaction
 from django.http import HttpResponse
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.account.forms import GuestCreateForm
@@ -16,14 +18,19 @@ class GuestCreateView(RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin, A
     template_name = "account/create_guest.html"
 
     def form_valid(self, form: GuestCreateForm) -> HttpResponse:
+        # A double submit would otherwise leave two identical guests in the room.
+        if User.objects.filter(rooms=self.request.room, name__iexact=form.cleaned_data["name"]).exists():
+            form.add_error("name", _("Someone with this name is already in this room"))
+            return self.form_invalid(form)
+
         created_guest: User = form.instance
 
         created_guest.created_at = timezone.now()
         created_guest.created_by = self.request.user
 
-        response = super().form_valid(form)
-
-        UserConnectionToRoom.objects.create(user=created_guest, room=self.request.room)
+        with transaction.atomic():
+            response = super().form_valid(form)
+            UserConnectionToRoom.objects.create(user=created_guest, room=self.request.room)
 
         return response
 

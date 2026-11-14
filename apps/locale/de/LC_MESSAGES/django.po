@@ -2191,3 +2191,9 @@ msgstr "Der Raum existiert nicht"
 
 msgid "User with this email address is already in this room"
 msgstr "Eine Person mit dieser E-Mail-Adresse ist bereits in diesem Raum"
+
+msgid "Someone with this name is already in this room"
+msgstr "Eine Person mit diesem Namen ist bereits in diesem Raum"
+
+msgid "An invitation was sent a moment ago. Please wait a few minutes."
+msgstr "Eine Einladung wurde gerade erst verschickt. Bitte warte ein paar Minuten."
