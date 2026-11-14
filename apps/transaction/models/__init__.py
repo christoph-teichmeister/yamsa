@@ -4,4 +4,5 @@ from apps.transaction.models.constants import BASE_CATEGORY_SLUGS, DEFAULT_CATEG
 from apps.transaction.models.parent_transaction import ParentTransaction
 from apps.transaction.models.receipt import Receipt
 from apps.transaction.models.room_category import RoomCategory
+from apps.transaction.models.transaction_change import TransactionChange
 from apps.transaction.utils import receipt_upload_path
