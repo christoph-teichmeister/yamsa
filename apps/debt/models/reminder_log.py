@@ -23,6 +23,8 @@ class ReminderLog(CommonInfo):
     class Meta:
         verbose_name = _("Reminder log")
         verbose_name_plural = _("Reminder logs")
+        # claim_window() looks up the latest log of a type on every dashboard render.
+        indexes = (models.Index(fields=("reminder_type", "created_at"), name="reminderlog_type_created_idx"),)
 
     @classmethod
     def claim_window(cls, reminder_type: str, *, interval: timedelta, now: datetime) -> "ReminderLog | None":
