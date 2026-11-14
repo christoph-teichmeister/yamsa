@@ -2,11 +2,12 @@ import uuid
 
 from django.contrib.auth import mixins
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.room.forms import RoomCreateForm
@@ -42,7 +43,10 @@ class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
         created_room.creation_token = token
 
         try:
-            ret = super().form_valid(form)
+            # Room and creator membership land together or not at all; guests follow after the commit.
+            with transaction.atomic():
+                ret = super().form_valid(form)
+                UserConnectionToRoom.objects.create(user=self.request.user, room=created_room)
         except (IntegrityError, ValidationError):
             # Lost the race against a concurrent POST of the same form (full_clean sees the committed
             # token as ValidationError, the unique index as IntegrityError): that request owns the room.
@@ -51,7 +55,6 @@ class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
                 raise
             return self._redirect_to(existing)
 
-        UserConnectionToRoom.objects.create(user=self.request.user, room=created_room)
         self._populate_suggested_guests(created_room)
 
         return ret
@@ -70,12 +73,26 @@ class RoomCreateView(mixins.LoginRequiredMixin, generic.CreateView):
         if not guest_emails:
             return
 
+        # Only the people the page offered: a posted address must not pull any account into the room.
+        suggested_emails = {
+            guest.email.lower() for guest in SuggestedGuestService(user=self.request.user).get_suggested_guests()
+        }
+        skipped = 0
         for email in guest_emails:
-            data = {"email": email, "room_slug": created_room.slug}
-            form = UserConnectionToRoomCreateForm(data=data)
+            if email.strip().lower() not in suggested_emails:
+                skipped += 1
+                continue
 
+            form = UserConnectionToRoomCreateForm(data={"email": email, "room_slug": created_room.slug})
             if form.is_valid():
                 form.save()
+            else:
+                skipped += 1
+
+        if skipped:
+            self.request.toast_queue.warning(
+                _("%(count)d of the selected people could not be added to the room.") % {"count": skipped}
+            )
 
     def _build_dashboard_url(self) -> str:
         base_url = reverse(viewname="core:welcome")

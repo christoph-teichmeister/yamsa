@@ -2178,3 +2178,16 @@ msgstr "Transaktionen importiert"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
+
+msgid "This email address cannot be added to the room"
+msgstr "Diese E-Mail-Adresse kann dem Raum nicht hinzugefügt werden"
+
+#, python-format
+msgid "%(count)d of the selected people could not be added to the room."
+msgstr "%(count)d der ausgewählten Personen konnten dem Raum nicht hinzugefügt werden."
+
+msgid "Room does not exist"
+msgstr "Der Raum existiert nicht"
+
+msgid "User with this email address is already in this room"
+msgstr "Eine Person mit dieser E-Mail-Adresse ist bereits in diesem Raum"
