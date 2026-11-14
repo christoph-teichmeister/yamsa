@@ -8,6 +8,13 @@ The project is a Django monolith rooted at `manage.py`. Domain-specific logic li
 `apps/staticfiles/` and `apps/static/bundles/`. Developer tooling scripts sit in `scripts/` and container assets in `Dockerfile`, `docker-compose.yml`,
 and `entrypoint.sh`. Documentation lives in `docs/`.
 
+Settings are the package `apps/config/settings/` (`DJANGO_SETTINGS_MODULE=apps.config.settings`). `__init__.py`
+star-imports the parts in a fixed order: `base` (paths, env, apps, middleware, storage, templates), `security`
+(CSP, cookies, sessions, axes, passkeys), `logs` (logging, release, Sentry), `mail`, `pwa`, `integrations`
+(ambient toolbox, web push, maintenance), `testing` (pytest and Playwright overrides) and `debug` (DEBUG-only apps).
+A new setting goes into the part it belongs to, reading earlier parts through explicit `from apps.config.settings.<part>
+import ...` lines; do not reorder the imports in `__init__.py`.
+
 ## Coding Style & Naming Conventions
 
 Follow Python's 4-space indentation and keep modules typed where practical. Use `snake_case` for functions, `PascalCase`
