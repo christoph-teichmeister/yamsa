@@ -14,6 +14,7 @@ class PaymentReminderCandidate:
     room: Room
     last_activity_at: datetime | None
     amounts: tuple[PaymentReminderAmount, ...]
+    creditor_names: tuple[str, ...] = ()
 
     def amount_summary(self) -> str:
         return ", ".join(self._format_amount(amount.currency, amount.amount) for amount in self.amounts)

@@ -12,8 +12,11 @@ class _PaymentReminderBuilder:
         self.user = user
         self.room = room
         self._amounts: dict[int, PaymentReminderAmount] = {}
+        # dict, not set: the mail names creditors in the order their debts came in.
+        self._creditor_names: dict[str, None] = {}
 
     def add(self, debt: Debt) -> None:
+        self._creditor_names[debt.creditor.name] = None
         currency_id = debt.currency_id
         current = self._amounts.get(currency_id)
         if current:
@@ -34,4 +37,5 @@ class _PaymentReminderBuilder:
             room=self.room,
             last_activity_at=last_activity_at,
             amounts=amounts,
+            creditor_names=tuple(self._creditor_names),
         )
