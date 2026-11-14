@@ -35,10 +35,12 @@ class MoneySpentOnRoomView(
             .values(
                 "parent_transaction__paid_by_id",
                 "parent_transaction__paid_by__name",
+                "parent_transaction__currency_id",
                 "parent_transaction__currency__sign",
             )
             .annotate(
                 paid_by_name=F("parent_transaction__paid_by__name"),
+                currency_id=F("parent_transaction__currency_id"),
                 currency_sign=F("parent_transaction__currency__sign"),
                 total_spent_per_person=Sum("value"),
             )
@@ -50,8 +52,13 @@ class MoneySpentOnRoomView(
     def total_money_spent(self) -> QuerySet[dict[str, object]]:
         return (
             self.get_base_queryset()
-            .values("parent_transaction__currency__sign")
-            .annotate(currency_sign=F("parent_transaction__currency__sign"), total_spent=Sum("value"))
+            .values("parent_transaction__currency_id", "parent_transaction__currency__sign")
+            .annotate(
+                currency_id=F("parent_transaction__currency_id"),
+                currency_sign=F("parent_transaction__currency__sign"),
+                total_spent=Sum("value"),
+            )
+            .order_by("parent_transaction__currency_id")
         )
 
     @context
@@ -61,8 +68,11 @@ class MoneySpentOnRoomView(
         return (
             self.get_base_queryset()
             .exclude(paid_for=F("parent_transaction__paid_by"))
-            .values("paid_for_id", "paid_for__name", "parent_transaction__currency__sign")
+            .values(
+                "paid_for_id", "paid_for__name", "parent_transaction__currency_id", "parent_transaction__currency__sign"
+            )
             .annotate(
+                currency_id=F("parent_transaction__currency_id"),
                 currency_sign=F("parent_transaction__currency__sign"),
                 total_covered_for_person=Sum("value"),
             )
@@ -76,7 +86,7 @@ class MoneySpentOnRoomView(
         """Actual outstanding debts after optimisation, grouped by debtor and currency."""
         return (
             Debt.objects.filter(room_id=self.request.room.id, settled=False)
-            .values("debitor_id", "debitor__name", "currency__sign")
+            .values("debitor_id", "debitor__name", "currency_id", "currency__sign")
             .annotate(
                 debitor_name=F("debitor__name"),
                 currency_sign=F("currency__sign"),
@@ -87,11 +97,12 @@ class MoneySpentOnRoomView(
 
     @context
     @property
-    def max_open_debt_per_currency(self) -> dict[str, object]:
-        """Max open debt value per currency - used for bar scaling in the template."""
+    def max_open_debt_per_currency(self) -> dict[int, object]:
+        """Max open debt value per currency id - used for bar scaling in the template."""
         qs = (
             Debt.objects.filter(room_id=self.request.room.id, settled=False)
-            .values("currency__sign")
-            .annotate(currency_sign=F("currency__sign"), max_debt=Max("value"))
+            .values("currency_id")
+            .annotate(max_debt=Max("value"))
+            .order_by("currency_id")
         )
-        return {row["currency_sign"]: row["max_debt"] for row in qs}
+        return {row["currency_id"]: row["max_debt"] for row in qs}
