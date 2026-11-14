@@ -24,9 +24,7 @@ The loader auto-manages:
 {% endcomment %}
 {% load i18n %}
 <div id="{{ loader_id }}-loader-container" class="relative w-full">
-  <div id="{{ loader_id }}-skeleton"
-       class="skeleton-container"
-       style="display: none">
+  <div id="{{ loader_id }}-skeleton" class="skeleton-container" hidden>
     {% for _ in "x"|rjust:skeleton_count %}<div class="skeleton-item"></div>{% endfor %}
   </div>
   {% include "shared_partials/_loading_overlay.html" with loader_id=loader_id %}
@@ -37,7 +35,7 @@ The loader auto-manages:
   <div id="{{ loader_id }}-error"
        class="flex flex-col items-center gap-2 px-5 py-6 text-center"
        role="alert"
-       style="display: none">
+       hidden>
     <p class="m-0 text-sm text-ink-muted">{% trans "Couldn't load this. Check your connection and try again." %}</p>
     <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             type="button"
@@ -59,32 +57,32 @@ The loader auto-manages:
 
     const showSkeleton = () => {
         const skeleton = document.getElementById(skeletonId);
-        if (skeleton) skeleton.style.display = 'block';
+        if (skeleton) skeleton.hidden = false;
     };
 
     const hideSkeleton = () => {
         const skeleton = document.getElementById(skeletonId);
-        if (skeleton) skeleton.style.display = 'none';
+        if (skeleton) skeleton.hidden = true;
     };
 
     const hideError = () => {
         const errorBox = document.getElementById(errorId);
-        if (errorBox) errorBox.style.display = 'none';
+        if (errorBox) errorBox.hidden = true;
     };
 
     const showError = () => {
         const errorBox = document.getElementById(errorId);
-        if (errorBox) errorBox.style.display = 'flex';
+        if (errorBox) errorBox.hidden = false;
     };
     
     const showOverlay = () => {
         const overlay = document.getElementById(overlayId);
-        if (overlay) overlay.style.display = 'flex';
+        if (overlay) overlay.hidden = false;
     };
     
     const hideOverlay = () => {
         const overlay = document.getElementById(overlayId);
-        if (overlay) overlay.style.display = 'none';
+        if (overlay) overlay.hidden = true;
         if (overlayTimer) {
             clearTimeout(overlayTimer);
             overlayTimer = null;

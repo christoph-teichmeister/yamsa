@@ -13,7 +13,7 @@ open state is the details element's own and needs no aria-expanded to mirror it.
       <details class="group">
         <summary class="room-overview-toggle flex cursor-pointer list-none items-center justify-between gap-2 border-b-2 border-line py-1 [&::-webkit-details-marker]:hidden"
                  aria-controls="{{ section_id }}">
-          <span class="border-b-2 border-transparent pb-1 -mb-[2px] text-xs font-semibold tracking-[0.08em] text-ink-subtle uppercase group-open:border-brand group-open:text-brand-text">{% trans title %} ({{ entries|length }})</span>
+          <span class="border-b-2 border-transparent pb-1 -mb-[2px] text-xs font-semibold tracking-wider text-ink-subtle uppercase group-open:border-brand group-open:text-brand-text">{% trans title %} ({{ entries|length }})</span>
           {% icon "chevron-down" "room-overview-toggle-icon text-ink-subtle transition-transform group-open:rotate-180 motion-reduce:transition-none" %}
         </summary>
         <div class="room-overview-entries mt-2 grid grid-cols-2 gap-2 @md:gap-3"
@@ -24,7 +24,7 @@ open state is the details element's own and needs no aria-expanded to mirror it.
         </div>
       </details>
     {% else %}
-      <p class="m-0 inline-block w-fit border-b-2 border-brand pb-1 text-xs font-semibold tracking-[0.08em] text-brand-text uppercase">{% trans title %}</p>
+      <p class="m-0 inline-block w-fit border-b-2 border-brand pb-1 text-xs font-semibold tracking-wider text-brand-text uppercase">{% trans title %}</p>
       {% comment %}
         Rows sit directly on the page, divided only by a hairline - no wrapping card, no surface
         change from the canvas behind it. A bordered/radiused box around the whole list still
