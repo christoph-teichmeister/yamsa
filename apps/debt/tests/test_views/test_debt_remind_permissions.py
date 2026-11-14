@@ -35,6 +35,12 @@ class TestWhoMayRemind:
 
         assert client.post(remind_url(debt)).status_code == http.HTTPStatus.FORBIDDEN
 
+    def test_a_debt_awaiting_confirmation_is_refused(self, client: Client, user: User, pending_debt: Debt) -> None:
+        client.force_login(user)
+
+        assert client.post(remind_url(pending_debt)).status_code == http.HTTPStatus.FORBIDDEN
+        assert not ReminderLog.objects.exists()
+
     def test_a_settled_debt_is_refused(self, client: Client, user: User, debt: Debt) -> None:
         Debt.objects.filter(pk=debt.pk).update(settled=True)
         client.force_login(user)

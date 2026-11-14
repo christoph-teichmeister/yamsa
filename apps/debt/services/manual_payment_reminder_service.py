@@ -17,7 +17,13 @@ class ManualPaymentReminderService:
 
     @staticmethod
     def can_remind(debt: Debt, creditor: User) -> bool:
-        return not debt.settled and debt.creditor_id == creditor.id and not debt.debitor.is_guest
+        # A debt the debitor already marked as paid waits on the creditor, so nagging would be pointless.
+        return (
+            not debt.settled
+            and not debt.awaiting_confirmation
+            and debt.creditor_id == creditor.id
+            and not debt.debitor.is_guest
+        )
 
     @classmethod
     def record(cls, debt: Debt, creditor: User) -> ReminderLog:

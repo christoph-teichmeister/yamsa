@@ -3,6 +3,7 @@ from django.urls import path
 from apps.debt.views.debt_export_view import DebtExportView
 from apps.debt.views.debt_list_view import DebtListView
 from apps.debt.views.debt_remind_view import DebtRemindView
+from apps.debt.views.debt_reopen_view import DebtReopenView
 from apps.debt.views.debt_settle_view import DebtSettleView
 from apps.debt.views.money_spent_on_room_view import MoneySpentOnRoomView, MoneySpentTrendPartialView
 from apps.room.urls import build_room_specific_paths
@@ -30,6 +31,11 @@ urlpatterns = [
                 "remind/<int:pk>/",
                 DebtRemindView.as_view(),
                 name="remind",
+            ),
+            path(
+                "reopen/<int:pk>/",
+                DebtReopenView.as_view(),
+                name="reopen",
             ),
             path(
                 "money-spent",

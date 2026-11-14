@@ -730,7 +730,8 @@ class TestCalculateOptimisedDebts:
         """
 
         debt = room.debts.get(debitor=guest_user_1, creditor=guest_user_2, currency=currency_2)
-        authenticated_client.force_login(guest_user_1)
+        # Only the creditor's word settles a debt.
+        authenticated_client.force_login(guest_user_2)
         response = authenticated_client.post(
             reverse("debt:settle", kwargs={"room_slug": room.slug, "pk": debt.id}),
             data={"settled": True},
