@@ -1,4 +1,5 @@
 from django.contrib.auth import hashers
+from django.contrib.auth.password_validation import validate_password
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
@@ -26,7 +27,12 @@ class RegisterForm(ModelForm):
         return normalized_email
 
     def clean_password(self) -> str:
-        return hashers.make_password(self.cleaned_data["password"])
+        password = self.cleaned_data["password"]
+        # Name and email are cleaned before the password (field order), so the similarity check sees them.
+        validate_password(
+            password, user=User(name=self.cleaned_data.get("name", ""), email=self.cleaned_data.get("email", ""))
+        )
+        return hashers.make_password(password)
 
     def save(self, commit: bool = True) -> User:
         self.instance.name = self.cleaned_data["name"]
