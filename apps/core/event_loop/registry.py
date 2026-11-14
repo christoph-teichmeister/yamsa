@@ -1,10 +1,13 @@
 import contextlib
 import importlib
+import logging
 from collections.abc import Callable
 
 from django.conf import settings
 
 from apps.core.event_loop.messages import Command, Event
+
+logger = logging.getLogger(__name__)
 
 
 class MessageRegistry:
@@ -73,7 +76,7 @@ class MessageRegistry:
 
         self._log_detected("commands", self.command_dict)
         self._log_detected("events", self.event_dict)
-        print(f"\n### {len(self.command_dict) + len(self.event_dict)} message functions detected. ###\n")
+        logger.debug("%d message functions detected", len(self.command_dict) + len(self.event_dict))
 
     @staticmethod
     def _import_handler_modules(app: str) -> None:
@@ -89,10 +92,9 @@ class MessageRegistry:
 
     @staticmethod
     def _log_detected(message_type: str, message_dict: dict) -> None:
-        print(f"\nMessage autodiscovery running for {message_type}...")
         for message, handlers in message_dict.items():
             handler_list = ", ".join(handler.__name__ for handler in handlers)
-            print(f"* {message.__name__}: [{handler_list}]")
+            logger.debug("Detected %s: %s -> [%s]", message_type, message.__name__, handler_list)
 
 
 message_registry = MessageRegistry()
