@@ -95,7 +95,12 @@ class TestRoomSettlementJourney:
         guest_debt_list.expect_row(debt.id, text=f"You owe {profile_user.name}", amount="15.00")
         guest_debt_list.open_settle_confirmation(debt.id)
         guest_debt_list.confirm_settlement()
-        guest_debt_list.expect_settled(debt.id)
+        guest_debt_list.expect_awaiting_confirmation(debt.id)
+
+        # Only the owner's confirmation makes the money count as moved.
+        owner_debt_list.navigate()
+        owner_debt_list.confirm_payment_received(debt.id)
+        owner_debt_list.expect_settled(debt.id)
 
         dashboard_page = DashboardPage(page, base_url, reverse("core:welcome"))
         dashboard_page.navigate()

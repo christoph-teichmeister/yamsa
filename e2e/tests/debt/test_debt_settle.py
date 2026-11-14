@@ -17,11 +17,37 @@ class TestDebtSettle:
         debt_list_page.open_settle_confirmation(open_debt.id)
         debt_list_page.confirm_settlement()
 
+        debt_list_page.expect_awaiting_confirmation(open_debt.id)
+        open_debt.refresh_from_db()
+        assert open_debt.awaiting_confirmation
+        assert not open_debt.settled
+
+    def test_the_creditor_confirms_a_payment_and_settles_the_debt(
+        self, debt_list_as: Callable, profile_user: User, open_debt: Debt
+    ) -> None:
+        Debt.objects.filter(pk=open_debt.pk).update(awaiting_confirmation=True)
+        debt_list_page = debt_list_as(profile_user)
+
+        debt_list_page.confirm_payment_received(open_debt.id)
+
         debt_list_page.expect_settled(open_debt.id)
         debt_list_page.expect_all_settled_badge()
         open_debt.refresh_from_db()
         assert open_debt.settled
-        assert open_debt.settled_at is not None
+        assert not open_debt.awaiting_confirmation
+
+    def test_the_creditor_can_reject_a_payment(
+        self, debt_list_as: Callable, profile_user: User, open_debt: Debt
+    ) -> None:
+        Debt.objects.filter(pk=open_debt.pk).update(awaiting_confirmation=True)
+        debt_list_page = debt_list_as(profile_user)
+
+        debt_list_page.reject_payment(open_debt.id)
+
+        debt_list_page.expect_open_for_creditor(open_debt.id)
+        open_debt.refresh_from_db()
+        assert not open_debt.awaiting_confirmation
+        assert not open_debt.settled
 
     def test_cancelling_the_confirmation_leaves_the_debt_open(
         self, debt_list_as: Callable, roommate: User, open_debt: Debt

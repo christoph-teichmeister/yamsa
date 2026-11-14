@@ -30,6 +30,22 @@ class DebtListPage(BasePage):
         expect(row).to_contain_text("Settled on")
         expect(row.get_by_role("button", name="Mark as paid")).to_have_count(0)
 
+    def expect_awaiting_confirmation(self, debt_id: int) -> None:
+        row = self.row_for(debt_id)
+        expect(row).to_contain_text("Paid, waiting for confirmation")
+        expect(row.get_by_role("button", name="Mark as paid")).to_have_count(0)
+
+    def confirm_payment_received(self, debt_id: int) -> None:
+        self.row_for(debt_id).get_by_role("button", name="Confirm payment").click()
+        with self.page.expect_response(
+            lambda response: "/settle/" in response.url and response.request.method == "POST"
+        ):
+            self.page.get_by_role("button", name="Yes, I received it").click()
+
+    def reject_payment(self, debt_id: int) -> None:
+        with self.page.expect_response(lambda response: "/reopen/" in response.url):
+            self.row_for(debt_id).get_by_role("button", name="Not received").click()
+
     def expect_open_for_debtor(self, debt_id: int) -> None:
         expect(self.row_for(debt_id).get_by_role("button", name="Mark as paid")).to_be_visible()
 
