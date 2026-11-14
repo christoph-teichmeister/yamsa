@@ -1,6 +1,7 @@
 from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.account.forms.guest_send_invitation_form import GuestSendInvitationEmailForm
@@ -23,6 +24,12 @@ class GuestSendInvitationEmailView(
         return User.objects.filter(is_guest=True, rooms=self.request.room)
 
     def form_valid(self, form: GuestSendInvitationEmailForm) -> HttpResponse:
+        # The button is hidden while the window runs, but a replayed POST must not mail again.
+        guest = self.get_queryset().annotate_invitation_email_can_be_sent().get(pk=self.object.pk)
+        if not guest.invitation_email_can_be_sent:
+            form.add_error("email", _("An invitation was sent a moment ago. Please wait a few minutes."))
+            return self.form_invalid(form)
+
         form_valid = super().form_valid(form)
 
         handle_message(
