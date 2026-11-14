@@ -4,11 +4,12 @@ from django.db.models import QuerySet
 from django.forms import BaseModelForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views import generic
+from django_context_decorator import context
 
 from apps.core.event_loop.runner import handle_message
+from apps.debt.messages.events.debt_marked_paid import DebtMarkedPaid
 from apps.debt.messages.events.debt_settled import DebtSettled
 from apps.debt.models import Debt
 from apps.debt.views.mixins.debt_base_context import DebtBaseContext
@@ -37,22 +38,28 @@ class DebtSettleView(RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin, De
             raise PermissionDenied(_("A settled debt cannot be reopened."))
 
         with transaction.atomic():
-            # Locked so two simultaneous posts cannot both see "unsettled" and notify twice.
+            # Locked so two simultaneous posts cannot both see the old state and notify twice.
             debt = Debt.objects.select_for_update().get(pk=self.object.pk)
-            became_settled = not debt.settled
-            if became_settled:
-                debt.settled = True
-                # `settled_at` is derived, never taken from the request.
-                debt.settled_at = timezone.localdate()
-                debt.save()
+            # The creditor's word settles the debt; the debitor can only claim to have paid.
+            by_creditor = self.request.user.pk == debt.creditor_id
+            changed = debt.settle() if by_creditor else debt.mark_as_paid()
         self.object = debt
 
-        # Only after the commit, and only for a newly settled debt: re-posting an already settled
-        # one tells nobody anything.
-        if became_settled:
-            handle_message(DebtSettled(context_data={"debt": debt, "settled_by": self.request.user}))
+        # Only after the commit, and only for a real change: re-posting says nothing new.
+        if changed:
+            event = (
+                DebtSettled(context_data={"debt": debt, "settled_by": self.request.user})
+                if by_creditor
+                else DebtMarkedPaid(context_data={"debt": debt})
+            )
+            handle_message(event)
 
         return HttpResponseRedirect(self.get_success_url())
+
+    @context
+    @property
+    def viewer_is_creditor(self) -> bool:
+        return self.request.user.pk == self.object.creditor_id
 
     def get_success_url(self) -> str:
         return reverse("debt:list", kwargs={"room_slug": self.request.room.slug})
