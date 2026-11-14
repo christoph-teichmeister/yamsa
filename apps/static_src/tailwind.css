@@ -117,6 +117,8 @@
      and have to carry white either way: the auth hero and the button standing on it. Everything
      else takes `brand`, which follows the theme. */
   --yamsa-brand-strong: #1b5acd;
+  /* Far end of the auth hero's gradient; no other surface uses it. */
+  --yamsa-brand-deep: #113881;
 
   /* The scrim of the loading overlays. One value for both themes, because it does not sit on
      the canvas but on whatever the page happens to show, and it has one job on either theme:
@@ -230,7 +232,7 @@
 /* The auth hero's ground. A utility rather than two tokens because its far end is a value of the
    gradient and of nothing else - and this file is the only place a colour is written down. */
 @utility auth-hero-surface {
-  background: linear-gradient(135deg, var(--yamsa-brand-strong), #113881);
+  background: linear-gradient(135deg, var(--yamsa-brand-strong), var(--yamsa-brand-deep));
 }
 
 /* The side menu's slide-in, on a modal <dialog>. None of this is expressible as a utility: the
@@ -249,7 +251,7 @@
   }
 
   &::backdrop {
-    background: rgb(0 0 0 / 0.5);
+    background: var(--yamsa-scrim);
     opacity: 0;
     transition:
       opacity 0.3s ease-out,

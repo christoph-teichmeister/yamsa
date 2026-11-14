@@ -95,7 +95,7 @@ there are the only place a color is written down. Tailwind exposes them via `@th
 | `brand`, `brand-hover`, `brand-text`           | brand fill, its hover, brand-colored text on a surface    |
 | `brand-soft`                                   | tinted brand background (badges, icon tiles, gradients)   |
 | `on-brand`                                     | text and icons on a brand fill                            |
-| `scrim`, `on-scrim`                            | the loading overlay's dimming layer, and what stands on it |
+| `scrim`, `on-scrim`                            | the dimming layer of every overlay: loading, dialog `backdrop:bg-scrim`, side-menu backdrop, avatar hover (`bg-scrim text-on-scrim`) |
 | `success-*`, `warning-*`, `danger-*`           | `-text` and `-soft` pairs for status                      |
 
 The `--yamsa-*-border` variables in `tailwind.css` are deliberately **not** in `@theme inline`:
@@ -289,6 +289,10 @@ Dialogs inside a sheet share `apps/static/js/dialog.js` (`data-dialog`,
 `data-dialog-open="<id>"`, `data-dialog-close`), which also re-opens a dialog that an htmx swap
 brought back with the `open` attribute. Neither bundle knows which page it is on — a second copy
 of either would drift from the first.
+
+A dialog is `m-auto rounded-3xl border border-line bg-surface p-0 text-ink backdrop:bg-scrim` with a
+`w-[min(<24|28|34>rem,calc(100vw_-_2rem))]` width chosen by its content. Colours, shadows (`shadow-card`)
+and letter-spacing (`tracking-wider`) come from tokens and the scale, never raw values or `bg-black/*`.
 
 ## Sub-cycles: parts that update on their own
 
