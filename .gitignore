@@ -19,6 +19,7 @@ dist/
 
 # Django/data directories
 apps/config/.env
+apps/config/.env.local
 /.env
 apps/locale/de/LC_MESSAGES/django.mo
 /webpack_bundles/
