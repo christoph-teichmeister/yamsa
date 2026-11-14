@@ -956,6 +956,7 @@ def _passkey_rp_id(request: HttpRequest | None = None) -> str:
 
 FIDO_SERVER_ID = _passkey_rp_id
 FIDO_SERVER_NAME = "yamsa"
+# Read by django-passkeys (no authenticator-attachment restriction); not referenced in our own code.
 KEY_ATTACHMENT = None
 
 # WEBPUSH
