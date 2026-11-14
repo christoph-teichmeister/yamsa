@@ -21,7 +21,7 @@ class CsvExportMixin:
     def _write_metadata(self, writer: object, buffer: io.StringIO, room: Model, timestamp: datetime) -> Iterator[str]:
         metadata = [
             ["Room Slug", room.slug],
-            ["Room Name", room.name],
+            ["Room Name", self._safe(room.name)],
             ["Export Timestamp", timestamp.isoformat()],
         ]
 
