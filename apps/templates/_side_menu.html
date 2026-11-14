@@ -85,9 +85,9 @@ in the app, the toasts included - a toast raised while the menu is open waits be
               title="{{ system_theme_label }}"
               aria-label="{{ system_theme_label }}">{% icon "circle-half" %}</button>
     </div>
-    <div class="room-card bg-surface px-3 py-3 text-center shadow-card">
+    <div class="rounded-2xl bg-surface px-3 py-3 text-center shadow-card">
       {% with sidebar_avatar_source=request.user.name|default:request.user.email %}
-        <div class="profile-avatar mb-2">
+        <div class="mx-auto mb-2 flex size-16 items-center justify-center rounded-2xl bg-brand-soft">
           {% if request.user.profile_picture %}
             <img src="{{ request.user.profile_picture_url }}"
                  data-profile-picture-fallback-url="{{ request.user.profile_picture_fallback_url }}"
@@ -143,8 +143,7 @@ in the app, the toasts included - a toast raised while the menu is open waits be
          hx-target="#body"
          hx-swap="morph:innerHTML"
          hx-push-url="true">
-      <div class="room-circle"
-           {% if request.path == "/welcome/" %}data-selected{% endif %}>{% icon "house" %}</div>
+      <div class="flex size-13 shrink-0 items-center justify-center rounded-full font-semibold uppercase {% if request.path == "/welcome/" %}bg-linear-[145deg] from-brand-hover to-brand text-on-brand shadow-brand{% else %}bg-ink/10 shadow-card{% endif %}">{% icon "house" %}</div>
       <div class="room-entry-text min-w-0 flex-1 text-left">
         <div class="room-name m-0 font-semibold">{% trans "Home" %}</div>
         <small class="room-description">{% trans "Back to home" %}</small>

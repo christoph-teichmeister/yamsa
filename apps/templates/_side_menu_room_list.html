@@ -15,8 +15,7 @@
        hx-target="#body"
        hx-swap="innerHTML"
        hx-push-url="true">
-    <div class="room-circle"
-         {% if request.path == "/import/upload/" %}data-selected{% endif %}>{% icon "box-arrow-in-down" %}</div>
+    <div class="flex size-13 shrink-0 items-center justify-center rounded-full font-semibold uppercase {% if request.path == "/import/upload/" %}bg-linear-[145deg] from-brand-hover to-brand text-on-brand shadow-brand{% else %}bg-ink/10 shadow-card{% endif %}">{% icon "box-arrow-in-down" %}</div>
     <div class="room-entry-text min-w-0 flex-1 text-left">
       <div class="room-name m-0 font-semibold">{% trans "Import" %}</div>
       <small class="room-description">{% trans "Bring your data from another app" %}</small>
