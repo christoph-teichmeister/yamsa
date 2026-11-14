@@ -31,7 +31,7 @@ tmp/
 yamsa_db_test
 # Default DJANGO_DATABASE_URL target (sqlite:///sqlite.db) — created by any manage.py call
 sqlite.db
-# The Playwright suite's test database (see E2E_TESTING in apps/config/settings.py), plus its WAL files
+# The Playwright suite's test database (see E2E_TESTING in apps/config/settings/testing.py), plus its WAL files
 e2e-test.sqlite3*
 
 # Node/Yarn

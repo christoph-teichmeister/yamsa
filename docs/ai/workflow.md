@@ -42,5 +42,5 @@ notes, delete the markdown file from `.github-pull-requests`.
 ## Security & Configuration Tips
 
 Secrets belong in environment variables or `.env` files excluded from git; never hard-code keys for mail, web push, or
-third-party APIs. Use `config/settings/*` to separate local vs. production configs, and prefer feature flags/settings
+third-party APIs. Settings live in the `apps/config/settings/` package (see `architecture.md`); prefer feature flags/settings
 constants over inline literals when adding new toggles.

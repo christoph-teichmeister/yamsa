@@ -57,7 +57,7 @@ include = ["apps*", "render_sh_scripts*"]
 branch = true
 # do not test these things
 omit = [
-    "*/config/settings.py",
+    "*/config/settings/*",
     "*/config/asgi.py",
     "*/config/wsgi.py",
     "*/migrations/*",

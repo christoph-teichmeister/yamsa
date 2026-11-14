@@ -70,7 +70,7 @@ name, one-writer rule, layer precedence). Every value not verified in step
 - Same branch name in every repo: yes
 - Worktree needs: `.env` (gitignored — `DATABASE_PORT`/`BACKEND_PORT`/`MAILHOG_*_PORT` overrides, copy or create per worktree if running via docker-compose, each with distinct values — see `## Parallel-run recipe`); `node_modules` (`yarn install` per worktree, or symlink — not yet measured which is faster); frontend build output (`yarn build`, produces `apps/static/bundles/` + the staticfiles manifest) — **verified missing in ④.4's worktree test**: a fresh worktree without it 500s on any page render with `ValueError: Missing staticfiles manifest entry for 'images/favicon.ico'`; Python deps handled by `uv sync` per worktree/venv
 - Toolchain in a worktree: nothing under `.claude/` is ever copied into one — committed, so it travels with the checkout.
-- Test suite self-isolating: yes — `DJANGO_DATABASE_URL` defaults to `sqlite:///sqlite.db` (apps/config/settings.py) when unset, so a worktree without its own `.env` override gets its own file-based test DB and cannot collide with another worktree's run
+- Test suite self-isolating: yes — `DJANGO_DATABASE_URL` defaults to `sqlite:///sqlite.db` (apps/config/settings/base.py) when unset, so a worktree without its own `.env` override gets its own file-based test DB and cannot collide with another worktree's run
 - Git-dependent management commands: none found
 - Tooling sees worktrees: yes — verified in ④.4: `docker compose -p yamsa_0 up -d` (main tree) and `docker compose -p yamsa_1 up -d` (a worktree on the same commit) ran simultaneously without collision once `container_name` was replaced with per-service network aliases (see `## Parallel-run recipe`'s pinned-values table) — each worktree's bind mount (`.:/src`) correctly resolves to its own checkout, not the main tree's
 <!-- /owner: beyonder-setup -->
@@ -137,7 +137,7 @@ An **isolated slot**, so implement sessions run side by side.
 |---|---|---|---|
 | `docker-compose.yml` ports | host ports 8002/5431/8027/1027 | `${BACKEND_PORT:-8000}:8000` etc. | applied 2026-09-01 — grep `\${BACKEND_PORT` docker-compose.yml |
 | `docker-compose.yml` `container_name` (×3) | global names `yamsa_database`/`yamsa_backend`/`yamsa_mailhog` | per-service `networks.default.aliases` (same hostnames, scoped to each project's own network) | applied 2026-09-01 — grep `aliases:` docker-compose.yml |
-| `apps/config/settings.py:53` (`DJANGO_EMAIL_HOST` default) | hostname `yamsa_mailhog` | unchanged — still resolves via the network alias above, per project | applied (no change needed) |
+| `apps/config/settings/base.py` (was `settings.py:53`) (`DJANGO_EMAIL_HOST` default) | hostname `yamsa_mailhog` | unchanged — still resolves via the network alias above, per project | applied (no change needed) |
 | `apps/docs/notes.md:8` (`docker cp ... yamsa_database:...`) | literal container name `yamsa_database` | `docker compose ps -q database` — resolves the running container id regardless of project name, works for the base env or any `-p` slot | applied 2026-09-01 — grep `docker compose ps -q database` apps/docs/notes.md |
 | `scripts/run_backend.sh:9`, `scripts/run_backend_local.sh:15-16` | container-internal port `8000` | none needed — internal bind port, not host-exposed, safe as-is per slot | applied (no change needed) |
 <!-- /owner: beyonder-setup -->
