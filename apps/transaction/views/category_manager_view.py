@@ -85,7 +85,7 @@ class RoomCategoryManagerView(
 
     def _post_delete(self, request: HttpRequest, service: RoomCategoryService) -> HttpResponse:
         room_category_id = request.POST.get("room_category_id")
-        if room_category_id:
+        if room_category_id and room_category_id.isdecimal():
             deleted_category = service.delete_room_category(int(room_category_id))
             if deleted_category:
                 self.request.toast_queue.success(self._get_category_deletion_success_message(deleted_category.name))
