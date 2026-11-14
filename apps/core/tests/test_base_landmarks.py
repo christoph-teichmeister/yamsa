@@ -18,6 +18,15 @@ def test_base_template_offers_a_skip_link_to_the_main_landmark(db: None, client:
     assert page.select_one("main#base-content") is not None
 
 
+def test_side_menu_rows_are_links_not_div_buttons(authenticated_client: Client) -> None:
+    response = authenticated_client.get(reverse("core:welcome"))
+
+    page = BeautifulSoup(response.content.decode(), "html.parser")
+    entries = page.select("#side-menu-panel .room-entry")
+    assert entries
+    assert all(entry.name == "a" and entry.get("href") for entry in entries)
+
+
 def test_toast_live_regions_are_rendered_empty(db: None, client: Client) -> None:
     page = _login_page(client)
 
