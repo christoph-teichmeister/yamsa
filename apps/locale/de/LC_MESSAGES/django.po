@@ -2197,3 +2197,6 @@ msgstr "Eine Person mit diesem Namen ist bereits in diesem Raum"
 
 msgid "An invitation was sent a moment ago. Please wait a few minutes."
 msgstr "Eine Einladung wurde gerade erst verschickt. Bitte warte ein paar Minuten."
+
+msgid "The push endpoint must be a public https URL."
+msgstr "Der Push-Endpunkt muss eine öffentliche https-URL sein."
