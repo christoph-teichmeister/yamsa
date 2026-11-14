@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "ambient-toolbox==12.*",
-    "django-axes==8.*",
+    "django-axes>=8,<10",
     "django-cloudinary-storage==0.*",
     "django-context-decorator==1.*",
     "django-environ==0.*",
