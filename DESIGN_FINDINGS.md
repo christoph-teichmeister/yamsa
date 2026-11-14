@@ -71,11 +71,9 @@ Bug found while testing (pre-existing, confirmed red on `main` too, unrelated to
 
 ## Cross-cutting / infra
 
-- [ ] **Terser minification is currently disabled** (`optimization.minimize: false` applied ad hoc,
-  not committed to `webpack.config.js`) as a workaround for a `htmx.defineExtension is not a
-      function` runtime break in the ProvidePlugin↔idiomorph integration under production
-  minification. Root cause not fully isolated — needs a proper fix in `webpack.config.js`
-  before minification can be safely re-enabled.
+- [x] **Terser minification** is enabled (`mode: "production"`, no `minimize: false`). The old
+  `htmx.defineExtension is not a function` break is fixed by the named `ProvidePlugin` export in
+  `webpack.config.js`; the production build compiles with it.
 - [ ] **No real mobile-browser visual verification** has been done for any change in this
   tracker — everything was checked via curl/rendered-HTML inspection and unit tests only (no
   Chrome extension access in this session). Given yamsa is mobile-first, a real device/viewport

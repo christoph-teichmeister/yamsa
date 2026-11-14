@@ -31,8 +31,8 @@ class ChangePasswordPage(BasePage):
     def field_type(self, field_id: str) -> str:
         return self.page.locator(f"#{field_id}").get_attribute("type")
 
-    def toggle_label(self, field_id: str) -> str:
-        return self.page.locator(f"[data-password-toggle='{field_id}']").get_attribute("aria-label")
+    def toggle_pressed(self, field_id: str) -> str:
+        return self.page.locator(f"[data-password-toggle='{field_id}']").get_attribute("aria-pressed")
 
     def expect_field_error(self, field_id: str, message: str) -> None:
         expect(self.page.locator(f"#{field_id}Error")).to_have_text(message)

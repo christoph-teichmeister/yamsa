@@ -281,9 +281,6 @@ msgstr "Zurück zum Profil"
 msgid "Show password"
 msgstr "Passwort anzeigen"
 
-msgid "Hide password"
-msgstr "Passwort verbergen"
-
 msgid "Superuser"
 msgstr "Superuser"
 

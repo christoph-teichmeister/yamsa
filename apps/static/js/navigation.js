@@ -279,7 +279,7 @@ import "./invalid-field-reveal.js";
       }
       input.dataset.roomSearchBound = 'true';
 
-      const scope = input.closest('.@container')?.querySelector('[data-room-search-scope]');
+      const scope = input.closest('.\\@container')?.querySelector('[data-room-search-scope]');
       if (!scope) {
         return;
       }

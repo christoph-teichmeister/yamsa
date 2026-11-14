@@ -99,7 +99,8 @@
       details = details.parentElement && details.parentElement.closest("details");
     }
     const target = isRadio(field) ? messageAnchor(field) : field;
-    target.scrollIntoView({ block: "center", behavior: "smooth" });
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    target.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
     field.focus({ preventScroll: true });
   };
 
