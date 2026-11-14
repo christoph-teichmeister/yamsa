@@ -146,3 +146,10 @@ class TestRoomCategoryManagerView:
         assert not RoomCategory.objects.filter(pk=target.pk).exists()
         trigger_payload = json.loads(response["HX-Trigger"])
         assert trigger_payload["triggerToast"][0]["message"] == f'Category "{target.category.name}" deleted.'
+
+    def test_delete_with_a_non_numeric_id_does_not_crash(self, authenticated_client: Client, room: Room) -> None:
+        url = reverse("transaction:category-manager", kwargs={"room_slug": room.slug})
+
+        response = authenticated_client.post(url, data={"action": "delete", "room_category_id": "abc"})
+
+        assert response.status_code in {http.HTTPStatus.OK, http.HTTPStatus.FOUND}

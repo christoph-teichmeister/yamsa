@@ -150,11 +150,13 @@ class RoomCategoryService:
             target.delete()
             self.room.room_categories.filter(order_index__gt=shift_index).update(order_index=F("order_index") - 1)
             if was_default:
-                replacement = self._ensure_default_exists()
-                replacement_category = replacement.category if replacement else Category.get_default_category()
-                ParentTransaction.objects.filter(room=self.room, category=deleted_category).update(
-                    category=replacement_category
-                )
+                self._ensure_default_exists()
+            # Whichever category goes, its transactions must land on one the room still offers.
+            default = self._get_default_room_category()
+            replacement_category = default.category if default else Category.get_default_category()
+            ParentTransaction.objects.filter(room=self.room, category=deleted_category).update(
+                category=replacement_category
+            )
             return deleted_category
 
     def _ensure_defaults(self) -> None:
