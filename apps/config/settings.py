@@ -137,7 +137,6 @@ THIRD_PARTY_APPS = (
     "axes",
     "cloudinary",
     "cloudinary_storage",
-    "django_extensions",
     "django_minify_html",
     "django_pony_express",
     "passkeys",
@@ -376,6 +375,8 @@ X_FRAME_OPTIONS = "DENY"
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 # Use X-Forwarded-Proto Header to determine SSL status (useful for API docs)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# The TLS-terminating proxy owns the HTTP->HTTPS redirect; redirecting here too would loop on plain-HTTP
+# health checks. HSTS is opt-in per environment through DJANGO_SECURE_HSTS_SECONDS (below).
 SECURE_SSL_REDIRECT = False
 CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE = env("DJANGO_SESSION_COOKIE_SECURE")
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -473,10 +474,6 @@ LOGGING = {
             "handlers": ("console",),
             "level": logging.WARNING,
         },
-        "django.security.cors": {
-            "handlers": ("console",),
-            "level": logging.WARNING,
-        },
         "axes": {
             "handlers": ("console",),
             "level": logging.WARNING,
@@ -564,16 +561,6 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 # https://docs.djangoproject.com/en/dev/ref/settings/#std-setting-SECURE_REFERRER_POLICY
 SECURE_REFERRER_POLICY = "same-origin"
 
-# DJANGO-CORS-HEADERS (Cross-Origin Resource Sharing)
-# ------------------------------------------------------------------------------
-
-# https://github.com/adamchainz/django-cors-headers?tab=readme-ov-file#cors_allow_credentials-bool
-CORS_ALLOW_CREDENTIALS = True
-# https://github.com/adamchainz/django-cors-headers?tab=readme-ov-file#cors_urls_regex-str--patternstr
-CORS_URLS_REGEX = "/api/.*"
-# https://github.com/adamchainz/django-cors-headers?tab=readme-ov-file#cors_allowed_origins-sequencestr
-CORS_ALLOWED_ORIGINS = (FRONTEND_URL,)
-
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-trusted-origins
 CSRF_TRUSTED_ORIGINS = (FRONTEND_URL, BACKEND_URL)
 
@@ -589,7 +576,6 @@ LOGIN_COUNT = 3
 AXES_COOLOFF_TIME = axes_cooloff_time
 AXES_LOGIN_FAILURE_LIMIT = LOGIN_COUNT
 AXES_USERNAME_FORM_FIELD = "email"  # use the email field from the login form
-AXES_CLEANUP_DAYS = 30
 # Axes maps the email login form field (AXES_USERNAME_FORM_FIELD) into the "username"
 # slot before applying lockouts, so AXES_LOCKOUT_PARAMETERS now contains a single entry that pairs
 # "username" and "ip_address" to key attempts per user/IP combination.
@@ -1047,7 +1033,7 @@ if env.bool("DJANGO_TESTING", False) or any(keyword in sys.argv for keyword in (
 # DEBUG
 # ------------------------------------------------------------------------------
 if DEBUG:
-    INSTALLED_APPS += ("django_browser_reload",)
+    INSTALLED_APPS += ("django_browser_reload", "django_extensions")
 
     MIDDLEWARE = (
         *MIDDLEWARE,
