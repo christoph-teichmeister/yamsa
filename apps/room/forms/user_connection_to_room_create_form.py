@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 from apps.account.models import User
 from apps.room.models import Room, UserConnectionToRoom
@@ -10,9 +11,10 @@ class UserConnectionToRoomCreateForm(forms.ModelForm):
     room_slug = forms.CharField()
 
     class ExceptionMessage:
-        EMAIL_UNKNOWN = "Email does not exist"
-        ROOM_UNKNOWN = "Room does not exist"
-        EMAIL_ALREADY_IN_ROOM = "User with this email address is already in this room"
+        # Neutral on purpose: a distinct "unknown" text would tell a visitor which addresses have accounts.
+        EMAIL_UNKNOWN = _("This email address cannot be added to the room")
+        ROOM_UNKNOWN = _("Room does not exist")
+        EMAIL_ALREADY_IN_ROOM = _("User with this email address is already in this room")
 
     class Meta:
         model = UserConnectionToRoom
