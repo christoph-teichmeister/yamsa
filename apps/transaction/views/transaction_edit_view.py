@@ -28,9 +28,14 @@ class TransactionEditView(
         return super().get_queryset().filter(room=self.request.room).select_related("paid_by", "currency", "category")
 
     def get_object(self, queryset: QuerySet | None = None) -> ParentTransaction:
+        if queryset is None and hasattr(self, "_parent_transaction"):
+            return self._parent_transaction
         parent_transaction = super().get_object(queryset)
         if parent_transaction.involves_former_member:
             raise PermissionDenied(FORMER_MEMBER_MESSAGE)
+        if queryset is None:
+            # Per request: involves_former_member costs queries and get_object() runs several times.
+            self._parent_transaction = parent_transaction
         return parent_transaction
 
     def get_form_kwargs(self) -> dict:

@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -10,6 +11,8 @@ from apps.debt.services.payment_reminder_service._payment_reminder_builder impor
 from apps.debt.services.payment_reminder_service.payment_reminder_candidate import PaymentReminderCandidate
 from apps.mail.services.payment_reminder_mail_service import PaymentReminderEmailService
 from apps.room.models import Room
+
+logger = logging.getLogger(__name__)
 
 
 class PaymentReminderService:
@@ -24,28 +27,35 @@ class PaymentReminderService:
         # Rooms older than this threshold are eligible for payment nudges.
         self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)
 
-    def run(self) -> list[PaymentReminderCandidate]:
-        """Send an email to every candidate that still owes a balance in an inactive room."""
+    def run(self, *, log: ReminderLog | None = None) -> list[PaymentReminderCandidate]:
+        """Send an email to every candidate that still owes a balance in an inactive room.
+
+        `log` is the wave already claimed by `run_if_due`; without one the wave is logged at the end.
+        """
         if not settings.INACTIVITY_REMINDER_ENABLED:
             return []
 
         candidates = self._collect_candidates()
         recipients: list[str] = []
         for candidate in candidates:
-            PaymentReminderEmailService(
-                recipient=candidate.user,
-                room_name=candidate.room.name,
-                amount_summary=candidate.amount_summary(),
-                inactivity_days=settings.INACTIVITY_REMINDER_DAYS,
-                payment_link=self._build_payment_link(candidate.room),
-            ).process()
+            try:
+                PaymentReminderEmailService(
+                    recipient=candidate.user,
+                    room_name=candidate.room.name,
+                    amount_summary=candidate.amount_summary(),
+                    inactivity_days=settings.INACTIVITY_REMINDER_DAYS,
+                    payment_link=self._build_payment_link(candidate.room),
+                ).process()
+            except Exception:
+                # Runs inside a page render: one bad mail must neither 500 the page nor be retried on every view.
+                logger.exception("Payment reminder mail failed for user %s", candidate.user.pk)
+                continue
             recipients.append(candidate.user.email)
 
-        # Keep a log of every reminder wave along with the affected recipients.
-        ReminderLog.objects.create(
-            reminder_type=self.REMINDER_TYPE,
-            recipients=sorted(set(recipients)),
-        )
+        if log is None:
+            log = ReminderLog(reminder_type=self.REMINDER_TYPE)
+        log.recipients = sorted(set(recipients))
+        log.save()
 
         return candidates
 
@@ -53,7 +63,10 @@ class PaymentReminderService:
         """Execute `run` only when the heartbeat window allows another reminder wave."""
         if not self.should_run():
             return []
-        return self.run()
+        log = ReminderLog.claim_window(self.REMINDER_TYPE, interval=self.HEARTBEAT_INTERVAL, now=self.now)
+        if log is None:
+            return []
+        return self.run(log=log)
 
     def should_run(self) -> bool:
         """Avoid sending reminders more often than the heartbeat interval."""

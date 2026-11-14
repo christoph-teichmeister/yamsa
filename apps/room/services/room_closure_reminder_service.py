@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -9,6 +10,8 @@ from apps.account.models import User
 from apps.debt.models import ReminderLog
 from apps.mail.services.room_closure_reminder_mail_service import RoomClosureReminderEmailService
 from apps.room.models import Room, UserConnectionToRoom
+
+logger = logging.getLogger(__name__)
 
 
 class RoomClosureReminderService:
@@ -22,8 +25,11 @@ class RoomClosureReminderService:
         # Any room with activity older than this threshold becomes a closure candidate.
         self.threshold = self.now - timedelta(days=settings.INACTIVITY_REMINDER_DAYS)
 
-    def run(self) -> list[Room]:
-        """Tell room owners to revisit rooms that have stayed open without activity."""
+    def run(self, *, log: ReminderLog | None = None) -> list[Room]:
+        """Tell room owners to revisit rooms that have stayed open without activity.
+
+        `log` is the wave already claimed by `run_if_due`; without one the wave is logged at the end.
+        """
         if not settings.INACTIVITY_REMINDER_ENABLED:
             return []
 
@@ -38,20 +44,25 @@ class RoomClosureReminderService:
             if not self._should_notify_creator(creator):
                 continue
 
-            RoomClosureReminderEmailService(
-                recipient=creator,
-                room_name=room.name,
-                inactivity_days=settings.INACTIVITY_REMINDER_DAYS,
-                room_link=self._build_room_link(room),
-            ).process()
+            try:
+                RoomClosureReminderEmailService(
+                    recipient=creator,
+                    room_name=room.name,
+                    inactivity_days=settings.INACTIVITY_REMINDER_DAYS,
+                    room_link=self._build_room_link(room),
+                ).process()
+            except Exception:
+                # Runs inside a page render: one bad mail must neither 500 the page nor be retried on every view.
+                logger.exception("Room closure reminder mail failed for room %s", room.pk)
+                continue
 
             recipients.append(creator.email)
             candidates.append(room)
 
-        ReminderLog.objects.create(
-            reminder_type=self.REMINDER_TYPE,
-            recipients=sorted(set(recipients)),
-        )
+        if log is None:
+            log = ReminderLog(reminder_type=self.REMINDER_TYPE)
+        log.recipients = sorted(set(recipients))
+        log.save()
 
         return candidates
 
@@ -59,7 +70,10 @@ class RoomClosureReminderService:
         """Guard the execution behind the heartbeat to avoid spamming creators."""
         if not self.should_run():
             return []
-        return self.run()
+        log = ReminderLog.claim_window(self.REMINDER_TYPE, interval=self.HEARTBEAT_INTERVAL, now=self.now)
+        if log is None:
+            return []
+        return self.run(log=log)
 
     def should_run(self) -> bool:
         """Check whether enough time has passed since the last reminder wave."""

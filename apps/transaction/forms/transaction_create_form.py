@@ -68,6 +68,7 @@ class TransactionCreateForm(SplitSharesMixin, RoomCategoryFieldMixin, forms.Mode
         if room is not None:
             self.instance.room = room
         self.narrow_category_field_to(room)
+        self.fields["paid_by"].queryset = self._share_room_users()
 
     def _share_room_users(self) -> QuerySet:
         return User.objects.filter(room=self._room)

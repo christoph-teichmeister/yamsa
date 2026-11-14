@@ -40,9 +40,11 @@ class TransactionCreateView(
         if self.request.method == "POST":
             # SimpleArrayField expects a single delimited value, not Django's default QueryDict
             # multi-value handling - same conversion TransactionEditView.get_form_kwargs() does.
-            kwargs["data"]._mutable = True
+            # On a copy: _build_split_rows re-reads request.POST's multi-values after a failed submit.
+            data = kwargs["data"].copy()
             for field in ("paid_for", "value"):
-                kwargs["data"][field] = kwargs["data"].getlist(field)
+                data[field] = kwargs["data"].getlist(field)
+            kwargs["data"] = data
 
         return kwargs
 
