@@ -87,9 +87,10 @@ class RoomDetailPage(BasePage):
         with self.page.expect_response(lambda response: "/status" in response.url):
             self.page.locator("#force-close-confirm-button").click()
 
-    def delete_room(self) -> None:
+    def delete_room(self, room_name: str) -> None:
         self.page.locator("#delete-room-button").click()
         expect(self.page.locator("#delete-room-dialog")).to_be_visible()
+        self.page.locator("#delete-room-name-input").fill(room_name)
         with self.page.expect_response(lambda response: response.url.endswith("/delete")):
             self.page.locator("#delete-room-confirm-button").click()
 

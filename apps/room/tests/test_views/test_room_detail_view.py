@@ -57,6 +57,7 @@ class TestRoomDetailView:
 
         assert contains_attribute(content, "id", "delete-room-button")
         assert contains_attribute(content, "id", "delete-room-dialog")
+        assert contains_attribute(content, "id", "delete-room-name-input")
 
     def test_an_open_room_offers_no_danger_zone(self, authenticated_client: Client, room: Room) -> None:
         content = authenticated_client.get(reverse("room:detail", kwargs={"room_slug": room.slug})).content.decode()
