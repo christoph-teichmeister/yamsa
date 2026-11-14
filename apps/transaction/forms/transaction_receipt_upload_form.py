@@ -3,6 +3,7 @@ import mimetypes
 from django import forms
 from django.core.files.uploadedfile import UploadedFile
 from django.http import HttpRequest
+from django.utils.translation import gettext_lazy as _lazy
 
 from apps.transaction.forms.transaction_create_form import (
     MAX_RECEIPT_SIZE,
@@ -20,7 +21,7 @@ class TransactionReceiptUploadForm(forms.Form):
     receipt = forms.FileField(
         widget=forms.ClearableFileInput(attrs={"accept": ACCEPTED_RECEIPT_TYPES}),
         required=True,
-        help_text="Upload a PDF or image (max 5 MB).",
+        help_text=_lazy("Upload a PDF or image (max 5 MB)."),
     )
 
     def __init__(self, *args: object, request: HttpRequest | None = None, **kwargs: object) -> None:
@@ -40,11 +41,11 @@ class TransactionReceiptUploadForm(forms.Form):
         uploaded_file.content_type = content_type
 
         if content_type not in RECEIPT_ACCEPTED_CONTENT_TYPES:
-            msg = "Receipts must be PDF or an image (PNG, JPEG, WebP, GIF)."
+            msg = _lazy("Receipts must be PDF or an image (PNG, JPEG, WebP, GIF).")
             raise forms.ValidationError(msg, code="invalid_content_type")
 
         if uploaded_file.size > MAX_RECEIPT_SIZE:
-            msg = "Each receipt must be 5 MB or smaller."
+            msg = _lazy("Each receipt must be 5 MB or smaller.")
             raise forms.ValidationError(msg, code="file_too_large")
 
         uploader = getattr(self._request, "user", None)

@@ -8,6 +8,7 @@ from django.template.defaulttags import url
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.timesince import timesince
+from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 
 from apps.core.utils import format_number_with_thousands
@@ -87,6 +88,19 @@ def room_last_used(value: datetime | None) -> str:
 
     # Same msgid the news cards and the transaction list already use, so no new string.
     return _("%(timesince)s ago") % {"timesince": timesince(value, depth=1)}
+
+
+@register.filter
+def money(value: object, currency_sign: str) -> str:
+    """An amount with its currency sign the way the active language writes it.
+
+    English puts the sign in front ("$42.50"); the other languages we ship put it behind a
+    non-breaking space ("42,50 €"), so the sign never wraps onto a line of its own.
+    """
+    amount = format_with_thousands(value)
+    if (get_language() or "en").startswith("en"):
+        return f"{currency_sign}{amount}"
+    return f"{amount}\u00a0{currency_sign}"
 
 
 @register.filter
