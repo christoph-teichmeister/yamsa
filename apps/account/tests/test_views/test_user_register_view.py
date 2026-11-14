@@ -244,3 +244,19 @@ def test_post_as_logged_in_guest_converts_that_guest(client: Client, guest_user:
     guest_user.refresh_from_db()
     assert not guest_user.is_guest
     assert guest_user.email == "now_real@local.local"
+
+
+def test_post_survives_a_post_register_mail_failure(client: Client, monkeypatch: pytest.MonkeyPatch) -> None:
+    def failing_handle_message(message: object) -> None:
+        msg = "smtp down"
+        raise OSError(msg)
+
+    monkeypatch.setattr("apps.account.views.user_register_view.handle_message", failing_handle_message)
+
+    response = client.post(
+        reverse("account:register"),
+        data={"name": "Mail Down", "email": "maildown@local.local", "password": "Str0ng-Pw-Value"},
+    )
+
+    assert response.status_code == http.HTTPStatus.FOUND
+    assert User.objects.filter(email="maildown@local.local").exists()
