@@ -152,7 +152,8 @@ class RoomCategoryService:
             if was_default:
                 replacement = self._ensure_default_exists()
                 replacement_category = replacement.category if replacement else Category.get_default_category()
-                ParentTransaction.objects.filter(room=self.room, category=deleted_category).update(
+                # all_objects: the category is PROTECTed, also by a transaction in its undo window.
+                ParentTransaction.all_objects.filter(room=self.room, category=deleted_category).update(
                     category=replacement_category
                 )
             return deleted_category

@@ -1,51 +1,55 @@
+from datetime import timedelta
 from unittest import mock
 
 import pytest
-from django.test import Client
-from django.urls import reverse
+from django.utils import timezone
 
 from apps.account.models import User
 from apps.room.models import Room
 from apps.transaction.messages.events.transaction import ParentTransactionDeleted
-from apps.transaction.models import ParentTransaction
+from apps.transaction.models import ChildTransaction, ParentTransaction
+from apps.transaction.services.transaction_deletion_service import UNDO_WINDOW, TransactionDeletionService
 from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 
 pytestmark = pytest.mark.django_db
 
 
-PARENT_DELETE_MESSAGE = "apps.transaction.views.parent_transaction_delete_view.handle_message"
+FINALISE_MESSAGE = "apps.transaction.services.transaction_deletion_service.handle_message"
 
 
-class TestParentTransactionDelete:
-    def test_the_event_follows_the_deletion(
-        self, authenticated_client: Client, room: Room, user: User, guest_user: User
-    ) -> None:
+def _trash_and_expire(parent: ParentTransaction, user: User) -> None:
+    TransactionDeletionService.trash(parent, user=user)
+    ParentTransaction.all_objects.filter(pk=parent.pk).update(
+        deleted_at=timezone.now() - UNDO_WINDOW - timedelta(seconds=1)
+    )
+
+
+class TestFinaliseExpired:
+    def test_the_event_follows_the_deletion(self, room: Room, user: User, guest_user: User) -> None:
         parent, _ = create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+        _trash_and_expire(parent, user)
         existed_when_notified = []
 
         def record(message: ParentTransactionDeleted) -> None:
-            existed_when_notified.append(ParentTransaction.objects.filter(pk=parent.pk).exists())
+            existed_when_notified.append(ParentTransaction.all_objects.filter(pk=parent.pk).exists())
 
-        with mock.patch(PARENT_DELETE_MESSAGE, side_effect=record):
-            authenticated_client.post(
-                reverse("transaction:parent-transaction-delete", kwargs={"room_slug": room.slug, "pk": parent.pk})
-            )
+        with mock.patch(FINALISE_MESSAGE, side_effect=record):
+            TransactionDeletionService.finalise_expired()
 
         assert existed_when_notified == [False]
 
     def test_a_failing_delete_leaves_transaction_and_shares_untouched(
-        self, authenticated_client: Client, room: Room, user: User, guest_user: User
+        self, room: Room, user: User, guest_user: User
     ) -> None:
         parent, _ = create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+        _trash_and_expire(parent, user)
 
         with (
             mock.patch.object(ParentTransaction, "delete", side_effect=RuntimeError("boom")),
-            mock.patch(PARENT_DELETE_MESSAGE) as handle_message,
+            mock.patch(FINALISE_MESSAGE) as handle_message,
             pytest.raises(RuntimeError),
         ):
-            authenticated_client.post(
-                reverse("transaction:parent-transaction-delete", kwargs={"room_slug": room.slug, "pk": parent.pk})
-            )
+            TransactionDeletionService.finalise_expired()
 
         handle_message.assert_not_called()
-        assert parent.child_transactions.count() == 1
+        assert ChildTransaction.all_objects.filter(parent_transaction=parent).count() == 1

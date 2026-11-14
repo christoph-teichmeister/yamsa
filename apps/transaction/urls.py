@@ -72,6 +72,11 @@ urlpatterns = [
                 views.ParentTransactionDeleteView.as_view(),
                 name="parent-transaction-delete",
             ),
+            path(
+                "parent-transaction/restore/<int:pk>",
+                views.ParentTransactionRestoreView.as_view(),
+                name="parent-transaction-restore",
+            ),
         ]
     ),
 ]

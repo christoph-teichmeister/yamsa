@@ -1,16 +1,16 @@
 from django.core.exceptions import PermissionDenied
-from django.db import transaction
 from django.db.models import QuerySet
 from django.forms import BaseForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.views import generic
 
-from apps.core.event_loop.runner import handle_message
 from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
-from apps.transaction.messages.events.transaction import ParentTransactionDeleted
+from apps.transaction.constants import DELETE_UNDO_SECONDS
 from apps.transaction.models import ParentTransaction
 from apps.transaction.models.constants import FORMER_MEMBER_MESSAGE
+from apps.transaction.services.transaction_deletion_service import TransactionDeletionService
 from apps.transaction.views.mixins.transaction_base_context import TransactionBaseContext
 
 
@@ -37,10 +37,16 @@ class ParentTransactionDeleteView(
         )
 
     def form_valid(self, form: BaseForm) -> HttpResponse:
-        # The event follows the commit: its handlers recalculate debts from what is left (#333).
-        with transaction.atomic():
-            deleted = ParentTransactionDeleted.context_before_deletion(self.object, user_who_deleted=self.request.user)
-            self.object.delete()
-
-        handle_message(ParentTransactionDeleted(context_data=deleted))
+        # Any earlier delete whose undo window has passed is made final here, which notifies the room.
+        TransactionDeletionService.finalise_expired(self.request.room)
+        TransactionDeletionService.trash(self.object, user=self.request.user)
+        self.request.toast_queue.add_with_action(
+            _('Deleted "{description}".').format(description=self.object.description),
+            action_label=_("Undo"),
+            action_url=reverse(
+                "transaction:parent-transaction-restore",
+                kwargs={"room_slug": self.request.room.slug, "pk": self.object.pk},
+            ),
+            duration_ms=DELETE_UNDO_SECONDS * 1000,
+        )
         return HttpResponseRedirect(self.get_success_url())

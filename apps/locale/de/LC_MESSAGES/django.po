@@ -1820,8 +1820,15 @@ msgstr "Keine Beschreibung"
 msgid "Adjust who paid and how it is split."
 msgstr "Leg fest, wer bezahlt hat und wie geteilt wird."
 
-msgid "Are you sure you wish to delete this transaction?"
-msgstr "Bist du sicher, dass du diese Transaktion löschen möchtest?"
+msgid "Delete this transaction?"
+msgstr "Diese Transaktion löschen?"
+
+msgid "You can undo this for a few seconds."
+msgstr "Du kannst das wenige Sekunden lang rückgängig machen."
+
+#, python-format
+msgid "\"%(description)s\" is removed from the room's expenses and the debts are recalculated."
+msgstr "„%(description)s“ wird aus den Ausgaben des Raums entfernt und die Schulden werden neu berechnet."
 
 msgid "Paid by"
 msgstr "Bezahlt von"
@@ -1835,6 +1842,9 @@ msgstr "Aktualisiere jeden Anteil oder entferne ihn vollständig."
 
 msgid "⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically."
 msgstr "⚠️ Gesamte Änderungen sperren einzelne Anteile; das Backend gleicht die Splits automatisch aus."
+
+msgid "Are you sure you wish to delete this transaction?"
+msgstr "Bist du sicher, dass du diese Transaktion löschen möchtest?"
 
 msgid "No split entries yet."
 msgstr "Noch keine Splits erfasst."
@@ -2116,6 +2126,20 @@ msgstr "Kategorie hinzugefügt."
 #, python-format
 msgid "Category \"%(category)s\" deleted."
 msgstr "Kategorie \"%(category)s\" gelöscht."
+
+#, python-brace-format
+msgid "Deleted \"{description}\"."
+msgstr "„{description}“ gelöscht."
+
+msgid "Undo"
+msgstr "Rückgängig"
+
+msgid "Too late: the transaction is deleted for good."
+msgstr "Zu spät: Die Transaktion ist endgültig gelöscht."
+
+#, python-brace-format
+msgid "Restored \"{description}\"."
+msgstr "„{description}“ wiederhergestellt."
 
 #, python-format
 msgid "%(count)s more category"

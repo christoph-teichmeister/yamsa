@@ -1,15 +1,18 @@
 import http
+from datetime import timedelta
 from unittest import mock
 
 import pytest
 from django.test import Client
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.account.models import User
 from apps.debt.models import Debt
 from apps.news.models import News
 from apps.room.models import Room
 from apps.transaction.models import ParentTransaction
+from apps.transaction.services.transaction_deletion_service import UNDO_WINDOW, TransactionDeletionService
 from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 from apps.transaction.tests.factories import ParentTransactionFactory
 from apps.webpush.utils import Notification
@@ -66,6 +69,10 @@ def test_deleting_a_transaction_reports_what_it_carried(
                 kwargs={"room_slug": room.slug, "pk": parent_transaction.pk},
             ),
         )
+        ParentTransaction.all_objects.filter(pk=parent_transaction.pk).update(
+            deleted_at=timezone.now() - UNDO_WINDOW - timedelta(seconds=1)
+        )
+        TransactionDeletionService.finalise_expired()
 
     news = News.objects.get(room=room, type=News.TypeChoices.TRANSACTION_DELETED)
     assert amount_and_sign in news.message
