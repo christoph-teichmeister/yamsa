@@ -1,6 +1,7 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.utils.translation import gettext as _
 
 from apps.account.messages.commands.remove_user_from_room import RemoveUserFromRoom
 from apps.account.views import UserListForRoomView
@@ -18,8 +19,8 @@ class UserRemoveFromRoomView(RoomNotClosedRequiredMixin, UserListForRoomView):
 
         if not user_to_be_removed.can_be_removed_from_room(room_id=room.id):
             request.toast_queue.error(
-                f'"{user_to_be_removed.name}" can not be removed from this room, because they still '
-                f"have unsettled debts."
+                _('"%(name)s" can not be removed from this room, because they still have unsettled debts.')
+                % {"name": user_to_be_removed.name}
             )
             return super().get(request, *args, **kwargs)
 
@@ -34,6 +35,8 @@ class UserRemoveFromRoomView(RoomNotClosedRequiredMixin, UserListForRoomView):
         )
 
         if user_to_be_removed.id == request.user.id:
+            request.toast_queue.success(_("You left the room."))
             return HttpResponseRedirect(redirect_to=reverse(viewname="core:welcome"))
 
+        request.toast_queue.success(_('"%(name)s" was removed from the room.') % {"name": user_to_be_removed.name})
         return super().get(request, *args, **kwargs)

@@ -1,5 +1,6 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from apps.room.views.mixins import RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin
@@ -21,7 +22,7 @@ class TransactionReceiptDeleteView(
         )
 
         if receipt.uploaded_by_id != request.user.id:
-            return HttpResponseForbidden("You can only delete receipts you uploaded.")
+            return HttpResponseForbidden(_("You can only delete receipts you uploaded."))
 
         parent_transaction = receipt.parent_transaction
         receipt.file.delete(save=False)
@@ -29,7 +30,7 @@ class TransactionReceiptDeleteView(
 
         receipts = parent_transaction.receipts.select_related("uploaded_by").all()
         form = TransactionReceiptUploadForm(request=request)
-        request.toast_queue.success("Receipt deleted.")
+        request.toast_queue.success(_("Receipt deleted."))
 
         context = self.get_context_data(
             parent_transaction=parent_transaction,

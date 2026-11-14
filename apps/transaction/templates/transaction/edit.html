@@ -37,15 +37,11 @@
           The delete button posts on its own and must not submit the sheet, so it carries the
           token that hx-include picks up rather than sitting in a nested form.
           {% endcomment %}
-          <button class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 self-start rounded-xl border border-danger-text/60 bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          <button id="delete-transaction-button"
+                  class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 self-start rounded-xl border border-danger-text/60 bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-danger-text transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
-                  hx-post="{% room_url 'transaction:parent-transaction-delete' pk=parent_transaction.id %}"
-                  hx-include="[name='csrfmiddlewaretoken']"
-                  hx-confirm="{% trans "Are you sure you wish to delete this transaction?" %}"
-                  hx-target="#body"
-                  hx-indicator="#body-loading-spinner"
-                  hx-swap="morph:innerHTML"
-                  hx-push-url="true">
+                  aria-haspopup="dialog"
+                  data-dialog-open="delete-transaction-dialog">
             {% icon "trash" %}
             {% trans "Delete" %}
           </button>
@@ -85,6 +81,7 @@
               </select>
               {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle" %}
             </div>
+            <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Amounts are never converted: debts stay in the currency of each expense." %}</p>
           </div>
           <div>
             <label class="mb-1.5 block text-sm font-semibold text-ink"
@@ -110,7 +107,7 @@
               <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
             {% endfor %}
             <p class="mt-1.5 mb-0 text-sm text-ink-subtle">
-              {% blocktrans with split_total=parent_transaction.value split_currency=parent_transaction.currency.sign %}Current split: {{ split_total }}{{ split_currency }}{% endblocktrans %}
+              {% blocktrans with split_amount=parent_transaction.value|money:parent_transaction.currency.sign %}Current split: {{ split_amount }}{% endblocktrans %}
             </p>
           </div>
           <div>
@@ -268,6 +265,38 @@
       </div>
     </form>
   </section>
+  <dialog id="delete-transaction-dialog"
+          class="m-auto w-[min(28rem,calc(100vw_-_2rem))] rounded-3xl border border-line bg-surface p-0 text-ink backdrop:bg-black/60"
+          data-dialog>
+    <div class="flex items-start justify-between gap-3 border-b border-line px-5 py-3">
+      <div>
+        <p class="m-0 font-semibold text-ink">{% trans "Delete this expense?" %}</p>
+        <p class="m-0 text-sm text-ink-subtle">{% trans "This can not be undone." %}</p>
+      </div>
+      <button class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-ink-subtle transition hover:bg-surface-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              type="button"
+              aria-label="{% trans "Close" %}"
+              data-dialog-close>{% icon "x-lg" %}</button>
+    </div>
+    <div class="flex flex-col gap-3 p-5">
+      <p class="m-0 text-ink">{% trans "The expense and its shares are deleted and the debts of this room are recalculated." %}</p>
+      <div class="mt-1 flex flex-col gap-2 @md:flex-row @md:justify-end">
+        <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                type="button"
+                data-dialog-close>{% trans "Cancel" %}</button>
+        {# The token is picked up by hx-include: this button posts on its own and must not submit the sheet. #}
+        <button id="delete-transaction-confirm-button"
+                class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-danger-soft px-4 py-2 text-sm font-semibold text-danger-text transition hover:border-danger-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                type="button"
+                hx-post="{% room_url 'transaction:parent-transaction-delete' pk=parent_transaction.id %}"
+                hx-include="[name='csrfmiddlewaretoken']"
+                hx-target="#body"
+                hx-indicator="#body-loading-spinner"
+                hx-swap="morph:innerHTML"
+                hx-push-url="true">{% trans "Delete expense" %}</button>
+      </div>
+    </div>
+  </dialog>
   <script nonce="{{ csp_nonce }}">
         // Editing the total hands the split over to the backend, so the individual shares must
         // stop looking editable. Only real state is set here - readOnly, aria-disabled, disabled,

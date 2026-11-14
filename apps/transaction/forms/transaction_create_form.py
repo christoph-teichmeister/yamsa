@@ -6,6 +6,7 @@ from django.contrib.postgres.forms import SimpleArrayField
 from django.core.files.uploadedfile import UploadedFile
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.utils.translation import gettext_lazy as _lazy
 
 from apps.account.models import User
 from apps.room.models import Room
@@ -22,7 +23,7 @@ RECEIPT_ACCEPTED_CONTENT_TYPES = (
     "image/webp",
 )
 MAX_RECEIPT_SIZE = 5 * 1024 * 1024  # 5 MB
-RECEIPT_AUTH_REQUIRED_MESSAGE = "Authenticated user is required to upload receipts."
+RECEIPT_AUTH_REQUIRED_MESSAGE = _lazy("Authenticated user is required to upload receipts.")
 
 
 class TransactionCreateForm(SplitSharesMixin, RoomCategoryFieldMixin, forms.ModelForm):
@@ -40,7 +41,7 @@ class TransactionCreateForm(SplitSharesMixin, RoomCategoryFieldMixin, forms.Mode
     receipts = forms.FileField(
         widget=forms.ClearableFileInput(),
         required=False,
-        help_text="Upload PNG/JPEG/WebP/GIF images or PDFs (max 5 MB each).",
+        help_text=_lazy("Upload PNG/JPEG/WebP/GIF images or PDFs (max 5 MB each)."),
     )
 
     class Meta:
@@ -127,12 +128,12 @@ class TransactionCreateForm(SplitSharesMixin, RoomCategoryFieldMixin, forms.Mode
         if uploaded_file.content_type not in RECEIPT_ACCEPTED_CONTENT_TYPES:
             errors.append(
                 forms.ValidationError(
-                    "Receipts must be PDF or an image (PNG, JPEG, WebP, GIF).",
+                    _lazy("Receipts must be PDF or an image (PNG, JPEG, WebP, GIF)."),
                     code="invalid_content_type",
                 )
             )
         if uploaded_file.size > MAX_RECEIPT_SIZE:
-            errors.append(forms.ValidationError("Each receipt must be 5 MB or smaller.", code="file_too_large"))
+            errors.append(forms.ValidationError(_lazy("Each receipt must be 5 MB or smaller."), code="file_too_large"))
         return errors
 
     def save(self, commit: bool = True) -> ParentTransaction:

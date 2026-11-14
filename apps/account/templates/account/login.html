@@ -24,6 +24,7 @@
         hx-swap="morph:innerHTML"
         hx-push-url="true">
     {% csrf_token %}
+    {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
     <div>
       <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Secure login" %}</p>
       <h1 class="mt-1 mb-0 text-xl font-semibold text-ink">{% trans "Login" %}</h1>
@@ -44,7 +45,7 @@
              type="email"
              name="email"
              value="{{ form.email.value|default_if_none:'' }}"
-             placeholder="name@example.com"
+             placeholder="{% trans "name@example.com" %}"
              autocomplete="email"
              autofocus
              required>

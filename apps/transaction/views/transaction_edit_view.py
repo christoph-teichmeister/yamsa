@@ -4,6 +4,7 @@ from django.db.models import QuerySet
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django.utils.translation import gettext as _
 from django.views import generic
 from django_context_decorator import context
 
@@ -58,6 +59,7 @@ class TransactionEditView(
         handle_message(
             ParentTransactionUpdated(context_data={"parent_transaction": self.object, "room": self.object.room})
         )
+        self.request.toast_queue.success(_("Expense updated."))
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self) -> str:

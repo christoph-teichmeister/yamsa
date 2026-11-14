@@ -18,10 +18,18 @@ class PaymentReminderEmailService(BaseYamsaEmailService):
     FROM_EMAIL = settings.EMAIL_DEFAULT_FROM_EMAIL
 
     def __init__(
-        self, recipient: User, *, room_name: str, amount_summary: str, inactivity_days: int, payment_link: str
+        self,
+        recipient: User,
+        *,
+        room_name: str,
+        amount_summary: str,
+        creditor_names: tuple[str, ...],
+        inactivity_days: int,
+        payment_link: str,
     ) -> None:
         self.room_name = room_name
         self.amount_summary = amount_summary
+        self.creditor_names = creditor_names
         self.inactivity_days = inactivity_days
         self.payment_link = payment_link
         self.subject = (_("%(room_name)s | Payment reminder") % {"room_name": self.room_name}) + " ⚡"
@@ -30,25 +38,25 @@ class PaymentReminderEmailService(BaseYamsaEmailService):
     def get_email_user_text_context(self) -> EmailUserTextContext:
         return EmailUserTextContext(
             text_list=[
-                _("Hey there! It has been %(inactivity_days)d days since any activity in %(room_name)s.")
+                _("It has been %(inactivity_days)d days since any activity in %(room_name)s.")
                 % {
                     "inactivity_days": self.inactivity_days,
                     "room_name": self.room_name,
                 },
-                _("You currently owe %(amount_summary)s.")
+                _("You still owe %(amount_summary)s to %(creditors)s.")
                 % {
                     "amount_summary": self.amount_summary,
+                    "creditors": ", ".join(self.creditor_names),
                 },
-                _("Please follow the link below to review and settle the outstanding balance before it grows stale.")
-                + " 🕰️",
+                _("Whenever you have a moment, the link below shows what is open and lets you settle it."),
             ]
         )
 
     def get_email_base_text_context(self) -> EmailBaseTextContext:
         return EmailBaseTextContext(
             header=_("Payment reminder: %(room_name)s") % {"room_name": self.room_name},
-            footer=_("This reminder is generated automatically for overdue balances. We're cheering for you!"),
-            sub_footer=_("Need a hand? Reach out to your room admin if the numbers look off."),
+            footer=_("This reminder is sent automatically when a room has been quiet and a balance is still open."),
+            sub_footer=_("Something looks off? Reply to this email and we will take a look."),
         )
 
     def get_email_extra_context(self) -> EmailExtraContext:

@@ -35,12 +35,15 @@ class TransactionEditPage(TransactionCreatePage):
         return self.page.get_by_role("button", name="Delete", exact=True)
 
     def delete_transaction(self, *, confirm: bool = True) -> None:
-        self.page.once("dialog", lambda dialog: dialog.accept() if confirm else dialog.dismiss())
+        self.delete_button.click()
+        dialog = self.page.locator("#delete-transaction-dialog")
+        expect(dialog).to_be_visible()
         if not confirm:
-            self.delete_button.click()
+            dialog.get_by_role("button", name="Cancel").click()
+            expect(dialog).not_to_be_visible()
             return
         with self.page.expect_response(lambda response: "/parent-transaction/delete/" in response.url):
-            self.delete_button.click()
+            dialog.get_by_role("button", name="Delete expense").click()
 
     def expect_shares_locked(self, *, locked: bool) -> None:
         values = self.page.locator(".split-row input[name='value']")

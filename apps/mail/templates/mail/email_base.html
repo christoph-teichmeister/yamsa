@@ -4,7 +4,7 @@
 <html dir="ltr"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:o="urn:schemas-microsoft-com:office:office"
-      lang="en">
+      lang="{{ language_code }}">
     <head>
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -238,7 +238,7 @@
                                                 <a href="{{ context.unsubscribe_link }}"
                                                    style="color:#475569;
                                                           display:inline-block;
-                                                          padding:8px 0;">Unsubscribe</a>
+                                                          padding:8px 0;">{{ context.unsubscribe_label }}</a>
                                             </td>
                                         </tr>
                                     </table>

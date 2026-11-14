@@ -42,6 +42,15 @@ msgstr "E-Mail-Erinnerungen zum Raum erhalten"
 msgid "User with email address '{email}' already exists"
 msgstr "Benutzer:in mit der E-Mail-Adresse '{email}' existiert bereits"
 
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Stay signed in for longer"
+msgstr "Länger angemeldet bleiben"
+
 msgid "We could not read that file. Please upload a valid image."
 msgstr "Wir konnten diese Datei nicht lesen. Bitte lade ein gültiges Bild hoch."
 
@@ -78,9 +87,6 @@ msgstr "Benutzer:innenfreundschaften"
 
 msgid "Users cannot be friends with themselves."
 msgstr "Benutzer:innen können nicht mit sich selbst befreundet sein."
-
-msgid "Password"
-msgstr "Passwort"
 
 msgid "Change your password"
 msgstr "Ändere dein Passwort"
@@ -153,9 +159,6 @@ msgstr "Noch kein PayPal-Link"
 msgid "Member profile"
 msgstr "Mitgliederprofil"
 
-msgid "Email address"
-msgstr "E-Mail-Adresse"
-
 msgid "PayPal.me username"
 msgstr "PayPal.me-Benutzername"
 
@@ -173,6 +176,9 @@ msgstr "Zurück zur Anmeldung"
 
 msgid "Need to reset your password?"
 msgstr "Möchtest du dein Passwort zurücksetzen?"
+
+msgid "The email can take a few minutes. Check your spam folder if it does not show up."
+msgstr "Die E-Mail kann ein paar Minuten brauchen. Schau in deinem Spam-Ordner nach, falls sie nicht ankommt."
 
 msgid "Request a new password"
 msgstr "Neues Passwort anfordern"
@@ -232,6 +238,9 @@ msgstr "Sichere Anmeldung"
 
 msgid "Login"
 msgstr "Anmelden"
+
+msgid "name@example.com"
+msgstr "name@beispiel.de"
 
 msgid "Stay signed in for 30 days"
 msgstr "Für 30 Tage angemeldet bleiben"
@@ -456,6 +465,17 @@ msgstr "Falls diese Adresse registriert ist, haben wir dir einen Link zum Zurüc
 msgid "The combination of email and password does not match"
 msgstr "Die Kombination aus E-Mail und Passwort ist nicht korrekt"
 
+#, python-format
+msgid "\"%(name)s\" can not be removed from this room, because they still have unsettled debts."
+msgstr "„%(name)s“ kann nicht aus diesem Raum entfernt werden, weil noch offene Schulden bestehen."
+
+msgid "You left the room."
+msgstr "Du hast den Raum verlassen."
+
+#, python-format
+msgid "\"%(name)s\" was removed from the room."
+msgstr "„%(name)s“ wurde aus dem Raum entfernt."
+
 msgid "This password reset link is invalid or has expired."
 msgstr "Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen."
 
@@ -494,6 +514,9 @@ msgstr "yamsa, gemeinsame Ausgaben, Mitbewohner-App, Rechnungsteilung, Dashboard
 
 msgid "yamsa"
 msgstr "yamsa"
+
+msgid "Buy Me a Coffee at ko-fi.com"
+msgstr "Spendiere mir einen Kaffee auf ko-fi.com"
 
 msgid "No connection - the expense is saved on this device and will be sent later"
 msgstr "Keine Verbindung – die Ausgabe ist auf diesem Gerät gespeichert und wird später gesendet"
@@ -638,15 +661,12 @@ msgid "Your debt to %(creditor_name)s"
 msgstr "Deine Schuld an %(creditor_name)s"
 
 #, python-format
-msgid "Are you sure that you have settled your debt (%(debt_value)s%(debt_currency)s) to %(creditor_name)s?"
-msgstr "Bist du sicher, dass du deine Schuld (%(debt_value)s%(debt_currency)s) bei %(creditor_name)s beglichen hast?"
-
-msgid "Not paid yet?"
-msgstr "Noch nicht bezahlt?"
+msgid "Pay %(debt_amount)s to %(creditor_name)s via PayPal"
+msgstr "%(debt_amount)s per PayPal an %(creditor_name)s zahlen"
 
 #, python-format
-msgid "Pay %(creditor_name)s via PayPal"
-msgstr "%(creditor_name)s über PayPal bezahlen"
+msgid "Did you pay %(debt_amount)s to %(creditor_name)s?"
+msgstr "Hast du %(debt_amount)s an %(creditor_name)s bezahlt?"
 
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -665,6 +685,9 @@ msgstr "Betrag"
 
 msgid "debts"
 msgstr "schulden"
+
+msgid "Debt marked as settled."
+msgstr "Schuld als beglichen markiert."
 
 msgid "Room name"
 msgstr "Raumname"
@@ -927,25 +950,25 @@ msgid "%(room_name)s | Payment reminder"
 msgstr "%(room_name)s | Zahlungserinnerung"
 
 #, python-format
-msgid "Hey there! It has been %(inactivity_days)d days since any activity in %(room_name)s."
-msgstr "Hallo! Es sind %(inactivity_days)d Tage seit der letzten Aktivität in %(room_name)s vergangen."
+msgid "It has been %(inactivity_days)d days since any activity in %(room_name)s."
+msgstr "In %(room_name)s gab es seit %(inactivity_days)d Tagen keine Aktivität."
 
 #, python-format
-msgid "You currently owe %(amount_summary)s."
-msgstr "Du schuldest aktuell %(amount_summary)s."
+msgid "You still owe %(amount_summary)s to %(creditors)s."
+msgstr "Du schuldest noch %(amount_summary)s an %(creditors)s."
 
-msgid "Please follow the link below to review and settle the outstanding balance before it grows stale."
-msgstr "Bitte folge dem Link unten, um den offenen Betrag zu prüfen und zu begleichen, bevor er veraltet."
+msgid "Whenever you have a moment, the link below shows what is open and lets you settle it."
+msgstr "Wenn du kurz Zeit hast: Über den Link unten siehst du, was offen ist, und kannst es begleichen."
 
 #, python-format
 msgid "Payment reminder: %(room_name)s"
 msgstr "Zahlungserinnerung: %(room_name)s"
 
-msgid "This reminder is generated automatically for overdue balances. We're cheering for you!"
-msgstr "Diese Erinnerung wird automatisch bei überfälligen Beträgen erzeugt. Wir drücken dir die Daumen!"
+msgid "This reminder is sent automatically when a room has been quiet and a balance is still open."
+msgstr "Diese Erinnerung wird automatisch verschickt, wenn ein Raum ruhig geworden ist und noch ein Betrag offen ist."
 
-msgid "Need a hand? Reach out to your room admin if the numbers look off."
-msgstr "Brauchst du Unterstützung? Wende dich an den Raum-Admin, wenn die Zahlen nicht stimmen."
+msgid "Something looks off? Reply to this email and we will take a look."
+msgstr "Etwas stimmt nicht? Antworte auf diese E-Mail, dann schauen wir es uns an."
 
 msgid "Review pending debts"
 msgstr "Ausstehende Schulden prüfen"
@@ -976,8 +999,8 @@ msgstr "%(room_name)s | Raum noch offen?"
 msgid "%(room_name)s has been quiet for %(inactivity_days)d days."
 msgstr "%(room_name)s war seit %(inactivity_days)d Tagen inaktiv."
 
-msgid "If everyone already settled up, please mark the debts as paid and close the room so it stops lingering."
-msgstr "Wenn alle bereits abgerechnet haben, markiere die Schulden bitte als bezahlt und schließe den Raum, damit er nicht weiter offen bleibt."
+msgid "If everyone has settled up, mark the debts as paid. There is no need to close the room."
+msgstr "Wenn alle abgerechnet haben, markiere die Schulden als bezahlt. Du musst den Raum nicht schließen."
 
 msgid "If you still need the room, feel free to ignore this reminder and keep it open."
 msgstr "Wenn du den Raum noch brauchst, ignoriere diese Erinnerung und lasse ihn geöffnet."
@@ -1388,13 +1411,13 @@ msgid "This room still has outstanding payments."
 msgstr "Dieser Raum hat noch ausstehende Zahlungen."
 
 #, python-format
-msgid "There is still %(debt_count)s open debt. Closing the room anyway will mark it as settled."
-msgid_plural "There are still %(debt_count)s open debts. Closing the room anyway will mark them as settled."
-msgstr[0] "Es gibt noch %(debt_count)s offene Schuld. Wenn du den Raum trotzdem schließt, wird sie als beglichen markiert."
-msgstr[1] "Es gibt noch %(debt_count)s offene Schulden. Wenn du den Raum trotzdem schließt, werden sie als beglichen markiert."
+msgid "There is still %(debt_count)s open debt. Closing the room anyway marks it as settled without a payment being recorded, and the person owed is not told."
+msgid_plural "There are still %(debt_count)s open debts. Closing the room anyway marks them as settled without a payment being recorded, and the people owed are not told."
+msgstr[0] "Es gibt noch %(debt_count)s offene Schuld. Wenn du den Raum trotzdem schließt, wird sie ohne erfasste Zahlung als beglichen markiert und die Person, die das Geld bekommt, erfährt nichts davon."
+msgstr[1] "Es gibt noch %(debt_count)s offene Schulden. Wenn du den Raum trotzdem schließt, werden sie ohne erfasste Zahlung als beglichen markiert und die Personen, die das Geld bekommen, erfahren nichts davon."
 
-msgid "Use this option only if you want to skip manual settlement."
-msgstr "Nutze diese Option nur, wenn du die manuelle Abrechnung überspringen möchtest."
+msgid "You can reopen the room later, but the debts stay settled. Use this only if you want to skip manual settlement."
+msgstr "Du kannst den Raum später wieder öffnen, die Schulden bleiben aber beglichen. Nutze das nur, wenn du die manuelle Abrechnung überspringen möchtest."
 
 msgid "Close anyway"
 msgstr "Trotzdem schließen"
@@ -1433,6 +1456,9 @@ msgstr "vor %(timesince)s"
 
 msgid "This room is closed. No changes can be made."
 msgstr "Dieser Raum ist geschlossen. Es können keine Änderungen vorgenommen werden."
+
+msgid "Room created."
+msgstr "Raum erstellt."
 
 msgid "Only a closed room can be deleted."
 msgstr "Nur ein geschlossener Raum kann gelöscht werden."
@@ -1744,6 +1770,9 @@ msgstr "Verwenden, wenn die Ausgabe früher stattfand."
 msgid "Defaults to the room preference."
 msgstr "Standardmäßig wird die Raumpräferenz verwendet."
 
+msgid "Amounts are never converted: debts stay in the currency of each expense."
+msgstr "Beträge werden nie umgerechnet: Schulden bleiben in der Währung der jeweiligen Ausgabe."
+
 msgid "Notes"
 msgstr "Notizen"
 
@@ -1805,8 +1834,8 @@ msgstr[0] "%(member_count)s Person"
 msgstr[1] "%(member_count)s Personen"
 
 #, python-format
-msgid "Owes %(owed_value)s%(owed_currency)s"
-msgstr "Schuldet %(owed_value)s%(owed_currency)s"
+msgid "Owes %(owed_amount)s"
+msgstr "Schuldet %(owed_amount)s"
 
 msgid "No split data available for this transaction yet."
 msgstr "Für diese Transaktion liegen noch keine Splits-Daten vor."
@@ -1820,21 +1849,21 @@ msgstr "Keine Beschreibung"
 msgid "Adjust who paid and how it is split."
 msgstr "Leg fest, wer bezahlt hat und wie geteilt wird."
 
-msgid "Are you sure you wish to delete this transaction?"
-msgstr "Bist du sicher, dass du diese Transaktion löschen möchtest?"
-
 msgid "Paid by"
 msgstr "Bezahlt von"
 
 #, python-format
-msgid "Current split: %(split_total)s%(split_currency)s"
-msgstr "Aktueller Split: %(split_total)s%(split_currency)s"
+msgid "Current split: %(split_amount)s"
+msgstr "Aktueller Split: %(split_amount)s"
 
 msgid "Update each share or remove it entirely."
 msgstr "Aktualisiere jeden Anteil oder entferne ihn vollständig."
 
 msgid "⚠️ Total edits lock individual share inputs; the backend will rebalance splits automatically."
 msgstr "⚠️ Gesamte Änderungen sperren einzelne Anteile; das Backend gleicht die Splits automatisch aus."
+
+msgid "Are you sure you wish to delete this transaction?"
+msgstr "Bist du sicher, dass du diese Transaktion löschen möchtest?"
 
 msgid "No split entries yet."
 msgstr "Noch keine Splits erfasst."
@@ -1847,6 +1876,15 @@ msgstr "Detailansicht öffnen"
 
 msgid "Receipts stay on the detail page, so upload PDFs there instead of here."
 msgstr "Belege bleiben auf der Detailseite, lade PDFs dort statt hier hoch."
+
+msgid "Delete this expense?"
+msgstr "Diese Ausgabe löschen?"
+
+msgid "The expense and its shares are deleted and the debts of this room are recalculated."
+msgstr "Die Ausgabe und ihre Anteile werden gelöscht und die Schulden dieses Raums neu berechnet."
+
+msgid "Delete expense"
+msgstr "Ausgabe löschen"
 
 msgid "Import done. Share this room with the others instead of letting them import their own export — otherwise the same history ends up in two rooms."
 msgstr "Import fertig. Teile diesen Raum mit den anderen, statt dass sie ihren eigenen Export hochladen — sonst landet dieselbe Historie in zwei Räumen."
@@ -1931,6 +1969,9 @@ msgstr "Zurück zu Schulden"
 
 msgid "Room spending overview"
 msgstr "Übersicht der Raumausgaben"
+
+msgid "This room uses several currencies. Totals are shown per currency and never converted."
+msgstr "Dieser Raum nutzt mehrere Währungen. Summen werden pro Währung angezeigt und nie umgerechnet."
 
 #, python-format
 msgid "Total spent (%(currency_sign)s)"
@@ -2117,17 +2158,38 @@ msgstr "Kategorie hinzugefügt."
 msgid "Category \"%(category)s\" deleted."
 msgstr "Kategorie \"%(category)s\" gelöscht."
 
+msgid "Expense deleted."
+msgstr "Ausgabe gelöscht."
+
 #, python-format
 msgid "%(count)s more category"
 msgid_plural "%(count)s more categories"
 msgstr[0] "%(count)s weitere Kategorie"
 msgstr[1] "%(count)s weitere Kategorien"
 
+msgid "Please fix the highlighted fields."
+msgstr "Bitte korrigiere die markierten Felder."
+
+msgid "Expense added."
+msgstr "Ausgabe hinzugefügt."
+
+msgid "Expense updated."
+msgstr "Ausgabe aktualisiert."
+
 msgid "Paid for"
 msgstr "Bezahlt für"
 
 msgid "transactions"
 msgstr "transaktionen"
+
+msgid "You can only delete receipts you uploaded."
+msgstr "Du kannst nur Belege löschen, die du selbst hochgeladen hast."
+
+msgid "Receipt deleted."
+msgstr "Beleg gelöscht."
+
+msgid "Receipt uploaded successfully."
+msgstr "Beleg erfolgreich hochgeladen."
 
 #, python-brace-format
 msgid "{payer} logged a payment of {amount}{currency} (\"{description}\")"
@@ -2154,6 +2216,13 @@ msgstr "{debitor} hat seine Schuld von {amount}{currency} bei dir beglichen"
 
 msgid "Debt settled"
 msgstr "Schuld beglichen"
+
+#, python-brace-format
+msgid "{removed} just left {room}"
+msgstr "{removed} hat {room} verlassen"
+
+msgid "User left"
+msgstr "Nutzer:in ausgetreten"
 
 #, python-brace-format
 msgid "{remover} just removed {removed} from {room}"
