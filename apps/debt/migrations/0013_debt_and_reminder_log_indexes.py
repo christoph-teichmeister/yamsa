@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('currency', '0002_currency_code'),
-        ('debt', '0010_reminderlog'),
+        ('debt', '0012_reminderlog_manual_debt'),
         ('room', '0013_room_creation_token'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
