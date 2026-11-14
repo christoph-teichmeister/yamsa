@@ -52,6 +52,7 @@ class DebtSettleView(RoomMembershipRequiredMixin, RoomNotClosedRequiredMixin, De
                 self.request.toast_queue.success(_("Debt marked as settled."))
             else:
                 handle_message(DebtMarkedPaid(context_data={"debt": debt}))
+                self.request.toast_queue.success(_("Paid, waiting for confirmation"))
 
         return HttpResponseRedirect(self.get_success_url())
 

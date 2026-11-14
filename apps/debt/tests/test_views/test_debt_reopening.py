@@ -38,9 +38,9 @@ class TestReopening:
         event = handle_message.call_args.args[0]
         assert isinstance(event, DebtPaymentRejected)
 
-    def test_the_debtor_withdraws_silently(self, client: Client, pending_debt: Debt, guest_user: User) -> None:
+    def test_the_debtor_withdraws_silently(self, client: Client, pending_debt: Debt, debitor: User) -> None:
         with mock.patch(REOPEN_MESSAGES) as handle_message:
-            login(client, guest_user).post(reopen_url(pending_debt))
+            login(client, debitor).post(reopen_url(pending_debt))
 
         pending_debt.refresh_from_db()
         assert pending_debt.awaiting_confirmation is False
@@ -77,8 +77,8 @@ class TestReopening:
 
         assert response.status_code == http.HTTPStatus.FORBIDDEN
 
-    def test_a_closed_room_refuses(self, client: Client, closed_room: Room, user: User, guest_user: User) -> None:
-        create_parent_transaction_with_optimisation(room=closed_room, paid_by=user, paid_for_tuple=(guest_user,))
+    def test_a_closed_room_refuses(self, client: Client, closed_room: Room, user: User, debitor: User) -> None:
+        create_parent_transaction_with_optimisation(room=closed_room, paid_by=user, paid_for_tuple=(debitor,))
         closed_debt = Debt.objects.get(room=closed_room, settled=False)
         Debt.objects.filter(pk=closed_debt.pk).update(awaiting_confirmation=True)
 

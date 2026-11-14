@@ -40,13 +40,25 @@ class TestSuccessToasts:
     ) -> None:
         create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
         debt = room.debts.filter(settled=False).first()
-        authenticated_client.force_login(guest_user)
 
         authenticated_client.post(
             reverse("debt:settle", kwargs={"room_slug": room.slug, "pk": debt.pk}), data={"settled": "on"}
         )
 
         assert carried_toast_messages(authenticated_client) == ["Debt marked as settled."]
+
+    def test_marking_a_debt_as_paid_confirms(
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
+    ) -> None:
+        create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
+        debt = room.debts.filter(settled=False).first()
+        authenticated_client.force_login(guest_user)
+
+        authenticated_client.post(
+            reverse("debt:settle", kwargs={"room_slug": room.slug, "pk": debt.pk}), data={"settled": "on"}
+        )
+
+        assert carried_toast_messages(authenticated_client) == ["Paid, waiting for confirmation"]
 
     def test_creating_a_room_confirms(self, authenticated_client: Client) -> None:
         response = authenticated_client.post(

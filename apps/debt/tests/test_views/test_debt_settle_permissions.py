@@ -55,8 +55,8 @@ class TestWhoMayOpenTheSettlement:
         debt.refresh_from_db()
         assert debt.settled is True
 
-    def test_the_debtor_can_only_mark_the_debt_as_paid(self, client: Client, debt: Debt, guest_user: User) -> None:
-        client.force_login(guest_user)
+    def test_the_debtor_can_only_mark_the_debt_as_paid(self, client: Client, debt: Debt, debitor: User) -> None:
+        client.force_login(debitor)
 
         response = client.post(settle_url(debt), data={"settled": "true"})
 

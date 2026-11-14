@@ -729,23 +729,17 @@ msgstr "Deine Schuld an %(creditor_name)s"
 msgid "Pay %(debt_amount)s to %(creditor_name)s via PayPal"
 msgstr "%(debt_amount)s per PayPal an %(creditor_name)s zahlen"
 
-msgid "Did you receive %(debt_value)s%(debt_currency)s from %(debitor_name)s?"
-msgstr "Hast du %(debt_value)s%(debt_currency)s von %(debitor_name)s erhalten?"
+#, python-format
+msgid "Did you receive %(debt_amount)s from %(debitor_name)s?"
+msgstr "Hast du %(debt_amount)s von %(debitor_name)s erhalten?"
 
 #, python-format
-msgid "Are you sure that you have settled your debt (%(debt_value)s%(debt_currency)s) to %(creditor_name)s?"
-msgstr "Bist du sicher, dass du deine Schuld (%(debt_value)s%(debt_currency)s) bei %(creditor_name)s beglichen hast?"
+msgid "Are you sure that you have settled your debt (%(debt_amount)s) to %(creditor_name)s?"
+msgstr "Bist du sicher, dass du deine Schuld (%(debt_amount)s) bei %(creditor_name)s beglichen hast?"
 
 #, python-format
 msgid "%(creditor_name)s has to confirm the payment before the debt counts as settled."
 msgstr "%(creditor_name)s muss die Zahlung bestätigen, bevor die Schuld als beglichen zählt."
-
-msgid "Not paid yet?"
-msgstr "Noch nicht bezahlt?"
-
-#, python-format
-msgid "Did you pay %(debt_amount)s to %(creditor_name)s?"
-msgstr "Hast du %(debt_amount)s an %(creditor_name)s bezahlt?"
 
 msgid "Cancel"
 msgstr "Abbrechen"

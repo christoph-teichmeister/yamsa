@@ -24,9 +24,9 @@ def login(client: Client, who: User) -> Client:
 
 
 class TestMarkingAsPaid:
-    def test_the_debtor_marks_it_and_the_creditor_is_told(self, client: Client, debt: Debt, guest_user: User) -> None:
+    def test_the_debtor_marks_it_and_the_creditor_is_told(self, client: Client, debt: Debt, debitor: User) -> None:
         with mock.patch(SETTLE_MESSAGES) as handle_message:
-            login(client, guest_user).post(settle_url(debt), data={"settled": "true"})
+            login(client, debitor).post(settle_url(debt), data={"settled": "true"})
 
         debt.refresh_from_db()
         assert (debt.awaiting_confirmation, debt.settled) == (True, False)
@@ -35,9 +35,9 @@ class TestMarkingAsPaid:
         assert isinstance(event, DebtMarkedPaid)
         assert event.Context.debt == debt
 
-    def test_a_repeated_post_stays_silent(self, client: Client, pending_debt: Debt, guest_user: User) -> None:
+    def test_a_repeated_post_stays_silent(self, client: Client, pending_debt: Debt, debitor: User) -> None:
         with mock.patch(SETTLE_MESSAGES) as handle_message:
-            login(client, guest_user).post(settle_url(pending_debt), data={"settled": "true"})
+            login(client, debitor).post(settle_url(pending_debt), data={"settled": "true"})
 
         handle_message.assert_not_called()
 
@@ -55,9 +55,9 @@ class TestMarkingAsPaid:
         assert event.Context.settled_by == user
 
     def test_a_debtor_cannot_settle_by_posting_again_after_marking(
-        self, client: Client, debt: Debt, guest_user: User
+        self, client: Client, debt: Debt, debitor: User
     ) -> None:
-        login(client, guest_user)
+        login(client, debitor)
         client.post(settle_url(debt), data={"settled": "true"})
         client.post(settle_url(debt), data={"settled": "true"})
 

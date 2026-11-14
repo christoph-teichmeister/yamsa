@@ -28,9 +28,9 @@ class TestRendering:
         return " ".join(soup.select_one("[data-debt-row]").get_text(" ", strip=True).split())
 
     def test_the_debtor_sees_waiting_and_a_withdraw_button(
-        self, client: Client, room: Room, pending_debt: Debt, guest_user: User
+        self, client: Client, room: Room, pending_debt: Debt, debitor: User
     ) -> None:
-        text = self.labels(client, room, guest_user)
+        text = self.labels(client, room, debitor)
 
         assert "Paid, waiting for confirmation" in text
         assert "Withdraw" in text
@@ -65,19 +65,19 @@ class TestRendering:
         assert "via PayPal" not in content
 
     def test_the_settle_page_tells_the_debtor_the_creditor_must_confirm(
-        self, client: Client, debt: Debt, guest_user: User
+        self, client: Client, debt: Debt, debitor: User
     ) -> None:
-        response = login(client, guest_user).get(settle_url(debt))
+        response = login(client, debitor).get(settle_url(debt))
 
         content = response.content.decode()
         assert "has to confirm the payment" in content
         assert "Yes, I paid this" in content
 
     def test_the_paypal_flow_still_ends_in_the_pending_state(
-        self, client: Client, debt: Debt, user: User, guest_user: User
+        self, client: Client, debt: Debt, user: User, debitor: User
     ) -> None:
         User.objects.filter(pk=user.pk).update(paypal_me_username="creditorname")
-        login(client, guest_user)
+        login(client, debitor)
 
         page = client.get(settle_url(debt)).content.decode()
         assert "https://www.paypal.com/paypalme/creditorname/" in page
