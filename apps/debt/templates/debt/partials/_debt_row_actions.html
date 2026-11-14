@@ -31,6 +31,34 @@
     {% icon "piggy-bank" %}
     {% trans "Mark as paid" %}
   </button>
+{% elif debt.viewer_is_creditor and not debt.debitor.is_guest %}
+  <span class="inline-flex items-center gap-1.5 rounded-full bg-surface-sunken px-2.5 py-1 text-xs font-semibold text-ink">{% trans "Open" %}</span>
+  {% if debt.reminder_available_at %}
+    {# Disabled buttons are skipped by screen readers' tab order, so the reason sits in plain text beside it. #}
+    <button class="inline-flex min-h-11 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-line bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-ink-subtle opacity-70"
+            type="button"
+            disabled
+            aria-describedby="remind-hint-{{ debt.id }}">
+      {% icon "bell" %}
+      {% trans "Reminder sent" %}
+    </button>
+    <p id="remind-hint-{{ debt.id }}"
+       class="m-0 basis-full text-sm text-ink-muted">
+      {% blocktrans with next_at=debt.reminder_available_at|date:"SHORT_DATETIME_FORMAT" trimmed %}
+        Next reminder possible at {{ next_at }}
+      {% endblocktrans %}
+    </p>
+  {% else %}
+    {# A plain post, not hx-post: the success toast must survive the redirect, and a morph of #body wipes a toast that htmx shows mid-swap. #}
+    <form method="post" action="{% room_url 'debt:remind' pk=debt.id %}">
+      {% csrf_token %}
+      <button class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-brand bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-brand-text transition hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
+              type="submit">
+        {% icon "bell" %}
+        {% trans "Send reminder" %}
+      </button>
+    </form>
+  {% endif %}
 {% else %}
   {% comment %}
     Whose debt it is now comes from the row's own wording ("<name> owes you"), so a debt the

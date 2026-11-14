@@ -1,10 +1,12 @@
-from django.db.models import Q, QuerySet
+from django.db.models import DateTimeField, ExpressionWrapper, OuterRef, Q, QuerySet, Subquery
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.views import generic
 from django_context_decorator import context
 
 from apps.debt.dataclasses import SimpleDebtRow
-from apps.debt.models import Debt
+from apps.debt.models import Debt, ReminderLog
+from apps.debt.services.manual_payment_reminder_service import ManualPaymentReminderService
 from apps.debt.services.simple_debt_service import SimpleDebtService
 from apps.debt.views.mixins.debt_base_context import DebtBaseContext
 from apps.room.views.mixins import RoomMembershipRequiredMixin
@@ -74,12 +76,27 @@ class DebtListView(RoomMembershipRequiredMixin, DebtBaseContext, generic.ListVie
         # Each row phrases the debt from the viewer's side ("You owe X" / "X owes you"), so both
         # sides are resolved once in SQL rather than per row in the template.
         viewer_id = self.request.user.id
+        # Non-null only while the viewer's cooldown for this debtor runs; the template shows when it ends.
+        last_reminder = (
+            ReminderLog.objects.filter(
+                reminder_type=ReminderLog.ReminderType.MANUAL_DEBT,
+                room_id=OuterRef("room_id"),
+                debitor_id=OuterRef("debitor_id"),
+                created_by_id=viewer_id,
+                created_at__gt=timezone.now() - ManualPaymentReminderService.COOLDOWN,
+            )
+            .order_by("-created_at")
+            .values("created_at")[:1]
+        )
         return (
             self.model.objects.filter(room_id=self.request.room.id)
             .select_related("debitor", "creditor", "currency")
             .annotate(
                 viewer_is_debitor=Q(debitor_id=viewer_id),
                 viewer_is_creditor=Q(creditor_id=viewer_id),
+                reminder_available_at=ExpressionWrapper(
+                    Subquery(last_reminder) + ManualPaymentReminderService.COOLDOWN, output_field=DateTimeField()
+                ),
             )
             .order_by("settled", "currency__sign", "debitor__name")
         )
