@@ -119,7 +119,7 @@ def test_child_transaction_create_is_refused(
         data={"parent_transaction": transaction_of_a_former_member.pk, "paid_for": user.id, "value": Decimal(5)},
     )
 
-    assert response.status_code == http.HTTPStatus.FORBIDDEN
+    assert response.status_code == http.HTTPStatus.METHOD_NOT_ALLOWED
     assert transaction_of_a_former_member.child_transactions.count() == shares_before
 
 
