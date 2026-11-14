@@ -1,4 +1,5 @@
 {% extends "core/base.html" %}
+{% load i18n %}
 {% comment %}
 The shell the three auth pages share: a hero band and the form beside it, one card.
 
@@ -25,5 +26,25 @@ reaches ~336px, about a phone's width - the one the fields are laid out for.
         {% endblock auth_form %}
       </div>
     </div>
+    {% comment %}
+      Plain POST, no htmx: Django's set_language view sets the cookie and redirects back here, and a
+      visitor who is not signed in has no profile to change the language on.
+    {% endcomment %}
+    <form class="mx-auto mt-4 flex items-center justify-center gap-1"
+          method="post"
+          action="{% url 'set_language' %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+      {% get_current_language as current_language %}
+      {% get_available_languages as available_languages %}
+      {% for language_code, language_name in available_languages %}
+        <button class="inline-flex min-h-11 cursor-pointer items-center rounded-lg border-0 bg-transparent px-3 text-sm font-semibold transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand {% if language_code == current_language %}text-ink{% else %}text-ink-muted{% endif %}"
+                type="submit"
+                name="language"
+                value="{{ language_code }}"
+                lang="{{ language_code }}"
+                {% if language_code == current_language %}aria-current="true"{% endif %}>{{ language_code|upper }}</button>
+      {% endfor %}
+    </form>
   </section>
 {% endblock content %}

@@ -1,5 +1,5 @@
 from django.contrib.auth import login
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django_context_decorator import context
@@ -59,30 +59,33 @@ class RegisterUserView(generic.CreateView):
         self.request.user = self.object
         login(request=self.request, user=self.object, backend="django.contrib.auth.backends.ModelBackend")
 
-        self._join_shared_room_if_needed()
+        joined_room = self._join_shared_room_if_needed()
 
         # Send PostRegisterEmail
         handle_message(SendPostRegisterEmail(context_data={"user": self.request.user}))
 
+        if joined_room:
+            return HttpResponseRedirect(reverse("room:detail", kwargs={"room_slug": joined_room.slug}))
         return response
 
-    def _join_shared_room_if_needed(self) -> None:
+    def _join_shared_room_if_needed(self) -> Room | None:
         request_room_slug = self._room_slug_from_request()
         session_room_slug = self.request.session.pop(SHARED_ROOM_SLUG_SESSION_KEY, None)
         room_slug = request_room_slug or session_room_slug
 
         if not room_slug:
-            return
+            return None
 
         room = Room.objects.filter(slug=room_slug).first()
         if not room:
-            return
+            return None
 
         UserConnectionToRoom.objects.get_or_create(
             user=self.object,
             room=room,
             defaults={"user_has_seen_this_room": True},
         )
+        return room
 
     def _room_slug_from_request(self) -> str | None:
         return self.request.POST.get("room_slug") or self.request.GET.get("room_slug")

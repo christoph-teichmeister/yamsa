@@ -2,6 +2,7 @@ import http
 
 import pytest
 from axes.models import AccessAttempt
+from bs4 import BeautifulSoup
 from django.conf import settings
 from django.http import HttpResponse
 from django.test import Client
@@ -165,3 +166,43 @@ def test_axes_lockout_tracks_username_and_ip_scope(client: Client, user: User) -
 
     assert successful_response.status_code == http.HTTPStatus.OK
     assert successful_response.template_name[0] == WelcomePartialView.template_name
+
+
+@pytest.mark.parametrize("source", ["post", "get"])
+def test_login_returns_to_the_page_that_asked_for_it(client: Client, user: User, source: str) -> None:
+    target = "/some/deep/page/"
+    url = reverse("account:login")
+    data = {"email": user.email, "password": DEFAULT_PASSWORD}
+    if source == "post":
+        response = client.post(url, data={**data, "next": target})
+    else:
+        response = client.post(f"{url}?next={target}", data=data)
+
+    assert response.status_code == http.HTTPStatus.FOUND
+    assert response.url == target
+
+
+@pytest.mark.parametrize("target", ["https://evil.example/phish", "//evil.example/phish", "javascript:alert(1)"])
+def test_login_ignores_a_next_that_leaves_the_host(client: Client, user: User, target: str) -> None:
+    response = client.post(
+        reverse("account:login"), data={"email": user.email, "password": DEFAULT_PASSWORD, "next": target}
+    )
+
+    assert response.status_code == http.HTTPStatus.FOUND
+    assert response.url == reverse("core:welcome")
+
+
+def test_login_form_carries_a_safe_next_through_a_failed_attempt(client: Client, user: User) -> None:
+    response = client.post(
+        reverse("account:login"), data={"email": user.email, "password": "wrong", "next": "/some/deep/page/"}
+    )
+
+    page = BeautifulSoup(response.content.decode(), "html.parser")
+    assert page.select_one("input[name=next]")["value"] == "/some/deep/page/"
+
+
+def test_login_page_offers_a_language_switch(client: Client) -> None:
+    page = BeautifulSoup(client.get(reverse("account:login")).content.decode(), "html.parser")
+
+    assert page.select_one(f"form[action='{reverse('set_language')}']") is not None
+    assert {button["value"] for button in page.select("button[name=language]")} == {"en", "de"}
