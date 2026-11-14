@@ -1,6 +1,7 @@
 import uuid
 
 import pytest
+from bs4 import BeautifulSoup
 from django.test import Client
 from django.urls import reverse
 
@@ -36,6 +37,21 @@ class TestRoomCreateView:
         assert href_fragment in content or href_fragment_unquoted in content
         assert hx_get_fragment in content or hx_get_fragment_unquoted in content
         assert "Back to dashboard" in content
+
+    def test_invalid_post_links_the_error_to_its_field(self, owner_client: Client) -> None:
+        data = {
+            "name": "",
+            "description": "Weekend",
+            "preferred_currency": CurrencyFactory().id,
+            "creation_token": str(uuid.uuid4()),
+        }
+
+        response = owner_client.post(reverse("room:create"), data)
+
+        page = BeautifulSoup(response.content.decode(), "html.parser")
+        field = page.select_one("input#name")
+        assert field["aria-invalid"] == "true"
+        assert page.select_one(f"#{field['aria-describedby']}") is not None
 
     def test_second_post_with_same_token_creates_no_second_room(self, owner_client: Client) -> None:
         currency = CurrencyFactory()

@@ -50,7 +50,7 @@
   --yamsa-line: #dde2ec;
   /* Carries the boundary of inputs and outline buttons, so it is held to 3:1 - clearly darker
      than the decorative `line`. */
-  --yamsa-line-strong: #8895b0;
+  --yamsa-line-strong: #74829d;
   --yamsa-ink-strong: #0f1319;
   /* A triplet, because customClasses.css tints the neutrals at several alphas - a row's
      hover ground, the skeleton shimmer, the divider. */
@@ -83,7 +83,7 @@
   --yamsa-surface-sunken: #14161b;
   --yamsa-surface-hover: #31353f;
   --yamsa-line: #343945;
-  --yamsa-line-strong: #667082;
+  --yamsa-line-strong: #7a8496;
   --yamsa-ink-strong: #ffffff;
   --yamsa-ink-rgb: 232, 235, 242;
   --yamsa-ink-muted: #aab3c2;

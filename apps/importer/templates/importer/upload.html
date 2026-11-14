@@ -20,6 +20,7 @@
                  for="{{ form.source.id_for_label }}">{{ form.source.label }}</label>
           <div class="relative">
             <select id="{{ form.source.id_for_label }}"
+                    {% if form.source.errors %}aria-invalid="true" aria-describedby="{{ form.source.id_for_label }}-error"{% endif %}
                     class="w-full appearance-none rounded-xl border bg-surface-sunken py-2.5 pr-10 pl-4 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand {% if form.source.errors %}border-danger-text/60{% else %}border-line-strong{% endif %}"
                     name="{{ form.source.html_name }}"
                     required>
@@ -31,7 +32,8 @@
             {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle" %}
           </div>
           {% for error_message in form.source.errors %}
-            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
+            <p {% if forloop.first %}id="{{ form.source.id_for_label }}-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
           {% endfor %}
         </div>
         <div>
@@ -39,6 +41,7 @@
                  for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
           {# The file picker's own button is styled through the file: variant - an input[type=file] takes no padding of its own. #}
           <input id="{{ form.file.id_for_label }}"
+                 {% if form.file.errors %}aria-invalid="true" aria-describedby="{{ form.file.id_for_label }}-error"{% endif %}
                  class="w-full rounded-xl border bg-surface-sunken py-2 pr-4 pl-2 text-sm text-ink transition file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-brand-soft file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-brand-text focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand {% if form.file.errors %}border-danger-text/60{% else %}border-line-strong{% endif %}"
                  type="file"
                  name="{{ form.file.html_name }}"
@@ -48,7 +51,8 @@
             {% blocktrans with limit=max_file_size_mb %}CSV file, max. {{ limit }} MB.{% endblocktrans %}
           </p>
           {% for error_message in form.file.errors %}
-            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
+            <p {% if forloop.first %}id="{{ form.file.id_for_label }}-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
           {% endfor %}
         </div>
         {% if form.non_field_errors %}

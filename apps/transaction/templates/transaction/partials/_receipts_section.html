@@ -19,7 +19,7 @@
                   hx-indicator="#body-loading-spinner"
                   hx-confirm="{% trans "Permanently delete this receipt?" %}">
               {% csrf_token %}
-              <button class="inline-flex size-8 cursor-pointer items-center justify-center rounded-full border border-danger-text/60 bg-surface text-danger-text shadow-card transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              <button class="inline-flex size-11 cursor-pointer items-center justify-center rounded-full border border-danger-text/60 bg-surface text-danger-text shadow-card transition hover:bg-danger-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                       type="submit"
                       aria-label="{% trans "Delete receipt" %}"
                       title="{% trans "Delete receipt" %}">{% icon "trash" %}</button>

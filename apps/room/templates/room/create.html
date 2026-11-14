@@ -30,13 +30,15 @@
         <div>
           <label class="mb-1.5 block text-sm font-semibold text-ink" for="name">{{ form.fields.name.label }}</label>
           <input id="name"
+                 {% if form.errors.name.data %}aria-invalid="true" aria-describedby="name-error"{% endif %}
                  class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                  type="text"
                  name="name"
                  value="{{ form.name.value|default_if_none:'' }}"
                  required>
           {% for error_message in form.errors.name.data %}
-            <p id="nameError" class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p {% if forloop.first %}id="name-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
         <div>
@@ -44,6 +46,7 @@
                  for="preferred_currency">{{ form.fields.preferred_currency.label }}</label>
           <div class="relative">
             <select id="preferred_currency"
+                    {% if form.errors.preferred_currency.data %}aria-invalid="true" aria-describedby="preferred_currency-error"{% endif %}
                     class="w-full appearance-none rounded-xl border border-line-strong bg-surface-sunken py-2.5 pr-10 pl-4 text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                     name="preferred_currency"
                     required>
@@ -57,7 +60,8 @@
             {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-subtle" %}
           </div>
           {% for error_message in form.errors.preferred_currency.data %}
-            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p {% if forloop.first %}id="preferred_currency-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
         <div>
@@ -65,6 +69,7 @@
                  for="description">{{ form.fields.description.label }}</label>
           {# An input, not a textarea: the field is capped at 50 characters, the same as the sheet's. #}
           <input id="description"
+                 {% if form.errors.description.data %}aria-invalid="true" aria-describedby="description-error"{% endif %}
                  class="w-full rounded-xl border border-line-strong bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                  type="text"
                  name="description"
@@ -74,7 +79,8 @@
                  minlength="1"
                  required>
           {% for error_message in form.errors.description.data %}
-            <p id="descriptionError" class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p {% if forloop.first %}id="description-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
         {# The suggested-guest buttons below write their picks in here, so they post with the room. #}

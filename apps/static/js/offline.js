@@ -138,7 +138,7 @@ import {OUTBOX_SYNC_TAG, buildEntry, putEntry, readEntries} from './outbox.js';
     }
 
     if (!isOffline()) {
-      banner.hidden = true;
+      banner.firstElementChild.hidden = true;
       return;
     }
 
@@ -154,7 +154,7 @@ import {OUTBOX_SYNC_TAG, buildEntry, putEntry, readEntries} from './outbox.js';
       hint.hidden = true;
     }
 
-    banner.hidden = false;
+    banner.firstElementChild.hidden = false;
   };
 
   const setConnectionState = (online) => {

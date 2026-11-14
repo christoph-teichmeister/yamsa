@@ -27,6 +27,7 @@
               <div class="flex min-w-0 flex-1 flex-col gap-2">
                 <div class="relative">
                   <select id="{{ choice_field.id_for_label }}"
+                          {% if choice_field.errors %}aria-invalid="true" aria-describedby="{{ choice_field.id_for_label }}-error"{% endif %}
                           class="w-full appearance-none rounded-xl border border-line-strong bg-surface-sunken py-2 pr-9 pl-3 text-sm text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                           name="{{ choice_field.html_name }}"
                           aria-label="{% blocktrans with name=person %}Assignment for {{ name }}{% endblocktrans %}">
@@ -41,6 +42,7 @@
                 </div>
                 <div>
                   <input id="{{ name_field.id_for_label }}"
+                         {% if name_field.errors %}aria-invalid="true" aria-describedby="{{ name_field.id_for_label }}-error"{% endif %}
                          class="w-full rounded-xl border border-line-strong bg-surface-sunken px-3 py-2 text-sm text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                          type="text"
                          name="{{ name_field.html_name }}"
@@ -50,10 +52,12 @@
                   <p class="mt-1.5 mb-0 text-sm text-ink-subtle">{% trans "Only used for a new guest." %}</p>
                 </div>
                 {% for error_message in choice_field.errors %}
-                  <p class="m-0 text-sm text-danger-text">{{ error_message }}</p>
+                  <p {% if forloop.first %}id="{{ choice_field.id_for_label }}-error"{% endif %}
+                     class="m-0 text-sm text-danger-text">{{ error_message }}</p>
                 {% endfor %}
                 {% for error_message in name_field.errors %}
-                  <p class="m-0 text-sm text-danger-text">{{ error_message }}</p>
+                  <p {% if forloop.first %}id="{{ name_field.id_for_label }}-error"{% endif %}
+                     class="m-0 text-sm text-danger-text">{{ error_message }}</p>
                 {% endfor %}
               </div>
             </div>
@@ -75,6 +79,7 @@
               <div class="flex min-w-0 flex-1 flex-col gap-2">
                 <div class="relative">
                   <select id="{{ choice_field.id_for_label }}"
+                          {% if choice_field.errors %}aria-invalid="true" aria-describedby="{{ choice_field.id_for_label }}-error"{% endif %}
                           class="w-full appearance-none rounded-xl border border-line-strong bg-surface-sunken py-2 pr-9 pl-3 text-sm text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                           name="{{ choice_field.html_name }}"
                           aria-label="{% blocktrans with name=category.label %}Target category for {{ name }}{% endblocktrans %}">
@@ -89,6 +94,7 @@
                 </div>
                 <div class="flex gap-2">
                   <input id="{{ name_field.id_for_label }}"
+                         {% if name_field.errors %}aria-invalid="true" aria-describedby="{{ name_field.id_for_label }}-error"{% endif %}
                          class="min-w-0 flex-1 rounded-xl border border-line-strong bg-surface-sunken px-3 py-2 text-sm text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                          type="text"
                          name="{{ name_field.html_name }}"
@@ -96,6 +102,7 @@
                          placeholder="{% trans 'Category name' %}"
                          aria-label="{% blocktrans with name=category.label %}New category name for {{ name }}{% endblocktrans %}">
                   <input id="{{ emoji_field.id_for_label }}"
+                         {% if emoji_field.errors %}aria-invalid="true" aria-describedby="{{ emoji_field.id_for_label }}-error"{% endif %}
                          class="w-16 shrink-0 rounded-xl border border-line-strong bg-surface-sunken px-2 py-2 text-center text-sm text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                          type="text"
                          name="{{ emoji_field.html_name }}"
@@ -106,13 +113,16 @@
                 </div>
                 <p class="m-0 text-sm text-ink-subtle">{% trans "Name and emoji are only used when creating a new category." %}</p>
                 {% for error_message in choice_field.errors %}
-                  <p class="m-0 text-sm text-danger-text">{{ error_message }}</p>
+                  <p {% if forloop.first %}id="{{ choice_field.id_for_label }}-error"{% endif %}
+                     class="m-0 text-sm text-danger-text">{{ error_message }}</p>
                 {% endfor %}
                 {% for error_message in name_field.errors %}
-                  <p class="m-0 text-sm text-danger-text">{{ error_message }}</p>
+                  <p {% if forloop.first %}id="{{ name_field.id_for_label }}-error"{% endif %}
+                     class="m-0 text-sm text-danger-text">{{ error_message }}</p>
                 {% endfor %}
                 {% for error_message in emoji_field.errors %}
-                  <p class="m-0 text-sm text-danger-text">{{ error_message }}</p>
+                  <p {% if forloop.first %}id="{{ emoji_field.id_for_label }}-error"{% endif %}
+                     class="m-0 text-sm text-danger-text">{{ error_message }}</p>
                 {% endfor %}
               </div>
             </div>
@@ -126,6 +136,7 @@
             <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="{{ form.room_name.id_for_label }}">{{ form.room_name.label }}</label>
             <input id="{{ form.room_name.id_for_label }}"
+                   {% if form.room_name.errors %}aria-invalid="true" aria-describedby="{{ form.room_name.id_for_label }}-error"{% endif %}
                    class="w-full rounded-xl border bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand {% if form.room_name.errors %}border-danger-text/60{% else %}border-line-strong{% endif %}"
                    type="text"
                    name="{{ form.room_name.html_name }}"
@@ -133,13 +144,15 @@
                    maxlength="100"
                    required>
             {% for error_message in form.room_name.errors %}
-              <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
+              <p {% if forloop.first %}id="{{ form.room_name.id_for_label }}-error"{% endif %}
+                 class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
             {% endfor %}
           </div>
           <div>
             <label class="mb-1.5 block text-sm font-semibold text-ink"
                    for="{{ form.room_description.id_for_label }}">{{ form.room_description.label }}</label>
             <input id="{{ form.room_description.id_for_label }}"
+                   {% if form.room_description.errors %}aria-invalid="true" aria-describedby="{{ form.room_description.id_for_label }}-error"{% endif %}
                    class="w-full rounded-xl border bg-surface-sunken px-4 py-2.5 text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand {% if form.room_description.errors %}border-danger-text/60{% else %}border-line-strong{% endif %}"
                    type="text"
                    name="{{ form.room_description.html_name }}"
@@ -147,7 +160,8 @@
                    maxlength="50"
                    required>
             {% for error_message in form.room_description.errors %}
-              <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
+              <p {% if forloop.first %}id="{{ form.room_description.id_for_label }}-error"{% endif %}
+                 class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message }}</p>
             {% endfor %}
           </div>
           <div>

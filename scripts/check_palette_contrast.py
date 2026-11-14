@@ -173,6 +173,11 @@ def _control_failures(name: str, tokens: dict[str, str]) -> list[str]:
         ("on-brand", "brand-hover", BODY_TEXT_RATIO, "a button label on the hovered brand fill"),
         ("brand", "surface", NON_TEXT_RATIO, "the focus ring on a surface"),
         ("line-strong", "surface", NON_TEXT_RATIO, "a control border on a surface"),
+        # Inputs sit on sunken grounds and cards, and an outline button is hovered.
+        ("line-strong", "surface-raised", NON_TEXT_RATIO, "a control border on a raised surface"),
+        ("line-strong", "surface-sunken", NON_TEXT_RATIO, "a control border on a sunken surface"),
+        ("line-strong", "surface-hover", NON_TEXT_RATIO, "a control border on a hovered surface"),
+        ("line-strong", "canvas", NON_TEXT_RATIO, "a control border on the canvas"),
     )
     found = []
     for first, second, needed, label in checks:
