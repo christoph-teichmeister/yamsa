@@ -67,8 +67,13 @@ class TransactionDeletionService:
         finalised = 0
         for pk in cls.expired(room).values_list("pk", flat=True):
             with transaction.atomic():
+                # of=("self",): deleted_by is a nullable join, and PostgreSQL refuses to lock the
+                # nullable side of an outer join (SQLite, which the tests use, ignores the lock).
                 row = (
-                    cls.expired().select_for_update().filter(pk=pk).select_related("room", "currency", "deleted_by")
+                    cls.expired()
+                    .select_for_update(of=("self",))
+                    .filter(pk=pk)
+                    .select_related("room", "currency", "deleted_by")
                 ).first()
                 if row is None:
                     continue
