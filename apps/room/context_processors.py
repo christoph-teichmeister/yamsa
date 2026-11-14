@@ -40,6 +40,10 @@ def room_context(request: HttpRequest) -> dict:
             "is_open": room.status == room.StatusChoices.OPEN,
             "has_guests": room.has_guests,
             "open_debt_count": room.debts.filter(settled=False).count(),
+            # Only a closed room can hold force-settled debts (reopening clears the marker); skip the query otherwise.
+            "force_settled_debt_count": (
+                room.debts.filter(force_settled_at__isnull=False).count() if room.is_closed else 0
+            ),
             "can_be_closed": room.can_be_closed,
             "can_be_deleted": room.can_be_deleted,
             "seal_icon": room.seal_icon,

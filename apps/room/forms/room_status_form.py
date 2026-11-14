@@ -21,6 +21,9 @@ class RoomStatusForm(forms.ModelForm):
     # Set by the dialog that asks whether to close a room with debts on it.
     force_close = forms.BooleanField(required=False, initial=False, widget=forms.HiddenInput())
 
+    # Set by the dialog that offers, on reopening, to undo a force close.
+    revert_force_settled = forms.BooleanField(required=False, initial=False, widget=forms.HiddenInput())
+
     user: User = None
 
     class Meta:
