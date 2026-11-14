@@ -630,22 +630,49 @@ msgstr "CSV exportieren"
 msgid "Settled"
 msgstr "Beglichen"
 
+msgid "Paid, waiting for confirmation"
+msgstr "Bezahlt, wartet auf Bestätigung"
+
+msgid "Confirm payment"
+msgstr "Zahlung bestätigen"
+
+msgid "Not received"
+msgstr "Nicht erhalten"
+
+msgid "Withdraw"
+msgstr "Zurückziehen"
+
 msgid "Pay with PayPal"
 msgstr "Mit PayPal bezahlen"
 
 msgid "Mark as paid"
 msgstr "Als bezahlt markieren"
 
+msgid "Mark as received"
+msgstr "Als erhalten markieren"
+
 msgid "Settle debt"
 msgstr "Schuld begleichen"
+
+#, python-format
+msgid "Debt of %(debitor_name)s to you"
+msgstr "Schuld von %(debitor_name)s bei dir"
 
 #, python-format
 msgid "Your debt to %(creditor_name)s"
 msgstr "Deine Schuld an %(creditor_name)s"
 
 #, python-format
+msgid "Did you receive %(debt_value)s%(debt_currency)s from %(debitor_name)s?"
+msgstr "Hast du %(debt_value)s%(debt_currency)s von %(debitor_name)s erhalten?"
+
+#, python-format
 msgid "Are you sure that you have settled your debt (%(debt_value)s%(debt_currency)s) to %(creditor_name)s?"
 msgstr "Bist du sicher, dass du deine Schuld (%(debt_value)s%(debt_currency)s) bei %(creditor_name)s beglichen hast?"
+
+#, python-format
+msgid "%(creditor_name)s has to confirm the payment before the debt counts as settled."
+msgstr "%(creditor_name)s muss die Zahlung bestätigen, bevor die Schuld als beglichen zählt."
 
 msgid "Not paid yet?"
 msgstr "Noch nicht bezahlt?"
@@ -656,6 +683,9 @@ msgstr "%(creditor_name)s über PayPal bezahlen"
 
 msgid "Cancel"
 msgstr "Abbrechen"
+
+msgid "Yes, I received it"
+msgstr "Ja, habe ich erhalten"
 
 msgid "Yes, I paid this"
 msgstr "Ja, ist bezahlt"
@@ -671,6 +701,9 @@ msgstr "Betrag"
 
 msgid "debts"
 msgstr "schulden"
+
+msgid "Only the people this debt is between can change it."
+msgstr "Nur die beiden Beteiligten dieser Schuld können sie ändern."
 
 msgid "Only the people this debt is between can settle it."
 msgstr "Nur die beiden Beteiligten dieser Schuld können sie begleichen."
@@ -2183,6 +2216,20 @@ msgstr "{debitor} hat seine Schuld von {amount}{currency} bei dir beglichen"
 
 msgid "Debt settled"
 msgstr "Schuld beglichen"
+
+msgid "Payment to confirm"
+msgstr "Zahlung bestätigen"
+
+#, python-brace-format
+msgid "{debitor} says they paid their debt of {amount}{currency} to you. Please confirm."
+msgstr "{debitor} sagt, die Schuld von {amount}{currency} bei dir bezahlt zu haben. Bitte bestätige das."
+
+msgid "Payment not received"
+msgstr "Zahlung nicht eingegangen"
+
+#, python-brace-format
+msgid "{creditor} did not receive your payment of {amount}{currency}. The debt is open again."
+msgstr "{creditor} hat deine Zahlung von {amount}{currency} nicht erhalten. Die Schuld ist wieder offen."
 
 #, python-brace-format
 msgid "{remover} just removed {removed} from {room}"

@@ -102,7 +102,9 @@ class PaymentReminderService:
 
     def _builders_for_room(self, room: Room) -> list[_PaymentReminderBuilder]:
         """Accumulate debt totals per user so each recipient receives a single email."""
-        debts = Debt.objects.filter(room=room, settled=False).select_related("debitor", "currency")
+        debts = Debt.objects.filter(room=room, settled=False, awaiting_confirmation=False).select_related(
+            "debitor", "currency"
+        )
         builders: dict[int, _PaymentReminderBuilder] = {}
         for debt in debts:
             if debt.debitor.is_guest:

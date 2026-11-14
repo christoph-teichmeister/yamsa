@@ -6,12 +6,16 @@ import pytest
 from apps.account.messages.events.user_removed_from_room import UserRemovedFromRoom
 from apps.account.models import User
 from apps.account.tests.factories import UserFactory
+from apps.debt.messages.events.debt_marked_paid import DebtMarkedPaid
+from apps.debt.messages.events.debt_payment_rejected import DebtPaymentRejected
 from apps.debt.messages.events.debt_settled import DebtSettled
 from apps.debt.models import Debt
 from apps.room.models import Room
 from apps.transaction.messages.events.transaction import ParentTransactionDeleted, ParentTransactionUpdated
 from apps.webpush.handlers.events.events import (
     send_notification_on_child_transaction_deleted,
+    send_notification_on_debt_marked_paid,
+    send_notification_on_debt_payment_rejected,
     send_notification_on_debt_settled,
     send_notification_on_transaction_update,
     send_notification_on_user_removed_from_room,
@@ -117,6 +121,38 @@ class TestNotificationLocalization:
         [notification] = self.outbox.all()
         assert notification.recipient == user
         assert notification.payload.body == f"{creditor} marked your debt of 10.50{debt.currency.sign} as settled"
+
+    def test_debt_marked_paid_tells_the_creditor_in_their_language(self, room: Room, user: User) -> None:
+        creditor = UserFactory(language="de")
+        self.opt_in(creditor)
+        debt = Debt.objects.create(
+            debitor=user, creditor=creditor, room=room, currency=room.preferred_currency, value=Decimal(10)
+        )
+
+        send_notification_on_debt_marked_paid(context=DebtMarkedPaid.Context(debt=debt))
+
+        [notification] = self.outbox.all()
+        assert notification.recipient == creditor
+        assert notification.payload.head == "Zahlung bestätigen"
+        assert notification.payload.body == (
+            f"{user} sagt, die Schuld von 10{debt.currency.sign} bei dir bezahlt zu haben. Bitte bestätige das."
+        )
+
+    def test_debt_payment_rejected_tells_the_debitor_in_their_language(self, room: Room, user: User) -> None:
+        debitor = UserFactory(language="de")
+        self.opt_in(debitor)
+        debt = Debt.objects.create(
+            debitor=debitor, creditor=user, room=room, currency=room.preferred_currency, value=Decimal(10)
+        )
+
+        send_notification_on_debt_payment_rejected(context=DebtPaymentRejected.Context(debt=debt))
+
+        [notification] = self.outbox.all()
+        assert notification.recipient == debitor
+        assert notification.payload.head == "Zahlung nicht eingegangen"
+        assert notification.payload.body == (
+            f"{user} hat deine Zahlung von 10{debt.currency.sign} nicht erhalten. Die Schuld ist wieder offen."
+        )
 
     def test_the_deleter_gets_no_push_for_their_own_deletion(
         self, room: Room, user: User, guest_user: User, create_parent_transaction_with_optimisation: Callable

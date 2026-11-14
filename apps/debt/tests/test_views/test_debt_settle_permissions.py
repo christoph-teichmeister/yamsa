@@ -13,12 +13,6 @@ from apps.transaction.tests.conftest import create_parent_transaction_with_optim
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture
-def debt(room: Room, user: User, guest_user: User) -> Debt:
-    create_parent_transaction_with_optimisation(room=room, paid_by=user, paid_for_tuple=(guest_user,))
-    return Debt.objects.get(room=room, settled=False)
-
-
 def settle_url(debt: Debt) -> str:
     return reverse("debt:settle", kwargs={"room_slug": debt.room.slug, "pk": debt.pk})
 
@@ -52,17 +46,24 @@ class TestWhoMayOpenTheSettlement:
         debt.refresh_from_db()
         assert debt.settled is False
 
-    @pytest.mark.parametrize("member", ["debtor", "creditor"])
-    def test_the_debtor_and_the_creditor_can_settle(
-        self, client: Client, room: Room, debt: Debt, user: User, guest_user: User, member: str
-    ) -> None:
-        client.force_login({"debtor": guest_user, "creditor": user}[member])
+    def test_the_creditor_can_settle_directly(self, client: Client, debt: Debt, user: User) -> None:
+        client.force_login(user)
 
         response = client.post(settle_url(debt), data={"settled": "true"})
 
         assert response.status_code == http.HTTPStatus.FOUND
         debt.refresh_from_db()
         assert debt.settled is True
+
+    def test_the_debtor_can_only_mark_the_debt_as_paid(self, client: Client, debt: Debt, guest_user: User) -> None:
+        client.force_login(guest_user)
+
+        response = client.post(settle_url(debt), data={"settled": "true"})
+
+        assert response.status_code == http.HTTPStatus.FOUND
+        debt.refresh_from_db()
+        assert debt.settled is False
+        assert debt.awaiting_confirmation is True
 
     def test_a_closed_room_refuses_the_settlement(
         self, authenticated_client: Client, closed_room: Room, user: User, guest_user: User

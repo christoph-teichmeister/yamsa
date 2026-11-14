@@ -4,6 +4,43 @@
     {% icon "piggy-bank-fill" %}
     {% trans "Settled" %}
   </span>
+{% elif debt.awaiting_confirmation %}
+  <span class="inline-flex items-center gap-1.5 rounded-full bg-warning-soft px-2.5 py-1 text-xs font-semibold text-warning-text">
+    {% icon "send-check" %}
+    {% trans "Paid, waiting for confirmation" %}
+  </span>
+  {% if debt.viewer_is_creditor %}
+    <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-success-text/60 bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-success-text transition hover:bg-success-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
+            type="button"
+            hx-get="{% room_url 'debt:settle' pk=debt.id %}"
+            hx-target="#body"
+            hx-indicator="#body-loading-spinner"
+            hx-swap="morph:innerHTML"
+            hx-push-url="true">
+      {% icon "piggy-bank" %}
+      {% trans "Confirm payment" %}
+    </button>
+  {% endif %}
+  {% if debt.viewer_is_creditor or debt.viewer_is_debitor %}
+    {# A real form, so the reversal also works without the JS bundle. #}
+    <form method="post"
+          action="{% room_url 'debt:reopen' pk=debt.id %}"
+          hx-post="{% room_url 'debt:reopen' pk=debt.id %}"
+          hx-target="#body"
+          hx-indicator="#body-loading-spinner"
+          hx-swap="morph:innerHTML"
+          hx-push-url="true">
+      {% csrf_token %}
+      <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
+              type="submit">
+        {% if debt.viewer_is_creditor %}
+          {% trans "Not received" %}
+        {% else %}
+          {% trans "Withdraw" %}
+        {% endif %}
+      </button>
+    </form>
+  {% endif %}
 {% elif debt.viewer_is_debitor %}
   {% if debt.creditor.paypal_me_username %}
     {% comment %}
@@ -30,6 +67,18 @@
           hx-push-url="true">
     {% icon "piggy-bank" %}
     {% trans "Mark as paid" %}
+  </button>
+{% elif debt.viewer_is_creditor %}
+  <span class="inline-flex items-center gap-1.5 rounded-full bg-surface-sunken px-2.5 py-1 text-xs font-semibold text-ink">{% trans "Open" %}</span>
+  <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-success-text/60 bg-transparent px-4 py-2 text-sm font-semibold whitespace-nowrap text-success-text transition hover:bg-success-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
+          type="button"
+          hx-get="{% room_url 'debt:settle' pk=debt.id %}"
+          hx-target="#body"
+          hx-indicator="#body-loading-spinner"
+          hx-swap="morph:innerHTML"
+          hx-push-url="true">
+    {% icon "piggy-bank" %}
+    {% trans "Mark as received" %}
   </button>
 {% else %}
   {% comment %}

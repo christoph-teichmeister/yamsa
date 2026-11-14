@@ -19,25 +19,47 @@
       <div class="bg-gradient-to-br from-brand-soft to-transparent px-5 py-5 @md:px-6">
         <p class="m-0 text-xs font-semibold tracking-wider text-ink-subtle uppercase">{% trans "Settle debt" %}</p>
         {% comment %}
-          The creditor's face is the anchor of the confirmation: it is the one thing that tells the
+          The other party's face is the anchor of the confirmation: it is the one thing that tells the
           reader at a glance whom they are about to mark as paid.
         {% endcomment %}
         <div class="mt-2 flex items-center gap-3">
-          {% include "shared_partials/_user_avatar.html" with avatar_url=debt.creditor.avatar_url avatar_name=debt.creditor.name avatar_fallback_url=debt.creditor.profile_picture_fallback_url avatar_class="avatar-lg" %}
-          <h1 class="m-0 text-xl font-semibold break-words text-ink">
-            {% blocktrans with creditor_name=debt.creditor.name trimmed %}
-              Your debt to {{ creditor_name }}
-            {% endblocktrans %}
-          </h1>
+          {% if viewer_is_creditor %}
+            {% include "shared_partials/_user_avatar.html" with avatar_url=debt.debitor.avatar_url avatar_name=debt.debitor.name avatar_fallback_url=debt.debitor.profile_picture_fallback_url avatar_class="avatar-lg" %}
+            <h1 class="m-0 text-xl font-semibold break-words text-ink">
+              {% blocktrans with debitor_name=debt.debitor.name trimmed %}
+                Debt of {{ debitor_name }} to you
+              {% endblocktrans %}
+            </h1>
+          {% else %}
+            {% include "shared_partials/_user_avatar.html" with avatar_url=debt.creditor.avatar_url avatar_name=debt.creditor.name avatar_fallback_url=debt.creditor.profile_picture_fallback_url avatar_class="avatar-lg" %}
+            <h1 class="m-0 text-xl font-semibold break-words text-ink">
+              {% blocktrans with creditor_name=debt.creditor.name trimmed %}
+                Your debt to {{ creditor_name }}
+              {% endblocktrans %}
+            </h1>
+          {% endif %}
         </div>
       </div>
       <div class="flex flex-col gap-3 border-t border-line px-5 py-5 @md:px-6">
-        <p class="m-0 text-ink">
-          {% blocktrans with creditor_name=debt.creditor.name debt_value=debt.value|format_with_thousands debt_currency=debt.currency.sign trimmed %}
-            Are you sure that you have settled your debt ({{ debt_value }}{{ debt_currency }}) to {{ creditor_name }}?
-          {% endblocktrans %}
-        </p>
-        {% if debt.creditor.paypal_me_username %}
+        {% if viewer_is_creditor %}
+          <p class="m-0 text-ink">
+            {% blocktrans with debitor_name=debt.debitor.name debt_value=debt.value|format_with_thousands debt_currency=debt.currency.sign trimmed %}
+              Did you receive {{ debt_value }}{{ debt_currency }} from {{ debitor_name }}?
+            {% endblocktrans %}
+          </p>
+        {% else %}
+          <p class="m-0 text-ink">
+            {% blocktrans with creditor_name=debt.creditor.name debt_value=debt.value|format_with_thousands debt_currency=debt.currency.sign trimmed %}
+              Are you sure that you have settled your debt ({{ debt_value }}{{ debt_currency }}) to {{ creditor_name }}?
+            {% endblocktrans %}
+          </p>
+          <p class="m-0 text-sm text-ink-muted">
+            {% blocktrans with creditor_name=debt.creditor.name trimmed %}
+              {{ creditor_name }} has to confirm the payment before the debt counts as settled.
+            {% endblocktrans %}
+          </p>
+        {% endif %}
+        {% if not viewer_is_creditor and debt.creditor.paypal_me_username %}
           <p class="m-0 text-sm text-ink-muted">
             {% trans "Not paid yet?" %}
             <a class="font-semibold text-brand-text no-underline transition hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
@@ -63,7 +85,11 @@
         <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-success-text/60 bg-success-soft px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-success-text transition hover:border-success-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-95"
                 type="submit">
           {% icon "piggy-bank" %}
-          {% trans "Yes, I paid this" %}
+          {% if viewer_is_creditor %}
+            {% trans "Yes, I received it" %}
+          {% else %}
+            {% trans "Yes, I paid this" %}
+          {% endif %}
         </button>
       </div>
     </form>
