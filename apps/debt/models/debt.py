@@ -25,6 +25,7 @@ class Debt(FullCleanOnSaveMixin, CommonInfo, models.Model):
     class Meta:
         verbose_name = _lazy("Debt")
         verbose_name_plural = _lazy("Debts")
+        indexes = (models.Index(fields=("room", "settled"), name="debt_room_settled_idx"),)
 
     def __str__(self) -> str:
         debitor = self.debitor.name

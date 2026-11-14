@@ -58,3 +58,14 @@ def test_post_closed_room_is_rejected(authenticated_client: Client, closed_room:
 
     assert response.status_code == http.HTTPStatus.FORBIDDEN
     assert not User.objects.filter(name=guest_name).exists()
+
+
+def test_a_double_submit_creates_one_guest(authenticated_client: Client, room: Room) -> None:
+    url = reverse("account:guest-create", kwargs={"room_slug": room.slug})
+    data = {"room_slug": room.slug, "name": "Guest Name"}
+
+    authenticated_client.post(url, data=data)
+    second = authenticated_client.post(url, data=data)
+
+    assert second.status_code == http.HTTPStatus.OK
+    assert User.objects.filter(name="Guest Name").count() == 1

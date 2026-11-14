@@ -125,5 +125,5 @@ class TestObjectsOfAnotherRoomAreNotReachable:
             data={"parent_transaction": foreign_transaction.pk, "paid_for": user.pk, "value": "5.00"},
         )
 
-        assert response.status_code == http.HTTPStatus.OK
+        assert response.status_code == http.HTTPStatus.METHOD_NOT_ALLOWED
         assert ChildTransaction.objects.filter(parent_transaction=foreign_transaction).count() == 1

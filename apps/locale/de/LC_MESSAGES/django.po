@@ -26,6 +26,10 @@ msgstr "Dein neues Passwort"
 msgid "Confirm your new password"
 msgstr "Bestätige dein neues Passwort"
 
+#, python-brace-format
+msgid "The email address '{email}' is already in use"
+msgstr "Die E-Mail-Adresse '{email}' wird bereits verwendet"
+
 msgid "Receive push notifications"
 msgstr "Push-Benachrichtigungen erhalten"
 
@@ -47,10 +51,6 @@ msgstr "Wir konnten diese Datei nicht lesen. Bitte lade ein gültiges Bild hoch.
 
 msgid "The profile picture could not be reduced enough. Try a smaller file."
 msgstr "Das Profilbild konnte nicht ausreichend verkleinert werden. Versuche es mit einer kleineren Datei."
-
-#, python-brace-format
-msgid "The email address '{email}' is already in use"
-msgstr "Die E-Mail-Adresse '{email}' wird bereits verwendet"
 
 msgid "Email"
 msgstr "E-Mail"
@@ -450,6 +450,12 @@ msgstr "Diesen Passkey löschen?"
 msgid "Enter your PayPal.Me username - letters and numbers only, at most 20 characters."
 msgstr "Gib deinen PayPal.Me-Benutzernamen ein - nur Buchstaben und Zahlen, maximal 20 Zeichen."
 
+msgid "Someone with this name is already in this room"
+msgstr "Eine Person mit diesem Namen ist bereits in diesem Raum"
+
+msgid "An invitation was sent a moment ago. Please wait a few minutes."
+msgstr "Eine Einladung wurde gerade erst verschickt. Bitte warte ein paar Minuten."
+
 msgid "If this address is registered, we have sent you a link to reset your password."
 msgstr "Falls diese Adresse registriert ist, haben wir dir einen Link zum Zurücksetzen des Passworts geschickt."
 
@@ -665,6 +671,12 @@ msgstr "Betrag"
 
 msgid "debts"
 msgstr "schulden"
+
+msgid "Only the people this debt is between can settle it."
+msgstr "Nur die beiden Beteiligten dieser Schuld können sie begleichen."
+
+msgid "A settled debt cannot be reopened."
+msgstr "Eine beglichene Schuld kann nicht wieder geöffnet werden."
 
 msgid "Room name"
 msgstr "Raumname"
@@ -1082,6 +1094,15 @@ msgstr "Das Siegelbild konnte nicht ausreichend verkleinert werden. Versuche es 
 msgid "This room still has open debts and can not be closed"
 msgstr "Dieser Raum hat noch offene Schulden und kann nicht geschlossen werden"
 
+msgid "This email address cannot be added to the room"
+msgstr "Diese E-Mail-Adresse kann dem Raum nicht hinzugefügt werden"
+
+msgid "Room does not exist"
+msgstr "Der Raum existiert nicht"
+
+msgid "User with this email address is already in this room"
+msgstr "Eine Person mit dieser E-Mail-Adresse ist bereits in diesem Raum"
+
 msgid "Room deleted"
 msgstr "Raum gelöscht"
 
@@ -1433,6 +1454,10 @@ msgstr "vor %(timesince)s"
 
 msgid "This room is closed. No changes can be made."
 msgstr "Dieser Raum ist geschlossen. Es können keine Änderungen vorgenommen werden."
+
+#, python-format
+msgid "%(count)d of the selected people could not be added to the room."
+msgstr "%(count)d der ausgewählten Personen konnten dem Raum nicht hinzugefügt werden."
 
 msgid "Only a closed room can be deleted."
 msgstr "Nur ein geschlossener Raum kann gelöscht werden."
@@ -2149,6 +2174,10 @@ msgid "{deleter} just deleted a transaction (\"{description}\")"
 msgstr "{deleter} hat eine Transaktion gelöscht (\"{description}\")"
 
 #, python-brace-format
+msgid "{creditor} marked your debt of {amount}{currency} as settled"
+msgstr "{creditor} hat deine Schuld von {amount}{currency} als beglichen markiert"
+
+#, python-brace-format
 msgid "{debitor} just settled their debt of {amount}{currency} to you"
 msgstr "{debitor} hat seine Schuld von {amount}{currency} bei dir beglichen"
 
@@ -2168,3 +2197,6 @@ msgstr "Transaktionen importiert"
 #, python-brace-format
 msgid "Webpush Information for {user}"
 msgstr "Webpush-Information für {user}"
+
+msgid "The push endpoint must be a public https URL."
+msgstr "Der Push-Endpunkt muss eine öffentliche https-URL sein."

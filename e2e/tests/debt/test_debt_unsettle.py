@@ -15,7 +15,7 @@ from apps.room.tests.factories import RoomFactory
 
 @pytest.mark.e2e
 class TestDebtUnsettle:
-    def test_settling_stamps_the_server_date_and_unsettling_clears_it(
+    def test_settling_stamps_the_server_date_and_cannot_be_undone(
         self, debt_list_as: Callable, roommate: User, open_debt: Debt, room_with_open_debt: Room
     ) -> None:
         debt_list_page = debt_list_as(roommate)
@@ -28,15 +28,13 @@ class TestDebtUnsettle:
         assert open_debt.settled_at == timezone.localdate()
 
         settle_path = reverse("debt:settle", kwargs={"room_slug": room_with_open_debt.slug, "pk": open_debt.id})
-        # A date riding along with the un-settling must not survive it either.
+        # Settling is one-way: reopening is refused and must not touch the stamped date.
         response = debt_list_page.post(settle_path, {"settled_at": "2001-01-01"})
 
-        assert response.status == HTTPStatus.FOUND
+        assert response.status == HTTPStatus.FORBIDDEN
         open_debt.refresh_from_db()
-        assert open_debt.settled is False
-        assert open_debt.settled_at is None
-        debt_list_page.navigate()
-        debt_list_page.expect_open_for_debtor(open_debt.id)
+        assert open_debt.settled is True
+        assert open_debt.settled_at == timezone.localdate()
 
     def test_a_date_sent_with_the_request_is_ignored(
         self, debt_list_as: Callable, roommate: User, open_debt: Debt, room_with_open_debt: Room

@@ -6,6 +6,7 @@ from django.utils import formats, timezone
 from django.views import generic
 from django_context_decorator import context
 
+from apps.currency.models import Currency
 from apps.debt.views.mixins.debt_base_context import DebtBaseContext
 from apps.debt.views.money_spent_on_room_view.room_child_transaction_queryset_mixin import (
     RoomChildTransactionQuerysetMixin,
@@ -54,15 +55,19 @@ class MoneySpentTrendPartialView(
 
         return end - timedelta(weeks=period_config["weeks"]), end
 
-    def _baseline_per_currency(self, range_start: datetime) -> dict[str, Decimal]:
-        """Total spent before the window - the level each series starts from."""
+    def _baseline_per_currency(self, range_start: datetime) -> dict[int, Decimal]:
+        """Total spent before the window per currency id - the level each series starts from.
+
+        Keyed by id, not sign: Currency.sign is not unique, so USD and CAD would merge.
+        """
         rows = (
             self.get_base_queryset()
             .filter(parent_transaction__paid_at__lt=range_start)
-            .values("parent_transaction__currency__sign")
-            .annotate(currency_sign=F("parent_transaction__currency__sign"), total=Sum("value"))
+            .values("parent_transaction__currency_id")
+            .annotate(currency_id=F("parent_transaction__currency_id"), total=Sum("value"))
+            .order_by("parent_transaction__currency_id")
         )
-        return {row["currency_sign"]: row["total"] for row in rows}
+        return {row["currency_id"]: row["total"] for row in rows}
 
     def _expenses_in_range(self, range_start: datetime, range_end: datetime) -> QuerySet:
         """One row per parent transaction: the chart steps per expense, not per calendar bucket."""
@@ -72,9 +77,14 @@ class MoneySpentTrendPartialView(
             .values(
                 "parent_transaction_id",
                 "parent_transaction__paid_at",
+                "parent_transaction__currency_id",
                 "parent_transaction__currency__sign",
             )
-            .annotate(currency_sign=F("parent_transaction__currency__sign"), expense_total=Sum("value"))
+            .annotate(
+                currency_id=F("parent_transaction__currency_id"),
+                currency_sign=F("parent_transaction__currency__sign"),
+                expense_total=Sum("value"),
+            )
             .order_by("parent_transaction__paid_at", "parent_transaction_id")
         )
 
@@ -93,42 +103,45 @@ class MoneySpentTrendPartialView(
 
         # Currencies are never summed into one line: a EUR and a HUF total share no scale, so each
         # gets its own series (and its own axis in the chart).
+        signs = {c.id: c.sign for c in Currency.objects.filter(id__in=baselines)}
         cumulative_per_currency = dict(baselines)
-        points_per_currency: dict[str, list[dict]] = {
-            sign: [self._point(range_start, total, Decimal(0))] for sign, total in baselines.items()
+        points_per_currency: dict[int, list[dict]] = {
+            currency_id: [self._point(range_start, total, Decimal(0))] for currency_id, total in baselines.items()
         }
 
         for row in self._expenses_in_range(range_start, range_end):
-            sign = row["currency_sign"]
+            currency_id = row["currency_id"]
             expense_total = row["expense_total"]
-            if sign not in points_per_currency:
-                points_per_currency[sign] = [self._point(range_start, Decimal(0), Decimal(0))]
-                cumulative_per_currency[sign] = Decimal(0)
-            cumulative_per_currency[sign] += expense_total
-            points_per_currency[sign].append(
+            signs[currency_id] = row["currency_sign"]
+            if currency_id not in points_per_currency:
+                points_per_currency[currency_id] = [self._point(range_start, Decimal(0), Decimal(0))]
+                cumulative_per_currency[currency_id] = Decimal(0)
+            cumulative_per_currency[currency_id] += expense_total
+            points_per_currency[currency_id].append(
                 self._point(
                     timezone.localtime(row["parent_transaction__paid_at"]),
-                    cumulative_per_currency[sign],
+                    cumulative_per_currency[currency_id],
                     expense_total,
                 )
             )
 
         series = []
-        for sign, points in points_per_currency.items():
-            cumulative = cumulative_per_currency[sign]
+        for currency_id, points in points_per_currency.items():
+            cumulative = cumulative_per_currency[currency_id]
             points.append(self._point(range_end, cumulative, Decimal(0)))
             series.append(
                 {
-                    "currency": sign,
+                    "currency": signs[currency_id],
+                    "currency_id": currency_id,
                     "points": points,
-                    "baseline": float(baselines.get(sign, Decimal(0))),
+                    "baseline": float(baselines.get(currency_id, Decimal(0))),
                     "total": float(cumulative),
                 }
             )
         # Totals of different currencies are not comparable, so the room's own currency leads and
         # the rest follow by sign - it also keeps the brand colour on the series that matters most.
-        preferred_sign = self.request.room.preferred_currency.sign
-        series.sort(key=lambda entry: (entry["currency"] != preferred_sign, entry["currency"]))
+        preferred_id = self.request.room.preferred_currency_id
+        series.sort(key=lambda entry: (entry["currency_id"] != preferred_id, entry["currency"], entry["currency_id"]))
 
         return {
             "series": series,

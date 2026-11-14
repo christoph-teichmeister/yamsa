@@ -97,7 +97,10 @@ class TestMoneySpentViews:
                 room=room,
                 paid_by=user,
                 paid_for_tuple=(guest_user,),
-                parent_transaction_kwargs={"paid_at": now - timedelta(hours=offset_hours)},
+                parent_transaction_kwargs={
+                    "paid_at": now - timedelta(hours=offset_hours),
+                    "currency": room.preferred_currency,
+                },
                 child_transaction_kwargs={"value": Decimal(10)},
             )
 
@@ -125,7 +128,7 @@ class TestMoneySpentViews:
             room=room,
             paid_by=user,
             paid_for_tuple=(guest_user,),
-            parent_transaction_kwargs={"paid_at": now - timedelta(hours=2)},
+            parent_transaction_kwargs={"paid_at": now - timedelta(hours=2), "currency": room.preferred_currency},
             child_transaction_kwargs={"value": Decimal(10)},
         )
         create_parent_transaction_with_optimisation(
@@ -152,6 +155,29 @@ class TestMoneySpentViews:
         assert series[0]["currency"] == room.preferred_currency.sign
 
     @freeze_time(FROZEN_NOW)
+    def test_money_spent_trend_view_keeps_currencies_sharing_a_sign_apart(
+        self, authenticated_client: Client, room: Room, user: User, guest_user: User
+    ) -> None:
+        """Regression: USD and CAD both use "$" and were summed into one series."""
+        usd = CurrencyFactory(sign="$")
+        cad = CurrencyFactory(sign="$")
+        for currency, value in ((usd, 10), (cad, 25)):
+            create_parent_transaction_with_optimisation(
+                room=room,
+                paid_by=user,
+                paid_for_tuple=(guest_user,),
+                parent_transaction_kwargs={"paid_at": FROZEN_NOW - timedelta(hours=1), "currency": currency},
+                child_transaction_kwargs={"value": Decimal(value)},
+            )
+
+        response = authenticated_client.get(
+            reverse("debt:money-spent-trend", kwargs={"room_slug": room.slug}), {"period": "1w"}
+        )
+
+        totals = sorted(entry["total"] for entry in response.context_data["trend_series"])
+        assert totals == [10.0, 25.0]
+
+    @freeze_time(FROZEN_NOW)
     def test_money_spent_trend_view_starts_from_spending_before_the_range(
         self, authenticated_client: Client, room: Room, user: User, guest_user: User
     ) -> None:
@@ -161,14 +187,14 @@ class TestMoneySpentViews:
             room=room,
             paid_by=user,
             paid_for_tuple=(guest_user,),
-            parent_transaction_kwargs={"paid_at": now - timedelta(weeks=6)},
+            parent_transaction_kwargs={"paid_at": now - timedelta(weeks=6), "currency": room.preferred_currency},
             child_transaction_kwargs={"value": Decimal(40)},
         )
         create_parent_transaction_with_optimisation(
             room=room,
             paid_by=user,
             paid_for_tuple=(guest_user,),
-            parent_transaction_kwargs={"paid_at": now - timedelta(hours=1)},
+            parent_transaction_kwargs={"paid_at": now - timedelta(hours=1), "currency": room.preferred_currency},
             child_transaction_kwargs={"value": Decimal(10)},
         )
 

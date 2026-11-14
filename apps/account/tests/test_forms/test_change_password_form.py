@@ -52,9 +52,25 @@ class TestChangePasswordForm:
             data={
                 "id": user.id,
                 "old_password": DEFAULT_PASSWORD,
-                "new_password": "1",
-                "new_password_confirmation": "2",
+                "new_password": "Another-Pass-1",
+                "new_password_confirmation": "Another-Pass-2",
             },
         )
         assert not form.is_valid()
         assert form.errors["new_password_confirmation"][0] == form.ExceptionMessage.PASSWORDS_DO_NOT_MATCH
+
+    @pytest.mark.parametrize("weak_password", ["short1", "12345678901", "password1234"])
+    def test_weak_new_password_is_rejected(self, user: User, form_request: HttpRequest, weak_password: str) -> None:
+        form = ChangePasswordForm(
+            request=form_request,
+            instance=user,
+            data={
+                "id": user.id,
+                "old_password": DEFAULT_PASSWORD,
+                "new_password": weak_password,
+                "new_password_confirmation": weak_password,
+            },
+        )
+
+        assert not form.is_valid()
+        assert "new_password" in form.errors

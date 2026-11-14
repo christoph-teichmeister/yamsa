@@ -52,6 +52,16 @@ class TestDebtExportView:
         assert user.name in data_rows[0] or guest_user.name in data_rows[0]
         assert all(other_user.name not in row and other_guest.name not in row for row in data_rows)
 
+    def test_debt_export_neutralises_a_formula_in_the_room_name(self, client: Client, room: Room, user: User) -> None:
+        room.name = '=HYPERLINK("http://evil.example")'
+        room.save()
+        client.force_login(user)
+
+        response = client.get(reverse("debt:export", kwargs={"room_slug": room.slug}))
+
+        lines = b"".join(response.streaming_content).decode("utf-8").splitlines()
+        assert lines[1].startswith("Room Name,\"'=")
+
     def test_debt_export_requires_membership(self, client: Client, room: Room) -> None:
         outsider = UserFactory()
         client.force_login(outsider)

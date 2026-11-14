@@ -1,10 +1,11 @@
+from django.contrib.auth import mixins
 from django.views import generic
 from django_context_decorator import context
 
 from apps.core.toast_constants import TOAST_TYPE_CLASSES
 
 
-class ToastHTMXView(generic.TemplateView):
+class ToastHTMXView(mixins.LoginRequiredMixin, generic.TemplateView):
     """HTMX-friendly fragment that renders the shared toast partial with payload data.
 
     The view simply forwards the GET parameters `toast_message` and `toast_type` into the
@@ -18,6 +19,8 @@ class ToastHTMXView(generic.TemplateView):
         3. The base template already listens for that payload and will display the toast.
         4. `toast_type` values come from `TOAST_TYPE_CLASSES` (`info`, `success`, `warning`, `error`).
 
+    Login is required: the message is rendered as given, so an anonymous caller could otherwise
+    craft a link that shows arbitrary text inside the app's own toast.
     """
 
     # How to use:

@@ -61,7 +61,7 @@ class TestRegisterForm:
     def test_posted_id_cannot_target_another_account(self, user: User) -> None:
         original_email = user.email
         form = self.form_class(
-            data={"id": user.id, "name": "attacker", "email": "attacker@local.local", "password": "pw"}
+            data={"id": user.id, "name": "attacker", "email": "attacker@local.local", "password": "Str0ng-Pw-Value"}
         )
         assert form.is_valid()
 
@@ -97,3 +97,10 @@ class TestRegisterForm:
         assert form.errors["email"][0] == form.ExceptionMessage.EMAIL_ADDRESS_ALREADY_IN_USE.format(
             email=expected_email
         )
+
+    @pytest.mark.parametrize("weak_password", ["pw", "12345678901", "password1234"])
+    def test_weak_password_is_rejected(self, weak_password: str) -> None:
+        form = self.form_class(data={"name": "name", "email": "weak@local.local", "password": weak_password})
+
+        assert not form.is_valid()
+        assert "password" in form.errors

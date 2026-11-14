@@ -8,6 +8,7 @@ from apps.transaction.forms.transaction_create_form import (
     MAX_RECEIPT_SIZE,
     RECEIPT_ACCEPTED_CONTENT_TYPES,
     RECEIPT_AUTH_REQUIRED_MESSAGE,
+    receipt_name_matches_content_type,
 )
 from apps.transaction.models import ParentTransaction, Receipt
 
@@ -39,7 +40,9 @@ class TransactionReceiptUploadForm(forms.Form):
             content_type = "application/octet-stream"
         uploaded_file.content_type = content_type
 
-        if content_type not in RECEIPT_ACCEPTED_CONTENT_TYPES:
+        if content_type not in RECEIPT_ACCEPTED_CONTENT_TYPES or not receipt_name_matches_content_type(
+            uploaded_file.name, content_type
+        ):
             msg = "Receipts must be PDF or an image (PNG, JPEG, WebP, GIF)."
             raise forms.ValidationError(msg, code="invalid_content_type")
 

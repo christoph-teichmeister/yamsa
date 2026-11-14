@@ -100,3 +100,35 @@ class TestPaymentReminderService:
         assert not mocked_process.called
         log = ReminderLog.objects.get(reminder_type=reminder_service.REMINDER_TYPE)
         assert log.recipients == []
+
+    def test_mail_failure_is_logged_not_raised_and_window_stays_taken(
+        self, reminder_service: PaymentReminderService, user: User, guest_user: User, debt_factory: Callable
+    ) -> None:
+        debt_factory(debitor=user, creditor=guest_user, value=Decimal("42.00"))
+
+        with mock.patch(
+            "apps.mail.services.payment_reminder_mail_service.PaymentReminderEmailService.process",
+            side_effect=OSError("smtp down"),
+        ):
+            reminder_service.run_if_due()
+            second_wave = reminder_service.run_if_due()
+
+        assert second_wave == []
+        log = ReminderLog.objects.get(reminder_type=reminder_service.REMINDER_TYPE)
+        assert log.recipients == []
+
+    def test_run_if_due_sends_once_per_window(
+        self, reminder_service: PaymentReminderService, user: User, guest_user: User, debt_factory: Callable
+    ) -> None:
+        debt_factory(debitor=user, creditor=guest_user, value=Decimal("42.00"))
+
+        with mock.patch(
+            "apps.mail.services.payment_reminder_mail_service.PaymentReminderEmailService.process"
+        ) as mocked_process:
+            first = reminder_service.run_if_due()
+            second = reminder_service.run_if_due()
+
+        assert len(first) == 1
+        assert second == []
+        assert mocked_process.call_count == 1
+        assert ReminderLog.objects.filter(reminder_type=reminder_service.REMINDER_TYPE).count() == 1
