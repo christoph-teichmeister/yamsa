@@ -19,6 +19,9 @@ class Debt(FullCleanOnSaveMixin, CommonInfo, models.Model):
 
     settled = models.BooleanField(default=False)
     settled_at = models.DateField(blank=True, null=True)
+    # Set only while a room closed with open debts holds this debt as settled on the closer's say-so;
+    # it is what lets reopening revert exactly those debts and no honestly settled ones.
+    force_settled_at = models.DateTimeField(blank=True, null=True)
 
     objects = DebtManager.from_queryset(DebtQuerySet)()
 

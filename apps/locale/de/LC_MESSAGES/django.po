@@ -996,6 +996,20 @@ msgid "Review room status"
 msgstr "Raumstatus prüfen"
 
 #, python-format
+msgid "%(room_name)s | Open debts marked as settled"
+msgstr "%(room_name)s | Offene Schulden als beglichen markiert"
+
+#, python-format
+msgid "%(actor)s closed \"%(room_name)s\" and marked all its open debts as settled."
+msgstr "%(actor)s hat \"%(room_name)s\" geschlossen und alle offenen Schulden als beglichen markiert."
+
+msgid "Nobody has to pay them. If that is wrong, the room can be reopened and the debts restored."
+msgstr "Niemand muss sie bezahlen. Falls das nicht stimmt, kann der Raum wieder geöffnet und die Schulden können wiederhergestellt werden."
+
+msgid "See the debts"
+msgstr "Schulden ansehen"
+
+#, python-format
 msgid "Welcome to %(room_name)s"
 msgstr "Willkommen bei %(room_name)s"
 
@@ -1081,6 +1095,13 @@ msgstr "Das Siegelbild konnte nicht ausreichend verkleinert werden. Versuche es 
 
 msgid "This room still has open debts and can not be closed"
 msgstr "Dieser Raum hat noch offene Schulden und kann nicht geschlossen werden"
+
+msgid "Debts marked as settled"
+msgstr "Schulden als beglichen markiert"
+
+#, python-brace-format
+msgid "{editor} closed \"{room}\" and marked all open debts as settled"
+msgstr "{editor} hat \"{room}\" geschlossen und alle offenen Schulden als beglichen markiert"
 
 msgid "Room deleted"
 msgstr "Raum gelöscht"
@@ -1381,6 +1402,24 @@ msgstr "Seine Felder werden schreibgeschützt, bis du ihn wieder öffnest."
 msgid "Nobody can add new expenses or edit the room's settings while it's closed. You can reopen it any time."
 msgstr "Niemand kann neue Ausgaben hinzufügen oder die Raumeinstellungen bearbeiten, solange er geschlossen ist. Du kannst ihn jederzeit wieder öffnen."
 
+msgid "Reopen this room?"
+msgstr "Diesen Raum wieder öffnen?"
+
+msgid "Debts were marked as settled when it was closed."
+msgstr "Beim Schließen wurden Schulden als beglichen markiert."
+
+#, python-format
+msgid "%(debt_count)s debt was marked as settled without being paid. Do you want to restore it?"
+msgid_plural "%(debt_count)s debts were marked as settled without being paid. Do you want to restore them?"
+msgstr[0] "%(debt_count)s Schuld wurde als beglichen markiert, ohne bezahlt zu sein. Möchtest du sie wiederherstellen?"
+msgstr[1] "%(debt_count)s Schulden wurden als beglichen markiert, ohne bezahlt zu sein. Möchtest du sie wiederherstellen?"
+
+msgid "Keep settled"
+msgstr "Beglichen lassen"
+
+msgid "Restore debts"
+msgstr "Schulden wiederherstellen"
+
 msgid "Outstanding debts"
 msgstr "Ausstehende Schulden"
 
@@ -1393,8 +1432,8 @@ msgid_plural "There are still %(debt_count)s open debts. Closing the room anyway
 msgstr[0] "Es gibt noch %(debt_count)s offene Schuld. Wenn du den Raum trotzdem schließt, wird sie als beglichen markiert."
 msgstr[1] "Es gibt noch %(debt_count)s offene Schulden. Wenn du den Raum trotzdem schließt, werden sie als beglichen markiert."
 
-msgid "Use this option only if you want to skip manual settlement."
-msgstr "Nutze diese Option nur, wenn du die manuelle Abrechnung überspringen möchtest."
+msgid "Use this option only if you want to skip manual settlement. Everyone involved is notified, and you can restore the debts when you reopen the room."
+msgstr "Nutze diese Option nur, wenn du die manuelle Abrechnung überspringen möchtest. Alle Beteiligten werden benachrichtigt, und du kannst die Schulden beim Wiederöffnen des Raums wiederherstellen."
 
 msgid "Close anyway"
 msgstr "Trotzdem schließen"
