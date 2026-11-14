@@ -42,7 +42,7 @@ class TestRoomMembers:
     ) -> None:
         people_page.add_existing_user("niemand@yamsa.local")
 
-        people_page.expect_field_error("Email does not exist")
+        people_page.expect_field_error("This email address cannot be added to the room")
         assert shared_room.users.count() == 2
 
     def test_a_roommate_without_expenses_can_be_removed(
