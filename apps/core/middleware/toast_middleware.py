@@ -21,7 +21,7 @@ class ToastMiddleware:
     def __call__(self, request: HttpRequest) -> HttpResponse:
         request.toast_queue = ToastQueue()
         for toast in self._take_carried_toasts(request):
-            request.toast_queue.add(toast["message"], toast["type"])
+            request.toast_queue.add_payload(toast)
 
         response = self.get_response(request)
         queued_toasts = request.toast_queue.consume()

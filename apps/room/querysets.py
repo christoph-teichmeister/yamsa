@@ -2,11 +2,15 @@ from typing import TYPE_CHECKING
 
 from django.contrib.auth.models import AnonymousUser
 from django.db import models
-from django.db.models import BooleanField, Exists, ExpressionWrapper, F, Max, OuterRef
+from django.db.models import BooleanField, Exists, ExpressionWrapper, F, Max, OuterRef, Q
 from django.db.models.functions import Coalesce, Substr, Upper
 
 if TYPE_CHECKING:
     from apps.account.models import User
+
+# An aggregate over the reverse relation bypasses the transaction manager, so it has to skip
+# transactions in their undo window itself.
+LIVE_TRANSACTION = Q(parent_transactions__deleted_at__isnull=True)
 
 
 class RoomQuerySet(models.QuerySet):
@@ -30,7 +34,9 @@ class RoomQuerySet(models.QuerySet):
         )
 
     def annotate_last_transaction_lastmodified_at_date(self) -> models.QuerySet:
-        return self.annotate(last_transaction_created_at_date=Max("parent_transactions__lastmodified_at"))
+        return self.annotate(
+            last_transaction_created_at_date=Max("parent_transactions__lastmodified_at", filter=LIVE_TRANSACTION)
+        )
 
     def annotate_last_activity(self) -> models.QuerySet:
         """Annotate each room with when it was last used, from two angles.
@@ -47,9 +53,9 @@ class RoomQuerySet(models.QuerySet):
         last year is bookkeeping, and must not present that room as the one in use right now.
         """
         return self.annotate(
-            last_transaction_at=Max("parent_transactions__paid_at"),
+            last_transaction_at=Max("parent_transactions__paid_at", filter=LIVE_TRANSACTION),
             last_activity=Coalesce(
-                Max("parent_transactions__paid_at"),
+                Max("parent_transactions__paid_at", filter=LIVE_TRANSACTION),
                 F("lastmodified_at"),
             ),
         )

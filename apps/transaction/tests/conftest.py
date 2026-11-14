@@ -1,8 +1,13 @@
+from datetime import timedelta
 from decimal import Decimal
+
+from django.urls import reverse
+from django.utils import timezone
 
 from apps.account.models import User
 from apps.room.models import Room
 from apps.transaction.models import ChildTransaction, ParentTransaction
+from apps.transaction.services.transaction_deletion_service import UNDO_WINDOW
 from apps.transaction.tests.factories import ParentTransactionFactory
 
 
@@ -39,3 +44,17 @@ def create_parent_transaction_with_optimisation(
     )
 
     return created_parent_transaction, created_child_transactions
+
+
+def delete_url(room: Room, parent: ParentTransaction) -> str:
+    return reverse("transaction:parent-transaction-delete", kwargs={"room_slug": room.slug, "pk": parent.pk})
+
+
+def restore_url(room: Room, parent: ParentTransaction) -> str:
+    return reverse("transaction:parent-transaction-restore", kwargs={"room_slug": room.slug, "pk": parent.pk})
+
+
+def let_window_pass(parent: ParentTransaction) -> None:
+    ParentTransaction.all_objects.filter(pk=parent.pk).update(
+        deleted_at=timezone.now() - UNDO_WINDOW - timedelta(seconds=1)
+    )

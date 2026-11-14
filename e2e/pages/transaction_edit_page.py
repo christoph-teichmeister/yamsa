@@ -32,15 +32,16 @@ class TransactionEditPage(TransactionCreatePage):
 
     @property
     def delete_button(self) -> Locator:
-        return self.page.get_by_role("button", name="Delete", exact=True)
+        return self.page.locator("#delete-transaction-button")
 
     def delete_transaction(self, *, confirm: bool = True) -> None:
-        self.page.once("dialog", lambda dialog: dialog.accept() if confirm else dialog.dismiss())
+        """Delete asks through an in-page dialog; confirming soft-deletes and redirects to the list."""
+        self.delete_button.click()
         if not confirm:
-            self.delete_button.click()
+            self.page.locator("#delete-transaction-dialog").get_by_role("button", name="Cancel").click()
             return
         with self.page.expect_response(lambda response: "/parent-transaction/delete/" in response.url):
-            self.delete_button.click()
+            self.page.locator("#delete-transaction-confirm-button").click()
 
     def expect_shares_locked(self, *, locked: bool) -> None:
         values = self.page.locator(".split-row input[name='value']")

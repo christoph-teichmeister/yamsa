@@ -63,6 +63,26 @@ def form_valid(self, form):
     return super().form_valid(form)
 ```
 
+## Deleting a transaction: soft delete with an undo window
+
+`ParentTransaction.deleted_at` is set while a delete can still be undone
+(`DELETE_UNDO_SECONDS` shown in the toast, plus `DELETE_UNDO_GRACE_SECONDS` on the server). The first manager,
+`objects`, hides those rows, and `ChildTransaction.objects` hides the shares of such a transaction; both are what
+related managers and the admin use, so a new query is safe by default. `all_objects` sees everything and is for
+`TransactionDeletionService`, the category cleanup (a PROTECTed category) and the delete event's context only.
+
+Two things bypass the manager and must filter themselves: aggregates over the reverse relation
+(`Max("parent_transactions__paid_at")` in `RoomQuerySet`, see `LIVE_TRANSACTION`) and `Category.objects.filter(transactions__...)`.
+
+`TransactionDeletionService` owns the lifecycle. `trash` recalculates the debts and tells nobody; `restore` undoes it;
+`finalise_expired` deletes the rows and then fires `ParentTransactionDeleted`, which is what writes the news item and
+sends the push. An undone delete therefore never reaches anybody. Nothing runs on a timer: the room's transaction
+list and the next delete finalise that room's expired rows, and `manage.py purge_deleted_transactions` does all rooms
+(schedule it every few minutes if notifications must not wait for the next visit).
+
+A toast can carry one action (`ToastQueue.add_with_action`): the button POSTs to the given URL, the timer pauses on
+hover and focus, and the text wraps.
+
 ## Offline: what the app promises without a connection
 
 Three pieces, in `apps/core` and `apps/static/js/offline.js`:
