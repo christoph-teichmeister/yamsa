@@ -77,7 +77,7 @@ class TestImport:
         side_menu = SideMenuPage(page, base_url)
         side_menu.open_menu()
 
-        page.locator("#side-menu-panel").get_by_role("button", name="Import").click()
+        page.locator("#side-menu-panel").get_by_role("link", name="Import").click()
 
         page.wait_for_url(lambda url: url.endswith(reverse("importer:upload")))
         expect(page.get_by_role("heading", name="Import transactions")).to_be_visible()

@@ -70,6 +70,15 @@ export const renderSpendingTrendChart = (d3) => {
             .append("svg")
             .attr("viewBox", `0 0 ${width} ${height}`)
             .attr("preserveAspectRatio", "xMidYMid meet")
+            // The drawing carries no text a screen reader could use; the summary stands in for it.
+            .attr("role", "img")
+            .attr(
+                "aria-label",
+                (container.dataset.summaryTemplate || "")
+                    .replace("{currency}", currency)
+                    .replace("{count}", data.length)
+                    .replace("{total}", `${currency}${data[data.length - 1].value.toFixed(2)}`),
+            )
 
         const gradientId = `trend-area-gradient-${seriesIndex}`
         const gradient = svg

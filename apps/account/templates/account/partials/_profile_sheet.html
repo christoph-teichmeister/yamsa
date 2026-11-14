@@ -40,6 +40,7 @@
         <label class="m-0 text-sm text-ink-muted @md:w-44 @md:shrink-0" for="name">{{ form.fields.name.label }}</label>
         <div class="min-w-0 flex-1">
           <input id="name"
+                 {% if form.errors.name.data %}aria-invalid="true" aria-describedby="name-error"{% endif %}
                  class="w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                  type="text"
                  name="name"
@@ -47,7 +48,8 @@
                  required
                  value="{{ form.name.value|default_if_none:user.name }}">
           {% for error_message in form.errors.name.data %}
-            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p {% if forloop.first %}id="name-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -56,6 +58,7 @@
                for="email">{{ form.fields.email.label }}</label>
         <div class="min-w-0 flex-1">
           <input id="email"
+                 {% if form.errors.email.data %}aria-invalid="true" aria-describedby="email-error"{% endif %}
                  class="w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                  type="email"
                  name="email"
@@ -63,7 +66,8 @@
                  required
                  value="{{ form.email.value|default_if_none:user.email }}">
           {% for error_message in form.errors.email.data %}
-            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p {% if forloop.first %}id="email-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -74,14 +78,16 @@
           <div class="flex items-center rounded-lg border border-line-strong bg-surface-sunken transition focus-within:border-brand focus-within:outline-2 focus-within:outline-offset-0 focus-within:outline-brand">
             <span class="pl-3 font-medium text-ink-subtle" aria-hidden="true">@</span>
             <input id="paypal_me_username"
-                   class="w-full min-w-0 border-0 bg-transparent py-2 pr-3 pl-0 font-medium text-ink outline-none placeholder:text-ink-subtle"
+                   {% if form.errors.paypal_me_username.data %}aria-invalid="true" aria-describedby="paypal_me_username-error"{% endif %}
+                   class="w-full min-w-0 border-0 bg-transparent py-2 pr-3 pl-0 font-medium text-ink outline-hidden placeholder:text-ink-subtle"
                    type="text"
                    name="paypal_me_username"
                    placeholder="{% trans "Not set" %}"
                    value="{{ form.paypal_me_username.value|default_if_none:user.paypal_me_username }}">
           </div>
           {% for error_message in form.errors.paypal_me_username.data %}
-            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p {% if forloop.first %}id="paypal_me_username-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>
@@ -91,6 +97,7 @@
         <div class="min-w-0 flex-1">
           <div class="relative">
             <select id="id_language"
+                    {% if form.errors.language.data %}aria-invalid="true" aria-describedby="id_language-error"{% endif %}
                     class="w-full appearance-none rounded-lg border border-line-strong bg-surface-sunken py-2 pr-9 pl-3 font-medium text-ink transition focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
                     name="language">
               {% for choice_value, choice_label in form.fields.language.choices %}
@@ -101,7 +108,8 @@
             {% icon "chevron-down" "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-subtle" %}
           </div>
           {% for error_message in form.errors.language.data %}
-            <p class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
+            <p {% if forloop.first %}id="id_language-error"{% endif %}
+               class="mt-1.5 mb-0 text-sm text-danger-text">{{ error_message.message }}</p>
           {% endfor %}
         </div>
       </div>

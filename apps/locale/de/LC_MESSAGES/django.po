@@ -495,6 +495,18 @@ msgstr "yamsa, gemeinsame Ausgaben, Mitbewohner-App, Rechnungsteilung, Dashboard
 msgid "yamsa"
 msgstr "yamsa"
 
+msgid "Skip to content"
+msgstr "Zum Inhalt springen"
+
+msgid "Support"
+msgstr "Unterstützen"
+
+msgid "Buy me a coffee on Ko-fi"
+msgstr "Spendiere mir einen Kaffee auf Ko-fi"
+
+msgid "opens in new tab"
+msgstr "öffnet in neuem Tab"
+
 msgid "No connection - the expense is saved on this device and will be sent later"
 msgstr "Keine Verbindung – die Ausgabe ist auf diesem Gerät gespeichert und wird später gesendet"
 
@@ -1203,6 +1215,9 @@ msgstr "Lade häufige Mitwirkende ein"
 msgid "Add past roommates with one tap. Mark your go-to teammates as friends to pin them to the top."
 msgstr "Füge frühere Mitbewohner mit einem Tippen hinzu. Markiere deine bevorzugten Teammitglieder als Freunde, um sie oben anzupinnen."
 
+msgid "Room sections"
+msgstr "Raumbereiche"
+
 msgid "Open to guests"
 msgstr "Für Gäste offen"
 
@@ -1455,6 +1470,9 @@ msgstr "Dunkles Design"
 msgid "Follow the system theme"
 msgstr "Systemeinstellung übernehmen"
 
+msgid "Main"
+msgstr "Hauptnavigation"
+
 msgid "Menu"
 msgstr "Menü"
 
@@ -1633,6 +1651,9 @@ msgstr "Füge Ausgaben hinzu, um die Aufschlüsselung freizuschalten."
 
 msgid "Tap a slice"
 msgstr "Tippe auf ein Segment"
+
+msgid "Spending by category"
+msgstr "Ausgaben nach Kategorie"
 
 msgid "Legend"
 msgstr "Legende"
@@ -1996,6 +2017,10 @@ msgstr "Wird aktualisiert..."
 
 msgid "Not enough data to render the chart yet."
 msgstr "Noch nicht genug Daten, um das Diagramm darzustellen."
+
+#, python-brace-format
+msgid "Spending timeline in {currency}: {count} expenses, total {total}"
+msgstr "Ausgabenverlauf in {currency}: {count} Ausgaben, insgesamt {total}"
 
 msgid "No data available"
 msgstr "Keine Daten verfügbar"

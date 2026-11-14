@@ -70,6 +70,7 @@
                  data-transaction-category-chart-dataset-id="{{ breakdown.chart_data_id }}"
                  data-empty-message="{% trans "Add expenses to unlock the breakdown." %}"
                  data-hint-message="{% trans "Tap a slice" %}"
+                 data-chart-label="{% trans "Spending by category" %}"
                  data-bucket-color="{{ chart_small_slice_bucket_color }}"></div>
             {{ breakdown.chart_data|json_script:breakdown.chart_data_id }}
             <div class="min-w-0">
