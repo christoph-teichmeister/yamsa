@@ -15,13 +15,12 @@ class SuggestedGuestFriendToggleHTMXView(mixins.LoginRequiredMixin, generic.Temp
         if not user_id:
             return HttpResponseBadRequest("Missing suggested user selection.")
 
-        try:
-            target_user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
+        # Only people the user is offered as suggestions, with one answer for every other id (unknown,
+        # non-numeric, self, guest, stranger), so the endpoint cannot be used to probe accounts.
+        service = SuggestedGuestService(user=request.user)
+        if not user_id.isdecimal() or int(user_id) not in {g.user_id for g in service.get_suggested_guests()}:
             return HttpResponseBadRequest("Suggested user not found.")
-
-        if target_user == request.user or target_user.is_guest:
-            return HttpResponseBadRequest("Cannot toggle friendship for this user.")
+        target_user = User.objects.get(id=user_id)
 
         friendship = UserFriendship.objects.filter(user=request.user, friend=target_user).first()
 
@@ -30,7 +29,7 @@ class SuggestedGuestFriendToggleHTMXView(mixins.LoginRequiredMixin, generic.Temp
         else:
             UserFriendship.objects.create(user=request.user, friend=target_user)
 
-        suggested_guests = SuggestedGuestService(user=request.user).get_suggested_guests()
+        suggested_guests = service.get_suggested_guests()
         suggested_guest_context = request.POST.get("suggested_guest_context", "create")
         add_inline_form = suggested_guest_context == "existing"
         context = self.get_context_data(

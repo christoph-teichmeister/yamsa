@@ -5,8 +5,8 @@ from apps.core.toast_constants import TOAST_TYPE_CLASSES
 
 
 class TestToastHtmxView:
-    def test_toast_htmx_view_returns_toast_payload(self, client: Client) -> None:
-        response = client.get(reverse("core:toast"), {"toast_message": "Hello", "toast_type": "warning"})
+    def test_toast_htmx_view_returns_toast_payload(self, authenticated_client: Client) -> None:
+        response = authenticated_client.get(reverse("core:toast"), {"toast_message": "Hello", "toast_type": "warning"})
         response.render()
 
         assert response.status_code == 200
@@ -17,15 +17,15 @@ class TestToastHtmxView:
             {"message": "Hello", "type": TOAST_TYPE_CLASSES["warning"]},
         ]
 
-    def test_toast_htmx_view_defaults_to_info_for_unknown_type(self, client: Client) -> None:
-        response = client.get(reverse("core:toast"), {"toast_message": "Hi", "toast_type": "missing"})
+    def test_toast_htmx_view_defaults_to_info_for_unknown_type(self, authenticated_client: Client) -> None:
+        response = authenticated_client.get(reverse("core:toast"), {"toast_message": "Hi", "toast_type": "missing"})
         response.render()
 
         toast_entry = response.context_data["queued_toasts"][0]
         assert toast_entry["type"] == TOAST_TYPE_CLASSES["info"]
 
-    def test_toast_htmx_view_without_message_skips_toasts(self, client: Client) -> None:
-        response = client.get(reverse("core:toast"))
+    def test_toast_htmx_view_without_message_skips_toasts(self, authenticated_client: Client) -> None:
+        response = authenticated_client.get(reverse("core:toast"))
         response.render()
 
         assert response.context_data["queued_toasts"] == []
@@ -39,3 +39,9 @@ class TestToastHtmxView:
         }
 
         assert dict(TOAST_TYPE_CLASSES) == expected_classes
+
+    def test_toast_htmx_view_sends_anonymous_visitors_to_the_login(self, client: Client) -> None:
+        response = client.get(reverse("core:toast"), {"toast_message": "Spoofed"})
+
+        assert response.status_code == 302
+        assert response.url.startswith("/account/login/")

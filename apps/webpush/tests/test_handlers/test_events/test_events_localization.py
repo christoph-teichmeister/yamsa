@@ -103,10 +103,39 @@ class TestNotificationLocalization:
         [notification] = self.outbox.all()
         assert notification.recipient == creditor
         assert notification.payload.head == "Schuld beglichen"
-        assert (
-            notification.payload.body
-            == f"{user} hat seine Schuld von {debt.value}{debt.currency.sign} bei dir beglichen"
+        assert notification.payload.body == f"{user} hat seine Schuld von 10{debt.currency.sign} bei dir beglichen"
+
+    def test_debt_settled_by_the_creditor_tells_the_debitor(self, room: Room, user: User) -> None:
+        creditor = UserFactory(language="de")
+        self.opt_in(user)
+        debt = Debt.objects.create(
+            debitor=user, creditor=creditor, room=room, currency=room.preferred_currency, value=Decimal("10.50")
         )
+
+        send_notification_on_debt_settled(context=DebtSettled.Context(debt=debt, settled_by=creditor))
+
+        [notification] = self.outbox.all()
+        assert notification.recipient == user
+        assert notification.payload.body == f"{creditor} marked your debt of 10.50{debt.currency.sign} as settled"
+
+    def test_the_deleter_gets_no_push_for_their_own_deletion(
+        self, room: Room, user: User, guest_user: User, create_parent_transaction_with_optimisation: Callable
+    ) -> None:
+        self.opt_in(user, guest_user)
+        parent_transaction, _ = create_parent_transaction_with_optimisation(
+            room=room,
+            paid_by=user,
+            paid_for_tuple=(guest_user,),
+            parent_transaction_kwargs={"created_by": user, "lastmodified_by": guest_user},
+        )
+
+        send_notification_on_child_transaction_deleted(
+            context=ParentTransactionDeleted(
+                context_data=ParentTransactionDeleted.context_before_deletion(parent_transaction, user_who_deleted=user)
+            ).Context
+        )
+
+        assert set(self._bodies()) == {guest_user}
 
     def test_user_removed_from_room_localizes_body_per_recipient_language(
         self, room: Room, user: User, guest_user: User

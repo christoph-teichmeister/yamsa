@@ -1,8 +1,10 @@
 import pytest
 
+from apps.account.models import User
 from apps.room.models import Room
 from apps.transaction.models import DEFAULT_CATEGORY_SLUG, Category, RoomCategory
 from apps.transaction.services.room_category_service import RoomCategoryService
+from apps.transaction.tests.factories import ParentTransactionFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -55,6 +57,17 @@ class TestRoomCategoryService:
 
         remaining = list(service.get_categories())
         assert [rc.order_index for rc in remaining] == list(range(len(remaining)))
+
+    def test_delete_non_default_category_moves_its_transactions_to_the_default(self, room: Room, user: User) -> None:
+        service = RoomCategoryService(room=room)
+        target = next(rc for rc in service.get_categories() if not rc.is_default)
+        default = RoomCategory.objects.get(room=room, is_default=True)
+        parent_transaction = ParentTransactionFactory(room=room, paid_by=user, category=target.category)
+
+        service.delete_room_category(target.id)
+
+        parent_transaction.refresh_from_db()
+        assert parent_transaction.category == default.category
 
     def test_delete_default_promotes_next_category(self, room: Room) -> None:
         service = RoomCategoryService(room=room)

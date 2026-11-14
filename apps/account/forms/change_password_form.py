@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import authenticate, hashers
+from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -31,6 +32,11 @@ class ChangePasswordForm(forms.ModelForm):
         if possible_user is None:
             raise ValidationError(self.ExceptionMessage.PASSWORD_INCORRECT)
         return old_password
+
+    def clean_new_password(self) -> str:
+        new_password = self.cleaned_data["new_password"]
+        validate_password(new_password, user=self.instance)
+        return new_password
 
     def clean(self) -> None:
         cleaned_data = super().clean()

@@ -6,6 +6,7 @@ from pywebpush import WebPushException, webpush
 
 from apps.account.models import User
 from apps.webpush.models import WebpushInformation
+from apps.webpush.validators import is_safe_push_endpoint
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,11 @@ class NotificationSendService:
 
     @staticmethod
     def _send_notification(web_push_info: WebpushInformation, payload: str, ttl: int) -> object | None:
+        # Rows saved before the form validated endpoints may still point at internal hosts.
+        if not is_safe_push_endpoint(web_push_info.endpoint):
+            logger.warning("Skipping webpush to unsafe endpoint (id=%s)", web_push_info.pk)
+            return None
+
         try:
             return webpush(
                 subscription_info={

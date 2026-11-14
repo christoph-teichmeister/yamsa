@@ -3,6 +3,7 @@ import http
 import pytest
 from django.test import Client
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.account.messages.commands.send_invitation_email import SendInvitationEmail
 from apps.account.models import User
@@ -104,3 +105,17 @@ def test_post_for_guest_of_another_room_is_404(authenticated_client: Client, roo
     response = authenticated_client.post(url, data={"email": "hijack@local.local"})
 
     assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+
+def test_a_second_post_inside_the_window_sends_nothing(
+    authenticated_client: Client, guest_user: User, guest_send_invitation_url: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    guest_user.invitation_email_sent_at = timezone.now()
+    guest_user.save()
+    recorded_messages = []
+    monkeypatch.setattr("apps.account.views.guest_send_invitation_email_view.handle_message", recorded_messages.append)
+
+    response = authenticated_client.post(guest_send_invitation_url, data={"email": "some_email@local.local"})
+
+    assert response.status_code == http.HTTPStatus.OK
+    assert recorded_messages == []

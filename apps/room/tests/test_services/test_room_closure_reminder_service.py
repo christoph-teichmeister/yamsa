@@ -182,3 +182,13 @@ class TestRoomClosureReminderService:
 
         closed_count_after = Room.objects.filter_status_closed().count()
         assert closed_count_after == closed_count_before  # no duplicate closes
+
+    def test_mail_failure_is_logged_not_raised_and_window_stays_taken(self, room_with_stale_activity: Room) -> None:
+        service = RoomClosureReminderService(now=timezone.now())
+
+        with mock.patch(REMINDER_SERVICE_PATH, side_effect=OSError("smtp down")):
+            service.run_if_due()
+            second_wave = service.run_if_due()
+
+        assert second_wave == []
+        assert ReminderLog.objects.filter(reminder_type=service.REMINDER_TYPE).count() == 1

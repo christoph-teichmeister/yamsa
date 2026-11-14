@@ -36,7 +36,11 @@ class UserForgotPasswordView(generic.FormView):
         email_allowed = cache.add(throttle_key, 1, FORGOT_PASSWORD_THROTTLE_SECONDS)
         if ip_allowed and email_allowed:
             for user in User.objects.filter(email__iexact=email, is_guest=False):
-                handle_message(SendForgotPasswordEmail(context_data={"user": user}))
+                # A failure here would 500 only for registered addresses and so reveal which are.
+                try:
+                    handle_message(SendForgotPasswordEmail(context_data={"user": user}))
+                except Exception:
+                    logger.exception("Forgot-password mail failed for user %s", user.pk)
 
         self.request.toast_queue.info(
             _("If this address is registered, we have sent you a link to reset your password.")

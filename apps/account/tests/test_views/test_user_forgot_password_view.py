@@ -157,3 +157,17 @@ def test_reset_with_garbage_uid_is_rejected(client: Client) -> None:
     response = client.get(reverse("account:reset-password", kwargs={"uidb64": "!!", "token": "x-y"}))
 
     assert response["Location"] == reverse("account:forgot-password")
+
+
+def test_post_survives_a_mail_failure_for_a_registered_address(
+    client: Client, user: User, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def failing_handle_message(message: Message) -> Message:
+        msg = "smtp down"
+        raise OSError(msg)
+
+    monkeypatch.setattr("apps.account.views.user_forgot_password_view.handle_message", failing_handle_message)
+
+    response = client.post(reverse("account:forgot-password"), data={"email": user.email})
+
+    assert response.status_code == http.HTTPStatus.FOUND

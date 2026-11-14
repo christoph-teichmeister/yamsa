@@ -41,13 +41,22 @@ class TestWhoMayOpenTheSettlement:
         debt.refresh_from_db()
         assert debt.settled is False
 
-    @pytest.mark.parametrize("member", ["debtor", "creditor", "another_guest"])
-    def test_every_member_of_the_room_can_settle(
+    def test_a_bystander_in_the_room_cannot_settle(self, client: Client, room: Room, debt: Debt) -> None:
+        bystander = GuestUserFactory()
+        room.users.add(bystander)
+        client.force_login(bystander)
+
+        response = client.post(settle_url(debt), data={"settled": "true"})
+
+        assert response.status_code == http.HTTPStatus.FORBIDDEN
+        debt.refresh_from_db()
+        assert debt.settled is False
+
+    @pytest.mark.parametrize("member", ["debtor", "creditor"])
+    def test_the_debtor_and_the_creditor_can_settle(
         self, client: Client, room: Room, debt: Debt, user: User, guest_user: User, member: str
     ) -> None:
-        other_guest = GuestUserFactory()
-        room.users.add(other_guest)
-        client.force_login({"debtor": guest_user, "creditor": user, "another_guest": other_guest}[member])
+        client.force_login({"debtor": guest_user, "creditor": user}[member])
 
         response = client.post(settle_url(debt), data={"settled": "true"})
 

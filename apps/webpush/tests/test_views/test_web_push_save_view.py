@@ -43,6 +43,14 @@ class TestWebPushSaveView:
 
         assert response.status_code == http.HTTPStatus.CREATED
 
+    def test_subscribe_with_an_internal_endpoint_is_refused(self) -> None:
+        payload = self._build_payload("subscribe")
+        payload["subscription"]["endpoint"] = "https://169.254.169.254/latest/meta-data"
+
+        response = self.client.post(self.url, data=json.dumps(payload), content_type="application/json")
+
+        assert response.status_code == http.HTTPStatus.BAD_REQUEST
+
     def test_unsubscribe_status_returns_accepted(self) -> None:
         response = self._post("unsubscribe")
 

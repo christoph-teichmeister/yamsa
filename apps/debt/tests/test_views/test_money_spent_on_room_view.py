@@ -137,5 +137,5 @@ class TestMoneySpentOnRoomViewContext:
         view = self._view_for_room(room)
         max_map = view.max_open_debt_per_currency
 
-        assert max_map[currency_a.sign] == Decimal(30)
-        assert max_map[currency_b.sign] == Decimal(55)
+        assert max_map[currency_a.id] == Decimal(30)
+        assert max_map[currency_b.id] == Decimal(55)

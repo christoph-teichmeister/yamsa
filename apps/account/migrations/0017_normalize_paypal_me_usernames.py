@@ -1,7 +1,22 @@
-from django.core.exceptions import ValidationError
+import re
+
 from django.db import migrations
 
-from apps.account.utils.paypal import normalize_paypal_me_username
+# Frozen copy of apps.account.utils.paypal as of this migration: a migration must not import live app
+# code, which keeps changing (or disappearing) while this one has to replay the same way forever.
+_URL_PREFIX = re.compile(r"^(?:https?://)?(?:www\.)?paypal(?:\.me/|\.com/paypalme/)", flags=re.IGNORECASE)
+_HANDLE = re.compile(r"^[A-Za-z0-9]{1,20}$")
+
+
+def normalize_paypal_me_username(value):
+    """Return the bare handle, None for blank, or raise ValueError for something that cannot be one."""
+    normalized = _URL_PREFIX.sub("", value.strip())
+    normalized = re.split(r"[?#/]", normalized, maxsplit=1)[0].strip().lstrip("@").strip()
+    if not normalized:
+        return None
+    if not _HANDLE.match(normalized):
+        raise ValueError(value)
+    return normalized
 
 
 def normalize_stored_paypal_me_usernames(apps, schema_editor):
@@ -18,7 +33,7 @@ def normalize_stored_paypal_me_usernames(apps, schema_editor):
     for user in User.objects.using(db_alias).exclude(paypal_me_username__isnull=True):
         try:
             normalized_username = normalize_paypal_me_username(user.paypal_me_username)
-        except ValidationError:
+        except ValueError:
             normalized_username = None
 
         if normalized_username == user.paypal_me_username:

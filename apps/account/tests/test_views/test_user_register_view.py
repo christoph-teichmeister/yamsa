@@ -191,7 +191,7 @@ def test_post_with_foreign_id_does_not_touch_that_account(client: Client, user: 
 
     response = client.post(
         reverse("account:register"),
-        data={"id": user.id, "name": "attacker", "email": "attacker@local.local", "password": "attacker_pw"},
+        data={"id": user.id, "name": "attacker", "email": "attacker@local.local", "password": "Str0ng-Pw-Value"},
     )
 
     assert response.status_code == http.HTTPStatus.FOUND
@@ -203,7 +203,12 @@ def test_post_with_foreign_id_does_not_touch_that_account(client: Client, user: 
 def test_post_with_forged_guest_token_registers_a_new_account(client: Client, guest_user: User) -> None:
     client.post(
         reverse("account:register"),
-        data={"guest_token": f"{guest_user.id}:forged", "name": "x", "email": "x@local.local", "password": "pw"},
+        data={
+            "guest_token": f"{guest_user.id}:forged",
+            "name": "x",
+            "email": "x@local.local",
+            "password": "Str0ng-Pw-Value",
+        },
     )
 
     guest_user.refresh_from_db()
@@ -220,7 +225,7 @@ def test_post_with_token_of_a_registered_user_does_not_touch_that_account(client
             "guest_token": build_guest_registration_token(user.id),
             "name": "x",
             "email": "x@local.local",
-            "password": "pw",
+            "password": "Str0ng-Pw-Value",
         },
     )
 
@@ -233,9 +238,25 @@ def test_post_as_logged_in_guest_converts_that_guest(client: Client, guest_user:
 
     client.post(
         reverse("account:register"),
-        data={"name": "now_real", "email": "now_real@local.local", "password": "pw"},
+        data={"name": "now_real", "email": "now_real@local.local", "password": "Str0ng-Pw-Value"},
     )
 
     guest_user.refresh_from_db()
     assert not guest_user.is_guest
     assert guest_user.email == "now_real@local.local"
+
+
+def test_post_survives_a_post_register_mail_failure(client: Client, monkeypatch: pytest.MonkeyPatch) -> None:
+    def failing_handle_message(message: object) -> None:
+        msg = "smtp down"
+        raise OSError(msg)
+
+    monkeypatch.setattr("apps.account.views.user_register_view.handle_message", failing_handle_message)
+
+    response = client.post(
+        reverse("account:register"),
+        data={"name": "Mail Down", "email": "maildown@local.local", "password": "Str0ng-Pw-Value"},
+    )
+
+    assert response.status_code == http.HTTPStatus.FOUND
+    assert User.objects.filter(email="maildown@local.local").exists()
