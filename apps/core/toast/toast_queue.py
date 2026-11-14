@@ -19,6 +19,22 @@ class ToastQueue:
             return
         self._items.append(ToastItem(message=message, toast_type=toast_type))
 
+    def add_with_action(self, message: str, *, action_label: str, action_url: str, duration_ms: int) -> None:
+        """Add a toast with one button that POSTs to `action_url`, e.g. an undo."""
+        self._items.append(
+            ToastItem(
+                message=message,
+                toast_type=SUCCESS_TOAST_CLASS,
+                action_label=action_label,
+                action_url=action_url,
+                duration_ms=duration_ms,
+            )
+        )
+
+    def add_payload(self, payload: dict[str, str | int]) -> None:
+        """Re-queue a toast that `consume()` handed out, action included."""
+        self._items.append(ToastItem.from_payload(payload))
+
     def success(self, message: str) -> None:
         self.add(message, SUCCESS_TOAST_CLASS)
 
@@ -34,16 +50,15 @@ class ToastQueue:
     def _snapshot(self) -> list[ToastItem]:
         return list(self._items)
 
-    def consume(self) -> list[dict[str, str]]:
+    def consume(self) -> list[dict[str, str | int]]:
         """Return all queued toasts and clear the queue."""
         snapshot = self._snapshot()
         self._items.clear()
-        return [{"message": item.message, "type": item.toast_type} for item in snapshot]
+        return [item.as_payload() for item in snapshot]
 
-    def as_trigger_payload(self) -> dict[str, list[dict[str, str]]]:
+    def as_trigger_payload(self) -> dict[str, list[dict[str, str | int]]]:
         """Return the trigger payload expected by HTMX headers."""
-        entries = self._snapshot()
-        return {"triggerToast": [{"message": item.message, "type": item.toast_type} for item in entries]}
+        return {"triggerToast": [item.as_payload() for item in self._snapshot()]}
 
     def has_entries(self) -> bool:
         return bool(self._items)
