@@ -8,6 +8,7 @@ from django.utils import timezone
 
 from apps.account.tests.test_utils import contains_attribute
 from apps.debt.models import Debt
+from apps.room.messages.events.room_debts_force_settled import RoomDebtsForceSettled
 from apps.room.messages.events.room_status_changed import RoomStatusChanged
 from apps.room.models import Room
 from apps.room.tests.test_forms.test_room_status_form import create_open_debt
@@ -70,7 +71,11 @@ class TestRoomStatusUpdateView:
         debt = Debt.objects.get(room=room)
         assert debt.settled
         assert debt.settled_at == timezone.localdate()
-        handle_message.assert_called_once()
+        assert debt.force_settled_at is not None
+        assert [type(call.args[0]) for call in handle_message.call_args_list] == [
+            RoomDebtsForceSettled,
+            RoomStatusChanged,
+        ]
 
     def test_a_closed_room_reopens(self, authenticated_client: Client, closed_room: Room) -> None:
         with mock.patch(STATUS_VIEW_MODULE) as handle_message:

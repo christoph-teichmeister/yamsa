@@ -40,6 +40,7 @@ def room_context(request: HttpRequest) -> dict:
             "is_open": room.status == room.StatusChoices.OPEN,
             "has_guests": room.has_guests,
             "open_debt_count": room.debts.filter(settled=False).count(),
+            "force_settled_debt_count": room.debts.filter(force_settled_at__isnull=False).count(),
             "can_be_closed": room.can_be_closed,
             "can_be_deleted": room.can_be_deleted,
             "seal_icon": room.seal_icon,
