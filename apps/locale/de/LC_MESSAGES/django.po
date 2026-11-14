@@ -1348,6 +1348,13 @@ msgstr "Dies kann nicht rückgängig gemacht werden."
 msgid "\"%(room_name)s\" and everything that belongs only to it — transactions, debts, receipts and news — will be permanently deleted. Members keep their accounts and can still be found in other rooms."
 msgstr "\"%(room_name)s\" und alles, was ausschließlich zu diesem Raum gehört – Transaktionen, Schulden, Belege und News – wird endgültig gelöscht. Mitglieder behalten ihre Konten und sind weiterhin in anderen Räumen zu finden."
 
+msgid "Type the room name to confirm"
+msgstr "Gib zur Bestätigung den Raumnamen ein"
+
+#, python-format
+msgid "\"Delete forever\" stays disabled until you type \"%(room_name)s\" exactly, including upper and lower case."
+msgstr "\"Endgültig löschen\" bleibt gesperrt, bis du \"%(room_name)s\" genau so eingibst, auch mit Groß- und Kleinschreibung."
+
 msgid "Delete forever"
 msgstr "Endgültig löschen"
 
@@ -1436,6 +1443,9 @@ msgstr "Dieser Raum ist geschlossen. Es können keine Änderungen vorgenommen we
 
 msgid "Only a closed room can be deleted."
 msgstr "Nur ein geschlossener Raum kann gelöscht werden."
+
+msgid "The typed name does not match the room name."
+msgstr "Der eingegebene Name stimmt nicht mit dem Raumnamen überein."
 
 msgid "Toggle navigation"
 msgstr "Navigation umschalten"

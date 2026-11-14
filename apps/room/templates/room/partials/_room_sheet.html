@@ -191,14 +191,36 @@
             still be found in other rooms.
           {% endblocktrans %}
         </p>
+        <div>
+          <label for="delete-room-name-input"
+                 class="mb-1.5 block text-sm font-medium text-ink">{% trans "Type the room name to confirm" %}</label>
+          <input id="delete-room-name-input"
+                 class="min-h-11 w-full rounded-lg border border-line-strong bg-surface-sunken px-3 py-2 font-medium text-ink transition placeholder:text-ink-subtle focus:border-brand focus:outline-2 focus:outline-offset-0 focus:outline-brand"
+                 type="text"
+                 name="confirm_name"
+                 autocomplete="off"
+                 autocapitalize="off"
+                 spellcheck="false"
+                 aria-describedby="delete-room-name-hint"
+                 data-expected-name="{{ current_room.name }}"
+                 placeholder="{{ current_room.name }}">
+          <p id="delete-room-name-hint"
+             class="mt-1.5 mb-0 text-xs text-ink-subtle">
+            {% blocktrans trimmed with room_name=current_room.name %}
+              "Delete forever" stays disabled until you type "{{ room_name }}" exactly, including upper and lower case.
+            {% endblocktrans %}
+          </p>
+        </div>
         <div class="mt-1 flex flex-col gap-2 @md:flex-row @md:justify-end">
-          <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          <button class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-strong bg-transparent min-h-11 px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
                   data-dialog-close>{% trans "Cancel" %}</button>
           {# hx-push-url: htmx follows the view's redirect without touching the address bar, which would otherwise stay on the deleted room and 404 on reload. #}
           <button id="delete-room-confirm-button"
-                  class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-danger-soft px-4 py-2 text-sm font-semibold text-danger-text transition hover:border-danger-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-transparent bg-danger-soft min-h-11 px-4 py-2 text-sm font-semibold text-danger-text transition hover:border-danger-text disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   type="button"
+                  disabled
+                  hx-include="#delete-room-name-input"
                   hx-post="{% room_url 'room:delete' %}"
                   hx-target="#body"
                   hx-swap="innerHTML"
@@ -208,6 +230,27 @@
     </dialog>
   {% endif %}
   <script nonce="{{ csp_nonce }}">
+      (function () {
+        var nameInput = document.getElementById('delete-room-name-input');
+        var confirmButton = document.getElementById('delete-room-confirm-button');
+        if (!nameInput || !confirmButton) {
+          return;
+        }
+        var sync = function () {
+          confirmButton.disabled = nameInput.value.trim() !== nameInput.dataset.expectedName.trim();
+        };
+        nameInput.addEventListener('input', sync);
+        // The dialog sits inside the room form; Enter would submit that form instead of confirming.
+        nameInput.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+          }
+        });
+        nameInput.closest('dialog').addEventListener('close', function () {
+          nameInput.value = '';
+          sync();
+        });
+      })();
       (function () {
         var input = document.getElementById('description');
         var counter = document.getElementById('description-counter');
