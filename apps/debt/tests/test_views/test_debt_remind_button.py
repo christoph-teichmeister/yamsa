@@ -6,7 +6,7 @@ from freezegun import freeze_time
 from apps.account.models import User
 from apps.account.tests.factories import UserFactory
 from apps.debt.models import Debt, ReminderLog
-from apps.debt.tests.test_views.remind_helpers import list_url, remind_url
+from apps.debt.tests.test_views.conftest import list_url, remind_url
 from apps.room.models import Room
 
 pytestmark = pytest.mark.django_db

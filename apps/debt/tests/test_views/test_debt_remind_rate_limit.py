@@ -7,7 +7,7 @@ from freezegun import freeze_time
 
 from apps.account.models import User
 from apps.debt.models import Debt, ReminderLog
-from apps.debt.tests.test_views.remind_helpers import PUSH, remind_url
+from apps.debt.tests.test_views.conftest import PUSH, remind_url
 from apps.room.models import Room
 from apps.transaction.tests.conftest import create_parent_transaction_with_optimisation
 
