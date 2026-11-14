@@ -2,7 +2,7 @@
 
 ## What shipped
 
-A real visual redesign, not a refinement: three independent critique cycles (DESIGN_FINDINGS.md)
+A real visual redesign, not a refinement: three independent critique cycles (findings tracker, removed 2026-11-14, see git history)
 found yamsa's Tailwind system strong but "structurally generic" — nothing forced "shared
 household, long-lived, guest-friendly" identity. The user overrode that conclusion and asked for
 an actual redesign via the Impeccable skill's `new-work` flow.
