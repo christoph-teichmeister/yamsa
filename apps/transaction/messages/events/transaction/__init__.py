@@ -1,5 +1,7 @@
 from apps.transaction.messages.events.transaction.child_transaction_deleted import ChildTransactionDeleted
 from apps.transaction.messages.events.transaction.parent_transaction_created import ParentTransactionCreated
 from apps.transaction.messages.events.transaction.parent_transaction_deleted import ParentTransactionDeleted
+from apps.transaction.messages.events.transaction.parent_transaction_restored import ParentTransactionRestored
+from apps.transaction.messages.events.transaction.parent_transaction_trashed import ParentTransactionTrashed
 from apps.transaction.messages.events.transaction.parent_transaction_updated import ParentTransactionUpdated
 from apps.transaction.messages.events.transaction.transactions_imported import TransactionsImported

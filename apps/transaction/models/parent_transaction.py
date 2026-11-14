@@ -7,6 +7,7 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _lazy
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
+from apps.transaction.managers import LiveManager
 from apps.transaction.models.constants import resolve_default_category_pk
 
 
@@ -36,6 +37,17 @@ class ParentTransaction(FullCleanOnSaveMixin, CommonInfo):
     # resubmitted form - books the expense once. The unique index is the guarantee; a view checking
     # first only spares the visitor an error page.
     client_request_id = models.UUIDField(null=True, blank=True, unique=True, editable=False)
+
+    # Set while a delete can still be undone, see TransactionDeletionService. The first manager
+    # is the default one, which related managers and the admin use, so a deleted row is invisible
+    # everywhere except through `all_objects`.
+    deleted_at = models.DateTimeField(null=True, blank=True, editable=False, db_index=True)
+    deleted_by = models.ForeignKey(
+        "account.User", null=True, blank=True, editable=False, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    objects = LiveManager()
+    all_objects = models.Manager()
 
     class Meta:
         ordering = ("-id",)

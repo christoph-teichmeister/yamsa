@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
+from django.db.models import Sum
+
 from apps.account.models import User
 from apps.core.event_loop.messages import Event
 from apps.room.models import Room
-from apps.transaction.models import ParentTransaction
+from apps.transaction.models import ChildTransaction, ParentTransaction
 
 
 class ParentTransactionDeleted(Event):
@@ -27,13 +29,13 @@ class ParentTransactionDeleted(Event):
 
     @staticmethod
     def context_before_deletion(parent_transaction: ParentTransaction, *, user_who_deleted: User) -> dict:
+        # all_objects: the transaction may be in its undo window, which hides its shares from the
+        # default manager.
+        shares = ChildTransaction.all_objects.filter(parent_transaction=parent_transaction)
         return {
             "parent_transaction": parent_transaction,
             "room": parent_transaction.room,
             "user_who_deleted": user_who_deleted,
-            "amount": parent_transaction.value,
-            "debtors": tuple(
-                child_transaction.paid_for
-                for child_transaction in parent_transaction.child_transactions.select_related("paid_for")
-            ),
+            "amount": shares.aggregate(total=Sum("value"))["total"] or Decimal(0),
+            "debtors": tuple(share.paid_for for share in shares.select_related("paid_for")),
         }

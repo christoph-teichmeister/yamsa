@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as _lazy
 
 from apps.core.models.mixins import FullCleanOnSaveMixin
+from apps.transaction.managers import LiveManager
 
 
 class ChildTransaction(FullCleanOnSaveMixin, CommonInfo):
@@ -11,6 +12,11 @@ class ChildTransaction(FullCleanOnSaveMixin, CommonInfo):
 
     paid_for = models.ForeignKey("account.User", related_name="owes_child_transactions", on_delete=models.CASCADE)
     value = models.DecimalField(decimal_places=2, max_digits=10)
+
+    # The shares of a transaction in its undo window must not reach a debt sum, so the default
+    # manager looks through the parent.
+    objects = LiveManager()
+    all_objects = models.Manager()
 
     class Meta:
         ordering = ("-id",)
