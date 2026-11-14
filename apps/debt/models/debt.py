@@ -1,5 +1,6 @@
 from ambient_toolbox.models import CommonInfo
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as _lazy
 
@@ -19,6 +20,9 @@ class Debt(FullCleanOnSaveMixin, CommonInfo, models.Model):
 
     settled = models.BooleanField(default=False)
     settled_at = models.DateField(blank=True, null=True)
+    # The debitor says they paid, the creditor has not confirmed yet. Still unsettled for every balance and
+    # optimisation purpose; only `settle()` makes the money count as moved.
+    awaiting_confirmation = models.BooleanField(default=False)
 
     objects = DebtManager.from_queryset(DebtQuerySet)()
 
@@ -26,6 +30,12 @@ class Debt(FullCleanOnSaveMixin, CommonInfo, models.Model):
         verbose_name = _lazy("Debt")
         verbose_name_plural = _lazy("Debts")
         indexes = (models.Index(fields=("room", "settled"), name="debt_room_settled_idx"),)
+        constraints = (
+            models.CheckConstraint(
+                condition=~models.Q(settled=True, awaiting_confirmation=True),
+                name="debt_settled_not_awaiting_confirmation",
+            ),
+        )
 
     def __str__(self) -> str:
         debitor = self.debitor.name
@@ -42,3 +52,32 @@ class Debt(FullCleanOnSaveMixin, CommonInfo, models.Model):
             currency=currency,
             creditor=creditor,
         )
+
+    # The transitions below only persist state. Locking and notifications belong to the calling view; each returns
+    # whether anything changed so a repeated request stays silent.
+
+    def mark_as_paid(self) -> bool:
+        """Debitor side: open -> awaiting confirmation."""
+        if self.settled or self.awaiting_confirmation:
+            return False
+        self.awaiting_confirmation = True
+        self.save()
+        return True
+
+    def settle(self) -> bool:
+        """Creditor side: open or awaiting confirmation -> settled. One-way."""
+        if self.settled:
+            return False
+        self.settled = True
+        self.awaiting_confirmation = False
+        self.settled_at = timezone.localdate()
+        self.save()
+        return True
+
+    def reopen(self) -> bool:
+        """Awaiting confirmation -> open, when the creditor rejects or the debitor withdraws."""
+        if self.settled or not self.awaiting_confirmation:
+            return False
+        self.awaiting_confirmation = False
+        self.save()
+        return True

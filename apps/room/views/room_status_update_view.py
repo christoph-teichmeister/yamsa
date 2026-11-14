@@ -38,7 +38,9 @@ class RoomStatusUpdateView(RoomMembershipRequiredMixin, RoomSheetResponseMixin, 
         # Both of these are side effects rather than persistence of the room itself, so they sit
         # here and not in the form's save() — see AGENTS.md § Hard rules.
         if force_closed:
-            self.object.debts.filter(settled=False).update(settled=True, settled_at=timezone.localdate())
+            self.object.debts.filter(settled=False).update(
+                settled=True, awaiting_confirmation=False, settled_at=timezone.localdate()
+            )
 
         if status_changed:
             handle_message(RoomStatusChanged(context_data={"room": self.object}))
