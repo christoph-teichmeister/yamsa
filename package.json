@@ -18,7 +18,7 @@
     "idiomorph": "^0.8.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.4",
+    "@tailwindcss/postcss": "^4.3.5",
     "bootstrap-icons": "^1.13.2",
     "css-loader": "^7.1.5",
     "mini-css-extract-plugin": "^2.10.2",
