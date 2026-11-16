@@ -115,11 +115,17 @@ class RoomClosureReminderService:
 
     @staticmethod
     def _close_empty_rooms() -> int:
-        """Close any open rooms that currently have no members.
+        """Close any open rooms that currently have no members and no open debts.
 
+        A queryset update bypasses ``RoomStatusForm``'s open-debts rule, so it is repeated here.
         Returns the number of rooms closed.
         """
-        return Room.objects.filter_status_open().filter_without_members().update(status=Room.StatusChoices.CLOSED)
+        return (
+            Room.objects.filter_status_open()
+            .filter_without_members()
+            .exclude(debts__settled=False)
+            .update(status=Room.StatusChoices.CLOSED)
+        )
 
     @staticmethod
     def _should_notify_creator(creator: User | None) -> bool:
