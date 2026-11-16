@@ -1,11 +1,13 @@
 from datetime import timedelta
+from decimal import Decimal
 from unittest import mock
 
 import pytest
 from django.test import override_settings
 from django.utils import timezone
 
-from apps.debt.models import ReminderLog
+from apps.account.tests.factories import UserFactory
+from apps.debt.models import Debt, ReminderLog
 from apps.room.models import Room
 from apps.room.services.room_closure_reminder_service import RoomClosureReminderService
 
@@ -139,6 +141,24 @@ class TestRoomClosureReminderService:
 
         room.refresh_from_db()
         assert room.status == Room.StatusChoices.CLOSED
+
+    def test_empty_room_with_open_debt_is_not_autoclosed(self, room_with_stale_activity: Room) -> None:
+        """The auto-close must honour the same open-debts rule as the manual close."""
+        room = room_with_stale_activity
+        room.users.clear()
+        Debt.objects.create(
+            room=room,
+            debitor=UserFactory(),
+            creditor=UserFactory(),
+            value=Decimal("10.00"),
+            currency=room.preferred_currency,
+        )
+
+        with mock.patch(REMINDER_SERVICE_PATH):
+            RoomClosureReminderService(now=timezone.now()).run()
+
+        room.refresh_from_db()
+        assert room.status == Room.StatusChoices.OPEN
 
     def test_empty_room_is_not_notified_after_autoclose(self, room_with_stale_activity: Room) -> None:
         """Auto-closed empty rooms must not trigger any notification emails."""
