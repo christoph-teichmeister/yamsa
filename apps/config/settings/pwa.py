@@ -40,8 +40,8 @@ PWA_SERVICE_WORKER = {
     "max_cached_pages": 40,
 }
 
-# Icons are "any" only: no dedicated maskable artwork exists, and a combined "any maskable"
-# purpose makes Android crop the full-bleed icon.
+# Keep "any" and "maskable" as separate entries: a combined "any maskable" purpose makes Android
+# crop the full-bleed icon, and without a maskable icon the launcher draws it on a white plate.
 MANIFEST = {
     "background_color": "#2d2a2e",
     "categories": ["finance", "lifestyle", "productivity", "shopping", "utilities"],
@@ -252,6 +252,13 @@ MANIFEST = {
             "src": "/static/images/favicons/android/android-launchericon-48-48.png",
             "sizes": "48x48",
             "purpose": "any",
+        },
+        # Art is padded into the 80% safe zone so launcher masks never cut the Y.
+        {
+            "src": "/static/images/favicons/android/maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable",
         },
         {"src": "/static/images/favicons/ios/16.png", "sizes": "16x16"},
         {"src": "/static/images/favicons/ios/20.png", "sizes": "20x20"},
